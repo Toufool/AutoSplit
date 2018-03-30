@@ -15,7 +15,7 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 A good split image is:
 - One that is still or mostly still for a few seconds during gameplay
 - One that is unique and does not repeat during the run
-    - If it does repeat and you have the same two split images in a row, make sure your "pause" option is long enough so that the program     doesn't split twice, and make sure the image doesn't appear again until you want the program to split.
+    - If it does repeat and you have the same two split images in a row, make sure your "pause" option is long enough so that the program     doesn't split twice, and make sure the image doesn't appear in your game feed again until you want the program to split.
 - One that is NOT completely black or completely white - these are common loading screens that could cause false positive matches/splits. However if there is no black or white screens between splits, this is okay to use.
 
 ## GAME SCREEN REGION
