@@ -1,5 +1,5 @@
 # autosplitter
-This program is used together with a speedrun timer (livesplit, wsplit, etc) that uses image analysis to compare images (chosen by the user) to the users live game feed and splits when there is a match.
+This program is used together with a speedrun timer (livesplit, wsplit, etc) that uses image analysis to compare images (chosen by the user) to the users live game feed and splits when there is a match. It was created using Python 2.7
 
 # HOW IT WORKS:
 
