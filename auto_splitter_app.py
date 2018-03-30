@@ -462,7 +462,7 @@ class Window(QtGui.QMainWindow):
         msgBox.setText("error: all images in folder must be .jpg")
         msgBox.exec_()
     
-        def check_fps(self):
+    def check_fps(self):
         global split_image_directory
         global x1,y1,x2,y2
         global split_hotkey
@@ -587,7 +587,6 @@ class Window(QtGui.QMainWindow):
                         ShowLivePercentDifferenceLabel.setText('n/a')
                         self.enable_buttons()
                         QtGui.QApplication.processEvents()
-                        print('Reset')
                         return
                     #if undo split hotkey is pressed, go back one split
                     if keyboard.is_pressed(undo_split_hotkey):
@@ -597,7 +596,6 @@ class Window(QtGui.QMainWindow):
                         self.skip_split()
             
             #loop breaks to here when match threshold is met. splits the timer, goes to next split, and pauses for a user-defined amount of time before comparing the next split.
-            print('split!')
             keyboard.press_and_release(split_hotkey)
             split_image_number=split_image_number+1
             if number_of_split_images != split_image_number:
@@ -611,7 +609,6 @@ class Window(QtGui.QMainWindow):
         StartAutoSplitterButton.setText('Start Auto Splitter')
         self.enable_buttons()
         QtGui.QApplication.processEvents()
-        print('done splitting')
     
 def run():
     app = QtGui.QApplication(sys.argv)
