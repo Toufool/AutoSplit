@@ -462,6 +462,53 @@ class Window(QtGui.QMainWindow):
         msgBox.setText("error: all images in folder must be .jpg")
         msgBox.exec_()
     
+        def check_fps(self):
+        global split_image_directory
+        global x1,y1,x2,y2
+        global split_hotkey
+        global reset_hotkey
+        global FPS
+        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
+            self.split_image_directory_error_message()
+            return
+        if not all(File.endswith(".jpg") or File.endswith(".JPG") for File in os.listdir(split_image_directory)):
+            self.image_type_error()
+            return
+        if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
+            self.coordinate_error_message()
+            return
+        CheckFPSButton.setText('Calculating...')
+        self.disable_buttons()
+        QtGui.QApplication.processEvents()
+        split_image_file=os.listdir(split_image_directory)[0]
+        split_image_path=split_image_directory+split_image_file
+        split_image = Image.open(split_image_path)
+        split_image_resized=split_image.resize((120,90))
+        #END SPLIT IMAGE STUFF
+            
+        bbox=x1,y1,x2,y2
+        mean_percent_diff=100
+        count=0
+        t0=time.time()
+        while count <= 100:
+            with mss.mss() as sct:
+                QtGui.QApplication.processEvents()
+                sct_img = sct.grab(bbox)
+                game_image = Image.frombytes('RGB', sct_img.size, sct_img.rgb)
+                game_image_resized = game_image.resize((120,90))
+                diff=ImageChops.difference(split_image_resized,game_image_resized)
+                diff_pix_val=np.asarray(list(diff.getdata()))
+                percent_diff=diff_pix_val/255.*100.
+                mean_percent_diff=np.mean(percent_diff)
+                count=count+1
+        t1 = time.time()
+        FPS=int(100/(t1-t0))
+        FPS=str(FPS)
+        CheckFPSLabel.setText('FPS: '+FPS)
+        CheckFPSButton.setText('Check FPS')
+        self.enable_buttons()
+        return
+    
     def auto_splitter(self):
         #set global variables
         global split_image_directory
@@ -558,59 +605,13 @@ class Window(QtGui.QMainWindow):
                 QtGui.QApplication.processEvents()
                 pause=pause*1000
                 QtTest.QTest.qWait(pause)
+                
         #loop breaks to here when the last image splits. 
         CurrentSplitImageLabel.setText('Current Split Image: none (Auto Splitting finished)')
         StartAutoSplitterButton.setText('Start Auto Splitter')
         self.enable_buttons()
         QtGui.QApplication.processEvents()
         print('done splitting')
-        
-    def check_fps(self):
-        global split_image_directory
-        global x1,y1,x2,y2
-        global split_hotkey
-        global reset_hotkey
-        global FPS
-        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
-            self.split_image_directory_error_message()
-            return
-        if not all(File.endswith(".jpg") or File.endswith(".JPG") for File in os.listdir(split_image_directory)):
-            self.image_type_error()
-            return
-        if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
-            self.coordinate_error_message()
-            return
-        CheckFPSButton.setText('Calculating...')
-        self.disable_buttons()
-        QtGui.QApplication.processEvents()
-        split_image_file=os.listdir(split_image_directory)[0]
-        split_image_path=split_image_directory+split_image_file
-        split_image = Image.open(split_image_path)
-        split_image_resized=split_image.resize((120,90))
-        #END SPLIT IMAGE STUFF
-            
-        bbox=x1,y1,x2,y2
-        mean_percent_diff=100
-        count=0
-        t0=time.time()
-        while count <= 100:
-            with mss.mss() as sct:
-                QtGui.QApplication.processEvents()
-                sct_img = sct.grab(bbox)
-                game_image = Image.frombytes('RGB', sct_img.size, sct_img.rgb)
-                game_image_resized = game_image.resize((120,90))
-                diff=ImageChops.difference(split_image_resized,game_image_resized)
-                diff_pix_val=np.asarray(list(diff.getdata()))
-                percent_diff=diff_pix_val/255.*100.
-                mean_percent_diff=np.mean(percent_diff)
-                count=count+1
-        t1 = time.time()
-        FPS=int(100/(t1-t0))
-        FPS=str(FPS)
-        CheckFPSLabel.setText('FPS: '+FPS)
-        CheckFPSButton.setText('Check FPS')
-        self.enable_buttons()
-        return
     
 def run():
     app = QtGui.QApplication(sys.argv)
