@@ -22,6 +22,7 @@ A good split image is:
 - Click "Set Top Left", hover your mouse over the top left corner of your game screen and wait a few seconds until the coordinates change in the program
 - Click "Set Bottom Right", hover your mouse over the bottom corner of your game screen and wait a few secounds until the coordinates change in the program
 - These coordinates do not have to be exact, but try to get them as accurate as you can
+- Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your desktop.
 Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below.
 
 ## TIMER HOTKEYS
