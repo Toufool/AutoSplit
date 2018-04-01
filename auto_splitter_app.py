@@ -5,7 +5,7 @@ import time
 import keyboard
 import numpy as np
 import mss
-import threading
+from io import BytesIO
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageGrab
@@ -32,7 +32,7 @@ class Window(QtGui.QMainWindow):
     
     def __init__(self):
         super(Window, self).__init__()
-        self.setFixedSize(440,420)
+        self.setFixedSize(440,460)
         self.setWindowTitle("Auto Splitter")
         self.statusBar()
         self.home()
@@ -71,6 +71,7 @@ class Window(QtGui.QMainWindow):
         global SkipHotkeyLabel
         global ThresholdDropdown
         global PauseDropdown
+        global current_split_image
         #SPLIT IMAGE FOLDER
         
         FilePathLabel=QtGui.QLabel('Split Image Folder:', self)
@@ -174,7 +175,7 @@ class Window(QtGui.QMainWindow):
         
         StartAutoSplitterButton=QtGui.QPushButton("Start Auto Splitter",self)
         StartAutoSplitterButton.clicked.connect(self.auto_splitter)
-        StartAutoSplitterButton.move(320,385)
+        StartAutoSplitterButton.move(320,395)
         StartAutoSplitterButton.resize(100,30)
         
         CheckFPSButton=QtGui.QPushButton("Check FPS",self)
@@ -186,8 +187,8 @@ class Window(QtGui.QMainWindow):
         CheckFPSLabel.move(257,312)
         CheckFPSLabel.resize(50,20)
         
-        CurrentSplitImageLabel=QtGui.QLabel('Current Split Image: none (Auto Splitter is not running)', self)
-        CurrentSplitImageLabel.move(10,390)
+        CurrentSplitImageLabel=QtGui.QLabel('Current Split Image:', self)
+        CurrentSplitImageLabel.move(10,400)
         CurrentSplitImageLabel.resize(300,20)
         
         ShowLivePercentDifferenceLabel=QtGui.QLabel('', self)
@@ -241,7 +242,25 @@ class Window(QtGui.QMainWindow):
         PauseDropdown.addItem("120 sec")
         PauseDropdown.activated[str].connect(self.pause)
         
+        current_split_image = QtGui.QLabel('no current image',self)
+        current_split_image.setAlignment(QtCore.Qt.AlignCenter)
+        current_split_image.resize(120,80)
+        current_split_image.move(155,370)
+        
         self.show()
+    
+    #displays the current split image
+    def set_current_split_image(self):
+        global current_split_image
+        global split_image_path
+        pixmap = QtGui.QPixmap(split_image_path)
+        current_split_image.setPixmap(pixmap.scaled(current_split_image.size()))
+    
+    #displays no image for current split image
+    def set_no_current_split_image(self):
+        global current_split_image
+        current_split_image.setText('no current image')
+        current_split_image.setAlignment(QtCore.Qt.AlignCenter)
     
     #get split image directory from user from clicking browse..
     def browse(self):
@@ -383,8 +402,9 @@ class Window(QtGui.QMainWindow):
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
             split_image = Image.open(split_image_path)
+            split_image = split_image.convert('RGB')
             split_image_resized=split_image.resize((120,90)) #turn split image into 120x90 image
-            CurrentSplitImageLabel.setText('Current Split Image: '+split_image_file)
+            self.set_current_split_image()
             QtGui.QApplication.processEvents()
             time.sleep(0.2)
     
@@ -405,8 +425,9 @@ class Window(QtGui.QMainWindow):
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
             split_image = Image.open(split_image_path)
+            split_image = split_image.convert('RGB')
             split_image_resized=split_image.resize((120,90)) #turn split image into 120x90 image
-            CurrentSplitImageLabel.setText('Current Split Image: '+split_image_file)
+            self.set_current_split_image()
             QtGui.QApplication.processEvents()
             time.sleep(0.2)
     
@@ -459,7 +480,7 @@ class Window(QtGui.QMainWindow):
     
     def image_type_error(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setText("error: all images in folder must be .jpg")
+        msgBox.setText("error: all images must be PNG type")
         msgBox.exec_()
     
     def check_fps(self):
@@ -471,7 +492,7 @@ class Window(QtGui.QMainWindow):
         if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
             self.split_image_directory_error_message()
             return
-        if not all(File.endswith(".jpg") or File.endswith(".JPG") for File in os.listdir(split_image_directory)):
+        if not all(File.endswith(".png") or File.endswith(".PNG") for File in os.listdir(split_image_directory)):
             self.image_type_error()
             return
         if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
@@ -483,6 +504,7 @@ class Window(QtGui.QMainWindow):
         split_image_file=os.listdir(split_image_directory)[0]
         split_image_path=split_image_directory+split_image_file
         split_image = Image.open(split_image_path)
+        split_image = split_image.convert('RGB')
         split_image_resized=split_image.resize((120,90))
         #END SPLIT IMAGE STUFF
             
@@ -528,6 +550,7 @@ class Window(QtGui.QMainWindow):
         global mean_percent_diff
         global mean_percent_diff_threshold
         global pause
+        global current_split_image
        
         #multiple checks to see if an error message needs to display
         if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
@@ -542,7 +565,7 @@ class Window(QtGui.QMainWindow):
         if reset_hotkey == 'none':
             self.reset_hotkey_error_message()
             return
-        if not all(File.endswith(".jpg") or File.endswith(".JPG") for File in os.listdir(split_image_directory)):
+        if not all(File.endswith(".png") or File.endswith(".PNG") for File in os.listdir(split_image_directory)):
             self.image_type_error()
             return
         
@@ -559,8 +582,9 @@ class Window(QtGui.QMainWindow):
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
             split_image = Image.open(split_image_path)
+            split_image = split_image.convert('RGB')
             split_image_resized=split_image.resize((120,90)) #turn split image into 120x90 image
-            CurrentSplitImageLabel.setText('Current Split Image: '+split_image_file)
+            self.set_current_split_image()
             QtGui.QApplication.processEvents()
 
             #while loop: constantly take screenshot of user-defined area, resize, and compare to split image. if the images meet the user-defined match threshold, exit while loop and split.
@@ -582,9 +606,9 @@ class Window(QtGui.QMainWindow):
                         QtGui.QApplication.processEvents()
                     #if reset hotkey is pressed, stop autosplitter and reset some text.
                     if keyboard.is_pressed(reset_hotkey):
-                        CurrentSplitImageLabel.setText('Current Split Image: none (Auto Splitter is not running)')
                         StartAutoSplitterButton.setText('Start Auto Splitter')
                         ShowLivePercentDifferenceLabel.setText('n/a')
+                        self.set_no_current_split_image()
                         self.enable_buttons()
                         QtGui.QApplication.processEvents()
                         return
@@ -599,13 +623,12 @@ class Window(QtGui.QMainWindow):
             keyboard.press_and_release(split_hotkey)
             split_image_number=split_image_number+1
             if number_of_split_images != split_image_number:
-                CurrentSplitImageLabel.setText('Current Split Image: (paused, waiting to go to next split)')
+                current_split_image.setText('none (paused)')
                 QtGui.QApplication.processEvents()
-                pause=pause*1000
-                QtTest.QTest.qWait(pause)
+                QtTest.QTest.qWait(pause*1000)
                 
         #loop breaks to here when the last image splits. 
-        CurrentSplitImageLabel.setText('Current Split Image: none (Auto Splitting finished)')
+        self.set_no_current_split_image()
         StartAutoSplitterButton.setText('Start Auto Splitter')
         self.enable_buttons()
         QtGui.QApplication.processEvents()
