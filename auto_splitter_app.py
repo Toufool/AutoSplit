@@ -5,12 +5,9 @@ import time
 import keyboard
 import numpy as np
 import mss
-from io import BytesIO
 from PIL import Image
 from PIL import ImageChops
-from PIL import ImageGrab
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QMouseEvent
 from PyQt4 import QtTest
 
 #initial values
