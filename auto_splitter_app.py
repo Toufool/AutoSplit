@@ -6,9 +6,6 @@ import numpy as np
 import mss
 import pyautogui
 import pythoncom as pc, pyHook as ph
-import ctypes
-from pynput import keyboard
-from pynput.keyboard import Key, Controller
 from PIL import Image
 from PIL import ImageChops
 from PyQt4 import QtGui, QtCore
