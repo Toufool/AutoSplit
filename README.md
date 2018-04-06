@@ -25,8 +25,9 @@ A good split image is:
 - Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your desktop
 Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
 
-## TIMER HOTKEYS
-- Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer
+## GLOBAL TIMER HOTKEYS
+- Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc.
+- Only the split hotkey is required to star the auto splitter, the others are optional. Resetting, skipping splits, and undoing splits can be done by using the buttons if preferred.
 
 ## OPTIONS
 ### Pause After Split:
