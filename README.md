@@ -1,5 +1,5 @@
 # autosplitter
-This program is used together with a speedrun timer (livesplit, wsplit, etc) that uses image analysis to compare images (chosen by the user) to the users live game feed and splits when there is a match. It was created using Python 2.7
+This program is used together with a speedrun timer (livesplit, wsplit, etc) that compares split images to the game screen region of your monitor and automaticlly hits your split hotkey when there is a match.
 
 # HOW IT WORKS:
 
@@ -53,3 +53,4 @@ Note: Making the game screen region smaller will increase performance. See "Chec
 - Starts the auto splitter from your first split in your split image folder. The current split image is displayed on the bottom
 - You can use your Start / Split hotkey to start the auto splitter
 - Use the Reset, Undo Split, and Skip Split hotkeys or buttons as needed. Using the buttons does not activate any hotkeys (it will not affect your timer).
+- Note that because it is taking so many images of your monitor per second, running the autosplitter does take a bit of processing power.
