@@ -749,7 +749,7 @@ class Window(QtGui.QMainWindow):
             
             #loop breaks to here when match threshold is met. splits the timer, goes to next split, and pauses for a user-defined amount of time before comparing the next split.
             hook.UnhookKeyboard()
-            pyautogui.press(split_hotkey)
+            pyautogui.press(pyautogui_split_hotkey)
             hook.HookKeyboard()
             split_image_number=split_image_number+1
             if number_of_split_images != split_image_number:
