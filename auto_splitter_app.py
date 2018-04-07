@@ -223,7 +223,6 @@ class Window(QtGui.QMainWindow):
         CheckBox=QtGui.QCheckBox('Show Live % Match',self)
         CheckBox.move(305,335)
         CheckBox.resize(270,30)
-        #CheckBox.stateChanged.connect(self.show_live_percent_difference)
         
         ThresholdDropdownLabel=QtGui.QLabel("% Match Threshold:",self)
         ThresholdDropdownLabel.move(10,335)
@@ -326,13 +325,6 @@ class Window(QtGui.QMainWindow):
     def pause(self,text):
         global pause
         pause = int(text[:-4]) #changes text from pause dropdown to an int to pause after a split
-    
-            
-    def show_live_percent_difference(self, state):
-            if state == QtCore.Qt.Checked:
-                ShowLivePercentDifferenceLabel.setText('n/a')
-            else:
-                ShowLivePercentDifferenceLabel.setText(str(''))
     
     #activates when pressing set top left button, hover mouse over top left of game screen. 5 seconds to do so
     def set_top_left(self):
@@ -785,8 +777,11 @@ class Window(QtGui.QMainWindow):
                     percent_diff=diff_pix_val/255.*100.
                     mean_percent_diff=np.mean(percent_diff)
                     #if checkbox is checked, show live percent difference to a few decimal places.
-                    if CheckBox.isChecked():
+                    if CheckBox.isChecked() == True:
                         ShowLivePercentDifferenceLabel.setText(str(100-mean_percent_diff)[0:5]+'%')
+                        QtGui.QApplication.processEvents()
+                    if CheckBox.isChecked() == False:
+                        ShowLivePercentDifferenceLabel.setText('')
                         QtGui.QApplication.processEvents()
                     #if the auto splitter buttons text is changed back to start auto splitter, we know that reset button was pressed, so return
                     if StartAutoSplitterButton.text() == 'Start Auto Splitter':
