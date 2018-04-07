@@ -26,7 +26,6 @@ mean_percent_diff_threshold=10
 pause=10
 
 
-
 class Window(QtGui.QMainWindow):
     
     def __init__(self):
@@ -76,8 +75,15 @@ class Window(QtGui.QMainWindow):
         global ResetButton
         global UndoButton
         global SkipButton
+        global hook
+        global pyHook_keys
+        global pyautogui_keys
         #SPLIT IMAGE FOLDER
         
+        #initiate HookKeyboard from pyHook - looks for global hotkeys. this is unhooked when autosplitter is running or else it throws an error
+        hook = ph.HookManager()
+        hook.KeyDown = self.globalhotkeys
+        hook.HookKeyboard()
         
         FilePathLabel=QtGui.QLabel('Split Image Folder:', self)
         FilePathLabel.move(10,20)
@@ -117,16 +123,13 @@ class Window(QtGui.QMainWindow):
         
         #HOTKEYS
         
-        #initiate HookKeyboard from pyHook
-        hm = ph.HookManager()
-        hm.KeyDown = self.hotkey
-        hm.HookKeyboard()
-        
+        pyHook_keys = np.array(['snapshot','scroll','oem_3','oem_minus', 'oem_plus','back','oem_4','oem_6','oem_5','capital','oem_1','oem_7','lshift','rshift','oem_comma','oem_period','oem_2','lcontrol','rcontrol','lwin','rwin','lmenu','rmenu','prior','next','numpad0','numpad1','numpad2','numpad3','numpad4','numpad5','numpad6','numpad7','numpad8','numpad9'])
+        pyautogui_keys = np.array(['prntscrn','scrolllock','`','-','+','backspace','[',']','\\','capslock',';',"'",'shiftleft','shiftright',',','.','/','ctrlleft','ctrlright','winleft','winright','altleft','altright','pageup','pagedown','num0','num1','num2','num3','num4','num5','num6','num7','numpad8','num9'])
         HotkeysLabel=QtGui.QLabel('----------------- Timer Global Hotkeys ----------------------', self)
         HotkeysLabel.move(94,140)
         HotkeysLabel.resize(250,30)
         
-        SplitHotkeyLabel=QtGui.QLabel('Split:', self)
+        SplitHotkeyLabel=QtGui.QLabel('Split / Start:', self)
         SplitHotkeyLabel.move(10,165)
         
         SplitHotkeyLine=QtGui.QLineEdit(split_hotkey,self)
@@ -212,7 +215,7 @@ class Window(QtGui.QMainWindow):
         CheckBox=QtGui.QCheckBox('Show Live % Match',self)
         CheckBox.move(305,335)
         CheckBox.resize(270,30)
-        CheckBox.stateChanged.connect(self.show_live_percent_difference)
+        #CheckBox.stateChanged.connect(self.show_live_percent_difference)
         
         ThresholdDropdownLabel=QtGui.QLabel("% Match Threshold:",self)
         ThresholdDropdownLabel.move(10,335)
@@ -265,20 +268,20 @@ class Window(QtGui.QMainWindow):
         
         UndoButton=QtGui.QPushButton("Undo Split",self)
         UndoButton.clicked.connect(self.undo_split)
-        UndoButton.move(15,422)
-        UndoButton.resize(60,25)
+        UndoButton.move(9,422)
+        UndoButton.resize(60,27)
         UndoButton.setEnabled(False)
         
         SkipButton=QtGui.QPushButton("Skip Split",self)
         SkipButton.clicked.connect(self.skip_split)
-        SkipButton.move(75,422)
-        SkipButton.resize(60,25)
+        SkipButton.move(69,422)
+        SkipButton.resize(60,27)
         SkipButton.setEnabled(False)
         
         current_split_image = QtGui.QLabel('no current image',self)
         current_split_image.setAlignment(QtCore.Qt.AlignCenter)
         current_split_image.resize(120,80)
-        current_split_image.move(155,370)
+        current_split_image.move(163,370)
         
         self.show()
     
@@ -298,8 +301,10 @@ class Window(QtGui.QMainWindow):
     #get split image directory from user from clicking browse..
     def browse(self):
         global split_image_directory
+        hook.UnhookKeyboard()
         split_image_directory = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory"))+'\\'
         FilePathLine.setText(split_image_directory)
+        hook.HookKeyboard()
     
     #activate when using match% threshold dropdown
     def threshold(self, text):
@@ -324,6 +329,7 @@ class Window(QtGui.QMainWindow):
     #activates when pressing set top left button, hover mouse over top left of game screen. 5 seconds to do so
     def set_top_left(self):
         global x1,y1
+        hook.UnhookKeyboard()
         self.disable_buttons()
         i=5
         while i > 0:
@@ -339,10 +345,12 @@ class Window(QtGui.QMainWindow):
         TopLeftLabel.setText('Top Left Coordinates:'+'                         '+str(x1)+', '+str(y1))
         TopLeftButton.setText('Set Top Left')
         self.enable_buttons()
+        hook.HookKeyboard()
     
     #activates when pressing set bottom right button, hover mouse over bottom right of game screen. 5 seconds to do so
     def set_bottom_right(self):
         global x2,y2
+        hook.UnhookKeyboard()
         self.disable_buttons()
         i=5
         while i > 0:
@@ -358,9 +366,10 @@ class Window(QtGui.QMainWindow):
         BottomRightLabel.setText('Bottom Right Coordinates:'+'                 '+str(x2)+', '+str(y2))
         BottomRightButton.setText('Set Bottom Right')
         self.enable_buttons()
+        hook.HookKeyboard()
     
     #setting global hotkeys and doing things when they are hit
-    def hotkey(self,event):
+    def globalhotkeys(self,event):
         global split_hotkey
         global old_split_hotkey
         global reset_hotkey
@@ -369,12 +378,29 @@ class Window(QtGui.QMainWindow):
         global old_undo_split_hotkey
         global skip_split_hotkey
         global old_skip_split_hotkey
+        global pyautogui_split_hotkey
         #set split hotkey
         if SplitHotkeyButton.text() == 'press a key...':
             old_split_hotkey=split_hotkey
             while old_split_hotkey == split_hotkey:
                 pc.PumpWaitingMessages()
                 split_hotkey=event.Key
+                split_hotkey=split_hotkey.lower()
+                index = np.where(pyHook_keys == split_hotkey)
+                index = str(index) 
+                index=index.replace('(array([','')
+                index=index.replace('], dtype=int64),)','')
+                if index != '':
+                    index=int(index)
+                    pyautogui_split_hotkey=pyautogui_keys[index]
+                else:
+                    pyautogui_split_hotkey=split_hotkey
+                #set key to none if it is any of the currently keys that is known to not work
+                if pyautogui_split_hotkey == 'scrolllock' or pyautogui_split_hotkey == 'backspace' or pyautogui_split_hotkey == 'capslock' or pyautogui_split_hotkey == 'shiftleft' or pyautogui_split_hotkey == 'shiftright' or pyautogui_split_hotkey == 'winleft' or pyautogui_split_hotkey == 'winright' or pyautogui_split_hotkey == 'altleft' or pyautogui_split_hotkey == 'altright' or pyautogui_split_hotkey == 'apps' or pyautogui_split_hotkey == 'pageup' or pyautogui_split_hotkey == 'pagedown':
+                    SplitHotkeyLine.setText('none')
+                    SplitHotkeyButton.setText('Set Hotkey')
+                    self.enable_buttons()
+                    return
                 if old_split_hotkey == split_hotkey:
                     SplitHotkeyLine.setText(split_hotkey)
                     SplitHotkeyButton.setText('Set Hotkey')
@@ -391,6 +417,7 @@ class Window(QtGui.QMainWindow):
             while old_reset_hotkey == reset_hotkey:
                 pc.PumpWaitingMessages()
                 reset_hotkey=event.Key
+                reset_hotkey=reset_hotkey.lower()
                 if old_reset_hotkey == reset_hotkey:
                     ResetHotkeyLine.setText(reset_hotkey)
                     ResetHotkeyButton.setText('Set Hotkey')
@@ -407,6 +434,7 @@ class Window(QtGui.QMainWindow):
             while old_undo_split_hotkey == undo_split_hotkey:
                 pc.PumpWaitingMessages()
                 undo_split_hotkey=event.Key
+                undo_split_hotkey=undo_split_hotkey.lower()
                 if old_undo_split_hotkey == undo_split_hotkey:
                     UndoHotkeyLine.setText(undo_split_hotkey)
                     UndoHotkeyButton.setText('Set Hotkey')
@@ -423,13 +451,14 @@ class Window(QtGui.QMainWindow):
             while old_skip_split_hotkey == skip_split_hotkey:
                 pc.PumpWaitingMessages()
                 skip_split_hotkey=event.Key
+                skip_split_hotkey=skip_split_hotkey.lower()
                 if old_skip_split_hotkey == skip_split_hotkey:
                     SkipHotkeyLine.setText(skip_split_hotkey)
                     SkipHotkeyButton.setText('Set Hotkey')
                     self.enable_buttons()
                     return
                 else:  
-                    SkipHotkeyLine.setText(undo_split_hotkey)
+                    SkipHotkeyLine.setText(skip_split_hotkey)
                     SkipHotkeyButton.setText('Set Hotkey')
                     self.enable_buttons()
                     return
@@ -437,12 +466,20 @@ class Window(QtGui.QMainWindow):
         if StartAutoSplitterButton.text() == 'Running..':
             pc.PumpWaitingMessages()
             key = event.Key
+            key = key.lower()
             if key == reset_hotkey:
                 self.reset()
             if key == undo_split_hotkey:
                 self.undo_split()
             if key == skip_split_hotkey:
                 self.skip_split()
+        else:
+            pc.PumpWaitingMessages()
+            key = event.Key
+            key = key.lower()
+            if key == split_hotkey:
+                self.auto_splitter()
+                
                     
     
     def set_split_hotkey(self):
@@ -469,8 +506,9 @@ class Window(QtGui.QMainWindow):
         global CurrentSplitImageLabel2
         global split_image_number
         global reset_hotkey
+        global hook
         StartAutoSplitterButton.setText('Start Auto Splitter')
-        ShowLivePercentDifferenceLabel.setText('n/a')
+        ShowLivePercentDifferenceLabel.setText('')
         CurrentSplitImageLabel2.setText('')
         self.set_no_current_split_image()
         self.enable_buttons()
@@ -491,7 +529,6 @@ class Window(QtGui.QMainWindow):
         if split_image_number == 0:
             split_image_number=split_image_number
         else:
-            pyautogui.press(undo_split_hotkey)
             split_image_number = split_image_number-1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -517,7 +554,6 @@ class Window(QtGui.QMainWindow):
         if split_image_number == number_of_split_images-1:
             split_image_number=split_image_number
         else:
-            pyautogui.press(skip_split_hotkey)
             split_image_number = split_image_number+1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -587,6 +623,7 @@ class Window(QtGui.QMainWindow):
         global split_hotkey
         global reset_hotkey
         global FPS
+        hook.UnhookKeyboard()
         if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
             self.split_image_directory_error_message()
             return
@@ -627,6 +664,7 @@ class Window(QtGui.QMainWindow):
         CheckFPSLabel.setText('FPS: '+FPS)
         CheckFPSButton.setText('Check FPS')
         self.enable_buttons()
+        hook.HookKeyboard()
         return
     
     def auto_splitter(self):
@@ -649,6 +687,8 @@ class Window(QtGui.QMainWindow):
         global pause
         global current_split_image
         global StartAutoSplitterButton
+        global hook
+        global pyautogui_split_hotkey
        
         #multiple checks to see if an error message needs to display
         if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
@@ -657,7 +697,7 @@ class Window(QtGui.QMainWindow):
         if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
             self.coordinate_error_message()
             return
-        if split_hotkey == 'none':
+        if SplitHotkeyLine.text() == 'none':
             self.split_hotkey_error_message()
             return
         if not all(File.endswith(".png") or File.endswith(".PNG") for File in os.listdir(split_image_directory)):
@@ -672,7 +712,6 @@ class Window(QtGui.QMainWindow):
         
         StartAutoSplitterButton.setText('Running..')
         QtGui.QApplication.processEvents()
-        pyautogui.press(split_hotkey)
         number_of_split_images=len(os.listdir(split_image_directory))
         
         #grab split image from folder, resize, and set current split image text
@@ -709,13 +748,17 @@ class Window(QtGui.QMainWindow):
                         return
             
             #loop breaks to here when match threshold is met. splits the timer, goes to next split, and pauses for a user-defined amount of time before comparing the next split.
+            hook.UnhookKeyboard()
             pyautogui.press(split_hotkey)
+            hook.HookKeyboard()
             split_image_number=split_image_number+1
             if number_of_split_images != split_image_number:
                 current_split_image.setText('none (paused)')
                 CurrentSplitImageLabel2.setText('none (paused)')
                 QtGui.QApplication.processEvents()
                 QtTest.QTest.qWait(pause*1000)
+                if StartAutoSplitterButton.text() == 'Start Auto Splitter':
+                        return
                 
         #loop breaks to here when the last image splits. 
         self.set_no_current_split_image()
