@@ -24,6 +24,7 @@ skip_split_hotkey='none'
 mean_percent_diff=100
 mean_percent_diff_threshold=10
 pause=10
+screenshot_number = 0
 
 
 class Window(QtGui.QMainWindow):
@@ -78,6 +79,8 @@ class Window(QtGui.QMainWindow):
         global hook
         global pyHook_keys
         global pyautogui_keys
+        global screenshot_number
+        global TakeScreenshotButton
         #SPLIT IMAGE FOLDER
         
         #initiate HookKeyboard from pyHook - looks for global hotkeys. this is unhooked when autosplitter is running or else it throws an error
@@ -86,40 +89,45 @@ class Window(QtGui.QMainWindow):
         hook.HookKeyboard()
         
         FilePathLabel=QtGui.QLabel('Split Image Folder:', self)
-        FilePathLabel.move(10,20)
+        FilePathLabel.move(10,10)
         
         FilePathLine=QtGui.QLineEdit(split_image_directory,self)
-        FilePathLine.move(110,23)
+        FilePathLine.move(110,13)
         FilePathLine.resize(200,25)
         FilePathLine.setReadOnly(True)
         
         BrowseButton = QtGui.QPushButton("Browse..",self)
         BrowseButton.clicked.connect(self.browse)
-        BrowseButton.move(320,20)
+        BrowseButton.move(320,10)
         
         #GAME REGION
         
         GameRegionLabel=QtGui.QLabel('------------------ Game Screen Region --------------------', self)
-        GameRegionLabel.move(93,60)
+        GameRegionLabel.move(93,40)
         GameRegionLabel.resize(250,30)
         
         TopLeftLabel=QtGui.QLabel('Top Left Coordinates:'+'                         '+x1+', '+y1, self)
-        TopLeftLabel.move(10,90)
+        TopLeftLabel.move(10,65)
         TopLeftLabel.resize(250,20)
         
         TopLeftButton=QtGui.QPushButton("Set Top Left",self)
         TopLeftButton.clicked.connect(self.set_top_left)
-        TopLeftButton.move(320,90)
+        TopLeftButton.move(320,65)
         TopLeftButton.resize(100,20)
         
         BottomRightLabel=QtGui.QLabel('Bottom Right Coordinates:'+'                 '+x2+', '+y2, self)
-        BottomRightLabel.move(10,110)
+        BottomRightLabel.move(10,85)
         BottomRightLabel.resize(250,20)
         
         BottomRightButton=QtGui.QPushButton("Set Bottom Right",self)
         BottomRightButton.clicked.connect(self.set_bottom_right)
-        BottomRightButton.move(320,110)
+        BottomRightButton.move(320,85)
         BottomRightButton.resize(100,20)
+        
+        TakeScreenshotButton=QtGui.QPushButton('Take Screenshot',self)
+        TakeScreenshotButton.clicked.connect(self.screenshot)
+        TakeScreenshotButton.move(320,115)
+        TakeScreenshotButton.resize(100,25)
         
         #HOTKEYS
         
@@ -368,6 +376,32 @@ class Window(QtGui.QMainWindow):
         self.enable_buttons()
         hook.HookKeyboard()
     
+    def screenshot(self):
+        global screenshot_number
+        global screenshot_file
+        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
+            self.split_image_directory_error_message()
+            return
+        if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
+            self.coordinate_error_message()
+            return
+        screenshot_file='screenshot_'+str(screenshot_number)+'.png'
+        if os.path.exists(split_image_directory+screenshot_file) == True:
+            self.file_exists_error()
+            return
+        hook.UnhookKeyboard()
+        self.disable_buttons()
+        bbox=x1,y1,x2,y2
+        with mss.mss() as sct:
+            screenshot = sct.grab(bbox)
+            screenshot = Image.frombytes('RGB', screenshot.size, screenshot.rgb)
+            screenshot.save(split_image_directory+screenshot_file)
+            os.startfile(split_image_directory+screenshot_file)
+        screenshot_number=screenshot_number+1
+        self.enable_buttons()
+        hook.HookKeyboard()
+        return
+    
     #setting global hotkeys and doing things when they are hit
     def globalhotkeys(self,event):
         global split_hotkey
@@ -581,6 +615,7 @@ class Window(QtGui.QMainWindow):
         ThresholdDropdown.setEnabled(False)
         PauseDropdown.setEnabled(False)
         ResetButton.setEnabled(False)
+        TakeScreenshotButton.setEnabled(False)
         
     
     def enable_buttons(self):
@@ -595,6 +630,7 @@ class Window(QtGui.QMainWindow):
         StartAutoSplitterButton.setEnabled(True)
         ThresholdDropdown.setEnabled(True)
         PauseDropdown.setEnabled(True)
+        TakeScreenshotButton.setEnabled(True)
         
     def coordinate_error_message(self):
         msgBox = QtGui.QMessageBox()
@@ -614,6 +650,12 @@ class Window(QtGui.QMainWindow):
     def image_type_error(self):
         msgBox = QtGui.QMessageBox()
         msgBox.setText("error: all images must be PNG type")
+        msgBox.exec_()
+    
+    def file_exists_error(self):
+        global screenshot_file
+        msgBox = QtGui.QMessageBox()
+        msgBox.setText('error: '+ screenshot_file +' already exists - no image was saved')
         msgBox.exec_()
     
     #closes entire process when you close the program
