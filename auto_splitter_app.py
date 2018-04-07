@@ -526,8 +526,9 @@ class Window(QtGui.QMainWindow):
         global CurrentSplitImageLabel2
         global undo_split_hotkey
         
-        if split_image_number == 0:
-            split_image_number=split_image_number
+        #if autosplitter is paused or its the first image, do nothing.
+        if current_split_image.text()=='none (paused)' or split_image_number == 0:
+            return
         else:
             split_image_number = split_image_number-1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
@@ -551,8 +552,10 @@ class Window(QtGui.QMainWindow):
         global CurrentSplitImageLabel2
         global skip_split_hotkey
         
-        if split_image_number == number_of_split_images-1:
-            split_image_number=split_image_number
+        #if auto splitter is paused or its on the last split, dont let skip split do anything
+        if current_split_image.text()=='none (paused)' or split_image_number == number_of_split_images-1:
+            return
+            
         else:
             split_image_number = split_image_number+1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
@@ -763,6 +766,7 @@ class Window(QtGui.QMainWindow):
         #loop breaks to here when the last image splits. 
         self.set_no_current_split_image()
         CurrentSplitImageLabel2.setText('')
+        ShowLivePercentDifferenceLabel.setText('')
         StartAutoSplitterButton.setText('Start Auto Splitter')
         self.enable_buttons()
         QtGui.QApplication.processEvents()
