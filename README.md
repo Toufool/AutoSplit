@@ -24,6 +24,7 @@ A good split image is:
 - These coordinates do not have to be exact, but try to get them as accurate as you can
 - Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your monitor.
 Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
+- The "Take Screenshot" button is a built in screenshot function that will take a screenshot of the game region and save it to your split image folder named screenshot_0, screenshot_1, screenshot_2, etc. Don't worry - if the file already exists, it won't overwrite your file. You might want to rename them to what is recommended in the Split Image Folder section above so that the order is correct. 
 
 ## GLOBAL TIMER HOTKEYS
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. It is best to set your hotkeys in your timer program before the autosplitter.
