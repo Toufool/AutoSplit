@@ -26,7 +26,7 @@ A good split image is:
 Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
 
 ## GLOBAL TIMER HOTKEYS
-- Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc.
+- Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. It is best to set your hotkeys in your timer program before the autosplitter.
 - Only the split / start hotkey is required to start the auto splitter, the others are optional. Using the Start Auto Splitter, Reset, Undo Split, and Skip Split will not hit any key and only acts on the program.
 - Currently, the Split / Start hotkey cannot accept these keys: scrolllock, backspace, capslock, shiftleft, shiftright, any windows key, altleft, altright, apps, pageup, pagedown. Using numpad while numlock is active may cause issues right now, so avoid having numlock active if possible.
 - If your timer stops starting/splitting from hitting your hotkey or when the program splits, try restarting your timer program.
