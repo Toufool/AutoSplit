@@ -22,17 +22,19 @@ A good split image is:
 - Click "Set Top Left", hover your mouse over the top left corner of your game screen and wait a few seconds until the coordinates change in the program
 - Click "Set Bottom Right", hover your mouse over the bottom corner of your game screen and wait a few secounds until the coordinates change in the program
 - These coordinates do not have to be exact, but try to get them as accurate as you can
-- Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your desktop
+- Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your monitor.
 Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
 
 ## GLOBAL TIMER HOTKEYS
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc.
-- Only the split hotkey is required to star the auto splitter, the others are optional. Resetting, skipping splits, and undoing splits can be done by using the buttons if preferred.
+- Only the split / start hotkey is required to start the auto splitter, the others are optional. Using the Start Auto Splitter, Reset, Undo Split, and Skip Split will not hit any key and only acts on the program.
+- Currently, the Split / Start hotkey cannot accept these keys: scrolllock, backspace, capslock, shiftleft, shiftright, any windows key, altleft, altright, apps, pageup, pagedown. Using numpad while numlock is active may cause issues right now, so avoid having numlock active if possible.
+- If your timer stops starting/splitting from hitting your hotkey or when the program splits, try restarting your timer program.
 
 ## OPTIONS
 ### Pause After Split:
 - After a match occurs and the program splits, this is the amount of time the program will pause and stop comparing images before it goes to the next split.  If all of your images are unique, there is no need to change this option 
-- If your split image folder has 2 or more split images in a row that are the same (for example, [this image](https://i.imgur.com/MubhHc5.png) that appears in Super Mario Odyssey each time you finish a world) make sure that you pause for enough time so that the program does not split twice
+- If your split image folder has 2 or more split images in a row that are the same (for example, [this image](https://i.imgur.com/MubhHc5.png) that appears in Super Mario Odyssey each time you finish a world) make sure that you pause for enough time so that the program does not split more than once
 
 ### Check FPS
 - Clicking this button will tell you how many times per second your gamefeed is being compared to the split image
@@ -44,9 +46,10 @@ Note: Making the game screen region smaller will increase performance. See "Chec
 - If the program is not splitting, trying lowering this number
 - If the program is splitting too early or not when you want it to, try raising this number. 
 - 90% is generally a good starting point, and is the default option.
-- The "test" option will make it so that your program will never split. Good to use for testing split images
+- The "test" option will make it so that your program will never split. This is good to use for testing split images
 - Check the "Show Live % Match" option to view how your game screen region is matching to your current split image
 
 ### Start Auto Splitter
 - Starts the auto splitter from your first split in your split image folder. The current split image is displayed on the bottom
-- Use the Reset, Undo Split, and Skip Split hotkeys when needed
+- You can use your Start / Split hotkey to start the auto splitter
+- Use the Reset, Undo Split, and Skip Split hotkeys or buttons as needed. Using the buttons does not activate any hotkeys (it will not affect your timer).
