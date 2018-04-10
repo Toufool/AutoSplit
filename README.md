@@ -7,6 +7,11 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 
 # TUTORIAL:
 
+##DOWNLOAD
+
+- Windows: https://www.dropbox.com/s/kn4wdwvgvz2ax1w/auto_splitter_app.zip?dl=0 (62.8MB)
+- Unzip and open "auto_splitter_app.exe'
+
 ## SPLIT IMAGE FOLDER:
 - All split images currently must be .png files
 - They can be any size
@@ -55,3 +60,8 @@ Note: Making the game screen region smaller will increase performance. See "Chec
 - You can use your Start / Split hotkey to start the auto splitter
 - Use the Reset, Undo Split, and Skip Split hotkeys or buttons as needed. Using the buttons does not activate any hotkeys (it will not affect your timer).
 - Note that because it is taking so many images of your monitor per second, running the autosplitter does take a bit of processing power.
+
+### Known Issues:
+- hotkeys start to not work on your timer for an unknown reason - resetting your timer program should fix this.
+- hotkeys & other settings don't save after closing
+- using the Skip Split and Undo Split hotkey too fast can cause the autospltter to stop working - using the buttons instead doesn't cause this. If this happens, use the buttons to reset and start the autosplitter and skip to your desired split.
