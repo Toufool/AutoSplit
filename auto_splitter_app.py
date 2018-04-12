@@ -102,7 +102,7 @@ class Window(QtGui.QMainWindow):
         
         #GAME REGION
         
-        GameRegionLabel=QtGui.QLabel('------------------ Game Screen Region --------------------', self)
+        GameRegionLabel=QtGui.QLabel('----------------- Game Screen Region --------------------', self)
         GameRegionLabel.move(93,40)
         GameRegionLabel.resize(250,30)
         
@@ -499,15 +499,12 @@ class Window(QtGui.QMainWindow):
                 self.undo_split()
             if key == skip_split_hotkey:
                 self.skip_split()
-        else:
-            pc.PumpWaitingMessages()
+        if StartAutoSplitterButton.text() == 'Start Auto Splitter':
             key = event.Key
             key = key.lower()
             if key == split_hotkey:
                 self.auto_splitter()
                 
-                    
-    
     def set_split_hotkey(self):
         self.disable_buttons()
         SplitHotkeyButton.setText('press a key...')
