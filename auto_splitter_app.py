@@ -541,6 +541,7 @@ class Window(QtGui.QMainWindow):
     
     #activates from either a hotkey or undo split button
     def undo_split(self):
+        hook.UnhookKeyboard()
         global split_image_number
         global split_image_file
         global split_image_path
@@ -551,8 +552,10 @@ class Window(QtGui.QMainWindow):
         
         #if autosplitter is paused or its the first image, do nothing.
         if current_split_image.text()=='none (paused)' or split_image_number == 0:
+            hook.HookKeyboard()
             return
         else:
+            time.sleep(0.4)
             split_image_number = split_image_number-1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -561,11 +564,12 @@ class Window(QtGui.QMainWindow):
             split_image_resized=split_image.resize((120,90))
             CurrentSplitImageLabel2.setText(split_image_file)
             self.set_current_split_image()
+            hook.HookKeyboard()
             QtGui.QApplication.processEvents()
-            time.sleep(0.2)
     
     #activates when a hotkey is split or from skip split button   
     def skip_split(self):
+        hook.UnhookKeyboard()
         global split_image_number
         global number_of_split_images
         global split_image_file
@@ -577,9 +581,11 @@ class Window(QtGui.QMainWindow):
         
         #if auto splitter is paused or its on the last split, dont let skip split do anything
         if current_split_image.text()=='none (paused)' or split_image_number == number_of_split_images-1:
+            hook.HookKeyboard()
             return
             
         else:
+            time.sleep(0.4)
             split_image_number = split_image_number+1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -588,8 +594,8 @@ class Window(QtGui.QMainWindow):
             split_image_resized=split_image.resize((120,90)) #turn split image into 120x90 image
             CurrentSplitImageLabel2.setText(split_image_file)
             self.set_current_split_image()
+            hook.HookKeyboard()
             QtGui.QApplication.processEvents()
-            time.sleep(0.2)
     
     def disable_buttons(self):
         BrowseButton.setEnabled(False)
