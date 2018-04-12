@@ -7,7 +7,7 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 
 # TUTORIAL:
 
-## DOWNLOAD
+## DOWNLOAD AND OPEN
 
 - Windows: https://www.dropbox.com/s/kn4wdwvgvz2ax1w/auto_splitter_app.zip?dl=0 (62.8MB)
 - Unzip and open "auto_splitter_app.exe'
@@ -20,7 +20,7 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 A good split image is:
 - One that is still or mostly still for a few seconds during gameplay
 - One that is unique and does not repeat during the run
-    - If it does repeat and you have the same two split images in a row, make sure your "pause" option is long enough so that the program     doesn't split twice, and make sure the image doesn't appear in your game feed again until you want the program to split
+    - If it does repeat and you have the same two split images in a row, make sure your "pause" option is long enough so that the program doesn't split twice, and make sure the image doesn't appear in your game feed again until you want the program to split
 - One that is NOT completely black or completely white - these are common loading screens that could cause false positive matches/splits. However if there is no black or white screens between splits, this is okay to use
 
 ## GAME SCREEN REGION
@@ -62,6 +62,7 @@ Note: Making the game screen region smaller will increase performance. See "Chec
 - Note that because it is taking so many images of your monitor per second, running the autosplitter does take a bit of processing power.
 
 ### Known Issues:
-- hotkeys start to not work on your timer for an unknown reason - resetting your timer program should fix this.
+- If using LiveSplit, hotkeys may start to act strange in livesplit (timer not starting or splitting, splitting when hitting reset key, etc.) if this happens, restarting LiveSplit should fix it. 
+    - To avoid this issue, it is a good idea to open the Auto Splitter app first, configure settings, and make sure it runs before opening LiveSplit.
 - hotkeys & other settings don't save after closing
-- using the Skip Split and Undo Split hotkey too fast can cause the autospltter to stop working - using the buttons instead doesn't cause this. If this happens, use the buttons to reset and start the autosplitter and skip to your desired split.
+- On rare occurrances, when the auto splitter is running, it will stop working when using the skip or undo split hotkeys. You can just hit your reset hotkey or the reset button and start the autosplitter again if this happens.
