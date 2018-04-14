@@ -9,7 +9,7 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 
 ## DOWNLOAD AND OPEN
 
-- Windows: https://www.dropbox.com/s/21n65jkx2sjuxxq/auto_splitter_app.zip?dl=0 (62.8MB)
+- Windows: https://www.dropbox.com/s/jh3zha64hyrpcls/auto_splitter_app.zip?dl=0 (62.8MB)
 - Unzip and open "auto_splitter_app.exe'
 
 ## SPLIT IMAGE FOLDER:
@@ -24,17 +24,14 @@ A good split image is:
 - One that is NOT completely black or completely white - these are common loading screens that could cause false positive matches/splits. However if there is no black or white screens between splits, this is okay to use
 
 ## GAME SCREEN REGION
-- Click "Set Top Left", hover your mouse over the top left corner of your game screen and wait a few seconds until the coordinates change in the program
-- Click "Set Bottom Right", hover your mouse over the bottom corner of your game screen and wait a few secounds until the coordinates change in the program
-- These coordinates do not have to be exact, but try to get them as accurate as you can
-- Once both coordinates are set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The coordinates do not follow your game feed - they are viewing your monitor.
-Note: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
-- The "Take Screenshot" button is a built in screenshot function that will take a screenshot of the game region and save it to your split image folder named screenshot_0, screenshot_1, screenshot_2, etc. Don't worry - if the file already exists, it won't overwrite your file. You might want to rename them to what is recommended in the Split Image Folder section above so that the order is correct. 
+- Click "Set Game Region" and then click and drag to form a rectangle over your game region
+- Once your game region is set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The region will not follow your game feed - they are viewing your monitor. Tip: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
+- The "Take Screenshot" button is a built in screenshot function that will take a screenshot of the game region and save it to your split image folder, and open it. You can name these whatever you want by typing in the text box next to it. 
 
 ## GLOBAL TIMER HOTKEYS
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. It is best to set your hotkeys in your timer program before the autosplitter.
 - Only the split / start hotkey is required to start the auto splitter, the others are optional. Using the Start Auto Splitter, Reset, Undo Split, and Skip Split will not hit any key and only acts on the program.
-- Currently, the Split / Start hotkey cannot accept these keys: scrolllock, backspace, capslock, shiftleft, shiftright, any windows key, altleft, altright, apps, pageup, pagedown. Using numpad while numlock is active may cause issues right now, so avoid having numlock active if possible.
+- Currently, the Split / Start hotkey cannot accept these keys: scrolllock, backspace, capslock, shiftleft, shiftright, any windows key, altleft, altright, apps, pageup, pagedown. Avoid using numpad keys when numlock is active for your Start / Split hotkey, as this is causing issues right now.
 - If your timer stops starting/splitting from hitting your hotkey or when the program splits, try restarting your timer program.
 
 ## OPTIONS
@@ -62,7 +59,9 @@ Note: Making the game screen region smaller will increase performance. See "Chec
 - Note that because it is taking so many images of your monitor per second, running the autosplitter does take a bit of processing power.
 
 ### Known Issues:
-- If using LiveSplit, hotkeys may start to act strange in livesplit (timer not starting or splitting, splitting when hitting reset key, etc.) if this happens, restarting LiveSplit should fix it. 
+- If using LiveSplit, hotkeys will start to act strange in livesplit (timer not starting or splitting, splitting when hitting reset key, etc.) if this happens, restarting LiveSplit should fix it. 
     - To avoid this issue, it is a good idea to open the Auto Splitter app first, configure settings, and make sure it runs before opening LiveSplit.
-- hotkeys & other settings don't save after closing
-- On rare occurrances, when the auto splitter is running, it will stop working when using the skip or undo split hotkeys. You can just hit your reset hotkey or the reset button and start the autosplitter again if this happens.
+- If using Wsplit, there is a slight delay before the timer starts if you use your hotkey to start it
+- If using multiple monitors, only one of the monitors can be used for a game region
+- Using numpad keys for Start/Split hotkey while numlock is active will not split when match % threshold is met
+- Hotkeys & other settings don't save after closing
