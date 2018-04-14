@@ -1,6 +1,5 @@
 import sys
 import os
-import pymouse
 import time
 import numpy as np
 import mss
@@ -10,6 +9,7 @@ from PIL import Image
 from PIL import ImageChops
 from PyQt4 import QtGui, QtCore
 from PyQt4 import QtTest
+import tkinter as tk
 
 #initial values
 split_image_directory='No Folder Selected'
@@ -24,8 +24,6 @@ skip_split_hotkey='none'
 mean_percent_diff=100
 mean_percent_diff_threshold=10
 pause=10
-screenshot_number = 0
-
 
 class Window(QtGui.QMainWindow):
     
@@ -45,10 +43,6 @@ class Window(QtGui.QMainWindow):
         global x1,y1,x2,y2
         global mean_percent_diff_threshold
         global FilePathLine
-        global TopLeftLabel
-        global TopLeftButton
-        global BottomRightLabel
-        global BottomRightButton
         global split_hotkey
         global reset_hotkey
         global undo_split_hotkey
@@ -58,6 +52,8 @@ class Window(QtGui.QMainWindow):
         global CheckFPSLabel
         global CheckFPSButton
         global CurrentSplitImageLabel2
+        global GameRegionButton
+        global GameRegionLabel
         global StartAutoSplitterButton
         global SplitHotkeyButton
         global ResetHotkeyButton
@@ -81,6 +77,7 @@ class Window(QtGui.QMainWindow):
         global pyautogui_keys
         global screenshot_number
         global TakeScreenshotButton
+        global TakeScreenshotLine
         #SPLIT IMAGE FOLDER
         
         #initiate HookKeyboard from pyHook - looks for global hotkeys. this is unhooked when autosplitter is running or else it throws an error
@@ -102,32 +99,31 @@ class Window(QtGui.QMainWindow):
         
         #GAME REGION
         
-        GameRegionLabel=QtGui.QLabel('----------------- Game Screen Region --------------------', self)
-        GameRegionLabel.move(93,40)
-        GameRegionLabel.resize(250,30)
+        GameRegionHeaderLabel=QtGui.QLabel('----------------- Game Screen Region --------------------', self)
+        GameRegionHeaderLabel.move(93,40)
+        GameRegionHeaderLabel.resize(250,30)
         
-        TopLeftLabel=QtGui.QLabel('Top Left Coordinates:'+'                         '+x1+', '+y1, self)
-        TopLeftLabel.move(10,65)
-        TopLeftLabel.resize(250,20)
+        GameRegionLabel=QtGui.QLabel('Game Region Window Size:                  None Set',self)
+        GameRegionLabel.move(10,75)
+        GameRegionLabel.resize(300,20)
         
-        TopLeftButton=QtGui.QPushButton("Set Top Left",self)
-        TopLeftButton.clicked.connect(self.set_top_left)
-        TopLeftButton.move(320,65)
-        TopLeftButton.resize(100,20)
+        GameRegionButton=QtGui.QPushButton("Set Game Region",self)
+        GameRegionButton.clicked.connect(self.DoScreenshotWidget)
+        GameRegionButton.move(320,70)
+        GameRegionButton.resize(100,27)
         
-        BottomRightLabel=QtGui.QLabel('Bottom Right Coordinates:'+'                 '+x2+', '+y2, self)
-        BottomRightLabel.move(10,85)
-        BottomRightLabel.resize(250,20)
+        TakeScreenshotLabel = QtGui.QLabel('Choose Filename:',self)
+        TakeScreenshotLabel.move(10,110)
+        TakeScreenshotLabel.resize(250,30)
         
-        BottomRightButton=QtGui.QPushButton("Set Bottom Right",self)
-        BottomRightButton.clicked.connect(self.set_bottom_right)
-        BottomRightButton.move(320,85)
-        BottomRightButton.resize(100,20)
+        TakeScreenshotLine = QtGui.QLineEdit('a_splitname',self)
+        TakeScreenshotLine.move(110,111)
+        TakeScreenshotLine.resize(200,25)
         
         TakeScreenshotButton=QtGui.QPushButton('Take Screenshot',self)
         TakeScreenshotButton.clicked.connect(self.screenshot)
-        TakeScreenshotButton.move(320,115)
-        TakeScreenshotButton.resize(100,25)
+        TakeScreenshotButton.move(320,110)
+        TakeScreenshotButton.resize(100,27)
         
         #HOTKEYS
         
@@ -221,6 +217,7 @@ class Window(QtGui.QMainWindow):
         ShowLivePercentDifferenceLabel.move(257,335)
         
         CheckBox=QtGui.QCheckBox('Show Live % Match',self)
+        CheckBox.setChecked(True)
         CheckBox.move(305,335)
         CheckBox.resize(270,30)
         
@@ -232,6 +229,9 @@ class Window(QtGui.QMainWindow):
         ThresholdDropdown.move(130,340)
         ThresholdDropdown.resize(70,20)
         ThresholdDropdown.addItem("test")
+        ThresholdDropdown.addItem("98%")
+        ThresholdDropdown.addItem("97%")
+        ThresholdDropdown.addItem("96%")
         ThresholdDropdown.addItem("95%")
         ThresholdDropdown.addItem("94%")
         ThresholdDropdown.addItem("93%")
@@ -243,7 +243,12 @@ class Window(QtGui.QMainWindow):
         ThresholdDropdown.addItem("87%")
         ThresholdDropdown.addItem("86%")
         ThresholdDropdown.addItem("85%")
-        ThresholdDropdown.setCurrentIndex(6)
+        ThresholdDropdown.addItem("84%")
+        ThresholdDropdown.addItem("83%")
+        ThresholdDropdown.addItem("82%")
+        ThresholdDropdown.addItem("81%")
+        ThresholdDropdown.addItem("80%")
+        ThresholdDropdown.setCurrentIndex(9)
         ThresholdDropdown.activated[str].connect(self.threshold)
         
         PauseLabel=QtGui.QLabel("Pause after split for:",self)
@@ -308,10 +313,16 @@ class Window(QtGui.QMainWindow):
     #get split image directory from user from clicking browse..
     def browse(self):
         global split_image_directory
+        global hook
         hook.UnhookKeyboard()
         split_image_directory = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory"))+'\\'
         FilePathLine.setText(split_image_directory)
         hook.HookKeyboard()
+    
+    #calls the screen region widget
+    def DoScreenshotWidget(self):
+        self.f = QtGui.QWidget()
+        self.ScreenRegionWidget = ScreenRegionWidget()
     
     #activate when using match% threshold dropdown
     def threshold(self, text):
@@ -326,58 +337,16 @@ class Window(QtGui.QMainWindow):
         global pause
         pause = int(text[:-4]) #changes text from pause dropdown to an int to pause after a split
     
-    #activates when pressing set top left button, hover mouse over top left of game screen. 5 seconds to do so
-    def set_top_left(self):
-        global x1,y1
-        hook.UnhookKeyboard()
-        self.disable_buttons()
-        i=5
-        while i > 0:
-            TopLeftButton.setText(str(i)+'..')
-            QtGui.QApplication.processEvents()
-            time.sleep(1)
-            i=i-1
-        mouse = pymouse.PyMouse()
-        top_left=(mouse.position())
-        top_left=np.asarray(top_left)
-        x1,y1=top_left
-        x1,y1=int(x1),int(y1)
-        TopLeftLabel.setText('Top Left Coordinates:'+'                         '+str(x1)+', '+str(y1))
-        TopLeftButton.setText('Set Top Left')
-        self.enable_buttons()
-        hook.HookKeyboard()
-    
-    #activates when pressing set bottom right button, hover mouse over bottom right of game screen. 5 seconds to do so
-    def set_bottom_right(self):
-        global x2,y2
-        hook.UnhookKeyboard()
-        self.disable_buttons()
-        i=5
-        while i > 0:
-            BottomRightButton.setText(str(i)+'..')
-            QtGui.QApplication.processEvents()
-            time.sleep(1)
-            i=i-1
-        mouse = pymouse.PyMouse()
-        bottom_right=(mouse.position())
-        bottom_right=np.asarray(bottom_right)
-        x2,y2=bottom_right
-        x2,y2=int(x2),int(y2)
-        BottomRightLabel.setText('Bottom Right Coordinates:'+'                 '+str(x2)+', '+str(y2))
-        BottomRightButton.setText('Set Bottom Right')
-        self.enable_buttons()
-        hook.HookKeyboard()
-    
     def screenshot(self):
-        global screenshot_number
         global screenshot_file
-        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
+        global hook
+        if split_image_directory == 'No Folder Selected' or split_image_directory == '\\':
             self.split_image_directory_error_message()
             return
         if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
             self.coordinate_error_message()
             return
-        screenshot_file='screenshot_'+str(screenshot_number)+'.png'
+        screenshot_file=str(TakeScreenshotLine.text())+'.png'
         if os.path.exists(split_image_directory+screenshot_file) == True:
             self.file_exists_error()
             return
@@ -387,12 +356,18 @@ class Window(QtGui.QMainWindow):
         with mss.mss() as sct:
             screenshot = sct.grab(bbox)
             screenshot = Image.frombytes('RGB', screenshot.size, screenshot.rgb)
-            screenshot.save(split_image_directory+screenshot_file)
-            os.startfile(split_image_directory+screenshot_file)
-        screenshot_number=screenshot_number+1
-        self.enable_buttons()
-        hook.HookKeyboard()
-        return
+            try:
+                screenshot.save(split_image_directory+screenshot_file)
+                os.startfile(split_image_directory+screenshot_file)
+                self.enable_buttons()
+                hook.HookKeyboard()
+                return
+            except Exception:
+                self.enable_buttons()
+                hook.HookKeyboard()
+                self.screenshotIOError()
+                return
+                
     
     #setting global hotkeys and doing things when they are hit
     def globalhotkeys(self,event):
@@ -555,7 +530,7 @@ class Window(QtGui.QMainWindow):
             hook.HookKeyboard()
             return
         else:
-            time.sleep(0.4)
+            time.sleep(0.2)
             split_image_number = split_image_number-1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -585,7 +560,7 @@ class Window(QtGui.QMainWindow):
             return
             
         else:
-            time.sleep(0.4)
+            time.sleep(0.2)
             split_image_number = split_image_number+1
             split_image_file=os.listdir(split_image_directory)[0+split_image_number]
             split_image_path=split_image_directory+split_image_file
@@ -599,8 +574,7 @@ class Window(QtGui.QMainWindow):
     
     def disable_buttons(self):
         BrowseButton.setEnabled(False)
-        TopLeftButton.setEnabled(False)
-        BottomRightButton.setEnabled(False)
+        GameRegionButton.setEnabled(False)
         SplitHotkeyButton.setEnabled(False)
         ResetHotkeyButton.setEnabled(False)
         UndoHotkeyButton.setEnabled(False)
@@ -615,8 +589,7 @@ class Window(QtGui.QMainWindow):
     
     def enable_buttons(self):
         BrowseButton.setEnabled(True)
-        TopLeftButton.setEnabled(True)
-        BottomRightButton.setEnabled(True)
+        GameRegionButton.setEnabled(True)
         SplitHotkeyButton.setEnabled(True)
         ResetHotkeyButton.setEnabled(True)
         UndoHotkeyButton.setEnabled(True)
@@ -653,6 +626,12 @@ class Window(QtGui.QMainWindow):
         msgBox.setText('error: '+ screenshot_file +' already exists - no image was saved')
         msgBox.exec_()
     
+    def screenshotIOError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setText('error: invalid filename')
+        msgBox.exec_()
+        
+    
     #closes entire process when you close the program
     def closeEvent(self, app):
         sys.exit()
@@ -663,8 +642,9 @@ class Window(QtGui.QMainWindow):
         global split_hotkey
         global reset_hotkey
         global FPS
+        global hook
         hook.UnhookKeyboard()
-        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
+        if split_image_directory == 'No Folder Selected' or split_image_directory == '\\':
             self.split_image_directory_error_message()
             return
         if not all(File.endswith(".png") or File.endswith(".PNG") for File in os.listdir(split_image_directory)):
@@ -729,9 +709,10 @@ class Window(QtGui.QMainWindow):
         global StartAutoSplitterButton
         global hook
         global pyautogui_split_hotkey
-       
+        hook.UnhookKeyboard()
+        hook.HookKeyboard()
         #multiple checks to see if an error message needs to display
-        if split_image_directory == 'No Folder Selected' or split_image_directory == '/':
+        if split_image_directory == 'No Folder Selected' or split_image_directory == '\\':
             self.split_image_directory_error_message()
             return
         if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
@@ -772,7 +753,12 @@ class Window(QtGui.QMainWindow):
             while mean_percent_diff > mean_percent_diff_threshold:
                 with mss.mss() as sct:
                     QtGui.QApplication.processEvents()
-                    sct_img = sct.grab(bbox)
+                    #For some reason bbox throws an error sometimes when typing, probably a bad mix between hook and the mss library. this try/except makes sure that no error gets thrown
+                    try: 
+                        sct_img = sct.grab(bbox)
+                    except Exception:
+                        bbox=x1,y1,x2,y2
+                        sct_img = sct.grab(bbox)
                     game_image = Image.frombytes('RGB', sct_img.size, sct_img.rgb)
                     game_image_resized = game_image.resize((120,90))
                     diff=ImageChops.difference(split_image_resized,game_image_resized)
@@ -810,7 +796,56 @@ class Window(QtGui.QMainWindow):
         StartAutoSplitterButton.setText('Start Auto Splitter')
         self.enable_buttons()
         QtGui.QApplication.processEvents()
+
+#screen region widget         
+class ScreenRegionWidget(QtGui.QWidget):
+    def __init__(self):
+        global hook
+        hook.UnhookKeyboard()
+        super(ScreenRegionWidget,self).__init__()
+        root = tk.Tk()
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        self.setGeometry(0, 0, screen_width, screen_height)
+        self.setWindowTitle(' ')
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
+        self.setWindowOpacity(0.5)
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.show()
+
+    def paintEvent(self, event):
+        qp = QtGui.QPainter(self)
+        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+        qp.setBrush(QtGui.QColor('opaque'))
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
+
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = self.begin
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        global x1,y1,x2,y2
+        global hook
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.close()
+
+        x1 = min(self.begin.x(), self.end.x())
+        y1 = min(self.begin.y(), self.end.y())
+        x2 = max(self.begin.x(), self.end.x())
+        y2 = max(self.begin.y(), self.end.y())
     
+        x1,y1,x2,y2=int(x1),int(y1),int(x2),int(y2)
+        GameRegionLabel.setText('Game Region Window Size:'+'                  '+str(x2-x1)+'x'+str(y2-y1))
+        GameRegionButton.setText('Set Game Region')
+        hook.HookKeyboard()
+        
 def run():
     global app
     app = QtGui.QApplication(sys.argv)
