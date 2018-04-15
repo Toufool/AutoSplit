@@ -9,7 +9,7 @@ Autosplitter takes a folder of images and looks at the first image in the folder
 
 ## DOWNLOAD AND OPEN
 
-- Windows: https://www.dropbox.com/s/jh3zha64hyrpcls/auto_splitter_app.zip?dl=0 (62.8MB)
+- Windows: https://www.dropbox.com/s/skjk9g9o715afwx/auto_splitter_app.zip?dl=0 (62.8MB)
 - Unzip and open "auto_splitter_app.exe'
 
 ## SPLIT IMAGE FOLDER:
