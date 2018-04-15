@@ -78,6 +78,7 @@ class Window(QtGui.QMainWindow):
         global screenshot_number
         global TakeScreenshotButton
         global TakeScreenshotLine
+        global GameRegionCheckBox
         #SPLIT IMAGE FOLDER
         
         #initiate HookKeyboard from pyHook - looks for global hotkeys. this is unhooked when autosplitter is running or else it throws an error
@@ -104,85 +105,90 @@ class Window(QtGui.QMainWindow):
         GameRegionHeaderLabel.resize(250,30)
         
         GameRegionLabel=QtGui.QLabel('Game Region Window Size:                  None Set',self)
-        GameRegionLabel.move(10,75)
+        GameRegionLabel.move(10,70)
         GameRegionLabel.resize(300,20)
         
         GameRegionButton=QtGui.QPushButton("Set Game Region",self)
         GameRegionButton.clicked.connect(self.DoScreenshotWidget)
-        GameRegionButton.move(320,70)
-        GameRegionButton.resize(100,27)
+        GameRegionButton.move(320,65)
+        GameRegionButton.resize(100,22)
+        
+        GameRegionCheckBox=QtGui.QCheckBox('Highlight Region',self)
+        GameRegionCheckBox.move(321,90)
+        GameRegionCheckBox.resize(200,20)
+        GameRegionCheckBox.stateChanged.connect(self.show_game_region)      
         
         TakeScreenshotLabel = QtGui.QLabel('Choose Filename:',self)
-        TakeScreenshotLabel.move(10,110)
+        TakeScreenshotLabel.move(10,118)
         TakeScreenshotLabel.resize(250,30)
         
         TakeScreenshotLine = QtGui.QLineEdit('a_splitname',self)
-        TakeScreenshotLine.move(110,111)
-        TakeScreenshotLine.resize(200,25)
+        TakeScreenshotLine.move(110,123)
+        TakeScreenshotLine.resize(200,20)
         
         TakeScreenshotButton=QtGui.QPushButton('Take Screenshot',self)
         TakeScreenshotButton.clicked.connect(self.screenshot)
-        TakeScreenshotButton.move(320,110)
-        TakeScreenshotButton.resize(100,27)
+        TakeScreenshotButton.move(320,122)
+        TakeScreenshotButton.resize(100,22)
         
         #HOTKEYS
         
         pyHook_keys = np.array(['snapshot','scroll','oem_3','oem_minus', 'oem_plus','back','oem_4','oem_6','oem_5','capital','oem_1','oem_7','lshift','rshift','oem_comma','oem_period','oem_2','lcontrol','rcontrol','lwin','rwin','lmenu','rmenu','prior','next','numpad0','numpad1','numpad2','numpad3','numpad4','numpad5','numpad6','numpad7','numpad8','numpad9'])
         pyautogui_keys = np.array(['prntscrn','scrolllock','`','-','+','backspace','[',']','\\','capslock',';',"'",'shiftleft','shiftright',',','.','/','ctrlleft','ctrlright','winleft','winright','altleft','altright','pageup','pagedown','num0','num1','num2','num3','num4','num5','num6','num7','numpad8','num9'])
         HotkeysLabel=QtGui.QLabel('----------------- Timer Global Hotkeys ----------------------', self)
-        HotkeysLabel.move(94,140)
+        HotkeysLabel.move(94,145)
         HotkeysLabel.resize(250,30)
         
         SplitHotkeyLabel=QtGui.QLabel('Split / Start:', self)
-        SplitHotkeyLabel.move(10,165)
+        SplitHotkeyLabel.move(10,170)
         
         SplitHotkeyLine=QtGui.QLineEdit(split_hotkey,self)
-        SplitHotkeyLine.move(167,170)
+        SplitHotkeyLine.move(167,175)
         SplitHotkeyLine.resize(95,20)
         SplitHotkeyLine.setReadOnly(True)
         
         SplitHotkeyButton=QtGui.QPushButton("Set Hotkey",self)
         SplitHotkeyButton.clicked.connect(self.set_split_hotkey)
-        SplitHotkeyButton.move(320,170)
+        SplitHotkeyButton.move(320,175)
         SplitHotkeyButton.resize(100,20)
         
         ResetHotkeyLabel=QtGui.QLabel('Reset (optional):', self)
-        ResetHotkeyLabel.move(10,190)
+        ResetHotkeyLabel.move(10,195)
         
         ResetHotkeyLine=QtGui.QLineEdit(reset_hotkey,self)
-        ResetHotkeyLine.move(167,195)
+        ResetHotkeyLine.move(167,200)
         ResetHotkeyLine.resize(95,20)
         ResetHotkeyLine.setReadOnly(True)
         
         ResetHotkeyButton=QtGui.QPushButton("Set Hotkey",self)
         ResetHotkeyButton.clicked.connect(self.set_reset_hotkey)
-        ResetHotkeyButton.move(320,195)
+        ResetHotkeyButton.move(320,200)
         ResetHotkeyButton.resize(100,20)
         
         UndoHotkeyLabel=QtGui.QLabel('Undo Split (optional):', self)
-        UndoHotkeyLabel.move(10,215)
+        UndoHotkeyLabel.move(10,220)
         
         UndoHotkeyLine=QtGui.QLineEdit(undo_split_hotkey,self)
-        UndoHotkeyLine.move(167,220)
+        UndoHotkeyLine.move(167,225)
         UndoHotkeyLine.resize(95,20)
         UndoHotkeyLine.setReadOnly(True)
         
         UndoHotkeyButton=QtGui.QPushButton("Set Hotkey",self)
         UndoHotkeyButton.clicked.connect(self.set_undo_split_hotkey)
-        UndoHotkeyButton.move(320,220)
+        UndoHotkeyButton.move(320,225)
         UndoHotkeyButton.resize(100,20)
         
         SkipHotkeyLabel=QtGui.QLabel('Skip Split (optional):', self)
-        SkipHotkeyLabel.move(10,240)
+        SkipHotkeyLabel.move(10,245)
         
         SkipHotkeyLine=QtGui.QLineEdit(skip_split_hotkey,self)
-        SkipHotkeyLine.move(167,245)
+        SkipHotkeyLine.move(167,250)
         SkipHotkeyLine.resize(95,20)
         SkipHotkeyLine.setReadOnly(True)
         
         SkipHotkeyButton=QtGui.QPushButton("Set Hotkey",self)
         SkipHotkeyButton.clicked.connect(self.set_skip_split_hotkey)
-        SkipHotkeyButton.move(320,245)
+        SkipHotkeyButton.move(320,250)
         SkipHotkeyButton.resize(100,20)
         
         #OPTIONS
@@ -323,6 +329,23 @@ class Window(QtGui.QMainWindow):
     def DoScreenshotWidget(self):
         self.f = QtGui.QWidget()
         self.ScreenRegionWidget = ScreenRegionWidget()
+    
+    def show_game_region(self,state):
+        try:
+            if state == QtCore.Qt.Checked:
+                self.f = QtGui.QWidget()
+                self.HighlightRegionWidget = HighlightRegionWidget()
+                return
+            else:
+                self.f = QtGui.QWidget()
+                self.HighlightRegionWidget = HighlightRegionWidget()
+                return
+        #qt.checked was getting typeerrors if you checked highlight region after starting and resetting the autosplitter
+        except TypeError:
+            self.f = QtGui.QWidget()
+            self.HighlightRegionWidget = HighlightRegionWidget()
+            return
+            
     
     #activate when using match% threshold dropdown
     def threshold(self, text):
@@ -513,6 +536,7 @@ class Window(QtGui.QMainWindow):
         ResetButton.setEnabled(False)
         UndoButton.setEnabled(False)
         SkipButton.setEnabled(False)
+        return
     
     #activates from either a hotkey or undo split button
     def undo_split(self):
@@ -541,6 +565,7 @@ class Window(QtGui.QMainWindow):
             self.set_current_split_image()
             hook.HookKeyboard()
             QtGui.QApplication.processEvents()
+            return
     
     #activates when a hotkey is split or from skip split button   
     def skip_split(self):
@@ -571,6 +596,7 @@ class Window(QtGui.QMainWindow):
             self.set_current_split_image()
             hook.HookKeyboard()
             QtGui.QApplication.processEvents()
+            return
     
     def disable_buttons(self):
         BrowseButton.setEnabled(False)
@@ -585,6 +611,7 @@ class Window(QtGui.QMainWindow):
         PauseDropdown.setEnabled(False)
         ResetButton.setEnabled(False)
         TakeScreenshotButton.setEnabled(False)
+        GameRegionCheckBox.setEnabled(False)
         
     
     def enable_buttons(self):
@@ -599,6 +626,7 @@ class Window(QtGui.QMainWindow):
         ThresholdDropdown.setEnabled(True)
         PauseDropdown.setEnabled(True)
         TakeScreenshotButton.setEnabled(True)
+        GameRegionCheckBox.setEnabled(True)
         
     def coordinate_error_message(self):
         msgBox = QtGui.QMessageBox()
@@ -629,6 +657,11 @@ class Window(QtGui.QMainWindow):
     def screenshotIOError(self):
         msgBox = QtGui.QMessageBox()
         msgBox.setText('error: invalid filename')
+        msgBox.exec_()
+    
+    def highlight_region_error(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setText('uncheck "Highlight Region" before running Auto Splitter')
         msgBox.exec_()
         
     
@@ -717,6 +750,9 @@ class Window(QtGui.QMainWindow):
             return
         if x2 <= x1 or y2 <= y1 or type(x1)==str or type(x2)==str:
             self.coordinate_error_message()
+            return
+        if GameRegionCheckBox.isChecked()==True:
+            self.highlight_region_error()
             return
         if SplitHotkeyLine.text() == 'none':
             self.split_hotkey_error_message()
@@ -845,7 +881,30 @@ class ScreenRegionWidget(QtGui.QWidget):
         GameRegionLabel.setText('Game Region Window Size:'+'                  '+str(x2-x1)+'x'+str(y2-y1))
         GameRegionButton.setText('Set Game Region')
         hook.HookKeyboard()
-        
+        return
+
+#widget that highlights the game region chosen by the user
+class HighlightRegionWidget(QtGui.QWidget):
+    def __init__(self):
+        if type(x1) == str:
+                return
+        super(HighlightRegionWidget,self).__init__()
+        self.setGeometry(x1 ,y1,x2-x1,y2-y1)
+        self.setWindowTitle(' ')
+        self.setWindowOpacity(0.5)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+        self.show()
+        if GameRegionCheckBox.isChecked() == False:
+            self.close()
+
+    def paintEvent(self, event):
+        qp = QtGui.QPainter(self)
+        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 4))
+        qp.setBrush(QtGui.QColor(150,150,255,255))
+        qp.drawRect(QtCore.QRect(0,0,x2-x1,y2-y1))
+        return
+
+
 def run():
     global app
     app = QtGui.QApplication(sys.argv)
