@@ -25,7 +25,8 @@ A good split image is:
 
 ## GAME SCREEN REGION
 - Click "Set Game Region" and then click and drag to form a rectangle over your game region
-- Once your game region is set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The region will not follow your game feed - they are viewing your monitor. Tip: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
+- You can visualize the region by checking "Highlight Region" (but this cannot be used while autosplitter is running).
+- Once your game region is set, make sure to not move your game feed (OBS, Xsplit, or any other source that you are using). The region will not follow your game feed - it is viewing your monitor. Tip: Making the game screen region smaller will increase performance. See "Check FPS" in Options below
 - The "Take Screenshot" button is a built in screenshot function that will take a screenshot of the game region and save it to your split image folder, and open it. You can name these whatever you want by typing in the text box next to it. 
 
 ## GLOBAL TIMER HOTKEYS
