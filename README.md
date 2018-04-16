@@ -1,5 +1,5 @@
 # autosplitter
-This program is used together with a speedrun timer (livesplit, wsplit, etc) that compares split images to the game screen region of your monitor and automaticlly hits your split hotkey when there is a match.
+This program is used together with a speedrun timer (livesplit, wsplit, etc) that compares split images to the game screen region of your monitor and automatically hits your split hotkey when there is a match.
 
 # HOW IT WORKS:
 
