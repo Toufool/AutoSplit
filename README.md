@@ -5,6 +5,8 @@ This program is used together with a speedrun timer (livesplit, wsplit, etc) tha
 
 Autosplitter takes a folder of images and looks at the first image in the folder (alphabetically) and begins to compare it to the live gameplay feed on your monitor. Once that image meets the "Match % Threshold" compared to your game feed, it presses your split hot key and moves on to the next image in the folder and repeats the procedure until all images have been matched and split.
 
+Here is a short video of the autosplitter at work: https://www.youtube.com/watch?v=5fTOmPCb-a8
+
 # TUTORIAL:
 
 ## DOWNLOAD AND OPEN
