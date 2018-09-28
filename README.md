@@ -11,7 +11,7 @@ Here is a short video of the autosplitter at work: https://www.youtube.com/watch
 
 ## DOWNLOAD AND OPEN
 
-- Windows: https://www.dropbox.com/s/skjk9g9o715afwx/auto_splitter_app.zip?dl=0 (62.8MB)
+- Windows 7 and 10: https://www.dropbox.com/s/skjk9g9o715afwx/auto_splitter_app.zip?dl=0 (62.8MB)
 - Unzip and open "auto_splitter_app.exe'
 
 ## SPLIT IMAGE FOLDER:
