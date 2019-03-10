@@ -68,3 +68,6 @@ A good split image is:
 - If using multiple monitors, only one of the monitors can be used for a game region
 - Using numpad keys for Start/Split hotkey while numlock is active will not split when match % threshold is met
 - Hotkeys & other settings don't save after closing
+
+### Credits
+https://github.com/harupy/ for the original snipping tool code that I used to integrate into the autosplitter.
