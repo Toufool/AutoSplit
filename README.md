@@ -1,18 +1,22 @@
 # Video Auto Splitter
-This program is used together with a speedrun timer (livesplit, wsplit, etc) that compares split images to a user-defined capture region of any window (OBS, xsplit, Amarec, etc.) and automatically hits your split hotkey when there is a match. The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
+This program compares split images to a capture region of any window (OBS, xsplit, Amarec, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 # TUTORIAL:
 
 ## DOWNLOAD AND OPEN
 
-- Windows 7 and 10: (add link here)
-- Unzip and open "VideoAutoSplitter.exe'
+### Compatability:
+- Windows 7 and 10
+
+### Opening the program:
+- Download the latest version: (no release yet)
+- Extract the file and open VideoAutoSplitter.exe
 
 ## SPLIT IMAGE FOLDER:
 - All files in the folder must be .png files
 - They can be any size
-- Name split images alphabetically in the order you want them to split - an easy way to do this is name the file "a_splitname.png, b_splitname.png, etc
-- Be mindful of false positives. For example, if you use a black screen for a split image, make a black screen will not show up before you want to split (for example, in SM64, a black loading screen will appear if you die, not ONLY after collecting a star).
+- Name split images alphabnumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
+- Be mindful of false positives. For example, if you use a black screen for a split image, make sure a black screen will not show up before you want to split (for example, in Super Mario 64, a black loading screen appear after a star, but will also appear if you die).
 
 ## CAPTURE REGION
 - Click "Select Region"
@@ -36,16 +40,17 @@ note: Closing the window that the program is capturing will throw and error at y
 - Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
 
 ### Check Max FPS
-- Calculates the maximum comparison rate of the capture region to split images. This will likely be a value much above the needed 30 or 60, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+- Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
 ### TIMER GOBAL HOTKEYS
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
 
 ### Known Limitations
-- Only one region can be used. Searching for sub regions inside the capture region and or image masking may be implimented in the future
+- Only one region can be used. Searching for sub regions inside the capture region and or image masking may be implemented in the future
+- Starting the timer/video auto splitter is still manual
 - For many games, it will be difficult to find a split image for the last split of the run
 - Similarity threshold cannot be customized per split image
-- While the potential is there, load time removal is not the main focus of this program and is not currently implimented
+- While the potential is there, load time removal is not the main focus of this program and is not currently implemented
 
 
 ### Credits
