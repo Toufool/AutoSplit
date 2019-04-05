@@ -38,7 +38,7 @@ note: Closing the window that the program is capturing will throw and error at y
 ### Check Max FPS
 - Calculates the maximum comparison rate of the capture region to split images. This will likely be a value much above the needed 30 or 60, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
-## TIMER GOBAL HOTKEYS
+### TIMER GOBAL HOTKEYS
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
 
 ### Known Limitations
