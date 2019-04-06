@@ -5,18 +5,18 @@ This program compares split images to a capture region of any window (OBS, xspli
   <img src="https://i.imgur.com/NVHY3g7.png" />
 </p>
 
-# TUTORIAL:
+# TUTORIAL
 
 ## DOWNLOAD AND OPEN
 
-### Compatability:
+### Compatability
 - Windows 7 and 10
 
-### Opening the program:
+### Opening the program
 - Download the latest version: (no release yet)
 - Extract the file and open VideoAutoSplitter.exe
 
-## SPLIT IMAGE FOLDER:
+## SPLIT IMAGE FOLDER
 - All files in the folder must be .png files
 - Images can be any size
 - Name split images alphabnumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
@@ -31,7 +31,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 note: Closing the window that the program is capturing will throw and error and reset the auto splitter if it is running
 
 ## OPTIONS
-### Show Live Similarity:
+### Show Live Similarity
 - Shows the live similarity between the capture region and your split image. This number is between 0 and 1, with 1 being a perfect match.
 
 ### Show Highest Similarity
@@ -46,7 +46,7 @@ note: Closing the window that the program is capturing will throw and error and 
 ### Check Max FPS
 - Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
-### TIMER GOBAL HOTKEYS
+### Timer Global Hotkeys
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
 
 ### Known Limitations
