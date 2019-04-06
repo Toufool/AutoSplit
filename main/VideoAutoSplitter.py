@@ -655,7 +655,6 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
             start = time.time()
             while self.similarity < self.similaritythresholdDoubleSpinBox.value():
                 #reset if the set screen region window was closed
-                print(self.similarity)
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
                 #loop goes into here if start auto splitter text is "Start Auto Splitter"
