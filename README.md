@@ -1,5 +1,5 @@
 # Video Auto Splitter
-This program compares split images to a capture region of any window (OBS, xsplit, Amarec, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
+This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 # TUTORIAL:
 
@@ -14,17 +14,17 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ## SPLIT IMAGE FOLDER:
 - All files in the folder must be .png files
-- They can be any size
+- Images can be any size
 - Name split images alphabnumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
-- Be mindful of false positives. For example, if you use a black screen for a split image, make sure a black screen will not show up before you want to split (for example, in Super Mario 64, a black loading screen appear after a star, but will also appear if you die).
+- Be mindful of false positives. For example, if you use a black screen for a split image, make sure a black screen will not show up before you want to split (for example, in Super Mario 64, a black loading screen appears after a star, but will also appear if you die).
 
 ## CAPTURE REGION
 - Click "Select Region"
-- Click and drag to form a rectangle over the region you wish to capture
-- Adjust position, height, and width manually to make corrections to the capture region
-- You can freely move the window that the program is capturing, but resizing will cause the capture region to change
+- Click and drag to form a rectangle over the region you want to capture
+- Adjust position, height, and width manually to make slight corrections to the capture region
+- You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish
-note: Closing the window that the program is capturing will throw and error at you and reset the auto splitter if it is running
+note: Closing the window that the program is capturing will throw and error and reset the auto splitter if it is running
 
 ## OPTIONS
 ### Show Live Similarity:
