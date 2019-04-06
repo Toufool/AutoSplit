@@ -1,10 +1,12 @@
-import auto_splitter_design
+import design
+import about
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtTest import QTest
 from PyQt4 import QtTest
 from win32api import GetSystemMetrics
 import sys
 import os
+import webbrowser
 import win32con
 import win32gui
 import win32ui
@@ -17,18 +19,19 @@ import keyboard
 import threading
 import pickle
 
-class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
+class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
     #signals
     updateCurrentSplitImage = QtCore.pyqtSignal(QtGui.QImage)
     startAutoSplitterSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
         
     def __init__(self, parent=None):      
-        super(AutoSplit, self).__init__(parent)
+        super(VideoAutoSplitter, self).__init__(parent)
         self.setupUi(self)
         
         #close all proccesses when closing window
-        app.aboutToQuit.connect(self.closeEvent)
+        self.actionView_Help.triggered.connect(self.viewHelp)
+        self.actionAbout.triggered.connect(self.about)
         
         #disable buttons upon open
         self.undosplitButton.setEnabled(False)
@@ -83,8 +86,8 @@ class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-            self.pauseDoubleSpinBox.setValue(self.pause)
-            self.fpslimitDoubleSpinBox.setValue(self.fps_limit)
+            self.pauseSpinBox.setValue(self.pause)
+            self.fpslimitSpinBox.setValue(self.fps_limit)
             
             #try to load and set hotkeys from when user last closed the window
             try:
@@ -117,6 +120,13 @@ class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
     
     #FUNCTIONS
     
+    def viewHelp(self):
+        webbrowser.open('https://github.com/austinryan/Video-Auto-Splitter')
+        return
+        
+    def about(self):
+        self.AboutWidget = AboutWidget()
+        
     def browse(self):
         #User selects the file with the split images in it.
         self.split_image_directory = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory"))+'\\'
@@ -722,7 +732,7 @@ class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(True)
                 
                 #limit the number of time the comparison runs to reduce cpu usage
-                fps_limit = self.fpslimitDoubleSpinBox.value()
+                fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1/fps_limit) - (time.time() - start)%(1/fps_limit))     
                 QtGui.QApplication.processEvents()
             
@@ -742,7 +752,7 @@ class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
                 self.currentSplitImage.setText('none (paused)')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                 QtGui.QApplication.processEvents()
-                QtTest.QTest.qWait(self.pauseDoubleSpinBox.value()*1000)
+                QtTest.QTest.qWait(self.pauseSpinBox.value()*1000)
                 self.resetButton.setEnabled(True)
                 
         
@@ -793,8 +803,8 @@ class AutoSplit(QtGui.QMainWindow, auto_splitter_design.Ui_MainWindow):
     def closeEvent(self, app):
         self.split_image_directory = str(self.splitimagefolderLineEdit.text())
         self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
-        self.pause = self.pauseDoubleSpinBox.value()
-        self.fps_limit = self.fpslimitDoubleSpinBox.value()
+        self.pause = self.pauseSpinBox.value()
+        self.fps_limit = self.fpslimitSpinBox.value()
         self.split_key = str(self.splitLineEdit.text())
         self.reset_key = str(self.resetLineEdit.text())
         self.skip_split_key = str(self.skipsplitLineEdit.text())
@@ -853,11 +863,21 @@ class SelectRegionWidget(QtGui.QWidget):
         self.height = self.y2 - self.y1
         self.width = self.x2 - self.x1
 
-        
+#About Window
+class AboutWidget(QtGui.QWidget,about.Ui_aboutVideoAutoSplitterWidget):
+    def __init__(self):
+        super(AboutWidget,self).__init__()
+        self.setupUi(self)
+        self.createdbyLabel.setOpenExternalLinks(True)
+        self.githubLabel.setOpenExternalLinks(True)
+        self.donatebuttonLabel.setOpenExternalLinks(True)
+        self.show()
+
+                        
 def main():
     global app
     app = QtGui.QApplication(sys.argv)
-    w = AutoSplit()
+    w = VideoAutoSplitter()
     w.show()
     sys.exit(app.exec_())
 
