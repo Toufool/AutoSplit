@@ -51,6 +51,7 @@ note: Closing the window that the program is capturing will throw and error and 
 
 ### Known Limitations
 - Only one region can be used. Searching for sub regions inside the capture region and or image masking may be implemented in the future
+- Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white.
 - Starting the timer/video auto splitter is still manual
 - For many games, it will be difficult to find a split image for the last split of the run
 - Similarity threshold cannot be customized per split image
