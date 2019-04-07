@@ -1,6 +1,6 @@
 import design
 import about
-from PyQt4 import QtGui, QtCore, QTest
+from PyQt4 import QtGui, QtCore, QtTest
 from win32api import GetSystemMetrics
 import sys
 import os
@@ -141,7 +141,7 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
         
         #wait until height and width change before we continue the function
         while self.SelectRegionWidget.height == -1 and self.SelectRegionWidget.width == -1:
-            QTest.QTest.qWait(1)
+            QtTest.QTest.qWait(1)
         
         #return an error if width or height are zero.
         if self.SelectRegionWidget.width == 0 or self.SelectRegionWidget.height == 0:
