@@ -1,8 +1,6 @@
 import design
 import about
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtTest import QTest
-from PyQt4 import QtTest
+from PyQt4 import QtGui, QtCore, QTest
 from win32api import GetSystemMetrics
 import sys
 import os
@@ -143,7 +141,7 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
         
         #wait until height and width change before we continue the function
         while self.SelectRegionWidget.height == -1 and self.SelectRegionWidget.width == -1:
-            QTest.qWait(1)
+            QTest.QTest.qWait(1)
         
         #return an error if width or height are zero.
         if self.SelectRegionWidget.width == 0 or self.SelectRegionWidget.height == 0:
@@ -779,32 +777,33 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
     #Error messages        
     def splitImageDirectoryError(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('error')
-        msgBox.setText("no split image folder is selected")
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("No split image folder is selected.")
         msgBox.exec_()
     def imageTypeError(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('error')
-        msgBox.setText("all images in folder must be .png")
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("All images in folder must be .png.")
         msgBox.exec_()
     def regionError(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('error')
-        msgBox.setText("no region is selected")
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("No region is selected.")
         msgBox.exec_()
     def regionSizeError(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('error')
-        msgBox.setText("width and height cannot be 0")
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Width and height cannot be 0. Please select a larger region.")
         msgBox.exec_()
     def splitHotkeyError(self):
         msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('error')
-        msgBox.setText("no split hotkey has been set")
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("No split hotkey has been set.")
         msgBox.exec_()
     
     #exit safely when closing the window
     def closeEvent(self, app):
+        #save settings to .pkl file.
         self.split_image_directory = str(self.splitimagefolderLineEdit.text())
         self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
         self.pause = self.pauseSpinBox.value()
