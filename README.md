@@ -19,7 +19,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## SPLIT IMAGE FOLDER
 - All files in the folder must be .png files
 - Images can be any size
-- Name split images alphabnumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
+- Name split images alphanumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
 - Be mindful of false positives. For example, if you use a black screen for a split image, make sure a black screen will not show up before you want to split (for example, in Super Mario 64, a black loading screen appears after a star, but will also appear if you die).
 
 ## CAPTURE REGION
