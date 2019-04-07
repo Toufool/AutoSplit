@@ -6,7 +6,6 @@ from PyQt4 import QtTest
 from win32api import GetSystemMetrics
 import sys
 import os
-import webbrowser
 import win32con
 import win32gui
 import win32ui
@@ -121,7 +120,7 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
     #FUNCTIONS
     
     def viewHelp(self):
-        webbrowser.open('https://github.com/austinryan/Video-Auto-Splitter')
+        os.system("start \"\" https://github.com/austinryan/Video-Auto-Splitter")
         return
         
     def about(self):
@@ -238,30 +237,36 @@ class VideoAutoSplitter(QtGui.QMainWindow, design.Ui_MainWindow):
     def positionUp(self):
         try:
             self.y1 = self.y1 - 1
+            self.checkLiveImage()
         #pass if no region is selected
         except AttributeError:
             pass
     def positionRight(self):
         try:
             self.x1 = self.x1 + 1
+            self.checkLiveImage()
         except AttributeError:
             pass
     def positionDown(self):
         try:
             self.y1 = self.y1 + 1
+            self.checkLiveImage()
         except AttributeError:
             pass
     def positionLeft(self):
         try:
             self.x1 = self.x1 - 1
+            self.checkLiveImage()
         except AttributeError:
             pass
     
     #update width or height when changing the value of the spinbox's        
     def updateWidth(self):
         self.width = self.widthSpinBox.value()
+        self.checkLiveImage()
     def updateHeight(self):
         self.height = self.heightSpinBox.value()
+        self.checkLiveImage()
     
     #update current split image. needed this to avoid updating it through the hotkey thread.    
     def updateSplitImage(self, qImg):
