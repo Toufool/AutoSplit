@@ -1,4 +1,4 @@
-# Video Auto Splitter
+# AutoSplitter
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 <p align="center">
@@ -14,7 +14,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Opening the program
 - Download the latest version: (no release yet)
-- Extract the file and open VideoAutoSplitter.exe
+- Extract the file and open AutoSplitter.exe
 
 ## SPLIT IMAGE FOLDER
 - All files in the folder must be .png files
@@ -52,7 +52,7 @@ note: Closing the window that the program is capturing will throw and error and 
 ### Known Limitations
 - Only one region can be used. Searching for sub regions inside the capture region and or image masking may be implemented in the future
 - Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white.
-- Starting the timer/video auto splitter is still manual
+- Starting the timer/auto splitter is still manual
 - For many games, it will be difficult to find a split image for the last split of the run
 - Similarity threshold cannot be customized per split image
 - While the potential is there, load time removal is not the main focus of this program and is not currently implemented
