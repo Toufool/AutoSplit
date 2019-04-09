@@ -1,4 +1,4 @@
-# AutoSplitter
+# AutoSplit
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 <p align="center">
@@ -14,7 +14,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Opening the program
 - Download the latest version: (no release yet)
-- Extract the file and open AutoSplitter.exe
+- Extract the file and open AutoSplit.exe
 
 ## SPLIT IMAGE FOLDER
 - All files in the folder must be .png files
