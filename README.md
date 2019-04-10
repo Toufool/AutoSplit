@@ -28,7 +28,6 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Adjust position, height, and width manually to make slight corrections to the capture region
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish
-note: Closing the window that the program is capturing will throw and error and reset the auto splitter if it is running
 
 ## OPTIONS
 ### Show Live Similarity
@@ -49,14 +48,14 @@ note: Closing the window that the program is capturing will throw and error and 
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
 
-### Known Limitations
-- Only one region can be used. Searching for sub regions inside the capture region and or image masking may be implemented in the future
-- Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white.
-- Starting the timer/auto splitter is still manual
+## Known Limitations
+- There are currently no custom settings for each split image (threshold, pause time, sub-regions etc.)
+- Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white
+- Starting your timer/AutoSplit is still manual
 - For many games, it will be difficult to find a split image for the last split of the run
-- Similarity threshold cannot be customized per split image
-- While the potential is there, load time removal is not the main focus of this program and is not currently implemented
 
+## Known Issues
+- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself (such as Google Chrome: https://www.technipages.com/google-chrome-enable-disable-hardware-acceleration-mode). If not, this can also be disabled in Windows: https://www.thewindowsclub.com/hardware-acceleration-windows-7. If you do not see the "troubleshoot" tab or it is grayed out, you can disable hardware acceleration through registry via method 2 found here: https://appuals.com/disable-hardware-acceleration-windows-7-8-8-1-10/. NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it. If you disabled through registry, delete the DWORD key that you created.
 
 ### Credits
 https://github.com/harupy/ for the snipping tool code that I used to integrate into the autosplitter.
