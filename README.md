@@ -2,7 +2,7 @@
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 <p align="center">
-  <img src="https://i.imgur.com/NVHY3g7.png" />
+  <img src="https://github.com/austinryan/Auto-Split/blob/master/autosplit_demo_image.png?raw=true" />
 </p>
 
 # TUTORIAL
