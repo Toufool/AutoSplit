@@ -94,25 +94,29 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             try:
                 self.splitLineEdit.setText(str(self.split_key))
                 self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-            # pass if there was the key is an empty string (hotkey was never set)
+                self.old_split_key = self.split_key
+            # pass if the key is an empty string (hotkey was never set)
             except ValueError:
                 pass
 
             try:
                 self.resetLineEdit.setText(str(self.reset_key))
                 self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.reset)
+                self.old_reset_key = self.reset_key
             except ValueError:
                 pass
 
             try:
                 self.skipsplitLineEdit.setText(str(self.skip_split_key))
                 self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.skipSplit)
+                self.old_skip_split_key = self.skip_split_key
             except ValueError:
                 pass
 
             try:
                 self.undosplitLineEdit.setText(str(self.undo_split_key))
                 self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.undoSplit)
+                self.old_undo_split_key = self.undo_split_key
             except ValueError:
                 pass
 
