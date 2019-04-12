@@ -656,16 +656,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     # reset button and hotkey connects here.
     def reset(self):
-        # don't allow to reset if the program is paused. currently if it is paused
-        # and the user hits the reset hotkey, it won't reset until it unpauses anyway
-        if self.currentSplitImage.text() == 'none (paused)':
-            return
-
-        # setting the start auto splitter button text to Start Auto Splitter triggers
-        # the def autoSplitter function to return
-        else:
-            self.startautosplitterButton.setText('Start Auto Splitter')
-            return
+        self.startautosplitterButton.setText('Start Auto Splitter')
+        return
 
     # split hotkey connects to this function, which then returns to the GUI thread
     # by emitting the signal and starts the autosplitter function
@@ -822,15 +814,35 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
-                self.resetButton.setEnabled(False)
                 self.undosplitButton.setEnabled(False)
                 self.skipsplitButton.setEnabled(False)
                 self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                 QtGui.QApplication.processEvents()
-                QtTest.QTest.qWait(self.pauseSpinBox.value() * 1000)
-                self.resetButton.setEnabled(True)
+
+                #I have a pause loop here so that it can check if the user reset or not. This should probably eventually be a signal... but it works
+                start = time.time()
+                while time.time() - start < self.pauseSpinBox.value():
+                    if win32gui.GetWindowText(self.hwnd) == '':
+                        self.reset()
+                    # loop goes into here if start auto splitter text is "Start Auto Splitter"
+                    if self.startautosplitterButton.text() == 'Start Auto Splitter':
+                        self.currentSplitImage.setText(' ')
+                        self.currentsplitimagefileLabel.setText(' ')
+                        self.livesimilarityLabel.setText(' ')
+                        self.highestsimilarityLabel.setText(' ')
+                        self.browseButton.setEnabled(True)
+                        self.startautosplitterButton.setEnabled(True)
+                        self.resetButton.setEnabled(False)
+                        self.undosplitButton.setEnabled(False)
+                        self.skipsplitButton.setEnabled(False)
+                        self.setsplithotkeyButton.setEnabled(True)
+                        self.setresethotkeyButton.setEnabled(True)
+                        self.setskipsplithotkeyButton.setEnabled(True)
+                        self.setundosplithotkeyButton.setEnabled(True)
+                        return
+                    QtTest.QTest.qWait(1)
 
         # loop breaks to here when the last image splits
         self.startautosplitterButton.setText('Start Auto Splitter')
