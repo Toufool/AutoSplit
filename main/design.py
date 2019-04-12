@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindow.ui'
+# Form implementation generated from reading ui file 'design.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -33,6 +33,9 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(612, 490))
         MainWindow.setMaximumSize(QtCore.QSize(612, 490))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.splitimagefolderLabel = QtGui.QLabel(self.centralwidget)
@@ -51,7 +54,7 @@ class Ui_MainWindow(object):
         self.positionLabel.setObjectName(_fromUtf8("positionLabel"))
         self.liveimageCheckBox = QtGui.QCheckBox(self.centralwidget)
         self.liveimageCheckBox.setEnabled(True)
-        self.liveimageCheckBox.setGeometry(QtCore.QRect(170, 260, 121, 17))
+        self.liveimageCheckBox.setGeometry(QtCore.QRect(125, 253, 121, 17))
         self.liveimageCheckBox.setChecked(True)
         self.liveimageCheckBox.setTristate(False)
         self.liveimageCheckBox.setObjectName(_fromUtf8("liveimageCheckBox"))
@@ -60,7 +63,7 @@ class Ui_MainWindow(object):
         self.positionUpButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.positionUpButton.setObjectName(_fromUtf8("positionUpButton"))
         self.positionDownButton = QtGui.QPushButton(self.centralwidget)
-        self.positionDownButton.setGeometry(QtCore.QRect(45, 145, 22, 22))
+        self.positionDownButton.setGeometry(QtCore.QRect(44, 145, 22, 22))
         self.positionDownButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.positionDownButton.setObjectName(_fromUtf8("positionDownButton"))
         self.positionLeftButton = QtGui.QPushButton(self.centralwidget)
@@ -68,7 +71,7 @@ class Ui_MainWindow(object):
         self.positionLeftButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.positionLeftButton.setObjectName(_fromUtf8("positionLeftButton"))
         self.positionRightButton = QtGui.QPushButton(self.centralwidget)
-        self.positionRightButton.setGeometry(QtCore.QRect(64, 126, 22, 22))
+        self.positionRightButton.setGeometry(QtCore.QRect(63, 126, 22, 22))
         self.positionRightButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.positionRightButton.setObjectName(_fromUtf8("positionRightButton"))
         self.selectregionButton = QtGui.QPushButton(self.centralwidget)
@@ -93,11 +96,11 @@ class Ui_MainWindow(object):
         self.resetButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.resetButton.setObjectName(_fromUtf8("resetButton"))
         self.undosplitButton = QtGui.QPushButton(self.centralwidget)
-        self.undosplitButton.setGeometry(QtCore.QRect(410, 259, 61, 21))
+        self.undosplitButton.setGeometry(QtCore.QRect(410, 251, 61, 21))
         self.undosplitButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.undosplitButton.setObjectName(_fromUtf8("undosplitButton"))
         self.skipsplitButton = QtGui.QPushButton(self.centralwidget)
-        self.skipsplitButton.setGeometry(QtCore.QRect(490, 259, 61, 21))
+        self.skipsplitButton.setGeometry(QtCore.QRect(490, 251, 61, 21))
         self.skipsplitButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.skipsplitButton.setObjectName(_fromUtf8("skipsplitButton"))
         self.pauseLabel = QtGui.QLabel(self.centralwidget)
@@ -202,7 +205,7 @@ class Ui_MainWindow(object):
         self.line_live_right.setFrameShape(QtGui.QFrame.VLine)
         self.line_live_right.setObjectName(_fromUtf8("line_live_right"))
         self.line_left = QtGui.QFrame(self.centralwidget)
-        self.line_left.setGeometry(QtCore.QRect(237, 296, 2, 163))
+        self.line_left.setGeometry(QtCore.QRect(234, 296, 2, 163))
         self.line_left.setFrameShadow(QtGui.QFrame.Plain)
         self.line_left.setLineWidth(1)
         self.line_left.setFrameShape(QtGui.QFrame.VLine)
@@ -241,7 +244,7 @@ class Ui_MainWindow(object):
         self.timerglobalhotkeysLabel.setGeometry(QtCore.QRect(313, 299, 101, 16))
         self.timerglobalhotkeysLabel.setObjectName(_fromUtf8("timerglobalhotkeysLabel"))
         self.line_right = QtGui.QFrame(self.centralwidget)
-        self.line_right.setGeometry(QtCore.QRect(487, 296, 2, 163))
+        self.line_right.setGeometry(QtCore.QRect(489, 296, 2, 163))
         self.line_right.setFrameShadow(QtGui.QFrame.Plain)
         self.line_right.setLineWidth(1)
         self.line_right.setFrameShape(QtGui.QFrame.VLine)
@@ -294,6 +297,15 @@ class Ui_MainWindow(object):
         self.fpslimitSpinBox.setSingleStep(1.0)
         self.fpslimitSpinBox.setProperty("value", 60.0)
         self.fpslimitSpinBox.setObjectName(_fromUtf8("fpslimitSpinBox"))
+        self.currentsplitimagefileLabel = QtGui.QLabel(self.centralwidget)
+        self.currentsplitimagefileLabel.setGeometry(QtCore.QRect(362, 271, 237, 20))
+        self.currentsplitimagefileLabel.setText(_fromUtf8(""))
+        self.currentsplitimagefileLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.currentsplitimagefileLabel.setObjectName(_fromUtf8("currentsplitimagefileLabel"))
+        self.takescreenshotButton = QtGui.QPushButton(self.centralwidget)
+        self.takescreenshotButton.setGeometry(QtCore.QRect(250, 251, 91, 21))
+        self.takescreenshotButton.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.takescreenshotButton.setObjectName(_fromUtf8("takescreenshotButton"))
         self.splitimagefolderLabel.raise_()
         self.splitimagefolderLineEdit.raise_()
         self.browseButton.raise_()
@@ -352,6 +364,8 @@ class Ui_MainWindow(object):
         self.captureregionLabel.raise_()
         self.fpslimitLabel.raise_()
         self.fpslimitSpinBox.raise_()
+        self.currentsplitimagefileLabel.raise_()
+        self.takescreenshotButton.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QtGui.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 612, 21))
@@ -371,7 +385,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "Video Auto Splitter", None))
+        MainWindow.setWindowTitle(_translate("MainWindow", "AutoSplit", None))
         self.splitimagefolderLabel.setText(_translate("MainWindow", "Split Image Folder:", None))
         self.browseButton.setText(_translate("MainWindow", "Browse..", None))
         self.positionLabel.setText(_translate("MainWindow", "Position", None))
@@ -405,7 +419,17 @@ class Ui_MainWindow(object):
         self.heightLabel.setText(_translate("MainWindow", "Height", None))
         self.captureregionLabel.setText(_translate("MainWindow", "Capture Region", None))
         self.fpslimitLabel.setText(_translate("MainWindow", "FPS Limit:", None))
+        self.takescreenshotButton.setText(_translate("MainWindow", "Take Screenshot", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.actionView_Help.setText(_translate("MainWindow", "View Help", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
 
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    MainWindow = QtGui.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
