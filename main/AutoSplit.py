@@ -126,7 +126,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # FUNCTIONS
 
     def viewHelp(self):
-        os.system("start \"\" https://github.com/austinryan/Auto-Split")
+        os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
         return
 
     def about(self):
