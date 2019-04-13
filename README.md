@@ -58,6 +58,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white.
 - Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.
+- The window of the capture region cannot be minimized.
 
 ## Known Issues
 - When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technipages.com/google-chrome-enable-disable-hardware-acceleration-mode). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
