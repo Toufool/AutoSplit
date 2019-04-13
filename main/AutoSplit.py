@@ -90,7 +90,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.pauseSpinBox.setValue(self.pause)
             self.fpslimitSpinBox.setValue(self.fps_limit)
 
-            # try to load and set hotkeys from when user last closed the window
+            # try to set hotkeys from when user last closed the window
             try:
                 self.splitLineEdit.setText(str(self.split_key))
                 self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
@@ -237,6 +237,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             cDC.DeleteDC()
             win32gui.ReleaseDC(self.hwnd, wDC)
             win32gui.DeleteObject(bmp.GetHandle())
+        
         except AttributeError:
             pass
 
@@ -586,13 +587,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # subtract 1 from the split image number
         self.split_image_number = self.split_image_number - 1
 
-        # if its the last split image, disable skip split button
+        # if i'ts the last split image, disable skip split button
         if self.split_image_number == self.number_of_split_images - 1:
             self.skipsplitButton.setEnabled(False)
         else:
             self.skipsplitButton.setEnabled(True)
 
-        # if its the first split image, disable the undo split button
+        # if it's the first split image, disable the undo split button
         if self.split_image_number == 0:
             self.undosplitButton.setEnabled(False)
         else:
@@ -618,7 +619,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         return
 
-    # skip split button and hotkey connect to here. similar to the flow of undo split button
+    # skip split button and hotkey connect to here
     def skipSplit(self):
 
         if self.currentSplitImage.text() == 'none (paused)' or self.skipsplitButton.isEnabled() == False or self.split_image_number == self.number_of_split_images - 1:
@@ -676,6 +677,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
+        # checks to make sure every file in the split image folder can be opened by opencv
         for image in os.listdir(self.split_image_directory):
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                 self.imageTypeError()
@@ -824,9 +826,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 #I have a pause loop here so that it can check if the user reset or not. This should probably eventually be a signal... but it works
                 start = time.time()
                 while time.time() - start < self.pauseSpinBox.value():
+                    #a few if cases to check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
-                    # loop goes into here if start auto splitter text is "Start Auto Splitter"
                     if self.startautosplitterButton.text() == 'Start Auto Splitter':
                         self.currentSplitImage.setText(' ')
                         self.currentsplitimagefileLabel.setText(' ')
