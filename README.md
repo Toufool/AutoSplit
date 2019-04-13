@@ -61,8 +61,9 @@ This program compares split images to a capture region of any window (OBS, xspli
 - The window of the capture region cannot be minimized.
 
 ## Known Issues
-- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technipages.com/google-chrome-enable-disable-hardware-acceleration-mode). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
+- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
 
 ### Credits
 https://github.com/harupy/ for the snipping tool code that I used to integrate into the autosplitter.
 https://twitter.com/amaringos for the icon.
+Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz)
