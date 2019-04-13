@@ -14,7 +14,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Windows 7 and 10.
 
 ### Opening the program
-- Download the latest version: (no release yet).
+- Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
 - Extract the file and open AutoSplit.exe.
 
 ## SPLIT IMAGE FOLDER
@@ -26,19 +26,20 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## CAPTURE REGION
 - Click "Select Region"
 - Click and drag to form a rectangle over the region you want to capture.
-- Adjust position, height, and width manually to make slight corrections to the capture region.
+- Adjust the position, height, and width of the capture region manually to make adjustments as needed.
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change.
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
 
 ## OPTIONS
 ### Show Live Similarity
-- Shows the live similarity between the capture region and your split image. This number is between 0 and 1, with 1 being a perfect match.
+- Displays the live similarity between the capture region and your split image. This number is between 0 and 1, with 1 being a perfect match.
 
 ### Show Highest Similarity
 - Shows the highest similarity between the capture region and current split image.
 
 ### Similarity Threshold
 - When the live similarity goes above this value, the program hits your split hotkey and moves to the next split image. A good starting point is 0.9.
+- Setting this value to 1.0 is useful for testing purposes.
 
 ### Pause Time
 - Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
@@ -49,6 +50,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
 - Make sure that Global Hotkeys are enabled in your speedrun timer.
+- Skip and Undo Split has a 0.1 second delay for double-tap prevention.
 
 ## Known Limitations
 - There are currently no custom settings for each split image (threshold, pause time, sub-regions etc.).
