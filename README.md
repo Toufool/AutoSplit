@@ -63,3 +63,4 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Credits
 https://github.com/harupy/ for the snipping tool code that I used to integrate into the autosplitter.
+https://twitter.com/amaringos for the icon.
