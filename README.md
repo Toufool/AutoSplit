@@ -29,6 +29,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Adjust the position, height, and width of the capture region manually to make adjustments as needed.
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change.
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
+- You can save a screenshot of the capture region to your split image folder using the Take Screenshot button.
 
 ## OPTIONS
 ### Show Live Similarity
