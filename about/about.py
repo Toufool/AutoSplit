@@ -65,7 +65,6 @@ class Ui_aboutAutoSplitWidget(object):
         self.donatebuttonLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p><a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BYRHQG69YRHBA&item_name=AutoSplit+development&currency_code=USD&source=url\"><img src=\":/resources/donatebutton.png\"/></p></body></html>", None))
         self.iconLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p><img src=\":/resources/icon.ico\"/></p></body></html>", None))
 
-import resources_rc
 
 if __name__ == "__main__":
     import sys
