@@ -564,7 +564,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             for dimension in split_image.shape:
                 max_error *= dimension
             max_error = max_error ** 0.5
-            similarity = 1 - (error / max_error)
+            1 - (error / max_error)
 
             count = count + 1
 
