@@ -83,7 +83,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # try to load settings from when user last closed the window
         try:
             with open('settings.pkl', 'rb') as f:
-                self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key, self.reset_key, self.skip_split_key, self.undo_split_key = pickle.load(f)
+                self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key, self.reset_key, self.skip_split_key, self.undo_split_key = pickle.load(
+                    f)
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
@@ -134,7 +135,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def browse(self):
         # User selects the file with the split images in it.
-        self.split_image_directory = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
+        self.split_image_directory = str(
+            QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
 
         # If the user doesn't select a folder, it defaults to \. Set it back to whats in the LineEdit, and return
         if self.split_image_directory == '\\':
@@ -237,7 +239,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             cDC.DeleteDC()
             win32gui.ReleaseDC(self.hwnd, wDC)
             win32gui.DeleteObject(bmp.GetHandle())
-        
+
         except AttributeError:
             pass
 
@@ -286,7 +288,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.currentSplitImage.setPixmap(pix)
 
     def takeScreenshot(self):
-        #error checks
+        # error checks
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             self.splitImageDirectoryError()
             return
@@ -296,7 +298,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         take_screenshot_file = 'split_image'
 
-        #check if file exists and rename it if it does
+        # check if file exists and rename it if it does
         i = 1
         while os.path.exists(self.split_image_directory + take_screenshot_file + '.png') == True:
             take_screenshot_file = 'split_image' + ' ' + '(' + str(i) + ')'
@@ -315,7 +317,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         sct_img = np.frombuffer(sct_img, dtype='uint8')
         sct_img.shape = (self.height, self.width, 4)
 
-        #save and open image
+        # save and open image
         cv2.imwrite(self.split_image_directory + take_screenshot_file + '.png', sct_img)
         os.startfile(self.split_image_directory + take_screenshot_file + '.png')
 
@@ -341,7 +343,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             except AttributeError:
                 pass
 
-            # wait until user presses the hotkey, then keyboard module reads the input
+            # wait until user presses the hotkey, then keyboard module reads the inpu
             self.split_key = keyboard.read_hotkey(False)
 
             # If the key the user presses is equal to itself or another hotkey already set,
@@ -578,11 +580,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # undo split button and hotkey connect to here
     def undoSplit(self):
         # if the auto splitter is paused or the undo split button is enabled, do nothing.
-        if self.currentSplitImage.text() == 'none (paused)' or self.undosplitButton.isEnabled() == False or self.split_image_number == 0:
+        if self.undosplitButton.isEnabled() == False or self.split_image_number == 0:
             return
-
-        # small delay feels a bit more natural
-        time.sleep(0.1)
 
         # subtract 1 from the split image number
         self.split_image_number = self.split_image_number - 1
@@ -617,15 +616,16 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.similarity = 0
         self.highest_similarity = 0.001
 
+        # small delay for double tap prevention
+        time.sleep(0.1)
+
         return
 
     # skip split button and hotkey connect to here
     def skipSplit(self):
 
-        if self.currentSplitImage.text() == 'none (paused)' or self.skipsplitButton.isEnabled() == False or self.split_image_number == self.number_of_split_images - 1:
+        if self.skipsplitButton.isEnabled() == False or self.split_image_number == self.number_of_split_images - 1:
             return
-
-        time.sleep(0.2)
 
         self.split_image_number = self.split_image_number + 1
 
@@ -653,6 +653,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         self.similarity = 0
         self.highest_similarity = 0.001
+        
+        time.sleep(0.1)
         return
 
     # reset button and hotkey connects here.
@@ -814,19 +816,35 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # add one to the split image number
             self.split_image_number = self.split_image_number + 1
 
+            # set a "pause" split image number. This is done so that it can detect if user hit split/undo split while paused.
+            pause_split_image_number = self.split_image_number
+
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
-                self.undosplitButton.setEnabled(False)
-                self.skipsplitButton.setEnabled(False)
+                #set current split image to none
                 self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+
+                # if its the first split image, disable the undo split button
+                if self.split_image_number == 0:
+                    self.undosplitButton.setEnabled(False)
+                else:
+                    self.undosplitButton.setEnabled(True)
+
+                # if its the last split image, disable the skip split button
+                if self.split_image_number == self.number_of_split_images - 1:
+                    self.skipsplitButton.setEnabled(False)
+                else:
+                    self.skipsplitButton.setEnabled(True)
+
                 QtGui.QApplication.processEvents()
 
-                #I have a pause loop here so that it can check if the user reset or not. This should probably eventually be a signal... but it works
+                # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
+                # This should probably eventually be a signal... but it works
                 start = time.time()
                 while time.time() - start < self.pauseSpinBox.value():
-                    #a few if cases to check for reset
+                    # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
                     if self.startautosplitterButton.text() == 'Start Auto Splitter':
@@ -844,6 +862,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.setskipsplithotkeyButton.setEnabled(True)
                         self.setundosplithotkeyButton.setEnabled(True)
                         return
+                    # check for skip/undo split:
+                    if self.split_image_number != pause_split_image_number:
+                        break
+
                     QtTest.QTest.qWait(1)
 
         # loop breaks to here when the last image splits
