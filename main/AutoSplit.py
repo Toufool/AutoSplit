@@ -769,10 +769,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # calculate similarity
                 error = cv2.norm(self.split_image, self.sct_img, cv2.NORM_L2)
-                max_error = 255 * 255
-                for dimension in self.split_image.shape:
-                    max_error *= dimension
-                max_error = max_error ** 0.5
+                max_error = (self.split_image.size ** 0.5) * 255
                 self.similarity = 1 - (error / max_error)
 
                 # show live similarity if the checkbox is checked
