@@ -33,7 +33,13 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>icon.ico</normaloff>icon.ico</iconset>
+    <normaloff>../../VideoAutoSplitter/icon.ico</normaloff>../../VideoAutoSplitter/icon.ico</iconset>
+  </property>
+  <property name="whatsThis">
+   <string/>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="splitimagefolderLabel">
@@ -78,17 +84,17 @@
      <string>Browse..</string>
     </property>
    </widget>
-   <widget class="QLabel" name="positionLabel">
+   <widget class="QLabel" name="xLabel">
     <property name="geometry">
      <rect>
-      <x>37</x>
-      <y>167</y>
-      <width>38</width>
+      <x>25</x>
+      <y>97</y>
+      <width>7</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Position</string>
+     <string>X</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="liveimageCheckBox">
@@ -113,76 +119,12 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="positionUpButton">
-    <property name="geometry">
-     <rect>
-      <x>44</x>
-      <y>107</y>
-      <width>22</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>▲</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="positionDownButton">
-    <property name="geometry">
-     <rect>
-      <x>44</x>
-      <y>145</y>
-      <width>22</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>▼</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="positionLeftButton">
-    <property name="geometry">
-     <rect>
-      <x>25</x>
-      <y>126</y>
-      <width>22</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>◄</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="positionRightButton">
-    <property name="geometry">
-     <rect>
-      <x>63</x>
-      <y>126</y>
-      <width>22</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>►</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="selectregionButton">
     <property name="geometry">
      <rect>
-      <x>17</x>
+      <x>18</x>
       <y>72</y>
-      <width>77</width>
+      <width>76</width>
       <height>23</height>
      </rect>
     </property>
@@ -196,8 +138,8 @@
    <widget class="QLabel" name="similaritythresholdLabel">
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>357</y>
+      <x>10</x>
+      <y>374</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -209,8 +151,8 @@
    <widget class="QDoubleSpinBox" name="similaritythresholdDoubleSpinBox">
     <property name="geometry">
      <rect>
-      <x>159</x>
-      <y>354</y>
+      <x>160</x>
+      <y>379</y>
       <width>64</width>
       <height>22</height>
      </rect>
@@ -292,8 +234,8 @@
    <widget class="QLabel" name="pauseLabel">
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>384</y>
+      <x>10</x>
+      <y>420</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -302,37 +244,12 @@
      <string>Pause time (seconds)</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="pauseSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>159</x>
-      <y>381</y>
-      <width>64</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="prefix">
-     <string/>
-    </property>
-    <property name="decimals">
-     <number>0</number>
-    </property>
-    <property name="maximum">
-     <double>3600.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>1.000000000000000</double>
-    </property>
-    <property name="value">
-     <double>10.000000000000000</double>
-    </property>
-   </widget>
    <widget class="QPushButton" name="checkfpsButton">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>410</y>
-      <width>81</width>
+      <x>5</x>
+      <y>196</y>
+      <width>51</width>
       <height>21</height>
      </rect>
     </property>
@@ -340,14 +257,14 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Check Max FPS</string>
+     <string>Max FPS</string>
     </property>
    </widget>
    <widget class="QLabel" name="fpsLabel">
     <property name="geometry">
      <rect>
-      <x>204</x>
-      <y>410</y>
+      <x>87</x>
+      <y>196</y>
       <width>20</width>
       <height>20</height>
      </rect>
@@ -362,8 +279,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>300</y>
+      <x>10</x>
+      <y>325</y>
       <width>111</width>
       <height>17</height>
      </rect>
@@ -384,8 +301,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>327</y>
+      <x>10</x>
+      <y>346</y>
       <width>131</width>
       <height>17</height>
      </rect>
@@ -403,8 +320,8 @@
    <widget class="QLabel" name="livesimilarityLabel">
     <property name="geometry">
      <rect>
-      <x>159</x>
-      <y>303</y>
+      <x>160</x>
+      <y>327</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -416,8 +333,8 @@
    <widget class="QLabel" name="highestsimilarityLabel">
     <property name="geometry">
      <rect>
-      <x>159</x>
-      <y>330</y>
+      <x>160</x>
+      <y>348</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -772,7 +689,7 @@
     <property name="geometry">
      <rect>
       <x>313</x>
-      <y>299</y>
+      <y>298</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -842,8 +759,8 @@
    <widget class="QLabel" name="widthLabel">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>196</y>
+      <x>14</x>
+      <y>138</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -855,8 +772,8 @@
    <widget class="QLabel" name="heightLabel">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>227</y>
+      <x>68</x>
+      <y>138</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -868,9 +785,9 @@
    <widget class="QLabel" name="fpsvalueLabel">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>410</y>
-      <width>38</width>
+      <x>58</x>
+      <y>196</y>
+      <width>26</width>
       <height>20</height>
      </rect>
     </property>
@@ -881,9 +798,9 @@
    <widget class="QSpinBox" name="widthSpinBox">
     <property name="geometry">
      <rect>
-      <x>51</x>
-      <y>193</y>
-      <width>51</width>
+      <x>6</x>
+      <y>155</y>
+      <width>44</width>
       <height>22</height>
      </rect>
     </property>
@@ -891,7 +808,7 @@
      <number>1</number>
     </property>
     <property name="maximum">
-     <number>2000</number>
+     <number>10000</number>
     </property>
     <property name="value">
      <number>640</number>
@@ -900,9 +817,9 @@
    <widget class="QSpinBox" name="heightSpinBox">
     <property name="geometry">
      <rect>
-      <x>51</x>
-      <y>224</y>
-      <width>51</width>
+      <x>62</x>
+      <y>155</y>
+      <width>44</width>
       <height>22</height>
      </rect>
     </property>
@@ -910,7 +827,7 @@
      <number>1</number>
     </property>
     <property name="maximum">
-     <number>2000</number>
+     <number>10000</number>
     </property>
     <property name="value">
      <number>480</number>
@@ -932,8 +849,8 @@
    <widget class="QLabel" name="fpslimitLabel">
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>439</y>
+      <x>8</x>
+      <y>223</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -945,9 +862,9 @@
    <widget class="QDoubleSpinBox" name="fpslimitSpinBox">
     <property name="geometry">
      <rect>
-      <x>159</x>
-      <y>434</y>
-      <width>64</width>
+      <x>62</x>
+      <y>220</y>
+      <width>44</width>
       <height>22</height>
      </rect>
     </property>
@@ -1002,15 +919,184 @@
      <string>Take Screenshot</string>
     </property>
    </widget>
+   <widget class="QSpinBox" name="xSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>113</y>
+      <width>44</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::UpDownArrows</enum>
+    </property>
+    <property name="minimum">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <number>999999999</number>
+    </property>
+    <property name="singleStep">
+     <number>1</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="ySpinBox">
+    <property name="geometry">
+     <rect>
+      <x>62</x>
+      <y>113</y>
+      <width>44</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::UpDownArrows</enum>
+    </property>
+    <property name="minimum">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <number>999999999</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="yLabel">
+    <property name="geometry">
+     <rect>
+      <x>81</x>
+      <y>97</y>
+      <width>7</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Y</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comparisonmethodComboBox">
+    <property name="geometry">
+     <rect>
+      <x>143</x>
+      <y>297</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>L2 Norm</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Histograms</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>pHash</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QDoubleSpinBox" name="pauseDoubleSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>425</y>
+      <width>64</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <double>999999999.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>10.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="custompausetimesCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>435</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Custom pause times</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="customthresholdsCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>390</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Custom thresholds</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="comparisonmethodLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>300</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Comparison Method</string>
+    </property>
+   </widget>
    <zorder>splitimagefolderLabel</zorder>
    <zorder>splitimagefolderLineEdit</zorder>
    <zorder>browseButton</zorder>
-   <zorder>positionLabel</zorder>
+   <zorder>xLabel</zorder>
    <zorder>liveimageCheckBox</zorder>
-   <zorder>positionUpButton</zorder>
-   <zorder>positionDownButton</zorder>
-   <zorder>positionLeftButton</zorder>
-   <zorder>positionRightButton</zorder>
    <zorder>selectregionButton</zorder>
    <zorder>similaritythresholdLabel</zorder>
    <zorder>similaritythresholdDoubleSpinBox</zorder>
@@ -1019,7 +1105,6 @@
    <zorder>undosplitButton</zorder>
    <zorder>skipsplitButton</zorder>
    <zorder>pauseLabel</zorder>
-   <zorder>pauseSpinBox</zorder>
    <zorder>checkfpsButton</zorder>
    <zorder>fpsLabel</zorder>
    <zorder>showlivesimilarityCheckBox</zorder>
@@ -1062,6 +1147,14 @@
    <zorder>fpslimitSpinBox</zorder>
    <zorder>currentsplitimagefileLabel</zorder>
    <zorder>takescreenshotButton</zorder>
+   <zorder>xSpinBox</zorder>
+   <zorder>ySpinBox</zorder>
+   <zorder>yLabel</zorder>
+   <zorder>comparisonmethodComboBox</zorder>
+   <zorder>pauseDoubleSpinBox</zorder>
+   <zorder>custompausetimesCheckBox</zorder>
+   <zorder>customthresholdsCheckBox</zorder>
+   <zorder>comparisonmethodLabel</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

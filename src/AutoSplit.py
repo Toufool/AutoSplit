@@ -1,20 +1,20 @@
-import design
-import about
+from PyQt4 import QtGui, QtCore, QtTest
 import sys
 import os
-from PyQt4 import QtGui, QtCore, QtTest
-import win32con
 import win32gui
-import win32ui
 import cv2
 import time
 import ctypes.wintypes
 import ctypes
-import numpy as np
 import keyboard
 import threading
 import pickle
 
+import design
+import about
+import compare
+import capture_windows
+import split_parser
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     myappid = u'mycompany.myproduct.subproduct.version'
@@ -38,9 +38,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.skipsplitButton.setEnabled(False)
         self.resetButton.setEnabled(False)
 
-        # set hwnd (the capture region window) to 0 initially to catch if user hasn't set a region yet
-        self.hwnd = 0
-
         # resize to these width and height so that FPS performance increases
         self.RESIZE_WIDTH = 320
         self.RESIZE_HEIGHT = 240
@@ -51,10 +48,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # Connecting button clicks to functions
         self.browseButton.clicked.connect(self.browse)
         self.selectregionButton.clicked.connect(self.selectRegion)
-        self.positionUpButton.clicked.connect(self.positionUp)
-        self.positionRightButton.clicked.connect(self.positionRight)
-        self.positionDownButton.clicked.connect(self.positionDown)
-        self.positionLeftButton.clicked.connect(self.positionLeft)
         self.takescreenshotButton.clicked.connect(self.takeScreenshot)
         self.startautosplitterButton.clicked.connect(self.autoSplitter)
         self.checkfpsButton.clicked.connect(self.checkFPS)
@@ -66,7 +59,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
         self.setundosplithotkeyButton.clicked.connect(self.setUndoSplitHotkey)
 
-        # update height and width when changing the value of these spinbox's
+        # update x, y, width, and height when changing the value of these spinbox's are changed
+        self.xSpinBox.valueChanged.connect(self.updateX)
+        self.ySpinBox.valueChanged.connect(self.updateY)
         self.widthSpinBox.valueChanged.connect(self.updateWidth)
         self.heightSpinBox.valueChanged.connect(self.updateHeight)
 
@@ -80,16 +75,25 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.timerLiveImage = QtCore.QTimer()
         self.timerLiveImage.timeout.connect(self.liveImageFunction)
 
+        # Default Settings for the region capture
+        self.hwnd = 0
+        self.rect = ctypes.wintypes.RECT()
+
         # try to load settings from when user last closed the window
         try:
             with open('settings.pkl', 'rb') as f:
-                self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key, self.reset_key, self.skip_split_key, self.undo_split_key = pickle.load(
-                    f)
+                [self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x1, self.y1, self.width, self.height, self.hwnd_title] = pickle.load(f)
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-            self.pauseSpinBox.setValue(self.pause)
+            self.pauseDoubleSpinBox.setValue(self.pause)
             self.fpslimitSpinBox.setValue(self.fps_limit)
+            self.xSpinBox.setValue(self.x1)
+            self.ySpinBox.setValue(self.y1)
+            self.widthSpinBox.setValue(self.width)
+            self.heightSpinBox.setValue(self.height)
+            self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
 
             # try to set hotkeys from when user last closed the window
             try:
@@ -123,7 +127,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         except IOError:
             pass
-
     # FUNCTIONS
 
     def viewHelp(self):
@@ -147,43 +150,63 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.splitimagefolderLineEdit.setText(self.split_image_directory)
 
     def selectRegion(self):
-        # call screen region widget
-        self.SelectRegionWidget = SelectRegionWidget()
+        # Create a screen selector widget
+        selector = SelectRegionWidget()
 
-        # wait until height and width change before we continue the function
-        while self.SelectRegionWidget.height == -1 and self.SelectRegionWidget.width == -1:
+        # Need to wait until the user has selected a region using the widget before moving on with
+        # selecting the window settings
+        while selector.height == -1 and selector.width == -1:
             QtTest.QTest.qWait(1)
 
         # return an error if width or height are zero.
-        if self.SelectRegionWidget.width == 0 or self.SelectRegionWidget.height == 0:
+        if selector.width == 0 or selector.height == 0:
             self.regionSizeError()
             return
 
-        # change width and height spinbox values
-        self.widthSpinBox.setValue(self.SelectRegionWidget.width)
-        self.heightSpinBox.setValue(self.SelectRegionWidget.height)
+        # Width and Height of the spinBox
+        self.widthSpinBox.setValue(selector.width)
+        self.heightSpinBox.setValue(selector.height)
 
-        # update x1,y1,width,height values
-        self.x1 = self.SelectRegionWidget.x1
-        self.y1 = self.SelectRegionWidget.y1
-        self.width = self.SelectRegionWidget.width
-        self.height = self.SelectRegionWidget.height
+        # Grab the window handle from the coordinates selected by the widget
+        self.hwnd = win32gui.WindowFromPoint((selector.left, selector.top))
+        
+        # Want to pull the parent window from the window handle
+        # By using GetAncestor we are able to get the parent window instead
+        # of the owner window.
+        GetAncestor = ctypes.windll.user32.GetAncestor
+        GA_ROOT = 2
 
-        # update selected window using the top left coordinate of the region that the user selects
-        self.hwnd = win32gui.WindowFromPoint((self.x1, self.y1))
         while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
-            self.hwnd = ctypes.windll.user32.GetAncestor(self.hwnd, win32con.GA_ROOT)
+            self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
+
+        # Convert the Desktop Coordinates to Window Coordinates
         DwmGetWindowAttribute = ctypes.windll.dwmapi.DwmGetWindowAttribute
         DWMWA_EXTENDED_FRAME_BOUNDS = 9
-        rect = ctypes.wintypes.RECT()
+        
+        # Pull the window's coordinates relative to desktop into rect
         DwmGetWindowAttribute(self.hwnd,
-                              ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-                              ctypes.byref(rect),
-                              ctypes.sizeof(rect)
-                              )
+                      ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
+                      ctypes.byref(self.rect),
+                      ctypes.sizeof(self.rect)
+                      )
 
-        self.top_old = rect.top - (rect.top - win32gui.GetWindowRect(self.hwnd)[1])
-        self.left_old = rect.left - (rect.left - win32gui.GetWindowRect(self.hwnd)[0])
+        # On Windows 10 the windows have offsets due to invisible pixels not accounted for in DwmGetWindowAttribute
+        #TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
+        # Research needs to be done to figure out why it was used it over win32gui in the first place...
+        # I have a feeling it was due to a misunderstanding and not getting the correct parent window before.
+        offset_left = self.rect.left - win32gui.GetWindowRect(self.hwnd)[0]
+        offset_top  = self.rect.top - win32gui.GetWindowRect(self.hwnd)[1]
+        
+        self.rect.left = selector.left - (self.rect.left - offset_left)
+        self.rect.top = selector.top - (self.rect.top - offset_top)
+        self.rect.right = self.rect.left + selector.width
+        self.rect.bottom = self.rect.top + selector.height
+
+        self.xSpinBox.setValue(self.rect.left)
+        self.ySpinBox.setValue(self.rect.top)
+
+        # Delete that widget since it is no longer used from here on out
+        del selector
 
         # check if live image needs to be turned on or just set a single image
         self.checkLiveImage()
@@ -202,84 +225,40 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.timerLiveImage.stop()
                 return
             ctypes.windll.user32.SetProcessDPIAware()
-            DwmGetWindowAttribute = ctypes.windll.dwmapi.DwmGetWindowAttribute
-            DWMWA_EXTENDED_FRAME_BOUNDS = 9
-            rect = ctypes.wintypes.RECT()
-            DwmGetWindowAttribute(self.hwnd,
-                                  ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-                                  ctypes.byref(rect),
-                                  ctypes.sizeof(rect)
-                                  )
-            self.top = self.y1 - self.top_old
-            self.left = self.x1 - self.left_old
 
-            wDC = win32gui.GetWindowDC(self.hwnd)
-            dcObj = win32ui.CreateDCFromHandle(wDC)
-            cDC = dcObj.CreateCompatibleDC()
-            bmp = win32ui.CreateBitmap()
-            bmp.CreateCompatibleBitmap(dcObj, self.width, self.height)
-            cDC.SelectObject(bmp)
-            cDC.BitBlt((0, 0), (self.width, self.height), dcObj, (self.left, self.top), win32con.SRCCOPY)
-
-            img = bmp.GetBitmapBits(True)
-            img = np.frombuffer(img, dtype='uint8')
-            img.shape = (self.height, self.width, 4)
-
-            img = cv2.resize(img, (240, 180))  # Resize to match the label size
-
-            img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
+            capture = capture_windows.capture_region(self.hwnd, self.rect)
+            capture = cv2.resize(capture, (240, 180))
+            capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             # Convert to set it on the label
-            qImg = QtGui.QImage(img, img.shape[1], img.shape[0], img.shape[1] * 3, QtGui.QImage.Format_RGB888)
+            qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3, QtGui.QImage.Format_RGB888)
             pix = QtGui.QPixmap(qImg)
             self.liveImage.setPixmap(pix)
 
-            # Cleanup
-            dcObj.DeleteDC()
-            cDC.DeleteDC()
-            win32gui.ReleaseDC(self.hwnd, wDC)
-            win32gui.DeleteObject(bmp.GetHandle())
-
         except AttributeError:
             pass
 
-    # position arrow buttons point to these functions
-    def positionUp(self):
+    # update x, y, width, height when spinbox values are changed
+    def updateX(self):
         try:
-            self.y1 = self.y1 - 1
-            self.checkLiveImage()
-        # pass if no region is selected
-        except AttributeError:
-            pass
-
-    def positionRight(self):
-        try:
-            self.x1 = self.x1 + 1
+            self.rect.left = self.xSpinBox.value()
             self.checkLiveImage()
         except AttributeError:
             pass
 
-    def positionDown(self):
+    def updateY(self):
         try:
-            self.y1 = self.y1 + 1
+            self.rect.top = self.ySpinBox.value()
             self.checkLiveImage()
         except AttributeError:
             pass
 
-    def positionLeft(self):
-        try:
-            self.x1 = self.x1 - 1
-            self.checkLiveImage()
-        except AttributeError:
-            pass
-
-    # update width or height when changing the value of the spinbox's
     def updateWidth(self):
-        self.width = self.widthSpinBox.value()
+        self.rect.right = self.rect.left + self.widthSpinBox.value()
         self.checkLiveImage()
 
     def updateHeight(self):
-        self.height = self.heightSpinBox.value()
+        self.rect.bottom = self.rect.top + self.heightSpinBox.value()
         self.checkLiveImage()
 
     # update current split image. needed this to avoid updating it through the hotkey thread.
@@ -305,31 +284,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             i = i + 1
 
         # grab screenshot of capture region
-        wDC = win32gui.GetWindowDC(self.hwnd)
-        dcObj = win32ui.CreateDCFromHandle(wDC)
-        cDC = dcObj.CreateCompatibleDC()
-        bmp = win32ui.CreateBitmap()
-        bmp.CreateCompatibleBitmap(dcObj, self.width, self.height)
-        cDC.SelectObject(bmp)
-        cDC.BitBlt((0, 0), (self.width, self.height), dcObj, (self.left, self.top), win32con.SRCCOPY)
-
-        sct_img = bmp.GetBitmapBits(True)
-        sct_img = np.frombuffer(sct_img, dtype='uint8')
-        sct_img.shape = (self.height, self.width, 4)
-
-        # Although we aren't displaying the image, transparency can cause screenshots to be incorrect
-        # so by converting to RGB, we just completely ditch the alpha channel
-        sct_img = cv2.cvtColor(sct_img, cv2.COLOR_BGRA2RGB)
+        capture = capture_windows.capture_region(self.hwnd, self.rect)
+        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
         # save and open image
-        cv2.imwrite(self.split_image_directory + take_screenshot_file + '.png', sct_img)
+        cv2.imwrite(self.split_image_directory + take_screenshot_file + '.png', capture)
         os.startfile(self.split_image_directory + take_screenshot_file + '.png')
-
-        # Cleanup
-        dcObj.DeleteDC()
-        cDC.DeleteDC()
-        win32gui.ReleaseDC(self.hwnd, wDC)
-        win32gui.DeleteObject(bmp.GetHandle())
 
     # HOTKEYS. I'll comment on one, and the rest are just variations in variables.
     def setSplitHotkey(self):
@@ -545,33 +505,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         count = 0
         t0 = time.time()
         while count < 100:
-            wDC = win32gui.GetWindowDC(self.hwnd)
-            dcObj = win32ui.CreateDCFromHandle(wDC)
-            cDC = dcObj.CreateCompatibleDC()
-            bmp = win32ui.CreateBitmap()
-            bmp.CreateCompatibleBitmap(dcObj, self.width, self.height)
-            cDC.SelectObject(bmp)
-            cDC.BitBlt((0, 0), (self.width, self.height), dcObj, (self.left, self.top), win32con.SRCCOPY)
 
-            sct_img = bmp.GetBitmapBits(True)
-            sct_img = np.frombuffer(sct_img, dtype='uint8')
-            sct_img.shape = (self.height, self.width, 4)
-            sct_img = cv2.resize(sct_img, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-            sct_img = cv2.cvtColor(sct_img, cv2.COLOR_BGRA2RGB)
+            capture = capture_windows.capture_region(self.hwnd, self.rect)
+            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+            capture  = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
-            # Cleanup
-            dcObj.DeleteDC()
-            cDC.DeleteDC()
-            win32gui.ReleaseDC(self.hwnd, wDC)
-            win32gui.DeleteObject(bmp.GetHandle())
-
-            # comparison
-            error = cv2.norm(split_image, sct_img, cv2.NORM_L2)
-            max_error = 255 * 255
-            for dimension in split_image.shape:
-                max_error *= dimension
-            max_error = max_error ** 0.5
-            similarity = 1 - (error / max_error)
+            if self.comparisonmethodComboBox.currentIndex() == 0:
+                similarity = compare.compare_l2_norm(split_image, capture)
+            elif self.comparisonmethodComboBox.currentIndex() == 1:
+                similarity = compare.compare_histograms(split_image, capture)
+            elif self.comparisonmethodComboBox.currentIndex() == 2:
+                similarity = compare.compare_phash(split_image, capture)
 
             count = count + 1
 
@@ -615,6 +559,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
+
+        # If the unique parameters are selected, go ahead and set the spinboxes to those values
+        if self.custompausetimesCheckBox.isChecked():
+            self.pauseDoubleSpinBox.setValue(split_parser.pause_from_filename(split_image_file))
+
+        if self.customthresholdsCheckBox.isChecked():
+            self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+
         # set initial similarity and highest similarity to 0 and 0.001 respectively then return
         # to autosplitter comparison loop.
         self.similarity = 0
@@ -655,6 +607,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
+        # If the unique parameters are selected, go ahead and set the spinboxes to those values
+        if self.custompausetimesCheckBox.isChecked():
+            self.pauseDoubleSpinBox.setValue(split_parser.pause_from_filename(split_image_file))
+
+        if self.customthresholdsCheckBox.isChecked():
+            self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+        
         self.similarity = 0
         self.highest_similarity = 0.001
         
@@ -683,13 +642,26 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
-        # checks to make sure every file in the split image folder can be opened by opencv
+
+        # Make sure that each of the images follows the guidelines for correct format
+        # according to all of the settings selected by the user.
         for image in os.listdir(self.split_image_directory):
+
+            # Check to make sure the file is actually an image format that can be opened
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                 self.imageTypeError()
                 return
-            else:
-                pass
+
+            if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
+                # Error, this file doesn't have a pause, but the checkbox was
+                # selected for unique pause times
+                return
+
+            if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
+                # Error, this file doesn't have a threshold, but the checkbox
+                # was selected for unique thresholds
+                return
+            
         if self.splitLineEdit.text() == '':
             self.splitHotkeyError()
             return
@@ -711,8 +683,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # First while loop: stays in this loop until all of the split images have been split
         while self.split_image_number < self.number_of_split_images:
+            
             # open split image, resize, set to current split image
             split_image_file = os.listdir(self.split_image_directory)[0 + self.split_image_number]
+            
             split_image_path = self.split_image_directory + split_image_file
             split_image = cv2.imread(split_image_path, cv2.IMREAD_COLOR)
             split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
@@ -724,6 +698,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.updateCurrentSplitImage.emit(qImg)
             self.currentsplitimagefileLabel.setText(split_image_file)
 
+            # If the unique parameters are selected, go ahead and set the spinboxes to those values
+            if self.custompausetimesCheckBox.isChecked():
+                self.pauseDoubleSpinBox.setValue(split_parser.pause_from_filename(split_image_file))
+
+            if self.customthresholdsCheckBox.isChecked():
+                self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+                                                           
             self.similarity = 0
             self.highest_similarity = 0.001
 
@@ -751,30 +732,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     return
 
                 # grab screenshot of capture region
-                wDC = win32gui.GetWindowDC(self.hwnd)
-                dcObj = win32ui.CreateDCFromHandle(wDC)
-                cDC = dcObj.CreateCompatibleDC()
-                bmp = win32ui.CreateBitmap()
-                bmp.CreateCompatibleBitmap(dcObj, self.width, self.height)
-                cDC.SelectObject(bmp)
-                cDC.BitBlt((0, 0), (self.width, self.height), dcObj, (self.left, self.top), win32con.SRCCOPY)
-
-                self.sct_img = bmp.GetBitmapBits(True)
-                self.sct_img = np.frombuffer(self.sct_img, dtype='uint8')
-                self.sct_img.shape = (self.height, self.width, 4)
-                self.sct_img = cv2.resize(self.sct_img, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-                self.sct_img = cv2.cvtColor(self.sct_img, cv2.COLOR_BGRA2RGB)
-
-                # Cleanup
-                dcObj.DeleteDC()
-                cDC.DeleteDC()
-                win32gui.ReleaseDC(self.hwnd, wDC)
-                win32gui.DeleteObject(bmp.GetHandle())
+                capture = capture_windows.capture_region(self.hwnd, self.rect)
+                capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+                capture  = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
                 # calculate similarity
-                error = cv2.norm(self.split_image, self.sct_img, cv2.NORM_L2)
-                max_error = (self.split_image.size ** 0.5) * 255
-                self.similarity = 1 - (error / max_error)
+                if self.comparisonmethodComboBox.currentIndex() == 0:
+                    self.similarity = compare.compare_l2_norm(self.split_image, capture)
+                elif self.comparisonmethodComboBox.currentIndex() == 1:
+                    self.similarity = compare.compare_histograms(self.split_image, capture)
+                elif self.comparisonmethodComboBox.currentIndex() == 2:
+                    self.similarity = compare.compare_phash(self.split_image, capture)
 
                 # show live similarity if the checkbox is checked
                 if self.showlivesimilarityCheckBox.isChecked():
@@ -844,7 +812,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # This should probably eventually be a signal... but it works
                 start = time.time()
-                while time.time() - start < self.pauseSpinBox.value():
+                while time.time() - start < self.pauseDoubleSpinBox.value():
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
@@ -923,17 +891,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # save settings to .pkl file.
         self.split_image_directory = str(self.splitimagefolderLineEdit.text())
         self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
-        self.pause = self.pauseSpinBox.value()
+        self.pause = self.pauseDoubleSpinBox.value()
         self.fps_limit = self.fpslimitSpinBox.value()
         self.split_key = str(self.splitLineEdit.text())
         self.reset_key = str(self.resetLineEdit.text())
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
+        self.hwnd_title = win32gui.GetWindowText(self.hwnd)
 
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key], f)
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x1, self.y1, self.width, self.height, self.hwnd_title], f)
         sys.exit()
 
 
@@ -987,13 +956,13 @@ class SelectRegionWidget(QtGui.QWidget):
         # The coordinates are pulled relative to the top left of the set geometry,
         # so the added virtual screen offsets convert them back to the virtual
         # screen coordinates
-        self.x1 = min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.y1 = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
-        self.x2 = max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.y2 = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
+        self.left = min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
+        self.top = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
+        self.right = max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
+        self.bottom = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
 
-        self.height = self.y2 - self.y1
-        self.width = self.x2 - self.x1
+        self.height = self.bottom - self.top
+        self.width = self.right - self.left
 
 
 # About Window
