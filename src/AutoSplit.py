@@ -524,6 +524,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.customthresholdsCheckBox.isChecked():
             self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
 
+        self.flags = split_parser.flags_from_filename(split_image_file)
+
         # set initial similarity and highest similarity to 0 and 0.001 respectively then return
         # to autosplitter comparison loop.
         self.similarity = 0
@@ -570,6 +572,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         if self.customthresholdsCheckBox.isChecked():
             self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+
+        self.flags = split_parser.flags_from_filename(split_image_file)
         
         self.similarity = 0
         self.highest_similarity = 0.001
@@ -666,6 +670,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             if self.customthresholdsCheckBox.isChecked():
                 self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+
+            self.flags = split_parser.flags_from_filename(split_image_file)
                                                            
             self.similarity = 0
             self.highest_similarity = 0.001
@@ -743,8 +749,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # comes here when threshold gets met
 
-            # send the split key
-            keyboard.send(str(self.splitLineEdit.text()))
+            # We need to make sure that this isn't a dummy split before sending
+            # the key press.
+            if (self.flags & 0x01 == 0x01):
+                pass
+            else:
+                keyboard.send(str(self.splitLineEdit.text()))
 
             # add one to the split image number
             self.split_image_number = self.split_image_number + 1

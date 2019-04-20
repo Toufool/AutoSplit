@@ -44,10 +44,10 @@ def pause_from_filename(filename):
 
 def flags_from_filename(filename):
     """
-    Retrieve the flags from the filename, if there are no flags then None is returned
+    Retrieve the flags from the filename, if there are no flags then 0 is returned
 
     @param filename: String containing the file's name
-    @return: The flags as a string, if not then None
+    @return: The flags as an integer, if invalid flags are found it returns 0
     """
 
     """
@@ -60,22 +60,31 @@ def flags_from_filename(filename):
     # Check to make sure there are flags between curly braces
     # of the filename
     try:
-        #TODO: If there are no closing brackets this could catch the rest of the filename
-        # that can catch flags in the filename extension or any other substrings within
-        # the file's name.
-        flags = filename.split('{', 1)[1].split('}')[0]
+        flags_str = filename.split('{', 1)[1].split('}')[0]
     except:
-        return None
-
-    """
-    TODO: Perhaps instead of sending a string, which can send flags that don't exist
-    maybe we can convert them to an integer for easier use. Any unxpected characters
-    can cause None to return. Also, this would help prevent conflicting flags, for
-    example you can't have a dummy split also be a pause split.
+        return 0
 
     DUMMY_FLAG = 1 << 0
     MASK_FLAG = 1 << 1
     PAUSE_FLAG = 1 << 2
-    """
 
+    flags = 0x00
+    
+    for c in flags_str:
+        if c.upper() == 'D':
+            flags |= DUMMY_FLAG
+        elif c.upper() == 'M':
+            flags |= MASK_FLAG
+        elif c.upper() == 'P':
+            flags |= PAUSE_FLAG
+        else:
+            # An invalid flag was caught, this filename was written incorrectly
+            # return 0. We don't want to interpret any misleading filenames
+            return 0
+
+    # Check for any conflicting flags that were set
+    # For instance, we can't have a dummy split also pause
+    if (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & PAUSE_FLAG == PAUSE_FLAG):
+        return 0
+    
     return flags
