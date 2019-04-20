@@ -79,54 +79,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.hwnd = 0
         self.rect = ctypes.wintypes.RECT()
 
-        # try to load settings from when user last closed the window
-        try:
-            with open('settings.pkl', 'rb') as f:
-                [self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x1, self.y1, self.width, self.height, self.hwnd_title] = pickle.load(f)
-            self.split_image_directory = str(self.split_image_directory)
-            self.splitimagefolderLineEdit.setText(self.split_image_directory)
-            self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-            self.pauseDoubleSpinBox.setValue(self.pause)
-            self.fpslimitSpinBox.setValue(self.fps_limit)
-            self.xSpinBox.setValue(self.x1)
-            self.ySpinBox.setValue(self.y1)
-            self.widthSpinBox.setValue(self.width)
-            self.heightSpinBox.setValue(self.height)
-            self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
+        # try to load settings
+        self.loadSettings()
 
-            # try to set hotkeys from when user last closed the window
-            try:
-                self.splitLineEdit.setText(str(self.split_key))
-                self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-                self.old_split_key = self.split_key
-            # pass if the key is an empty string (hotkey was never set)
-            except ValueError:
-                pass
-
-            try:
-                self.resetLineEdit.setText(str(self.reset_key))
-                self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.reset)
-                self.old_reset_key = self.reset_key
-            except ValueError:
-                pass
-
-            try:
-                self.skipsplitLineEdit.setText(str(self.skip_split_key))
-                self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.skipSplit)
-                self.old_skip_split_key = self.skip_split_key
-            except ValueError:
-                pass
-
-            try:
-                self.undosplitLineEdit.setText(str(self.undo_split_key))
-                self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.undoSplit)
-                self.old_undo_split_key = self.undo_split_key
-            except ValueError:
-                pass
-
-        except IOError:
-            pass
     # FUNCTIONS
 
     def viewHelp(self):
@@ -242,6 +197,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def updateX(self):
         try:
             self.rect.left = self.xSpinBox.value()
+            self.rect.right = self.rect.left + self.widthSpinBox.value()
             self.checkLiveImage()
         except AttributeError:
             pass
@@ -249,6 +205,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def updateY(self):
         try:
             self.rect.top = self.ySpinBox.value()
+            self.rect.bottom = self.rect.top + self.heightSpinBox.value()
             self.checkLiveImage()
         except AttributeError:
             pass
@@ -501,7 +458,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
         split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
-        # run 10 iterations of screenshotting capture region + comparison.
+        # run 100 iterations of screenshotting capture region + comparison.
         count = 0
         t0 = time.time()
         while count < 100:
@@ -655,11 +612,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
+                self.customPauseError()
                 return
 
             if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
                 # Error, this file doesn't have a threshold, but the checkbox
                 # was selected for unique thresholds
+                self.customThresholdError()
                 return
             
         if self.splitLineEdit.text() == '':
@@ -677,6 +636,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(False)
         self.setskipsplithotkeyButton.setEnabled(False)
         self.setundosplithotkeyButton.setEnabled(False)
+        self.custompausetimesCheckBox.setEnabled(False)
+        self.customthresholdsCheckBox.setEnabled(False)
+
 
         self.split_image_number = 0
         self.number_of_split_images = len(os.listdir(self.split_image_directory))
@@ -729,12 +691,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.setresethotkeyButton.setEnabled(True)
                     self.setskipsplithotkeyButton.setEnabled(True)
                     self.setundosplithotkeyButton.setEnabled(True)
+                    self.custompausetimesCheckBox.setEnabled(True)
+                    self.customthresholdsCheckBox.setEnabled(True)
                     return
 
                 # grab screenshot of capture region
                 capture = capture_windows.capture_region(self.hwnd, self.rect)
                 capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-                capture  = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
+                capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
                 # calculate similarity
                 if self.comparisonmethodComboBox.currentIndex() == 0:
@@ -811,8 +775,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # This should probably eventually be a signal... but it works
-                start = time.time()
-                while time.time() - start < self.pauseDoubleSpinBox.value():
+                pause_start_time = time.time()
+                while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
@@ -830,6 +794,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.setresethotkeyButton.setEnabled(True)
                         self.setskipsplithotkeyButton.setEnabled(True)
                         self.setundosplithotkeyButton.setEnabled(True)
+                        self.custompausetimesCheckBox.setEnabled(True)
+                        self.customthresholdsCheckBox.setEnabled(True)
                         return
                     # check for skip/undo split:
                     if self.split_image_number != pause_split_image_number:
@@ -852,9 +818,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(True)
         self.setskipsplithotkeyButton.setEnabled(True)
         self.setundosplithotkeyButton.setEnabled(True)
+        self.custompausetimesCheckBox.setEnabled(True)
+        self.customthresholdsCheckBox.setEnabled(True)
         QtGui.QApplication.processEvents()
 
-        # Error messages
+    # Error messages
 
     def splitImageDirectoryError(self):
         msgBox = QtGui.QMessageBox()
@@ -886,11 +854,27 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("No split hotkey has been set.")
         msgBox.exec_()
 
-    # exit safely when closing the window
-    def closeEvent(self, app):
-        # save settings to .pkl file.
+    def customThresholdError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Invalid custom threshold detected.")
+        msgBox.exec_()
+
+    def customPauseError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Invalid custom pause time detected.")
+        msgBox.exec_()
+
+    def saveSettings(self):
+        #get values to be able to save settings
+        self.x = self.xSpinBox.value()
+        self.y = self.ySpinBox.value()
+        self.width = self.widthSpinBox.value()
+        self.height = self.heightSpinBox.value()
         self.split_image_directory = str(self.splitimagefolderLineEdit.text())
         self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
+        self.comparison_index = self.comparisonmethodComboBox.currentIndex()
         self.pause = self.pauseDoubleSpinBox.value()
         self.fps_limit = self.fpslimitSpinBox.value()
         self.split_key = str(self.splitLineEdit.text())
@@ -899,12 +883,89 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.undo_split_key = str(self.undosplitLineEdit.text())
         self.hwnd_title = win32gui.GetWindowText(self.hwnd)
 
+        if self.custompausetimesCheckBox.isChecked():
+            self.custom_pause_times_setting = 1
+        else:
+            self.custom_pause_times_setting = 0
+
+        if self.customthresholdsCheckBox.isChecked():
+            self.custom_thresholds_setting = 1
+        else:
+            self.custom_thresholds_setting = 0
+
+
+        #save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
-                [self.split_image_directory, self.similarity_threshold, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x1, self.y1, self.width, self.height, self.hwnd_title], f)
-        sys.exit()
+                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting], f)
 
+    def loadSettings(self):
+        try:
+            with open('settings.pkl', 'rb') as f:
+                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
+                 self.custom_thresholds_setting, self.custom_pause_times_setting] = pickle.load(f)
+            self.split_image_directory = str(self.split_image_directory)
+            self.splitimagefolderLineEdit.setText(self.split_image_directory)
+            self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
+            self.pauseDoubleSpinBox.setValue(self.pause)
+            self.fpslimitSpinBox.setValue(self.fps_limit)
+            self.xSpinBox.setValue(self.x)
+            self.ySpinBox.setValue(self.y)
+            self.widthSpinBox.setValue(self.width)
+            self.heightSpinBox.setValue(self.height)
+            self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
+            self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
+
+            # set custom checkbox's accordingly
+            if self.custom_pause_times_setting == 1:
+                self.custompausetimesCheckBox.setChecked(True)
+            else:
+                self.custompausetimesCheckBox.setChecked(False)
+
+            if self.custom_thresholds_setting == 1:
+                self.customthresholdsCheckBox.setChecked(True)
+            else:
+                self.customthresholdsCheckBox.setChecked(False)
+
+            # try to set hotkeys from when user last closed the window
+            try:
+                self.splitLineEdit.setText(str(self.split_key))
+                self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
+                self.old_split_key = self.split_key
+            # pass if the key is an empty string (hotkey was never set)
+            except ValueError:
+                pass
+
+            try:
+                self.resetLineEdit.setText(str(self.reset_key))
+                self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.reset)
+                self.old_reset_key = self.reset_key
+            except ValueError:
+                pass
+
+            try:
+                self.skipsplitLineEdit.setText(str(self.skip_split_key))
+                self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.skipSplit)
+                self.old_skip_split_key = self.skip_split_key
+            except ValueError:
+                pass
+
+            try:
+                self.undosplitLineEdit.setText(str(self.undo_split_key))
+                self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.undoSplit)
+                self.old_undo_split_key = self.undo_split_key
+            except ValueError:
+                pass
+
+        except IOError:
+            pass
+    # exit safely when closing the window
+    def closeEvent(self, app):
+        self.saveSettings()
+        sys.exit()
 
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
@@ -986,3 +1047,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
