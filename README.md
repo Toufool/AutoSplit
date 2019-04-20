@@ -20,18 +20,26 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## SPLIT IMAGE FOLDER
 - Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
-- Name split images alphanumerically in the order you want them to split - an easy way to do this is name the files a_splitname.png, b_splitname.png, etc.
-- Be mindful of false positives. For example, if you use a black screen for a split image, make sure a black screen will not show up before you want to split (for example, in Super Mario 64, a black loading screen appears after a star, but will also appear if you die).
+- Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png...`
+- Custom split image settings are handled in the filename. See how [here](https://github.com/Toufool/Auto-Split#custom-split-image-settings)
 
 ## CAPTURE REGION
 - Click "Select Region"
 - Click and drag to form a rectangle over the region you want to capture.
-- Adjust the position, height, and width of the capture region manually to make adjustments as needed.
+- Adjust the x, y, width, and height of the capture region manually to make adjustments as needed.
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change.
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
 - You can save a screenshot of the capture region to your split image folder using the Take Screenshot button.
 
+## Max FPS
+  - Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+
 ## OPTIONS
+
+### Comparison Method
+- There are three comparison methods to choose from: L2 Norm, Histograms, and pHash.
+- v1.0.0 used L2 Norm.
+
 ### Show Live Similarity
 - Displays the live similarity between the capture region and your split image. This number is between 0 and 1, with 1 being a perfect match.
 
@@ -39,22 +47,27 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Shows the highest similarity between the capture region and current split image.
 
 ### Similarity Threshold
-- When the live similarity goes above this value, the program hits your split hotkey and moves to the next split image. A good starting point is 0.9.
-- Setting this value to 1.0 is useful for testing purposes.
+- When the live similarity goes above this value, the program hits your split hotkey and moves to the next split image.
 
 ### Pause Time
 - Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
 
-### Check Max FPS
-- Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+### Custom Split Image Settings
+- Each split image can have different thresholds, pause times, and can be flagged.
+- These settings are handled in the image's filename. 
+- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked.
+- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked.
+- Flags are placed between curly brackets `{}` in the filename. Current available flags:
+  - {d} dummy split. When matched, it moves to the next image without hitting your split hokey
+- Filename example: `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
 
 ### Timer Global Hotkeys
-- Click "Set Hotkey" on each option and make sure that they match up to what your hotkeys are in your preferred speedrun timer. These are global hotkeys and act the same as they do in livesplit, wsplit, etc. They will work even when the program is minimized.
+- Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
 - Make sure that Global Hotkeys are enabled in your speedrun timer.
 - Skip and Undo Split has a 0.1 second delay for double-tap prevention.
+- All of these actions can also be handled by their corresponding buttons.
 
 ## Known Limitations
-- There are currently no custom settings for each split image (threshold, pause time, sub-regions etc.).
 - Transparency in an image is not seen as a mask or "nothing." It gets transformed into solid white.
 - Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.
