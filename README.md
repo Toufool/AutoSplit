@@ -20,7 +20,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## SPLIT IMAGE FOLDER
 - Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
-- Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png...`
+- Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`... 
 - Custom split image settings are handled in the filename. See how [here](https://github.com/Toufool/Auto-Split#custom-split-image-settings)
 
 ## CAPTURE REGION
@@ -55,10 +55,10 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Custom Split Image Settings
 - Each split image can have different thresholds, pause times, and can be flagged.
 - These settings are handled in the image's filename. 
-- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked.
-- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked.
+- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked
+- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
 - Flags are placed between curly brackets `{}` in the filename. Current available flags:
-  - {d} dummy split. When matched, it moves to the next image without hitting your split hokey
+  - {d} dummy split. When matched, it moves to the next image without hitting your split hokey.
 - Filename example: `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
 
 ### Timer Global Hotkeys
