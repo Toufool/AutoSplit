@@ -57,6 +57,24 @@ def compare_l2_norm(source, capture):
 
     return 1 - (error/max_error)
 
+def compare_l2_norm_masked(source, capture, mask):
+    """
+    Compares two images by calculating the L2 Error (square-root
+    of sum of squared error)
+
+    @param source: Image of any given shape
+    @param capture: Image matching the dimensions of the source
+    @param mask: An image matching the dimensions of the source, but 1 channel grayscale
+    @return: The similarity between the images as a number 0 to 1.
+    """
+
+    error = cv2.norm(source, capture, cv2.NORM_L2, mask)
+
+    # The L2 Error is summed across all pixels, so this normalizes
+    max_error = max_error = (numpy.count_nonzero(mask) ** 0.5) * 255
+
+    return 1 - (error / max_error)
+
 def compare_template(source, capture):
     """
     Checks if the source is located within the capture by using
@@ -105,6 +123,31 @@ def compare_phash(source, capture):
     @return: The similarity between the hashes of the image as a number 0 to 1.
     """
 
+    source = Image.fromarray(source)
+    capture = Image.fromarray(capture)
+
+    source_hash = imagehash.phash(source)
+    capture_hash = imagehash.phash(capture)
+
+    return 1 - ((source_hash - capture_hash)/64.0)
+
+def compare_phash_masked(source, capture, mask):
+    """
+    Compares the pHash of the two given images and returns the similarity between
+    the two.
+    
+    @param source: Image of any given shape as a numpy array
+    @param capture: Image of any given shape as a numpy array
+    @param mask: An image matching the dimensions of the source, but 1 channel grayscale
+    @return: The similarity between the hashes of the image as a number 0 to 1.
+    """
+
+    # Since imagehash doesn't have any masking itself, bitwise_and will allow us
+    # to apply the mask to the source and capture before calculating the pHash for
+    # each of the images
+    source = cv2.bitwise_and(source, source, mask=mask)
+    capture = cv2.bitwise_and(capture, capture, mask=mask)
+    
     source = Image.fromarray(source)
     capture = Image.fromarray(capture)
 
