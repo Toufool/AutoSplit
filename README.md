@@ -38,7 +38,10 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Comparison Method
 - There are three comparison methods to choose from: L2 Norm, Histograms, and pHash.
-- v1.0.0 used L2 Norm.
+  - L2 Norm: This method finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
+  - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html)
+  - pHash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
+- Note: v1.0.0 used L2 Norm.
 
 ### Show Live Similarity
 - Displays the live similarity between the capture region and your split image. This number is between 0 and 1, with 1 being a perfect match.
@@ -57,7 +60,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - These settings are handled in the image's filename. 
 - Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked
 - Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
-- Flags are placed between curly brackets `{}` in the filename. Current available flags:
+- Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets `{}`. Current available flags:
   - {d} dummy split. When matched, it moves to the next image without hitting your split hokey.
 - Filename example: `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
 
