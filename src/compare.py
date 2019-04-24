@@ -54,7 +54,7 @@ def compare_l2_norm(source, capture):
     
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * 255
-
+    
     return 1 - (error/max_error)
 
 def compare_l2_norm_masked(source, capture, mask):
@@ -71,7 +71,7 @@ def compare_l2_norm_masked(source, capture, mask):
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = max_error = (numpy.count_nonzero(mask) ** 0.5) * 255
+    max_error = (3 * numpy.count_nonzero(mask) * 255 * 255) ** 0.5
 
     return 1 - (error / max_error)
 
@@ -144,7 +144,9 @@ def compare_phash_masked(source, capture, mask):
 
     # Since imagehash doesn't have any masking itself, bitwise_and will allow us
     # to apply the mask to the source and capture before calculating the pHash for
-    # each of the images
+    # each of the images. As a result of this, this function is not going to be very
+    # helpful for large masks as the images when shrinked down to 8x8 will mostly be
+    # the same
     source = cv2.bitwise_and(source, source, mask=mask)
     capture = cv2.bitwise_and(capture, capture, mask=mask)
     
