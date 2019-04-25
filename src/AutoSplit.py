@@ -671,7 +671,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # grab screenshot of capture region
                 capture = capture_windows.capture_region(self.hwnd, self.rect)
-                capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+                
+                # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
+                # threshold settings on versions below 1.2.0 aren't messed up
+                if (self.flags & 0x02 == 0x02):
+                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+                else:
+                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+                
+                # convert to BGR
                 capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
                 # calculate similarity
@@ -838,11 +846,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
-
         # if theres a mask flag, create a mask
         if (self.flags & 0x02 == 0x02):
+
+            # create mask based on resized, nearest neighbor interpolated split image
             self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
-            self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+            self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
             self.mask = cv2.inRange(self.split_image, lower, upper)
@@ -850,7 +859,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.split_image = cv2.cvtColor(self.split_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally
+        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
@@ -1090,12 +1099,11 @@ def main():
     app = QtGui.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon('icon.ico'))
     w = AutoSplit()
+    w.setWindowIcon(QtGui.QIcon('icon.ico'))
     w.show()
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
     main()
-
-
 
