@@ -62,6 +62,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.clicked.connect(self.setResetHotkey)
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
         self.setundosplithotkeyButton.clicked.connect(self.setUndoSplitHotkey)
+        self.alignregionButton.clicked.connect(self.alignRegion)
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -172,6 +173,87 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # check if live image needs to be turned on or just set a single image
         self.checkLiveImage()
+
+    def alignRegion(self):
+        # check to see if a region has been set
+        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+            self.regionError()
+            return
+
+        # This is the image used for aligning the capture region
+        # to the best fit for the user.
+        template_filename = str(QtGui.QFileDialog.getOpenFileName(self, "Select Reference Image", "", "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
+
+        # return if the user presses cancel
+        if template_filename == '':
+            return
+
+        template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
+
+        # shouldn't need this, but just for caution, throw a type error if file is not a valid image file
+        if template is None:
+            self.alignRegionImageTypeError()
+            return
+
+        # Obtaining the capture of a region which contains the
+        # subregion being searched for to align the image.
+        capture = capture_windows.capture_region(self.hwnd, self.rect)
+        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
+
+        # Obtain the best matching point for the template within the
+        # capture. This assumes that the template is actually smaller
+        # than the dimensions of the capture. Since we are using SQDIFF
+        # the best match will be the min_val which is located at min_loc.
+        # The best match found in the image, set everything to 0 by default
+        # so that way the first match will overwrite these values
+        best_match = 0.0
+        best_height = 0
+        best_width = 0
+        best_loc = (0, 0)
+
+        # This tests 50 images scaled from 20% to 300% of the original template size
+        for scale in np.linspace(0.2, 3, num=56):
+            width = int(template.shape[1] * scale)
+            height = int(template.shape[0] * scale)
+
+            # The template can not be larger than the capture
+            if width > capture.shape[1] or height > capture.shape[0]:
+                continue
+
+            resized = cv2.resize(template, (width, height))
+
+            result = cv2.matchTemplate(capture, resized, cv2.TM_SQDIFF)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+            # The maximum value for SQ_DIFF is dependent on the size of the template
+            # we need this value to normalize it from 0.0 to 1.0
+            max_error = resized.size * 255 * 255
+            similarity = 1 - (min_val / max_error)
+
+            # Check if the similarity was good enough to get alignment
+            if similarity > best_match:
+                best_match = similarity
+                best_width = width
+                best_height = height
+                best_loc = min_loc
+
+        # Go ahead and check if this satisfies our requirement before setting the region
+        # We don't want a low similarity image to be aligned.
+        if best_match < 0.9:
+            self.alignmentNotMatchedError()
+            return
+
+        # The new region can be defined by using the min_loc point and the
+        # height and width of the template.
+        self.rect.left = self.rect.left + best_loc[0]
+        self.rect.top = self.rect.top + best_loc[1]
+        self.rect.right = self.rect.left + best_width
+        self.rect.bottom = self.rect.top + best_height
+
+        self.xSpinBox.setValue(self.rect.left)
+        self.ySpinBox.setValue(self.rect.top)
+        self.widthSpinBox.setValue(best_width)
+        self.heightSpinBox.setValue(best_height)
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -671,14 +753,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # grab screenshot of capture region
                 capture = capture_windows.capture_region(self.hwnd, self.rect)
-                
+
                 # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
                 # threshold settings on versions below 1.2.0 aren't messed up
                 if (self.flags & 0x02 == 0x02):
                     capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
                 else:
                     capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-                
+
                 # convert to BGR
                 capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
@@ -922,6 +1004,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText("No transparency detected in image marked with mask flag {m}")
+        msgBox.exec_()
+
+    def alignRegionImageTypeError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("File not a valid image file")
+        msgBox.exec_()
+
+    def alignmentNotMatchedError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("No area in capture region matched reference image. Alignment failed.")
         msgBox.exec_()
 
     def saveSettings(self):
