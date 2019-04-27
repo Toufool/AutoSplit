@@ -62,7 +62,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Custom Split Image Settings
 - Each split image can have different thresholds, pause times, and can be flagged.
 - These settings are handled in the image's filename. 
-- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked
+- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
 - Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hokey.
@@ -72,7 +72,7 @@ This program compares split images to a capture region of any window (OBS, xspli
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
   
 ### How to Create a Masked Image
-The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For an example, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get" text in super mario sunshine:
+The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For an example, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get" text in Super Mario Sunshine:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Toufool/Auto-Split/master/mask_example_image.PNG" />
