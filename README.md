@@ -91,6 +91,7 @@ The best way to create a masked image is to set your capture region as the entir
 ## Known Issues
 - When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
 - Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
+- LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 
 ## Resources
 - Still need help? [Open an issue](https://github.com/Toufool/Auto-Split/issues)
