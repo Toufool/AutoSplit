@@ -90,6 +90,7 @@ The best way to create a masked image is to set your capture region as the entir
 
 ## Known Issues
 - When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
+- Known to currently have issues selecting a region in Streamlabs OBS (only shows black image).
 - Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
 - LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 - Numlock on keys are linked to numlock-off keys. For example, if you set your reset hotkey to 2, you can hit arrow down and it will reset and vice versa.
