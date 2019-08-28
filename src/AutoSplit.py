@@ -1025,6 +1025,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
         self.hwnd_title = win32gui.GetWindowText(self.hwnd)
+        self.custom_pause_times_setting = 0.90
+        self.custom_thresholds_setting = 0.10
 
 
         #save settings to settings.pkl
