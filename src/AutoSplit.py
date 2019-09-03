@@ -927,18 +927,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
-        # Override default values if they have been specified on the file
+        # Override values if they have been specified on the file
         pause = split_parser.pause_from_filename(split_image_file)
         if pause != None:
-            self.pauseDoubleSpinBox.setValue(pause)
-        else:
-            self.pauseDoubleSpinBox.setValue(self.pause)
+            self.pause = pause
 
         threshold = split_parser.threshold_from_filename(split_image_file)
         if threshold != None:
-            self.similaritythresholdDoubleSpinBox.setValue(threshold)
-        else:
-            self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
+            self.threshold = threshold
 
         self.similarity = 0
         self.highest_similarity = 0.001
