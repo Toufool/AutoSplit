@@ -714,7 +714,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # second while loop: stays in this loop until similarity threshold is met
             start = time.time()
-            while self.similarity < self.similaritythresholdDoubleSpinBox.value():
+            while self.similarity < self.similarity_threshold:
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
@@ -837,7 +837,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # This should probably eventually be a signal... but it works
                 pause_start_time = time.time()
-                while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
+                while time.time() - pause_start_time < self.pause:
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
@@ -934,7 +934,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         threshold = split_parser.threshold_from_filename(split_image_file)
         if threshold != None:
-            self.threshold = threshold
+            self.similarity_threshold = threshold
 
         self.similarity = 0
         self.highest_similarity = 0.001
@@ -1021,23 +1021,19 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
         self.hwnd_title = win32gui.GetWindowText(self.hwnd)
-        self.custom_pause_times_setting = 0.90
-        self.custom_thresholds_setting = 0.10
 
 
         #save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting], f)
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title], f)
 
     def loadSettings(self):
         try:
             with open('settings.pkl', 'rb') as f:
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting] = pickle.load(f)
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title] = pickle.load(f)
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
