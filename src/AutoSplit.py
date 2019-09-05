@@ -1021,19 +1021,23 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
         self.hwnd_title = win32gui.GetWindowText(self.hwnd)
+        self.custom_pause_times_setting = 0.90
+        self.custom_thresholds_setting = 0.10
 
 
         #save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title], f)
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting], f)
 
     def loadSettings(self):
         try:
             with open('settings.pkl', 'rb') as f:
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title] = pickle.load(f)
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting] = pickle.load(f)
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
