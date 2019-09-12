@@ -931,10 +931,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         pause = split_parser.pause_from_filename(split_image_file)
         if pause != None:
             self.pause = pause
+        else:
+            self.pause = self.pauseDoubleSpinBox.value()
 
         threshold = split_parser.threshold_from_filename(split_image_file)
         if threshold != None:
             self.similarity_threshold = threshold
+        else:
+            self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
 
         self.similarity = 0
         self.highest_similarity = 0.001
