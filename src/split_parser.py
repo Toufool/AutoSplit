@@ -110,3 +110,12 @@ def flags_from_filename(filename):
         return 0
     
     return flags
+
+def is_reset_image(filename):
+    """
+    Checks if the image is used for resetting
+
+    @param filename: String containing the file's name
+    @return: True if its a reset image
+    """
+    return ('RESET' in filename.upper())

@@ -83,6 +83,9 @@ The best way to create a masked image is to set your capture region as the entir
   <img src="https://raw.githubusercontent.com/Toufool/Auto-Split/master/mask_example_image.PNG" />
 </p>
 
+### Reset image
+You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and the image can be masked, for example: `Reset_(0.95)_{m}.png`.
+
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
 - Make sure that Global Hotkeys are enabled in your speedrun timer.

@@ -537,7 +537,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             self.splitImageDirectoryError()
             return
-        for image in os.listdir(self.split_image_directory):
+        for image in self.split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                 self.imageTypeError()
                 return
@@ -551,7 +551,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             return
 
         # grab first image in the split image folder
-        split_image_file = os.listdir(self.split_image_directory)[0]
+        split_image_file = self.split_image_filenames[0]
         split_image_path = self.split_image_directory + split_image_file
         split_image = cv2.imread(split_image_path, cv2.IMREAD_COLOR)
         split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
@@ -675,9 +675,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.regionError()
             return
 
+        # get split image filenames
+        self.split_image_filenames = os.listdir(self.split_image_directory)
+
+        # finds reset image (if any) and removes it from the list
+        self.findResetImage()
+
         # Make sure that each of the images follows the guidelines for correct format
         # according to all of the settings selected by the user.
-        for image in os.listdir(self.split_image_directory):
+        for image in self.split_image_filenames:
 
             # Check to make sure the file is actually an image format that can be opened
             # according to the mask flag
@@ -703,6 +709,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.imageTypeError()
                     return
 
+            # Check that there's only one reset image
+            if split_parser.is_reset_image(image):
+                self.multipleResetImagesError()
+                return
+
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
@@ -725,11 +736,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             current_group = []
             self.split_groups.append(current_group)
 
-            for i, image in enumerate(os.listdir(self.split_image_directory)):
+            for i, image in enumerate(self.split_image_filenames):
                 current_group.append(i)
 
                 flags = split_parser.flags_from_filename(image)
-                if flags & 0x01 != 0x01 and i < len(os.listdir(self.split_image_directory)) - 1:
+                if flags & 0x01 != 0x01 and i < len(self.split_image_filenames) - 1:
                     current_group = []
                     self.split_groups.append(current_group)
 
@@ -749,8 +760,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
 
         self.split_image_number = 0
-        self.number_of_split_images = len(os.listdir(self.split_image_directory))
-
+        self.number_of_split_images = len(self.split_image_filenames)
         self.waiting_for_split_delay = False
 
         # First while loop: stays in this loop until all of the split images have been split
@@ -769,6 +779,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # skip loop if we just finished waiting for the split delay and need to press the split key!
             start = time.time()
             while self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
+            while self.similarity < self.similaritythresholdDoubleSpinBox.value():
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
@@ -804,22 +815,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # convert to BGR
                 capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
-                # calculate similarity
-                if self.comparisonmethodComboBox.currentIndex() == 0:
-                    if (self.flags & 0x02 == 0x02):
-                        self.similarity = compare.compare_l2_norm_masked(self.split_image, capture, self.mask)
-                    else:
-                        self.similarity = compare.compare_l2_norm(self.split_image, capture)
-                elif self.comparisonmethodComboBox.currentIndex() == 1:
-                    if (self.flags & 0x02 == 0x02):
-                        self.similarity = compare.compare_histograms_masked(self.split_image, capture, self.mask)
-                    else:
-                        self.similarity = compare.compare_histograms(self.split_image, capture)
-                elif self.comparisonmethodComboBox.currentIndex() == 2:
-                    if (self.flags & 0x02 == 0x02):
-                        self.similarity = compare.compare_phash_masked(self.split_image, capture, self.mask)
-                    else:
-                        self.similarity = compare.compare_phash(self.split_image, capture)
+                # calculate similarity for reset image
+                if self.reset_image is not None:
+                    reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                    if reset_similarity >= self.reset_image_threshold:
+                        self.reset()
+                        continue
+
+                # calculate similarity for split image
+                self.similarity = self.compareImage(self.split_image, self.mask, capture)
 
                 # show live similarity if the checkbox is checked
                 if self.showlivesimilarityCheckBox.isChecked():
@@ -952,10 +956,67 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.customthresholdsCheckBox.setEnabled(True)
         QtGui.QApplication.processEvents()
 
+    def compareImage(self, image, mask, capture):
+        if mask is None:
+            if self.comparisonmethodComboBox.currentIndex() == 0:
+                return compare.compare_l2_norm(image, capture)
+            elif self.comparisonmethodComboBox.currentIndex() == 1:
+                return compare.compare_histograms(image, capture)
+            elif self.comparisonmethodComboBox.currentIndex() == 2:
+                return compare.compare_phash(image, capture)
+        else:
+            if self.comparisonmethodComboBox.currentIndex() == 0:
+                return compare.compare_l2_norm_masked(image, capture, mask)
+            elif self.comparisonmethodComboBox.currentIndex() == 1:
+                return compare.compare_histograms_masked(image, capture, mask)
+            elif self.comparisonmethodComboBox.currentIndex() == 2:
+                return compare.compare_phash_masked(image, capture, mask)
+
+    def findResetImage(self):
+        self.reset_image = None
+        self.reset_mask = None
+        self.reset_image_threshold = None
+
+        reset_image_file = None
+        for i, image in enumerate(self.split_image_filenames):
+            if split_parser.is_reset_image(image):
+                reset_image_file = image
+                break
+
+        if reset_image_file is None:
+            return
+
+        self.split_image_filenames.remove(reset_image_file)
+
+        # create reset image and keep in memory
+        path = self.split_image_directory + reset_image_file
+        flags = split_parser.flags_from_filename(reset_image_file)
+
+        self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file)
+        if self.reset_image_threshold is None:
+            self.reset_image_threshold = 1.0
+
+        # if theres a mask flag, create a mask
+        if (flags & 0x02 == 0x02):
+            # create mask based on resized, nearest neighbor interpolated split image
+            self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+            self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+            lower = np.array([0, 0, 0, 1], dtype="uint8")
+            upper = np.array([255, 255, 255, 255], dtype="uint8")
+            self.reset_mask = cv2.inRange(self.reset_image, lower, upper)
+
+            # set split image as BGR
+            self.reset_image = cv2.cvtColor(self.reset_image, cv2.COLOR_BGRA2BGR)
+
+        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        else:
+            self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
+            self.reset_image = cv2.resize(reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+
     def updateSplitImage(self):
 
         # get split image path
-        split_image_file = os.listdir(self.split_image_directory)[0 + self.split_image_number]
+        split_image_file = self.split_image_filenames[0 + self.split_image_number]
         self.split_image_path = self.split_image_directory + split_image_file
 
         # get flags
@@ -998,6 +1059,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+            self.mask = None
 
         # If the unique parameters are selected, go ahead and set the spinboxes to those values
         if self.custompausetimesCheckBox.isChecked():
@@ -1072,6 +1134,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText("No area in capture region matched reference image. Alignment failed.")
+        msgBox.exec_()
+
+    def multipleResetImagesError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Only one image with the keyword \"reset\" is allowed.")
         msgBox.exec_()
 
     def saveSettings(self):
