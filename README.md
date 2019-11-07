@@ -83,6 +83,21 @@ The best way to create a masked image is to set your capture region as the entir
 - Make sure that Global Hotkeys are enabled in your speedrun timer.
 - All of these actions can also be handled by their corresponding buttons.
 
+### Group dummy splits when undoing / skipping
+If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through ths splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
+
+If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it in sync with LiveSplit/wsplit. 
+
+Examples:
+Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
+
+In this situation you would have only 3 splits in LiveSplit/wsplit (even though there are 6 split images, only 3 are "real" splits). This basically results in 3 groups of splits: 1st split is images 1 and 2. 2nd split is images 3, 4 and 5. 3rd split is image 6.
+
+- If you are in the 1st or 2nd image and press the skip key, it will end up on the 3rd image
+- If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 1st image
+- If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
+- If you are in the 6th image and press the undo key, it will end up on the 3rd image
+
 ## Known Limitations
 - Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.

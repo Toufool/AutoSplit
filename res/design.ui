@@ -139,7 +139,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>374</y>
+      <y>378</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -152,7 +152,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>379</y>
+      <y>383</y>
       <width>64</width>
       <height>22</height>
      </rect>
@@ -280,7 +280,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>325</y>
+      <y>330</y>
       <width>111</width>
       <height>17</height>
      </rect>
@@ -302,7 +302,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>346</y>
+      <y>351</y>
       <width>131</width>
       <height>17</height>
      </rect>
@@ -321,7 +321,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>327</y>
+      <y>332</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -334,7 +334,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>348</y>
+      <y>353</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -347,7 +347,7 @@
     <property name="geometry">
      <rect>
       <x>249</x>
-      <y>328</y>
+      <y>320</y>
       <width>61</width>
       <height>16</height>
      </rect>
@@ -360,7 +360,7 @@
     <property name="geometry">
      <rect>
       <x>249</x>
-      <y>365</y>
+      <y>350</y>
       <width>61</width>
       <height>16</height>
      </rect>
@@ -373,7 +373,7 @@
     <property name="geometry">
      <rect>
       <x>249</x>
-      <y>402</y>
+      <y>380</y>
       <width>50</width>
       <height>16</height>
      </rect>
@@ -386,7 +386,7 @@
     <property name="geometry">
      <rect>
       <x>249</x>
-      <y>438</y>
+      <y>410</y>
       <width>61</width>
       <height>16</height>
      </rect>
@@ -399,7 +399,7 @@
     <property name="geometry">
      <rect>
       <x>316</x>
-      <y>326</y>
+      <y>320</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -412,7 +412,7 @@
     <property name="geometry">
      <rect>
       <x>316</x>
-      <y>436</y>
+      <y>410</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -428,7 +428,7 @@
     <property name="geometry">
      <rect>
       <x>316</x>
-      <y>400</y>
+      <y>380</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -441,7 +441,7 @@
     <property name="geometry">
      <rect>
       <x>316</x>
-      <y>363</y>
+      <y>350</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -454,7 +454,7 @@
     <property name="geometry">
      <rect>
       <x>409</x>
-      <y>326</y>
+      <y>320</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -470,7 +470,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>363</y>
+      <y>350</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -486,7 +486,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>399</y>
+      <y>380</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -502,7 +502,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>436</y>
+      <y>410</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -689,9 +689,9 @@
     <property name="geometry">
      <rect>
       <x>313</x>
-      <y>298</y>
+      <y>296</y>
       <width>101</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -989,7 +989,7 @@
     <property name="geometry">
      <rect>
       <x>143</x>
-      <y>297</y>
+      <y>299</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -1061,7 +1061,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>390</y>
+      <y>394</y>
       <width>111</width>
       <height>17</height>
      </rect>
@@ -1106,6 +1106,22 @@
     </property>
     <property name="text">
      <string>Align Region</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="groupDummySplitsCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>252</x>
+      <y>440</y>
+      <width>230</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Group dummy splits when undoing/skipping</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <zorder>splitimagefolderLabel</zorder>
@@ -1172,6 +1188,7 @@
    <zorder>customthresholdsCheckBox</zorder>
    <zorder>comparisonmethodLabel</zorder>
    <zorder>alignregionButton</zorder>
+   <zorder>groupDummySplitsCheckBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

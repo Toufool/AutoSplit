@@ -587,8 +587,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.undosplitButton.isEnabled() == False or self.split_image_number == 0:
             return
 
-        # subtract 1 from the split image number
-        self.split_image_number = self.split_image_number - 1
+        # check if we can ignore dummy splits when skipping
+        if self.groupDummySplitsCheckBox.isChecked() == False:
+            self.split_image_number = self.split_image_number - 1
+        else:
+            for i, group in enumerate(self.split_groups):
+                if i > 0 and self.split_image_number in group:
+                    self.split_image_number = self.split_groups[i - 1][0]
+                    break
 
         # if i'ts the last split image, disable skip split button
         if self.split_image_number == self.number_of_split_images - 1:
@@ -597,7 +603,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.skipsplitButton.setEnabled(True)
 
         # if it's the first split image, disable the undo split button
-        if self.split_image_number == 0:
+        if self.split_image_number <= 0:
+            self.split_image_number = 0
             self.undosplitButton.setEnabled(False)
         else:
             self.undosplitButton.setEnabled(True)
@@ -612,12 +619,21 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.skipsplitButton.isEnabled() == False or self.split_image_number == self.number_of_split_images - 1:
             return
 
-        self.split_image_number = self.split_image_number + 1
+        # check if we can ignore dummy splits when skipping
+        if self.groupDummySplitsCheckBox.isChecked() == False:
+            self.split_image_number = self.split_image_number + 1
+        else:
+            for group in self.split_groups:
+                if self.split_image_number in group:
+                    self.split_image_number = group[-1] + 1
+                    break
 
-        if self.split_image_number == self.number_of_split_images - 1:
+        if self.split_image_number >= self.number_of_split_images - 1:
+            self.split_image_number = self.number_of_split_images - 1
             self.skipsplitButton.setEnabled(False)
         else:
             self.skipsplitButton.setEnabled(True)
+
         if self.split_image_number == 0:
             self.undosplitButton.setEnabled(False)
         else:
@@ -702,6 +718,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.splitLineEdit.text() == '':
             self.splitHotkeyError()
             return
+
+        # construct groups of splits if needed
+        self.split_groups = []
+        if self.groupDummySplitsCheckBox.isChecked():
+            current_group = []
+            self.split_groups.append(current_group)
+
+            for i, image in enumerate(os.listdir(self.split_image_directory)):
+                current_group.append(i)
+
+                flags = split_parser.flags_from_filename(image)
+                if flags & 0x01 != 0x01 and i < len(os.listdir(self.split_image_directory)) - 1:
+                    current_group = []
+                    self.split_groups.append(current_group)
 
         # change auto splitter button text and disable/enable some buttons
         self.startautosplitterButton.setText('Running..')
@@ -1045,20 +1075,25 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.custom_thresholds_setting = 0
 
+        if self.groupDummySplitsCheckBox.isChecked():
+            self.group_dummy_splits_undo_skip_setting = 1
+        else:
+            self.group_dummy_splits_undo_skip_setting = 0
 
         #save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
                  self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting], f)
+                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting], f)
 
     def loadSettings(self):
         try:
             with open('settings.pkl', 'rb') as f:
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
                  self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting] = pickle.load(f)
+                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting] = pickle.load(f)
+
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
             self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
@@ -1081,6 +1116,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.customthresholdsCheckBox.setChecked(True)
             else:
                 self.customthresholdsCheckBox.setChecked(False)
+
+            if self.group_dummy_splits_undo_skip_setting == 1:
+                self.groupDummySplitsCheckBox.setChecked(True)
+            else:
+                self.groupDummySplitsCheckBox.setChecked(False)
 
             # try to set hotkeys from when user last closed the window
             try:
