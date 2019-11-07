@@ -751,14 +751,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.split_image_number = 0
         self.number_of_split_images = len(os.listdir(self.split_image_directory))
 
+        self.waiting_for_split_delay = False
+
         # First while loop: stays in this loop until all of the split images have been split
         while self.split_image_number < self.number_of_split_images:
+
+            # Check if we are not waiting for the split delay to send the key press
+            if self.waiting_for_split_delay == True:
+                time_millis = int(round(time.time() * 1000))
+                if time_millis < self.split_time:
+                    QtGui.QApplication.processEvents()
+                    continue
 
             self.updateSplitImage()
 
             # second while loop: stays in this loop until similarity threshold is met
+            # skip loop if we just finished waiting for the split delay and need to press the split key!
             start = time.time()
-            while self.similarity < self.similaritythresholdDoubleSpinBox.value():
+            while self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
@@ -851,7 +861,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if (self.flags & 0x01 == 0x01):
                 pass
             else:
-                keyboard.send(str(self.splitLineEdit.text()))
+                # If it's a delayed split, check if the delay has passed
+                # Otherwise calculate the split time for the key press
+                if self.split_delay > 0 and self.waiting_for_split_delay == False:
+                    self.split_time = int(round(time.time() * 1000)) + self.split_delay
+                    self.waiting_for_split_delay = True
+
+                    self.currentSplitImage.setText('Delayed split...')
+                    self.currentsplitimagefileLabel.setText(' ')
+                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                    continue
+
+            # Split key press
+            self.waiting_for_split_delay = False
+            keyboard.send(str(self.splitLineEdit.text()))
 
             # add one to the split image number
             self.split_image_number = self.split_image_number + 1
@@ -983,6 +1006,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.customthresholdsCheckBox.isChecked():
             self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
 
+        # Get delay for split, if any
+        self.split_delay = split_parser.delay_from_filename(split_image_file)
+        
         self.similarity = 0
         self.highest_similarity = 0.001
 
