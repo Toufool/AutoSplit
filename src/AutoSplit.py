@@ -779,7 +779,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # skip loop if we just finished waiting for the split delay and need to press the split key!
             start = time.time()
             while self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
-            while self.similarity < self.similaritythresholdDoubleSpinBox.value():
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
