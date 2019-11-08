@@ -876,9 +876,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                     continue
 
-            # Split key press
-            self.waiting_for_split_delay = False
-            keyboard.send(str(self.splitLineEdit.text()))
+                # Split key press
+                self.waiting_for_split_delay = False
+                keyboard.send(str(self.splitLineEdit.text()))
 
             # add one to the split image number
             self.split_image_number = self.split_image_number + 1
