@@ -818,6 +818,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if self.reset_image is not None:
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
+                        keyboard.send(str(self.resetLineEdit.text()))
                         self.reset()
                         continue
 
