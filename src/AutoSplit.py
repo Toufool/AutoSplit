@@ -1011,7 +1011,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
-            self.reset_image = cv2.resize(reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+            self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
     def updateSplitImage(self):
 
