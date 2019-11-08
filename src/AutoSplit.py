@@ -539,7 +539,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             return
         for image in self.split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                self.imageTypeError()
+                self.imageTypeError(image)
                 return
             else:
                 pass
@@ -693,20 +693,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if source is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
-                    self.imageTypeError()
+                    self.imageTypeError(image)
                     return
 
                 if source.shape[2] != 4:
                     # Error, this file doesn't have an alpha channel even
                     # though the flag for masking was added
-                    self.alphaChannelError()
+                    self.alphaChannelError(image)
                     return
 
             else:
                 if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
-                    self.imageTypeError()
+                    self.imageTypeError(image)
                     return
 
             # Check that there's only one reset image
@@ -717,13 +717,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
-                self.customPauseError()
+                self.customPauseError(image)
                 return
 
             if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
                 # Error, this file doesn't have a threshold, but the checkbox
                 # was selected for unique thresholds
-                self.customThresholdError()
+                self.customThresholdError(image)
                 return
             
         if self.splitLineEdit.text() == '':
@@ -1082,10 +1082,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("No split image folder is selected.")
         msgBox.exec_()
 
-    def imageTypeError(self):
+    def imageTypeError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("All files in split image folder must be valid image files.")
+        msgBox.setText('"' + image + '" is not a valid image file.')
         msgBox.exec_()
 
     def regionError(self):
@@ -1106,22 +1106,22 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("No split hotkey has been set.")
         msgBox.exec_()
 
-    def customThresholdError(self):
+    def customThresholdError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Invalid custom threshold detected.")
+        msgBox.setText("\"" + image + "\" doesn't have a valid custom threshold.")
         msgBox.exec_()
 
-    def customPauseError(self):
+    def customPauseError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Invalid custom pause time detected.")
+        msgBox.setText("\"" + image + "\" doesn't have a valid custom pause time.")
         msgBox.exec_()
 
-    def alphaChannelError(self):
+    def alphaChannelError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("No transparency detected in image marked with mask flag {m}")
+        msgBox.setText("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
         msgBox.exec_()
 
     def alignRegionImageTypeError(self):
