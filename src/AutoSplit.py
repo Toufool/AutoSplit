@@ -801,18 +801,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.customthresholdsCheckBox.setEnabled(True)
                     return
 
-                # grab screenshot of capture region
-                capture = capture_windows.capture_region(self.hwnd, self.rect)
-
-                # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
-                # threshold settings on versions below 1.2.0 aren't messed up
-                if (self.flags & 0x02 == 0x02):
-                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
-                else:
-                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-
-                # convert to BGR
-                capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
+                capture = self.getCaptureForComparison()
 
                 # calculate similarity for reset image
                 if self.reset_image is not None:
@@ -931,9 +920,19 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.custompausetimesCheckBox.setEnabled(True)
                         self.customthresholdsCheckBox.setEnabled(True)
                         return
+
                     # check for skip/undo split:
                     if self.split_image_number != pause_split_image_number:
                         break
+
+                    # calculate similarity for reset image
+                    capture = self.getCaptureForComparison()
+                    if self.reset_image is not None:
+                        reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                        if reset_similarity >= self.reset_image_threshold:
+                            keyboard.send(str(self.resetLineEdit.text()))
+                            self.reset()
+                            continue
 
                     QtTest.QTest.qWait(1)
 
@@ -971,6 +970,22 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 return compare.compare_histograms_masked(image, capture, mask)
             elif self.comparisonmethodComboBox.currentIndex() == 2:
                 return compare.compare_phash_masked(image, capture, mask)
+
+    def getCaptureForComparison(self):
+        # grab screenshot of capture region
+        capture = capture_windows.capture_region(self.hwnd, self.rect)
+
+        # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
+        # threshold settings on versions below 1.2.0 aren't messed up
+        if (self.flags & 0x02 == 0x02):
+            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+        else:
+            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+
+        # convert to BGR
+        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
+
+        return capture
 
     def findResetImage(self):
         self.reset_image = None
