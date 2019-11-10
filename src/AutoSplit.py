@@ -539,7 +539,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             return
         for image in self.split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                self.imageTypeError()
+                self.imageTypeError(image)
                 return
             else:
                 pass
@@ -693,20 +693,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if source is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
-                    self.imageTypeError()
+                    self.imageTypeError(image)
                     return
 
                 if source.shape[2] != 4:
                     # Error, this file doesn't have an alpha channel even
                     # though the flag for masking was added
-                    self.alphaChannelError()
+                    self.alphaChannelError(image)
                     return
 
             else:
                 if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
-                    self.imageTypeError()
+                    self.imageTypeError(image)
                     return
 
             # Check that there's only one reset image
@@ -717,13 +717,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
-                self.customPauseError()
+                self.customPauseError(image)
                 return
 
             if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
                 # Error, this file doesn't have a threshold, but the checkbox
                 # was selected for unique thresholds
-                self.customThresholdError()
+                self.customThresholdError(image)
                 return
             
         if self.splitLineEdit.text() == '':
@@ -801,18 +801,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.customthresholdsCheckBox.setEnabled(True)
                     return
 
-                # grab screenshot of capture region
-                capture = capture_windows.capture_region(self.hwnd, self.rect)
-
-                # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
-                # threshold settings on versions below 1.2.0 aren't messed up
-                if (self.flags & 0x02 == 0x02):
-                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
-                else:
-                    capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-
-                # convert to BGR
-                capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
+                capture = self.getCaptureForComparison()
 
                 # calculate similarity for reset image
                 if self.reset_image is not None:
@@ -876,9 +865,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                     continue
 
-            # Split key press
-            self.waiting_for_split_delay = False
-            keyboard.send(str(self.splitLineEdit.text()))
+                # Split key press
+                self.waiting_for_split_delay = False
+                keyboard.send(str(self.splitLineEdit.text()))
 
             # add one to the split image number
             self.split_image_number = self.split_image_number + 1
@@ -931,9 +920,19 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.custompausetimesCheckBox.setEnabled(True)
                         self.customthresholdsCheckBox.setEnabled(True)
                         return
+
                     # check for skip/undo split:
                     if self.split_image_number != pause_split_image_number:
                         break
+
+                    # calculate similarity for reset image
+                    capture = self.getCaptureForComparison()
+                    if self.reset_image is not None:
+                        reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                        if reset_similarity >= self.reset_image_threshold:
+                            keyboard.send(str(self.resetLineEdit.text()))
+                            self.reset()
+                            continue
 
                     QtTest.QTest.qWait(1)
 
@@ -971,6 +970,22 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 return compare.compare_histograms_masked(image, capture, mask)
             elif self.comparisonmethodComboBox.currentIndex() == 2:
                 return compare.compare_phash_masked(image, capture, mask)
+
+    def getCaptureForComparison(self):
+        # grab screenshot of capture region
+        capture = capture_windows.capture_region(self.hwnd, self.rect)
+
+        # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
+        # threshold settings on versions below 1.2.0 aren't messed up
+        if (self.flags & 0x02 == 0x02):
+            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+        else:
+            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+
+        # convert to BGR
+        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
+
+        return capture
 
     def findResetImage(self):
         self.reset_image = None
@@ -1011,7 +1026,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
-            self.reset_image = cv2.resize(reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+            self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
     def updateSplitImage(self):
 
@@ -1082,10 +1097,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("No split image folder is selected.")
         msgBox.exec_()
 
-    def imageTypeError(self):
+    def imageTypeError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("All files in split image folder must be valid image files.")
+        msgBox.setText('"' + image + '" is not a valid image file.')
         msgBox.exec_()
 
     def regionError(self):
@@ -1106,22 +1121,22 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("No split hotkey has been set.")
         msgBox.exec_()
 
-    def customThresholdError(self):
+    def customThresholdError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Invalid custom threshold detected.")
+        msgBox.setText("\"" + image + "\" doesn't have a valid custom threshold.")
         msgBox.exec_()
 
-    def customPauseError(self):
+    def customPauseError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Invalid custom pause time detected.")
+        msgBox.setText("\"" + image + "\" doesn't have a valid custom pause time.")
         msgBox.exec_()
 
-    def alphaChannelError(self):
+    def alphaChannelError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("No transparency detected in image marked with mask flag {m}")
+        msgBox.setText("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
         msgBox.exec_()
 
     def alignRegionImageTypeError(self):
