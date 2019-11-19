@@ -763,6 +763,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.number_of_split_images = len(self.split_image_filenames)
         self.waiting_for_split_delay = False
 
+        self.run_start_time = time.time()
+
         # First while loop: stays in this loop until all of the split images have been split
         while self.split_image_number < self.number_of_split_images:
 
@@ -801,15 +803,25 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.customthresholdsCheckBox.setEnabled(True)
                     return
 
-                capture = self.getCaptureForComparison()
 
                 # calculate similarity for reset image
-                if self.reset_image is not None:
+                reset_masked = None
+                capture = None
+
+                if self.shouldCheckResetImage():
+                    reset_masked = (self.reset_mask is not None)
+                    capture = self.getCaptureForComparison(reset_masked)
+
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
                         keyboard.send(str(self.resetLineEdit.text()))
                         self.reset()
                         continue
+
+                # get capture again if needed
+                masked = (self.flags & 0x02 == 0x02)
+                if capture is None or masked != reset_masked:
+                    capture = self.getCaptureForComparison(masked)
 
                 # calculate similarity for split image
                 self.similarity = self.compareImage(self.split_image, self.mask, capture)
@@ -926,8 +938,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         break
 
                     # calculate similarity for reset image
-                    capture = self.getCaptureForComparison()
-                    if self.reset_image is not None:
+                    if self.shouldCheckResetImage() == True:
+                        reset_masked = (self.reset_mask is not None)
+                        capture = self.getCaptureForComparison(reset_masked)
+
                         reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                         if reset_similarity >= self.reset_image_threshold:
                             keyboard.send(str(self.resetLineEdit.text()))
@@ -971,13 +985,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             elif self.comparisonmethodComboBox.currentIndex() == 2:
                 return compare.compare_phash_masked(image, capture, mask)
 
-    def getCaptureForComparison(self):
+    def getCaptureForComparison(self, masked):
         # grab screenshot of capture region
         capture = capture_windows.capture_region(self.hwnd, self.rect)
 
         # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
         # threshold settings on versions below 1.2.0 aren't messed up
-        if (self.flags & 0x02 == 0x02):
+        if (masked):
             capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
         else:
             capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
@@ -986,6 +1000,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
         return capture
+
+    def shouldCheckResetImage(self):
+        if self.reset_image is not None and time.time() - self.run_start_time > self.reset_image_pause_time:
+            return True
+
+        return False
 
     def findResetImage(self):
         self.reset_image = None
@@ -1010,6 +1030,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file)
         if self.reset_image_threshold is None:
             self.reset_image_threshold = 1.0
+
+        self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file)
+        if self.reset_image_pause_time is None:
+            self.reset_image_pause_time = 0
 
         # if theres a mask flag, create a mask
         if (flags & 0x02 == 0x02):
