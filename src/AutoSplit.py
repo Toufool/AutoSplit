@@ -63,6 +63,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
         self.setundosplithotkeyButton.clicked.connect(self.setUndoSplitHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
+        self.selectwindowButton.clicked.connect(self.selectWindow)
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -254,6 +255,51 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.ySpinBox.setValue(self.rect.top)
         self.widthSpinBox.setValue(best_width)
         self.heightSpinBox.setValue(best_height)
+
+    def selectWindow(self):
+        # Create a screen selector widget
+        selector = SelectWindowWidget()
+
+        # Need to wait until the user has selected a region using the widget before moving on with
+        # selecting the window settings
+        while selector.x == -1 and selector.y == -1:
+            QtTest.QTest.qWait(1)
+
+        # Grab the window handle from the coordinates selected by the widget
+        self.hwnd = None
+        self.hwnd = win32gui.WindowFromPoint((selector.x, selector.y))
+
+        if self.hwnd is None:
+            return
+    
+        del selector
+        
+        # Want to pull the parent window from the window handle
+        # By using GetAncestor we are able to get the parent window instead
+        # of the owner window.
+        GetAncestor = ctypes.windll.user32.GetAncestor
+        GA_ROOT = 2
+
+        while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
+            self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
+
+        # getting window bounds
+        # on windows there are some invisble pixels that are not accounted for
+        # also the top bar with the window name is not accounted for
+        # I hardcoded the x and y coordinates to fix this
+        # This is not an ideal solution because it assumes every window will have a top bar
+        rect = win32gui.GetClientRect(self.hwnd)
+        self.rect.left = 8
+        self.rect.top = 31
+        self.rect.right = 0 + rect[2]
+        self.rect.bottom = 0 + rect[3]
+
+        self.widthSpinBox.setValue(self.rect.right)
+        self.heightSpinBox.setValue(self.rect.bottom)
+        self.xSpinBox.setValue(self.rect.left)
+        self.ySpinBox.setValue(self.rect.top)
+
+        self.checkLiveImage()
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -1355,6 +1401,35 @@ class SelectRegionWidget(QtGui.QWidget):
 
         self.height = self.bottom - self.top
         self.width = self.right - self.left
+
+# widget to select a window and obtain its bounds
+class SelectWindowWidget(QtGui.QWidget):
+    def __init__(self):
+        super(SelectWindowWidget, self).__init__()
+        user32 = ctypes.windll.user32
+        user32.SetProcessDPIAware()
+
+        self.x = -1
+        self.y = -1
+
+        # We need to pull the monitor information to correctly draw the geometry covering all portions
+        # of the user's screen. These parameters create the bounding box with left, top, width, and height
+        self.SM_XVIRTUALSCREEN = user32.GetSystemMetrics(76)
+        self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
+        self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
+        self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
+        
+        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN , self.SM_CXVIRTUALSCREEN, self.SM_CYVIRTUALSCREEN)
+        self.setWindowTitle(' ')
+
+        self.setWindowOpacity(0.5)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.show()
+
+    def mouseReleaseEvent(self, event):
+        self.close()
+        self.x = event.pos().x()
+        self.y = event.pos().y()
 
 
 # About Window
