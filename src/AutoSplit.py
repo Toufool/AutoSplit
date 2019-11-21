@@ -534,25 +534,30 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # check max FPS button connects here.
     def checkFPS(self):
         # error checking
-        if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
+        split_image_directory = self.splitimagefolderLineEdit.text()
+        if split_image_directory == 'No Folder Selected' or split_image_directory is None:
             self.splitImageDirectoryError()
             return
-        for image in self.split_image_filenames:
+
+        split_image_filenames = os.listdir(split_image_directory)
+        for image in split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                 self.imageTypeError(image)
                 return
             else:
                 pass
+
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
+
         if self.width == 0 or self.height == 0:
             self.regionSizeError()
             return
 
         # grab first image in the split image folder
-        split_image_file = self.split_image_filenames[0]
-        split_image_path = self.split_image_directory + split_image_file
+        split_image_file = split_image_filenames[0]
+        split_image_path = split_image_directory + split_image_file
         split_image = cv2.imread(split_image_path, cv2.IMREAD_COLOR)
         split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
         split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
