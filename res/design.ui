@@ -88,7 +88,7 @@
     <property name="geometry">
      <rect>
       <x>25</x>
-      <y>118</y>
+      <y>139</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -122,9 +122,9 @@
    <widget class="QPushButton" name="selectregionButton">
     <property name="geometry">
      <rect>
-      <x>18</x>
-      <y>71</y>
-      <width>76</width>
+      <x>5</x>
+      <y>67</y>
+      <width>101</width>
       <height>23</height>
      </rect>
     </property>
@@ -248,7 +248,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>201</y>
+      <y>225</y>
       <width>51</width>
       <height>21</height>
      </rect>
@@ -264,7 +264,7 @@
     <property name="geometry">
      <rect>
       <x>87</x>
-      <y>201</y>
+      <y>225</y>
       <width>20</width>
       <height>20</height>
      </rect>
@@ -760,7 +760,7 @@
     <property name="geometry">
      <rect>
       <x>14</x>
-      <y>156</y>
+      <y>177</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -773,7 +773,7 @@
     <property name="geometry">
      <rect>
       <x>68</x>
-      <y>156</y>
+      <y>177</y>
       <width>31</width>
       <height>16</height>
      </rect>
@@ -786,7 +786,7 @@
     <property name="geometry">
      <rect>
       <x>58</x>
-      <y>201</y>
+      <y>225</y>
       <width>26</width>
       <height>20</height>
      </rect>
@@ -799,7 +799,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>172</y>
+      <y>193</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -818,7 +818,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>172</y>
+      <y>193</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -850,7 +850,7 @@
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>227</y>
+      <y>251</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -863,7 +863,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>224</y>
+      <y>248</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -923,7 +923,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>133</y>
+      <y>154</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -951,7 +951,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>133</y>
+      <y>154</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -976,7 +976,7 @@
     <property name="geometry">
      <rect>
       <x>81</x>
-      <y>118</y>
+      <y>139</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -1095,9 +1095,9 @@
    <widget class="QPushButton" name="alignregionButton">
     <property name="geometry">
      <rect>
-      <x>18</x>
-      <y>96</y>
-      <width>76</width>
+      <x>5</x>
+      <y>92</y>
+      <width>101</width>
       <height>23</height>
      </rect>
     </property>
@@ -1122,6 +1122,22 @@
     </property>
     <property name="checked">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="selectwindowButton">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>117</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Select Window</string>
     </property>
    </widget>
    <zorder>splitimagefolderLabel</zorder>
@@ -1189,6 +1205,7 @@
    <zorder>comparisonmethodLabel</zorder>
    <zorder>alignregionButton</zorder>
    <zorder>groupDummySplitsCheckBox</zorder>
+   <zorder>selectwindowButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -1219,6 +1236,27 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>splitimagefolderLineEdit</tabstop>
+  <tabstop>xSpinBox</tabstop>
+  <tabstop>ySpinBox</tabstop>
+  <tabstop>widthSpinBox</tabstop>
+  <tabstop>heightSpinBox</tabstop>
+  <tabstop>fpslimitSpinBox</tabstop>
+  <tabstop>liveimageCheckBox</tabstop>
+  <tabstop>comparisonmethodComboBox</tabstop>
+  <tabstop>showlivesimilarityCheckBox</tabstop>
+  <tabstop>showhighestsimilarityCheckBox</tabstop>
+  <tabstop>customthresholdsCheckBox</tabstop>
+  <tabstop>similaritythresholdDoubleSpinBox</tabstop>
+  <tabstop>custompausetimesCheckBox</tabstop>
+  <tabstop>pauseDoubleSpinBox</tabstop>
+  <tabstop>splitLineEdit</tabstop>
+  <tabstop>resetLineEdit</tabstop>
+  <tabstop>skipsplitLineEdit</tabstop>
+  <tabstop>undosplitLineEdit</tabstop>
+  <tabstop>groupDummySplitsCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
