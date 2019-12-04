@@ -133,7 +133,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # Grab the window handle from the coordinates selected by the widget
         self.hwnd = win32gui.WindowFromPoint((selector.left, selector.top))
-        
         # Want to pull the parent window from the window handle
         # By using GetAncestor we are able to get the parent window instead
         # of the owner window.
@@ -279,7 +278,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # of the owner window.
         GetAncestor = ctypes.windll.user32.GetAncestor
         GA_ROOT = 2
-
         while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
             self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
 
@@ -370,9 +368,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         take_screenshot_filename = '001_SplitImage'
 
         # check if file exists and rename it if it does
+        # Below starts the FileNameNumber at #001 up to #999. After that it will go to 1000,
+        # which is a problem, but I doubt anyone will get to 1000 split images...
         i = 1
         while os.path.exists(self.split_image_directory + take_screenshot_filename + '.png') == True:
-            take_screenshot_filename = 'split_image' + ' ' + '(' + str(i) + ')'
+            FileNameNumber = (f"{i:03}")
+            take_screenshot_filename = FileNameNumber + '_SplitImage'
             i = i + 1
 
         # grab screenshot of capture region
@@ -905,6 +906,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.undosplitButton.setEnabled(True)
 
+
                 # limit the number of time the comparison runs to reduce cpu usage
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
@@ -924,6 +926,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.waiting_for_split_delay = True
 
                     self.currentSplitImage.setText('Delayed split...')
+                    self.undosplitButton.setEnabled(False)
+                    self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                     continue
@@ -1453,4 +1457,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
