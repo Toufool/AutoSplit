@@ -1179,7 +1179,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def imageTypeError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText('"' + image + '" is not a valid image file.')
+        msgBox.setText('"' + image + '" is not a valid image file or the full image file path contains a special character.')
         msgBox.exec_()
 
     def regionError(self):
