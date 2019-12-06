@@ -60,6 +60,12 @@ class Ui_MainWindow(object):
         self.liveimageCheckBox.setChecked(True)
         self.liveimageCheckBox.setTristate(False)
         self.liveimageCheckBox.setObjectName(_fromUtf8("liveimageCheckBox"))
+        self.loopCheckBox = QtGui.QCheckBox(self.centralwidget)
+        self.loopCheckBox.setEnabled(True)
+        self.loopCheckBox.setGeometry(QtCore.QRect(500, 360, 121, 17))
+        self.loopCheckBox.setChecked(False)
+        self.loopCheckBox.setTristate(False)
+        self.loopCheckBox.setObjectName(_fromUtf8("loopCheckBox"))
         self.selectregionButton = QtGui.QPushButton(self.centralwidget)
         self.selectregionButton.setGeometry(QtCore.QRect(5, 67, 101, 23))
         self.selectregionButton.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -350,6 +356,7 @@ class Ui_MainWindow(object):
         self.browseButton.raise_()
         self.xLabel.raise_()
         self.liveimageCheckBox.raise_()
+        self.loopCheckBox.raise_()
         self.selectregionButton.raise_()
         self.similaritythresholdLabel.raise_()
         self.similaritythresholdDoubleSpinBox.raise_()
@@ -446,6 +453,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.resetLineEdit, self.skipsplitLineEdit)
         MainWindow.setTabOrder(self.skipsplitLineEdit, self.undosplitLineEdit)
         MainWindow.setTabOrder(self.undosplitLineEdit, self.groupDummySplitsCheckBox)
+        MainWindow.setTabOrder(self.groupDummySplitsCheckBox, self.loopCheckBox)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "AutoSplit", None))
@@ -453,6 +461,7 @@ class Ui_MainWindow(object):
         self.browseButton.setText(_translate("MainWindow", "Browse..", None))
         self.xLabel.setText(_translate("MainWindow", "X", None))
         self.liveimageCheckBox.setText(_translate("MainWindow", "Live Capture Region", None))
+        self.loopCheckBox.setText(_translate("MainWindow", "Loop Split Images", None))
         self.selectregionButton.setText(_translate("MainWindow", "Select Region", None))
         self.similaritythresholdLabel.setText(_translate("MainWindow", "Similarity threshold", None))
         self.startautosplitterButton.setText(_translate("MainWindow", "Start Auto Splitter", None))
@@ -502,4 +511,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
