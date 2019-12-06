@@ -766,6 +766,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.multipleResetImagesError()
                 return
 
+            # If there is no reset hotkey set but a reset image is present, throw an error.
+            if self.resetLineEdit.text() == '' and self.reset_image is not None:
+                self.resetHotkeyError()
+                return
+
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
@@ -836,6 +841,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
+
+                # calculate similarity for reset image
+                reset_masked = None
+                capture = None
+
+                if self.shouldCheckResetImage():
+                    reset_masked = (self.reset_mask is not None)
+                    capture = self.getCaptureForComparison(reset_masked)
+
+                    reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                    if reset_similarity >= self.reset_image_threshold:
+                        keyboard.send(str(self.resetLineEdit.text()))
+                        self.reset()
+
                 # loop goes into here if start auto splitter text is "Start Auto Splitter"
                 if self.startautosplitterButton.text() == 'Start Auto Splitter':
                     self.currentSplitImage.setText(' ')
@@ -853,22 +872,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.setundosplithotkeyButton.setEnabled(True)
                     self.custompausetimesCheckBox.setEnabled(True)
                     self.customthresholdsCheckBox.setEnabled(True)
+                    QtGui.QApplication.processEvents()
                     return
-
-
-                # calculate similarity for reset image
-                reset_masked = None
-                capture = None
-
-                if self.shouldCheckResetImage():
-                    reset_masked = (self.reset_mask is not None)
-                    capture = self.getCaptureForComparison(reset_masked)
-
-                    reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
-                    if reset_similarity >= self.reset_image_threshold:
-                        keyboard.send(str(self.resetLineEdit.text()))
-                        self.reset()
-                        continue
 
                 # get capture again if needed
                 masked = (self.flags & 0x02 == 0x02)
@@ -936,8 +941,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.waiting_for_split_delay = False
                 keyboard.send(str(self.splitLineEdit.text()))
 
-            # add one to the split image number
-            self.split_image_number = self.split_image_number + 1
+            # if loop check box is checked and its the last split, go to first split.
+            # else just add one to split image number.
+            if self.loopCheckBox.isChecked() and self.split_image_number == self.number_of_split_images - 1:
+                self.split_image_number = 0
+            else:
+                self.split_image_number = self.split_image_number + 1
 
             # set a "pause" split image number. This is done so that it can detect if user hit split/undo split while paused.
             pause_split_image_number = self.split_image_number
@@ -1236,6 +1245,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("Only one image with the keyword \"reset\" is allowed.")
         msgBox.exec_()
 
+    def resetHotkeyError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Your split image folder contains a reset image, but no reset hotkey is set.")
+        msgBox.exec_()
+
+
     def saveSettings(self):
         #get values to be able to save settings
         self.x = self.xSpinBox.value()
@@ -1268,19 +1284,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.group_dummy_splits_undo_skip_setting = 0
 
+        if self.loopCheckBox.isChecked():
+            self.loop_setting = 1
+        else:
+            self.loop_setting = 0
+
         #save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
                  self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting], f)
+                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
 
     def loadSettings(self):
         try:
             with open('settings.pkl', 'rb') as f:
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
                  self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting] = pickle.load(f)
+                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
 
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
@@ -1309,6 +1330,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.groupDummySplitsCheckBox.setChecked(True)
             else:
                 self.groupDummySplitsCheckBox.setChecked(False)
+
+            if self.loop_setting == 1:
+                self.loopCheckBox.setChecked(True)
+            else:
+                self.loopCheckBox.setChecked(False)
 
             # try to set hotkeys from when user last closed the window
             try:
@@ -1457,5 +1483,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
