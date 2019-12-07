@@ -67,7 +67,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - These settings are handled in the image's filename. 
 - Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
 - Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
-- Custom delay times are placed between hash signs `##` in the filename.
+- Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hokey.
   - {m} masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images MUST be .png and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate
@@ -84,7 +84,7 @@ The best way to create a masked image is to set your capture region as the entir
 </p>
 
 ### Reset image
-You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
+You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold MUST be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
 
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
@@ -105,6 +105,11 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 - If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 1st image
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
 - If you are in the 6th image and press the undo key, it will end up on the 3rd image
+
+### Loop Split Images
+If this option is disabled, when the last split meets the threshold and splits, it will automatically reset.
+
+If this option is enabled, when the last split meets the threshold and splits, it will loop back to the first split image. 
 
 ## Known Limitations
 - Starting your timer/AutoSplit is still manual.
