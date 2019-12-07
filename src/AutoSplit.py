@@ -785,7 +785,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 return
 
         #if there is no custom threshold for the reset image, throw an error.
-        if self.reset_image_threshold is None:
+        if self.reset_image is not None and self.reset_image_threshold is None:
             self.noResetImageThresholdError()
             return
 
