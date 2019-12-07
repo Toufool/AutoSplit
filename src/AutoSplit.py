@@ -784,6 +784,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.multipleResetImagesError()
                 return
 
+        #if there is no custom threshold for the reset image, throw an error.
+        if self.reset_image_threshold is None:
+            self.noResetImageThresholdError()
+            return
+
         # If there is no reset hotkey set but a reset image is present, throw an error.
         if self.resetLineEdit.text() == '' and self.reset_image is not None:
             self.resetHotkeyError()
@@ -1130,8 +1135,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         flags = split_parser.flags_from_filename(reset_image_file)
 
         self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file)
-        if self.reset_image_threshold is None:
-            self.reset_image_threshold = 1.0
 
         self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file)
         if self.reset_image_pause_time is None:
@@ -1281,6 +1284,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText("Only one image with the keyword \"reset\" is allowed.")
+        msgBox.exec_()
+
+    def noResetImageThresholdError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Reset Image must have a custom threshold. Please set one and check that it is valid")
         msgBox.exec_()
 
     def resetHotkeyError(self):
@@ -1521,6 +1530,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
 
