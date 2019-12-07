@@ -730,9 +730,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # get split image filenames
         self.split_image_filenames = os.listdir(self.split_image_directory)
 
-        # finds reset image (if any) and removes it from the list
-        self.findResetImage()
-
         # Make sure that each of the images follows the guidelines for correct format
         # according to all of the settings selected by the user.
         for image in self.split_image_filenames:
@@ -761,16 +758,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.imageTypeError(image)
                     return
 
-            # Check that there's only one reset image
-            if split_parser.is_reset_image(image):
-                self.multipleResetImagesError()
-                return
-
-            # If there is no reset hotkey set but a reset image is present, throw an error.
-            if self.resetLineEdit.text() == '' and self.reset_image is not None:
-                self.resetHotkeyError()
-                return
-
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
@@ -782,9 +769,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # was selected for unique thresholds
                 self.customThresholdError(image)
                 return
-            
+
         if self.splitLineEdit.text() == '':
             self.splitHotkeyError()
+            return
+
+        #find reset image then remove it from the list
+        self.findResetImage()
+
+        # Check that there's only one reset image
+        for image in self.split_image_filenames:
+
+            if split_parser.is_reset_image(image):
+                self.multipleResetImagesError()
+                return
+
+        # If there is no reset hotkey set but a reset image is present, throw an error.
+        if self.resetLineEdit.text() == '' and self.reset_image is not None:
+            self.resetHotkeyError()
             return
 
         # construct groups of splits if needed
@@ -935,6 +937,42 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                    #check for reset while delayed
+                    delay_start_time = time.time()
+                    while time.time() - delay_start_time < (self.split_delay / 1000):
+                        # check for reset
+                        if win32gui.GetWindowText(self.hwnd) == '':
+                            self.reset()
+                        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+                            self.currentSplitImage.setText(' ')
+                            self.currentsplitimagefileLabel.setText(' ')
+                            self.livesimilarityLabel.setText(' ')
+                            self.highestsimilarityLabel.setText(' ')
+                            self.browseButton.setEnabled(True)
+                            self.startautosplitterButton.setEnabled(True)
+                            self.resetButton.setEnabled(False)
+                            self.undosplitButton.setEnabled(False)
+                            self.skipsplitButton.setEnabled(False)
+                            self.setsplithotkeyButton.setEnabled(True)
+                            self.setresethotkeyButton.setEnabled(True)
+                            self.setskipsplithotkeyButton.setEnabled(True)
+                            self.setundosplithotkeyButton.setEnabled(True)
+                            self.custompausetimesCheckBox.setEnabled(True)
+                            self.customthresholdsCheckBox.setEnabled(True)
+                            return
+
+                        # calculate similarity for reset image
+                        if self.shouldCheckResetImage() == True:
+                            reset_masked = (self.reset_mask is not None)
+                            capture = self.getCaptureForComparison(reset_masked)
+
+                            reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                            if reset_similarity >= self.reset_image_threshold:
+                                keyboard.send(str(self.resetLineEdit.text()))
+                                self.reset()
+                                continue
+
+                        QtTest.QTest.qWait(1)
                     continue
 
                 # Split key press
@@ -1483,4 +1521,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
 
