@@ -978,7 +978,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                                 continue
 
                         QtTest.QTest.qWait(1)
-                    continue
 
                 # Split key press
                 self.waiting_for_split_delay = False
