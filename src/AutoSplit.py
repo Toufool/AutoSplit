@@ -17,6 +17,7 @@ import compare
 import capture_windows
 import split_parser
 
+
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     myappid = u'mycompany.myproduct.subproduct.version'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -86,6 +87,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # Default Settings for the region capture
         self.hwnd = 0
+        self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
         # try to load settings
@@ -142,24 +144,27 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
             self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
 
+        if self.hwnd != 0 or win32gui.GetWindowText(self.hwnd) != '':
+            self.hwnd_title = win32gui.GetWindowText(self.hwnd)
+
         # Convert the Desktop Coordinates to Window Coordinates
         DwmGetWindowAttribute = ctypes.windll.dwmapi.DwmGetWindowAttribute
         DWMWA_EXTENDED_FRAME_BOUNDS = 9
-        
+
         # Pull the window's coordinates relative to desktop into rect
         DwmGetWindowAttribute(self.hwnd,
-                      ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-                      ctypes.byref(self.rect),
-                      ctypes.sizeof(self.rect)
-                      )
+                              ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
+                              ctypes.byref(self.rect),
+                              ctypes.sizeof(self.rect)
+                              )
 
         # On Windows 10 the windows have offsets due to invisible pixels not accounted for in DwmGetWindowAttribute
-        #TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
+        # TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
         # Research needs to be done to figure out why it was used it over win32gui in the first place...
         # I have a feeling it was due to a misunderstanding and not getting the correct parent window before.
         offset_left = self.rect.left - win32gui.GetWindowRect(self.hwnd)[0]
-        offset_top  = self.rect.top - win32gui.GetWindowRect(self.hwnd)[1]
-        
+        offset_top = self.rect.top - win32gui.GetWindowRect(self.hwnd)[1]
+
         self.rect.left = selector.left - (self.rect.left - offset_left)
         self.rect.top = selector.top - (self.rect.top - offset_top)
         self.rect.right = self.rect.left + selector.width
@@ -179,10 +184,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
-
         # This is the image used for aligning the capture region
         # to the best fit for the user.
-        template_filename = str(QtGui.QFileDialog.getOpenFileName(self, "Select Reference Image", "", "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
+        template_filename = str(QtGui.QFileDialog.getOpenFileName(self, "Select Reference Image", "",
+                                                                  "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
 
         # return if the user presses cancel
         if template_filename == '':
@@ -270,9 +275,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         if self.hwnd is None:
             return
-    
+
         del selector
-        
+
         # Want to pull the parent window from the window handle
         # By using GetAncestor we are able to get the parent window instead
         # of the owner window.
@@ -280,6 +285,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         GA_ROOT = 2
         while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
             self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
+
+        if self.hwnd != 0 or win32gui.GetWindowText(self.hwnd) != '':
+            self.hwnd_title = win32gui.GetWindowText(self.hwnd)
 
         # getting window bounds
         # on windows there are some invisble pixels that are not accounted for
@@ -312,6 +320,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.regionError()
                 self.timerLiveImage.stop()
                 return
+
             ctypes.windll.user32.SetProcessDPIAware()
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
@@ -319,7 +328,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             # Convert to set it on the label
-            qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3, QtGui.QImage.Format_RGB888)
+            qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3,
+                                QtGui.QImage.Format_RGB888)
             pix = QtGui.QPixmap(qImg)
             self.liveImage.setPixmap(pix)
 
@@ -364,7 +374,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
-
         take_screenshot_filename = '001_SplitImage'
 
         # check if file exists and rename it if it does
@@ -616,7 +625,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
             capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-            capture  = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
+            capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             if self.comparisonmethodComboBox.currentIndex() == 0:
                 similarity = compare.compare_l2_norm(split_image, capture)
@@ -717,7 +726,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def startUndoSplit(self):
         self.undoSplitSignal.emit()
 
-
     def autoSplitter(self):
         # error checking:
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
@@ -774,7 +782,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.splitHotkeyError()
             return
 
-        #find reset image then remove it from the list
+        # find reset image then remove it from the list
         self.findResetImage()
 
         # Check that there's only one reset image
@@ -784,7 +792,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.multipleResetImagesError()
                 return
 
-        #if there is no custom threshold for the reset image, throw an error.
+        # if there is no custom threshold for the reset image, throw an error.
         if self.reset_image is not None and self.reset_image_threshold is None:
             self.noResetImageThresholdError()
             return
@@ -821,7 +829,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setundosplithotkeyButton.setEnabled(False)
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
-
 
         self.split_image_number = 0
         self.number_of_split_images = len(self.split_image_filenames)
@@ -918,7 +925,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.undosplitButton.setEnabled(True)
 
-
                 # limit the number of time the comparison runs to reduce cpu usage
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
@@ -942,7 +948,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
-                    #check for reset while delayed
+                    # check for reset while delayed
                     delay_start_time = time.time()
                     while time.time() - delay_start_time < (self.split_delay / 1000):
                         # check for reset
@@ -995,7 +1001,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
-                #set current split image to none
+                # set current split image to none
                 self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
@@ -1143,7 +1149,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if (flags & 0x02 == 0x02):
             # create mask based on resized, nearest neighbor interpolated split image
             self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-            self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+            self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
+                                          interpolation=cv2.INTER_NEAREST)
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
             self.reset_mask = cv2.inRange(self.reset_image, lower, upper)
@@ -1165,7 +1172,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
 
-        #set current split image in UI
+        # set current split image in UI
         # if flagged as mask, transform transparency into UI's gray BG color
         if (self.flags & 0x02 == 0x02):
             self.split_image_display = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
@@ -1173,7 +1180,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.split_image_display[transparent_mask] = [240, 240, 240, 255]
             self.split_image_display = cv2.cvtColor(self.split_image_display, cv2.COLOR_BGRA2RGB)
             self.split_image_display = cv2.resize(self.split_image_display, (240, 180))
-        #if not flagged as mask, open normally
+        # if not flagged as mask, open normally
         else:
             self.split_image_display = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image_display = cv2.cvtColor(self.split_image_display, cv2.COLOR_BGR2RGB)
@@ -1190,7 +1197,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # create mask based on resized, nearest neighbor interpolated split image
             self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
-            self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
+            self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
+                                          interpolation=cv2.INTER_NEAREST)
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
             self.mask = cv2.inRange(self.split_image, lower, upper)
@@ -1213,7 +1221,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
-        
+
         self.similarity = 0
         self.highest_similarity = 0.001
 
@@ -1228,7 +1236,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def imageTypeError(self, image):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText('"' + image + '" is not a valid image file or the full image file path contains a special character.')
+        msgBox.setText(
+            '"' + image + '" is not a valid image file or the full image file path contains a special character.')
         msgBox.exec_()
 
     def regionError(self):
@@ -1297,9 +1306,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("Your split image folder contains a reset image, but no reset hotkey is set.")
         msgBox.exec_()
 
-
     def saveSettings(self):
-        #get values to be able to save settings
+        # get values to be able to save settings
         self.x = self.xSpinBox.value()
         self.y = self.ySpinBox.value()
         self.width = self.widthSpinBox.value()
@@ -1313,7 +1321,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.reset_key = str(self.resetLineEdit.text())
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
-        self.hwnd_title = win32gui.GetWindowText(self.hwnd)
 
         if self.custompausetimesCheckBox.isChecked():
             self.custom_pause_times_setting = 1
@@ -1335,19 +1342,25 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.loop_setting = 0
 
-        #save settings to settings.pkl
+        # save settings to settings.pkl
         with open('settings.pkl', 'wb') as f:
             pickle.dump(
-                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
+                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                 self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                 self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting,
+                 self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
 
     def loadSettings(self):
         try:
             with open('settings.pkl', 'rb') as f:
-                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause, self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height, self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting, self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                 self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                 self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting,
+                 self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
 
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
@@ -1420,6 +1433,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.saveSettings()
         sys.exit()
 
+
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
 class SelectRegionWidget(QtGui.QWidget):
@@ -1434,8 +1448,9 @@ class SelectRegionWidget(QtGui.QWidget):
         self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
         self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
         self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-        
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN , self.SM_CXVIRTUALSCREEN, self.SM_CYVIRTUALSCREEN)
+
+        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
+                         self.SM_CYVIRTUALSCREEN)
         self.setWindowTitle(' ')
 
         self.height = -1
@@ -1471,12 +1486,13 @@ class SelectRegionWidget(QtGui.QWidget):
         # so the added virtual screen offsets convert them back to the virtual
         # screen coordinates
         self.left = min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.top = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
+        self.top = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
         self.right = max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.bottom = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN 
+        self.bottom = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
 
         self.height = self.bottom - self.top
         self.width = self.right - self.left
+
 
 # widget to select a window and obtain its bounds
 class SelectWindowWidget(QtGui.QWidget):
@@ -1494,8 +1510,9 @@ class SelectWindowWidget(QtGui.QWidget):
         self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
         self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
         self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-        
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN , self.SM_CXVIRTUALSCREEN, self.SM_CYVIRTUALSCREEN)
+
+        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
+                         self.SM_CYVIRTUALSCREEN)
         self.setWindowTitle(' ')
 
         self.setWindowOpacity(0.5)
@@ -1529,4 +1546,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
