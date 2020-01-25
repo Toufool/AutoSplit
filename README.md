@@ -137,4 +137,4 @@ If this option is enabled, when the last split meets the threshold and splits, i
 ## Donate
 If you enjoy using the program, please consider donating. Thank you!  
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?token=smI9iwHZ_FYTd0BZVCIphAeuNuk6UcamAceGChZUXp_7eik04kiXvhBsnVMCkgWDYhWfjG&country.x=US&locale.x=)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BYRHQG69YRHBA&item_name=AutoSplit+development&currency_code=USD&source=url)
