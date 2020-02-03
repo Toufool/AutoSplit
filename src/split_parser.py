@@ -64,6 +64,28 @@ def delay_from_filename(filename):
     else:
         return delay
 
+def loop_from_filename(filename):
+    """
+    Retrieve the number of loops from filename, if there is no loop number or the loop number isn't valid,
+    then 1 is returned.
+
+    @param filename: String containing the file's name
+    @return: A valid loop number, if not then 1
+    """
+
+    # Check to make sure there is a valid delay time between brackets
+    # of the filename
+    try:
+        loop = int(filename.split('@', 1)[1].split('@')[0])
+    except:
+        return 1
+
+    # Delay times should always be positive or zero
+    if (loop < 1):
+        return 1
+    else:
+        return loop
+
 def flags_from_filename(filename):
     """
     Retrieve the flags from the filename, if there are no flags then 0 is returned
