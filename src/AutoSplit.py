@@ -933,11 +933,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.undosplitButton.setEnabled(True)
 
-                # limit the number of time the comparison runs to reduce cpu usage
-                fps_limit = self.fpslimitSpinBox.value()
-                time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
-                QtGui.QApplication.processEvents()
-
                 #if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
                 #if no b flag, just split when similarity goes above threshold.
                 if self.flags & 0x04 == 0x04 and self.split_below_threshold == False:
@@ -951,6 +946,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     if self.waiting_for_split_delay == False and self.similarity > self.similaritythresholdDoubleSpinBox.value():
                         break
+                        
+                # limit the number of time the comparison runs to reduce cpu usage
+                fps_limit = self.fpslimitSpinBox.value()
+                time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
+                QtGui.QApplication.processEvents()
 
 
             # comes here when threshold gets met
