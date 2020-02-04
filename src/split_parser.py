@@ -97,7 +97,8 @@ def flags_from_filename(filename):
     """
     List of flags:
     'd' = dummy, do nothing when this split is found
-    'm' = mask, use a mask when comparing this split (TBD!!)
+    'm' = mask, use a mask when comparing this split
+    'b' = below threshold, after threshold is met, split when it goes below the threhsold.
     'p' = pause, hit pause key when this split is found
     """
 
@@ -110,7 +111,8 @@ def flags_from_filename(filename):
 
     DUMMY_FLAG = 1 << 0
     MASK_FLAG = 1 << 1
-    PAUSE_FLAG = 1 << 2
+    BELOW_FLAG = 1 << 2
+    PAUSE_FLAG = 1 << 3
 
     flags = 0x00
     
@@ -119,6 +121,8 @@ def flags_from_filename(filename):
             flags |= DUMMY_FLAG
         elif c.upper() == 'M':
             flags |= MASK_FLAG
+        elif c.upper() == 'B':
+            flags |= BELOW_FLAG
         elif c.upper() == 'P':
             flags |= PAUSE_FLAG
         else:
