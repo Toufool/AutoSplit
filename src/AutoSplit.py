@@ -838,6 +838,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.loop_number = 1
         self.number_of_split_images = len(self.split_image_filenames)
         self.waiting_for_split_delay = False
+        self.split_below_threshold = False
 
         self.run_start_time = time.time()
 
@@ -856,7 +857,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # second while loop: stays in this loop until similarity threshold is met
             # skip loop if we just finished waiting for the split delay and need to press the split key!
             start = time.time()
-            while self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
+            while True:
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
@@ -936,6 +937,21 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
                 QtGui.QApplication.processEvents()
+
+                #if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
+                #if no b flag, just split when similarity goes above threshold.
+                if self.flags & 0x04 == 0x04 and self.split_below_threshold == False:
+                    if self.waiting_for_split_delay == False and self.similarity > self.similaritythresholdDoubleSpinBox.value():
+                        self.split_below_threshold = True
+                        continue
+                elif self.flags & 0x04 == 0x04 and self.split_below_threshold == True:
+                    if self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
+                        self.split_below_threshold = False
+                        break
+                else:
+                    if self.waiting_for_split_delay == False and self.similarity > self.similaritythresholdDoubleSpinBox.value():
+                        break
+
 
             # comes here when threshold gets met
 
@@ -1250,6 +1266,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         #Set Image Loop #
         self.imageloopLabel.setText("Image Loop #: " + str(self.loop_number))
 
+        #need to set split below threshold to false each time an image updates.
+        self.split_below_threshold = False
+
         self.similarity = 0
         self.highest_similarity = 0.001
 
@@ -1337,7 +1356,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def dummySplitsError(self):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Group dummy splits when undoing/skipping cannot currently be checked if any split image has a loop parameter greater than 1")
+        msgBox.setText("Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
         msgBox.exec_()
 
     def settingsNotFoundError(self):
