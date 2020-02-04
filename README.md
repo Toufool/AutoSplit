@@ -68,13 +68,16 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
 - Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
+- Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hokey.
+  - {b} split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
   - {m} masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images MUST be .png and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate
 - Filename examples: 
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
   - `003_SplitName_(0.85)_[20]_#3500#_{m}.png` is the third split image with a threshold of 0.85, pause time of 20, delay split time of 3.5 seconds and it is a masked image.
+  - `004_SplitName(0.9)_[10]_#3500#_@3@_{b}.png` is the fourth split image with a threshold of 0.9, pause time of 10 seconds, delay split time of 3.5 seconds, will loop 3 times, and will split when similarity is below the threshold rather than above.
   
 ### How to Create a Masked Image
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). The last thing you need to do is add {m} to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
@@ -106,10 +109,12 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
 - If you are in the 6th image and press the undo key, it will end up on the 3rd image
 
+Please note this option cannot currently be used if you have any loop parameter `@@` greater than 1 in any image.
+
 ### Loop Split Images
 If this option is disabled, when the last split meets the threshold and splits, it will automatically reset.
-
-If this option is enabled, when the last split meets the threshold and splits, it will loop back to the first split image. 
+If this option is enabled, when the last split meets the threshold and splits, it will loop back to the first split image.
+This option does not loop specific images. See the Custom Split Image Settings section above.
 
 ## Known Limitations
 - Starting your timer/AutoSplit is still manual.
