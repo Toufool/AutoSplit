@@ -73,14 +73,14 @@ def loop_from_filename(filename):
     @return: A valid loop number, if not then 1
     """
 
-    # Check to make sure there is a valid delay time between brackets
+    # Check to make sure there is a valid loop number between at's
     # of the filename
     try:
         loop = int(filename.split('@', 1)[1].split('@')[0])
     except:
         return 1
 
-    # Delay times should always be positive or zero
+    # Make loop number 1 if it is less than 1
     if (loop < 1):
         return 1
     else:
