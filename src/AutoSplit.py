@@ -936,7 +936,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 #if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
                 #if no b flag, just split when similarity goes above threshold.
                 if self.flags & 0x04 == 0x04 and self.split_below_threshold == False:
-                    if self.waiting_for_split_delay == False and self.similarity > self.similaritythresholdDoubleSpinBox.value():
+                    if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
                         self.split_below_threshold = True
                         continue
                 elif self.flags & 0x04 == 0x04 and self.split_below_threshold == True:
@@ -944,7 +944,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.split_below_threshold = False
                         break
                 else:
-                    if self.waiting_for_split_delay == False and self.similarity > self.similaritythresholdDoubleSpinBox.value():
+                    if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
                         break
                         
                 # limit the number of time the comparison runs to reduce cpu usage
