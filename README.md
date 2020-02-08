@@ -116,6 +116,9 @@ If this option is disabled, when the last split meets the threshold and splits, 
 If this option is enabled, when the last split meets the threshold and splits, it will loop back to the first split image.
 This option does not loop specific images. See the Custom Split Image Settings section above.
 
+### Settings
+Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file is loaded upon opening the program. These settings include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, hotkeys, "Group dummy splits when undoing/skipping" check box, and "Loop Split Images" check box. Settings can be reloaded using the Reload Settings button.
+
 ## Known Limitations
 - Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.
