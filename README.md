@@ -63,7 +63,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Time in milliseconds that the program waits before hitting the split hotkey for that specific split.
 
 ### Custom Split Image Settings
-- Each split image can have different thresholds, pause times, delay split times and can be flagged.
+- Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
 - These settings are handled in the image's filename. 
 - Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
 - Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
