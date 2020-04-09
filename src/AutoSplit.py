@@ -1466,7 +1466,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.loop_setting = 0
 
         # save settings to settings.pkl
-        with open('settings.pkl', 'wb') as f:
+        with open(os.path.join(sys.path[0], 'settings.pkl'), 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
                  self.fps_limit, self.split_key,
@@ -1477,7 +1477,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def loadSettings(self):
         try:
-            with pickle.load(open('settings.pkl', 'rb')) as f:
+            with pickle.load(open(os.path.join(sys.path[0], 'settings.pkl'), 'rb')) as f:
                 if len(f) == 18:
 
                     # the settings file might not include the pause hotkey yet
