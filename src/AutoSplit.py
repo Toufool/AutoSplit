@@ -63,6 +63,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.clicked.connect(self.setResetHotkey)
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
         self.setundosplithotkeyButton.clicked.connect(self.setUndoSplitHotkey)
+        self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
         self.reloadsettingsButton.clicked.connect(self.loadSettings)
@@ -416,7 +417,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # If the key the user presses is equal to itself or another hotkey already set,
             # this causes issues. so here, it catches that, and will make no changes to the hotkey.
             try:
-                if self.split_key == self.splitLineEdit.text() or self.split_key == self.resetLineEdit.text() or self.split_key == self.skipsplitLineEdit.text() or self.split_key == self.undosplitLineEdit.text():
+                if self.split_key == self.splitLineEdit.text() or self.split_key == self.resetLineEdit.text() or self.split_key == self.skipsplitLineEdit.text() or self.split_key == self.undosplitLineEdit.text() or self.split_key == self.pauseLineEdit.text():
                     self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
                     self.afterSettingHotkeySignal.emit()
                     return
@@ -461,7 +462,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 pass
             self.reset_key = keyboard.read_hotkey(False)
             try:
-                if self.reset_key == self.splitLineEdit.text() or self.reset_key == self.resetLineEdit.text() or self.reset_key == self.skipsplitLineEdit.text() or self.reset_key == self.undosplitLineEdit.text():
+                if self.reset_key == self.splitLineEdit.text() or self.reset_key == self.resetLineEdit.text() or self.reset_key == self.skipsplitLineEdit.text() or self.reset_key == self.undosplitLineEdit.text() or self.reset_key == self.pauseLineEdit.text():
                     self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
                     self.afterSettingHotkeySignal.emit()
                     return
@@ -499,7 +500,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.skip_split_key = keyboard.read_hotkey(False)
 
             try:
-                if self.skip_split_key == self.splitLineEdit.text() or self.skip_split_key == self.resetLineEdit.text() or self.skip_split_key == self.skipsplitLineEdit.text() or self.skip_split_key == self.undosplitLineEdit.text():
+                if self.skip_split_key == self.splitLineEdit.text() or self.skip_split_key == self.resetLineEdit.text() or self.skip_split_key == self.skipsplitLineEdit.text() or self.skip_split_key == self.undosplitLineEdit.text() or self.skip_split_key == self.pauseLineEdit.text():
                     self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
                     self.afterSettingHotkeySignal.emit()
                     return
@@ -539,7 +540,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.undo_split_key = keyboard.read_hotkey(False)
 
             try:
-                if self.undo_split_key == self.splitLineEdit.text() or self.undo_split_key == self.resetLineEdit.text() or self.undo_split_key == self.skipsplitLineEdit.text() or self.undo_split_key == self.undosplitLineEdit.text():
+                if self.undo_split_key == self.splitLineEdit.text() or self.undo_split_key == self.resetLineEdit.text() or self.undo_split_key == self.skipsplitLineEdit.text() or self.undo_split_key == self.undosplitLineEdit.text() or self.undo_split_key == self.pauseLineEdit.text():
                     self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
                     self.afterSettingHotkeySignal.emit()
                     return
@@ -566,6 +567,37 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         t.start()
         return
 
+    # this one is shorter because AutoSplit will ignore pause hotkey presses
+    # since it doesn't keep track of whether the timer is paused
+    def setPauseHotkey(self):
+        self.setpausehotkeyButton.setText('Press a key..')
+        self.beforeSettingHotkey()
+
+        def callback():
+            self.pause_key = keyboard.read_hotkey(False)
+            try:
+                if self.pause_key == self.splitLineEdit.text() or self.pause_key == self.resetLineEdit.text() or self.pause_key == self.skipsplitLineEdit.text() or self.pause_key == self.undosplitLineEdit.text() or self.pause_key == self.pauseLineEdit.text():
+                    self.afterSettingHotkeySignal.emit()
+                    return
+            except AttributeError:
+                self.afterSettingHotkeySignal.emit()
+                return
+            try:
+                if '+' in self.pause_key:
+                    self.afterSettingHotkeySignal.emit()
+                    return
+            except AttributeError:
+                self.afterSettingHotkeySignal.emit()
+                return
+            self.pauseLineEdit.setText(self.pause_key)
+            self.old_pause_key = self.pause_key
+            self.afterSettingHotkeySignal.emit()
+            return
+
+        t = threading.Thread(target=callback)
+        t.start()
+        return
+
     # do all of these after you click "set hotkey" but before you type the hotkey.
     def beforeSettingHotkey(self):
         self.startautosplitterButton.setEnabled(False)
@@ -573,6 +605,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(False)
         self.setskipsplithotkeyButton.setEnabled(False)
         self.setundosplithotkeyButton.setEnabled(False)
+        self.setpausehotkeyButton.setEnabled(False)
         self.reloadsettingsButton.setEnabled(False)
 
     # do all of these things after you set a hotkey. a signal connects to this because
@@ -582,11 +615,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setText('Set Hotkey')
         self.setskipsplithotkeyButton.setText('Set Hotkey')
         self.setundosplithotkeyButton.setText('Set Hotkey')
+        self.setpausehotkeyButton.setText('Set Hotkey')
         self.startautosplitterButton.setEnabled(True)
         self.setsplithotkeyButton.setEnabled(True)
         self.setresethotkeyButton.setEnabled(True)
         self.setskipsplithotkeyButton.setEnabled(True)
         self.setundosplithotkeyButton.setEnabled(True)
+        self.setpausehotkeyButton.setEnabled(True)
         self.reloadsettingsButton.setEnabled(True)
         return
 
@@ -762,6 +797,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.customThresholdError(image)
                 return
 
+            if self.pauseLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
+                # Error, no pause hotkey set even though pause flag is set
+                self.pauseHotkeyError()
+                return
+
         if self.splitLineEdit.text() == '':
             self.splitHotkeyError()
             return
@@ -829,6 +869,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(False)
         self.setskipsplithotkeyButton.setEnabled(False)
         self.setundosplithotkeyButton.setEnabled(False)
+        self.setpausehotkeyButton.setEnabled(False)
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
@@ -891,6 +932,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.setresethotkeyButton.setEnabled(True)
                     self.setskipsplithotkeyButton.setEnabled(True)
                     self.setundosplithotkeyButton.setEnabled(True)
+                    self.setpausehotkeyButton.setEnabled(True)
                     self.custompausetimesCheckBox.setEnabled(True)
                     self.customthresholdsCheckBox.setEnabled(True)
                     self.groupDummySplitsCheckBox.setEnabled(True)
@@ -955,9 +997,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # comes here when threshold gets met
 
-            # We need to make sure that this isn't a dummy split before sending
-            # the key press.
-            if (self.flags & 0x01 == 0x01):
+            # We need to make sure that this isn't a dummy split without pause flag
+            # before sending a key press.
+            if (self.flags & 0x09 == 0x01):
                 pass
             else:
                 # If it's a delayed split, check if the delay has passed
@@ -993,6 +1035,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                             self.setresethotkeyButton.setEnabled(True)
                             self.setskipsplithotkeyButton.setEnabled(True)
                             self.setundosplithotkeyButton.setEnabled(True)
+                            self.setpausehotkeyButton.setEnabled(True)
                             self.custompausetimesCheckBox.setEnabled(True)
                             self.customthresholdsCheckBox.setEnabled(True)
                             self.groupDummySplitsCheckBox.setEnabled(True)
@@ -1011,9 +1054,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                         QtTest.QTest.qWait(1)
 
-                # Split key press
                 self.waiting_for_split_delay = False
-                keyboard.send(str(self.splitLineEdit.text()))
+
+                # Split key press unless dummy flag is set
+                if (self.flags & 0x01 == 0x00):
+                    keyboard.send(str(self.splitLineEdit.text()))
+
+                # Pause key press if pause flag is set
+                if (self.flags & 0x08 == 0x08):
+                    keyboard.send(str(self.pauseLineEdit.text()))
 
             #increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
@@ -1079,6 +1128,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         self.setresethotkeyButton.setEnabled(True)
                         self.setskipsplithotkeyButton.setEnabled(True)
                         self.setundosplithotkeyButton.setEnabled(True)
+                        self.setpausehotkeyButton.setEnabled(True)
                         self.custompausetimesCheckBox.setEnabled(True)
                         self.customthresholdsCheckBox.setEnabled(True)
                         self.groupDummySplitsCheckBox.setEnabled(True)
@@ -1117,6 +1167,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(True)
         self.setskipsplithotkeyButton.setEnabled(True)
         self.setundosplithotkeyButton.setEnabled(True)
+        self.setpausehotkeyButton.setEnabled(True)
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
@@ -1353,6 +1404,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox.setText("Your split image folder contains a reset image, but no reset hotkey is set.")
         msgBox.exec_()
 
+    def pauseHotkeyError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Your split image folder contains an image with the {p} flag, but no pause hotkey is set.")
+        msgBox.exec_()
+
     def dummySplitsError(self):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
@@ -1386,6 +1443,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.reset_key = str(self.resetLineEdit.text())
         self.skip_split_key = str(self.skipsplitLineEdit.text())
         self.undo_split_key = str(self.undosplitLineEdit.text())
+        self.pause_key = str(self.pauseLineEdit.text())
 
         if self.custompausetimesCheckBox.isChecked():
             self.custom_pause_times_setting = 1
@@ -1415,17 +1473,27 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                  self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
                  self.hwnd_title,
                  self.custom_pause_times_setting, self.custom_thresholds_setting,
-                 self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
+                 self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.pause_key], f)
 
     def loadSettings(self):
         try:
-            with open('settings.pkl', 'rb') as f:
-                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                 self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                 self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting,
-                 self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+            with pickle.load(open('settings.pkl', 'rb')) as f:
+                if len(f) == 18:
+
+                    # the settings file might not include the pause hotkey yet
+                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                    self.fps_limit, self.split_key,
+                    self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                    self.hwnd_title,
+                    self.custom_pause_times_setting, self.custom_thresholds_setting,
+                    self.group_dummy_splits_undo_skip_setting, self.loop_setting] = f
+                else:
+                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                    self.fps_limit, self.split_key,
+                    self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                    self.hwnd_title,
+                    self.custom_pause_times_setting, self.custom_thresholds_setting,
+                    self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.pause_key] = f
 
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
@@ -1503,6 +1571,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.undosplitLineEdit.setText(str(self.undo_split_key))
                 self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
                 self.old_undo_split_key = self.undo_split_key
+            except ValueError:
+                pass
+
+            try:
+                self.pauseLineEdit.setText(str(self.pause_key))
+                self.old_pause_key = self.pause_key
             except ValueError:
                 pass
 

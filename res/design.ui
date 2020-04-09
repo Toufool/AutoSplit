@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>612</width>
-    <height>490</height>
+    <height>520</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>612</width>
-    <height>490</height>
+    <height>520</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -139,7 +139,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>378</y>
+      <y>408</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -152,7 +152,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>383</y>
+      <y>413</y>
       <width>64</width>
       <height>22</height>
      </rect>
@@ -171,7 +171,7 @@
     <property name="geometry">
      <rect>
       <x>501</x>
-      <y>425</y>
+      <y>455</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -187,7 +187,7 @@
     <property name="geometry">
      <rect>
       <x>501</x>
-      <y>385</y>
+      <y>415</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -235,7 +235,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>420</y>
+      <y>450</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -280,7 +280,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>330</y>
+      <y>360</y>
       <width>111</width>
       <height>17</height>
      </rect>
@@ -302,7 +302,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>351</y>
+      <y>381</y>
       <width>131</width>
       <height>17</height>
      </rect>
@@ -321,7 +321,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>332</y>
+      <y>362</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -334,7 +334,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>353</y>
+      <y>383</y>
       <width>46</width>
       <height>13</height>
      </rect>
@@ -395,6 +395,19 @@
      <string>Undo Split</string>
     </property>
    </widget>
+   <widget class="QLabel" name="pausehotkeyLabel">
+    <property name="geometry">
+     <rect>
+      <x>249</x>
+      <y>440</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pause / Unpause</string>
+    </property>
+   </widget>
    <widget class="QLineEdit" name="splitLineEdit">
     <property name="geometry">
      <rect>
@@ -450,10 +463,23 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLineEdit" name="pauseLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>316</x>
+      <y>440</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
    <widget class="QPushButton" name="setsplithotkeyButton">
     <property name="geometry">
      <rect>
-      <x>409</x>
+      <x>410</x>
       <y>320</y>
       <width>71</width>
       <height>21</height>
@@ -503,6 +529,22 @@
      <rect>
       <x>410</x>
       <y>410</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="setpausehotkeyButton">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>440</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -704,7 +746,7 @@
       <x>489</x>
       <y>296</y>
       <width>2</width>
-      <height>163</height>
+      <height>193</height>
      </rect>
     </property>
     <property name="frameShadow">
@@ -989,7 +1031,7 @@
     <property name="geometry">
      <rect>
       <x>143</x>
-      <y>299</y>
+      <y>329</y>
       <width>81</width>
       <height>22</height>
      </rect>
@@ -1014,7 +1056,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>425</y>
+      <y>455</y>
       <width>64</width>
       <height>22</height>
      </rect>
@@ -1036,7 +1078,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>435</y>
+      <y>465</y>
       <width>121</width>
       <height>17</height>
      </rect>
@@ -1061,7 +1103,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>394</y>
+      <y>424</y>
       <width>111</width>
       <height>17</height>
      </rect>
@@ -1083,7 +1125,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>300</y>
+      <y>330</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -1112,7 +1154,7 @@
     <property name="geometry">
      <rect>
       <x>252</x>
-      <y>440</y>
+      <y>470</y>
       <width>230</width>
       <height>17</height>
      </rect>
@@ -1163,14 +1205,17 @@
    <zorder>resetLabel</zorder>
    <zorder>skiptsplitLabel</zorder>
    <zorder>undosplitLabel</zorder>
+   <zorder>pausehotkeyLabel</zorder>
    <zorder>splitLineEdit</zorder>
    <zorder>undosplitLineEdit</zorder>
    <zorder>skipsplitLineEdit</zorder>
    <zorder>resetLineEdit</zorder>
+   <zorder>pauseLineEdit</zorder>
    <zorder>setsplithotkeyButton</zorder>
    <zorder>setresethotkeyButton</zorder>
    <zorder>setskipsplithotkeyButton</zorder>
    <zorder>setundosplithotkeyButton</zorder>
+   <zorder>setpausehotkeyButton</zorder>
    <zorder>line_live_bottom</zorder>
    <zorder>line_live_top</zorder>
    <zorder>line_live_right</zorder>
@@ -1255,6 +1300,7 @@
   <tabstop>resetLineEdit</tabstop>
   <tabstop>skipsplitLineEdit</tabstop>
   <tabstop>undosplitLineEdit</tabstop>
+  <tabstop>pauseLineEdit</tabstop>
   <tabstop>groupDummySplitsCheckBox</tabstop>
  </tabstops>
  <resources/>

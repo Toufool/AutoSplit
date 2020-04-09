@@ -98,7 +98,7 @@ def flags_from_filename(filename):
     List of flags:
     'd' = dummy, do nothing when this split is found
     'm' = mask, use a mask when comparing this split
-    'b' = below threshold, after threshold is met, split when it goes below the threhsold.
+    'b' = below threshold, after threshold is met, split when it goes below the threshold.
     'p' = pause, hit pause key when this split is found
     """
 
@@ -130,11 +130,6 @@ def flags_from_filename(filename):
             # return 0. We don't want to interpret any misleading filenames
             return 0
 
-    # Check for any conflicting flags that were set
-    # For instance, we can't have a dummy split also pause
-    if (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & PAUSE_FLAG == PAUSE_FLAG):
-        return 0
-    
     return flags
 
 def is_reset_image(filename):
