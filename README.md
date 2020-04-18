@@ -15,10 +15,10 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Opening the program
 - Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
-- Extract the file and open AutoSplit.exe.
+- Extract the file and open `AutoSplit.exe`.
 
 ## Split Image Folder
-- Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
+- Supported image file types: `.png`, `.jpg`, `.jpeg`, `.bmp`, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
 - Images are matched in alphanumerical order.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`... 
@@ -70,10 +70,13 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
+  - **NOTE:** If you think these flags are too hard to understand, don't worry, just ignore the last two ones. They make everything more complicated.
   - `{d}` dummy split image. When matched, it moves to the next image without hitting your split hotkey.
   - `{b}` split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
-  - `{m}` masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images MUST be .png and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate
-  - `{p}` pause/unpause timer. This allows you to let AutoSplit remove the loading times. Use `{d}` as well if you only want to pause/unpause but don't want to split. There is no "Pause / Unpause" button in AutoSplit because it doesn't keep track of whether your timer is currently paused.
+  - `{m}` masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images *must* be `.png` and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do **_not_** use pHash comparison if you use any masked images, as it is very inaccurate
+  - `{p}` pause/unpause timer. This allows you to let AutoSplit remove the loading times. Use dummy flag as well if you only want to pause/unpause but don't want to split. There is no "Pause / Unpause" button in AutoSplit because it doesn't keep track of whether your timer is currently paused.
+  - `{n}` include next split as well. This allows you to have more than one split image that the live image is compared to simultaneously. You can chain split images marked with this flag together. Only the first image in such a chain can have a loop value greater than 1. This flag is compatible with all other values/flags.
+  - `{u}` undo split image. This flag is only useful with the "Group dummy splits" checkbox enabled. The split image with this flag is the split in this split group that is chosen when you hit undo while in the split group after this one. This is useful if there are split images at the beginning and the end of a split image group. If multiple split images in the same group have this flag, only the last one will work. Default is the first split of the group.
 - Filename examples: 
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
@@ -81,7 +84,7 @@ This program compares split images to a capture region of any window (OBS, xspli
   - `004_SplitName(0.9)_[10]_#3500#_@3@_{b}.png` is the fourth split image with a threshold of 0.9, pause time of 10 seconds, delay split time of 3.5 seconds, will loop 3 times, and will split when similarity is below the threshold rather than above.
   
 ### How to Create a Masked Image
-The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). The last thing you need to do is add {m} to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
+The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). The last thing you need to do is add `{m}` to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Toufool/Auto-Split/master/mask_example_image.PNG" />
@@ -110,7 +113,7 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
 - If you are in the 6th image and press the undo key, it will end up on the 3rd image
 
-Please note this option cannot currently be used if you have any loop parameter `@@` greater than 1 in any image.
+Please note that splits marked with include next flag will always be grouped, no matter if this checkbox is enabled.
 
 ### Loop Split Images
 If this option is disabled, when the last split meets the threshold and splits, it will automatically reset.
