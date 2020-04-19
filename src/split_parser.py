@@ -133,5 +133,3 @@ class SplitImage:
             self.image = cv2.imread(self.path, cv2.IMREAD_COLOR)
             self.image = cv2.resize(self.image, (resize_width, resize_height))
             self.mask = None
-
-        return image
