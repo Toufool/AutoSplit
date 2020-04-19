@@ -739,6 +739,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             self.splitImageDirectoryError()
             return
+        if len(os.listdir(self.split_image_directory)) == 0:
+            self.noSplitImagesError()
+            return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
@@ -816,7 +819,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         for i, image in enumerate(self.split_images):
             if image.is_reset_image:
                 # Check that there's only one reset image
-                if reset_image is None:
+                if self.reset_image is None:
+                    if len(self.split_images) == 1:
+                        self.noSplitImagesError()
+                        return
                     self.reset_image = image
                     self.split_images.pop(i)
                 else:
@@ -1051,22 +1057,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.loop_number = 1
                 self.split_image_index_changed = True
 
-            number_of_comparison_images = len(self.current_split_images)
-
             if self.loop_number == 1:
                 # If loop check box is checked and its the last split, go to first split
                 # Else if current loop amount is back to 1, add 1 to split image number
                 if self.loopCheckBox.isChecked() and self.successful_split_image.skip_image_index is None:
                     self.split_image_index = 0
                 else:
-                    self.split_image_index += number_of_comparison_images
+                    self.split_image_index += len(self.current_split_images)
 
             # Set a "pause" split image number. This is done so that it can detect if user hit split/undo split while paused
             pause_split_image_index = self.split_image_index
             pause_loop_number = self.loop_number
 
             # If it's not the last split image, pause for the amount set by the user
-            if self.successful_split_image.pause > 0:
+            if self.successful_split_image.pause > 0 and (self.loopCheckBox.isChecked() or len(self.split_images) < self.split_image_index):
                 # Set current split image to none
                 self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
@@ -1101,12 +1105,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         break
 
                     # calculate similarity for reset image
-                    if self.shouldCheckResetImage() == True:
-                        reset_masked = (self.reset_mask is not None)
+                    if self.shouldCheckResetImage():
+                        reset_masked = (self.reset_image.mask is not None)
                         capture = self.getCaptureForComparison(reset_masked)
 
-                        reset_image.similarity = self.compareImage(self.reset_image, capture)
-                        if reset_image.similarity >= self.reset_image.threshold:
+                        self.reset_image.similarity = self.compareImage(self.reset_image, capture)
+                        if self.reset_image.similarity >= self.reset_image.threshold:
                             keyboard.send(str(self.resetLineEdit.text()))
                             self.reset()
                             continue
@@ -1163,7 +1167,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         return capture
 
     def shouldCheckResetImage(self):
-        return (self.reset_image is not None and time.time() - self.run_start_time > self.reset_image_pause_time)
+        return (self.reset_image is not None and time.time() - self.run_start_time > self.reset_image.pause)
 
     def updateSplitImage(self, split_image):
 
@@ -1204,6 +1208,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
         msgBox.setText("No split image folder is selected.")
+        msgBox.exec_()
+
+    def noSplitImagesError(self):
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Error')
+        msgBox.setText("Your split image folder doesn't contain any splits.")
         msgBox.exec_()
 
     def imageTypeError(self, image):
@@ -1270,7 +1280,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def noResetImageThresholdError(self):
         msgBox = QtGui.QMessageBox()
         msgBox.setWindowTitle('Error')
-        msgBox.setText("Reset Image must have a custom threshold. Please set one and check that it is valid")
+        msgBox.setText("Reset image must have a custom threshold. Please set one and check that it is valid.")
         msgBox.exec_()
 
     def resetHotkeyError(self):
