@@ -92,6 +92,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
+        # Get the file's path (PyInstaller compatible)
+        if getattr(sys, 'frozen', False):
+            self.file_path = os.path.dirname(os.path.abspath(sys.executable))
+        else:
+            self.file_path = os.path.dirname(os.path.abspath(__file__))
+
         # try to load settings
         self.loadSettings()
 
@@ -1466,7 +1472,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.loop_setting = 0
 
         # save settings to settings.pkl
-        with open(os.path.join(sys.path[0], 'settings.pkl'), 'wb') as f:
+        with open(os.path.join(self.file_path, 'settings.pkl'), 'wb') as f:
             pickle.dump(
                 [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
                  self.fps_limit, self.split_key,
@@ -1477,7 +1483,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def loadSettings(self):
         try:
-            with open(os.path.join(sys.path[0], 'settings.pkl'), 'rb') as f:
+            with open(os.path.join(self.file_path, 'settings.pkl'), 'rb') as f:
                 f2 = pickle.load(f)
                 if len(f2) == 18:
                     # the settings file might not include the pause hotkey yet
