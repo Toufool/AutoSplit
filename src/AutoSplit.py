@@ -1477,23 +1477,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def loadSettings(self):
         try:
-            with pickle.load(open(os.path.join(sys.path[0], 'settings.pkl'), 'rb')) as f:
-                if len(f) == 18:
-
+            with open(os.path.join(sys.path[0], 'settings.pkl'), 'rb') as f:
+                f2 = pickle.load(f)
+                if len(f2) == 18:
                     # the settings file might not include the pause hotkey yet
-                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                    self.fps_limit, self.split_key,
-                    self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                    self.hwnd_title,
-                    self.custom_pause_times_setting, self.custom_thresholds_setting,
-                    self.group_dummy_splits_undo_skip_setting, self.loop_setting] = f
-                else:
-                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                    self.fps_limit, self.split_key,
-                    self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                    self.hwnd_title,
-                    self.custom_pause_times_setting, self.custom_thresholds_setting,
-                    self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.pause_key] = f
+                    f2.append('')
+
+                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                self.fps_limit, self.split_key,
+                self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                self.hwnd_title,
+                self.custom_pause_times_setting, self.custom_thresholds_setting,
+                self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.pause_key] = f2
 
             self.split_image_directory = str(self.split_image_directory)
             self.splitimagefolderLineEdit.setText(self.split_image_directory)
