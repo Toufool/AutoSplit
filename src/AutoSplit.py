@@ -749,9 +749,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # get split image filenames
         self.split_images = []
         previous_n_flag = False
+        if self.customthresholdsCheckBox.isEnabled():
+            threshold_for_all_images = None
+        else:
+            threshold_for_all_images = self.similaritythresholdDoubleSpinBox.value()
+
+        if self.custompausetimesCheckBox.isEnabled():
+            pause_for_all_images = None
+        else:
+            pause_for_all_images = self.pauseDoubleSpinBox.value()
 
         for image_filename in os.listdir(self.split_image_directory):
-            self.split_images.append(split_parser.SplitImage(self.split_image_directory, image_filename))
+            self.split_images.append(split_parser.SplitImage(self.split_image_directory, image_filename, threshold_for_all_images, pause_for_all_images))
 
             # Make sure that each of the images follows the guidelines for correct format
             # according to all of the settings selected by the user.
@@ -981,10 +990,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     for image in self.current_split_images:
                         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
                         # Otherwise just split when similarity goes above threshold
-                        if image.flags & 0x04 == 0x04 and image.split_below_threshold == False and image.similarity >= self.similaritythresholdDoubleSpinBox.value():
+                        if image.flags & 0x04 == 0x04 and image.split_below_threshold == False and image.similarity >= image.threshold:
                             image.split_below_threshold = True
                             raise ContinueLoop
-                        if (image.flags & 0x04 == 0x04 and image.split_below_threshold == True and image.similarity < self.similaritythresholdDoubleSpinBox.value()) or (image.similarity >= self.similaritythresholdDoubleSpinBox.value() and image.flags & 0x04 == 0):
+                        if (image.flags & 0x04 == 0x04 and image.split_below_threshold == True and image.similarity < image.threshold) or (image.similarity >= image.threshold and image.flags & 0x04 == 0):
                             self.successful_split_image = image
                             raise BreakLoop
 
@@ -1070,7 +1079,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             pause_loop_number = self.loop_number
 
             # If it's not the last split image, pause for the amount set by the user
-            if self.successful_split_image.pause > 0 and (self.loopCheckBox.isChecked() or len(self.split_images) < self.split_image_index):
+            if self.successful_split_image.pause > 0 and (self.loopCheckBox.isChecked() or len(self.split_images) > self.split_image_index):
                 # Set current split image to none
                 self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
@@ -1091,8 +1100,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # This should probably eventually be a signal... but it works
-                pause_start_time = time.time()
-                while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
+                pause_end_time = time.time() + self.successful_split_image.pause
+                while time.time() < pause_end_time:
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
@@ -1190,7 +1199,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.split_image_display = cv2.resize(self.split_image_display, (240, 180))
         # If not flagged as mask, open normally
         else:
-            self.split_image_display = cv2.imread(self.split_image.path, cv2.IMREAD_COLOR)
+            self.split_image_display = cv2.imread(split_image.path, cv2.IMREAD_COLOR)
             self.split_image_display = cv2.cvtColor(self.split_image_display, cv2.COLOR_BGR2RGB)
             self.split_image_display = cv2.resize(self.split_image_display, (240, 180))
 
