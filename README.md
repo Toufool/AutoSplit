@@ -1,9 +1,9 @@
-# <img src="https://raw.githubusercontent.com/austinryan/Auto-Split/master/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit</h1>
+# <img src="/icon.ico" height="42" width="45" align="top" /> AutoSplit
 
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
 <p align="center">
-  <img src="https://github.com/austinryan/Auto-Split/blob/master/example1.4.0.gif?raw=true" />
+  <img src="/example1.4.0.gif" />
 </p>
 
 # TUTORIAL
@@ -14,15 +14,18 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Windows 7 and 10.
 
 ### Opening the program
-- Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
+- Download the [latest version](../../releases)
 - Extract the file and open `AutoSplit.exe`.
+
+### Building
+- Read [requirements.txt](/requirements.txt) for information on how to run/build the python code
 
 ## Split Image Folder
 - Supported image file types: `.png`, `.jpg`, `.jpeg`, `.bmp`, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
 - Images are matched in alphanumerical order.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`... 
-- Custom split image settings are handled in the filename. See how [here](https://github.com/Toufool/Auto-Split#custom-split-image-settings).
+- Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
 - Images can be created using Print Screen, [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot), or AutoSplit's Take Screenshot button.
 
 ## Capture Region
@@ -44,7 +47,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - There are three comparison methods to choose from: L2 Norm, Histograms, and pHash.
   - L2 Norm: This method finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
-  - pHash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
+  - pHash: An explanation on pHash comparison can be found [here](https://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to **_not_** use pHash if you use masked images. It is very inaccurate.
 - Note: v1.0 used L2 Norm.
 
 ### Show Live Similarity
@@ -84,10 +87,10 @@ This program compares split images to a capture region of any window (OBS, xspli
   - `004_SplitName(0.9)_[10]_#3500#_@3@_{b}.png` is the fourth split image with a threshold of 0.9, pause time of 10 seconds, delay split time of 3.5 seconds, will loop 3 times, and will split when similarity is below the threshold rather than above.
   
 ### How to Create a Masked Image
-The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). The last thing you need to do is add `{m}` to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
+The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://youtu.be/v53kkUYFVn8). The last thing you need to do is add `{m}` to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Toufool/Auto-Split/master/mask_example_image.PNG" />
+  <img src="/mask_example_image.PNG" />
 </p>
 
 ### Reset image
@@ -129,14 +132,14 @@ Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the
 - The window of the capture region cannot be minimized.
 
 ## Known Issues
-- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
+- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). **NOTE:** If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
 - Known to currently have issues selecting a region in Streamlabs OBS (only shows black image).
 - Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
 - LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 - Numlock on keys are linked to numlock-off keys. For example, if you set your reset hotkey to 2, you can hit arrow down and it will reset and vice versa.
 
 ## Resources
-- Still need help? [Open an issue](https://github.com/Toufool/Auto-Split/issues)
+- Still need help? [Open an issue](../../issues)
 - Join the [AutoSplit Discord](https://discord.gg/Qcbxv9y)
 
 
