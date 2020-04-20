@@ -1,0 +1,21 @@
+# Requirements file for AutoSplit
+#
+# Python: CPython 3.7 (not 3.8 as there is no cp38 wheel for PyQt4)
+#
+# Usage: pip install -r requirements.txt
+#
+# Building AutoSplit with PyInstaller: pyinstaller -w -F src\AutoSplit.py
+#
+# If you are on a 32-bit computer, replace the "_amd64" in the 2nd URL with "32".
+# You can find other wheels here: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
+https://download.lfd.uci.edu/pythonlibs/s2jqpv5t/PyQt4-4.11.4-cp37-cp37m-win_amd64.whl
+#
+# Comment this out if you don't want to build AutoSplit:
+PyInstaller
+#
+# Other dependencies:
+opencv-python
+Pillow
+ImageHash
+pywin32
+keyboard

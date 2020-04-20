@@ -405,7 +405,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Pause / Unpause</string>
+     <string>Pause</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="splitLineEdit">
@@ -1159,10 +1159,16 @@
       <height>17</height>
      </rect>
     </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
     <property name="text">
      <string>Group dummy splits when undoing/skipping</string>
     </property>
     <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="tristate">
      <bool>false</bool>
     </property>
    </widget>
