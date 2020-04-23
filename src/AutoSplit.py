@@ -693,9 +693,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.split_image_index = self.split_images[self.split_image_index].undo_image_index
 
-        self.updateSplitImage()
-
-        return
+        self.split_image_index_changed = True
 
     # skip split button and hotkey connect to here
     def skipSplit(self):
@@ -708,9 +706,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.split_image_index = self.split_images[self.split_image_index].skip_image_index
 
-        self.updateSplitImage()
-
-        return
+        self.split_image_index_changed = True
 
     # reset button and hotkey connects here.
     def reset(self):
@@ -857,7 +853,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 return
 
         # Construct groups of splits
-        previous_group_start = None
         previous_group_undo = None
         current_group_start = 0
         current_group_undo = 0
@@ -871,12 +866,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if image.flags & flags == 0:
                 for image in self.split_images[current_group_start : i + 1]:
                     image.undo_image_index = previous_group_undo
+                    image.skip_image_index = i + 1
 
-                if previous_group_start is not None:
-                    for image in self.split_images[previous_group_start : current_group_start]:
-                        image.skip_image_index = i + 1
-
-                previous_group_start = current_group_start
                 previous_group_undo = current_group_undo
                 current_group_start = i + 1
                 current_group_undo = current_group_start
@@ -908,22 +899,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # First while loop: stays in this loop until all of the split images have been split
         while self.split_image_index < self.number_of_split_images:
 
-            if self.split_image_index_changed:
-                # Construct list of images that should be compared
-                self.current_split_images = []
-                for image in self.split_images[self.split_image_index :]:
-                    image.get_image(self.RESIZE_WIDTH, self.RESIZE_HEIGHT)
-                    self.current_split_images.append(image)
-                    if image.flags & 0x10 == 0:
-                        break
-
-                self.updateSplitImage(self.current_split_images[0])
-                self.highest_similarity = 0.001
-
             # second while loop: stays in this loop until similarity threshold is met
             # skip loop if we just finished waiting for the split delay and need to press the split key!
             start = time.time()
             while True:
+
+                if self.split_image_index_changed:
+                    # Construct list of images that should be compared
+                    self.current_split_images = []
+                    for image in self.split_images[self.split_image_index :]:
+                        image.get_image(self.RESIZE_WIDTH, self.RESIZE_HEIGHT)
+                        self.current_split_images.append(image)
+                        if image.flags & 0x10 == 0:
+                            break
+
+                    self.updateSplitImage(self.current_split_images[0])
+                    self.highest_similarity = 0.001
+                    self.split_image_index_changed = False
+
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
@@ -1061,7 +1054,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # Increase loop number if needed, set to 1 if it was the last loop
             if self.loop_number < self.successful_split_image.loop:
                 self.loop_number += 1
-                self.split_image_index_changed = False
             else:
                 self.loop_number = 1
                 self.split_image_index_changed = True
@@ -1208,8 +1200,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                             QtGui.QImage.Format_RGB888)
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image.filename)
-
-        self.current_split_images[0].get_image(self.RESIZE_WIDTH, self.RESIZE_HEIGHT)
 
     # Error messages
 
