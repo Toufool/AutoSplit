@@ -94,7 +94,10 @@ The best way to create a masked image is to set your capture region as the entir
 </p>
 
 ### Reset image
-You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold MUST be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
+You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold **_must_** be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
+
+### Start image
+The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`. The image must always have a custom threshold. You can reload the image using the "Reload" button. You can also specify a custom comparison frequency using `<>`. The pause time is the ymount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset.
 
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
@@ -126,16 +129,18 @@ This option does not loop specific images. See the Custom Split Image Settings s
 ### Settings
 Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file is loaded upon opening the program. These settings include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, hotkeys, "Group dummy splits when undoing/skipping" check box, and "Loop Split Images" check box. Settings can be reloaded using the Reload Settings button.
 
+## LiveSplit integration
+There is a LiveSplit Component available that will directly connect AutoSplit with LiveSplit. You can get it [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration).
+
 ## Known Limitations
-- Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
 
 ## Known Issues
 - When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). **NOTE:** If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
 - Known to currently have issues selecting a region in Streamlabs OBS (only shows black image).
-- Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
-- LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
+- Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad, turn numlock off or use the LiveSplit integration to avoid this issue.
+- WSplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 - Numlock on keys are linked to numlock-off keys. For example, if you set your reset hotkey to 2, you can hit arrow down and it will reset and vice versa.
 
 ## Resources
