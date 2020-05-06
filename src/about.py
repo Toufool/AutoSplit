@@ -23,7 +23,7 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_aboutAutoSplitWidget(object):
-    def setupUi(self, aboutAutoSplitWidget):
+    def setupUi(self, aboutAutoSplitWidget, VERSION):
         aboutAutoSplitWidget.setObjectName(_fromUtf8("aboutAutoSplitWidget"))
         aboutAutoSplitWidget.resize(276, 249)
         aboutAutoSplitWidget.setMinimumSize(QtCore.QSize(276, 249))
@@ -51,15 +51,15 @@ class Ui_aboutAutoSplitWidget(object):
         self.iconLabel.setGeometry(QtCore.QRect(190, 17, 62, 71))
         self.iconLabel.setObjectName(_fromUtf8("iconLabel"))
 
-        self.retranslateUi(aboutAutoSplitWidget)
+        self.retranslateUi(aboutAutoSplitWidget, VERSION)
         QtCore.QObject.connect(self.okButton, QtCore.SIGNAL(_fromUtf8("clicked()")), aboutAutoSplitWidget.close)
         QtCore.QMetaObject.connectSlotsByName(aboutAutoSplitWidget)
 
-    def retranslateUi(self, aboutAutoSplitWidget):
+    def retranslateUi(self, aboutAutoSplitWidget, VERSION):
         aboutAutoSplitWidget.setWindowTitle(_translate("aboutAutoSplitWidget", "About AutoSplit", None))
         self.okButton.setText(_translate("aboutAutoSplitWidget", "OK", None))
         self.createdbyLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p>Created by <a href=\"https://twitter.com/toufool\"><span style=\" text-decoration: underline; color:#0000ff;\">Toufool</span></a> and <a href=\"https://twitter.com/faschz\"><span style=\" text-decoration: underline; color:#0000ff;\">Faschz</span></a></p></body></html>", None))
-        self.versionLabel.setText(_translate("aboutAutoSplitWidget", "Version: 1.4.0", None))
+        self.versionLabel.setText(_translate("aboutAutoSplitWidget", "Version: " + VERSION, None))
         self.donatetextLabel.setText(_translate("aboutAutoSplitWidget", "If you enjoy using this program, please\n"
 "       consider donating. Thank you!", None))
         self.donatebuttonLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p><a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BYRHQG69YRHBA&item_name=AutoSplit+development&currency_code=USD&source=url\"><img src=\":/resources/donatebutton.png\"/></p></body></html>", None))

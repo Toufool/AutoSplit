@@ -1,9 +1,12 @@
+import os
 import cv2
 import numpy as np
 
+import errors
+
 class SplitImage:
 
-    def __init__(self, path, filename, threshold_for_all_images, pause_for_all_images):
+    def __init__(self, path, filename, threshold_for_all_images = None, pause_for_all_images = None, get_custom_framerate = False):
         self.path = path + filename
         self.filename = filename
 
@@ -27,7 +30,7 @@ class SplitImage:
                 self.threshold = float(self.filename.split('(', 1)[1].split(')')[0])
 
                 # Check to make sure if it is a valid threshold
-                if (self.threshold > 1.0 or self.threshold < 0.0):
+                if self.threshold > 1.0 or self.threshold <= 0.0:
                     raise ValueError
             except:
                 self.threshold = None
@@ -44,11 +47,20 @@ class SplitImage:
                 self.pause = float(self.filename.split('[', 1)[1].split(']')[0])
 
                 # Pause times should always be positive or zero
-                if (self.pause < 0.0):
+                if self.pause < 0.0:
                     raise ValueError
             except:
                 self.pause = None
 
+        if get_custom_framerate:
+            try:
+                self.framerate = float(self.filename.split('<', 1)[1].split('>')[0])
+
+                # The framerate should always be positive
+                if self.framerate <= 0.0:
+                    raise ValueError
+            except:
+                self.framerate = None
 
         # Retrieve the delay time from the filename, if there is no delay time or the delay time
         # isn't a valid number, then it is set to 0
@@ -59,7 +71,7 @@ class SplitImage:
             self.delay = float(self.filename.split('#', 1)[1].split('#')[0])
 
             # Delay times should always be positive or zero
-            if (self.delay < 0):
+            if self.delay < 0:
                 raise ValueError
         except:
             self.delay = 0
@@ -74,7 +86,7 @@ class SplitImage:
             self.loop = int(self.filename.split('@', 1)[1].split('@')[0])
 
             # Make loop number 1 if it is less than 1
-            if (self.loop < 1):
+            if self.loop < 1:
                 raise ValueError
         except:
             self.loop = 1
@@ -120,8 +132,8 @@ class SplitImage:
 
         self.is_reset_image = ('RESET' in self.filename.upper())
 
-    def get_image(self, resize_width, resize_height):
-        if (self.flags & 0x02 == 0x02):
+    def getImage(self, resize_width, resize_height):
+        if self.flags & 0x02 == 0x02:
             # Create mask based on resized, nearest neighbor interpolated split image
             self.image = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
             self.image = cv2.resize(self.image, (resize_width, resize_height),
@@ -138,3 +150,27 @@ class SplitImage:
             self.image = cv2.imread(self.path, cv2.IMREAD_COLOR)
             self.image = cv2.resize(self.image, (resize_width, resize_height))
             self.mask = None
+
+def getImageError(image):
+    # Check to make sure the file is actually an image format that can be opened
+    # according to the mask flag
+    if image.flags & 0x02 == 0x02:
+        source = cv2.imread(image.path, cv2.IMREAD_UNCHANGED)
+
+        if source is None:
+            # Opencv couldn't open this file as an image, this isn't a correct
+            # file format that is supported
+            return errors.IMAGE_TYPE
+
+        if source.shape[2] != 4:
+            # Error, this file doesn't have an alpha channel even
+            # though the flag for masking was added
+            return errors.ALPHA_CHANNEL
+
+    else:
+        if cv2.imread(image.path, cv2.IMREAD_COLOR) is None:
+            # Opencv couldn't open this file as an image, this isn't a correct
+            # file format that is supported
+            return errors.IMAGE_TYPE
+
+    return None

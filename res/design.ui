@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>612</width>
-    <height>490</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>612</width>
-    <height>520</height>
+    <height>523</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>612</width>
-    <height>520</height>
+    <height>523</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../VideoAutoSplitter/icon.ico</normaloff>../../VideoAutoSplitter/icon.ico</iconset>
+    <normaloff>../icon.ico</normaloff>../icon.ico</iconset>
   </property>
   <property name="whatsThis">
    <string/>
@@ -104,7 +104,7 @@
     <property name="geometry">
      <rect>
       <x>125</x>
-      <y>253</y>
+      <y>256</y>
       <width>121</width>
       <height>17</height>
      </rect>
@@ -114,6 +114,28 @@
     </property>
     <property name="checked">
      <bool>true</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="loopCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>320</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Loop Split Images</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
     <property name="tristate">
      <bool>false</bool>
@@ -170,8 +192,8 @@
    <widget class="QPushButton" name="startautosplitterButton">
     <property name="geometry">
      <rect>
-      <x>501</x>
-      <y>455</y>
+      <x>500</x>
+      <y>460</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -186,8 +208,8 @@
    <widget class="QPushButton" name="resetButton">
     <property name="geometry">
      <rect>
-      <x>501</x>
-      <y>415</y>
+      <x>500</x>
+      <y>420</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -199,11 +221,27 @@
      <string>Reset</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pauseComparisonButton">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>375</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Pause Comparison</string>
+    </property>
+   </widget>
    <widget class="QPushButton" name="undosplitButton">
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>251</y>
+      <y>253</y>
       <width>61</width>
       <height>21</height>
      </rect>
@@ -219,7 +257,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>251</y>
+      <y>253</y>
       <width>61</width>
       <height>21</height>
      </rect>
@@ -369,7 +407,7 @@
      <string>Reset</string>
     </property>
    </widget>
-   <widget class="QLabel" name="skiptsplitLabel">
+   <widget class="QLabel" name="skipsplitLabel">
     <property name="geometry">
      <rect>
       <x>249</x>
@@ -798,6 +836,19 @@
      <string>Current Split Image</string>
     </property>
    </widget>
+   <widget class="QLabel" name="imageloopLabel">
+    <property name="geometry">
+     <rect>
+      <x>362</x>
+      <y>251</y>
+      <width>108</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Image Loop #:</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="widthLabel">
     <property name="geometry">
      <rect>
@@ -917,7 +968,7 @@
      <number>0</number>
     </property>
     <property name="minimum">
-     <double>30.000000000000000</double>
+     <double>1.000000000000000</double>
     </property>
     <property name="maximum">
      <double>5000.000000000000000</double>
@@ -933,7 +984,7 @@
     <property name="geometry">
      <rect>
       <x>362</x>
-      <y>271</y>
+      <y>276</y>
       <width>237</width>
       <height>20</height>
      </rect>
@@ -949,7 +1000,7 @@
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>251</y>
+      <y>254</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -1188,6 +1239,35 @@
      <string>Select Window</string>
     </property>
    </widget>
+   <widget class="QLabel" name="startimageLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>292</y>
+      <width>130</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start image: not found</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startimagereloadButton">
+    <property name="geometry">
+     <rect>
+      <x>142</x>
+      <y>290</y>
+      <width>83</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Reload</string>
+    </property>
+   </widget>
    <zorder>splitimagefolderLabel</zorder>
    <zorder>splitimagefolderLineEdit</zorder>
    <zorder>browseButton</zorder>
@@ -1198,6 +1278,7 @@
    <zorder>similaritythresholdDoubleSpinBox</zorder>
    <zorder>startautosplitterButton</zorder>
    <zorder>resetButton</zorder>
+   <zorder>pauseComparisonButton</zorder>
    <zorder>undosplitButton</zorder>
    <zorder>skipsplitButton</zorder>
    <zorder>pauseLabel</zorder>
@@ -1209,7 +1290,7 @@
    <zorder>highestsimilarityLabel</zorder>
    <zorder>splitLabel</zorder>
    <zorder>resetLabel</zorder>
-   <zorder>skiptsplitLabel</zorder>
+   <zorder>skipsplitLabel</zorder>
    <zorder>undosplitLabel</zorder>
    <zorder>pausehotkeyLabel</zorder>
    <zorder>splitLineEdit</zorder>
@@ -1234,6 +1315,7 @@
    <zorder>timerglobalhotkeysLabel</zorder>
    <zorder>line_right</zorder>
    <zorder>currentsplitimageLabel</zorder>
+   <zorder>imageloopLabel</zorder>
    <zorder>liveImage</zorder>
    <zorder>currentSplitImage</zorder>
    <zorder>widthLabel</zorder>
@@ -1257,6 +1339,8 @@
    <zorder>alignregionButton</zorder>
    <zorder>groupDummySplitsCheckBox</zorder>
    <zorder>selectwindowButton</zorder>
+   <zorder>startimageLabel</zorder>
+   <zorder>startimagereloadButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
