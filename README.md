@@ -97,7 +97,7 @@ The best way to create a masked image is to set your capture region as the entir
 You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold **_must_** be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
 
 ### Start image
-The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`. The image must always have a custom threshold. You can reload the image using the "Reload" button. You can also specify a custom comparison frequency using `<>`. The pause time is the ymount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset.
+The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`. The image must always have a custom threshold. You can reload the image using the "Reload" button. You can also specify a custom comparison frequency using `<>`. The pause time is the amount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset.
 
 ### Timer Global Hotkeys
 - Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
