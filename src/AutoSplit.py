@@ -341,7 +341,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.startimageLabel.setText("Start image: started")
 
             if self.start_image.delay > 0:
-                threading.Timer(self.start_image.delay, split).start()
+                threading.Timer(self.start_image.delay / 1000, split).start()
             else:
                 split()
 
