@@ -15,10 +15,6 @@ REGION_SIZE = "Width and height cannot be 0. Please select a larger region."
 
 SPLIT_HOTKEY = "No split hotkey has been set."
 
-CUSTOM_THRESHOLD = '"%s" does not have a valid custom threshold.'
-
-CUSTOM_PAUSE = '"%s" does not have a valid custom pause time.'
-
 ALPHA_CHANNEL = '"%s" is marked with mask flag but it does not have transparency.'
 
 ALIGN_REGION_IMAGE_TYPE = "File is not a valid image file."
@@ -43,4 +39,4 @@ IMAGE_HAS_INCLUDE_NEXT_FLAG = 'The image with the keyword "%s" is marked with in
 
 INCLUDE_NEXT_FLAG_WITH_LOOP = "Your split image folder contains an image marked with include next flag followed by an image with a loop value greater than 1."
 
-NO_START_IMAGE = 'Your split image folder does not contain an image with the keyword "start".'
+NO_START_IMAGE = 'Your split image folder does not contain an image with the keyword "start_auto_splitter".'

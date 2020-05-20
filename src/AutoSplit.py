@@ -97,12 +97,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.browseButton.clicked.connect(self.browse)
         self.selectregionButton.clicked.connect(self.selectRegion)
         self.takescreenshotButton.clicked.connect(self.takeScreenshot)
-        self.startautosplitterButton.clicked.connect(self.startAutoSplitter)
+        self.startautosplitterButton.clicked.connect(self.autoSplitter)
         self.checkfpsButton.clicked.connect(self.checkFPS)
-        self.resetButton.clicked.connect(self.startReset)
+        self.resetButton.clicked.connect(self.reset)
         self.pauseComparisonButton.clicked.connect(self.pauseComparison)
-        self.skipsplitButton.clicked.connect(self.startSkipSplit)
-        self.undosplitButton.clicked.connect(self.startUndoSplit)
+        self.skipsplitButton.clicked.connect(self.skipSplit)
+        self.undosplitButton.clicked.connect(self.undoSplit)
         self.setsplithotkeyButton.clicked.connect(self.setSplitHotkey)
         self.setresethotkeyButton.clicked.connect(self.setResetHotkey)
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
@@ -113,11 +113,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.reloadsettingsButton.clicked.connect(self.loadSettings)
         self.startimagereloadButton.clicked.connect(self.reloadStartImage)
 
-        # update x, y, width, and height when changing the value of these spinbox's are changed
+        # Update x, y, width, and height when changing the value of these spinboxes
         self.xSpinBox.valueChanged.connect(self.updateX)
         self.ySpinBox.valueChanged.connect(self.updateY)
         self.widthSpinBox.valueChanged.connect(self.updateWidth)
         self.heightSpinBox.valueChanged.connect(self.updateHeight)
+
+        # Update similarity threshold and pause time when changing the value of these spinboxes
+        self.similaritythresholdDoubleSpinBox.valueChanged.connect(self.updateSimilarityThreshold)
+        self.pauseDoubleSpinBox.valueChanged.connect(self.updatePause)
 
         # connect signals to functions
         self.updateCurrentSplitImage.connect(self.updateSplitImageGUI)
@@ -233,6 +237,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def loadStartImage(self, started_by_button = False, wait_for_delay = True, is_in_startup = False):
         self.timerStartImage.stop()
+        self.currentSplitImage.setText(' ')
         self.currentsplitimagefileLabel.setText(' ')
         self.startimageLabel.setText("Start image: not found")
         QtGui.QApplication.processEvents()
@@ -291,7 +296,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.check_start_image_timestamp = 0.0
             self.startimageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image, False)
+            self.updateSplitImage(self.start_image, False, False)
 
         self.highest_similarity = 0.0
 
@@ -310,9 +315,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         if self.check_start_image_timestamp > 0:
             self.check_start_image_timestamp = 0.0
             self.startimageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image, False)
+            self.updateSplitImage(self.start_image, False, False)
 
-        self.start_image.similarity = self.compareImage(self.start_image)
+        self.start_image.similarity = self.compareImage(self.start_image.similarity, self.start_image)
 
         if self.start_image.similarity == errors.REGION:
             self.timerStartImage.stop()
@@ -549,21 +554,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # Get split image filenames
         self.split_images = []
         previous_n_flag = False
-        if self.customthresholdsCheckBox.isChecked():
-            threshold_for_all_images = None
-        else:
-            threshold_for_all_images = self.similaritythresholdDoubleSpinBox.value()
-
-        if self.custompausetimesCheckBox.isChecked():
-            pause_for_all_images = None
-        else:
-            pause_for_all_images = self.pauseDoubleSpinBox.value()
 
         for image_filename in os.listdir(self.split_image_directory):
-            if 'START_AUTO_SPLITTER' in image_filename.upper():
+            if 'START_AUTO_SPLITTER' in image_filename.upper() and 'RESET' in image_filename.upper() == False:
                 continue
 
-            self.split_images.append(split_parser.SplitImage(self.split_image_directory, image_filename, threshold_for_all_images, pause_for_all_images))
+            self.split_images.append(split_parser.SplitImage(self.split_image_directory, image_filename, self.default_similarity_threshold, self.default_pause))
 
             # Make sure that each of the images follows the guidelines for correct format
             # according to all of the settings selected by the user.
@@ -572,18 +568,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             if image_error is not None:
                 self.showBox(image_error % self.split_images[-1], True)
-                return
-
-            if self.custompausetimesCheckBox.isChecked() and self.split_images[-1].pause is None:
-                # Error, this file doesn't have a pause, but the checkbox was
-                # selected for unique pause times
-                self.showBox(errors.CUSTOM_PAUSE % self.split_images[-1].filename, True)
-                return
-
-            if self.customthresholdsCheckBox.isChecked() and self.split_images[-1].threshold is None:
-                # Error, this file doesn't have a threshold, but the checkbox
-                # was selected for unique thresholds
-                self.showBox(errors.CUSTOM_THRESHOLD % self.split_images[-1].filename, True)
                 return
 
             if self.pauseLineEdit.text() == '' and self.split_images[-1].flags & 0x08 == 0x08 and self.is_auto_controlled == False:
@@ -674,10 +658,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # Change auto splitter button text and disable/enable some buttons
         self.startautosplitterButton.setText('Running...')
         self.browseButton.setEnabled(False)
-        self.custompausetimesCheckBox.setEnabled(False)
-        self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
         self.startimagereloadButton.setEnabled(False)
+        self.comparisonmethodComboBox.setEnabled(False)
+        self.similaritythresholdLabel.setText("Similarity threshold\nCurrent value")
+        self.pauseLabel.setText("Pause time (seconds)\nCurrent value")
 
         if self.is_auto_controlled == False:
             self.startautosplitterButton.setEnabled(False)
@@ -729,7 +714,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 capture = None
 
                 if self.shouldCheckResetImage():
-                    self.reset_image.similarity = self.compareImage(self.reset_image)
+                    self.reset_image.similarity = self.compareImage(self.reset_image.similarity, self.reset_image)
                     if self.reset_image.similarity == errors.REGION or (self.reset_image.similarity is not None and self.reset_image.similarity >= self.reset_image.threshold):
                         if self.is_auto_controlled:
                             print("reset", flush = True)
@@ -754,22 +739,22 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                         if capture is None:
                             capture = self.getCaptureForComparison(False)
 
-                            if capture == errors.REGION:
+                            if type(capture) is str:
                                 self.reset()
                                 self.resetUI()
                                 return
 
-                        image.similarity = self.compareImage(image, capture)
+                        image.similarity = self.compareImage(image.similarity, image, capture)
                     else:
                         if masked_capture is None:
                             masked_capture = self.getCaptureForComparison(True)
 
-                            if capture == errors.REGION:
+                            if type(capture) is str:
                                 self.reset()
                                 self.resetUI()
                                 return
 
-                        image.similarity = self.compareImage(image, masked_capture)
+                        image.similarity = self.compareImage(image.similarity, image, masked_capture)
 
                     if image.similarity is None:
                         break
@@ -844,7 +829,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                         # calculate similarity for reset image
                         if self.shouldCheckResetImage():
-                            self.reset_image.similarity = self.compareImage(self.reset_image)
+                            self.reset_image.similarity = self.compareImage(self.reset_image.similarity, self.reset_image)
                             if self.reset_image.similarity == errors.REGION or (self.reset_image.similarity is not None and self.reset_image.similarity >= self.reset_image.threshold):
                                 if self.is_auto_controlled:
                                     print("reset", flush = True)
@@ -884,15 +869,16 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                 self.imageloopLabel.setText(' ')
 
-                # Make sure the index doesn't exceed the list
-                if self.split_image_index < len(self.split_images):
-                    # If it's the last split image and last loop number, disable the skip split button
-                    self.skipsplitButton.setEnabled(self.successful_split_image.skip_image_index is not None or self.successful_split_image.loop != self.loop_number)
+                if self.is_auto_controlled == False:
+                    # Make sure the index doesn't exceed the list
+                    if self.split_image_index < len(self.split_images):
+                        # If it's the last split image and last loop number, disable the skip split button
+                        self.skipsplitButton.setEnabled(self.successful_split_image.skip_image_index is not None or self.successful_split_image.loop != self.loop_number)
 
-                    # If it's the first split image and first loop, disable the undo split button
-                    self.undosplitButton.setEnabled(self.successful_split_image.undo_image_index is not None or self.successful_split_image.loop != 1)
-                else:
-                    self.undosplitButton.setEnabled(False)
+                        # If it's the first split image and first loop, disable the undo split button
+                        self.undosplitButton.setEnabled(self.successful_split_image.undo_image_index is not None or self.successful_split_image.loop != 1)
+                    else:
+                        self.undosplitButton.setEnabled(False)
 
                 QtGui.QApplication.processEvents()
 
@@ -913,7 +899,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                     # calculate similarity for reset image
                     if self.shouldCheckResetImage():
-                        self.reset_image.similarity = self.compareImage(self.reset_image)
+                        self.reset_image.similarity = self.compareImage(self.reset_image.similarity, self.reset_image)
                         if self.reset_image.similarity == errors.REGION or (self.reset_image.similarity is not None and self.reset_image.similarity >= self.reset_image.threshold):
                             if self.is_auto_controlled:
                                 print("reset", flush = True)
@@ -935,10 +921,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.livesimilarityLabel.setText(' ')
         self.highestsimilarityLabel.setText(' ')
         self.browseButton.setEnabled(True)
-        self.custompausetimesCheckBox.setEnabled(True)
-        self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
         self.startimagereloadButton.setEnabled(True)
+        self.comparisonmethodComboBox.setEnabled(True)
+        self.similaritythresholdLabel.setText("Similarity threshold\nDefault value")
+        self.pauseLabel.setText("Pause time (seconds)\nDefault value")
+        self.similaritythresholdDoubleSpinBox.setValue(self.default_similarity_threshold)
+        self.pauseDoubleSpinBox.setValue(self.default_pause)
         self.loadStartImage()
 
         if self.is_auto_controlled == False:
@@ -973,22 +962,26 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             else:
                 keyboard.send(str(self.pauseLineEdit.text()))
 
-    def compareImage(self, image, capture = None):
+    def compareImage(self, previous_similarity, image, capture = None):
         if self.is_comparison_paused:
             return None
 
         if capture is None:
             capture = self.getCaptureForComparison(image.mask is not None)
 
-        if capture == errors.REGION:
-             return errors.REGION
+        if type(capture) is str:
+            return errors.REGION
 
-        if self.comparisonmethodComboBox.currentIndex() == 0:
-            return compare.compare_l2_norm(image, capture)
-        if self.comparisonmethodComboBox.currentIndex() == 1:
-            return compare.compare_histograms(image, capture)
-        if self.comparisonmethodComboBox.currentIndex() == 2:
-            return compare.compare_phash(image, capture)
+        try:
+            if self.comparisonmethodComboBox.currentIndex() == 0:
+                return compare.compare_l2_norm(image, capture)
+            if self.comparisonmethodComboBox.currentIndex() == 1:
+                return compare.compare_histograms(image, capture)
+            if self.comparisonmethodComboBox.currentIndex() == 2:
+                return compare.compare_phash(image, capture)
+        except Exception as e:
+            sys.stderr.write("Comparison failed: " + str(e) + "\n")
+            return previous_similarity
 
     def getCaptureForComparison(self, masked):
         if self.is_comparison_paused:
@@ -1033,7 +1026,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.highestsimilarityLabel.setText(' ')
 
-    def updateSplitImage(self, image, multiple_images):
+    def updateSplitImage(self, image, multiple_images, update_spinboxes = True):
 
         if image.loop > 1:
             # Set Image Loop #
@@ -1041,11 +1034,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         else:
             self.imageloopLabel.setText(' ')
 
+        self.similaritythresholdLabel.setEnabled(multiple_images == False)
+        self.pauseLabel.setEnabled(multiple_images == False)
+
         if multiple_images:
             self.currentSplitImage.setText(str(len(self.current_split_images)) + ' images')
             self.currentsplitimagefileLabel.setText(' ')
             self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+
+            self.similaritythresholdDoubleSpinBox.setValue(self.default_similarity_threshold)
+            self.pauseDoubleSpinBox.setValue(self.default_pause)
             return
+
+        if update_spinboxes:
+            if image.threshold is not None:
+                self.similaritythresholdDoubleSpinBox.setValue(image.threshold)
+
+            if image.pause is not None:
+                self.pauseDoubleSpinBox.setValue(image.pause)
 
         # Set current split image in UI
         # If flagged as mask, transform transparency into UI's gray BG color
@@ -1066,6 +1072,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                             QtGui.QImage.Format_RGB888)
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(image.filename)
+
+    def updateSimilarityThreshold(self):
+        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+            self.default_similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
+        else:
+            self.split_images[self.split_image_index].threshold = self.similaritythresholdDoubleSpinBox.value()
+
+    def updatePause(self):
+        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+            self.default_pause = self.pauseDoubleSpinBox.value()
+        else:
+            self.split_images[self.split_image_index].pause = self.pauseDoubleSpinBox.value()
 
     # Error messages
     def showBox(self, message, reset = False):

@@ -6,9 +6,11 @@ import errors
 
 class SplitImage:
 
-    def __init__(self, path, filename, threshold_for_all_images = None, pause_for_all_images = None, get_custom_framerate = False):
+    def __init__(self, path, filename, default_threshold = None, default_pause = None, get_custom_framerate = False):
         self.path = path + filename
         self.filename = filename
+
+        self.similarity = None
 
         # For the {b} flag
         self.split_below_threshold = False
@@ -18,39 +20,33 @@ class SplitImage:
         self.undo_image_index = None
         self.skip_image_index = None
 
-        if threshold_for_all_images is not None:
-            self.threshold = threshold_for_all_images
-        else:
-            # Retrieve the threshold from the filename, if there is no threshold or the threshold
-            # doesn't meet the requirements of being between 0.0 and 1.0, then it is set to None
+        # Retrieve the threshold from the filename, if there is no threshold or the threshold
+        # doesn't meet the requirements of being between 0.0 and 1.0, then it is set to the default
 
-            # Check to make sure there is a valid floating point number between
-            # parentheses of the filename
-            try:
-                self.threshold = float(self.filename.split('(', 1)[1].split(')')[0])
+        # Check to make sure there is a valid floating point number between
+        # parentheses of the filename
+        try:
+            self.threshold = float(self.filename.split('(', 1)[1].split(')')[0])
 
-                # Check to make sure if it is a valid threshold
-                if self.threshold > 1.0 or self.threshold <= 0.0:
-                    raise ValueError
-            except:
-                self.threshold = None
+            # Check to make sure if it is a valid threshold
+            if self.threshold > 1.0 or self.threshold <= 0.0:
+                raise ValueError
+        except:
+            self.threshold = default_threshold
 
-        if pause_for_all_images is not None:
-            self.pause = pause_for_all_images
-        else:
-            # Retrieve the pause time from the filename, if there is no pause time or the pause time
-            # isn't a valid number, then it is set to None
+        # Retrieve the pause time from the filename, if there is no pause time or the pause time
+        # isn't a valid number, then it is set to the default
 
-            # Check to make sure there is a valid pause time between brackets
-            # of the filename
-            try:
-                self.pause = float(self.filename.split('[', 1)[1].split(']')[0])
+        # Check to make sure there is a valid pause time between brackets
+        # of the filename
+        try:
+            self.pause = float(self.filename.split('[', 1)[1].split(']')[0])
 
-                # Pause times should always be positive or zero
-                if self.pause < 0.0:
-                    raise ValueError
-            except:
-                self.pause = None
+            # Pause times should always be positive or zero
+            if self.pause < 0.0:
+                raise ValueError
+        except:
+            self.pause = default_pause
 
         if get_custom_framerate:
             try:
