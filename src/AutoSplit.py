@@ -556,7 +556,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         previous_n_flag = False
 
         for image_filename in os.listdir(self.split_image_directory):
-            if 'START_AUTO_SPLITTER' in image_filename.upper() and 'RESET' in image_filename.upper() == False:
+            if 'START_AUTO_SPLITTER' in image_filename.upper() and ('RESET' in image_filename.upper()) == False:
                 continue
 
             self.split_images.append(split_parser.SplitImage(self.split_image_directory, image_filename, self.default_similarity_threshold, self.default_pause))
