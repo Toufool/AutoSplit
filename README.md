@@ -10,7 +10,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ## DOWNLOAD AND OPEN
 
-### Compatability
+### Compatibility
 - Windows 7 and 10.
 
 ### Opening the program
@@ -68,8 +68,8 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Custom Split Image Settings
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
 - These settings are handled in the image's filename. 
-- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
-- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
+- Custom thresholds are place between parentheses `()` in the filename.
+- Custom pause times are placed between square brackets `[]` in the filename.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
@@ -79,7 +79,7 @@ This program compares split images to a capture region of any window (OBS, xspli
   - `{m}` masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images *must* be `.png` and contain transparency. For more on this, see [How to Create a Masked Image](#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do **_not_** use pHash comparison if you use any masked images, as it is very inaccurate
   - `{p}` pause/unpause timer. This allows you to let AutoSplit remove the loading times. Use dummy flag as well if you only want to pause/unpause but don't want to split. There is no "Pause / Unpause" button in AutoSplit because it doesn't keep track of whether your timer is currently paused.
   - `{n}` include next split as well. This allows you to have more than one split image that the live image is compared to simultaneously. You can chain split images marked with this flag together. Only the first image in such a chain can have a loop value greater than 1. This flag is compatible with all other values/flags.
-  - `{u}` undo split image. This flag is only useful with the "Group dummy splits" checkbox enabled. The split image with this flag is the split in this split group that is chosen when you hit undo while in the split group after this one. This is useful if there are split images at the beginning and the end of a split image group. If multiple split images in the same group have this flag, only the last one will work. Default is the first split of the group.
+  - `{u}` undo split image. This flag is only useful with the "Group dummy splits" checkbox enabled. The split image with this flag is the split image in this split image group that is chosen when you hit undo while in the group after that one. This is useful if there are split images at the beginning and the end of a split image group. If multiple split images in the same group have this flag, only the last one will work. Default is the first split of the group.
 - Filename examples: 
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
@@ -105,7 +105,7 @@ The start image is similar to the reset image. You can only have one start image
 - All of these actions can also be handled by their corresponding buttons.
 
 ### Group dummy splits when undoing / skipping
-If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through ths splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
+If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping, meaning it will cycle through the splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
 
 If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it in sync with LiveSplit/wsplit. 
 
