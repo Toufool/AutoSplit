@@ -149,7 +149,7 @@ There is a LiveSplit Component available that will directly connect AutoSplit wi
 
 
 ## Credits
-- https://github.com/harupy/ for the snipping tool code that I used to integrate into the autosplitter.
+- [harupy](https://github.com/harupy/) for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
