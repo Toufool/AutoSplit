@@ -112,9 +112,9 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 Please note this option cannot currently be used if you have any loop parameter `@@` greater than 1 in any image.
 
 ### Loop Split Images
-If this option is disabled, when the last split meets the threshold and splits, it will automatically reset.
-If this option is enabled, when the last split meets the threshold and splits, it will loop back to the first split image.
-This option does not loop specific images. See the Custom Split Image Settings section above.
+If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
+If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
+This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
 ### Settings
 Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file is loaded upon opening the program. These settings include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, hotkeys, "Group dummy splits when undoing/skipping" check box, and "Loop Split Images" check box. Settings can be reloaded using the Reload Settings button.
