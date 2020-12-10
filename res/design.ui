@@ -202,8 +202,8 @@
    <widget class="QPushButton" name="undosplitButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>251</y>
+      <x>477</x>
+      <y>250</y>
       <width>61</width>
       <height>21</height>
      </rect>
@@ -218,8 +218,8 @@
    <widget class="QPushButton" name="skipsplitButton">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>251</y>
+      <x>541</x>
+      <y>250</y>
       <width>61</width>
       <height>21</height>
      </rect>
@@ -1140,6 +1140,19 @@
      <string>Select Window</string>
     </property>
    </widget>
+   <widget class="QLabel" name="currentsplitimageLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>362</x>
+      <y>251</y>
+      <width>108</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Image Loop #:</string>
+    </property>
+   </widget>
    <zorder>splitimagefolderLabel</zorder>
    <zorder>splitimagefolderLineEdit</zorder>
    <zorder>browseButton</zorder>
@@ -1206,6 +1219,7 @@
    <zorder>alignregionButton</zorder>
    <zorder>groupDummySplitsCheckBox</zorder>
    <zorder>selectwindowButton</zorder>
+   <zorder>currentsplitimageLabel_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
