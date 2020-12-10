@@ -7,8 +7,6 @@ import time
 import ctypes.wintypes
 import ctypes
 import keyboard
-import threading
-import pickle
 import numpy as np
 
 import design
@@ -19,6 +17,15 @@ import split_parser
 
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
+    from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey
+    from error_messages import (splitImageDirectoryError, imageTypeError, regionError, regionSizeError,
+    splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
+    multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, dummySplitsError, settingsNotFoundError,
+    invalidSettingsError)
+    from settings_file import saveSettings, loadSettings
+    from screen_region import selectRegion, selectWindow, alignRegion
+    from menu_bar import about, viewHelp
+
     myappid = u'mycompany.myproduct.subproduct.version'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -95,14 +102,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.loadSettings()
 
     # FUNCTIONS
-
-    def viewHelp(self):
-        os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
-        return
-
-    def about(self):
-        self.AboutWidget = AboutWidget()
-
     def browse(self):
         # User selects the file with the split images in it.
         self.split_image_directory = str(
@@ -115,198 +114,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # set the split image folder line to the directory text
         self.splitimagefolderLineEdit.setText(self.split_image_directory)
-
-    def selectRegion(self):
-        # Create a screen selector widget
-        selector = SelectRegionWidget()
-
-        # Need to wait until the user has selected a region using the widget before moving on with
-        # selecting the window settings
-        while selector.height == -1 and selector.width == -1:
-            QtTest.QTest.qWait(1)
-
-        # return an error if width or height are zero.
-        if selector.width == 0 or selector.height == 0:
-            self.regionSizeError()
-            return
-
-        # Width and Height of the spinBox
-        self.widthSpinBox.setValue(selector.width)
-        self.heightSpinBox.setValue(selector.height)
-
-        # Grab the window handle from the coordinates selected by the widget
-        self.hwnd = win32gui.WindowFromPoint((selector.left, selector.top))
-        # Want to pull the parent window from the window handle
-        # By using GetAncestor we are able to get the parent window instead
-        # of the owner window.
-        GetAncestor = ctypes.windll.user32.GetAncestor
-        GA_ROOT = 2
-
-        while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
-            self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
-
-        if self.hwnd != 0 or win32gui.GetWindowText(self.hwnd) != '':
-            self.hwnd_title = win32gui.GetWindowText(self.hwnd)
-
-        # Convert the Desktop Coordinates to Window Coordinates
-        DwmGetWindowAttribute = ctypes.windll.dwmapi.DwmGetWindowAttribute
-        DWMWA_EXTENDED_FRAME_BOUNDS = 9
-
-        # Pull the window's coordinates relative to desktop into rect
-        DwmGetWindowAttribute(self.hwnd,
-                              ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-                              ctypes.byref(self.rect),
-                              ctypes.sizeof(self.rect)
-                              )
-
-        # On Windows 10 the windows have offsets due to invisible pixels not accounted for in DwmGetWindowAttribute
-        # TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
-        # Research needs to be done to figure out why it was used it over win32gui in the first place...
-        # I have a feeling it was due to a misunderstanding and not getting the correct parent window before.
-        offset_left = self.rect.left - win32gui.GetWindowRect(self.hwnd)[0]
-        offset_top = self.rect.top - win32gui.GetWindowRect(self.hwnd)[1]
-
-        self.rect.left = selector.left - (self.rect.left - offset_left)
-        self.rect.top = selector.top - (self.rect.top - offset_top)
-        self.rect.right = self.rect.left + selector.width
-        self.rect.bottom = self.rect.top + selector.height
-
-        self.xSpinBox.setValue(self.rect.left)
-        self.ySpinBox.setValue(self.rect.top)
-
-        # Delete that widget since it is no longer used from here on out
-        del selector
-
-        # check if live image needs to be turned on or just set a single image
-        self.checkLiveImage()
-
-    def alignRegion(self):
-        # check to see if a region has been set
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.regionError()
-            return
-        # This is the image used for aligning the capture region
-        # to the best fit for the user.
-        template_filename = str(QtGui.QFileDialog.getOpenFileName(self, "Select Reference Image", "",
-                                                                  "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
-
-        # return if the user presses cancel
-        if template_filename == '':
-            return
-
-        template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
-
-        # shouldn't need this, but just for caution, throw a type error if file is not a valid image file
-        if template is None:
-            self.alignRegionImageTypeError()
-            return
-
-        # Obtaining the capture of a region which contains the
-        # subregion being searched for to align the image.
-        capture = capture_windows.capture_region(self.hwnd, self.rect)
-        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
-
-        # Obtain the best matching point for the template within the
-        # capture. This assumes that the template is actually smaller
-        # than the dimensions of the capture. Since we are using SQDIFF
-        # the best match will be the min_val which is located at min_loc.
-        # The best match found in the image, set everything to 0 by default
-        # so that way the first match will overwrite these values
-        best_match = 0.0
-        best_height = 0
-        best_width = 0
-        best_loc = (0, 0)
-
-        # This tests 50 images scaled from 20% to 300% of the original template size
-        for scale in np.linspace(0.2, 3, num=56):
-            width = int(template.shape[1] * scale)
-            height = int(template.shape[0] * scale)
-
-            # The template can not be larger than the capture
-            if width > capture.shape[1] or height > capture.shape[0]:
-                continue
-
-            resized = cv2.resize(template, (width, height))
-
-            result = cv2.matchTemplate(capture, resized, cv2.TM_SQDIFF)
-            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-
-            # The maximum value for SQ_DIFF is dependent on the size of the template
-            # we need this value to normalize it from 0.0 to 1.0
-            max_error = resized.size * 255 * 255
-            similarity = 1 - (min_val / max_error)
-
-            # Check if the similarity was good enough to get alignment
-            if similarity > best_match:
-                best_match = similarity
-                best_width = width
-                best_height = height
-                best_loc = min_loc
-
-        # Go ahead and check if this satisfies our requirement before setting the region
-        # We don't want a low similarity image to be aligned.
-        if best_match < 0.9:
-            self.alignmentNotMatchedError()
-            return
-
-        # The new region can be defined by using the min_loc point and the
-        # height and width of the template.
-        self.rect.left = self.rect.left + best_loc[0]
-        self.rect.top = self.rect.top + best_loc[1]
-        self.rect.right = self.rect.left + best_width
-        self.rect.bottom = self.rect.top + best_height
-
-        self.xSpinBox.setValue(self.rect.left)
-        self.ySpinBox.setValue(self.rect.top)
-        self.widthSpinBox.setValue(best_width)
-        self.heightSpinBox.setValue(best_height)
-
-    def selectWindow(self):
-        # Create a screen selector widget
-        selector = SelectWindowWidget()
-
-        # Need to wait until the user has selected a region using the widget before moving on with
-        # selecting the window settings
-        while selector.x == -1 and selector.y == -1:
-            QtTest.QTest.qWait(1)
-
-        # Grab the window handle from the coordinates selected by the widget
-        self.hwnd = None
-        self.hwnd = win32gui.WindowFromPoint((selector.x, selector.y))
-
-        if self.hwnd is None:
-            return
-
-        del selector
-
-        # Want to pull the parent window from the window handle
-        # By using GetAncestor we are able to get the parent window instead
-        # of the owner window.
-        GetAncestor = ctypes.windll.user32.GetAncestor
-        GA_ROOT = 2
-        while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
-            self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
-
-        if self.hwnd != 0 or win32gui.GetWindowText(self.hwnd) != '':
-            self.hwnd_title = win32gui.GetWindowText(self.hwnd)
-
-        # getting window bounds
-        # on windows there are some invisble pixels that are not accounted for
-        # also the top bar with the window name is not accounted for
-        # I hardcoded the x and y coordinates to fix this
-        # This is not an ideal solution because it assumes every window will have a top bar
-        rect = win32gui.GetClientRect(self.hwnd)
-        self.rect.left = 8
-        self.rect.top = 31
-        self.rect.right = 0 + rect[2]
-        self.rect.bottom = 0 + rect[3]
-
-        self.widthSpinBox.setValue(self.rect.right)
-        self.heightSpinBox.setValue(self.rect.bottom)
-        self.xSpinBox.setValue(self.rect.left)
-        self.ySpinBox.setValue(self.rect.top)
-
-        self.checkLiveImage()
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -393,202 +200,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # save and open image
         cv2.imwrite(self.split_image_directory + take_screenshot_filename + '.png', capture)
         os.startfile(self.split_image_directory + take_screenshot_filename + '.png')
-
-    # HOTKEYS. I'll comment on one, and the rest are just variations in variables.
-    def setSplitHotkey(self):
-        self.setsplithotkeyButton.setText('Press a key..')
-
-        # disable some buttons
-        self.beforeSettingHotkey()
-
-        # new thread points to callback. this thread is needed or GUI will freeze
-        # while the program waits for user input on the hotkey
-        def callback():
-            # try to remove the previously set hotkey if there is one.
-            try:
-                keyboard.remove_hotkey(self.split_hotkey)
-            except AttributeError:
-                pass
-
-            # wait until user presses the hotkey, then keyboard module reads the input
-            self.split_key = keyboard.read_hotkey(False)
-
-            # If the key the user presses is equal to itself or another hotkey already set,
-            # this causes issues. so here, it catches that, and will make no changes to the hotkey.
-            try:
-                if self.split_key == self.splitLineEdit.text() or self.split_key == self.resetLineEdit.text() or self.split_key == self.skipsplitLineEdit.text() or self.split_key == self.undosplitLineEdit.text():
-                    self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            # keyboard module allows you to hit multiple keys for a hotkey. they are joined
-            # together by +. If user hits two keys at the same time, make no changes to the
-            # hotkey. A try and except is needed if a hotkey hasn't been set yet. I'm not
-            # allowing for these multiple-key hotkeys because it can cause crashes, and
-            # not many people are going to really use or need this.
-            try:
-                if '+' in self.split_key:
-                    self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            # add the key as the hotkey, set the text into the LineEdit, set it as old_xxx_key,
-            # then emite a signal to re-enable some buttons and change some text in GUI.
-            self.split_hotkey = keyboard.add_hotkey(self.split_key, self.startAutoSplitter)
-            self.splitLineEdit.setText(self.split_key)
-            self.old_split_key = self.split_key
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        t = threading.Thread(target=callback)
-        t.start()
-        return
-
-    def setResetHotkey(self):
-        self.setresethotkeyButton.setText('Press a key..')
-        self.beforeSettingHotkey()
-
-        def callback():
-            try:
-                keyboard.remove_hotkey(self.reset_hotkey)
-            except AttributeError:
-                pass
-            self.reset_key = keyboard.read_hotkey(False)
-            try:
-                if self.reset_key == self.splitLineEdit.text() or self.reset_key == self.resetLineEdit.text() or self.reset_key == self.skipsplitLineEdit.text() or self.reset_key == self.undosplitLineEdit.text():
-                    self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-            try:
-                if '+' in self.reset_key:
-                    self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-            self.reset_hotkey = keyboard.add_hotkey(self.reset_key, self.startReset)
-            self.resetLineEdit.setText(self.reset_key)
-            self.old_reset_key = self.reset_key
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        t = threading.Thread(target=callback)
-        t.start()
-        return
-
-    def setSkipSplitHotkey(self):
-        self.setskipsplithotkeyButton.setText('Press a key..')
-        self.beforeSettingHotkey()
-
-        def callback():
-            try:
-                keyboard.remove_hotkey(self.skip_split_hotkey)
-            except AttributeError:
-                pass
-
-            self.skip_split_key = keyboard.read_hotkey(False)
-
-            try:
-                if self.skip_split_key == self.splitLineEdit.text() or self.skip_split_key == self.resetLineEdit.text() or self.skip_split_key == self.skipsplitLineEdit.text() or self.skip_split_key == self.undosplitLineEdit.text():
-                    self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            try:
-                if '+' in self.skip_split_key:
-                    self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            self.skip_split_hotkey = keyboard.add_hotkey(self.skip_split_key, self.startSkipSplit)
-            self.skipsplitLineEdit.setText(self.skip_split_key)
-            self.old_skip_split_key = self.skip_split_key
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        t = threading.Thread(target=callback)
-        t.start()
-        return
-
-    def setUndoSplitHotkey(self):
-        self.setundosplithotkeyButton.setText('Press a key..')
-        self.beforeSettingHotkey()
-
-        def callback():
-            try:
-                keyboard.remove_hotkey(self.undo_split_hotkey)
-            except AttributeError:
-                pass
-
-            self.undo_split_key = keyboard.read_hotkey(False)
-
-            try:
-                if self.undo_split_key == self.splitLineEdit.text() or self.undo_split_key == self.resetLineEdit.text() or self.undo_split_key == self.skipsplitLineEdit.text() or self.undo_split_key == self.undosplitLineEdit.text():
-                    self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            try:
-                if '+' in self.undo_split_key:
-                    self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
-                    self.afterSettingHotkeySignal.emit()
-                    return
-            except AttributeError:
-                self.afterSettingHotkeySignal.emit()
-                return
-
-            self.undo_split_hotkey = keyboard.add_hotkey(self.undo_split_key, self.startUndoSplit)
-            self.undosplitLineEdit.setText(self.undo_split_key)
-            self.old_undo_split_key = self.undo_split_key
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        t = threading.Thread(target=callback)
-        t.start()
-        return
-
-    # do all of these after you click "set hotkey" but before you type the hotkey.
-    def beforeSettingHotkey(self):
-        self.startautosplitterButton.setEnabled(False)
-        self.setsplithotkeyButton.setEnabled(False)
-        self.setresethotkeyButton.setEnabled(False)
-        self.setskipsplithotkeyButton.setEnabled(False)
-        self.setundosplithotkeyButton.setEnabled(False)
-        self.reloadsettingsButton.setEnabled(False)
-
-    # do all of these things after you set a hotkey. a signal connects to this because
-    # changing GUI stuff in the hotkey thread was causing problems
-    def afterSettingHotkey(self):
-        self.setsplithotkeyButton.setText('Set Hotkey')
-        self.setresethotkeyButton.setText('Set Hotkey')
-        self.setskipsplithotkeyButton.setText('Set Hotkey')
-        self.setundosplithotkeyButton.setText('Set Hotkey')
-        self.startautosplitterButton.setEnabled(True)
-        self.setsplithotkeyButton.setEnabled(True)
-        self.setresethotkeyButton.setEnabled(True)
-        self.setskipsplithotkeyButton.setEnabled(True)
-        self.setundosplithotkeyButton.setEnabled(True)
-        self.reloadsettingsButton.setEnabled(True)
-        return
 
     # check max FPS button connects here.
     def checkFPS(self):
@@ -688,8 +299,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         return
 
-    # reset button and hotkey connects here.
     def reset(self):
+        # when the reset button or hotkey is pressed, it will change this text, which will trigger the autoSplitter function, if running, to abort and change GUI.
         self.startautosplitterButton.setText('Start Auto Splitter')
         return
 
@@ -800,7 +411,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     current_group = []
                     self.split_groups.append(current_group)
 
-        #construct dummy splits array
+        # construct dummy splits array
         self.dummy_splits_array = []
         for i, image in enumerate(self.split_image_filenames):
             if split_parser.flags_from_filename(image) & 0x01 == 0x01:
@@ -808,8 +419,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             else:
                 self.dummy_splits_array.append(False)
 
-
-        #construct loop amounts for each split image
+        # construct loop amounts for each split image
         self.split_image_loop_amount = []
         for i, image in enumerate(self.split_image_filenames):
             self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
@@ -818,22 +428,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.dummySplitsError()
             return
 
-        # change auto splitter button text and disable/enable some buttons
-        self.startautosplitterButton.setText('Running..')
-        self.browseButton.setEnabled(False)
-        self.startautosplitterButton.setEnabled(False)
-        self.resetButton.setEnabled(True)
-        self.undosplitButton.setEnabled(True)
-        self.skipsplitButton.setEnabled(True)
-        self.setsplithotkeyButton.setEnabled(False)
-        self.setresethotkeyButton.setEnabled(False)
-        self.setskipsplithotkeyButton.setEnabled(False)
-        self.setundosplithotkeyButton.setEnabled(False)
-        self.custompausetimesCheckBox.setEnabled(False)
-        self.customthresholdsCheckBox.setEnabled(False)
-        self.groupDummySplitsCheckBox.setEnabled(False)
+        self.guiChangesOnStart()
 
-        #initialize some settings
+        # initialize some settings
         self.split_image_number = 0
         self.loop_number = 1
         self.number_of_split_images = len(self.split_image_filenames)
@@ -877,24 +474,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # loop goes into here if start auto splitter text is "Start Auto Splitter"
                 if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                    self.imageloopLabel.setText("Image Loop #:")
-                    self.currentSplitImage.setText(' ')
-                    self.currentsplitimagefileLabel.setText(' ')
-                    self.livesimilarityLabel.setText(' ')
-                    self.highestsimilarityLabel.setText(' ')
-                    self.browseButton.setEnabled(True)
-                    self.startautosplitterButton.setEnabled(True)
-                    self.resetButton.setEnabled(False)
-                    self.undosplitButton.setEnabled(False)
-                    self.skipsplitButton.setEnabled(False)
-                    self.setsplithotkeyButton.setEnabled(True)
-                    self.setresethotkeyButton.setEnabled(True)
-                    self.setskipsplithotkeyButton.setEnabled(True)
-                    self.setundosplithotkeyButton.setEnabled(True)
-                    self.custompausetimesCheckBox.setEnabled(True)
-                    self.customthresholdsCheckBox.setEnabled(True)
-                    self.groupDummySplitsCheckBox.setEnabled(True)
-                    QtGui.QApplication.processEvents()
+                    self.guiChangesOnReset()
                     return
 
                 # get capture again if needed
@@ -933,8 +513,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.undosplitButton.setEnabled(True)
 
-                #if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
-                #if no b flag, just split when similarity goes above threshold.
+                # if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
+                # if no b flag, just split when similarity goes above threshold.
                 if self.flags & 0x04 == 0x04 and self.split_below_threshold == False:
                     if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
                         self.split_below_threshold = True
@@ -946,12 +526,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
                         break
-                        
+
                 # limit the number of time the comparison runs to reduce cpu usage
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
                 QtGui.QApplication.processEvents()
-
 
             # comes here when threshold gets met
 
@@ -965,37 +544,21 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if self.split_delay > 0 and self.waiting_for_split_delay == False:
                     self.split_time = int(round(time.time() * 1000)) + self.split_delay
                     self.waiting_for_split_delay = True
-
-                    self.currentSplitImage.setText('Delayed split...')
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
                     self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
 
-                    # check for reset while delayed
+                    # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
                     while time.time() - delay_start_time < (self.split_delay / 1000):
+                        self.delay_time_left = str(round((self.split_delay / 1000) - (time.time() - delay_start_time), 1))
+                        self.currentSplitImage.setText('Delayed Split: ' + self.delay_time_left + ' sec remaining')
                         # check for reset
                         if win32gui.GetWindowText(self.hwnd) == '':
                             self.reset()
                         if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                            self.imageloopLabel.setText("Image Loop #:")
-                            self.currentSplitImage.setText(' ')
-                            self.currentsplitimagefileLabel.setText(' ')
-                            self.livesimilarityLabel.setText(' ')
-                            self.highestsimilarityLabel.setText(' ')
-                            self.browseButton.setEnabled(True)
-                            self.startautosplitterButton.setEnabled(True)
-                            self.resetButton.setEnabled(False)
-                            self.undosplitButton.setEnabled(False)
-                            self.skipsplitButton.setEnabled(False)
-                            self.setsplithotkeyButton.setEnabled(True)
-                            self.setresethotkeyButton.setEnabled(True)
-                            self.setskipsplithotkeyButton.setEnabled(True)
-                            self.setundosplithotkeyButton.setEnabled(True)
-                            self.custompausetimesCheckBox.setEnabled(True)
-                            self.customthresholdsCheckBox.setEnabled(True)
-                            self.groupDummySplitsCheckBox.setEnabled(True)
+                            self.guiChangesOnReset()
                             return
 
                         # calculate similarity for reset image
@@ -1015,7 +578,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.waiting_for_split_delay = False
                 keyboard.send(str(self.splitLineEdit.text()))
 
-            #increase loop number if needed, set to 1 if it was the last loop.
+            # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
                 self.loop_number = self.loop_number + 1
             else:
@@ -1038,7 +601,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
-                self.currentSplitImage.setText('none (paused)')
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
@@ -1058,30 +620,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 QtGui.QApplication.processEvents()
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
-                # This should probably eventually be a signal... but it works
+                # Also updates the current split image text, counting down the time until the next split image
                 pause_start_time = time.time()
                 while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
+                    self.pause_time_left = str(round((self.pauseDoubleSpinBox.value()) - (time.time() - pause_start_time), 1))
+                    self.currentSplitImage.setText('Paused. ' + self.pause_time_left + ' sec remaining')
+
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
                     if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                        self.imageloopLabel.setText("Image Loop #:")
-                        self.currentSplitImage.setText(' ')
-                        self.currentsplitimagefileLabel.setText(' ')
-                        self.livesimilarityLabel.setText(' ')
-                        self.highestsimilarityLabel.setText(' ')
-                        self.browseButton.setEnabled(True)
-                        self.startautosplitterButton.setEnabled(True)
-                        self.resetButton.setEnabled(False)
-                        self.undosplitButton.setEnabled(False)
-                        self.skipsplitButton.setEnabled(False)
-                        self.setsplithotkeyButton.setEnabled(True)
-                        self.setresethotkeyButton.setEnabled(True)
-                        self.setskipsplithotkeyButton.setEnabled(True)
-                        self.setundosplithotkeyButton.setEnabled(True)
-                        self.custompausetimesCheckBox.setEnabled(True)
-                        self.customthresholdsCheckBox.setEnabled(True)
-                        self.groupDummySplitsCheckBox.setEnabled(True)
+                        self.guiChangesOnReset()
                         return
 
                     # check for skip/undo split:
@@ -1102,6 +651,25 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     QtTest.QTest.qWait(1)
 
         # loop breaks to here when the last image splits
+        self.guiChangesOnReset()
+
+    def guiChangesOnStart(self):
+        self.startautosplitterButton.setText('Running..')
+        self.browseButton.setEnabled(False)
+        self.startautosplitterButton.setEnabled(False)
+        self.resetButton.setEnabled(True)
+        self.undosplitButton.setEnabled(True)
+        self.skipsplitButton.setEnabled(True)
+        self.setsplithotkeyButton.setEnabled(False)
+        self.setresethotkeyButton.setEnabled(False)
+        self.setskipsplithotkeyButton.setEnabled(False)
+        self.setundosplithotkeyButton.setEnabled(False)
+        self.custompausetimesCheckBox.setEnabled(False)
+        self.customthresholdsCheckBox.setEnabled(False)
+        self.groupDummySplitsCheckBox.setEnabled(False)
+        QtGui.QApplication.processEvents()
+
+    def guiChangesOnReset(self):
         self.startautosplitterButton.setText('Start Auto Splitter')
         self.imageloopLabel.setText("Image Loop #:")
         self.currentSplitImage.setText(' ')
@@ -1263,363 +831,19 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
 
-        #Set Image Loop #
+        # Set Image Loop #
         self.imageloopLabel.setText("Image Loop #: " + str(self.loop_number))
 
-        #need to set split below threshold to false each time an image updates.
+        # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
 
         self.similarity = 0
         self.highest_similarity = 0.001
 
-    # Error messages
-
-    def splitImageDirectoryError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("No split image folder is selected.")
-        msgBox.exec_()
-
-    def imageTypeError(self, image):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText(
-            '"' + image + '" is not a valid image file or the full image file path contains a special character.')
-        msgBox.exec_()
-
-    def regionError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("No region is selected. Select a region or reload settings while region window is open")
-        msgBox.exec_()
-
-    def regionSizeError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("Width and height cannot be 0. Please select a larger region.")
-        msgBox.exec_()
-
-    def splitHotkeyError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("No split hotkey has been set.")
-        msgBox.exec_()
-
-    def customThresholdError(self, image):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("\"" + image + "\" doesn't have a valid custom threshold.")
-        msgBox.exec_()
-
-    def customPauseError(self, image):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("\"" + image + "\" doesn't have a valid custom pause time.")
-        msgBox.exec_()
-
-    def alphaChannelError(self, image):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
-        msgBox.exec_()
-
-    def alignRegionImageTypeError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("File not a valid image file")
-        msgBox.exec_()
-
-    def alignmentNotMatchedError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("No area in capture region matched reference image. Alignment failed.")
-        msgBox.exec_()
-
-    def multipleResetImagesError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("Only one image with the keyword \"reset\" is allowed.")
-        msgBox.exec_()
-
-    def noResetImageThresholdError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("Reset Image must have a custom threshold. Please set one and check that it is valid")
-        msgBox.exec_()
-
-    def resetHotkeyError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("Your split image folder contains a reset image, but no reset hotkey is set.")
-        msgBox.exec_()
-
-    def dummySplitsError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
-        msgBox.exec_()
-
-    def settingsNotFoundError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("No settings file found. The settings file is saved when the program is closed.")
-        msgBox.exec_()
-
-    def invalidSettingsError(self):
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle('Error')
-        msgBox.setText("The settings file is invalid")
-        msgBox.exec_()
-
-    def saveSettings(self):
-        # get values to be able to save settings
-        self.x = self.xSpinBox.value()
-        self.y = self.ySpinBox.value()
-        self.width = self.widthSpinBox.value()
-        self.height = self.heightSpinBox.value()
-        self.split_image_directory = str(self.splitimagefolderLineEdit.text())
-        self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
-        self.comparison_index = self.comparisonmethodComboBox.currentIndex()
-        self.pause = self.pauseDoubleSpinBox.value()
-        self.fps_limit = self.fpslimitSpinBox.value()
-        self.split_key = str(self.splitLineEdit.text())
-        self.reset_key = str(self.resetLineEdit.text())
-        self.skip_split_key = str(self.skipsplitLineEdit.text())
-        self.undo_split_key = str(self.undosplitLineEdit.text())
-
-        if self.custompausetimesCheckBox.isChecked():
-            self.custom_pause_times_setting = 1
-        else:
-            self.custom_pause_times_setting = 0
-
-        if self.customthresholdsCheckBox.isChecked():
-            self.custom_thresholds_setting = 1
-        else:
-            self.custom_thresholds_setting = 0
-
-        if self.groupDummySplitsCheckBox.isChecked():
-            self.group_dummy_splits_undo_skip_setting = 1
-        else:
-            self.group_dummy_splits_undo_skip_setting = 0
-
-        if self.loopCheckBox.isChecked():
-            self.loop_setting = 1
-        else:
-            self.loop_setting = 0
-
-        # save settings to settings.pkl
-        with open('settings.pkl', 'wb') as f:
-            pickle.dump(
-                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                 self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                 self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting,
-                 self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
-
-    def loadSettings(self):
-        try:
-            with open('settings.pkl', 'rb') as f:
-                [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                 self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                 self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting,
-                 self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
-
-            self.split_image_directory = str(self.split_image_directory)
-            self.splitimagefolderLineEdit.setText(self.split_image_directory)
-            self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-            self.pauseDoubleSpinBox.setValue(self.pause)
-            self.fpslimitSpinBox.setValue(self.fps_limit)
-            self.xSpinBox.setValue(self.x)
-            self.ySpinBox.setValue(self.y)
-            self.widthSpinBox.setValue(self.width)
-            self.heightSpinBox.setValue(self.height)
-            self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
-            self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
-
-            # set custom checkbox's accordingly
-            if self.custom_pause_times_setting == 1:
-                self.custompausetimesCheckBox.setChecked(True)
-            else:
-                self.custompausetimesCheckBox.setChecked(False)
-
-            if self.custom_thresholds_setting == 1:
-                self.customthresholdsCheckBox.setChecked(True)
-            else:
-                self.customthresholdsCheckBox.setChecked(False)
-
-            if self.group_dummy_splits_undo_skip_setting == 1:
-                self.groupDummySplitsCheckBox.setChecked(True)
-            else:
-                self.groupDummySplitsCheckBox.setChecked(False)
-
-            if self.loop_setting == 1:
-                self.loopCheckBox.setChecked(True)
-            else:
-                self.loopCheckBox.setChecked(False)
-
-            # try to set hotkeys from when user last closed the window
-            try:
-                try:
-                    keyboard.remove_hotkey(self.split_hotkey)
-                except AttributeError:
-                    pass
-                self.splitLineEdit.setText(str(self.split_key))
-                self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-                self.old_split_key = self.split_key
-            # pass if the key is an empty string (hotkey was never set)
-            except ValueError:
-                pass
-
-            try:
-                try:
-                    keyboard.remove_hotkey(self.reset_hotkey)
-                except AttributeError:
-                    pass
-                self.resetLineEdit.setText(str(self.reset_key))
-                self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.startReset)
-                self.old_reset_key = self.reset_key
-            except ValueError:
-                pass
-
-            try:
-                try:
-                    keyboard.remove_hotkey(self.skip_split_hotkey)
-                except AttributeError:
-                    pass
-                self.skipsplitLineEdit.setText(str(self.skip_split_key))
-                self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.startSkipSplit)
-                self.old_skip_split_key = self.skip_split_key
-            except ValueError:
-                pass
-
-            try:
-                try:
-                    keyboard.remove_hotkey(self.undo_split_hotkey)
-                except AttributeError:
-                    pass
-                self.undosplitLineEdit.setText(str(self.undo_split_key))
-                self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
-                self.old_undo_split_key = self.undo_split_key
-            except ValueError:
-                pass
-
-            self.checkLiveImage()
-
-        except IOError:
-            self.settingsNotFoundError()
-            pass
-        except Exception:
-            self.invalidSettingsError()
-            pass
-
     # exit safely when closing the window
     def closeEvent(self, event):
         self.saveSettings()
         sys.exit()
-
-
-# Widget for dragging screen region
-# https://github.com/harupy/snipping-tool
-class SelectRegionWidget(QtGui.QWidget):
-    def __init__(self):
-        super(SelectRegionWidget, self).__init__()
-        user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
-
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.SM_XVIRTUALSCREEN = user32.GetSystemMetrics(76)
-        self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
-        self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
-        self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
-                         self.SM_CYVIRTUALSCREEN)
-        self.setWindowTitle(' ')
-
-        self.height = -1
-        self.width = -1
-
-        self.begin = QtCore.QPoint()
-        self.end = QtCore.QPoint()
-        self.setWindowOpacity(0.5)
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.show()
-
-    def paintEvent(self, event):
-        qp = QtGui.QPainter(self)
-        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-        qp.setBrush(QtGui.QColor('opaque'))
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
-
-    def mousePressEvent(self, event):
-        self.begin = event.pos()
-        self.end = self.begin
-        self.update()
-
-    def mouseMoveEvent(self, event):
-        self.end = event.pos()
-        self.update()
-
-    def mouseReleaseEvent(self, event):
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.close()
-
-        # The coordinates are pulled relative to the top left of the set geometry,
-        # so the added virtual screen offsets convert them back to the virtual
-        # screen coordinates
-        self.left = min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.top = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
-        self.right = max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.bottom = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
-
-        self.height = self.bottom - self.top
-        self.width = self.right - self.left
-
-
-# widget to select a window and obtain its bounds
-class SelectWindowWidget(QtGui.QWidget):
-    def __init__(self):
-        super(SelectWindowWidget, self).__init__()
-        user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
-
-        self.x = -1
-        self.y = -1
-
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.SM_XVIRTUALSCREEN = user32.GetSystemMetrics(76)
-        self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
-        self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
-        self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
-                         self.SM_CYVIRTUALSCREEN)
-        self.setWindowTitle(' ')
-
-        self.setWindowOpacity(0.5)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.show()
-
-    def mouseReleaseEvent(self, event):
-        self.close()
-        self.x = event.pos().x()
-        self.y = event.pos().y()
-
-
-# About Window
-class AboutWidget(QtGui.QWidget, about.Ui_aboutAutoSplitWidget):
-    def __init__(self):
-        super(AboutWidget, self).__init__()
-        self.setupUi(self)
-        self.createdbyLabel.setOpenExternalLinks(True)
-        self.donatebuttonLabel.setOpenExternalLinks(True)
-        self.show()
 
 
 def main():
