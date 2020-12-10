@@ -70,6 +70,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.clicked.connect(self.setResetHotkey)
         self.setskipsplithotkeyButton.clicked.connect(self.setSkipSplitHotkey)
         self.setundosplithotkeyButton.clicked.connect(self.setUndoSplitHotkey)
+        self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
         self.reloadsettingsButton.clicked.connect(self.loadSettings)
@@ -87,6 +88,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
+        self.pauseSignal.connect(self.pause)
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
@@ -299,6 +301,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         return
 
+    def pause(self):
+        #TODO add what to do when you hit pause hotkey.
+
     def reset(self):
         # when the reset button or hotkey is pressed, it will change this text, which will trigger the autoSplitter function, if running, to abort and change GUI.
         self.startautosplitterButton.setText('Start Auto Splitter')
@@ -320,6 +325,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def startUndoSplit(self):
         self.undoSplitSignal.emit()
+
+    def startPause(self):
+        self.pauseSignal.emit()
 
     def autoSplitter(self):
         # error checking:
@@ -664,6 +672,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(False)
         self.setskipsplithotkeyButton.setEnabled(False)
         self.setundosplithotkeyButton.setEnabled(False)
+        self.setpausehotkeyButton.setEnabled(False)
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
@@ -685,6 +694,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setresethotkeyButton.setEnabled(True)
         self.setskipsplithotkeyButton.setEnabled(True)
         self.setundosplithotkeyButton.setEnabled(True)
+        self.setpausehotkeyButton.setEnabled(True)
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)

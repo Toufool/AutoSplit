@@ -17,6 +17,7 @@ def saveSettings(self):
     self.reset_key = str(self.resetLineEdit.text())
     self.skip_split_key = str(self.skipsplitLineEdit.text())
     self.undo_split_key = str(self.undosplitLineEdit.text())
+    self.pause_key = str(self.pausehotkeyLineEdit.text())
 
     if self.custompausetimesCheckBox.isChecked():
         self.custom_pause_times_setting = 1
@@ -43,7 +44,7 @@ def saveSettings(self):
         pickle.dump(
             [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
              self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
              self.hwnd_title,
              self.custom_pause_times_setting, self.custom_thresholds_setting,
              self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
@@ -54,7 +55,7 @@ def loadSettings(self):
         with open('settings.pkl', 'rb') as f:
             [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
              self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
              self.hwnd_title,
              self.custom_pause_times_setting, self.custom_thresholds_setting,
              self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
@@ -135,6 +136,17 @@ def loadSettings(self):
             self.undosplitLineEdit.setText(str(self.undo_split_key))
             self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
             self.old_undo_split_key = self.undo_split_key
+        except ValueError:
+            pass
+
+        try:
+            try:
+                keyboard.remove_hotkey(self.pause_hotkey)
+            except AttributeError:
+                pass
+            self.pauseLineEdit.setText(str(self.pause_key))
+            self.pause_hotkey = keyboard.add_hotkey(str(self.pause_key), self.startPause)
+            self.old_pause_key = self.pause_key
         except ValueError:
             pass
 
