@@ -35,6 +35,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     resetSignal = QtCore.pyqtSignal()
     skipSplitSignal = QtCore.pyqtSignal()
     undoSplitSignal = QtCore.pyqtSignal()
+    pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
