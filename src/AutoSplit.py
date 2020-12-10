@@ -624,7 +624,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 pause_start_time = time.time()
                 while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
                     self.pause_time_left = str(round((self.pauseDoubleSpinBox.value()) - (time.time() - pause_start_time), 1))
-                    self.currentSplitImage.setText('Paused. ' + self.pause_time_left + ' sec remaining')
+                    self.currentSplitImage.setText('None (Paused). ' + self.pause_time_left + ' sec remaining')
 
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
