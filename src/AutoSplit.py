@@ -17,7 +17,7 @@ import split_parser
 
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
-    from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey
+    from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
     from error_messages import (splitImageDirectoryError, imageTypeError, regionError, regionSizeError,
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
     multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, dummySplitsError, settingsNotFoundError,
@@ -89,7 +89,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
-        self.pauseSignal.connect(self.pause)
+        #self.pauseSignal.connect(self.pause)
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
@@ -302,7 +302,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         return
 
-    def pause(self):
+    #def pause(self):
         #TODO add what to do when you hit pause hotkey.
 
     def reset(self):

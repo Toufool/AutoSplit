@@ -144,7 +144,7 @@ def loadSettings(self):
                 keyboard.remove_hotkey(self.pause_hotkey)
             except AttributeError:
                 pass
-            self.pauseLineEdit.setText(str(self.pause_key))
+            self.pausehotkeyLineEdit.setText(str(self.pause_key))
             self.pause_hotkey = keyboard.add_hotkey(str(self.pause_key), self.startPause)
             self.old_pause_key = self.pause_key
         except ValueError:
@@ -155,6 +155,7 @@ def loadSettings(self):
     except IOError:
         self.settingsNotFoundError()
         pass
-    except Exception:
-        self.invalidSettingsError()
-        pass
+
+    #except Exception:
+        #self.invalidSettingsError()
+        #pass

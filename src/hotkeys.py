@@ -8,6 +8,7 @@ def beforeSettingHotkey(self):
     self.setresethotkeyButton.setEnabled(False)
     self.setskipsplithotkeyButton.setEnabled(False)
     self.setundosplithotkeyButton.setEnabled(False)
+    self.setpausehotkeyButton.setEnabled(False)
     self.reloadsettingsButton.setEnabled(False)
 
 
@@ -18,12 +19,15 @@ def afterSettingHotkey(self):
     self.setresethotkeyButton.setText('Set Hotkey')
     self.setskipsplithotkeyButton.setText('Set Hotkey')
     self.setundosplithotkeyButton.setText('Set Hotkey')
+    self.setpausehotkeyButton.setText('Set Hotkey')
     self.startautosplitterButton.setEnabled(True)
     self.setsplithotkeyButton.setEnabled(True)
     self.setresethotkeyButton.setEnabled(True)
     self.setskipsplithotkeyButton.setEnabled(True)
     self.setundosplithotkeyButton.setEnabled(True)
+    self.setpausehotkeyButton.setEnabled(True)
     self.reloadsettingsButton.setEnabled(True)
+
     return
 
 #--------------------HOTKEYS--------------------------
@@ -52,7 +56,7 @@ def setSplitHotkey(self):
                     or self.split_key == self.resetLineEdit.text() \
                     or self.split_key == self.skipsplitLineEdit.text() \
                     or self.split_key == self.undosplitLineEdit.text() \
-                    or self.split_key == self.pauseLineEdit.text():
+                    or self.split_key == self.pausehotkeyLineEdit.text():
                 self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
                 self.afterSettingHotkeySignal.emit()
                 return
@@ -101,7 +105,7 @@ def setResetHotkey(self):
                     or self.reset_key == self.resetLineEdit.text() \
                     or self.reset_key == self.skipsplitLineEdit.text() \
                     or self.reset_key == self.undosplitLineEdit.text() \
-                    or self.reset_key == self.pauseLineEdit.text():
+                    or self.reset_key == self.pausehotkeyLineEdit.text():
                 self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
                 self.afterSettingHotkeySignal.emit()
                 return
@@ -143,7 +147,7 @@ def setSkipSplitHotkey(self):
                     or self.skip_split_key == self.resetLineEdit.text() \
                     or self.skip_split_key == self.skipsplitLineEdit.text() \
                     or self.skip_split_key == self.undosplitLineEdit.text() \
-                    or self.skip_split_key == self.pauseLineEdit.text():
+                    or self.skip_split_key == self.pausehotkeyLineEdit.text():
                 self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
                 self.afterSettingHotkeySignal.emit()
                 return
@@ -187,7 +191,7 @@ def setUndoSplitHotkey(self):
                     or self.undo_split_key == self.resetLineEdit.text() \
                     or self.undo_split_key == self.skipsplitLineEdit.text() \
                     or self.undo_split_key == self.undosplitLineEdit.text() \
-                    or self.undo_split_key == self.pauseLineEdit.text():
+                    or self.undo_split_key == self.pausehotkeyLineEdit.text():
                 self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
                 self.afterSettingHotkeySignal.emit()
                 return
@@ -231,7 +235,7 @@ def setPauseHotkey(self):
                     or self.pause_key == self.resetLineEdit.text() \
                     or self.pause_key == self.skipsplitLineEdit.text() \
                     or self.pause_key == self.undosplitLineEdit.text() \
-                    or self.pause_key == self.pauseLineEdit.text():
+                    or self.pause_key == self.pausehotkeyLineEdit.text():
                 self.pause_hotkey = keyboard.add_hotkey(self.old_pause_key, self.startPause)
                 self.afterSettingHotkeySignal.emit()
                 return
@@ -249,7 +253,7 @@ def setPauseHotkey(self):
             return
 
         self.pause_hotkey = keyboard.add_hotkey(self.pause_key, self.startPause)
-        self.pauseLineEdit.setText(self.pause_key)
+        self.pausehotkeyLineEdit.setText(self.pause_key)
         self.old_pause_key = self.pause_key
         self.afterSettingHotkeySignal.emit()
         return
