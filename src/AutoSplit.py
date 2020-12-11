@@ -583,9 +583,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                         QtTest.QTest.qWait(1)
 
-                # Split key press
                 self.waiting_for_split_delay = False
-                keyboard.send(str(self.splitLineEdit.text()))
+
+                # if {p} flag hit pause key, otherwise hit split hotkey
+                if (self.flags & 0x08 == 0x08):
+                    keyboard.send(str(self.pausehotkeyLineEdit.text()))
+                else:
+                    keyboard.send(str(self.splitLineEdit.text()))
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
