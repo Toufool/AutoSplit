@@ -677,6 +677,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
+        self.reloadsettingsButton.setEnabled(False)
         QtGui.QApplication.processEvents()
 
     def guiChangesOnReset(self):
@@ -699,6 +700,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
+        self.reloadsettingsButton.setEnabled(True)
         QtGui.QApplication.processEvents()
 
     def compareImage(self, image, mask, capture):
