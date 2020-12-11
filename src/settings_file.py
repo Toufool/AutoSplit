@@ -105,6 +105,8 @@ def loadSettings(self):
         # pass if the key is an empty string (hotkey was never set)
         except ValueError:
             pass
+        except KeyError:
+            pass
 
         try:
             try:
@@ -115,6 +117,8 @@ def loadSettings(self):
             self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.startReset)
             self.old_reset_key = self.reset_key
         except ValueError:
+            pass
+        except KeyError:
             pass
 
         try:
@@ -127,6 +131,8 @@ def loadSettings(self):
             self.old_skip_split_key = self.skip_split_key
         except ValueError:
             pass
+        except KeyError:
+            pass
 
         try:
             try:
@@ -137,6 +143,8 @@ def loadSettings(self):
             self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
             self.old_undo_split_key = self.undo_split_key
         except ValueError:
+            pass
+        except KeyError:
             pass
 
         try:
@@ -149,6 +157,8 @@ def loadSettings(self):
             self.old_pause_key = self.pause_key
         except ValueError:
             pass
+        except KeyError:
+            pass
 
         self.checkLiveImage()
 
@@ -156,6 +166,6 @@ def loadSettings(self):
         self.settingsNotFoundError()
         pass
 
-    #except Exception:
-        #self.invalidSettingsError()
-        #pass
+    except Exception:
+        self.invalidSettingsError()
+        pass

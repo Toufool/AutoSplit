@@ -31,6 +31,7 @@ def afterSettingHotkey(self):
     return
 
 #--------------------HOTKEYS--------------------------
+#Going to comment on one func, and others will be similar.
 def setSplitHotkey(self):
     self.setsplithotkeyButton.setText('Press a key..')
 
@@ -44,6 +45,15 @@ def setSplitHotkey(self):
         try:
             keyboard.remove_hotkey(self.split_hotkey)
         except AttributeError:
+            pass
+        #this error was coming up when loading the program and
+        #the lineEdit area was empty (no hotkey set), then you
+        #set one, reload the setting once back to blank works,
+        #but if you click reload settings again, it errors
+        #we can just have it pass, but don't want to throw in
+        #generic exception here in case another one of these
+        #pops up somewhere.
+        except KeyError:
             pass
 
         # wait until user presses the hotkey, then keyboard module reads the input
@@ -99,6 +109,8 @@ def setResetHotkey(self):
             keyboard.remove_hotkey(self.reset_hotkey)
         except AttributeError:
             pass
+        except KeyError:
+            pass
         self.reset_key = keyboard.read_hotkey(False)
         try:
             if self.reset_key == self.splitLineEdit.text() \
@@ -138,6 +150,8 @@ def setSkipSplitHotkey(self):
         try:
             keyboard.remove_hotkey(self.skip_split_hotkey)
         except AttributeError:
+            pass
+        except KeyError:
             pass
 
         self.skip_split_key = keyboard.read_hotkey(False)
@@ -183,6 +197,8 @@ def setUndoSplitHotkey(self):
             keyboard.remove_hotkey(self.undo_split_hotkey)
         except AttributeError:
             pass
+        except KeyError:
+            pass
 
         self.undo_split_key = keyboard.read_hotkey(False)
 
@@ -226,6 +242,8 @@ def setPauseHotkey(self):
         try:
             keyboard.remove_hotkey(self.pause_hotkey)
         except AttributeError:
+            pass
+        except KeyError:
             pass
 
         self.pause_key = keyboard.read_hotkey(False)
