@@ -1198,22 +1198,6 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="reloadsettingsButton">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>350</y>
-      <width>101</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Reload Settings</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="loopCheckBox">
     <property name="enabled">
      <bool>true</bool>
@@ -1306,7 +1290,6 @@
    <zorder>pausehotkeyLabel</zorder>
    <zorder>pausehotkeyLineEdit</zorder>
    <zorder>setpausehotkeyButton</zorder>
-   <zorder>reloadsettingsButton</zorder>
    <zorder>loopCheckBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -1325,6 +1308,14 @@
     <addaction name="actionView_Help"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionSave_Settings_2"/>
+    <addaction name="actionLoad_Settings"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionView_Help">
@@ -1345,6 +1336,16 @@
   <action name="actionSave_Settings">
    <property name="text">
     <string>Save Settings</string>
+   </property>
+  </action>
+  <action name="actionSave_Settings_2">
+   <property name="text">
+    <string>Save Settings</string>
+   </property>
+  </action>
+  <action name="actionLoad_Settings">
+   <property name="text">
+    <string>Load Settings</string>
    </property>
   </action>
  </widget>

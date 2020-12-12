@@ -128,3 +128,15 @@ def invalidSettingsError(self):
     msgBox.setWindowTitle('Error')
     msgBox.setText("Invalid settings file.")
     msgBox.exec_()
+
+def noSettingsFileOnOpenError(self):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setWindowTitle('Error')
+    msgBox.setText("No settings file found. One can be loaded on open if placed in the same folder as AutoSplit.exe")
+    msgBox.exec_()
+
+def tooManySettingsFilesOnOpenError(self):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setWindowTitle('Error')
+    msgBox.setText("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
+    msgBox.exec_()

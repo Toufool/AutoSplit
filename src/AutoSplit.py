@@ -7,6 +7,7 @@ import time
 import ctypes.wintypes
 import ctypes
 import keyboard
+import glob
 import numpy as np
 
 import design
@@ -21,7 +22,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
     multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
-    invalidSettingsError, oldVersionSettingsFileError)
+    invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
     from settings_file import saveSettings, loadSettings
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, viewHelp
@@ -102,9 +103,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        # try to load settings
-        #TODO decide what to do about loading settings upon opening the program
-        #self.loadSettings()
+        # find all .pkls in AutoSplit folder, error if there is none or more than 1
+        self.load_settings_on_open = True
+        self.loadSettings()
+        self.load_settings_on_open = False
 
     # FUNCTIONS
     #TODO add checkbox for going back to image 1 when resetting.

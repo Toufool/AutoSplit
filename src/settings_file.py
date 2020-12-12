@@ -1,6 +1,7 @@
 import keyboard
 import win32gui
 import pickle
+import glob
 from PyQt4 import QtGui
 
 def saveSettings(self):
@@ -58,11 +59,23 @@ def saveSettings(self):
 
 
 def loadSettings(self):
-    self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+    if self.load_settings_on_open == True:
+        self.settings_files = glob.glob("*.pkl")
+        if len(self.settings_files) < 1:
+            self.noSettingsFileOnOpenError()
+            return
+        elif len(self.settings_files) > 1:
+            self.tooManySettingsFilesOnOpenError()
+            return
+        else:
+            self.load_settings_file_path = self.settings_files[0]
 
-    # if user cancels load settings window, don't attempt to load settings
-    if self.load_settings_file_path == '':
-        return
+    else:
+        self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+
+        # if user cancels load settings window, don't attempt to load settings
+        if self.load_settings_file_path == '':
+            return
 
     try:
         with open(self.load_settings_file_path, 'rb') as f:
