@@ -9,7 +9,6 @@ def beforeSettingHotkey(self):
     self.setskipsplithotkeyButton.setEnabled(False)
     self.setundosplithotkeyButton.setEnabled(False)
     self.setpausehotkeyButton.setEnabled(False)
-    self.reloadsettingsButton.setEnabled(False)
 
 
 # do all of these things after you set a hotkey. a signal connects to this because
@@ -26,7 +25,6 @@ def afterSettingHotkey(self):
     self.setskipsplithotkeyButton.setEnabled(True)
     self.setundosplithotkeyButton.setEnabled(True)
     self.setpausehotkeyButton.setEnabled(True)
-    self.reloadsettingsButton.setEnabled(True)
 
     return
 

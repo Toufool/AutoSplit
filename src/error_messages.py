@@ -7,6 +7,12 @@ def splitImageDirectoryError(self):
     msgBox.setText("No split image folder is selected.")
     msgBox.exec_()
 
+def splitImageDirectoryNotFoundError(self):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setWindowTitle('Error')
+    msgBox.setText("The Split Image Folder does not exist.")
+    msgBox.exec_()
+
 
 def imageTypeError(self, image):
     msgBox = QtGui.QMessageBox()
@@ -19,7 +25,7 @@ def imageTypeError(self, image):
 def regionError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
-    msgBox.setText("No region is selected. Select a region or reload settings while region window is open")
+    msgBox.setText("No region is selected or the region window is not open. Select a region or load settings while region window is open")
     msgBox.exec_()
 
 
@@ -36,6 +42,11 @@ def splitHotkeyError(self):
     msgBox.setText("No split hotkey has been set.")
     msgBox.exec_()
 
+def pauseHotkeyError(self):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setWindowTitle('Error')
+    msgBox.setText("Pause flag detected in filenames, but no Pause Hotkey has been set")
+    msgBox.exec_()
 
 def customThresholdError(self, image):
     msgBox = QtGui.QMessageBox()
@@ -100,16 +111,20 @@ def dummySplitsError(self):
         "Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
     msgBox.exec_()
 
-
 def settingsNotFoundError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
     msgBox.setText("No settings file found. The settings file is saved when the program is closed.")
     msgBox.exec_()
 
+def oldVersionSettingsFileError(self):
+    msgBox = QtGui.QMessageBox()
+    msgBox.setWindowTitle('Error')
+    msgBox.setText("Old version settings file detected. This version allows settings files from v1.3 and above.")
+    msgBox.exec_()
 
 def invalidSettingsError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
-    msgBox.setText("The settings file is invalid")
+    msgBox.setText("Invalid settings file.")
     msgBox.exec_()

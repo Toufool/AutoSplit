@@ -18,10 +18,10 @@ import split_parser
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
-    from error_messages import (splitImageDirectoryError, imageTypeError, regionError, regionSizeError,
+    from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
-    multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, dummySplitsError, settingsNotFoundError,
-    invalidSettingsError)
+    multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
+    invalidSettingsError, oldVersionSettingsFileError)
     from settings_file import saveSettings, loadSettings
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, viewHelp
@@ -45,6 +45,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # close all processes when closing window
         self.actionView_Help.triggered.connect(self.viewHelp)
         self.actionAbout.triggered.connect(self.about)
+        self.actionSave_Settings.triggered.connect(self.saveSettings)
+        self.actionLoad_Settings.triggered.connect(self.loadSettings)
 
         # disable buttons upon open
         self.undosplitButton.setEnabled(False)
@@ -74,7 +76,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
-        self.reloadsettingsButton.clicked.connect(self.loadSettings)
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -102,7 +103,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.rect = ctypes.wintypes.RECT()
 
         # try to load settings
-        self.loadSettings()
+        #TODO decide what to do about loading settings upon opening the program
+        #self.loadSettings()
 
     # FUNCTIONS
     def browse(self):
@@ -181,6 +183,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # error checks
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             self.splitImageDirectoryError()
+            return
+        if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
+            self.splitImageDirectoryNotFoundError()
             return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
@@ -332,10 +337,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def autoSplitter(self):
         # error checking:
-        if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
+        if str(self.splitimagefolderLineEdit.text()) == 'No Folder Selected':
             self.splitImageDirectoryError()
             return
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+        if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
+            self.splitImageDirectoryNotFoundError()
+            return
+        if self.hwnd ==  0 or win32gui.GetWindowText(self.hwnd) == '':
             self.regionError()
             return
 
@@ -369,6 +377,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     # file format that is supported
                     self.imageTypeError(image)
                     return
+
+            #error out if there is a {p} flag but no pause hotkey set.
+            if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
+                self.pauseHotkeyError()
+                return
 
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
@@ -681,7 +694,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
-        self.reloadsettingsButton.setEnabled(False)
         QtGui.QApplication.processEvents()
 
     def guiChangesOnReset(self):
@@ -704,7 +716,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
-        self.reloadsettingsButton.setEnabled(True)
         QtGui.QApplication.processEvents()
 
     def compareImage(self, image, mask, capture):
@@ -859,7 +870,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     # exit safely when closing the window
     def closeEvent(self, event):
-        self.saveSettings()
+        #TODO ask user if they want to save settings
+        #self.saveSettings()
         sys.exit()
 
 

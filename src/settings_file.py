@@ -1,8 +1,16 @@
 import keyboard
 import win32gui
 import pickle
+from PyQt4 import QtGui
 
 def saveSettings(self):
+    # user picks save destination
+    self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
+    print(self.save_settings_file_path)
+    #if user cancels save destination window, don't save settings
+    if self.save_settings_file_path == '':
+        return
+
     # get values to be able to save settings
     self.x = self.xSpinBox.value()
     self.y = self.ySpinBox.value()
@@ -39,8 +47,8 @@ def saveSettings(self):
     else:
         self.loop_setting = 0
 
-    # save settings to settings.pkl
-    with open('settings.pkl', 'wb') as f:
+    # save settings to a .pkl file
+    with open(self.save_settings_file_path, 'wb') as f:
         pickle.dump(
             [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
              self.fps_limit, self.split_key,
@@ -51,14 +59,39 @@ def saveSettings(self):
 
 
 def loadSettings(self):
+    self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+    print(self.load_settings_file_path)
+
+    # if user cancels load settings window, don't attempt to load settings
+    if self.load_settings_file_path == '':
+        return
+
     try:
-        with open('settings.pkl', 'rb') as f:
-            [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-             self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-             self.hwnd_title,
-             self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+        with open(self.load_settings_file_path, 'rb') as f:
+            self.settings_count = len(pickle.load(f))
+            print(self.settings_count)
+            #v1.5 settings
+            if self.settings_count == 19:
+                with open(self.load_settings_file_path, 'rb') as f:
+                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                     self.fps_limit, self.split_key,
+                     self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
+                     self.hwnd_title,
+                     self.custom_pause_times_setting, self.custom_thresholds_setting,
+                     self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+            #v1.3-1.4 settings. add a blank pause key.
+            elif self.settings_count == 18:
+                with open(self.load_settings_file_path, 'rb') as f:
+                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                     self.fps_limit, self.split_key,
+                     self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
+                     self.hwnd_title,
+                     self.custom_pause_times_setting, self.custom_thresholds_setting,
+                     self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+                self.pause_key = ''
+            else:
+                self.oldVersionSettingsFileError()
+                return
 
         self.split_image_directory = str(self.split_image_directory)
         self.splitimagefolderLineEdit.setText(self.split_image_directory)
@@ -161,10 +194,6 @@ def loadSettings(self):
             pass
 
         self.checkLiveImage()
-
-    except IOError:
-        self.settingsNotFoundError()
-        pass
 
     except Exception:
         self.invalidSettingsError()

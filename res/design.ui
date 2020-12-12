@@ -1325,20 +1325,6 @@
     <addaction name="actionView_Help"/>
     <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="actionSplit_Settings"/>
-   </widget>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionSave_Settings"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionView_Help">
