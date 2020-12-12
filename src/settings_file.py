@@ -6,7 +6,6 @@ from PyQt4 import QtGui
 def saveSettings(self):
     # user picks save destination
     self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
-    print(self.save_settings_file_path)
     #if user cancels save destination window, don't save settings
     if self.save_settings_file_path == '':
         return
@@ -60,7 +59,6 @@ def saveSettings(self):
 
 def loadSettings(self):
     self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
-    print(self.load_settings_file_path)
 
     # if user cancels load settings window, don't attempt to load settings
     if self.load_settings_file_path == '':
@@ -69,7 +67,6 @@ def loadSettings(self):
     try:
         with open(self.load_settings_file_path, 'rb') as f:
             self.settings_count = len(pickle.load(f))
-            print(self.settings_count)
             #v1.5 settings
             if self.settings_count == 19:
                 with open(self.load_settings_file_path, 'rb') as f:

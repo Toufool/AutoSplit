@@ -107,6 +107,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         #self.loadSettings()
 
     # FUNCTIONS
+    #TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
         # User selects the file with the split images in it.
         self.split_image_directory = str(
