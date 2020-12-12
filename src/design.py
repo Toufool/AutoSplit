@@ -476,7 +476,8 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.splitLineEdit, self.resetLineEdit)
         MainWindow.setTabOrder(self.resetLineEdit, self.skipsplitLineEdit)
         MainWindow.setTabOrder(self.skipsplitLineEdit, self.undosplitLineEdit)
-        MainWindow.setTabOrder(self.undosplitLineEdit, self.groupDummySplitsCheckBox)
+        MainWindow.setTabOrder(self.undosplitLineEdit, self.pausehotkeyLineEdit)
+        MainWindow.setTabOrder(self.pausehotkeyLineEdit, self.groupDummySplitsCheckBox)
         MainWindow.setTabOrder(self.groupDummySplitsCheckBox, self.loopCheckBox)
 
     def retranslateUi(self, MainWindow):
