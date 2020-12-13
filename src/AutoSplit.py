@@ -15,7 +15,6 @@ import about
 import compare
 import capture_windows
 import split_parser
-#TODO EDIT README
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
