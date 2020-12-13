@@ -39,8 +39,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
 
-    #TODO BUG: REPRO: open invalid settings file, save settings as, then try to save settings.
-
     def __init__(self, parent=None):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
