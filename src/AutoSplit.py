@@ -115,6 +115,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # initialize a few settings options
         self.last_saved_settings = None
 
+        self.live_image_function_on_open = True
+
     # FUNCTIONS
     #TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
@@ -139,7 +141,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def liveImageFunction(self):
         try:
-            if win32gui.GetWindowText(self.hwnd) == '':
+            if win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == True:
+                self.timerLiveImage.stop()
+                self.live_image_function_on_open = False
+                return
+
+            elif win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == False:
                 self.regionError()
                 self.timerLiveImage.stop()
                 return

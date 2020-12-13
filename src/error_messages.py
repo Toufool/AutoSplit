@@ -25,7 +25,7 @@ def imageTypeError(self, image):
 def regionError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
-    msgBox.setText("No region is selected or the region window is not open. Select a region or load settings while region window is open")
+    msgBox.setText("No region is selected or the Capture Region window is not open. Select a region or load settings while the Capture Region window is open.")
     msgBox.exec_()
 
 
