@@ -23,7 +23,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
     multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
     invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
-    from settings_file import saveSettings, loadSettings
+    from settings_file import saveSettings, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, viewHelp
 
@@ -103,10 +103,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
+        #last successful loaded settings file path to None until we try to load them
+        self.last_successfully_loaded_settings_file_path = None
+
         # find all .pkls in AutoSplit folder, error if there is none or more than 1
         self.load_settings_on_open = True
         self.loadSettings()
         self.load_settings_on_open = False
+
+        # initialize a few settings options
+        self.last_saved_settings = None
+        self.save_settings_to_last_loaded_settings_file = False
 
     # FUNCTIONS
     #TODO add checkbox for going back to image 1 when resetting.
@@ -873,9 +880,41 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     # exit safely when closing the window
     def closeEvent(self, event):
-        #TODO ask user if they want to save settings
-        #self.saveSettings()
-        sys.exit()
+        if self.haveSettingsChanged():
+            if self.last_successfully_loaded_settings_file_path == None:
+                msgBox = QtGui.QMessageBox
+                warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
+                if warning == msgBox.Yes:
+                    self.save_settings_to_last_loaded_settings_file = False
+                    self.saveSettings()
+                    sys.exit()
+                    event.accept()
+                if warning == msgBox.No:
+                    event.accept()
+                    sys.exit()
+                    pass
+                if warning == msgBox.Cancel:
+                    event.ignore()
+                    return
+            else:
+                msgBox = QtGui.QMessageBox
+                warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
+                if warning == msgBox.Yes:
+                    self.save_settings_to_last_loaded_settings_file = True
+                    self.saveSettings()
+                    sys.exit()
+                    event.accept()
+                if warning == msgBox.No:
+                    event.accept()
+                    sys.exit()
+                    pass
+                if warning == msgBox.Cancel:
+                    event.ignore()
+                    return
+        else:
+            event.accept()
+            sys.exit()
+
 
 
 def main():

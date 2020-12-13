@@ -4,13 +4,7 @@ import pickle
 import glob
 from PyQt4 import QtGui
 
-def saveSettings(self):
-    # user picks save destination
-    self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
-    #if user cancels save destination window, don't save settings
-    if self.save_settings_file_path == '':
-        return
-
+def getSaveSettingsValues(self):
     # get values to be able to save settings
     self.x = self.xSpinBox.value()
     self.y = self.ySpinBox.value()
@@ -47,15 +41,54 @@ def saveSettings(self):
     else:
         self.loop_setting = 0
 
-    # save settings to a .pkl file
-    with open(self.save_settings_file_path, 'wb') as f:
-        pickle.dump(
-            [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+def haveSettingsChanged(self):
+    self.getSaveSettingsValues()
+    self.current_save_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
              self.fps_limit, self.split_key,
              self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
              self.hwnd_title,
              self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting], f)
+             self.group_dummy_splits_undo_skip_setting, self.loop_setting]
+    if self.current_save_settings == self.last_loaded_settings or self.current_save_settings == self.last_saved_settings:
+        return False
+    else:
+        return True
+
+
+
+def saveSettings(self):
+    if self.save_settings_to_last_loaded_settings_file == True:
+        self.getSaveSettingsValues()
+        self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index,
+                                    self.pause,
+                                    self.fps_limit, self.split_key,
+                                    self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x,
+                                    self.y, self.width, self.height,
+                                    self.hwnd_title,
+                                    self.custom_pause_times_setting, self.custom_thresholds_setting,
+                                    self.group_dummy_splits_undo_skip_setting, self.loop_setting]
+        # save settings to a .pkl file
+        with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
+            pickle.dump(self.last_saved_settings, f)
+    else:
+        # user picks save destination
+        self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
+
+        #if user cancels save destination window, don't save settings
+        if self.save_settings_file_path == '':
+            return
+
+        self.getSaveSettingsValues()
+        self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                 self.fps_limit, self.split_key,
+                 self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
+                 self.hwnd_title,
+                 self.custom_pause_times_setting, self.custom_thresholds_setting,
+                 self.group_dummy_splits_undo_skip_setting, self.loop_setting]
+
+        # save settings to a .pkl file
+        with open(self.save_settings_file_path, 'wb') as f:
+            pickle.dump(self.last_saved_settings, f)
 
 
 def loadSettings(self):
@@ -63,9 +96,11 @@ def loadSettings(self):
         self.settings_files = glob.glob("*.pkl")
         if len(self.settings_files) < 1:
             self.noSettingsFileOnOpenError()
+            self.last_loaded_settings = None
             return
         elif len(self.settings_files) > 1:
             self.tooManySettingsFilesOnOpenError()
+            self.last_loaded_settings = None
             return
         else:
             self.load_settings_file_path = self.settings_files[0]
@@ -73,7 +108,7 @@ def loadSettings(self):
     else:
         self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
 
-        # if user cancels load settings window, don't attempt to load settings
+        #
         if self.load_settings_file_path == '':
             return
 
@@ -83,7 +118,7 @@ def loadSettings(self):
             #v1.5 settings
             if self.settings_count == 19:
                 with open(self.load_settings_file_path, 'rb') as f:
-                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
                      self.fps_limit, self.split_key,
                      self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
                      self.hwnd_title,
@@ -92,7 +127,7 @@ def loadSettings(self):
             #v1.3-1.4 settings. add a blank pause key.
             elif self.settings_count == 18:
                 with open(self.load_settings_file_path, 'rb') as f:
-                    [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
                      self.fps_limit, self.split_key,
                      self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
                      self.hwnd_title,
@@ -203,6 +238,7 @@ def loadSettings(self):
         except KeyError:
             pass
 
+        self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
         self.checkLiveImage()
 
     except Exception:
