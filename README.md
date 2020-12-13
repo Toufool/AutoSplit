@@ -125,9 +125,9 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 ### Settings
 
--Settings files can be saved and opened and use the .pkl extension by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
--For v1.4 and below, settings work differently. Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file must be in the same directory as AutoSplit.exe and is loaded upon opening the program. Settings can be reloaded using the Reload Settings button.
--The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Rest" check box.
+- Settings files use the extension `.pkl`. Settings files can be saved and opened by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
+- For v1.4 and below, settings work differently. Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file must be in the same directory as AutoSplit.exe and is loaded upon opening the program. Settings can be reloaded using the Reload Settings button.
+- The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
 
 ## Known Limitations
 - For many games, it will be difficult to find a split image for the last split of the run.
