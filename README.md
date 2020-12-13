@@ -73,6 +73,8 @@ This program compares split images to a capture region of any window (OBS, xspli
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hotkey.
   - {b} split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
   - {m} masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images MUST be .png and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate
+  - {p} pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
+  - A pause flag and a dummy flag `{pd}` cannot be used together
 - Filename examples: 
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
@@ -90,9 +92,10 @@ The best way to create a masked image is to set your capture region as the entir
 You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold MUST be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
 
 ### Timer Global Hotkeys
-- Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. Start / Split hotkey must be the same as the one used in your preferred timer program in order for the splitting to work properly.
+- Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. The Start / Split hotkey and Pause hotkey must be the same as the one used in your preferred timer program in order for the splitting/pausing to work properly.
 - Make sure that Global Hotkeys are enabled in your speedrun timer.
 - All of these actions can also be handled by their corresponding buttons.
+- Note that pressing your Pause Hotkey does not serve any function in AutoSplit itself and is strictly used for the Pause flag.
 
 ### Group dummy splits when undoing / skipping
 If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through ths splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
@@ -112,15 +115,21 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 Please note this option cannot currently be used if you have any loop parameter `@@` greater than 1 in any image.
 
 ### Loop Split Images
-If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
+If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
+### Auto Start On Reset
+If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
+If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
+
 ### Settings
-Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file is loaded upon opening the program. These settings include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, hotkeys, "Group dummy splits when undoing/skipping" check box, and "Loop Split Images" check box. Settings can be reloaded using the Reload Settings button.
+
+-Settings files can be saved and opened and use the .pkl extension by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
+-For v1.4 and below, settings work differently. Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file must be in the same directory as AutoSplit.exe and is loaded upon opening the program. Settings can be reloaded using the Reload Settings button.
+-The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Rest" check box.
 
 ## Known Limitations
-- Starting your timer/AutoSplit is still manual.
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
 

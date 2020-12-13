@@ -1313,6 +1313,7 @@
      <string>File</string>
     </property>
     <addaction name="actionSave_Settings_2"/>
+    <addaction name="actionSave_Settings_As"/>
     <addaction name="actionLoad_Settings"/>
    </widget>
    <addaction name="menuFile"/>
@@ -1346,6 +1347,11 @@
   <action name="actionLoad_Settings">
    <property name="text">
     <string>Load Settings</string>
+   </property>
+  </action>
+  <action name="actionSave_Settings_As">
+   <property name="text">
+    <string>Save Settings As...</string>
    </property>
   </action>
  </widget>
