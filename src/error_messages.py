@@ -45,7 +45,7 @@ def splitHotkeyError(self):
 def pauseHotkeyError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
-    msgBox.setText("Pause flag detected in filenames, but no Pause Hotkey has been set")
+    msgBox.setText("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
     msgBox.exec_()
 
 def customThresholdError(self, image):
