@@ -67,6 +67,7 @@ def saveSettings(self):
     if self.last_successfully_loaded_settings_file_path == None:
         self.saveSettingsAs()
     else:
+        self.getSaveSettingsValues()
         self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index,
                                     self.pause,
                                     self.fps_limit, self.split_key,
