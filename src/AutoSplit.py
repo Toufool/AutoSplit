@@ -23,7 +23,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
     multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
     invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
-    from settings_file import saveSettings, loadSettings, haveSettingsChanged, getSaveSettingsValues
+    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, viewHelp
 
@@ -47,6 +47,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.actionView_Help.triggered.connect(self.viewHelp)
         self.actionAbout.triggered.connect(self.about)
         self.actionSave_Settings.triggered.connect(self.saveSettings)
+        self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
 
         # disable buttons upon open
@@ -113,7 +114,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # initialize a few settings options
         self.last_saved_settings = None
-        self.save_settings_to_last_loaded_settings_file = False
 
     # FUNCTIONS
     #TODO add checkbox for going back to image 1 when resetting.
@@ -318,7 +318,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         return
 
     #def pause(self):
-        #TODO add what to do when you hit pause hotkey.
+        #TODO add what to do when you hit pause hotkey, if this even needs to be done
 
     def reset(self):
         # when the reset button or hotkey is pressed, it will change this text, which will trigger the autoSplitter function, if running, to abort and change GUI.
@@ -881,12 +881,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # exit safely when closing the window
     def closeEvent(self, event):
         if self.haveSettingsChanged():
+            #give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
             if self.last_successfully_loaded_settings_file_path == None:
                 msgBox = QtGui.QMessageBox
                 warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
                 if warning == msgBox.Yes:
-                    self.save_settings_to_last_loaded_settings_file = False
-                    self.saveSettings()
+                    self.saveSettingsAs()
                     sys.exit()
                     event.accept()
                 if warning == msgBox.No:
@@ -900,7 +900,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 msgBox = QtGui.QMessageBox
                 warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
                 if warning == msgBox.Yes:
-                    self.save_settings_to_last_loaded_settings_file = True
                     self.saveSettings()
                     sys.exit()
                     event.accept()

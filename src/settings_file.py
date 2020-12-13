@@ -54,11 +54,10 @@ def haveSettingsChanged(self):
     else:
         return True
 
-
-
 def saveSettings(self):
-    if self.save_settings_to_last_loaded_settings_file == True:
-        self.getSaveSettingsValues()
+    if self.last_successfully_loaded_settings_file_path == None:
+        self.saveSettingsAs()
+    else:
         self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index,
                                     self.pause,
                                     self.fps_limit, self.split_key,
@@ -70,25 +69,26 @@ def saveSettings(self):
         # save settings to a .pkl file
         with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
             pickle.dump(self.last_saved_settings, f)
-    else:
-        # user picks save destination
-        self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
 
-        #if user cancels save destination window, don't save settings
-        if self.save_settings_file_path == '':
-            return
+def saveSettingsAs(self):
+    # user picks save destination
+    self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings", "", "PKL (*.pkl)"))
 
-        self.getSaveSettingsValues()
-        self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                 self.fps_limit, self.split_key,
-                 self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-                 self.hwnd_title,
-                 self.custom_pause_times_setting, self.custom_thresholds_setting,
-                 self.group_dummy_splits_undo_skip_setting, self.loop_setting]
+    #if user cancels save destination window, don't save settings
+    if self.save_settings_file_path == '':
+        return
 
-        # save settings to a .pkl file
-        with open(self.save_settings_file_path, 'wb') as f:
-            pickle.dump(self.last_saved_settings, f)
+    self.getSaveSettingsValues()
+    self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
+             self.fps_limit, self.split_key,
+             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
+             self.hwnd_title,
+             self.custom_pause_times_setting, self.custom_thresholds_setting,
+             self.group_dummy_splits_undo_skip_setting, self.loop_setting]
+
+    # save settings to a .pkl file
+    with open(self.save_settings_file_path, 'wb') as f:
+        pickle.dump(self.last_saved_settings, f)
 
 
 def loadSettings(self):

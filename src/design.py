@@ -452,11 +452,14 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionSave_Settings = QtGui.QAction(MainWindow)
         self.actionSave_Settings.setObjectName(_fromUtf8("actionSave_Settings"))
+        self.actionSave_Settings_As = QtGui.QAction(MainWindow)
+        self.actionSave_Settings_As.setObjectName(_fromUtf8("actionSave_Settings_As"))
         self.actionLoad_Settings = QtGui.QAction(MainWindow)
         self.actionLoad_Settings.setObjectName(_fromUtf8("actionLoad_Settings"))
         self.menuHelp.addAction(self.actionView_Help)
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionSave_Settings)
+        self.menuFile.addAction(self.actionSave_Settings_As)
         self.menuFile.addAction(self.actionLoad_Settings)
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuHelp.menuAction())
@@ -535,6 +538,7 @@ class Ui_MainWindow(object):
         self.actionView_Help.setText(_translate("MainWindow", "View Help", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
         self.actionSave_Settings.setText(_translate("MainWindow", "Save Settings", None))
+        self.actionSave_Settings_As.setText(_translate("MainWindow", "Save Settings As...", None))
         self.actionLoad_Settings.setText(_translate("MainWindow", "Load Settings", None))
 
 
