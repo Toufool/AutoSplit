@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
+    <width>619</width>
     <height>490</height>
    </rect>
   </property>
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>612</width>
+    <width>619</width>
     <height>490</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>612</width>
+    <width>619</width>
     <height>490</height>
    </size>
   </property>
@@ -170,7 +170,7 @@
    <widget class="QPushButton" name="startautosplitterButton">
     <property name="geometry">
      <rect>
-      <x>501</x>
+      <x>505</x>
       <y>425</y>
       <width>101</width>
       <height>31</height>
@@ -186,7 +186,7 @@
    <widget class="QPushButton" name="resetButton">
     <property name="geometry">
      <rect>
-      <x>501</x>
+      <x>505</x>
       <y>385</y>
       <width>101</width>
       <height>31</height>
@@ -1205,13 +1205,35 @@
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>320</y>
+      <y>314</y>
       <width>121</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
      <string>Loop Split Images</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="loopCheckBox_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>344</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Auto Start On Reset</string>
     </property>
     <property name="checked">
      <bool>false</bool>
@@ -1291,13 +1313,14 @@
    <zorder>pausehotkeyLineEdit</zorder>
    <zorder>setpausehotkeyButton</zorder>
    <zorder>loopCheckBox</zorder>
+   <zorder>loopCheckBox_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>612</width>
+     <width>619</width>
      <height>21</height>
     </rect>
    </property>
