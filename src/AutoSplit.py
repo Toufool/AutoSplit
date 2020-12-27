@@ -511,6 +511,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
 
+                # loop goes into here if start auto splitter text is "Start Auto Splitter"
+                if self.startautosplitterButton.text() == 'Start Auto Splitter':
+                    if self.autostartonresetCheckBox.isChecked():
+                        self.startAutoSplitterSignal.emit()
+                        return
+                    else:
+                        self.guiChangesOnReset()
+                        return
+
                 # calculate similarity for reset image
                 reset_masked = None
                 capture = None
