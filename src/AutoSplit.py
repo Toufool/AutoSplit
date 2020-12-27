@@ -355,12 +355,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def autoSplitter(self):
         # error checking:
         if str(self.splitimagefolderLineEdit.text()) == 'No Folder Selected':
+            self.guiChangesOnReset()
             self.splitImageDirectoryError()
             return
         if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
+            self.guiChangesOnReset()
             self.splitImageDirectoryNotFoundError()
             return
         if self.hwnd ==  0 or win32gui.GetWindowText(self.hwnd) == '':
+            self.guiChangesOnReset()
             self.regionError()
             return
 
@@ -379,12 +382,14 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if source is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
+                    self.guiChangesOnReset()
                     self.imageTypeError(image)
                     return
 
                 if source.shape[2] != 4:
                     # Error, this file doesn't have an alpha channel even
                     # though the flag for masking was added
+                    self.guiChangesOnReset()
                     self.alphaChannelError(image)
                     return
 
@@ -392,27 +397,32 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
+                    self.guiChangesOnReset()
                     self.imageTypeError(image)
                     return
 
             #error out if there is a {p} flag but no pause hotkey set.
             if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
+                self.guiChangesOnReset()
                 self.pauseHotkeyError()
                 return
 
             if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
                 # Error, this file doesn't have a pause, but the checkbox was
                 # selected for unique pause times
+                self.guiChangesOnReset()
                 self.customPauseError(image)
                 return
 
             if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
                 # Error, this file doesn't have a threshold, but the checkbox
                 # was selected for unique thresholds
+                self.guiChangesOnReset()
                 self.customThresholdError(image)
                 return
 
         if self.splitLineEdit.text() == '':
+            self.guiChangesOnReset()
             self.splitHotkeyError()
             return
 
@@ -423,16 +433,19 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         for image in self.split_image_filenames:
 
             if split_parser.is_reset_image(image):
+                self.guiChangesOnReset()
                 self.multipleResetImagesError()
                 return
 
         # if there is no custom threshold for the reset image, throw an error.
         if self.reset_image is not None and self.reset_image_threshold is None:
+            self.guiChangesOnReset()
             self.noResetImageThresholdError()
             return
 
         # If there is no reset hotkey set but a reset image is present, throw an error.
         if self.resetLineEdit.text() == '' and self.reset_image is not None:
+            self.guiChangesOnReset()
             self.resetHotkeyError()
             return
 
