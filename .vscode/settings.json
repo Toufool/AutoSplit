@@ -1,0 +1,48 @@
+{
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "[git-commit]": {
+    "editor.rulers": [
+      72
+    ]
+  },
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.rulers": [
+      72,
+      79,
+      120,
+    ]
+  },
+  "[py]": {
+    "editor.tabSize": 4,
+    "editor.rulers": [
+      72,
+      79,
+      120,
+    ]
+  },
+  "//1": "Keeping autoformat to false for now to keep minimal changes",
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": false,
+  },
+  "python.linting.pylintEnabled": false,
+  "//2": "Using flake8 as other linters are incomplete or have too many false positives last I tried",
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.pycodestyleEnabled": false,
+  "python.linting.flake8Args": [
+    "--max-line-length=120"
+  ],
+  "python.linting.flake8CategorySeverity.F": "Warning",
+  "python.formatting.autopep8Args": [
+    "--max-line-length=120"
+  ],
+  "python.pythonPath": "",
+  "files.insertFinalNewline": true,
+}

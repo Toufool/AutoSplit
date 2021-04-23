@@ -1,0 +1,20 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+env/
+build/
+dist/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Dev settings
+*.pkl
+# Defaut settings
+!src/settings.pkl
