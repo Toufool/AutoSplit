@@ -3,6 +3,8 @@ import win32gui
 import pickle
 import glob
 from PyQt4 import QtGui
+from hotkeys import _hotkey_action
+
 
 def getSaveSettingsValues(self):
     # get values to be able to save settings
@@ -166,96 +168,63 @@ def loadSettings(self):
         self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
 
         # set custom checkbox's accordingly
-        if self.custom_pause_times_setting == 1:
-            self.custompausetimesCheckBox.setChecked(True)
-        else:
-            self.custompausetimesCheckBox.setChecked(False)
-
-        if self.custom_thresholds_setting == 1:
-            self.customthresholdsCheckBox.setChecked(True)
-        else:
-            self.customthresholdsCheckBox.setChecked(False)
-
-        if self.group_dummy_splits_undo_skip_setting == 1:
-            self.groupDummySplitsCheckBox.setChecked(True)
-        else:
-            self.groupDummySplitsCheckBox.setChecked(False)
-
-        if self.loop_setting == 1:
-            self.loopCheckBox.setChecked(True)
-        else:
-            self.loopCheckBox.setChecked(False)
-
-        if self.auto_start_on_reset_setting == 1:
-            self.autostartonresetCheckBox.setChecked(True)
-        else:
-            self.autostartonresetCheckBox.setChecked(False)
-
+        self.custompausetimesCheckBox.setChecked(self.custom_pause_times_setting == 1)
+        self.customthresholdsCheckBox.setChecked(self.custom_thresholds_setting == 1)
+        self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
+        self.loopCheckBox.setChecked(self.loop_setting == 1)
+        self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
+        
+        # TODO: Reuse code from hotkeys rather than duplicating here
         # try to set hotkeys from when user last closed the window
         try:
-            try:
-                keyboard.remove_hotkey(self.split_hotkey)
-            except AttributeError:
-                pass
+            keyboard.unhook_key(self.split_hotkey)
+        except AttributeError:
+            pass
+        try:
             self.splitLineEdit.setText(str(self.split_key))
-            self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-            self.old_split_key = self.split_key
+            self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
         # pass if the key is an empty string (hotkey was never set)
-        except ValueError:
-            pass
-        except KeyError:
+        except (ValueError, KeyError):
             pass
 
         try:
-            try:
-                keyboard.remove_hotkey(self.reset_hotkey)
-            except AttributeError:
-                pass
-            self.resetLineEdit.setText(str(self.reset_key))
-            self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.startReset)
-            self.old_reset_key = self.reset_key
-        except ValueError:
+            keyboard.unhook_key(self.reset_hotkey)
+        except AttributeError:
             pass
-        except KeyError:
+        try:
+            self.resetLineEdit.setText(self.reset_key)
+            self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
+        except (ValueError, KeyError):
             pass
 
         try:
-            try:
-                keyboard.remove_hotkey(self.skip_split_hotkey)
-            except AttributeError:
-                pass
-            self.skipsplitLineEdit.setText(str(self.skip_split_key))
-            self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.startSkipSplit)
-            self.old_skip_split_key = self.skip_split_key
-        except ValueError:
+            keyboard.unhook_key(self.skip_split_hotkey)
+        except AttributeError:
             pass
-        except KeyError:
+        try:
+            self.skipsplitLineEdit.setText(self.skip_split_key)
+            self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
+        except (ValueError, KeyError):
             pass
 
         try:
-            try:
-                keyboard.remove_hotkey(self.undo_split_hotkey)
-            except AttributeError:
-                pass
-            self.undosplitLineEdit.setText(str(self.undo_split_key))
-            self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
-            self.old_undo_split_key = self.undo_split_key
-        except ValueError:
+            keyboard.unhook_key(self.undo_split_hotkey)
+        except AttributeError:
             pass
-        except KeyError:
+        try:
+            self.undosplitLineEdit.setText(self.undo_split_key)
+            self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
+        except (ValueError, KeyError):
             pass
 
         try:
-            try:
-                keyboard.remove_hotkey(self.pause_hotkey)
-            except AttributeError:
-                pass
-            self.pausehotkeyLineEdit.setText(str(self.pause_key))
-            self.pause_hotkey = keyboard.add_hotkey(str(self.pause_key), self.startPause)
-            self.old_pause_key = self.pause_key
-        except ValueError:
+            keyboard.unhook_key(self.pause_hotkey)
+        except AttributeError:
             pass
-        except KeyError:
+        try:
+            self.pausehotkeyLineEdit.setText(self.pause_key)
+            self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
+        except (ValueError, KeyError):
             pass
 
         self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
@@ -263,4 +232,3 @@ def loadSettings(self):
 
     except Exception:
         self.invalidSettingsError()
-        pass
