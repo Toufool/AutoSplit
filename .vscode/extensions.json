@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "ms-pyright.pyright",
+    "ms-python.python",
+    "sonarsource.sonarlint-vscode",
+    "davidanson.vscode-markdownlint"
+  ]
+}
