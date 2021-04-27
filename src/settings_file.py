@@ -2,6 +2,7 @@ import keyboard
 import win32gui
 import pickle
 import glob
+import logging
 from PyQt4 import QtGui
 from hotkeys import _hotkey_action
 
@@ -108,7 +109,14 @@ def saveSettingsAs(self):
 
 
 def loadSettings(self):
-    if self.load_settings_on_open == True:
+    # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
+    self.split_hotkey = ""
+    self.reset_hotkey = ""
+    self.skip_split_hotkey = ""
+    self.undo_split_hotkey = ""
+    self.pause_hotkey = ""
+
+    if self.load_settings_on_open:
         self.settings_files = glob.glob("*.pkl")
         if len(self.settings_files) < 1:
             self.noSettingsFileOnOpenError()
@@ -173,12 +181,12 @@ def loadSettings(self):
         self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
         self.loopCheckBox.setChecked(self.loop_setting == 1)
         self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
-        
+
         # TODO: Reuse code from hotkeys rather than duplicating here
         # try to set hotkeys from when user last closed the window
         try:
             keyboard.unhook_key(self.split_hotkey)
-        except AttributeError:
+        except (AttributeError, KeyError):
             pass
         try:
             self.splitLineEdit.setText(str(self.split_key))
@@ -189,7 +197,7 @@ def loadSettings(self):
 
         try:
             keyboard.unhook_key(self.reset_hotkey)
-        except AttributeError:
+        except (AttributeError, KeyError):
             pass
         try:
             self.resetLineEdit.setText(self.reset_key)
@@ -199,7 +207,7 @@ def loadSettings(self):
 
         try:
             keyboard.unhook_key(self.skip_split_hotkey)
-        except AttributeError:
+        except (AttributeError, KeyError):
             pass
         try:
             self.skipsplitLineEdit.setText(self.skip_split_key)
@@ -209,7 +217,7 @@ def loadSettings(self):
 
         try:
             keyboard.unhook_key(self.undo_split_hotkey)
-        except AttributeError:
+        except (AttributeError, KeyError):
             pass
         try:
             self.undosplitLineEdit.setText(self.undo_split_key)
@@ -219,7 +227,7 @@ def loadSettings(self):
 
         try:
             keyboard.unhook_key(self.pause_hotkey)
-        except AttributeError:
+        except (AttributeError, KeyError):
             pass
         try:
             self.pausehotkeyLineEdit.setText(self.pause_key)
@@ -231,4 +239,5 @@ def loadSettings(self):
         self.checkLiveImage()
 
     except Exception:
+        logging.error(logging.traceback.format_exc())
         self.invalidSettingsError()
