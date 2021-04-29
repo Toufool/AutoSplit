@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore, QtTest
 from menu_bar import about, VERSION, viewHelp
 import sys
+import signal
 import os
 import win32gui
 import cv2
@@ -15,6 +16,7 @@ import design
 import compare
 import capture_windows
 import split_parser
+
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # Importing the functions inside of the class will make them methods of the class
@@ -57,9 +59,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.skipsplitButton.setEnabled(False)
         self.resetButton.setEnabled(False)
 
-        # Threads will be killed once this is set to True
-        self.kill_threads = False
-
         if self.is_auto_controlled:
             self.setsplithotkeyButton.setEnabled(False)
             self.setresethotkeyButton.setEnabled(False)
@@ -76,8 +75,40 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # Send version and process ID to stdout
             print(f"{VERSION}\n{os.getpid()}", flush=True)
 
-            # Create thread that checks for updates from LiveSplit
-            threading.Thread(target=self.updateAutoControl).start()
+            class Worker(QtCore.QObject):
+                autosplit = None
+
+                def __init__(self, autosplit):
+                    self.autosplit = autosplit
+                    super().__init__()
+
+                def run(self):
+                    while True:
+                        line = input()
+                        # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
+                        # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
+                        # For now this can only used in a Development environment
+                        if line == 'kill':
+                            self.autosplit.closeEvent()
+                            break
+                        elif line == 'start':
+                            self.autosplit.startAutoSplitter()
+                        elif line == 'split' or line == 'skip':
+                            self.autosplit.startSkipSplit()
+                        elif line == 'undo':
+                            self.autosplit.startUndoSplit()
+                        elif line == 'reset':
+                            self.autosplit.startReset()
+                        # TODO: Not yet implemented in AutoSplit Integration
+                        # elif line == 'pause':
+                        #     self.startPause()
+
+            # Use and Start the thread that checks for updates from LiveSplit
+            self.update_auto_control = QtCore.QThread()
+            worker = Worker(self)
+            worker.moveToThread(self.update_auto_control)
+            self.update_auto_control.started.connect(worker.run)
+            self.update_auto_control.start()
 
         # resize to these width and height so that FPS performance increases
         self.RESIZE_WIDTH = 320
@@ -143,28 +174,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.live_image_function_on_open = True
 
     # FUNCTIONS
-
-    def updateAutoControl(self):
-        while self.kill_threads == False:
-            # NOTE: This leads to the program hanging on exit until the
-            #       LiveSplit server component returns something.
-            #       In some edge cases and happens everytime in dev setup,
-            #       we may never receive an input and freeze the program.
-            # TODO: Let's find a better solution (like some sort of input timeout maybe?)
-            line = input()
-            if line == 'kill':
-                self.kill_threads = True
-            elif line == 'start':
-                self.startAutoSplitter()
-            elif line == 'split' or line == 'skip':
-                self.startSkipSplit()
-            elif line == 'undo':
-                self.startUndoSplit()
-            elif line == 'reset':
-                self.startReset()
-            # TODO: Not yet implemented
-            # elif line == 'pause':
-            #     self.startPause()
 
     #TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
@@ -988,20 +997,30 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.001
 
     # exit safely when closing the window
-    def closeEvent(self, event):
+    def closeEvent(self, event=None):
         def exit():
-            if self.is_auto_controlled and self.kill_threads == False:
-                print('killme', flush=True)
-            self.kill_threads = True
-            event.accept()
+            if event is not None:
+                event.accept()
+            if self.is_auto_controlled:
+                self.update_auto_control.terminate()
+                # stop main thread (which is probably blocked reading input) via an interrupt signal
+                # only available for windows in version 3.2 or higher
+                os.kill(os.getpid(), signal.SIGINT)
             sys.exit()
+
+        # Simulates LiveSplit quitting without asking. See "TODO" at update_auto_control Worker
+        # This also more gracefully exits LiveSplit
+        # Users can still manually save their settings
+        if event is None:
+            exit()
 
         if self.haveSettingsChanged():
             # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
             msgBox = QtGui.QMessageBox
-            warning_message = "Do you want to save changes made to settings file Untitled?" \
-                if self.last_successfully_loaded_settings_file_path == None \
-                else "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?"
+            settings_file_name = "Untitled" \
+                if self.last_successfully_loaded_settings_file_path is None \
+                else os.path.basename(self.last_successfully_loaded_settings_file_path)
+            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
 
             warning = msgBox.warning(self, "AutoSplit", warning_message, msgBox.Yes | msgBox.No | msgBox.Cancel)
 
