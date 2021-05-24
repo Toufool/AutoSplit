@@ -1,21 +1,23 @@
+#!/usr/bin/python3.7
+# -*- coding: utf-8 -*-
+
 from PyQt4 import QtGui, QtCore, QtTest
 from menu_bar import about, VERSION, viewHelp
+from win32 import win32gui
 import sys
 import signal
 import os
-import win32gui
 import cv2
 import time
 import ctypes.wintypes
 import ctypes
 import keyboard
-import threading
-import numpy as np
 
 import design
 import compare
 import capture_windows
 import split_parser
+import numpy as np
 
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):

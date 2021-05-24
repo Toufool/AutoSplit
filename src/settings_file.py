@@ -1,10 +1,10 @@
+from win32 import win32gui
+from PyQt4 import QtGui
+from hotkeys import _hotkey_action
 import keyboard
-import win32gui
 import pickle
 import glob
 import logging
-from PyQt4 import QtGui
-from hotkeys import _hotkey_action
 
 
 def getSaveSettingsValues(self):
