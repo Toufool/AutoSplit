@@ -186,12 +186,13 @@ def loadSettings(self):
         # try to set hotkeys from when user last closed the window
         try:
             keyboard.unhook_key(self.split_hotkey)
+        # pass if the key is an empty string (hotkey was never set)
         except (AttributeError, KeyError):
             pass
         try:
-            self.splitLineEdit.setText(str(self.split_key))
+          if self.is_auto_controlled == False:
+            self.splitLineEdit.setText(self.split_key)
             self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
-        # pass if the key is an empty string (hotkey was never set)
         except (ValueError, KeyError):
             pass
 
