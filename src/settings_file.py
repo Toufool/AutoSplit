@@ -6,7 +6,6 @@ import pickle
 import glob
 import logging
 
-
 def getSaveSettingsValues(self):
     # get values to be able to save settings
     self.x = self.xSpinBox.value()
