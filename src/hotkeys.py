@@ -1,5 +1,8 @@
 import keyboard
+import pyautogui
 import threading
+# While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
+pyautogui.FAILSAFE = False
 
 
 # do all of these after you click "set hotkey" but before you type the hotkey.
@@ -36,25 +39,42 @@ def is_digit(key):
         return False
 
 
+# Supports sending the appropriate scan code for all the special cases
+def send_hotkey(key_or_scan_code):
+    hotkey_type = type(key_or_scan_code)
+
+    # Deal with regular inputs
+    if hotkey_type is int:
+        return keyboard.send(key_or_scan_code)
+    elif hotkey_type is not str:
+        raise TypeError(f'key_or_scan_code "{key_or_scan_code}" {hotkey_type} should be an int or str')
+    if (not (key_or_scan_code.startswith('num ') or key_or_scan_code == 'decimal')):
+        return keyboard.send(key_or_scan_code)
+
+    # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the defautl (wrong) key
+    # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
+    pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
+
+
 def __validate_keypad(expected_key, keyboard_event):
-    # Prevent "num delete", "num dot" and "delete" from triggering each other
-    # as well as "dot" and "num dot"
+    # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
+    # as well as "." and "(keypad)./decimal"
     if keyboard_event.scan_code == 83 or keyboard_event.scan_code == 52:
         if expected_key == keyboard_event.name:
             return True
         else:
-            # TODO: "delete" won't work with "num delete" if localized in non-english
+            # TODO: "del" won't work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
             return False
-    # Prevent "action" from triggering "numpad" hotkeys
+    # Prevent "action keys" from triggering "keypad keys"
     if is_digit(keyboard_event.name[-1]):
-        # Prevent "regular number" from activating "numpad" hotkeys
+        # Prevent "regular numbers" from activating "keypad numbers"
         if expected_key.startswith("num "):
             return keyboard_event.is_keypad
-        # Prevent "numpad" from activating "regular number" hotkeys
+        # Prevent "keypad numbers" from activating "regular numbers"
         else:
             return not keyboard_event.is_keypad
     else:
-        # Prevent "num action" keys from triggering "regular number" and "numpad" hotkeys.
+        # Prevent "keypad action keys" from triggering "regular numbers" and "keypad numbers"
         # Still allow the same key that might be localized differently on keypad vs non-keypad
         return not is_digit(expected_key[-1])
 
@@ -76,7 +96,7 @@ def _hotkey_action(keyboard_event, key_name, action):
 
 
 def __get_key_name(keyboard_event):
-    return "num " + keyboard_event.name \
+    return f"num {keyboard_event.name}"  \
         if keyboard_event.is_keypad and is_digit(keyboard_event.name) \
         else keyboard_event.name
 
