@@ -704,7 +704,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                                 if self.is_auto_controlled:
                                     print("reset", flush = True)
                                 else:
-                                     send_hotkey(self.resetLineEdit.text())
+                                    send_hotkey(self.resetLineEdit.text())
                                 self.reset()
                                 continue
 
@@ -717,12 +717,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     if self.is_auto_controlled:
                         print("pause", flush = True)
                     else:
-                        send_hotkey.send(self.pausehotkeyLineEdit.text())
+                        send_hotkey(self.pausehotkeyLineEdit.text())
                 else:
                     if self.is_auto_controlled:
                         print("split", flush = True)
                     else:
-                        send_hotkey.send(self.splitLineEdit.text())
+                        send_hotkey(self.splitLineEdit.text())
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
