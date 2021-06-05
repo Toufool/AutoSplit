@@ -1,5 +1,9 @@
 import keyboard
+import pyautogui
 import threading
+# While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
+pyautogui.FAILSAFE = False
+
 
 # do all of these after you click "set hotkey" but before you type the hotkey.
 def beforeSettingHotkey(self):
@@ -26,10 +30,88 @@ def afterSettingHotkey(self):
     self.setundosplithotkeyButton.setEnabled(True)
     self.setpausehotkeyButton.setEnabled(True)
 
-    return
 
-#--------------------HOTKEYS--------------------------
-#Going to comment on one func, and others will be similar.
+def is_digit(key):
+    try:
+        key_as_num = int(key)
+        return key_as_num >= 0 and key_as_num <= 9
+    except Exception:
+        return False
+
+
+# Supports sending the appropriate scan code for all the special cases
+def send_hotkey(key_or_scan_code):
+    hotkey_type = type(key_or_scan_code)
+
+    # Deal with regular inputs
+    if hotkey_type is int:
+        return keyboard.send(key_or_scan_code)
+    elif hotkey_type is not str:
+        raise TypeError(f'key_or_scan_code "{key_or_scan_code}" {hotkey_type} should be an int or str')
+    if (not (key_or_scan_code.startswith('num ') or key_or_scan_code == 'decimal')):
+        return keyboard.send(key_or_scan_code)
+
+    # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the defautl (wrong) key
+    # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
+    pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
+
+
+def __validate_keypad(expected_key, keyboard_event):
+    # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
+    # as well as "." and "(keypad)./decimal"
+    if keyboard_event.scan_code == 83 or keyboard_event.scan_code == 52:
+        if expected_key == keyboard_event.name:
+            return True
+        else:
+            # TODO: "del" won't work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
+            return False
+    # Prevent "action keys" from triggering "keypad keys"
+    if is_digit(keyboard_event.name[-1]):
+        # Prevent "regular numbers" from activating "keypad numbers"
+        if expected_key.startswith("num "):
+            return keyboard_event.is_keypad
+        # Prevent "keypad numbers" from activating "regular numbers"
+        else:
+            return not keyboard_event.is_keypad
+    else:
+        # Prevent "keypad action keys" from triggering "regular numbers" and "keypad numbers"
+        # Still allow the same key that might be localized differently on keypad vs non-keypad
+        return not is_digit(expected_key[-1])
+
+
+# NOTE: This is a workaround very specific to numpads.
+# Windows reports different physical keys with the same scan code.
+# For example, "Home", "Num Home" and "Num 7" are all "71".
+# See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684
+#
+# We're doing the check here instead of saving the key code because it'll
+# cause issues with save files and the non-keypad shared keys are localized
+# while the keypad ones aren't.
+#
+# Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
+# We're also trying to achieve the same hotkey behaviour as LiveSplit has.
+def _hotkey_action(keyboard_event, key_name, action):
+    if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
+        action()
+
+
+def __get_key_name(keyboard_event):
+    return f"num {keyboard_event.name}"  \
+        if keyboard_event.is_keypad and is_digit(keyboard_event.name) \
+        else keyboard_event.name
+
+
+def __is_key_already_set(self, key_name):
+    return key_name == self.splitLineEdit.text() \
+        or key_name == self.resetLineEdit.text() \
+        or key_name == self.skipsplitLineEdit.text() \
+        or key_name == self.undosplitLineEdit.text() \
+        or key_name == self.pausehotkeyLineEdit.text()
+
+
+# --------------------HOTKEYS--------------------------
+# TODO: Refactor to de-duplicate all this code, including settings_file.py
+# Going to comment on one func, and others will be similar.
 def setSplitHotkey(self):
     self.setsplithotkeyButton.setText('Press a key..')
 
@@ -38,48 +120,34 @@ def setSplitHotkey(self):
 
     # new thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
-    def callback():
+    def callback(hotkey):
         # try to remove the previously set hotkey if there is one.
         try:
-            keyboard.remove_hotkey(self.split_hotkey)
-        except AttributeError:
-            pass
-        #this error was coming up when loading the program and
-        #the lineEdit area was empty (no hotkey set), then you
-        #set one, reload the setting once back to blank works,
-        #but if you click reload settings again, it errors
-        #we can just have it pass, but don't want to throw in
-        #generic exception here in case another one of these
-        #pops up somewhere.
-        except KeyError:
+            keyboard.unhook_key(hotkey)
+        # KeyError was coming up when loading the program and
+        # the lineEdit area was empty (no hotkey set), then you
+        # set one, reload the setting once back to blank works,
+        # but if you click reload settings again, it errors
+        # we can just have it pass, but don't want to throw in
+        # generic exception here in case another one of these
+        # pops up somewhere.
+        except (AttributeError, KeyError):
             pass
 
         # wait until user presses the hotkey, then keyboard module reads the input
-        self.split_key = keyboard.read_hotkey(False)
-
-        # If the key the user presses is equal to itself or another hotkey already set,
-        # this causes issues. so here, it catches that, and will make no changes to the hotkey.
+        key_name = __get_key_name(keyboard.read_event(True))
         try:
-            if self.split_key == self.splitLineEdit.text() \
-                    or self.split_key == self.resetLineEdit.text() \
-                    or self.split_key == self.skipsplitLineEdit.text() \
-                    or self.split_key == self.undosplitLineEdit.text() \
-                    or self.split_key == self.pausehotkeyLineEdit.text():
-                self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
+            # If the key the user presses is equal to itself or another hotkey already set,
+            # this causes issues. so here, it catches that, and will make no changes to the hotkey.
 
-        # keyboard module allows you to hit multiple keys for a hotkey. they are joined
-        # together by +. If user hits two keys at the same time, make no changes to the
-        # hotkey. A try and except is needed if a hotkey hasn't been set yet. I'm not
-        # allowing for these multiple-key hotkeys because it can cause crashes, and
-        # not many people are going to really use or need this.
-        try:
-            if '+' in self.split_key:
-                self.split_hotkey = keyboard.add_hotkey(self.old_split_key, self.startAutoSplitter)
+            # or
+
+            # keyboard module allows you to hit multiple keys for a hotkey. they are joined
+            # together by +. If user hits two keys at the same time, make no changes to the
+            # hotkey. A try and except is needed if a hotkey hasn't been set yet. I'm not
+            # allowing for these multiple-key hotkeys because it can cause crashes, and
+            # not many people are going to really use or need this.
+            if __is_key_already_set(self, key_name) or '+' in key_name:
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -88,192 +156,131 @@ def setSplitHotkey(self):
 
         # add the key as the hotkey, set the text into the LineEdit, set it as old_xxx_key,
         # then emite a signal to re-enable some buttons and change some text in GUI.
-        self.split_hotkey = keyboard.add_hotkey(self.split_key, self.startAutoSplitter)
-        self.splitLineEdit.setText(self.split_key)
-        self.old_split_key = self.split_key
-        self.afterSettingHotkeySignal.emit()
-        return
 
-    t = threading.Thread(target=callback)
+        # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+        # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
+        # The best way to achieve this is make our own hotkey handling on top of hook
+        # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
+        self.split_hotkey = keyboard.hook_key(key_name, lambda e: _hotkey_action(e, key_name, self.startAutoSplitter))
+        self.splitLineEdit.setText(key_name)
+        self.split_key = key_name
+        self.afterSettingHotkeySignal.emit()
+
+    t = threading.Thread(target=callback, args=(self.split_hotkey,))
     t.start()
-    return
+
 
 def setResetHotkey(self):
     self.setresethotkeyButton.setText('Press a key..')
     self.beforeSettingHotkey()
 
-    def callback():
+    def callback(hotkey):
         try:
-            keyboard.remove_hotkey(self.reset_hotkey)
-        except AttributeError:
+            keyboard.unhook_key(hotkey)
+        except (AttributeError, KeyError):
             pass
-        except KeyError:
-            pass
-        self.reset_key = keyboard.read_hotkey(False)
-        try:
-            if self.reset_key == self.splitLineEdit.text() \
-                    or self.reset_key == self.resetLineEdit.text() \
-                    or self.reset_key == self.skipsplitLineEdit.text() \
-                    or self.reset_key == self.undosplitLineEdit.text() \
-                    or self.reset_key == self.pausehotkeyLineEdit.text():
-                self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
-        try:
-            if '+' in self.reset_key:
-                self.reset_hotkey = keyboard.add_hotkey(self.old_reset_key, self.startReset)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
-        self.reset_hotkey = keyboard.add_hotkey(self.reset_key, self.startReset)
-        self.resetLineEdit.setText(self.reset_key)
-        self.old_reset_key = self.reset_key
-        self.afterSettingHotkeySignal.emit()
-        return
 
-    t = threading.Thread(target=callback)
+        key_name = __get_key_name(keyboard.read_event(True))
+
+        try:
+            if __is_key_already_set(self, key_name) or '+' in key_name:
+                self.afterSettingHotkeySignal.emit()
+                return
+        except AttributeError:
+            self.afterSettingHotkeySignal.emit()
+            return
+
+        self.reset_hotkey = keyboard.hook_key(key_name, lambda e: _hotkey_action(e, key_name, self.startReset))
+        self.resetLineEdit.setText(key_name)
+        self.reset_key = key_name
+        self.afterSettingHotkeySignal.emit()
+
+    t = threading.Thread(target=callback, args=(self.reset_hotkey,))
     t.start()
-    return
+
 
 def setSkipSplitHotkey(self):
     self.setskipsplithotkeyButton.setText('Press a key..')
     self.beforeSettingHotkey()
 
-    def callback():
+    def callback(hotkey):
         try:
-            keyboard.remove_hotkey(self.skip_split_hotkey)
-        except AttributeError:
-            pass
-        except KeyError:
+            keyboard.unhook_key(hotkey)
+        except (AttributeError, KeyError):
             pass
 
-        self.skip_split_key = keyboard.read_hotkey(False)
+        key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if self.skip_split_key == self.splitLineEdit.text() \
-                    or self.skip_split_key == self.resetLineEdit.text() \
-                    or self.skip_split_key == self.skipsplitLineEdit.text() \
-                    or self.skip_split_key == self.undosplitLineEdit.text() \
-                    or self.skip_split_key == self.pausehotkeyLineEdit.text():
-                self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
+            if __is_key_already_set(self, key_name) or '+' in key_name:
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
             self.afterSettingHotkeySignal.emit()
             return
 
-        try:
-            if '+' in self.skip_split_key:
-                self.skip_split_hotkey = keyboard.add_hotkey(self.old_skip_split_key, self.startSkipSplit)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        self.skip_split_hotkey = keyboard.add_hotkey(self.skip_split_key, self.startSkipSplit)
-        self.skipsplitLineEdit.setText(self.skip_split_key)
-        self.old_skip_split_key = self.skip_split_key
+        self.skip_split_hotkey = keyboard.hook_key(key_name, lambda e: _hotkey_action(e, key_name, self.startSkipSplit))
+        self.skipsplitLineEdit.setText(key_name)
+        self.skip_split_key = key_name
         self.afterSettingHotkeySignal.emit()
-        return
 
-    t = threading.Thread(target=callback)
+    t = threading.Thread(target=callback, args=(self.skip_split_hotkey,))
     t.start()
-    return
+
 
 def setUndoSplitHotkey(self):
     self.setundosplithotkeyButton.setText('Press a key..')
     self.beforeSettingHotkey()
 
-    def callback():
+    def callback(hotkey):
         try:
-            keyboard.remove_hotkey(self.undo_split_hotkey)
-        except AttributeError:
-            pass
-        except KeyError:
+            keyboard.unhook_key(hotkey)
+        except (AttributeError, KeyError):
             pass
 
-        self.undo_split_key = keyboard.read_hotkey(False)
+        key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if self.undo_split_key == self.splitLineEdit.text() \
-                    or self.undo_split_key == self.resetLineEdit.text() \
-                    or self.undo_split_key == self.skipsplitLineEdit.text() \
-                    or self.undo_split_key == self.undosplitLineEdit.text() \
-                    or self.undo_split_key == self.pausehotkeyLineEdit.text():
-                self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
+            if __is_key_already_set(self, key_name) or '+' in key_name:
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
             self.afterSettingHotkeySignal.emit()
             return
 
-        try:
-            if '+' in self.undo_split_key:
-                self.undo_split_hotkey = keyboard.add_hotkey(self.old_undo_split_key, self.startUndoSplit)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        self.undo_split_hotkey = keyboard.add_hotkey(self.undo_split_key, self.startUndoSplit)
-        self.undosplitLineEdit.setText(self.undo_split_key)
-        self.old_undo_split_key = self.undo_split_key
+        self.undo_split_hotkey = keyboard.hook_key(key_name, lambda e: _hotkey_action(e, key_name, self.startUndoSplit))
+        self.undosplitLineEdit.setText(key_name)
+        self.undo_split_key = key_name
         self.afterSettingHotkeySignal.emit()
-        return
 
-    t = threading.Thread(target=callback)
+    t = threading.Thread(target=callback, args=(self.undo_split_hotkey,))
     t.start()
-    return
+
 
 def setPauseHotkey(self):
     self.setpausehotkeyButton.setText('Press a key..')
     self.beforeSettingHotkey()
 
-    def callback():
+    def callback(hotkey):
         try:
-            keyboard.remove_hotkey(self.pause_hotkey)
-        except AttributeError:
-            pass
-        except KeyError:
+            keyboard.unhook_key(hotkey)
+        except (AttributeError, KeyError):
             pass
 
-        self.pause_key = keyboard.read_hotkey(False)
+        key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if self.pause_key == self.splitLineEdit.text() \
-                    or self.pause_key == self.resetLineEdit.text() \
-                    or self.pause_key == self.skipsplitLineEdit.text() \
-                    or self.pause_key == self.undosplitLineEdit.text() \
-                    or self.pause_key == self.pausehotkeyLineEdit.text():
-                self.pause_hotkey = keyboard.add_hotkey(self.old_pause_key, self.startPause)
+            if __is_key_already_set(self, key_name) or '+' in key_name:
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
             self.afterSettingHotkeySignal.emit()
             return
 
-        try:
-            if '+' in self.pause_key:
-                self.pause_hotkey = keyboard.add_hotkey(self.old_pause_key, self.startPause)
-                self.afterSettingHotkeySignal.emit()
-                return
-        except AttributeError:
-            self.afterSettingHotkeySignal.emit()
-            return
-
-        self.pause_hotkey = keyboard.add_hotkey(self.pause_key, self.startPause)
-        self.pausehotkeyLineEdit.setText(self.pause_key)
-        self.old_pause_key = self.pause_key
+        self.pause_hotkey = keyboard.hook_key(key_name, lambda e: _hotkey_action(e, key_name, self.startPause))
+        self.pausehotkeyLineEdit.setText(key_name)
+        self.pause_key = key_name
         self.afterSettingHotkeySignal.emit()
-        return
 
-    t = threading.Thread(target=callback)
+    t = threading.Thread(target=callback, args=(self.pause_hotkey,))
     t.start()
-    return
