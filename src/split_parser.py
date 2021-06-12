@@ -42,6 +42,50 @@ def pause_from_filename(filename):
     else:
         return pause
 
+def delay_from_filename(filename):
+    """
+    Retrieve the delay time from the filename, if there is no delay time or the delay time
+    isn't a valid number, then None is returned
+
+    @param filename: String containing the file's name
+    @return: A valid delay time, if not then 0
+    """
+
+    # Check to make sure there is a valid delay time between brackets
+    # of the filename
+    try:
+        delay = float(filename.split('#', 1)[1].split('#')[0])
+    except:
+        return 0
+
+    # Delay times should always be positive or zero
+    if (delay < 0):
+        return 0
+    else:
+        return delay
+
+def loop_from_filename(filename):
+    """
+    Retrieve the number of loops from filename, if there is no loop number or the loop number isn't valid,
+    then 1 is returned.
+
+    @param filename: String containing the file's name
+    @return: A valid loop number, if not then 1
+    """
+
+    # Check to make sure there is a valid delay time between brackets
+    # of the filename
+    try:
+        loop = int(filename.split('@', 1)[1].split('@')[0])
+    except:
+        return 1
+
+    # Delay times should always be positive or zero
+    if (loop < 1):
+        return 1
+    else:
+        return loop
+
 def flags_from_filename(filename):
     """
     Retrieve the flags from the filename, if there are no flags then 0 is returned
@@ -53,7 +97,8 @@ def flags_from_filename(filename):
     """
     List of flags:
     'd' = dummy, do nothing when this split is found
-    'm' = mask, use a mask when comparing this split (TBD!!)
+    'm' = mask, use a mask when comparing this split
+    'b' = below threshold, after threshold is met, split when it goes below the threhsold.
     'p' = pause, hit pause key when this split is found
     """
 
@@ -66,7 +111,8 @@ def flags_from_filename(filename):
 
     DUMMY_FLAG = 1 << 0
     MASK_FLAG = 1 << 1
-    PAUSE_FLAG = 1 << 2
+    BELOW_FLAG = 1 << 2
+    PAUSE_FLAG = 1 << 3
 
     flags = 0x00
     
@@ -75,6 +121,8 @@ def flags_from_filename(filename):
             flags |= DUMMY_FLAG
         elif c.upper() == 'M':
             flags |= MASK_FLAG
+        elif c.upper() == 'B':
+            flags |= BELOW_FLAG
         elif c.upper() == 'P':
             flags |= PAUSE_FLAG
         else:
@@ -88,3 +136,12 @@ def flags_from_filename(filename):
         return 0
     
     return flags
+
+def is_reset_image(filename):
+    """
+    Checks if the image is used for resetting
+
+    @param filename: String containing the file's name
+    @return: True if its a reset image
+    """
+    return ('RESET' in filename.upper())
