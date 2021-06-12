@@ -1,8 +1,9 @@
+from win32 import win32gui
+from PyQt5 import QtWidgets
 import keyboard
-import win32gui
 import pickle
 import glob
-from PyQt4 import QtGui
+
 
 def getSaveSettingsValues(self):
     # get values to be able to save settings
@@ -82,7 +83,7 @@ def saveSettings(self):
 
 def saveSettingsAs(self):
     # user picks save destination
-    self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings As", "", "PKL (*.pkl)"))
+    self.save_settings_file_path = str(QtWidgets.QFileDialog.getSaveFileName(self, "Save Settings As", "", "PKL (*.pkl)"))
 
     #if user cancels save destination window, don't save settings
     if self.save_settings_file_path == '':
@@ -120,7 +121,7 @@ def loadSettings(self):
             self.load_settings_file_path = self.settings_files[0]
 
     else:
-        self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+        self.load_settings_file_path = str(QtWidgets.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
 
         #
         if self.load_settings_file_path == '':
