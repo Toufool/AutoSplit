@@ -1,0 +1,22 @@
+# Requirements file for AutoSplit
+#
+# Python: CPython 3.7+
+#
+# Usage: ./install.bat
+#
+# If you're having issues with the libraries, you might want to first run:
+# pip3 uninstall -r requirements.txt
+#
+# Creating AutoSplit.exe with PyInstaller: ./build.bat
+#
+# Comment this out if you don't want to create AutoSplit.exe:
+PyInstaller
+#
+# Other dependencies:
+PyQT5==5.9
+opencv-python
+Pillow
+ImageHash
+pywin32==226
+keyboard
+pyautogui

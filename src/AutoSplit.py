@@ -1,7 +1,7 @@
 #!/usr/bin/python3.7
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtGui, QtCore, QtTest
+from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
 from menu_bar import about, VERSION, viewHelp
 from win32 import win32gui
 import sys
@@ -11,18 +11,17 @@ import cv2
 import time
 import ctypes.wintypes
 import ctypes
+import numpy as np
 
 from hotkeys import send_hotkey
 import design
 import compare
 import capture_windows
 import split_parser
-import numpy as np
 
 
 
-class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
-    # Importing the functions inside of the class will make them methods of the class
+class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
     from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
@@ -182,7 +181,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def browse(self):
         # User selects the file with the split images in it.
         self.split_image_directory = str(
-            QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
+            QtWidgets.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
 
         # If the user doesn't select a folder, it defaults to \. Set it back to whats in the LineEdit, and return
         if self.split_image_directory == '\\':
@@ -558,7 +557,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.waiting_for_split_delay == True:
                 time_millis = int(round(time.time() * 1000))
                 if time_millis < self.split_time:
-                    QtGui.QApplication.processEvents()
+                    QtWidgets.QApplication.processEvents()
                     continue
 
             self.updateSplitImage()
@@ -659,7 +658,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # limit the number of time the comparison runs to reduce cpu usage
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
-                QtGui.QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
 
             # comes here when threshold gets met
 
@@ -764,7 +763,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     else:
                         self.undosplitButton.setEnabled(True)
 
-                QtGui.QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # Also updates the current split image text, counting down the time until the next split image
@@ -822,7 +821,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.setundosplithotkeyButton.setEnabled(False)
             self.setpausehotkeyButton.setEnabled(False)
 
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def guiChangesOnReset(self):
         self.startautosplitterButton.setText('Start Auto Splitter')
@@ -847,7 +846,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.setundosplithotkeyButton.setEnabled(True)
             self.setpausehotkeyButton.setEnabled(True)
 
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
 
     def compareImage(self, image, mask, capture):
         if mask is None:
@@ -1019,7 +1018,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         if self.haveSettingsChanged():
             # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
-            msgBox = QtGui.QMessageBox
+            msgBox = QtWidgets.QMessageBox
             settings_file_name = "Untitled" \
                 if self.last_successfully_loaded_settings_file_path is None \
                 else os.path.basename(self.last_successfully_loaded_settings_file_path)
@@ -1040,7 +1039,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
 
 def main():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon('icon.ico'))
     w = AutoSplit()
     w.setWindowIcon(QtGui.QIcon('icon.ico'))

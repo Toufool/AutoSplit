@@ -1,5 +1,5 @@
 import os
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 import about
 
 # AutoSplit Version number
@@ -7,7 +7,7 @@ VERSION = "1.5.0"
 
 
 # About Window
-class AboutWidget(QtGui.QWidget, about.Ui_aboutAutoSplitWidget):
+class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
     def __init__(self):
         super(AboutWidget, self).__init__()
         self.setupUi(self)
