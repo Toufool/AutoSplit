@@ -750,7 +750,7 @@ Default value</string>
      <rect>
       <x>430</x>
       <y>50</y>
-      <width>101</width>
+      <width>221</width>
       <height>16</height>
      </rect>
     </property>
@@ -1065,7 +1065,7 @@ Default value</string>
      <rect>
       <x>252</x>
       <y>443</y>
-      <width>230</width>
+      <width>240</width>
       <height>17</height>
      </rect>
     </property>
