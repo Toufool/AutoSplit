@@ -1,6 +1,5 @@
 from win32 import win32gui
-from PyQt5 import QtWidgets
-from hotkeys import _hotkey_action
+from PyQt6 import QtWidgets
 import keyboard
 import pickle
 import glob
