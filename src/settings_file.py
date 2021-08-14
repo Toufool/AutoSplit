@@ -1,5 +1,5 @@
 from win32 import win32gui
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 import keyboard
 import pickle
 import glob
