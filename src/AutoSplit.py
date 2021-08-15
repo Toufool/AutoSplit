@@ -804,7 +804,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
-        self.imageHasTransparency = self.checkIfImageHasTransparency() or self.flags & 0x02
+        self.imageHasTransparency = self.checkIfImageHasTransparency()
 
         # set current split image in UI
         # if flagged as mask, transform transparency into UI's gray BG color

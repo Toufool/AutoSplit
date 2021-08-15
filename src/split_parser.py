@@ -6,7 +6,7 @@ def threshold_from_filename(filename):
     @param filename: String containing the file's name
     @return: A valid threshold, if not then None
     """
-    
+
     # Check to make sure there is a valid floating point number between
     # parentheses of the filename
     try:
@@ -97,7 +97,6 @@ def flags_from_filename(filename):
     """
     List of flags:
     'd' = dummy, do nothing when this split is found
-    'm' = mask, use a mask when comparing this split
     'b' = below threshold, after threshold is met, split when it goes below the threhsold.
     'p' = pause, hit pause key when this split is found
     """
@@ -110,17 +109,14 @@ def flags_from_filename(filename):
         return 0
 
     DUMMY_FLAG = 1 << 0
-    MASK_FLAG = 1 << 1
     BELOW_FLAG = 1 << 2
     PAUSE_FLAG = 1 << 3
 
     flags = 0x00
-    
+
     for c in flags_str:
         if c.upper() == 'D':
             flags |= DUMMY_FLAG
-        elif c.upper() == 'M':
-            flags |= MASK_FLAG
         elif c.upper() == 'B':
             flags |= BELOW_FLAG
         elif c.upper() == 'P':
@@ -134,7 +130,7 @@ def flags_from_filename(filename):
     # For instance, we can't have a dummy split also pause
     if (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & PAUSE_FLAG == PAUSE_FLAG):
         return 0
-    
+
     return flags
 
 def is_reset_image(filename):
