@@ -1,9 +1,7 @@
-import numpy
-import cv2
-
+from win32 import win32gui
 import win32ui
-import win32gui
 import win32con
+import numpy as np
 
 def capture_region(hwnd, rect):
     """
@@ -14,10 +12,10 @@ def capture_region(hwnd, rect):
     @param rect: The coordinates of the region
     @return: The image of the region in the window in BGRA format
     """
-    
+
     width = rect.right - rect.left
     height = rect.bottom - rect.top
-   
+
     wDC = win32gui.GetWindowDC(hwnd)
     dcObj = win32ui.CreateDCFromHandle(wDC)
     cDC = dcObj.CreateCompatibleDC()
@@ -25,14 +23,14 @@ def capture_region(hwnd, rect):
     bmp.CreateCompatibleBitmap(dcObj, width, height)
     cDC.SelectObject(bmp)
     cDC.BitBlt((0, 0), (width, height), dcObj, (rect.left, rect.top), win32con.SRCCOPY)
-   
+
     img = bmp.GetBitmapBits(True)
-    img = numpy.frombuffer(img, dtype='uint8')
+    img = np.frombuffer(img, dtype='uint8')
     img.shape = (height, width, 4)
- 
+
     dcObj.DeleteDC()
     cDC.DeleteDC()
     win32gui.ReleaseDC(hwnd, wDC)
     win32gui.DeleteObject(bmp.GetHandle())
-    
+
     return img
