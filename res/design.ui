@@ -141,11 +141,12 @@
       <x>10</x>
       <y>378</y>
       <width>91</width>
-      <height>16</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Similarity threshold</string>
+     <string>Similarity threshold
+Default value</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="similaritythresholdDoubleSpinBox">
@@ -237,11 +238,12 @@
       <x>10</x>
       <y>420</y>
       <width>111</width>
-      <height>16</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Pause time (seconds)</string>
+     <string>Pause time (seconds)
+Default value</string>
     </property>
    </widget>
    <widget class="QPushButton" name="checkfpsButton">
@@ -748,7 +750,7 @@
      <rect>
       <x>430</x>
       <y>50</y>
-      <width>101</width>
+      <width>221</width>
       <height>16</height>
      </rect>
     </property>
@@ -1029,56 +1031,6 @@
      <double>10.000000000000000</double>
     </property>
    </widget>
-   <widget class="QCheckBox" name="custompausetimesCheckBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>435</y>
-      <width>121</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Custom pause times</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="customthresholdsCheckBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>394</y>
-      <width>111</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Custom thresholds</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="comparisonmethodLabel">
     <property name="geometry">
      <rect>
@@ -1113,7 +1065,7 @@
      <rect>
       <x>252</x>
       <y>443</y>
-      <width>230</width>
+      <width>240</width>
       <height>17</height>
      </rect>
     </property>
@@ -1302,8 +1254,6 @@
    <zorder>yLabel</zorder>
    <zorder>comparisonmethodComboBox</zorder>
    <zorder>pauseDoubleSpinBox</zorder>
-   <zorder>custompausetimesCheckBox</zorder>
-   <zorder>customthresholdsCheckBox</zorder>
    <zorder>comparisonmethodLabel</zorder>
    <zorder>alignregionButton</zorder>
    <zorder>groupDummySplitsCheckBox</zorder>
@@ -1389,9 +1339,7 @@
   <tabstop>comparisonmethodComboBox</tabstop>
   <tabstop>showlivesimilarityCheckBox</tabstop>
   <tabstop>showhighestsimilarityCheckBox</tabstop>
-  <tabstop>customthresholdsCheckBox</tabstop>
   <tabstop>similaritythresholdDoubleSpinBox</tabstop>
-  <tabstop>custompausetimesCheckBox</tabstop>
   <tabstop>pauseDoubleSpinBox</tabstop>
   <tabstop>splitLineEdit</tabstop>
   <tabstop>resetLineEdit</tabstop>

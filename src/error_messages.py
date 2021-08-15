@@ -37,18 +37,6 @@ def pauseHotkeyError(self):
     setTextMessage("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
 
 
-def customThresholdError(self, image):
-    setTextMessage("\"" + image + "\" doesn't have a valid custom threshold.")
-
-
-def customPauseError(self, image):
-    setTextMessage("\"" + image + "\" doesn't have a valid custom pause time.")
-
-
-def alphaChannelError(self, image):
-    setTextMessage("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
-
-
 def alignRegionImageTypeError(self):
     setTextMessage("File not a valid image file")
 
@@ -61,20 +49,12 @@ def multipleResetImagesError(self):
     setTextMessage("Only one image with the keyword \"reset\" is allowed.")
 
 
-def noResetImageThresholdError(self):
-    setTextMessage("Reset Image must have a custom threshold. Please set one and check that it is valid")
-
-
 def resetHotkeyError(self):
     setTextMessage("Your split image folder contains a reset image, but no reset hotkey is set.")
 
 
 def dummySplitsError(self):
     setTextMessage("Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
-
-
-def settingsNotFoundError(self):
-    setTextMessage("No settings file found. The settings file is saved when the program is closed.")
 
 
 def oldVersionSettingsFileError(self):

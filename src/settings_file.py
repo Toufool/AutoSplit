@@ -23,15 +23,8 @@ def getSaveSettingsValues(self):
     self.undo_split_key = str(self.undosplitLineEdit.text())
     self.pause_key = str(self.pausehotkeyLineEdit.text())
 
-    if self.custompausetimesCheckBox.isChecked():
-        self.custom_pause_times_setting = 1
-    else:
-        self.custom_pause_times_setting = 0
-
-    if self.customthresholdsCheckBox.isChecked():
-        self.custom_thresholds_setting = 1
-    else:
-        self.custom_thresholds_setting = 0
+    self.custom_pause_times_setting = 0
+    self.custom_thresholds_setting = 1
 
     if self.groupDummySplitsCheckBox.isChecked():
         self.group_dummy_splits_undo_skip_setting = 1
@@ -50,12 +43,27 @@ def getSaveSettingsValues(self):
 
 def haveSettingsChanged(self):
     self.getSaveSettingsValues()
-    self.current_save_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-             self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-             self.hwnd_title,
-             self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+    self.current_save_settings = [
+        self.split_image_directory,
+        self.similarity_threshold,
+        self.comparison_index,
+        self.pause,
+        self.fps_limit,
+        self.split_key,
+        self.reset_key,
+        self.skip_split_key,
+        self.undo_split_key,
+        self.pause_key,
+        self.x,
+        self.y,
+        self.width,
+        self.height,
+        self.hwnd_title,
+        self.custom_pause_times_setting,
+        self.custom_thresholds_setting,
+        self.group_dummy_splits_undo_skip_setting,
+        self.loop_setting,
+        self.auto_start_on_reset_setting]
 
     #one small caveat in this: if you load a settings file from an old version, but dont change settings,
     #the current save settings and last load settings will have different # of elements and it will ask
@@ -70,14 +78,27 @@ def saveSettings(self):
         self.saveSettingsAs()
     else:
         self.getSaveSettingsValues()
-        self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index,
-                                    self.pause,
-                                    self.fps_limit, self.split_key,
-                                    self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x,
-                                    self.y, self.width, self.height,
-                                    self.hwnd_title,
-                                    self.custom_pause_times_setting, self.custom_thresholds_setting,
-                                    self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+        self.last_saved_settings = [
+            self.split_image_directory,
+            self.similarity_threshold,
+            self.comparison_index,
+            self.pause,
+            self.fps_limit,
+            self.split_key,
+            self.reset_key,
+            self.skip_split_key,
+            self.undo_split_key,
+            self.pause_key,
+            self.x,
+            self.y,
+            self.width,
+            self.height,
+            self.hwnd_title,
+            self.custom_pause_times_setting,
+            self.custom_thresholds_setting,
+            self.group_dummy_splits_undo_skip_setting,
+            self.loop_setting,
+            self.auto_start_on_reset_setting]
         # save settings to a .pkl file
         with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
             pickle.dump(self.last_saved_settings, f)
@@ -91,12 +112,27 @@ def saveSettingsAs(self):
         return
 
     self.getSaveSettingsValues()
-    self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-             self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-             self.hwnd_title,
-             self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+    self.last_saved_settings = [
+        self.split_image_directory,
+        self.similarity_threshold,
+        self.comparison_index,
+        self.pause,
+        self.fps_limit,
+        self.split_key,
+        self.reset_key,
+        self.skip_split_key,
+        self.undo_split_key,
+        self.pause_key,
+        self.x,
+        self.y,
+        self.width,
+        self.height,
+        self.hwnd_title,
+        self.custom_pause_times_setting,
+        self.custom_thresholds_setting,
+        self.group_dummy_splits_undo_skip_setting,
+        self.loop_setting,
+        self.auto_start_on_reset_setting]
 
     # save settings to a .pkl file
     with open(self.save_settings_file_path, 'wb') as f:
@@ -141,21 +177,49 @@ def loadSettings(self):
             #v1.5 settings
             if self.settings_count == 20:
                 with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                     self.fps_limit, self.split_key,
-                     self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-                     self.hwnd_title,
-                     self.custom_pause_times_setting, self.custom_thresholds_setting,
-                     self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting] = pickle.load(f)
+                    self.last_loaded_settings = [
+                        self.split_image_directory,
+                        self.similarity_threshold,
+                        self.comparison_index,
+                        self.pause,
+                        self.fps_limit,
+                        self.split_key,
+                        self.reset_key,
+                        self.skip_split_key,
+                        self.undo_split_key,
+                        self.pause_key,
+                        self.x,
+                        self.y,
+                        self.width,
+                        self.height,
+                        self.hwnd_title,
+                        self.custom_pause_times_setting,
+                        self.custom_thresholds_setting,
+                        self.group_dummy_splits_undo_skip_setting,
+                        self.loop_setting,
+                        self.auto_start_on_reset_setting] = pickle.load(f)
             #v1.3-1.4 settings. add a blank pause key.
             elif self.settings_count == 18:
                 with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                     self.fps_limit, self.split_key,
-                     self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                     self.hwnd_title,
-                     self.custom_pause_times_setting, self.custom_thresholds_setting,
-                     self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
+                    self.last_loaded_settings = [
+                        self.split_image_directory,
+                        self.similarity_threshold,
+                        self.comparison_index,
+                        self.pause,
+                        self.fps_limit,
+                        self.split_key,
+                        self.reset_key,
+                        self.skip_split_key,
+                        self.undo_split_key,
+                        self.x,
+                        self.y,
+                        self.width,
+                        self.height,
+                        self.hwnd_title,
+                        self.custom_pause_times_setting,
+                        self.custom_thresholds_setting,
+                        self.group_dummy_splits_undo_skip_setting,
+                        self.loop_setting] = pickle.load(f)
                 self.pause_key = ''
                 self.auto_start_on_reset_setting = 0
             elif self.settings_count < 18:
@@ -175,8 +239,6 @@ def loadSettings(self):
         self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
 
         # set custom checkbox's accordingly
-        self.custompausetimesCheckBox.setChecked(self.custom_pause_times_setting == 1)
-        self.customthresholdsCheckBox.setChecked(self.custom_thresholds_setting == 1)
         self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
         self.loopCheckBox.setChecked(self.loop_setting == 1)
         self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
