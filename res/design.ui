@@ -32,8 +32,8 @@
    <string>AutoSplit</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../VideoAutoSplitter/icon.ico</normaloff>../../../../VideoAutoSplitter/icon.ico</iconset>
+   <iconset resource="resources.qrc">
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <property name="whatsThis">
    <string/>

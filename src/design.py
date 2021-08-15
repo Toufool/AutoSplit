@@ -36,7 +36,7 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QtCore.QSize(622, 490))
         MainWindow.setMaximumSize(QtCore.QSize(622, 490))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../../VideoAutoSplitter/icon.ico")), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/resources/icon.ico")), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setWhatsThis(_fromUtf8(""))
         MainWindow.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)

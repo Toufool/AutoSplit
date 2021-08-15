@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from compare import checkIfImageHasTransparency
 from menu_bar import about, VERSION, viewHelp
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
@@ -608,7 +609,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 # then split on similarity below threshold.
                 # if no b flag, just split when similarity goes above threshold.
                 if not self.waiting_for_split_delay:
-                    print(self.similarity, self.similarity_threshold)
                     if self.flags & 0x04 == 0x04 and not self.split_below_threshold:
                         if self.similarity >= self.similarity_threshold:
                             self.split_below_threshold = True
@@ -882,7 +882,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
-        self.imageHasTransparency = self.checkIfImageHasTransparency()
+        self.imageHasTransparency = checkIfImageHasTransparency(self.split_image_path)
 
         # set current split image in UI
         # if flagged as mask, transform transparency into UI's gray BG color
