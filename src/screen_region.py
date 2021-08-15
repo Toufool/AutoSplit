@@ -1,13 +1,8 @@
 from PyQt4 import QtGui, QtCore, QtTest
-import ctypes
-import ctypes.wintypes
-import win32gui
-import cv2
+from win32 import win32gui
 import capture_windows
-from PyQt4 import QtGui, QtCore, QtTest
 import ctypes
 import ctypes.wintypes
-import win32gui
 import cv2
 import numpy as np
 

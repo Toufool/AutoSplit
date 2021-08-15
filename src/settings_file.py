@@ -1,8 +1,8 @@
+from win32 import win32gui
+from PyQt4 import QtGui
 import keyboard
-import win32gui
 import pickle
 import glob
-from PyQt4 import QtGui
 
 def getSaveSettingsValues(self):
     # get values to be able to save settings

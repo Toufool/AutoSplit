@@ -1,6 +1,5 @@
 from PIL import Image
 import imagehash
-
 import numpy as np
 import cv2
 

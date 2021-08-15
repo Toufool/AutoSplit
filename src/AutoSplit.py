@@ -1,3 +1,6 @@
+#!/usr/bin/python3.7
+# -*- coding: utf-8 -*-
+
 from PyQt4 import QtGui, QtCore, QtTest
 from menu_bar import about, viewHelp
 from win32 import win32gui
