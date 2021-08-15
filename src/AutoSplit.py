@@ -9,22 +9,25 @@ import ctypes
 import keyboard
 import numpy as np
 
-from menu_bar import about, viewHelp
 import design
 import compare
 import capture_windows
 import split_parser
 
 
-class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
-    from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
-    from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
-    splitHotkeyError, customThresholdError, customPauseError, alignRegionImageTypeError, alignmentNotMatchedError,
-    multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
-    invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
+class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
+    from hotkeys import (
+        beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey,
+        setPauseHotkey)
+    from error_messages import (
+        splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
+        splitHotkeyError, alignRegionImageTypeError, oldVersionSettingsFileError, noSettingsFileOnOpenError,
+        tooManySettingsFilesOnOpenError, invalidSettingsError, multipleResetImagesError, resetHotkeyError,
+        pauseHotkeyError, dummySplitsError)
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from compare import checkIfImageHasTransparency
+    from menu_bar import about, viewHelp
 
     myappid = u'Toufool.AutoSplit.v1.5.0'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -43,8 +46,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setupUi(self)
 
         # close all processes when closing window
-        self.actionView_Help.triggered.connect(viewHelp)
-        self.actionAbout.triggered.connect(about)
+        self.actionView_Help.triggered.connect(self.viewHelp)
+        self.actionAbout.triggered.connect(self.about)
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
@@ -408,12 +411,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.multipleResetImagesError()
                 return
 
-        # if there is no custom threshold for the reset image, throw an error.
-        if self.reset_image is not None and self.reset_image_threshold is None:
-            self.guiChangesOnReset()
-            self.noResetImageThresholdError()
-            return
-
         # If there is no reset hotkey set but a reset image is present, throw an error.
         if self.resetLineEdit.text() == '' and self.reset_image is not None:
             self.guiChangesOnReset()
@@ -549,6 +546,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # then split on similarity below threshold.
                 # if no b flag, just split when similarity goes above threshold.
                 if not self.waiting_for_split_delay:
+                    print(self.similarity, self.similarity_threshold)
                     if self.flags & 0x04 == 0x04 and not self.split_below_threshold:
                         if self.similarity >= self.similarity_threshold:
                             self.split_below_threshold = True
@@ -583,8 +581,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
                     while time.time() - delay_start_time < (self.split_delay / 1000):
-                        self.delay_time_left = str(round((self.split_delay / 1000) - (time.time() - delay_start_time), 1))
-                        self.currentSplitImage.setText('Delayed Split: ' + self.delay_time_left + ' sec remaining')
+                        delay_time_left = round((self.split_delay / 1000) - (time.time() - delay_start_time), 1)
+                        self.currentSplitImage.setText(f'Delayed Split: {delay_time_left} sec remaining')
                         # check for reset
                         if win32gui.GetWindowText(self.hwnd) == '':
                             self.reset()
@@ -661,8 +659,8 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 # Also updates the current split image text, counting down the time until the next split image
                 pause_start_time = time.time()
                 while time.time() - pause_start_time < self.pause:
-                    self.pause_time_left = str(round((self.pauseDoubleSpinBox.value()) - (time.time() - pause_start_time), 1))
-                    self.currentSplitImage.setText('None (Paused). ' + self.pause_time_left + ' sec remaining')
+                    pause_time_left = round(self.pause - (time.time() - pause_start_time), 1)
+                    self.currentSplitImage.setText(f'None (Paused). {pause_time_left} sec remaining')
 
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
@@ -759,7 +757,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def findResetImage(self):
         self.reset_image = None
         self.reset_mask = None
-        self.reset_image_threshold = None
 
         reset_image_file = None
         for i, image in enumerate(self.split_image_filenames):
@@ -775,11 +772,11 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # create reset image and keep in memory
         path = self.split_image_directory + reset_image_file
 
-        self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file)
-
-        self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file)
-        if self.reset_image_pause_time is None:
-            self.reset_image_pause_time = 0
+        # Override values if they have been specified on the file
+        self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file) \
+            or self.pauseDoubleSpinBox.value()
+        self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file) \
+            or self.similaritythresholdDoubleSpinBox.value()
 
         # if theres a mask flag, create a mask
         if self.imageHasTransparency:
@@ -850,8 +847,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.mask = None
 
         # Override values if they have been specified on the file
-        self.pause = split_parser.pause_from_filename(split_image_file) or self.pauseDoubleSpinBox.value()
-        threshold = split_parser.threshold_from_filename(split_image_file) or self.pauseDoubleSpinBox.value()
+        self.pause = split_parser.pause_from_filename(split_image_file) \
+            or self.pauseDoubleSpinBox.value()
+        self.similarity_threshold = split_parser.threshold_from_filename(split_image_file) \
+            or self.similaritythresholdDoubleSpinBox.value()
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
