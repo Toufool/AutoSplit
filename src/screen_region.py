@@ -1,5 +1,6 @@
-from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
+from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
+from typing import cast, Callable
 import capture_windows
 import ctypes
 import ctypes.wintypes
@@ -25,11 +26,11 @@ def selectRegion(self):
     self.heightSpinBox.setValue(selector.height)
 
     # Grab the window handle from the coordinates selected by the widget
-    self.hwnd = win32gui.WindowFromPoint((selector.left, selector.top))
+    self.hwnd = cast(int, win32gui.WindowFromPoint((selector.left, selector.top)))
     # Want to pull the parent window from the window handle
     # By using GetAncestor we are able to get the parent window instead
     # of the owner window.
-    GetAncestor = ctypes.windll.user32.GetAncestor
+    GetAncestor = cast(Callable[[int, int], int], ctypes.windll.user32.GetAncestor)
     GA_ROOT = 2
 
     while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
@@ -80,10 +81,9 @@ def selectWindow(self):
         QtTest.QTest.qWait(1)
 
     # Grab the window handle from the coordinates selected by the widget
-    self.hwnd = None
-    self.hwnd = win32gui.WindowFromPoint((selector.x, selector.y))
+    self.hwnd = cast(int, win32gui.WindowFromPoint((selector.x, selector.y)))
 
-    if self.hwnd is None:
+    if self.hwnd == 0:
         return
 
     del selector
@@ -91,7 +91,7 @@ def selectWindow(self):
     # Want to pull the parent window from the window handle
     # By using GetAncestor we are able to get the parent window instead
     # of the owner window.
-    GetAncestor = ctypes.windll.user32.GetAncestor
+    GetAncestor = cast(Callable[[int, int], int], ctypes.windll.user32.GetAncestor)
     GA_ROOT = 2
     while win32gui.IsChild(win32gui.GetParent(self.hwnd), self.hwnd):
         self.hwnd = GetAncestor(self.hwnd, GA_ROOT)
@@ -124,8 +124,11 @@ def alignRegion(self):
             return
         # This is the image used for aligning the capture region
         # to the best fit for the user.
-        template_filename = str(QtWidgets.QFileDialog.getOpenFileName(self, "Select Reference Image", "",
-                                                                  "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
+        template_filename = str(QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            "Select Reference Image",
+            "",
+            "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
 
         # return if the user presses cancel
         if template_filename == '':
@@ -221,13 +224,13 @@ class SelectWindowWidget(QtWidgets.QWidget):
         self.setWindowTitle(' ')
 
         self.setWindowOpacity(0.5)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         self.close()
-        self.x = event.pos().x()
-        self.y = event.pos().y()
+        self.x = int(event.position().x())
+        self.y = int(event.position().y())
 
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
@@ -254,36 +257,36 @@ class SelectRegionWidget(QtWidgets.QWidget):
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
         self.setWindowOpacity(0.5)
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QtGui.QPaintEvent):
         qp = QtGui.QPainter(self)
         qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
         qp.setBrush(QtGui.QColor('opaque'))
         qp.drawRect(QtCore.QRect(self.begin, self.end))
 
-    def mousePressEvent(self, event):
-        self.begin = event.pos()
+    def mousePressEvent(self, event: QtGui.QMouseEvent):
+        self.begin = event.position().toPoint()
         self.end = self.begin
         self.update()
 
-    def mouseMoveEvent(self, event):
-        self.end = event.pos()
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
+        self.end = event.position().toPoint()
         self.update()
 
-    def mouseReleaseEvent(self, event):
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
         self.close()
 
         # The coordinates are pulled relative to the top left of the set geometry,
         # so the added virtual screen offsets convert them back to the virtual
         # screen coordinates
-        self.left = min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.top = min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
-        self.right = max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN
-        self.bottom = max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN
+        self.left = int(min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN)
+        self.top = int(min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN)
+        self.right = int(max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN)
+        self.bottom = int(max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN)
 
         self.height = self.bottom - self.top
         self.width = self.right - self.left

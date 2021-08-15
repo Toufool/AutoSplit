@@ -1,4 +1,1 @@
-#!/usr/bin/env bash
-
-BASEDIR=$(dirname "$0")
-pyinstaller -w -F --icon=src/icon.ico "BASEDIR/../src/AutoSplit.py"
+pyinstaller -w -F --icon=src/icon.ico "%~p0/../src/AutoSplit.py"

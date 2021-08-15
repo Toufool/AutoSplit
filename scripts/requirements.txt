@@ -1,6 +1,6 @@
 # Requirements file for AutoSplit
 #
-# Python: CPython 3.7+
+# Python: CPython 3.9+
 #
 # Usage: ./install.bat
 #
@@ -13,9 +13,11 @@
 PyInstaller
 #
 # Other dependencies:
-PyQT5==5.9
+PyQt6
 opencv-python
 Pillow
 ImageHash
-pywin32==226
+pywin32
 keyboard
+pyautogui
+PySide6

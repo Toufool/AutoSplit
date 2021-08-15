@@ -41,5 +41,8 @@
   "trailing-spaces.trimOnSave": true,
   "trailing-spaces.syntaxIgnore": [
     "markdown"
-  ]
+  ],
+  "files.associations": {
+    "*.qrc": "xml"
+  },
 }

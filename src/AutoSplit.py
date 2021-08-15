@@ -1,7 +1,7 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
+from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
 import os
@@ -139,7 +139,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
-            self.timerLiveImage.start(1000 / 60)
+            self.timerLiveImage.start(int(1000 / 60))
         else:
             self.timerLiveImage.stop()
             self.liveImageFunction()
@@ -164,7 +164,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # Convert to set it on the label
             qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3,
-                                QtGui.QImage.Format_RGB888)
+                                QtGui.QImage.Format.Format_RGB888)
             pix = QtGui.QPixmap(qImg)
             self.liveImage.setPixmap(pix)
 
@@ -579,7 +579,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
-                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
@@ -641,7 +641,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
 
                 # if its the last split image and last loop number, disable the skip split button
@@ -825,7 +825,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         qImg = QtGui.QImage(self.split_image_display, self.split_image_display.shape[1],
                             self.split_image_display.shape[0], self.split_image_display.shape[1] * 3,
-                            QtGui.QImage.Format_RGB888)
+                            QtGui.QImage.Format.Format_RGB888)
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
@@ -870,35 +870,27 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     # exit safely when closing the window
     def closeEvent(self, event):
         if self.haveSettingsChanged():
-            #give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
-            if self.last_successfully_loaded_settings_file_path == None:
-                msgBox = QtWidgets.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettingsAs()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
-            else:
-                msgBox = QtWidgets.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettings()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
+            # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
+            msgBox = QtWidgets.QMessageBox
+            settings_file_name = "Untitled" \
+                if self.last_successfully_loaded_settings_file_path is None \
+                else os.path.basename(self.last_successfully_loaded_settings_file_path)
+            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
+
+            warning = msgBox.warning(
+                self,
+                "AutoSplit",
+                warning_message,
+                msgBox.StandardButton.Yes | msgBox.StandardButton.No | msgBox.StandardButton.Cancel)
+
+            if warning == msgBox.StandardButton.Yes:
+                # TODO: Don't close if user cancelled the save
+                self.saveSettingsAs()
+                exit()
+            if warning == msgBox.StandardButton.No:
+                exit()
+            if warning == msgBox.StandardButton.Cancel:
+                event.ignore()
         else:
             event.accept()
             sys.exit()
@@ -910,7 +902,7 @@ def main():
     w = AutoSplit()
     w.setWindowIcon(QtGui.QIcon('icon.ico'))
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':
