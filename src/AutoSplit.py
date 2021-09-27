@@ -28,9 +28,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError, invalidSettingsError)
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
-    from menu_bar import about, viewHelp
+    from menu_bar import about, VERSION, viewHelp
 
-    myappid = u'mycompany.myproduct.subproduct.version'
+    myappid = f'Toufool.AutoSplit.v{VERSION}'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     # signals

@@ -43,6 +43,7 @@
     "markdown"
   ],
   "files.associations": {
-    "*.qrc": "xml"
+    "*.qrc": "xml",
+    "*.ui": "xml"
   },
 }

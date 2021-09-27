@@ -1,6 +1,11 @@
 import os
 from PyQt6 import QtWidgets
 import about
+import resources_rc
+
+# AutoSplit Version number
+VERSION = "1.5.A3"
+
 
 # About Window
 class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
