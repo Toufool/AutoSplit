@@ -25,7 +25,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from error_messages import (
         splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
         splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError,
-        oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError, invalidSettingsError)
+        oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError, invalidSettingsError,
+        multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError)
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, VERSION, viewHelp
