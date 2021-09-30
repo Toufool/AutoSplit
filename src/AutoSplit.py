@@ -323,8 +323,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.startImageLabel.setText("Start image: ready")
             self.updateSplitImage(self.start_image_name)
 
-        start_image_masked = (self.start_image_mask is not None)
-        capture = self.getCaptureForComparison(start_image_masked)
+        capture = self.getCaptureForComparison()
         start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
         start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
             or self.similaritythresholdDoubleSpinBox.value()
@@ -348,7 +347,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 or (start_image_similarity >= start_image_threshold and start_image_flags & 0x04 == 0):
             def split():
                 self.hasSentStart = False
-                keyboard.send(str(self.splitLineEdit.text()))
+                send_hotkey(self.splitLineEdit.text())
                 time.sleep(1 / self.fpslimitSpinBox.value())
                 self.startAutoSplitter()
 
