@@ -4,7 +4,7 @@ import about
 import resources_rc
 
 # AutoSplit Version number
-VERSION = "1.5.A3"
+VERSION = "1.5.A4"
 
 
 # About Window
@@ -15,6 +15,7 @@ class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
         self.createdbyLabel.setOpenExternalLinks(True)
         self.donatebuttonLabel.setOpenExternalLinks(True)
         self.show()
+
 
 def viewHelp(self):
     os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")

@@ -462,11 +462,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         return
 
-    #def pause(self):
-        #TODO add what to do when you hit pause hotkey, if this even needs to be done
+    # def pause(self):
+        # TODO add what to do when you hit pause hotkey, if this even needs to be done
 
     def reset(self):
-        # when the reset button or hotkey is pressed, it will change this text, which will trigger in the autoSplitter function, if running, to abort and change GUI.
+        # When the reset button or hotkey is pressed, it will change this text,
+        # which will trigger in the autoSplitter function, if running, to abort and change GUI.
         self.startautosplitterButton.setText('Start Auto Splitter')
         return
 
@@ -494,6 +495,15 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def startPause(self):
         self.pauseSignal.emit()
+
+    def checkForReset(self):
+        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+            if self.autostartonresetCheckBox.isChecked():
+                self.startAutoSplitterSignal.emit()
+            else:
+                self.guiChangesOnReset()
+            return True
+        return False
 
     def autoSplitter(self):
         # error checking:
@@ -654,14 +664,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
 
-                # loop goes into here if start auto splitter text is "Start Auto Splitter"
-                if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                    if self.autostartonresetCheckBox.isChecked():
-                        self.startAutoSplitterSignal.emit()
-                        return
-                    else:
-                        self.guiChangesOnReset()
-                        return
+                if self.checkForReset():
+                    return
 
                 # calculate similarity for reset image
                 reset_masked = None
@@ -676,14 +680,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         keyboard.send(str(self.resetLineEdit.text()))
                         self.reset()
 
-                # loop goes into here if start auto splitter text is "Start Auto Splitter"
-                if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                    if self.autostartonresetCheckBox.isChecked():
-                        self.startAutoSplitterSignal.emit()
-                        return
-                    else:
-                        self.guiChangesOnReset()
-                        return
+                if self.checkForReset():
+                    return
 
                 # get capture again if needed
                 masked = (self.flags & 0x02 == 0x02)
@@ -765,13 +763,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         # check for reset
                         if win32gui.GetWindowText(self.hwnd) == '':
                             self.reset()
-                        if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                            if self.autostartonresetCheckBox.isChecked():
-                                self.startAutoSplitterSignal.emit()
-                                return
-                            else:
-                                self.guiChangesOnReset()
-                                return
+                        if self.checkForReset():
+                            return
 
                         # calculate similarity for reset image
                         if self.shouldCheckResetImage() == True:
@@ -845,13 +838,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
-                    if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                        if self.autostartonresetCheckBox.isChecked():
-                            self.startAutoSplitterSignal.emit()
-                            return
-                        else:
-                            self.guiChangesOnReset()
-                            return
+                    if self.checkForReset():
+                        return
 
                     # check for skip/undo split:
                     if self.split_image_number != pause_split_image_number or self.loop_number != pause_loop_number:
@@ -914,6 +902,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.groupDummySplitsCheckBox.setEnabled(True)
         self.startImageReloadButton.setEnabled(True)
         QtWidgets.QApplication.processEvents()
+        self.loadStartImage(False, False)
 
     def compareImage(self, image, mask, capture):
         if mask is None:
