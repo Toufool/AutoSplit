@@ -6,11 +6,12 @@ from win32 import win32gui
 import sys
 import os
 import cv2
-import time
 import ctypes.wintypes
 import ctypes
 import keyboard
 import numpy as np
+import threading
+import time
 
 import design
 import compare
@@ -26,7 +27,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
         splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError,
         oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError, invalidSettingsError,
-        multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError)
+        multipleKeywordImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, noKeywordImageError)
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from menu_bar import about, VERSION, viewHelp
@@ -82,6 +83,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
+        self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, False))
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -108,7 +110,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        #last loaded settings and last successful loaded settings file path to None until we try to load them
+        # Last loaded settings and last successful loaded settings file path to None until we try to load them
         self.last_loaded_settings = None
         self.last_successfully_loaded_settings_file_path = None
 
@@ -122,8 +124,19 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.live_image_function_on_open = True
 
+        # Automatic timer start
+        self.timerStartImage = QtCore.QTimer()
+        self.timerStartImage.timeout.connect(self.startImageFunction)
+        self.timerStartImage_is_running = False
+        self.start_image = None
+        self.highest_similarity = 0.0
+        self.check_start_image_timestamp = 0.0
+
+        # Try to load start image
+        self.loadStartImage(wait_for_delay=False, is_in_startup=True)
+
     # FUNCTIONS
-    #TODO add checkbox for going back to image 1 when resetting.
+    # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
         # User selects the file with the split images in it.
         self.split_image_directory = str(
@@ -170,6 +183,115 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         except AttributeError:
             pass
+
+    def loadStartImage(self, started_by_button=False, wait_for_delay=True, is_in_startup=False):
+        self.timerStartImage.stop()
+        self.currentsplitimagefileLabel.setText(' ')
+        self.startImageLabel.setText("Start image: not found")
+        QtWidgets.QApplication.processEvents()
+
+        if self.splitimagefolderLineEdit.text() == 'No Folder Selected' \
+                or not os.path.exists(self.split_image_directory):
+            # Only show error messages if the user clicked the button
+            if started_by_button:
+                self.splitImageDirectoryError()
+            return
+        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+            if started_by_button:
+                self.regionError()
+            return
+
+        start_image_name = None
+
+        for image in os.listdir(self.split_image_directory):
+            if 'start_auto_splitter' in image.lower():
+                if start_image_name is None:
+                    start_image_name = image
+                else:
+                    if started_by_button:
+                        self.multipleKeywordImagesError('start_auto_splitter')
+                    return
+
+        if start_image_name is None:
+            if started_by_button:
+                self.noKeywordImageError('start_auto_splitter')
+            return
+
+        self.start_image = split_parser.SplitImage(self.split_image_directory, start_image_name)
+
+        if self.start_image.threshold is None:
+            self.start_image.threshold = self.similaritythresholdDoubleSpinBox.value()
+
+        image_error = split_parser.getImageError(self.start_image)
+
+        if image_error is not None:
+            if started_by_button:
+                self.showBox(image_error % self.start_image)
+            return
+
+        self.start_image.getImage(self.RESIZE_WIDTH, self.RESIZE_HEIGHT)
+
+        if wait_for_delay and self.start_image.pause is not None and self.start_image.pause > 0:
+            self.check_start_image_timestamp = time.time() + self.start_image.pause
+            self.startImageLabel.setText("Start image: paused")
+            self.currentSplitImage.setText('none (paused)')
+            self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+            self.highestsimilarityLabel.setText(' ')
+        else:
+            self.check_start_image_timestamp = 0.0
+            self.startImageLabel.setText("Start image: ready")
+            self.updateSplitImage(self.start_image, False)
+
+        self.highest_similarity = 0.0
+
+        if is_in_startup:
+            self.pauseComparisonButton.setText("Unpause Comparison")
+            self.is_comparison_paused = True
+
+        self.timerStartImage.start(1000 / self.fpslimitSpinBox.value())
+
+        QtWidgets.QApplication.processEvents()
+
+    def startImageFunction(self):
+        if time.time() < self.check_start_image_timestamp:
+            return
+
+        if self.check_start_image_timestamp > 0:
+            self.check_start_image_timestamp = 0.0
+            self.startImageLabel.setText("Start image: ready")
+            self.updateSplitImage(self.start_image, False)
+
+        self.start_image.similarity = self.compareImage(self.start_image)
+
+        if self.start_image.similarity > self.highest_similarity:
+            self.highest_similarity = self.start_image.similarity
+
+        self.updateLiveSimilarity([self.start_image])
+
+        # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
+        # Otherwise just split when similarity goes above threshold
+        if self.start_image.flags & 0x04 == 0x04 \
+                and not self.start_image.split_below_threshold \
+                and self.start_image.similarity >= self.start_image.threshold:
+            self.start_image.split_below_threshold = True
+            return
+        if (self.start_image.flags & 0x04 == 0x04
+            and self.start_image.split_below_threshold
+            and self.start_image.similarity < self.start_image.threshold) \
+                or (self.start_image.similarity >= self.start_image.threshold and self.start_image.flags & 0x04 == 0):
+            def split():
+                self.hasSentStart = False
+                self.sendSplitKeyPress(self.start_image.flags)
+                time.sleep(1 / self.fpslimitSpinBox.value())
+                self.startAutoSplitter()
+
+            self.timerStartImage.stop()
+            self.startImageLabel.setText("Start image: started")
+
+            if self.start_image.delay > 0:
+                threading.Timer(self.start_image.delay / 1000, split).start()
+            else:
+                split()
 
     # update x, y, width, height when spinbox values are changed
     def updateX(self):
@@ -337,13 +459,18 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.startautosplitterButton.setText('Start Auto Splitter')
         return
 
-    # functions for the hotkeys to return to the main thread from signals and start their corresponding functions
+    # Functions for the hotkeys to return to the main thread from signals and start their corresponding functions
     def startAutoSplitter(self):
-        # if the auto splitter is already running or the button is disabled, don't emit the signal to start it.
-        if self.startautosplitterButton.text() == 'Running..' or self.startautosplitterButton.isEnabled() == False:
+        self.hasSentStart = True
+
+        # If the auto splitter is already running or the button is disabled, don't emit the signal to start it
+        if self.startautosplitterButton.text() == 'Running...':
             return
-        else:
-            self.startAutoSplitterSignal.emit()
+
+        if self.startImageLabel.text() == "Start image: ready" or self.startImageLabel.text() == "Start image: paused":
+            self.startImageLabel.setText("Start image: not ready")
+
+        self.startAutoSplitterSignal.emit()
 
     def startReset(self):
         self.resetSignal.emit()
@@ -439,7 +566,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             if split_parser.is_reset_image(image):
                 self.guiChangesOnReset()
-                self.multipleResetImagesError()
+                self.multipleKeywordImagesError('reset')
                 return
 
         # if there is no custom threshold for the reset image, throw an error.
@@ -736,7 +863,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.guiChangesOnReset()
 
     def guiChangesOnStart(self):
-        self.startautosplitterButton.setText('Running..')
+        self.timerStartImage.stop()
+        self.startautosplitterButton.setText('Running...')
         self.browseButton.setEnabled(False)
         self.startautosplitterButton.setEnabled(False)
         self.resetButton.setEnabled(True)
@@ -750,6 +878,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
+        self.startImageReloadButton.setEnabled(False)
         QtWidgets.QApplication.processEvents()
 
     def guiChangesOnReset(self):
@@ -772,6 +901,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
+        self.startImageReloadButton.setEnabled(True)
         QtWidgets.QApplication.processEvents()
 
     def compareImage(self, image, mask, capture):

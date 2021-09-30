@@ -31,7 +31,7 @@ def afterSettingHotkey(self):
 #--------------------HOTKEYS--------------------------
 #Going to comment on one func, and others will be similar.
 def setSplitHotkey(self):
-    self.setsplithotkeyButton.setText('Press a key..')
+    self.setsplithotkeyButton.setText('Press a key...')
 
     # disable some buttons
     self.beforeSettingHotkey()
@@ -99,7 +99,7 @@ def setSplitHotkey(self):
     return
 
 def setResetHotkey(self):
-    self.setresethotkeyButton.setText('Press a key..')
+    self.setresethotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback():
@@ -141,7 +141,7 @@ def setResetHotkey(self):
     return
 
 def setSkipSplitHotkey(self):
-    self.setskipsplithotkeyButton.setText('Press a key..')
+    self.setskipsplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback():
@@ -187,7 +187,7 @@ def setSkipSplitHotkey(self):
     return
 
 def setUndoSplitHotkey(self):
-    self.setundosplithotkeyButton.setText('Press a key..')
+    self.setundosplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback():
@@ -233,7 +233,7 @@ def setUndoSplitHotkey(self):
     return
 
 def setPauseHotkey(self):
-    self.setpausehotkeyButton.setText('Press a key..')
+    self.setpausehotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback():
