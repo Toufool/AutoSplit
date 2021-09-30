@@ -4,12 +4,7 @@ import about
 import resources_rc
 
 # AutoSplit Version number
-VERSION = "1.5.A3"
-
-
-# AutoSplit Version number
-VERSION = "1.5.0"
-
+VERSION = "1.5.A4"
 
 # About Window
 class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
