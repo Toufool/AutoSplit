@@ -45,8 +45,12 @@ def alignmentNotMatchedError(self):
     setTextMessage("No area in capture region matched reference image. Alignment failed.")
 
 
-def multipleResetImagesError(self):
-    setTextMessage("Only one image with the keyword \"reset\" is allowed.")
+def noKeywordImageError(self, keyword):
+    setTextMessage(f"Your split image folder does not contain an image with the keyword \"{keyword}\".")
+
+
+def multipleKeywordImagesError(self, keyword):
+    setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
 
 
 def resetHotkeyError(self):
@@ -71,3 +75,4 @@ def noSettingsFileOnOpenError(self):
 
 def tooManySettingsFilesOnOpenError(self):
     setTextMessage("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
+

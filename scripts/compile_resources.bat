@@ -1,3 +1,3 @@
-:: Doesn't work with current setup. Files might have to be moved around.
-:: The Donate button file is also missing
+pyuic6 "%~dp0../res/about.ui" -o "%~dp0../src/about.py"
+pyuic6 "%~dp0../res/design.ui" -o "%~dp0../src/design.py"
 pyside6-rcc "%~dp0../res/resources.qrc" -o "%~dp0../src/resources_rc.py"

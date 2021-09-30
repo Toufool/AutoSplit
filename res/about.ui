@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
-    <height>249</height>
+    <width>264</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>276</width>
-    <height>249</height>
+    <width>264</width>
+    <height>250</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>276</width>
-    <height>249</height>
+    <width>264</width>
+    <height>250</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -32,10 +32,10 @@
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>180</x>
      <y>220</y>
-     <width>71</width>
-     <height>21</height>
+     <width>75</width>
+     <height>24</height>
     </rect>
    </property>
    <property name="text">
@@ -47,12 +47,12 @@
     <rect>
      <x>10</x>
      <y>44</y>
-     <width>151</width>
-     <height>16</height>
+     <width>161</width>
+     <height>32</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://twitter.com/toufool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://twitter.com/toufool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Maintained by &lt;a href=&quot;https://twitter.com/Avasam06&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Avasam&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="versionLabel">
@@ -60,7 +60,7 @@
     <rect>
      <x>10</x>
      <y>21</y>
-     <width>71</width>
+     <width>161</width>
      <height>16</height>
     </rect>
    </property>
@@ -71,28 +71,31 @@
   <widget class="QLabel" name="donatetextLabel">
    <property name="geometry">
     <rect>
-     <x>46</x>
+     <x>30</x>
      <y>95</y>
-     <width>191</width>
-     <height>41</height>
+     <width>204</width>
+     <height>32</height>
     </rect>
    </property>
    <property name="text">
     <string>If you enjoy using this program, please
-       consider donating. Thank you!</string>
+consider donating. Thank you!</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="donatebuttonLabel">
    <property name="geometry">
     <rect>
-     <x>52</x>
-     <y>127</y>
-     <width>171</width>
-     <height>91</height>
+     <x>60</x>
+     <y>150</y>
+     <width>147</width>
+     <height>47</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=BYRHQG69YRHBA&amp;item_name=AutoSplit+development&amp;currency_code=USD&amp;source=url&quot;&gt;&lt;img src=&quot;:/resources/donatebutton.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;amp;business=BYRHQG69YRHBA&amp;amp;item_name=AutoSplit+development&amp;amp;currency_code=USD&amp;amp;source=url&quot;&gt;&lt;img src=&quot;:/resources/btn_donateCC_LG.png&quot;/&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
