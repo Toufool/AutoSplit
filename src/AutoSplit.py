@@ -133,7 +133,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.check_start_image_timestamp = 0.0
 
         # Try to load start image
-        self.loadStartImage(wait_for_delay=False, is_in_startup=True)
+        self.loadStartImage(wait_for_delay=False)
 
     # FUNCTIONS
     # TODO add checkbox for going back to image 1 when resetting.
@@ -184,7 +184,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         except AttributeError:
             pass
 
-    def loadStartImage(self, started_by_button=False, wait_for_delay=True, is_in_startup=False):
+    def loadStartImage(self, started_by_button=False, wait_for_delay=True):
         self.timerStartImage.stop()
         self.currentsplitimagefileLabel.setText(' ')
         self.startImageLabel.setText("Start image: not found")
@@ -201,38 +201,48 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.regionError()
             return
 
-        start_image_name = None
-
+        self.start_image_name = None
         for image in os.listdir(self.split_image_directory):
             if 'start_auto_splitter' in image.lower():
-                if start_image_name is None:
-                    start_image_name = image
+                if self.start_image_name is None:
+                    self.start_image_name = image
                 else:
                     if started_by_button:
                         self.multipleKeywordImagesError('start_auto_splitter')
                     return
 
-        if start_image_name is None:
+        if self.start_image_name is None:
             if started_by_button:
                 self.noKeywordImageError('start_auto_splitter')
             return
 
-        self.start_image = split_parser.SplitImage(self.split_image_directory, start_image_name)
+        self.split_image_filenames = os.listdir(self.split_image_directory)
+        self.split_image_number = 0
+        self.loop_number = 1
+        self.start_image_mask = None
+        flags = split_parser.flags_from_filename(self.start_image_name)
+        path = self.split_image_directory + self.start_image_name
+        # if theres a mask flag, create a mask
+        if (flags & 0x02 == 0x02):
+            # create mask based on resized, nearest neighbor interpolated split image
+            self.start_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+            self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
+                                          interpolation=cv2.INTER_NEAREST)
+            lower = np.array([0, 0, 0, 1], dtype="uint8")
+            upper = np.array([255, 255, 255, 255], dtype="uint8")
+            self.start_image_mask = cv2.inRange(self.start_image, lower, upper)
 
-        if self.start_image.threshold is None:
-            self.start_image.threshold = self.similaritythresholdDoubleSpinBox.value()
+            # set split image as BGR
+            self.start_image = cv2.cvtColor(self.start_image, cv2.COLOR_BGRA2BGR)
 
-        image_error = split_parser.getImageError(self.start_image)
+        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        else:
+            self.start_image = cv2.imread(path, cv2.IMREAD_COLOR)
+            self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
-        if image_error is not None:
-            if started_by_button:
-                self.showBox(image_error % self.start_image)
-            return
-
-        self.start_image.getImage(self.RESIZE_WIDTH, self.RESIZE_HEIGHT)
-
-        if wait_for_delay and self.start_image.pause is not None and self.start_image.pause > 0:
-            self.check_start_image_timestamp = time.time() + self.start_image.pause
+        start_image_pause = split_parser.pause_from_filename(self.start_image_name)
+        if wait_for_delay and start_image_pause is not None and start_image_pause > 0:
+            self.check_start_image_timestamp = time.time() + start_image_pause
             self.startImageLabel.setText("Start image: paused")
             self.currentSplitImage.setText('none (paused)')
             self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
@@ -240,15 +250,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.check_start_image_timestamp = 0.0
             self.startImageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image, False)
+            self.updateSplitImage(self.start_image_name)
 
         self.highest_similarity = 0.0
 
-        if is_in_startup:
-            self.pauseComparisonButton.setText("Unpause Comparison")
-            self.is_comparison_paused = True
-
-        self.timerStartImage.start(1000 / self.fpslimitSpinBox.value())
+        self.timerStartImage.start(int(1000 / self.fpslimitSpinBox.value()))
 
         QtWidgets.QApplication.processEvents()
 
@@ -259,37 +265,42 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if self.check_start_image_timestamp > 0:
             self.check_start_image_timestamp = 0.0
             self.startImageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image, False)
+            self.updateSplitImage(self.start_image_name)
 
-        self.start_image.similarity = self.compareImage(self.start_image)
+        start_image_masked = (self.start_image_mask is not None)
+        capture = self.getCaptureForComparison(start_image_masked)
+        start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
+        start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
+            or self.similaritythresholdDoubleSpinBox.value()
+        start_image_split_below_threshold = False
+        start_image_flags = split_parser.flags_from_filename(self.start_image_name)
+        start_image_delay = split_parser.delay_from_filename(self.start_image_name)
 
-        if self.start_image.similarity > self.highest_similarity:
-            self.highest_similarity = self.start_image.similarity
-
-        self.updateLiveSimilarity([self.start_image])
+        if start_image_similarity > self.highest_similarity:
+            self.highest_similarity = start_image_similarity
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
-        if self.start_image.flags & 0x04 == 0x04 \
-                and not self.start_image.split_below_threshold \
-                and self.start_image.similarity >= self.start_image.threshold:
-            self.start_image.split_below_threshold = True
+        if start_image_flags & 0x04 == 0x04 \
+                and not start_image_split_below_threshold \
+                and start_image_similarity >= start_image_threshold:
+            start_image_split_below_threshold = True
             return
-        if (self.start_image.flags & 0x04 == 0x04
-            and self.start_image.split_below_threshold
-            and self.start_image.similarity < self.start_image.threshold) \
-                or (self.start_image.similarity >= self.start_image.threshold and self.start_image.flags & 0x04 == 0):
+        if (start_image_flags & 0x04 == 0x04
+            and start_image_split_below_threshold
+            and start_image_similarity < start_image_threshold) \
+                or (start_image_similarity >= start_image_threshold and start_image_flags & 0x04 == 0):
             def split():
                 self.hasSentStart = False
-                self.sendSplitKeyPress(self.start_image.flags)
+                keyboard.send(str(self.splitLineEdit.text()))
                 time.sleep(1 / self.fpslimitSpinBox.value())
                 self.startAutoSplitter()
 
             self.timerStartImage.stop()
             self.startImageLabel.setText("Start image: started")
 
-            if self.start_image.delay > 0:
-                threading.Timer(self.start_image.delay / 1000, split).start()
+            if start_image_delay > 0:
+                threading.Timer(start_image_delay / 1000, split).start()
             else:
                 split()
 
@@ -986,10 +997,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
-    def updateSplitImage(self):
-
+    def updateSplitImage(self, custom_image_file=None):
         # get split image path
-        split_image_file = self.split_image_filenames[0 + self.split_image_number]
+        split_image_file = custom_image_file or self.split_image_filenames[0 + self.split_image_number]
         self.split_image_path = self.split_image_directory + split_image_file
 
         # get flags
@@ -1037,10 +1047,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # If the unique parameters are selected, go ahead and set the spinboxes to those values
         if self.custompausetimesCheckBox.isChecked():
-            self.pauseDoubleSpinBox.setValue(split_parser.pause_from_filename(split_image_file))
+            customPause = split_parser.pause_from_filename(split_image_file)
+            if customPause is not None:
+                self.pauseDoubleSpinBox.setValue()
 
         if self.customthresholdsCheckBox.isChecked():
-            self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+            threshold = split_parser.threshold_from_filename(split_image_file)
+            if threshold is not None:
+                self.similaritythresholdDoubleSpinBox.setValue(threshold)
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
