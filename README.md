@@ -11,7 +11,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## DOWNLOAD AND OPEN
 
 ### Compatability
-- Windows 7 and 10.
+- Windows 7, 10, and 11
 
 ### Building
 - Read [requirements.txt](/requirements.txt) for information on how to run/build the python code
@@ -19,6 +19,9 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Opening the program
 - Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
 - Extract the file and open AutoSplit.exe.
+
+### Building
+- Read [requirements.txt](/requirements.txt) for information on how to run/build the python code (this is not required for normal use).
 
 ## Split Image Folder
 - Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
@@ -131,14 +134,13 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - Settings files use the extension `.pkl`. Settings files can be saved and opened by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
 - For v1.4 and below, settings work differently. Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file must be in the same directory as AutoSplit.exe and is loaded upon opening the program. Settings can be reloaded using the Reload Settings button.
 - The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
+- If you are upgrading to Windows 11, it's possible that save files may not transfer perfectly. You may need to readjust or reselect your Capture Region, for example.
 
 ## Known Limitations
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
 
 ## Known Issues
-- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
-- Known to currently have issues selecting a region in Streamlabs OBS (only shows black image).
 - Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
 - LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 - Numlock on keys are linked to numlock-off keys. For example, if you set your reset hotkey to 2, you can hit arrow down and it will reset and vice versa.
@@ -152,6 +154,7 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - https://github.com/harupy/ for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
+- [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 
 ## Donate

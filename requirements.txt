@@ -12,7 +12,6 @@
 # You can find other wheels here: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
 https://download.lfd.uci.edu/pythonlibs/q4trcu4l/PyQt4-4.11.4-cp37-cp37m-win_amd64.whl
 # https://download.lfd.uci.edu/pythonlibs/q4trcu4l/PyQt4-4.11.4-cp37-cp37m-win32.whl
-
 #
 # Comment this out if you don't want to create AutoSplit.exe:
 PyInstaller
