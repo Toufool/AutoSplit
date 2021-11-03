@@ -1,8 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from compare import checkIfImageHasTransparency
-from menu_bar import about, VERSION, viewHelp
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
@@ -15,6 +13,8 @@ import numpy as np
 import threading
 import time
 
+from compare import checkIfImageHasTransparency
+from menu_bar import about, VERSION, viewHelp
 from hotkeys import send_hotkey
 import design
 import compare
@@ -1119,9 +1119,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon('icon.ico'))
+    app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w = AutoSplit()
-    w.setWindowIcon(QtGui.QIcon('icon.ico'))
+    w.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w.show()
     sys.exit(app.exec())
 

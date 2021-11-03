@@ -199,7 +199,7 @@ def loadSettings(self):
                         self.group_dummy_splits_undo_skip_setting,
                         self.loop_setting,
                         self.auto_start_on_reset_setting] = pickle.load(f)
-            #v1.3-1.4 settings. add a blank pause key.
+            # v1.3-1.4 settings. add a blank pause key.
             elif self.settings_count == 18:
                 with open(self.load_settings_file_path, 'rb') as f:
                     self.last_loaded_settings = [

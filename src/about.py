@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'C:\Users\Avasam\Documents\Git\Auto-Split\scripts\../res/about.ui'
+# Form implementation generated from reading ui file './res/about.ui'
 #
 # Created by: PyQt6 UI code generator 6.1.0
 #
