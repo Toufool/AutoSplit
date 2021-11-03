@@ -11,7 +11,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ## DOWNLOAD AND OPEN
 
 ### Compatability
-- Windows 7 and 10.
+- Windows 7, 10, and 11
 
 ### Building
 - Read [requirements.txt](/requirements.txt) for information on how to run/build the python code
@@ -137,8 +137,6 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - The window of the capture region cannot be minimized.
 
 ## Known Issues
-- When setting your region, you may only see a black image. This is caused by hardware acceleration. You may be able to disable this through the application itself like in [Google Chrome](https://www.technize.net/google-chrome-disable-hardware-acceleration/). If not, this can also be disabled through [Windows](https://www.thewindowsclub.com/hardware-acceleration-windows-7). NOTE: If you notice any computer performance issues after disabling hardware acceleration, re-enable it.
-- Known to currently have issues selecting a region in Streamlabs OBS (only shows black image).
 - Using numpad number keys when numlock is on does not split correctly. Either avoid using numpad or turn numlock off to avoid this issue.
 - LiveSplit and wsplit will not split correctly if you are holding shift, ctrl, or alt when a match occurs.
 - Numlock on keys are linked to numlock-off keys. For example, if you set your reset hotkey to 2, you can hit arrow down and it will reset and vice versa.
