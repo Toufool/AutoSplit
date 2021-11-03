@@ -59,7 +59,7 @@ class Ui_aboutAutoSplitWidget(object):
         aboutAutoSplitWidget.setWindowTitle(_translate("aboutAutoSplitWidget", "About AutoSplit", None))
         self.okButton.setText(_translate("aboutAutoSplitWidget", "OK", None))
         self.createdbyLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p>Created by <a href=\"https://twitter.com/toufool\"><span style=\" text-decoration: underline; color:#0000ff;\">Toufool</span></a> and <a href=\"https://twitter.com/faschz\"><span style=\" text-decoration: underline; color:#0000ff;\">Faschz</span></a></p></body></html>", None))
-        self.versionLabel.setText(_translate("aboutAutoSplitWidget", "Version: 1.5.0", None))
+        self.versionLabel.setText(_translate("aboutAutoSplitWidget", "Version: 1.5.1", None))
         self.donatetextLabel.setText(_translate("aboutAutoSplitWidget", "If you enjoy using this program, please\n"
 "       consider donating. Thank you!", None))
         self.donatebuttonLabel.setText(_translate("aboutAutoSplitWidget", "<html><head/><body><p><a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BYRHQG69YRHBA&item_name=AutoSplit+development&currency_code=USD&source=url\"><img src=\":/resources/donatebutton.png\"/></p></body></html>", None))
