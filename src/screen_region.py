@@ -112,11 +112,11 @@ def selectWindow(self):
     rect = win32gui.GetClientRect(self.hwnd)
     self.rect.left = 8
     self.rect.top = 31
-    self.rect.right = 0 + rect[2]
-    self.rect.bottom = 0 + rect[3]
+    self.rect.right = 8 + rect[2]
+    self.rect.bottom = 31 + rect[3]
 
-    self.widthSpinBox.setValue(self.rect.right)
-    self.heightSpinBox.setValue(self.rect.bottom)
+    self.widthSpinBox.setValue(rect[2])
+    self.heightSpinBox.setValue(rect[3])
     self.xSpinBox.setValue(self.rect.left)
     self.ySpinBox.setValue(self.rect.top)
 
