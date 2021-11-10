@@ -1,8 +1,7 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
-from menu_bar import about, viewHelp
+from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
 import os
@@ -13,22 +12,22 @@ import ctypes
 import numpy as np
 
 from hotkeys import send_hotkey
-import design
+from menu_bar import about, VERSION, viewHelp
+import error_messages
 import compare
+import design
 import capture_windows
 import split_parser
 
+
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
-    from compare import checkIfImageHasTransparency
-    from error_messages import (
-        splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
-        splitHotkeyError, alignRegionImageTypeError, oldVersionSettingsFileError, noSettingsFileOnOpenError,
-        tooManySettingsFilesOnOpenError, invalidSettingsError, multipleResetImagesError, resetHotkeyError,
-        pauseHotkeyError, dummySplitsError, alignmentNotMatchedError)
+    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
+    from screen_region import selectRegion, selectWindow, alignRegion
     from hotkeys import (
-        beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey,
+        afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey,
         setPauseHotkey)
-    myappid = u'Toufool.AutoSplit.v1.5.1'
+
+    myappid = f'Toufool.AutoSplit.v{VERSION}'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     # signals
@@ -135,7 +134,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
-            self.timerLiveImage.start(1000 / 60)
+            self.timerLiveImage.start(int(1000 / 60))
         else:
             self.timerLiveImage.stop()
             self.liveImageFunction()
@@ -148,7 +147,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 return
 
             elif win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == False:
-                self.regionError()
+                error_messages.regionError()
                 self.timerLiveImage.stop()
                 return
 
@@ -160,7 +159,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # Convert to set it on the label
             qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3,
-                                QtGui.QImage.Format_RGB888)
+                                QtGui.QImage.Format.Format_RGB888)
             pix = QtGui.QPixmap(qImg)
             self.liveImage.setPixmap(pix)
 
@@ -200,13 +199,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def takeScreenshot(self):
         # error checks
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
         if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
-            self.splitImageDirectoryNotFoundError()
+            error_messages.splitImageDirectoryNotFoundError()
             return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.regionError()
+            error_messages.regionError()
             return
         take_screenshot_filename = '001_SplitImage'
 
@@ -232,23 +231,23 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # error checking
         split_image_directory = self.splitimagefolderLineEdit.text()
         if split_image_directory == 'No Folder Selected' or split_image_directory is None:
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
 
         split_image_filenames = os.listdir(split_image_directory)
         for image in split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                self.imageTypeError(image)
+                error_messages.imageTypeError(image)
                 return
             else:
                 pass
 
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.regionError()
+            error_messages.regionError()
             return
 
         if self.width == 0 or self.height == 0:
-            self.regionSizeError()
+            error_messages.regionSizeError()
             return
 
         # grab first image in the split image folder
@@ -357,15 +356,15 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # error checking:
         if str(self.splitimagefolderLineEdit.text()) == 'No Folder Selected':
             self.guiChangesOnReset()
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
         if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
             self.guiChangesOnReset()
-            self.splitImageDirectoryNotFoundError()
+            error_messages.splitImageDirectoryNotFoundError()
             return
-        if self.hwnd ==  0 or win32gui.GetWindowText(self.hwnd) == '':
+        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.guiChangesOnReset()
-            self.regionError()
+            error_messages.regionError()
             return
 
         # get split image filenames
@@ -381,7 +380,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     # Opencv couldn't open this file as an image, this isn't a correct
                     # file format that is supported
                     self.guiChangesOnReset()
-                    self.imageTypeError(image)
+                    error_messages.imageTypeError(image)
                     return
                 else:
                     # TODO: Now that we know the image has transparency, error out if it is completely transparent
@@ -391,12 +390,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             #error out if there is a {p} flag but no pause hotkey set.
             if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
                 self.guiChangesOnReset()
-                self.pauseHotkeyError()
+                error_messages.pauseHotkeyError()
                 return
 
         if self.splitLineEdit.text() == '':
             self.guiChangesOnReset()
-            self.splitHotkeyError()
+            error_messages.splitHotkeyError()
             return
 
         # find reset image then remove it from the list
@@ -407,13 +406,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             if split_parser.is_reset_image(image):
                 self.guiChangesOnReset()
-                self.multipleResetImagesError()
+                error_messages.multipleResetImagesError()
                 return
 
         # If there is no reset hotkey set but a reset image is present, throw an error.
         if self.resetLineEdit.text() == '' and self.reset_image is not None:
             self.guiChangesOnReset()
-            self.resetHotkeyError()
+            error_messages.resetHotkeyError()
             return
 
         # construct groups of splits if needed
@@ -444,7 +443,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
 
         if any(x > 1 for x in self.split_image_loop_amount) and self.groupDummySplitsCheckBox.isChecked() == True:
-            self.dummySplitsError()
+            error_messages.dummySplitsError()
             return
 
         self.guiChangesOnStart()
@@ -574,7 +573,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
-                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
@@ -636,7 +635,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
 
                 # if its the last split image and last loop number, disable the skip split button
@@ -802,7 +801,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
-        self.imageHasTransparency = self.checkIfImageHasTransparency()
+        self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image_path)
 
         # set current split image in UI
         # if flagged as mask, transform transparency into UI's gray BG color
@@ -820,7 +819,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         qImg = QtGui.QImage(self.split_image_display, self.split_image_display.shape[1],
                             self.split_image_display.shape[0], self.split_image_display.shape[1] * 3,
-                            QtGui.QImage.Format_RGB888)
+                            QtGui.QImage.Format.Format_RGB888)
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
@@ -865,35 +864,27 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     # exit safely when closing the window
     def closeEvent(self, event):
         if self.haveSettingsChanged():
-            #give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
-            if self.last_successfully_loaded_settings_file_path == None:
-                msgBox = QtWidgets.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettingsAs()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
-            else:
-                msgBox = QtWidgets.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettings()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
+            # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
+            msgBox = QtWidgets.QMessageBox
+            settings_file_name = "Untitled" \
+                if self.last_successfully_loaded_settings_file_path is None \
+                else os.path.basename(self.last_successfully_loaded_settings_file_path)
+            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
+
+            warning = msgBox.warning(
+                self,
+                "AutoSplit",
+                warning_message,
+                msgBox.StandardButton.Yes | msgBox.StandardButton.No | msgBox.StandardButton.Cancel)
+
+            if warning == msgBox.StandardButton.Yes:
+                # TODO: Don't close if user cancelled the save
+                self.saveSettingsAs()
+                exit()
+            if warning == msgBox.StandardButton.No:
+                exit()
+            if warning == msgBox.StandardButton.Cancel:
+                event.ignore()
         else:
             event.accept()
             sys.exit()
@@ -905,7 +896,7 @@ def main():
     w = AutoSplit()
     w.setWindowIcon(QtGui.QIcon('icon.ico'))
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

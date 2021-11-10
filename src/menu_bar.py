@@ -1,6 +1,10 @@
 import os
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 import about
+
+# AutoSplit Version number
+VERSION = "1.5.1"
+
 
 # About Window
 class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
@@ -10,6 +14,7 @@ class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
         self.createdbyLabel.setOpenExternalLinks(True)
         self.donatebuttonLabel.setOpenExternalLinks(True)
         self.show()
+
 
 def viewHelp(self):
     os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
