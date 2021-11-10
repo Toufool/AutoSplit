@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore, QtTest
+from PyQt5 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import capture_windows
 import ctypes
@@ -124,7 +124,7 @@ def alignRegion(self):
             return
         # This is the image used for aligning the capture region
         # to the best fit for the user.
-        template_filename = str(QtGui.QFileDialog.getOpenFileName(self, "Select Reference Image", "",
+        template_filename = str(QtWidgets.QFileDialog.getOpenFileName(self, "Select Reference Image", "",
                                                                   "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
 
         # return if the user presses cancel
@@ -200,7 +200,7 @@ def alignRegion(self):
 
 
 # widget to select a window and obtain its bounds
-class SelectWindowWidget(QtGui.QWidget):
+class SelectWindowWidget(QtWidgets.QWidget):
     def __init__(self):
         super(SelectWindowWidget, self).__init__()
         user32 = ctypes.windll.user32
@@ -231,7 +231,7 @@ class SelectWindowWidget(QtGui.QWidget):
 
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
-class SelectRegionWidget(QtGui.QWidget):
+class SelectRegionWidget(QtWidgets.QWidget):
     def __init__(self):
         super(SelectRegionWidget, self).__init__()
         user32 = ctypes.windll.user32
@@ -254,7 +254,7 @@ class SelectRegionWidget(QtGui.QWidget):
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
         self.setWindowOpacity(0.5)
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.show()
 
@@ -274,7 +274,7 @@ class SelectRegionWidget(QtGui.QWidget):
         self.update()
 
     def mouseReleaseEvent(self, event):
-        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.close()
 
         # The coordinates are pulled relative to the top left of the set geometry,

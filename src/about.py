@@ -2,11 +2,11 @@
 
 # Form implementation generated from reading ui file 'about.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created by: PyQt5 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -15,12 +15,12 @@ except AttributeError:
         return s
 
 try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
+    _encoding = QtWidgets.QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+        return QtWidgets.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+        return QtWidgets.QApplication.translate(context, text, disambig)
 
 class Ui_aboutAutoSplitWidget(object):
     def setupUi(self, aboutAutoSplitWidget):
@@ -31,28 +31,28 @@ class Ui_aboutAutoSplitWidget(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/resources/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         aboutAutoSplitWidget.setWindowIcon(icon)
-        self.okButton = QtGui.QPushButton(aboutAutoSplitWidget)
+        self.okButton = QtWidgets.QPushButton(aboutAutoSplitWidget)
         self.okButton.setGeometry(QtCore.QRect(190, 220, 71, 21))
         self.okButton.setObjectName(_fromUtf8("okButton"))
-        self.createdbyLabel = QtGui.QLabel(aboutAutoSplitWidget)
+        self.createdbyLabel = QtWidgets.QLabel(aboutAutoSplitWidget)
         self.createdbyLabel.setGeometry(QtCore.QRect(10, 44, 151, 16))
         self.createdbyLabel.setObjectName(_fromUtf8("createdbyLabel"))
-        self.versionLabel = QtGui.QLabel(aboutAutoSplitWidget)
+        self.versionLabel = QtWidgets.QLabel(aboutAutoSplitWidget)
         self.versionLabel.setGeometry(QtCore.QRect(10, 21, 71, 16))
         self.versionLabel.setObjectName(_fromUtf8("versionLabel"))
-        self.donatetextLabel = QtGui.QLabel(aboutAutoSplitWidget)
+        self.donatetextLabel = QtWidgets.QLabel(aboutAutoSplitWidget)
         self.donatetextLabel.setGeometry(QtCore.QRect(46, 95, 191, 41))
         self.donatetextLabel.setObjectName(_fromUtf8("donatetextLabel"))
-        self.donatebuttonLabel = QtGui.QLabel(aboutAutoSplitWidget)
+        self.donatebuttonLabel = QtWidgets.QLabel(aboutAutoSplitWidget)
         self.donatebuttonLabel.setGeometry(QtCore.QRect(52, 127, 171, 91))
         self.donatebuttonLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.donatebuttonLabel.setObjectName(_fromUtf8("donatebuttonLabel"))
-        self.iconLabel = QtGui.QLabel(aboutAutoSplitWidget)
+        self.iconLabel = QtWidgets.QLabel(aboutAutoSplitWidget)
         self.iconLabel.setGeometry(QtCore.QRect(190, 17, 62, 71))
         self.iconLabel.setObjectName(_fromUtf8("iconLabel"))
 
         self.retranslateUi(aboutAutoSplitWidget)
-        QtCore.QObject.connect(self.okButton, QtCore.SIGNAL(_fromUtf8("clicked()")), aboutAutoSplitWidget.close)
+        self.okButton.clicked.connect(aboutAutoSplitWidget.close)
         QtCore.QMetaObject.connectSlotsByName(aboutAutoSplitWidget)
 
     def retranslateUi(self, aboutAutoSplitWidget):
@@ -69,8 +69,8 @@ import resources_rc
 
 if __name__ == "__main__":
     import sys
-    app = QtGui.QApplication(sys.argv)
-    aboutAutoSplitWidget = QtGui.QWidget()
+    app = QtWidgets.QApplication(sys.argv)
+    aboutAutoSplitWidget = QtWidgets.QWidget()
     ui = Ui_aboutAutoSplitWidget()
     ui.setupUi(aboutAutoSplitWidget)
     aboutAutoSplitWidget.show()

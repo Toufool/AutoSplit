@@ -1,4 +1,3 @@
-
 from ctypes import windll
 from ctypes.wintypes import LONG, RECT
 from win32 import win32gui
