@@ -13,9 +13,6 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Compatability
 - Windows 7, 10, and 11
 
-### Building
-- Read [requirements.txt](/requirements.txt) for information on how to run/build the python code
-
 ### Opening the program
 - Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
 - Extract the file and open AutoSplit.exe.
