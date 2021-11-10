@@ -7,6 +7,8 @@ import ctypes.wintypes
 import cv2
 import numpy as np
 
+import error_messages
+
 
 def selectRegion(self):
     # Create a screen selector widget
@@ -19,7 +21,7 @@ def selectRegion(self):
 
     # return an error if width or height are zero.
     if selector.width == 0 or selector.height == 0:
-        self.regionSizeError()
+        error_messages.regionSizeError()
         return
 
     # Width and Height of the spinBox
@@ -123,7 +125,7 @@ def selectWindow(self):
 def alignRegion(self):
     # check to see if a region has been set
     if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-        self.regionError()
+        error_messages.regionError()
         return
     # This is the image used for aligning the capture region
     # to the best fit for the user.
@@ -141,7 +143,7 @@ def alignRegion(self):
 
     # shouldn't need this, but just for caution, throw a type error if file is not a valid image file
     if template is None:
-        self.alignRegionImageTypeError()
+        error_messages.alignRegionImageTypeError()
         return
 
     # Obtaining the capture of a region which contains the
@@ -189,7 +191,7 @@ def alignRegion(self):
     # Go ahead and check if this satisfies our requirement before setting the region
     # We don't want a low similarity image to be aligned.
     if best_match < 0.9:
-        self.alignmentNotMatchedError()
+        error_messages.alignmentNotMatchedError()
         return
 
     # The new region can be defined by using the min_loc point and the

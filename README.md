@@ -10,16 +10,17 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Compatability
 
-- Windows 7, 10, and 11
+- Windows 7, 10, and 11.
 
 ### Opening the program
 
-- Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
+- Download the [latest version](/Toufool/Auto-Split/releases)
 - Extract the file and open AutoSplit.exe.
 
 ### Building
 
 (This is not required for normal use)
+
 - Microsoft Visual C++ 14.0 or greater may be required. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) 
 - Read [requirements.txt](/scripts/requirements.txt) for information on how to run/build the python code
   - Run `.\scripts\install.bat` to install all dependencies

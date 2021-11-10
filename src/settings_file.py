@@ -1,10 +1,12 @@
-from hotkeys import _hotkey_action
-from PyQt6 import QtWidgets
 from win32 import win32gui
+from PyQt6 import QtWidgets
 import glob
 import keyboard
-import logging
 import pickle
+import logging
+
+from hotkeys import _hotkey_action
+import error_messages
 
 
 def getSaveSettingsValues(self):
@@ -104,12 +106,13 @@ def saveSettings(self):
         with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
             pickle.dump(self.last_saved_settings, f)
 
+
 def saveSettingsAs(self):
-    # user picks save destination
+    # User picks save destination
     self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(self, "Save Settings As", "", "PKL (*.pkl)")[0]
 
-    #if user cancels save destination window, don't save settings
-    if self.save_settings_file_path == '':
+    # If user cancels save destination window, don't save settings
+    if not self.save_settings_file_path:
         return
 
     self.getSaveSettingsValues()
@@ -155,11 +158,11 @@ def loadSettings(self):
     if self.load_settings_on_open:
         self.settings_files = glob.glob("*.pkl")
         if len(self.settings_files) < 1:
-            self.noSettingsFileOnOpenError()
+            error_messages.noSettingsFileOnOpenError()
             self.last_loaded_settings = None
             return
         elif len(self.settings_files) > 1:
-            self.tooManySettingsFilesOnOpenError()
+            error_messages.tooManySettingsFilesOnOpenError()
             self.last_loaded_settings = None
             return
         else:
@@ -224,7 +227,7 @@ def loadSettings(self):
                 self.pause_key = ''
                 self.auto_start_on_reset_setting = 0
             elif self.settings_count < 18:
-                self.oldVersionSettingsFileError()
+                error_messages.oldVersionSettingsFileError()
                 return
 
         self.split_image_directory = str(self.split_image_directory)
@@ -242,6 +245,7 @@ def loadSettings(self):
         # set custom checkbox's accordingly
         self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
         self.loopCheckBox.setChecked(self.loop_setting == 1)
+        self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
         self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
 
         # TODO: Reuse code from hotkeys rather than duplicating here
@@ -303,4 +307,4 @@ def loadSettings(self):
 
     except Exception:
         logging.error(logging.traceback.format_exc())
-        self.invalidSettingsError()
+        error_messages.invalidSettingsError()
