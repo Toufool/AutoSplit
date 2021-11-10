@@ -4,7 +4,7 @@
 #
 # Usage: pip install -r requirements.txt
 #
-# Creating AutoSplit.exe with PyInstaller: pyinstaller -w -F src\AutoSplit.py
+# Creating AutoSplit.exe with PyInstaller: pyinstaller -w -F --icon=src\icon.ico src\AutoSplit.py
 #
 # You can find other wheels here: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
 # If you use 32-bit installation of Python, use the the 2nd URL instead.

@@ -197,9 +197,10 @@ def loadSettings(self):
                 keyboard.remove_hotkey(self.split_hotkey)
             except AttributeError:
                 pass
-            self.splitLineEdit.setText(str(self.split_key))
-            self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-            self.old_split_key = self.split_key
+            if self.is_auto_controlled == False:
+                self.splitLineEdit.setText(str(self.split_key))
+                self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
+                self.old_split_key = self.split_key
         # pass if the key is an empty string (hotkey was never set)
         except ValueError:
             pass
