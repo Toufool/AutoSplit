@@ -18,14 +18,6 @@
       120,
     ]
   },
-  "[py]": {
-    "editor.tabSize": 4,
-    "editor.rulers": [
-      72,
-      79,
-      120,
-    ]
-  },
   // Keeping autoformat to false for now to keep minimal changes
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {

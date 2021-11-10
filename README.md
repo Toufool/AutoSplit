@@ -2,19 +2,17 @@
 
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
-<p align="center">
-  <img src="https://github.com/austinryan/Auto-Split/blob/master/example1.5.0.gif" />
-</p>
+![example](example1.5.0.gif)
 
 # TUTORIAL
 
 ## DOWNLOAD AND OPEN
 
 ### Compatability
-- Windows 7, 10, and 11
+- Windows 7, 10, and 11.
 
 ### Building
-- Read [requirements.txt](/requirements.txt) for information on how to run/build the python code
+- Read [requirements.txt](/scripts/requirements.txt) for information on how to run/build the python code
 
 ### Opening the program
 - Download the [latest version](https://github.com/austinryan/Auto-Split/releases)
@@ -90,9 +88,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### How to Create a Masked Image
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). The last thing you need to do is add {m} to the filename. For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Toufool/Auto-Split/master/mask_example_image.PNG" />
-</p>
+![mask_example](mask_example_image.PNG)
 
 ### Reset image
 You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold MUST be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10]_{m}.png`.
