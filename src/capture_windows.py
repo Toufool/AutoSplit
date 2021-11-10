@@ -4,7 +4,6 @@ from win32 import win32gui
 import numpy as np
 import win32ui
 import win32con
-import numpy as np
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
