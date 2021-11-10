@@ -1,7 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtTest
-from menu_bar import about, VERSION, viewHelp
 import sys
-import signal
 import os
 import win32gui
 import cv2
@@ -9,17 +7,16 @@ import time
 import ctypes.wintypes
 import ctypes
 import keyboard
-import threading
+import glob
 import numpy as np
 
 import design
+import about
 import compare
 import capture_windows
 import split_parser
 
-
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
-    # Importing the functions inside of the class will make them methods of the class
     from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
     from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
     splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
@@ -27,6 +24,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
+    from menu_bar import about, viewHelp
 
     myappid = u'mycompany.myproduct.subproduct.version'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -44,12 +42,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
 
-        # Parse command line args
-        self.is_auto_controlled = ('--auto-controlled' in sys.argv)
-
         # close all processes when closing window
-        self.actionView_Help.triggered.connect(viewHelp)
-        self.actionAbout.triggered.connect(lambda: about(self))
+        self.actionView_Help.triggered.connect(self.viewHelp)
+        self.actionAbout.triggered.connect(self.about)
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
@@ -58,57 +53,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.undosplitButton.setEnabled(False)
         self.skipsplitButton.setEnabled(False)
         self.resetButton.setEnabled(False)
-
-        if self.is_auto_controlled:
-            self.setsplithotkeyButton.setEnabled(False)
-            self.setresethotkeyButton.setEnabled(False)
-            self.setskipsplithotkeyButton.setEnabled(False)
-            self.setundosplithotkeyButton.setEnabled(False)
-            self.setpausehotkeyButton.setEnabled(False)
-            self.startautosplitterButton.setEnabled(False)
-            self.splitLineEdit.setEnabled(False)
-            self.resetLineEdit.setEnabled(False)
-            self.skipsplitLineEdit.setEnabled(False)
-            self.undosplitLineEdit.setEnabled(False)
-            self.pausehotkeyLineEdit.setEnabled(False)
-
-            # Send version and process ID to stdout
-            print(f"{VERSION}\n{os.getpid()}", flush=True)
-
-            class Worker(QtCore.QObject):
-                autosplit = None
-
-                def __init__(self, autosplit):
-                    self.autosplit = autosplit
-                    super().__init__()
-
-                def run(self):
-                    while True:
-                        line = input()
-                        # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
-                        # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
-                        # For now this can only used in a Development environment
-                        if line == 'kill':
-                            self.autosplit.closeEvent()
-                            break
-                        elif line == 'start':
-                            self.autosplit.startAutoSplitter()
-                        elif line == 'split' or line == 'skip':
-                            self.autosplit.startSkipSplit()
-                        elif line == 'undo':
-                            self.autosplit.startUndoSplit()
-                        elif line == 'reset':
-                            self.autosplit.startReset()
-                        # TODO: Not yet implemented in AutoSplit Integration
-                        # elif line == 'pause':
-                        #     self.startPause()
-
-            # Use and Start the thread that checks for updates from LiveSplit
-            self.update_auto_control = QtCore.QThread()
-            worker = Worker(self)
-            worker.moveToThread(self.update_auto_control)
-            self.update_auto_control.started.connect(worker.run)
-            self.update_auto_control.start()
 
         # resize to these width and height so that FPS performance increases
         self.RESIZE_WIDTH = 320
@@ -174,7 +118,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.live_image_function_on_open = True
 
     # FUNCTIONS
-
     #TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
         # User selects the file with the split images in it.
@@ -340,7 +283,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     # undo split button and hotkey connect to here
     def undoSplit(self):
-        if self.undosplitButton.isEnabled() == False and self.is_auto_controlled == False:
+        if self.undosplitButton.isEnabled() == False:
             return
 
         if self.loop_number != 1 and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -363,7 +306,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # skip split button and hotkey connect to here
     def skipSplit(self):
 
-        if self.skipsplitButton.isEnabled() == False and self.is_auto_controlled == False:
+        if self.skipsplitButton.isEnabled() == False:
             return
 
         if self.loop_number < self.split_image_loop_amount[self.split_image_number] and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -392,10 +335,10 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # functions for the hotkeys to return to the main thread from signals and start their corresponding functions
     def startAutoSplitter(self):
         # if the auto splitter is already running or the button is disabled, don't emit the signal to start it.
-        if self.startautosplitterButton.text() == 'Running..' or \
-            (self.startautosplitterButton.isEnabled() == False and self.is_auto_controlled == False):
+        if self.startautosplitterButton.text() == 'Running..' or self.startautosplitterButton.isEnabled() == False:
             return
-        self.startAutoSplitterSignal.emit()
+        else:
+            self.startAutoSplitterSignal.emit()
 
     def startReset(self):
         self.resetSignal.emit()
@@ -459,7 +402,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     return
 
             #error out if there is a {p} flag but no pause hotkey set.
-            if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08 and self.is_auto_controlled == False:
+            if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
                 self.guiChangesOnReset()
                 self.pauseHotkeyError()
                 return
@@ -478,7 +421,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.customThresholdError(image)
                 return
 
-        if self.splitLineEdit.text() == '' and self.is_auto_controlled == False:
+        if self.splitLineEdit.text() == '':
             self.guiChangesOnReset()
             self.splitHotkeyError()
             return
@@ -501,7 +444,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             return
 
         # If there is no reset hotkey set but a reset image is present, throw an error.
-        if self.resetLineEdit.text() == '' and self.reset_image is not None and self.is_auto_controlled == False:
+        if self.resetLineEdit.text() == '' and self.reset_image is not None:
             self.guiChangesOnReset()
             self.resetHotkeyError()
             return
@@ -587,10 +530,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
-                        if self.is_auto_controlled:
-                            print("reset", flush = True)
-                        else:
-                            keyboard.send(str(self.resetLineEdit.text()))
+                        keyboard.send(str(self.resetLineEdit.text()))
                         self.reset()
 
                 # loop goes into here if start auto splitter text is "Start Auto Splitter"
@@ -626,18 +566,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.highestsimilarityLabel.setText(' ')
 
-                if self.is_auto_controlled == False:
-                    # if its the last split image and last loop number, disable the skip split button
-                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
-                        self.skipsplitButton.setEnabled(False)
-                    else:
-                        self.skipsplitButton.setEnabled(True)
+                # if its the last split image and last loop number, disable the skip split button
+                if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                    self.skipsplitButton.setEnabled(False)
+                else:
+                    self.skipsplitButton.setEnabled(True)
 
-                    # if its the first split image and first loop, disable the undo split button
-                    if self.split_image_number == 0 and self.loop_number == 1:
-                        self.undosplitButton.setEnabled(False)
-                    else:
-                        self.undosplitButton.setEnabled(True)
+                # if its the first split image and first loop, disable the undo split button
+                if self.split_image_number == 0 and self.loop_number == 1:
+                    self.undosplitButton.setEnabled(False)
+                else:
+                    self.undosplitButton.setEnabled(True)
 
                 # if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
                 # if no b flag, just split when similarity goes above threshold.
@@ -698,10 +637,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                             reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                             if reset_similarity >= self.reset_image_threshold:
-                                if self.is_auto_controlled:
-                                    print("reset", flush = True)
-                                else:
-                                    keyboard.send(str(self.resetLineEdit.text()))
+                                keyboard.send(str(self.resetLineEdit.text()))
                                 self.reset()
                                 continue
 
@@ -711,15 +647,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # if {p} flag hit pause key, otherwise hit split hotkey
                 if (self.flags & 0x08 == 0x08):
-                    if self.is_auto_controlled:
-                        print("pause", flush = True)
-                    else:
-                        keyboard.send(str(self.pausehotkeyLineEdit.text()))
+                    keyboard.send(str(self.pausehotkeyLineEdit.text()))
                 else:
-                    if self.is_auto_controlled:
-                        print("split", flush = True)
-                    else:
-                        keyboard.send(str(self.splitLineEdit.text()))
+                    keyboard.send(str(self.splitLineEdit.text()))
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
@@ -748,18 +678,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
 
-                if self.is_auto_controlled == False:
-                    # if its the last split image and last loop number, disable the skip split button
-                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
-                        self.skipsplitButton.setEnabled(False)
-                    else:
-                        self.skipsplitButton.setEnabled(True)
+                # if its the last split image and last loop number, disable the skip split button
+                if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                    self.skipsplitButton.setEnabled(False)
+                else:
+                    self.skipsplitButton.setEnabled(True)
 
-                    # if its the first split image and first loop, disable the undo split button
-                    if self.split_image_number == 0 and self.loop_number == 1:
-                        self.undosplitButton.setEnabled(False)
-                    else:
-                        self.undosplitButton.setEnabled(True)
+                # if its the first split image and first loop, disable the undo split button
+                if self.split_image_number == 0 and self.loop_number == 1:
+                    self.undosplitButton.setEnabled(False)
+                else:
+                    self.undosplitButton.setEnabled(True)
 
                 QtGui.QApplication.processEvents()
 
@@ -804,21 +733,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def guiChangesOnStart(self):
         self.startautosplitterButton.setText('Running..')
         self.browseButton.setEnabled(False)
+        self.startautosplitterButton.setEnabled(False)
+        self.resetButton.setEnabled(True)
+        self.undosplitButton.setEnabled(True)
+        self.skipsplitButton.setEnabled(True)
+        self.setsplithotkeyButton.setEnabled(False)
+        self.setresethotkeyButton.setEnabled(False)
+        self.setskipsplithotkeyButton.setEnabled(False)
+        self.setundosplithotkeyButton.setEnabled(False)
+        self.setpausehotkeyButton.setEnabled(False)
         self.custompausetimesCheckBox.setEnabled(False)
         self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
-
-        if self.is_auto_controlled == False:
-            self.startautosplitterButton.setEnabled(False)
-            self.resetButton.setEnabled(True)
-            self.undosplitButton.setEnabled(True)
-            self.skipsplitButton.setEnabled(True)
-            self.setsplithotkeyButton.setEnabled(False)
-            self.setresethotkeyButton.setEnabled(False)
-            self.setskipsplithotkeyButton.setEnabled(False)
-            self.setundosplithotkeyButton.setEnabled(False)
-            self.setpausehotkeyButton.setEnabled(False)
-
         QtGui.QApplication.processEvents()
 
     def guiChangesOnReset(self):
@@ -829,21 +755,18 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.livesimilarityLabel.setText(' ')
         self.highestsimilarityLabel.setText(' ')
         self.browseButton.setEnabled(True)
+        self.startautosplitterButton.setEnabled(True)
+        self.resetButton.setEnabled(False)
+        self.undosplitButton.setEnabled(False)
+        self.skipsplitButton.setEnabled(False)
+        self.setsplithotkeyButton.setEnabled(True)
+        self.setresethotkeyButton.setEnabled(True)
+        self.setskipsplithotkeyButton.setEnabled(True)
+        self.setundosplithotkeyButton.setEnabled(True)
+        self.setpausehotkeyButton.setEnabled(True)
         self.custompausetimesCheckBox.setEnabled(True)
         self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
-
-        if self.is_auto_controlled == False:
-            self.startautosplitterButton.setEnabled(True)
-            self.resetButton.setEnabled(False)
-            self.undosplitButton.setEnabled(False)
-            self.skipsplitButton.setEnabled(False)
-            self.setsplithotkeyButton.setEnabled(True)
-            self.setresethotkeyButton.setEnabled(True)
-            self.setskipsplithotkeyButton.setEnabled(True)
-            self.setundosplithotkeyButton.setEnabled(True)
-            self.setpausehotkeyButton.setEnabled(True)
-
         QtGui.QApplication.processEvents()
 
     def compareImage(self, image, mask, capture):
@@ -997,43 +920,41 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.001
 
     # exit safely when closing the window
-    def closeEvent(self, event=None):
-        def exit():
-            if event is not None:
-                event.accept()
-            if self.is_auto_controlled:
-                self.update_auto_control.terminate()
-                # stop main thread (which is probably blocked reading input) via an interrupt signal
-                # only available for windows in version 3.2 or higher
-                os.kill(os.getpid(), signal.SIGINT)
+    def closeEvent(self, event):
+        if self.haveSettingsChanged():
+            #give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
+            if self.last_successfully_loaded_settings_file_path == None:
+                msgBox = QtGui.QMessageBox
+                warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
+                if warning == msgBox.Yes:
+                    self.saveSettingsAs()
+                    sys.exit()
+                    event.accept()
+                if warning == msgBox.No:
+                    event.accept()
+                    sys.exit()
+                    pass
+                if warning == msgBox.Cancel:
+                    event.ignore()
+                    return
+            else:
+                msgBox = QtGui.QMessageBox
+                warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
+                if warning == msgBox.Yes:
+                    self.saveSettings()
+                    sys.exit()
+                    event.accept()
+                if warning == msgBox.No:
+                    event.accept()
+                    sys.exit()
+                    pass
+                if warning == msgBox.Cancel:
+                    event.ignore()
+                    return
+        else:
+            event.accept()
             sys.exit()
 
-        # Simulates LiveSplit quitting without asking. See "TODO" at update_auto_control Worker
-        # This also more gracefully exits LiveSplit
-        # Users can still manually save their settings
-        if event is None:
-            exit()
-
-        if self.haveSettingsChanged():
-            # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
-            msgBox = QtGui.QMessageBox
-            settings_file_name = "Untitled" \
-                if self.last_successfully_loaded_settings_file_path is None \
-                else os.path.basename(self.last_successfully_loaded_settings_file_path)
-            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
-
-            warning = msgBox.warning(self, "AutoSplit", warning_message, msgBox.Yes | msgBox.No | msgBox.Cancel)
-
-            if warning == msgBox.Yes:
-                # TODO: Don't close if user cancelled the save
-                self.saveSettingsAs()
-                exit()
-            if warning == msgBox.No:
-                exit()
-            if warning == msgBox.Cancel:
-                event.ignore()
-        else:
-            exit()
 
 
 def main():
