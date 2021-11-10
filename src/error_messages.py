@@ -1,6 +1,7 @@
 # Error messages
 from PyQt4 import QtGui
 
+
 def splitImageDirectoryError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
@@ -48,27 +49,6 @@ def pauseHotkeyError(self):
     msgBox.setText("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
     msgBox.exec_()
 
-def customThresholdError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" doesn't have a valid custom threshold.")
-    msgBox.exec_()
-
-
-def customPauseError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" doesn't have a valid custom pause time.")
-    msgBox.exec_()
-
-
-def alphaChannelError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
-    msgBox.exec_()
-
-
 def alignRegionImageTypeError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
@@ -90,13 +70,6 @@ def multipleResetImagesError(self):
     msgBox.exec_()
 
 
-def noResetImageThresholdError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Reset Image must have a custom threshold. Please set one and check that it is valid")
-    msgBox.exec_()
-
-
 def resetHotkeyError(self):
     msgBox = QtGui.QMessageBox()
     msgBox.setWindowTitle('Error')
@@ -109,12 +82,6 @@ def dummySplitsError(self):
     msgBox.setWindowTitle('Error')
     msgBox.setText(
         "Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
-    msgBox.exec_()
-
-def settingsNotFoundError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No settings file found. The settings file is saved when the program is closed.")
     msgBox.exec_()
 
 def oldVersionSettingsFileError(self):

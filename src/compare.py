@@ -1,7 +1,6 @@
 from PIL import Image
 import imagehash
-
-import numpy
+import numpy as np
 import cv2
 
 def compare_histograms(source, capture):
@@ -16,10 +15,10 @@ def compare_histograms(source, capture):
 
     source_hist = cv2.calcHist([source], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
     capture_hist = cv2.calcHist([capture], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
-    
+
     cv2.normalize(source_hist, source_hist)
     cv2.normalize(capture_hist, capture_hist)
-    
+
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
 def compare_histograms_masked(source, capture, mask):
@@ -34,10 +33,10 @@ def compare_histograms_masked(source, capture, mask):
     """
     source_hist = cv2.calcHist([source], [0, 1, 2], mask, [8, 8, 8], [0, 256, 0, 256, 0, 256])
     capture_hist = cv2.calcHist([capture], [0, 1, 2], mask, [8, 8, 8], [0, 256, 0, 256, 0, 256])
-    
+
     cv2.normalize(source_hist, source_hist)
     cv2.normalize(capture_hist, capture_hist)
-    
+
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
 def compare_l2_norm(source, capture):
@@ -51,10 +50,10 @@ def compare_l2_norm(source, capture):
     """
 
     error = cv2.norm(source, capture, cv2.NORM_L2)
-    
+
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * 255
-    
+
     return 1 - (error/max_error)
 
 def compare_l2_norm_masked(source, capture, mask):
@@ -71,7 +70,7 @@ def compare_l2_norm_masked(source, capture, mask):
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = (3 * numpy.count_nonzero(mask) * 255 * 255) ** 0.5
+    max_error = (3 * np.count_nonzero(mask) * 255 * 255) ** 0.5
 
     return 1 - (error / max_error)
 
@@ -111,13 +110,13 @@ def compare_template_masked(source, capture, mask):
     result = cv2.matchTemplate(capture, source, cv2.TM_SQDIFF, None, mask)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-    return 1 - (min_val/numpy.count_nonzero(mask))
+    return 1 - (min_val/np.count_nonzero(mask))
 
 def compare_phash(source, capture):
     """
     Compares the pHash of the two given images and returns the similarity between
     the two.
-    
+
     @param source: Image of any given shape as a numpy array
     @param capture: Image of any given shape as a numpy array
     @return: The similarity between the hashes of the image as a number 0 to 1.
@@ -135,7 +134,7 @@ def compare_phash_masked(source, capture, mask):
     """
     Compares the pHash of the two given images and returns the similarity between
     the two.
-    
+
     @param source: Image of any given shape as a numpy array
     @param capture: Image of any given shape as a numpy array
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
@@ -149,7 +148,7 @@ def compare_phash_masked(source, capture, mask):
     # the same
     source = cv2.bitwise_and(source, source, mask=mask)
     capture = cv2.bitwise_and(capture, capture, mask=mask)
-    
+
     source = Image.fromarray(source)
     capture = Image.fromarray(capture)
 
@@ -157,3 +156,9 @@ def compare_phash_masked(source, capture, mask):
     capture_hash = imagehash.phash(capture)
 
     return 1 - ((source_hash - capture_hash)/64.0)
+
+
+def checkIfImageHasTransparency(self):
+    source = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
+    # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
+    return source.shape[2] == 4 and np.mean(source[:, :, 3]) != 255
