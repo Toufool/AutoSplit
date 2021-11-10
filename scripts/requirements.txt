@@ -1,22 +1,26 @@
 # Requirements file for AutoSplit
 #
-# Python: CPython 3.7+
+# Python: CPython 3.9+
 #
-# Usage: pip3.7 install -r requirements.txt
+# Usage: .scripts/install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip3.7 uninstall -r requirements.txt
+# pip3 uninstall -r requirements.txt
 #
-# Creating AutoSplit.exe with PyInstaller: pyinstaller -w -F --hidden-import sip --icon=src\icon.ico src\AutoSplit.py
+# Creating AutoSplit.exe with PyInstaller: .scripts/build.bat
 #
 # Comment this out if you don't want to create AutoSplit.exe:
 PyInstaller
 #
+# Comment this out if you don't want to install the PyQt designer
+PyQt6-tools
+#
 # Other dependencies:
-PyQT5==5.9
+PyQt6
 opencv-python
 Pillow
 ImageHash
-pywin32==226
+pywin32
 keyboard
 pyautogui
+PySide6

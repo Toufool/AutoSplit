@@ -45,8 +45,8 @@ def alignmentNotMatchedError():
     setTextMessage("No area in capture region matched reference image. Alignment failed.")
 
 
-def multipleResetImagesError():
-    setTextMessage("Only one image with the keyword \"reset\" is allowed.")
+def multipleKeywordImagesError(keyword):
+    setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
 
 
 def resetHotkeyError():

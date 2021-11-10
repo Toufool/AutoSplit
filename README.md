@@ -12,10 +12,6 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 - Windows 7, 10, and 11.
 
-### Building
-
-- Read [requirements.txt](/scripts/requirements.txt) for information on how to install, run and build the python code.
-
 ### Opening the program
 
 - Download the [latest version](/Toufool/Auto-Split/releases)
@@ -30,7 +26,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
 - Images are matched in alphanumerical order.
-- Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`... 
+- Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`...
 - Custom split image settings are handled in the filename. See how [here](https://github.com/Toufool/Auto-Split#custom-split-image-settings).
 - Images can be created using Print Screen, [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot), or AutoSplit's Take Screenshot button.
 
@@ -47,7 +43,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ## Max FPS
 
-  - Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+- Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
 ## OPTIONS
 
@@ -82,9 +78,9 @@ This program compares split images to a capture region of any window (OBS, xspli
 ### Custom Split Image Settings
 
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
-- These settings are handled in the image's filename. 
+- These settings are handled in the image's filename.
 - Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
-- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked. 
+- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
@@ -93,7 +89,7 @@ This program compares split images to a capture region of any window (OBS, xspli
   - {m} masked split image. This allows you to customize what you want compared in your split image by using transparency. Transparent pixels in the split image are ignored when comparing. This is useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). These images MUST be .png and contain transparency. For more on this, see [How to Create a Masked Image](https://github.com/Toufool/Auto-Split/blob/master/README.md#how-to-create-a-masked-image). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate
   - {p} pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
   - A pause flag and a dummy flag `{pd}` cannot be used together
-- Filename examples: 
+- Filename examples:
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
   - `003_SplitName_(0.85)_[20]_#3500#_{m}.png` is the third split image with a threshold of 0.85, pause time of 20, delay split time of 3.5 seconds and it is a masked image.
@@ -120,7 +116,7 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 
 If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through ths splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
 
-If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it in sync with LiveSplit/wsplit. 
+If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it in sync with LiveSplit/wsplit.
 
 Examples:
 Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.

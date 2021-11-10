@@ -113,7 +113,7 @@ def __is_key_already_set(self, key_name):
 # TODO: Refactor to de-duplicate all this code, including settings_file.py
 # Going to comment on one func, and others will be similar.
 def setSplitHotkey(self):
-    self.setsplithotkeyButton.setText('Press a key..')
+    self.setsplithotkeyButton.setText('Press a key...')
 
     # disable some buttons
     self.beforeSettingHotkey()
@@ -171,7 +171,7 @@ def setSplitHotkey(self):
 
 
 def setResetHotkey(self):
-    self.setresethotkeyButton.setText('Press a key..')
+    self.setresethotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback(hotkey):
@@ -200,7 +200,7 @@ def setResetHotkey(self):
 
 
 def setSkipSplitHotkey(self):
-    self.setskipsplithotkeyButton.setText('Press a key..')
+    self.setskipsplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback(hotkey):
@@ -229,7 +229,7 @@ def setSkipSplitHotkey(self):
 
 
 def setUndoSplitHotkey(self):
-    self.setundosplithotkeyButton.setText('Press a key..')
+    self.setundosplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback(hotkey):
@@ -258,7 +258,7 @@ def setUndoSplitHotkey(self):
 
 
 def setPauseHotkey(self):
-    self.setpausehotkeyButton.setText('Press a key..')
+    self.setpausehotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
     def callback(hotkey):
