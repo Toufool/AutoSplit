@@ -6,15 +6,14 @@ import cv2
 import time
 import ctypes.wintypes
 import ctypes
-import keyboard
-import glob
 import numpy as np
 
+from hotkeys import send_hotkey
 import design
-import about
 import compare
 import capture_windows
 import split_parser
+
 
 class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
@@ -530,7 +529,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
-                        keyboard.send(str(self.resetLineEdit.text()))
+                        send_hotkey(self.resetLineEdit.text())
                         self.reset()
 
                 # loop goes into here if start auto splitter text is "Start Auto Splitter"
@@ -637,7 +636,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                             reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                             if reset_similarity >= self.reset_image_threshold:
-                                keyboard.send(str(self.resetLineEdit.text()))
+                                send_hotkey(self.resetLineEdit.text())
                                 self.reset()
                                 continue
 
@@ -647,9 +646,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # if {p} flag hit pause key, otherwise hit split hotkey
                 if (self.flags & 0x08 == 0x08):
-                    keyboard.send(str(self.pausehotkeyLineEdit.text()))
+                    send_hotkey(self.pausehotkeyLineEdit.text())
                 else:
-                    keyboard.send(str(self.splitLineEdit.text()))
+                    send_hotkey(self.splitLineEdit.text())
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
@@ -721,7 +720,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                         reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                         if reset_similarity >= self.reset_image_threshold:
-                            keyboard.send(str(self.resetLineEdit.text()))
+                            send_hotkey(self.resetLineEdit.text())
                             self.reset()
                             continue
 

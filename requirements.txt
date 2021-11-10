@@ -20,3 +20,4 @@ Pillow
 ImageHash
 pywin32
 keyboard
+pyautogui
