@@ -243,11 +243,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 or not os.path.exists(self.split_image_directory):
             # Only show error messages if the user clicked the button
             if started_by_button:
-                self.splitImageDirectoryError()
+                error_messages.splitImageDirectoryError()
             return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             if started_by_button:
-                self.regionError()
+                error_messages.regionError()
             return
 
         self.start_image_name = None
@@ -262,17 +262,17 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         if self.start_image_name is None:
             if started_by_button:
-                self.noKeywordImageError('start_auto_splitter')
+                error_messages.noKeywordImageError('start_auto_splitter')
             return
 
         self.split_image_filenames = os.listdir(self.split_image_directory)
         self.split_image_number = 0
         self.loop_number = 1
         self.start_image_mask = None
-        flags = split_parser.flags_from_filename(self.start_image_name)
         path = self.split_image_directory + self.start_image_name
-        # if theres a mask flag, create a mask
-        if (flags & 0x02 == 0x02):
+
+        # if image has transparency, create a mask
+        if compare.checkIfImageHasTransparency(path):
             # create mask based on resized, nearest neighbor interpolated split image
             self.start_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
             self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
@@ -284,7 +284,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.start_image = cv2.cvtColor(self.start_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             self.start_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
@@ -983,8 +983,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file) \
             or self.similaritythresholdDoubleSpinBox.value()
 
-        # if theres a mask flag, create a mask
-        if self.imageHasTransparency:
+        # if image has transparency, create a mask
+        if compare.checkIfImageHasTransparency(path):
             # create mask based on resized, nearest neighbor interpolated split image
             self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
             self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
@@ -996,7 +996,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.reset_image = cv2.cvtColor(self.reset_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
@@ -1030,9 +1030,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
-        # if theres a mask flag, create a mask
+        # if image has transparency, create a mask
         if (self.imageHasTransparency):
-
             # create mask based on resized, nearest neighbor interpolated split image
             self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
             self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
@@ -1044,7 +1043,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.split_image = cv2.cvtColor(self.split_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))

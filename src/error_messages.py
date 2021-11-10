@@ -45,6 +45,10 @@ def alignmentNotMatchedError():
     setTextMessage("No area in capture region matched reference image. Alignment failed.")
 
 
+def noKeywordImageError(self, keyword):
+    setTextMessage(f"Your split image folder does not contain an image with the keyword \"{keyword}\".")
+
+
 def multipleKeywordImagesError(keyword):
     setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
 
