@@ -22,3 +22,4 @@ Pillow
 ImageHash
 pywin32==226
 keyboard
+pyautogui
