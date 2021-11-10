@@ -13,7 +13,6 @@ import numpy as np
 import threading
 import time
 
-from hotkeys import send_hotkey
 from menu_bar import about, VERSION, viewHelp
 import error_messages
 import compare
@@ -23,6 +22,7 @@ import split_parser
 
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
+    from hotkeys import send_command
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
     from hotkeys import afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
@@ -341,7 +341,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 or (start_image_similarity >= start_image_threshold and start_image_flags & 0x04 == 0):
             def split():
                 self.hasSentStart = False
-                send_hotkey(self.splitLineEdit.text())
+                self.send_command("start")
                 time.sleep(1 / self.fpslimitSpinBox.value())
                 self.startAutoSplitter()
 
@@ -470,7 +470,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     # undo split button and hotkey connect to here
     def undoSplit(self):
-        if self.undosplitButton.isEnabled() == False and self.is_auto_controlled == False:
+        if self.undosplitButton.isEnabled() == False and not self.is_auto_controlled:
             return
 
         if self.loop_number != 1 and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -493,7 +493,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     # skip split button and hotkey connect to here
     def skipSplit(self):
 
-        if self.skipsplitButton.isEnabled() == False and self.is_auto_controlled == False:
+        if self.skipsplitButton.isEnabled() == False and not self.is_auto_controlled:
             return
 
         if self.loop_number < self.split_image_loop_amount[self.split_image_number] and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -577,26 +577,24 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # according to all of the settings selected by the user.
         for image in self.split_image_filenames:
             # Test for image without transparency
-            if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                # Test for image with transparency
-                if cv2.imread(self.split_image_directory + image, cv2.IMREAD_UNCHANGED) is None:
-                    # Opencv couldn't open this file as an image, this isn't a correct
-                    # file format that is supported
-                    self.guiChangesOnReset()
-                    error_messages.imageTypeError(image)
-                    return
-                else:
-                    # TODO: Now that we know the image has transparency, error out if it is completely transparent
-                    # Will fix https://github.com/Toufool/Auto-Split/issues/52
-                    pass
+            if (cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None
+                    # Test for image with transparency
+                    and cv2.imread(self.split_image_directory + image, cv2.IMREAD_UNCHANGED) is None):
+                # Opencv couldn't open this file as an image, this isn't a correct
+                # file format that is supported
+                self.guiChangesOnReset()
+                error_messages.imageTypeError(image)
+                return
 
-            #error out if there is a {p} flag but no pause hotkey set.
-            if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08 and self.is_auto_controlled == False:
+            # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+            if (self.pausehotkeyLineEdit.text() == ''
+                    and split_parser.flags_from_filename(image) & 0x08 == 0x08
+                    and not self.is_auto_controlled):
                 self.guiChangesOnReset()
                 error_messages.pauseHotkeyError()
                 return
 
-        if self.splitLineEdit.text() == '' and self.is_auto_controlled == False:
+        if self.splitLineEdit.text() == '' and not self.is_auto_controlled:
             self.guiChangesOnReset()
             error_messages.splitHotkeyError()
             return
@@ -612,8 +610,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 error_messages.multipleKeywordImagesError('reset')
                 return
 
-        # If there is no reset hotkey set but a reset image is present, throw an error.
-        if self.resetLineEdit.text() == '' and self.reset_image is not None and self.is_auto_controlled == False:
+        # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
+        if self.resetLineEdit.text() == '' and self.reset_image is not None and not self.is_auto_controlled:
             self.guiChangesOnReset()
             error_messages.resetHotkeyError()
             return
@@ -689,11 +687,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 if self.shouldCheckResetImage():
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
-                        if self.is_auto_controlled:
-                            print("reset", flush = True)
-                        else:
-                            send_hotkey(self.resetLineEdit.text())
-                        self.reset()
+                        self.send_command("reset")
 
                 if self.checkForReset():
                     return
@@ -722,7 +716,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.highestsimilarityLabel.setText(' ')
 
-                if self.is_auto_controlled == False:
+                if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
                     if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
                         self.skipsplitButton.setEnabled(False)
@@ -787,10 +781,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                             reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                             if reset_similarity >= self.reset_image_threshold:
-                                if self.is_auto_controlled:
-                                    print("reset", flush = True)
-                                else:
-                                    send_hotkey(self.resetLineEdit.text())
+                                self.send_command("reset")
                                 self.reset()
                                 continue
 
@@ -800,15 +791,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                 # if {p} flag hit pause key, otherwise hit split hotkey
                 if (self.flags & 0x08 == 0x08):
-                    if self.is_auto_controlled:
-                        print("pause", flush = True)
-                    else:
-                        send_hotkey(self.pausehotkeyLineEdit.text())
+                    self.send_command("pause")
                 else:
-                    if self.is_auto_controlled:
-                        print("split", flush = True)
-                    else:
-                        send_hotkey(self.splitLineEdit.text())
+                    self.send_command("split")
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
@@ -837,7 +822,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
 
-                if self.is_auto_controlled == False:
+                if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
                     if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
                         self.skipsplitButton.setEnabled(False)
@@ -875,7 +860,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                         reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                         if reset_similarity >= self.reset_image_threshold:
-                            send_hotkey(self.resetLineEdit.text())
+                            self.send_command("reset")
                             self.reset()
                             continue
 
@@ -892,7 +877,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.groupDummySplitsCheckBox.setEnabled(False)
         self.startImageReloadButton.setEnabled(False)
 
-        if self.is_auto_controlled == False:
+        if not self.is_auto_controlled:
             self.startautosplitterButton.setEnabled(False)
             self.resetButton.setEnabled(True)
             self.undosplitButton.setEnabled(True)
@@ -917,7 +902,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.groupDummySplitsCheckBox.setEnabled(True)
         self.startImageReloadButton.setEnabled(True)
 
-        if self.is_auto_controlled == False:
+        if not self.is_auto_controlled:
             self.startautosplitterButton.setEnabled(True)
             self.resetButton.setEnabled(False)
             self.undosplitButton.setEnabled(False)

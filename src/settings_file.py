@@ -26,9 +26,6 @@ def getSaveSettingsValues(self):
     self.undo_split_key = str(self.undosplitLineEdit.text())
     self.pause_key = str(self.pausehotkeyLineEdit.text())
 
-    self.custom_pause_times_setting = 0
-    self.custom_thresholds_setting = 1
-
     if self.groupDummySplitsCheckBox.isChecked():
         self.group_dummy_splits_undo_skip_setting = 1
     else:
@@ -62,8 +59,8 @@ def haveSettingsChanged(self):
         self.width,
         self.height,
         self.hwnd_title,
-        self.custom_pause_times_setting,
-        self.custom_thresholds_setting,
+        0,
+        0,
         self.group_dummy_splits_undo_skip_setting,
         self.loop_setting,
         self.auto_start_on_reset_setting]
@@ -97,8 +94,8 @@ def saveSettings(self):
             self.width,
             self.height,
             self.hwnd_title,
-            self.custom_pause_times_setting,
-            self.custom_thresholds_setting,
+            0,
+            0,
             self.group_dummy_splits_undo_skip_setting,
             self.loop_setting,
             self.auto_start_on_reset_setting]
@@ -132,8 +129,8 @@ def saveSettingsAs(self):
         self.width,
         self.height,
         self.hwnd_title,
-        self.custom_pause_times_setting,
-        self.custom_thresholds_setting,
+        0,
+        0,
         self.group_dummy_splits_undo_skip_setting,
         self.loop_setting,
         self.auto_start_on_reset_setting]
@@ -197,8 +194,8 @@ def loadSettings(self):
                         self.width,
                         self.height,
                         self.hwnd_title,
-                        self.custom_pause_times_setting,
-                        self.custom_thresholds_setting,
+                        0,
+                        0,
                         self.group_dummy_splits_undo_skip_setting,
                         self.loop_setting,
                         self.auto_start_on_reset_setting] = pickle.load(f)
@@ -220,8 +217,8 @@ def loadSettings(self):
                         self.width,
                         self.height,
                         self.hwnd_title,
-                        self.custom_pause_times_setting,
-                        self.custom_thresholds_setting,
+                        0,
+                        0,
                         self.group_dummy_splits_undo_skip_setting,
                         self.loop_setting] = pickle.load(f)
                 self.pause_key = ''
@@ -256,7 +253,7 @@ def loadSettings(self):
         except (AttributeError, KeyError):
             pass
         try:
-          if self.is_auto_controlled == False:
+          if not self.is_auto_controlled:
             self.splitLineEdit.setText(self.split_key)
             self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
         except (ValueError, KeyError):

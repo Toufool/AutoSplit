@@ -2,7 +2,7 @@
 #
 # Python: CPython 3.9+
 #
-# Usage: .scripts/install.bat
+# Usage: ./scripts/install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
 # pip3.9 uninstall -r requirements.txt

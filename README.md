@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/Avasam/Auto-Split/main/res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
+# <img src="https://raw.githubusercontent.com/TouFool/Auto-Split/master/res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
 
 This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
 
@@ -14,14 +14,14 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 ### Opening the program
 
-- Download the [latest version](/Toufool/Auto-Split/releases)
+- Download the [latest version](/../../releases)
 - Extract the file and open AutoSplit.exe.
 
 ### Building
 
 (This is not required for normal use)
 
-- Microsoft Visual C++ 14.0 or greater may be required. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) 
+- Microsoft Visual C++ 14.0 or greater may be required. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 - Read [requirements.txt](/scripts/requirements.txt) for information on how to run/build the python code
   - Run `.\scripts\install.bat` to install all dependencies
   - Run the app directly with `py .\src\AutoSplit.py`
@@ -34,7 +34,7 @@ This program compares split images to a capture region of any window (OBS, xspli
 - Images can be any size.
 - Images are matched in alphanumerical order.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`...
-- Custom split image settings are handled in the filename. See how [here](https://github.com/Toufool/Auto-Split#custom-split-image-settings).
+- Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
 - Images can be created using Print Screen, [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot), or AutoSplit's Take Screenshot button.
 
 ## Capture Region
@@ -86,8 +86,8 @@ This program compares split images to a capture region of any window (OBS, xspli
 
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
 - These settings are handled in the image's filename.
-- Custom thresholds are place between parenthesis `()` in the filename and the custom thresholds checkbox must be checked. All images must have a custom threshold if the box is checked.
-- Custom pause times are placed between square brackets `[]` in the filename and the custom pause times checkbox must be checked. All images must have a custom threshold if the box is checked.
+- Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
+- Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
@@ -103,13 +103,19 @@ This program compares split images to a capture region of any window (OBS, xspli
   
 ### How to Create a Masked Image
 
+Masked images are very useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate.
+
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
 ![Mask Example](res/mask_example_image.PNG)
 
 ### Reset image
 
-You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. A custom threshold MUST be applied to this image. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. Also the image can be masked, for example: `Reset_(0.95)_[10].png`.
+You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a probability and pause time for it. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. For example: `Reset_(0.95)_[10].png`.
+
+### Start image
+
+The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset.
 
 ### Timer Global Hotkeys
 
@@ -154,6 +160,10 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
 - If you are upgrading to Windows 11, it's possible that save files may not transfer perfectly. You may need to readjust or reselect your Capture Region, for example.
 
+## LiveSplit integration
+
+There is a LiveSplit Component available that will directly connect AutoSplit with LiveSplit. You can get it [here](/KaDiWa4/LiveSplit.AutoSplitIntegration).
+
 ## Known Limitations
 
 - For many games, it will be difficult to find a split image for the last split of the run.
@@ -161,15 +171,16 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 ## Resources
 
-- Still need help? [Open an issue](https://github.com/Toufool/Auto-Split/issues)
+- Still need help? [Open an issue](../../issues)
 - Join the [AutoSplit Discord](https://discord.gg/Qcbxv9y)
 
 ## Credits
 
-- <https://github.com/harupy/> for the snipping tool code that I used to integrate into the autosplitter.
+- [Harutaka Kawamura](https://github.com/harupy/) for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
+- [KaDiWa](https://github.com/KaDiWa4) for the LiveSplit integration.
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 
 ## Donate

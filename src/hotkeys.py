@@ -39,8 +39,22 @@ def is_digit(key):
         return False
 
 
+def send_command(self, command):
+    if self.is_auto_controlled:
+        print(command, flush=True)
+    else:
+        if command == "split" or command == "start":
+            _send_hotkey(self.splitLineEdit.text())
+        elif command == "pause":
+            _send_hotkey(self.pausehotkeyLineEdit.text())
+        elif command == "reset":
+            _send_hotkey(self.resetLineEdit.text())
+        else:
+            raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
+
+
 # Supports sending the appropriate scan code for all the special cases
-def send_hotkey(key_or_scan_code):
+def _send_hotkey(key_or_scan_code):
     hotkey_type = type(key_or_scan_code)
 
     # Deal with regular inputs
