@@ -2,6 +2,7 @@ from ctypes import windll
 from ctypes.wintypes import LONG, RECT, HBITMAP
 from typing import Dict
 from win32 import win32gui
+import sys
 import numpy as np
 import win32ui
 import win32con
@@ -9,6 +10,7 @@ import win32con
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
 accelerated_windows: Dict[int, bool] = {}
+is_windows_11 = sys.getwindowsversion().build >= 22000
 
 
 def capture_region(hwnd: int, rect: RECT):
@@ -21,7 +23,9 @@ def capture_region(hwnd: int, rect: RECT):
     @return: The image of the region in the window in BGRA format
     """
 
-    is_accelerated_window = accelerated_windows.get(hwnd)
+    # Windows 11 has some jank, and we're not ready to fully investigate it
+    # for now let's ensure it works at the cost of performance
+    is_accelerated_window = is_windows_11 or accelerated_windows.get(hwnd)
 
     # The window type is not yet known, let's find out!
     if is_accelerated_window is None:
@@ -35,14 +39,14 @@ def capture_region(hwnd: int, rect: RECT):
     return __get_image(hwnd, rect, is_accelerated_window)
 
 
-def __get_image(hwnd: int, rect: RECT, printWindow=False):
+def __get_image(hwnd: int, rect: RECT, print_window=False):
     width: LONG = rect.right - rect.left
     height: LONG = rect.bottom - rect.top
     windowDC: int = win32gui.GetWindowDC(hwnd)
     dcObject = win32ui.CreateDCFromHandle(windowDC)
 
     # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
-    if (printWindow):
+    if (print_window):
         windll.user32.PrintWindow(hwnd, dcObject.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
     compatibleDC = dcObject.CreateCompatibleDC()
