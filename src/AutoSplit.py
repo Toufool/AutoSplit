@@ -1,32 +1,33 @@
-from PyQt4 import QtGui, QtCore, QtTest
+#!/usr/bin/python3.9
+# -*- coding: utf-8 -*-
+
+from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
+from win32 import win32gui
 import sys
+import signal
 import os
-import win32gui
 import cv2
-import time
 import ctypes.wintypes
 import ctypes
-import keyboard
-import glob
 import numpy as np
+import threading
+import time
 
-import design
-import about
+from menu_bar import about, VERSION, viewHelp
+import error_messages
 import compare
+import design
 import capture_windows
 import split_parser
 
-class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
-    from hotkeys import beforeSettingHotkey, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
-    from error_messages import (splitImageDirectoryError, splitImageDirectoryNotFoundError, imageTypeError, regionError, regionSizeError,
-    splitHotkeyError, customThresholdError, customPauseError, alphaChannelError, alignRegionImageTypeError, alignmentNotMatchedError,
-    multipleResetImagesError, noResetImageThresholdError, resetHotkeyError, pauseHotkeyError, dummySplitsError, settingsNotFoundError,
-    invalidSettingsError, oldVersionSettingsFileError, noSettingsFileOnOpenError, tooManySettingsFilesOnOpenError)
+
+class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
+    from hotkeys import send_command
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
-    from menu_bar import about, viewHelp
+    from hotkeys import afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
 
-    myappid = u'mycompany.myproduct.subproduct.version'
+    myappid = f'Toufool.AutoSplit.v{VERSION}'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     # signals
@@ -42,9 +43,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
 
+        # Parse command line args
+        self.is_auto_controlled = ('--auto-controlled' in sys.argv)
+
         # close all processes when closing window
-        self.actionView_Help.triggered.connect(self.viewHelp)
-        self.actionAbout.triggered.connect(self.about)
+        self.actionView_Help.triggered.connect(viewHelp)
+        self.actionAbout.triggered.connect(lambda: about(self))
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
@@ -53,6 +57,57 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.undosplitButton.setEnabled(False)
         self.skipsplitButton.setEnabled(False)
         self.resetButton.setEnabled(False)
+
+        if self.is_auto_controlled:
+            self.setsplithotkeyButton.setEnabled(False)
+            self.setresethotkeyButton.setEnabled(False)
+            self.setskipsplithotkeyButton.setEnabled(False)
+            self.setundosplithotkeyButton.setEnabled(False)
+            self.setpausehotkeyButton.setEnabled(False)
+            self.startautosplitterButton.setEnabled(False)
+            self.splitLineEdit.setEnabled(False)
+            self.resetLineEdit.setEnabled(False)
+            self.skipsplitLineEdit.setEnabled(False)
+            self.undosplitLineEdit.setEnabled(False)
+            self.pausehotkeyLineEdit.setEnabled(False)
+
+            # Send version and process ID to stdout
+            print(f"{VERSION}\n{os.getpid()}", flush=True)
+
+            class Worker(QtCore.QObject):
+                autosplit = None
+
+                def __init__(self, autosplit):
+                    self.autosplit = autosplit
+                    super().__init__()
+
+                def run(self):
+                    while True:
+                        line = input()
+                        # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
+                        # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
+                        # For now this can only used in a Development environment
+                        if line == 'kill':
+                            self.autosplit.closeEvent()
+                            break
+                        elif line == 'start':
+                            self.autosplit.startAutoSplitter()
+                        elif line == 'split' or line == 'skip':
+                            self.autosplit.startSkipSplit()
+                        elif line == 'undo':
+                            self.autosplit.startUndoSplit()
+                        elif line == 'reset':
+                            self.autosplit.startReset()
+                        # TODO: Not yet implemented in AutoSplit Integration
+                        # elif line == 'pause':
+                        #     self.startPause()
+
+            # Use and Start the thread that checks for updates from LiveSplit
+            self.update_auto_control = QtCore.QThread()
+            worker = Worker(self)
+            worker.moveToThread(self.update_auto_control)
+            self.update_auto_control.started.connect(worker.run)
+            self.update_auto_control.start()
 
         # resize to these width and height so that FPS performance increases
         self.RESIZE_WIDTH = 320
@@ -77,6 +132,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
+        self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, False))
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -91,7 +147,6 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
-        #self.pauseSignal.connect(self.pause)
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
@@ -103,7 +158,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        #last loaded settings and last successful loaded settings file path to None until we try to load them
+        # Last loaded settings and last successful loaded settings file path to None until we try to load them
         self.last_loaded_settings = None
         self.last_successfully_loaded_settings_file_path = None
 
@@ -117,12 +172,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         self.live_image_function_on_open = True
 
+        # Automatic timer start
+        self.timerStartImage = QtCore.QTimer()
+        self.timerStartImage.timeout.connect(self.startImageFunction)
+        self.timerStartImage_is_running = False
+        self.start_image = None
+        self.highest_similarity = 0.0
+        self.check_start_image_timestamp = 0.0
+
+        # Try to load start image
+        self.loadStartImage(wait_for_delay=False)
+
     # FUNCTIONS
-    #TODO add checkbox for going back to image 1 when resetting.
+
+    # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
         # User selects the file with the split images in it.
         self.split_image_directory = str(
-            QtGui.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
+            QtWidgets.QFileDialog.getExistingDirectory(self, "Select Split Image Directory")) + '\\'
 
         # If the user doesn't select a folder, it defaults to \. Set it back to whats in the LineEdit, and return
         if self.split_image_directory == '\\':
@@ -134,7 +201,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
-            self.timerLiveImage.start(1000 / 60)
+            self.timerLiveImage.start(int(1000 / 60))
         else:
             self.timerLiveImage.stop()
             self.liveImageFunction()
@@ -147,7 +214,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 return
 
             elif win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == False:
-                self.regionError()
+                error_messages.regionError()
                 self.timerLiveImage.stop()
                 return
 
@@ -159,12 +226,132 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             # Convert to set it on the label
             qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3,
-                                QtGui.QImage.Format_RGB888)
+                                QtGui.QImage.Format.Format_RGB888)
             pix = QtGui.QPixmap(qImg)
             self.liveImage.setPixmap(pix)
 
         except AttributeError:
             pass
+
+    def loadStartImage(self, started_by_button=False, wait_for_delay=True):
+        self.timerStartImage.stop()
+        self.currentsplitimagefileLabel.setText(' ')
+        self.startImageLabel.setText("Start image: not found")
+        QtWidgets.QApplication.processEvents()
+
+        if self.splitimagefolderLineEdit.text() == 'No Folder Selected' \
+                or not os.path.exists(self.split_image_directory):
+            # Only show error messages if the user clicked the button
+            if started_by_button:
+                error_messages.splitImageDirectoryError()
+            return
+        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+            if started_by_button:
+                error_messages.regionError()
+            return
+
+        self.start_image_name = None
+        for image in os.listdir(self.split_image_directory):
+            if 'start_auto_splitter' in image.lower():
+                if self.start_image_name is None:
+                    self.start_image_name = image
+                else:
+                    if started_by_button:
+                        error_messages.multipleKeywordImagesError('start_auto_splitter')
+                    return
+
+        if self.start_image_name is None:
+            if started_by_button:
+                error_messages.noKeywordImageError('start_auto_splitter')
+            return
+
+        self.split_image_filenames = os.listdir(self.split_image_directory)
+        self.split_image_number = 0
+        self.loop_number = 1
+        self.start_image_mask = None
+        path = self.split_image_directory + self.start_image_name
+
+        # if image has transparency, create a mask
+        if compare.checkIfImageHasTransparency(path):
+            # create mask based on resized, nearest neighbor interpolated split image
+            self.start_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+            self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
+                                          interpolation=cv2.INTER_NEAREST)
+            lower = np.array([0, 0, 0, 1], dtype="uint8")
+            upper = np.array([255, 255, 255, 255], dtype="uint8")
+            self.start_image_mask = cv2.inRange(self.start_image, lower, upper)
+
+            # set split image as BGR
+            self.start_image = cv2.cvtColor(self.start_image, cv2.COLOR_BGRA2BGR)
+
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        else:
+            self.start_image = cv2.imread(path, cv2.IMREAD_COLOR)
+            self.start_image = cv2.resize(self.start_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
+
+        start_image_pause = split_parser.pause_from_filename(self.start_image_name)
+        if wait_for_delay and start_image_pause is not None and start_image_pause > 0:
+            self.check_start_image_timestamp = time.time() + start_image_pause
+            self.startImageLabel.setText("Start image: paused")
+            self.currentSplitImage.setText('none (paused)')
+            self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+            self.highestsimilarityLabel.setText(' ')
+        else:
+            self.check_start_image_timestamp = 0.0
+            self.startImageLabel.setText("Start image: ready")
+            self.updateSplitImage(self.start_image_name)
+
+        self.highest_similarity = 0.0
+
+        self.timerStartImage.start(int(1000 / self.fpslimitSpinBox.value()))
+
+        QtWidgets.QApplication.processEvents()
+
+    def startImageFunction(self):
+        if time.time() < self.check_start_image_timestamp:
+            return
+
+        if self.check_start_image_timestamp > 0:
+            self.check_start_image_timestamp = 0.0
+            self.startImageLabel.setText("Start image: ready")
+            self.updateSplitImage(self.start_image_name)
+
+        start_image_masked = (self.start_image_mask is not None)
+        capture = self.getCaptureForComparison(start_image_masked)
+        start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
+        start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
+            or self.similaritythresholdDoubleSpinBox.value()
+        start_image_split_below_threshold = False
+        start_image_flags = split_parser.flags_from_filename(self.start_image_name)
+        start_image_delay = split_parser.delay_from_filename(self.start_image_name)
+
+        if start_image_similarity > self.highest_similarity:
+            self.highest_similarity = start_image_similarity
+
+        # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
+        # Otherwise just split when similarity goes above threshold
+        if start_image_flags & 0x04 == 0x04 \
+                and not start_image_split_below_threshold \
+                and start_image_similarity >= start_image_threshold:
+            start_image_split_below_threshold = True
+            return
+        if (start_image_flags & 0x04 == 0x04
+            and start_image_split_below_threshold
+            and start_image_similarity < start_image_threshold) \
+                or (start_image_similarity >= start_image_threshold and start_image_flags & 0x04 == 0):
+            def split():
+                self.hasSentStart = False
+                self.send_command("start")
+                time.sleep(1 / self.fpslimitSpinBox.value())
+                self.startAutoSplitter()
+
+            self.timerStartImage.stop()
+            self.startImageLabel.setText("Start image: started")
+
+            if start_image_delay > 0:
+                threading.Timer(start_image_delay / 1000, split).start()
+            else:
+                split()
 
     # update x, y, width, height when spinbox values are changed
     def updateX(self):
@@ -199,13 +386,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def takeScreenshot(self):
         # error checks
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
         if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
-            self.splitImageDirectoryNotFoundError()
+            error_messages.splitImageDirectoryNotFoundError()
             return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.regionError()
+            error_messages.regionError()
             return
         take_screenshot_filename = '001_SplitImage'
 
@@ -231,23 +418,23 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # error checking
         split_image_directory = self.splitimagefolderLineEdit.text()
         if split_image_directory == 'No Folder Selected' or split_image_directory is None:
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
 
         split_image_filenames = os.listdir(split_image_directory)
         for image in split_image_filenames:
             if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                self.imageTypeError(image)
+                error_messages.imageTypeError(image)
                 return
             else:
                 pass
 
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.regionError()
+            error_messages.regionError()
             return
 
         if self.width == 0 or self.height == 0:
-            self.regionSizeError()
+            error_messages.regionSizeError()
             return
 
         # grab first image in the split image folder
@@ -283,7 +470,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
     # undo split button and hotkey connect to here
     def undoSplit(self):
-        if self.undosplitButton.isEnabled() == False:
+        if self.undosplitButton.isEnabled() == False and not self.is_auto_controlled:
             return
 
         if self.loop_number != 1 and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -306,7 +493,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     # skip split button and hotkey connect to here
     def skipSplit(self):
 
-        if self.skipsplitButton.isEnabled() == False:
+        if self.skipsplitButton.isEnabled() == False and not self.is_auto_controlled:
             return
 
         if self.loop_number < self.split_image_loop_amount[self.split_image_number] and self.groupDummySplitsCheckBox.isChecked() == False:
@@ -324,21 +511,28 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         return
 
-    #def pause(self):
-        #TODO add what to do when you hit pause hotkey, if this even needs to be done
+    # def pause(self):
+        # TODO add what to do when you hit pause hotkey, if this even needs to be done
 
     def reset(self):
-        # when the reset button or hotkey is pressed, it will change this text, which will trigger in the autoSplitter function, if running, to abort and change GUI.
+        # When the reset button or hotkey is pressed, it will change this text,
+        # which will trigger in the autoSplitter function, if running, to abort and change GUI.
         self.startautosplitterButton.setText('Start Auto Splitter')
         return
 
-    # functions for the hotkeys to return to the main thread from signals and start their corresponding functions
+    # Functions for the hotkeys to return to the main thread from signals and start their corresponding functions
     def startAutoSplitter(self):
-        # if the auto splitter is already running or the button is disabled, don't emit the signal to start it.
-        if self.startautosplitterButton.text() == 'Running..' or self.startautosplitterButton.isEnabled() == False:
+        self.hasSentStart = True
+
+        # If the auto splitter is already running or the button is disabled, don't emit the signal to start it.
+        if self.startautosplitterButton.text() == 'Running...' or \
+            (not self.startautosplitterButton.isEnabled() and not self.is_auto_controlled):
             return
-        else:
-            self.startAutoSplitterSignal.emit()
+
+        if self.startImageLabel.text() == "Start image: ready" or self.startImageLabel.text() == "Start image: paused":
+            self.startImageLabel.setText("Start image: not ready")
+
+        self.startAutoSplitterSignal.emit()
 
     def startReset(self):
         self.resetSignal.emit()
@@ -352,19 +546,28 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
     def startPause(self):
         self.pauseSignal.emit()
 
+    def checkForReset(self):
+        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+            if self.autostartonresetCheckBox.isChecked():
+                self.startAutoSplitterSignal.emit()
+            else:
+                self.guiChangesOnReset()
+            return True
+        return False
+
     def autoSplitter(self):
         # error checking:
         if str(self.splitimagefolderLineEdit.text()) == 'No Folder Selected':
             self.guiChangesOnReset()
-            self.splitImageDirectoryError()
+            error_messages.splitImageDirectoryError()
             return
         if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
             self.guiChangesOnReset()
-            self.splitImageDirectoryNotFoundError()
+            error_messages.splitImageDirectoryNotFoundError()
             return
-        if self.hwnd ==  0 or win32gui.GetWindowText(self.hwnd) == '':
+        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
             self.guiChangesOnReset()
-            self.regionError()
+            error_messages.regionError()
             return
 
         # get split image filenames
@@ -373,57 +576,27 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # Make sure that each of the images follows the guidelines for correct format
         # according to all of the settings selected by the user.
         for image in self.split_image_filenames:
-
-            # Check to make sure the file is actually an image format that can be opened
-            # according to the mask flag
-            if split_parser.flags_from_filename(image) & 0x02 == 0x02:
-                source = cv2.imread(self.split_image_directory + image, cv2.IMREAD_UNCHANGED)
-
-                if source is None:
-                    # Opencv couldn't open this file as an image, this isn't a correct
-                    # file format that is supported
-                    self.guiChangesOnReset()
-                    self.imageTypeError(image)
-                    return
-
-                if source.shape[2] != 4:
-                    # Error, this file doesn't have an alpha channel even
-                    # though the flag for masking was added
-                    self.guiChangesOnReset()
-                    self.alphaChannelError(image)
-                    return
-
-            else:
-                if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
-                    # Opencv couldn't open this file as an image, this isn't a correct
-                    # file format that is supported
-                    self.guiChangesOnReset()
-                    self.imageTypeError(image)
-                    return
-
-            #error out if there is a {p} flag but no pause hotkey set.
-            if self.pausehotkeyLineEdit.text() == '' and split_parser.flags_from_filename(image) & 0x08 == 0x08:
+            # Test for image without transparency
+            if (cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None
+                    # Test for image with transparency
+                    and cv2.imread(self.split_image_directory + image, cv2.IMREAD_UNCHANGED) is None):
+                # Opencv couldn't open this file as an image, this isn't a correct
+                # file format that is supported
                 self.guiChangesOnReset()
-                self.pauseHotkeyError()
+                error_messages.imageTypeError(image)
                 return
 
-            if self.custompausetimesCheckBox.isChecked() and split_parser.pause_from_filename(image) is None:
-                # Error, this file doesn't have a pause, but the checkbox was
-                # selected for unique pause times
+            # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+            if (self.pausehotkeyLineEdit.text() == ''
+                    and split_parser.flags_from_filename(image) & 0x08 == 0x08
+                    and not self.is_auto_controlled):
                 self.guiChangesOnReset()
-                self.customPauseError(image)
+                error_messages.pauseHotkeyError()
                 return
 
-            if self.customthresholdsCheckBox.isChecked() and split_parser.threshold_from_filename(image) is None:
-                # Error, this file doesn't have a threshold, but the checkbox
-                # was selected for unique thresholds
-                self.guiChangesOnReset()
-                self.customThresholdError(image)
-                return
-
-        if self.splitLineEdit.text() == '':
+        if self.splitLineEdit.text() == '' and not self.is_auto_controlled:
             self.guiChangesOnReset()
-            self.splitHotkeyError()
+            error_messages.splitHotkeyError()
             return
 
         # find reset image then remove it from the list
@@ -434,19 +607,13 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
             if split_parser.is_reset_image(image):
                 self.guiChangesOnReset()
-                self.multipleResetImagesError()
+                error_messages.multipleKeywordImagesError('reset')
                 return
 
-        # if there is no custom threshold for the reset image, throw an error.
-        if self.reset_image is not None and self.reset_image_threshold is None:
+        # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
+        if self.resetLineEdit.text() == '' and self.reset_image is not None and not self.is_auto_controlled:
             self.guiChangesOnReset()
-            self.noResetImageThresholdError()
-            return
-
-        # If there is no reset hotkey set but a reset image is present, throw an error.
-        if self.resetLineEdit.text() == '' and self.reset_image is not None:
-            self.guiChangesOnReset()
-            self.resetHotkeyError()
+            error_messages.resetHotkeyError()
             return
 
         # construct groups of splits if needed
@@ -477,7 +644,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
 
         if any(x > 1 for x in self.split_image_loop_amount) and self.groupDummySplitsCheckBox.isChecked() == True:
-            self.dummySplitsError()
+            error_messages.dummySplitsError()
             return
 
         self.guiChangesOnStart()
@@ -498,7 +665,7 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.waiting_for_split_delay == True:
                 time_millis = int(round(time.time() * 1000))
                 if time_millis < self.split_time:
-                    QtGui.QApplication.processEvents()
+                    QtWidgets.QApplication.processEvents()
                     continue
 
             self.updateSplitImage()
@@ -511,41 +678,24 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 if win32gui.GetWindowText(self.hwnd) == '':
                     self.reset()
 
-                # loop goes into here if start auto splitter text is "Start Auto Splitter"
-                if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                    if self.autostartonresetCheckBox.isChecked():
-                        self.startAutoSplitterSignal.emit()
-                        return
-                    else:
-                        self.guiChangesOnReset()
-                        return
+                if self.checkForReset():
+                    return
 
                 # calculate similarity for reset image
-                reset_masked = None
-                capture = None
+                capture = self.getCaptureForComparison()
 
                 if self.shouldCheckResetImage():
-                    reset_masked = (self.reset_mask is not None)
-                    capture = self.getCaptureForComparison(reset_masked)
-
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
-                        keyboard.send(str(self.resetLineEdit.text()))
-                        self.reset()
+                        self.send_command("reset")
 
-                # loop goes into here if start auto splitter text is "Start Auto Splitter"
-                if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                    if self.autostartonresetCheckBox.isChecked():
-                        self.startAutoSplitterSignal.emit()
-                        return
-                    else:
-                        self.guiChangesOnReset()
-                        return
+                if self.checkForReset():
+                    return
 
-                # get capture again if needed
-                masked = (self.flags & 0x02 == 0x02)
-                if capture is None or masked != reset_masked:
-                    capture = self.getCaptureForComparison(masked)
+                # TODO: Check is this actually still needed?
+                # get capture again if current and reset image have different mask flags
+                if self.imageHasTransparency != (self.reset_mask is not None):
+                    capture = self.getCaptureForComparison()
 
                 # calculate similarity for split image
                 self.similarity = self.compareImage(self.split_image, self.mask, capture)
@@ -566,44 +716,44 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.highestsimilarityLabel.setText(' ')
 
-                # if its the last split image and last loop number, disable the skip split button
-                if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
-                    self.skipsplitButton.setEnabled(False)
-                else:
-                    self.skipsplitButton.setEnabled(True)
+                if not self.is_auto_controlled:
+                    # if its the last split image and last loop number, disable the skip split button
+                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                        self.skipsplitButton.setEnabled(False)
+                    else:
+                        self.skipsplitButton.setEnabled(True)
 
-                # if its the first split image and first loop, disable the undo split button
-                if self.split_image_number == 0 and self.loop_number == 1:
-                    self.undosplitButton.setEnabled(False)
-                else:
-                    self.undosplitButton.setEnabled(True)
+                    # if its the first split image and first loop, disable the undo split button
+                    if self.split_image_number == 0 and self.loop_number == 1:
+                        self.undosplitButton.setEnabled(False)
+                    else:
+                        self.undosplitButton.setEnabled(True)
 
-                # if the b flag is set, let similarity go above threshold first, then split on similarity below threshold.
+                # if the b flag is set, let similarity go above threshold first,
+                # then split on similarity below threshold.
                 # if no b flag, just split when similarity goes above threshold.
-                if self.flags & 0x04 == 0x04 and self.split_below_threshold == False:
-                    if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
-                        self.split_below_threshold = True
-                        continue
-                elif self.flags & 0x04 == 0x04 and self.split_below_threshold == True:
-                    if self.waiting_for_split_delay == False and self.similarity < self.similaritythresholdDoubleSpinBox.value():
-                        self.split_below_threshold = False
-                        break
-                else:
-                    if self.waiting_for_split_delay == False and self.similarity >= self.similaritythresholdDoubleSpinBox.value():
+                if not self.waiting_for_split_delay:
+                    if self.flags & 0x04 == 0x04 and not self.split_below_threshold:
+                        if self.similarity >= self.similarity_threshold:
+                            self.split_below_threshold = True
+                            continue
+                    elif self.flags & 0x04 == 0x04 and self.split_below_threshold:
+                        if self.similarity < self.similarity_threshold:
+                            self.split_below_threshold = False
+                            break
+                    elif self.similarity >= self.similarity_threshold:
                         break
 
                 # limit the number of time the comparison runs to reduce cpu usage
                 fps_limit = self.fpslimitSpinBox.value()
                 time.sleep((1 / fps_limit) - (time.time() - start) % (1 / fps_limit))
-                QtGui.QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
 
             # comes here when threshold gets met
 
             # We need to make sure that this isn't a dummy split before sending
             # the key press.
-            if (self.flags & 0x01 == 0x01):
-                pass
-            else:
+            if not (self.flags & 0x01 == 0x01):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
                 if self.split_delay > 0 and self.waiting_for_split_delay == False:
@@ -612,32 +762,26 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
-                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
                     while time.time() - delay_start_time < (self.split_delay / 1000):
-                        self.delay_time_left = str(round((self.split_delay / 1000) - (time.time() - delay_start_time), 1))
-                        self.currentSplitImage.setText('Delayed Split: ' + self.delay_time_left + ' sec remaining')
+                        delay_time_left = round((self.split_delay / 1000) - (time.time() - delay_start_time), 1)
+                        self.currentSplitImage.setText(f'Delayed Split: {delay_time_left} sec remaining')
                         # check for reset
                         if win32gui.GetWindowText(self.hwnd) == '':
                             self.reset()
-                        if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                            if self.autostartonresetCheckBox.isChecked():
-                                self.startAutoSplitterSignal.emit()
-                                return
-                            else:
-                                self.guiChangesOnReset()
-                                return
+                        if self.checkForReset():
+                            return
 
                         # calculate similarity for reset image
-                        if self.shouldCheckResetImage() == True:
-                            reset_masked = (self.reset_mask is not None)
-                            capture = self.getCaptureForComparison(reset_masked)
+                        if self.shouldCheckResetImage():
+                            capture = self.getCaptureForComparison()
 
                             reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                             if reset_similarity >= self.reset_image_threshold:
-                                keyboard.send(str(self.resetLineEdit.text()))
+                                self.send_command("reset")
                                 self.reset()
                                 continue
 
@@ -647,9 +791,9 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
                 # if {p} flag hit pause key, otherwise hit split hotkey
                 if (self.flags & 0x08 == 0x08):
-                    keyboard.send(str(self.pausehotkeyLineEdit.text()))
+                    self.send_command("pause")
                 else:
-                    keyboard.send(str(self.splitLineEdit.text()))
+                    self.send_command("split")
 
             # increase loop number if needed, set to 1 if it was the last loop.
             if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
@@ -675,53 +819,48 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
+                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #:     -')
 
-                # if its the last split image and last loop number, disable the skip split button
-                if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
-                    self.skipsplitButton.setEnabled(False)
-                else:
-                    self.skipsplitButton.setEnabled(True)
+                if not self.is_auto_controlled:
+                    # if its the last split image and last loop number, disable the skip split button
+                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                        self.skipsplitButton.setEnabled(False)
+                    else:
+                        self.skipsplitButton.setEnabled(True)
 
-                # if its the first split image and first loop, disable the undo split button
-                if self.split_image_number == 0 and self.loop_number == 1:
-                    self.undosplitButton.setEnabled(False)
-                else:
-                    self.undosplitButton.setEnabled(True)
+                    # if its the first split image and first loop, disable the undo split button
+                    if self.split_image_number == 0 and self.loop_number == 1:
+                        self.undosplitButton.setEnabled(False)
+                    else:
+                        self.undosplitButton.setEnabled(True)
 
-                QtGui.QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # Also updates the current split image text, counting down the time until the next split image
                 pause_start_time = time.time()
-                while time.time() - pause_start_time < self.pauseDoubleSpinBox.value():
-                    self.pause_time_left = str(round((self.pauseDoubleSpinBox.value()) - (time.time() - pause_start_time), 1))
-                    self.currentSplitImage.setText('None (Paused). ' + self.pause_time_left + ' sec remaining')
+                while time.time() - pause_start_time < self.pause:
+                    pause_time_left = round(self.pause - (time.time() - pause_start_time), 1)
+                    self.currentSplitImage.setText(f'None (Paused). {pause_time_left} sec remaining')
 
                     # check for reset
                     if win32gui.GetWindowText(self.hwnd) == '':
                         self.reset()
-                    if self.startautosplitterButton.text() == 'Start Auto Splitter':
-                        if self.autostartonresetCheckBox.isChecked():
-                            self.startAutoSplitterSignal.emit()
-                            return
-                        else:
-                            self.guiChangesOnReset()
-                            return
+                    if self.checkForReset():
+                        return
 
                     # check for skip/undo split:
                     if self.split_image_number != pause_split_image_number or self.loop_number != pause_loop_number:
                         break
 
                     # calculate similarity for reset image
-                    if self.shouldCheckResetImage() == True:
-                        reset_masked = (self.reset_mask is not None)
-                        capture = self.getCaptureForComparison(reset_masked)
+                    if self.shouldCheckResetImage():
+                        capture = self.getCaptureForComparison()
 
                         reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                         if reset_similarity >= self.reset_image_threshold:
-                            keyboard.send(str(self.resetLineEdit.text()))
+                            self.send_command("reset")
                             self.reset()
                             continue
 
@@ -730,22 +869,27 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         # loop breaks to here when the last image splits
         self.guiChangesOnReset()
 
+
     def guiChangesOnStart(self):
-        self.startautosplitterButton.setText('Running..')
+        self.timerStartImage.stop()
+        self.startautosplitterButton.setText('Running...')
         self.browseButton.setEnabled(False)
-        self.startautosplitterButton.setEnabled(False)
-        self.resetButton.setEnabled(True)
-        self.undosplitButton.setEnabled(True)
-        self.skipsplitButton.setEnabled(True)
-        self.setsplithotkeyButton.setEnabled(False)
-        self.setresethotkeyButton.setEnabled(False)
-        self.setskipsplithotkeyButton.setEnabled(False)
-        self.setundosplithotkeyButton.setEnabled(False)
-        self.setpausehotkeyButton.setEnabled(False)
-        self.custompausetimesCheckBox.setEnabled(False)
-        self.customthresholdsCheckBox.setEnabled(False)
         self.groupDummySplitsCheckBox.setEnabled(False)
-        QtGui.QApplication.processEvents()
+        self.startImageReloadButton.setEnabled(False)
+
+        if not self.is_auto_controlled:
+            self.startautosplitterButton.setEnabled(False)
+            self.resetButton.setEnabled(True)
+            self.undosplitButton.setEnabled(True)
+            self.skipsplitButton.setEnabled(True)
+            self.setsplithotkeyButton.setEnabled(False)
+            self.setresethotkeyButton.setEnabled(False)
+            self.setskipsplithotkeyButton.setEnabled(False)
+            self.setundosplithotkeyButton.setEnabled(False)
+            self.setpausehotkeyButton.setEnabled(False)
+
+        QtWidgets.QApplication.processEvents()
+
 
     def guiChangesOnReset(self):
         self.startautosplitterButton.setText('Start Auto Splitter')
@@ -755,19 +899,23 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.livesimilarityLabel.setText(' ')
         self.highestsimilarityLabel.setText(' ')
         self.browseButton.setEnabled(True)
-        self.startautosplitterButton.setEnabled(True)
-        self.resetButton.setEnabled(False)
-        self.undosplitButton.setEnabled(False)
-        self.skipsplitButton.setEnabled(False)
-        self.setsplithotkeyButton.setEnabled(True)
-        self.setresethotkeyButton.setEnabled(True)
-        self.setskipsplithotkeyButton.setEnabled(True)
-        self.setundosplithotkeyButton.setEnabled(True)
-        self.setpausehotkeyButton.setEnabled(True)
-        self.custompausetimesCheckBox.setEnabled(True)
-        self.customthresholdsCheckBox.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
-        QtGui.QApplication.processEvents()
+        self.startImageReloadButton.setEnabled(True)
+
+        if not self.is_auto_controlled:
+            self.startautosplitterButton.setEnabled(True)
+            self.resetButton.setEnabled(False)
+            self.undosplitButton.setEnabled(False)
+            self.skipsplitButton.setEnabled(False)
+            self.setsplithotkeyButton.setEnabled(True)
+            self.setresethotkeyButton.setEnabled(True)
+            self.setskipsplithotkeyButton.setEnabled(True)
+            self.setundosplithotkeyButton.setEnabled(True)
+            self.setpausehotkeyButton.setEnabled(True)
+
+        QtWidgets.QApplication.processEvents()
+        self.loadStartImage(False, False)
+
 
     def compareImage(self, image, mask, capture):
         if mask is None:
@@ -785,32 +933,20 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             elif self.comparisonmethodComboBox.currentIndex() == 2:
                 return compare.compare_phash_masked(image, capture, mask)
 
-    def getCaptureForComparison(self, masked):
+    def getCaptureForComparison(self):
         # grab screenshot of capture region
         capture = capture_windows.capture_region(self.hwnd, self.rect)
-
-        # if flagged as a mask, capture with nearest neighbor interpolation. else don't so that
-        # threshold settings on versions below 1.2.0 aren't messed up
-        if (masked):
-            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
-        else:
-            capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
-
+        # Capture with nearest neighbor interpolation
+        capture = cv2.resize(capture, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT), interpolation=cv2.INTER_NEAREST)
         # convert to BGR
-        capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
-
-        return capture
+        return cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
     def shouldCheckResetImage(self):
-        if self.reset_image is not None and time.time() - self.run_start_time > self.reset_image_pause_time:
-            return True
-
-        return False
+        return self.reset_image is not None and time.time() - self.run_start_time > self.reset_image_pause_time
 
     def findResetImage(self):
         self.reset_image = None
         self.reset_mask = None
-        self.reset_image_threshold = None
 
         reset_image_file = None
         for i, image in enumerate(self.split_image_filenames):
@@ -825,16 +961,15 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         # create reset image and keep in memory
         path = self.split_image_directory + reset_image_file
-        flags = split_parser.flags_from_filename(reset_image_file)
 
-        self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file)
+        # Override values if they have been specified on the file
+        self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file) \
+            or self.pauseDoubleSpinBox.value()
+        self.reset_image_threshold = split_parser.threshold_from_filename(reset_image_file) \
+            or self.similaritythresholdDoubleSpinBox.value()
 
-        self.reset_image_pause_time = split_parser.pause_from_filename(reset_image_file)
-        if self.reset_image_pause_time is None:
-            self.reset_image_pause_time = 0
-
-        # if theres a mask flag, create a mask
-        if (flags & 0x02 == 0x02):
+        # if image has transparency, create a mask
+        if compare.checkIfImageHasTransparency(path):
             # create mask based on resized, nearest neighbor interpolated split image
             self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
             self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
@@ -846,23 +981,23 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.reset_image = cv2.cvtColor(self.reset_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.reset_image = cv2.resize(self.reset_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
 
-    def updateSplitImage(self):
-
+    def updateSplitImage(self, custom_image_file=None):
         # get split image path
-        split_image_file = self.split_image_filenames[0 + self.split_image_number]
+        split_image_file = custom_image_file or self.split_image_filenames[0 + self.split_image_number]
         self.split_image_path = self.split_image_directory + split_image_file
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
+        self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image_path)
 
         # set current split image in UI
         # if flagged as mask, transform transparency into UI's gray BG color
-        if (self.flags & 0x02 == 0x02):
+        if (self.imageHasTransparency):
             self.split_image_display = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
             transparent_mask = self.split_image_display[:, :, 3] == 0
             self.split_image_display[transparent_mask] = [240, 240, 240, 255]
@@ -876,13 +1011,12 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
 
         qImg = QtGui.QImage(self.split_image_display, self.split_image_display.shape[1],
                             self.split_image_display.shape[0], self.split_image_display.shape[1] * 3,
-                            QtGui.QImage.Format_RGB888)
+                            QtGui.QImage.Format.Format_RGB888)
         self.updateCurrentSplitImage.emit(qImg)
         self.currentsplitimagefileLabel.setText(split_image_file)
 
-        # if theres a mask flag, create a mask
-        if (self.flags & 0x02 == 0x02):
-
+        # if image has transparency, create a mask
+        if (self.imageHasTransparency):
             # create mask based on resized, nearest neighbor interpolated split image
             self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
             self.split_image = cv2.resize(self.split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT),
@@ -894,18 +1028,17 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.split_image = cv2.cvtColor(self.split_image, cv2.COLOR_BGRA2BGR)
 
-        # else if there is no mask flag, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
             self.split_image = cv2.resize(split_image, (self.RESIZE_WIDTH, self.RESIZE_HEIGHT))
             self.mask = None
 
-        # If the unique parameters are selected, go ahead and set the spinboxes to those values
-        if self.custompausetimesCheckBox.isChecked():
-            self.pauseDoubleSpinBox.setValue(split_parser.pause_from_filename(split_image_file))
-
-        if self.customthresholdsCheckBox.isChecked():
-            self.similaritythresholdDoubleSpinBox.setValue(split_parser.threshold_from_filename(split_image_file))
+        # Override values if they have been specified on the file
+        self.pause = split_parser.pause_from_filename(split_image_file) \
+            or self.pauseDoubleSpinBox.value()
+        self.similarity_threshold = split_parser.threshold_from_filename(split_image_file) \
+            or self.similaritythresholdDoubleSpinBox.value()
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
@@ -920,50 +1053,55 @@ class AutoSplit(QtGui.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.001
 
     # exit safely when closing the window
-    def closeEvent(self, event):
-        if self.haveSettingsChanged():
-            #give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
-            if self.last_successfully_loaded_settings_file_path == None:
-                msgBox = QtGui.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit","Do you want to save changes made to settings file Untitled?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettingsAs()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
-            else:
-                msgBox = QtGui.QMessageBox
-                warning = msgBox.warning(self, "AutoSplit", "Do you want to save the changes made to the settings file " + os.path.basename(self.last_successfully_loaded_settings_file_path) + " ?", msgBox.Yes | msgBox.No | msgBox.Cancel)
-                if warning == msgBox.Yes:
-                    self.saveSettings()
-                    sys.exit()
-                    event.accept()
-                if warning == msgBox.No:
-                    event.accept()
-                    sys.exit()
-                    pass
-                if warning == msgBox.Cancel:
-                    event.ignore()
-                    return
-        else:
-            event.accept()
+    def closeEvent(self, event=None):
+        def exit():
+            if event is not None:
+                event.accept()
+            if self.is_auto_controlled:
+                self.update_auto_control.terminate()
+                # stop main thread (which is probably blocked reading input) via an interrupt signal
+                # only available for windows in version 3.2 or higher
+                os.kill(os.getpid(), signal.SIGINT)
             sys.exit()
 
+        # Simulates LiveSplit quitting without asking. See "TODO" at update_auto_control Worker
+        # This also more gracefully exits LiveSplit
+        # Users can still manually save their settings
+        if event is None:
+            exit()
 
+        if self.haveSettingsChanged():
+            # give a different warning if there was never a settings file that was loaded successfully, and save as instead of save.
+            msgBox = QtWidgets.QMessageBox
+            settings_file_name = "Untitled" \
+                if self.last_successfully_loaded_settings_file_path is None \
+                else os.path.basename(self.last_successfully_loaded_settings_file_path)
+            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
+
+            warning = msgBox.warning(
+                self,
+                "AutoSplit",
+                warning_message,
+                msgBox.StandardButton.Yes | msgBox.StandardButton.No | msgBox.StandardButton.Cancel)
+
+            if warning == msgBox.StandardButton.Yes:
+                # TODO: Don't close if user cancelled the save
+                self.saveSettingsAs()
+                exit()
+            if warning == msgBox.StandardButton.No:
+                exit()
+            if warning == msgBox.StandardButton.Cancel:
+                event.ignore()
+        else:
+            exit()
 
 def main():
-    app = QtGui.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon('icon.ico'))
+    app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w = AutoSplit()
-    w.setWindowIcon(QtGui.QIcon('icon.ico'))
+    w.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':

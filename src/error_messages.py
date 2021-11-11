@@ -1,142 +1,77 @@
 # Error messages
-from PyQt4 import QtGui
+from PyQt6 import QtWidgets
 
-def splitImageDirectoryError(self):
-    msgBox = QtGui.QMessageBox()
+
+def setTextMessage(message: str):
+    msgBox = QtWidgets.QMessageBox()
     msgBox.setWindowTitle('Error')
-    msgBox.setText("No split image folder is selected.")
-    msgBox.exec_()
-
-def splitImageDirectoryNotFoundError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("The Split Image Folder does not exist.")
-    msgBox.exec_()
+    msgBox.setText(message)
+    msgBox.exec()
 
 
-def imageTypeError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText(
-        '"' + image + '" is not a valid image file or the full image file path contains a special character.')
-    msgBox.exec_()
+def splitImageDirectoryError():
+    setTextMessage("No split image folder is selected.")
 
 
-def regionError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No region is selected or the Capture Region window is not open. Select a region or load settings while the Capture Region window is open.")
-    msgBox.exec_()
+def splitImageDirectoryNotFoundError():
+    setTextMessage("The Split Image Folder does not exist.")
 
 
-def regionSizeError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Width and height cannot be 0. Please select a larger region.")
-    msgBox.exec_()
+def imageTypeError(image):
+    setTextMessage('"' + image + '" is not a valid image file or the full image file path contains a special character.')
 
 
-def splitHotkeyError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No split hotkey has been set.")
-    msgBox.exec_()
-
-def pauseHotkeyError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
-    msgBox.exec_()
-
-def customThresholdError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" doesn't have a valid custom threshold.")
-    msgBox.exec_()
+def regionError():
+    setTextMessage("No region is selected or the Capture Region window is not open. Select a region or load settings while the Capture Region window is open.")
 
 
-def customPauseError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" doesn't have a valid custom pause time.")
-    msgBox.exec_()
+def regionSizeError():
+    setTextMessage("Width and height cannot be 0. Please select a larger region.")
 
 
-def alphaChannelError(self, image):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("\"" + image + "\" is marked with mask flag but it doesn't have transparency.")
-    msgBox.exec_()
+def splitHotkeyError():
+    setTextMessage("No split hotkey has been set.")
 
 
-def alignRegionImageTypeError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("File not a valid image file")
-    msgBox.exec_()
+def pauseHotkeyError():
+    setTextMessage("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
 
 
-def alignmentNotMatchedError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No area in capture region matched reference image. Alignment failed.")
-    msgBox.exec_()
+def alignRegionImageTypeError():
+    setTextMessage("File not a valid image file")
 
 
-def multipleResetImagesError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Only one image with the keyword \"reset\" is allowed.")
-    msgBox.exec_()
+def alignmentNotMatchedError():
+    setTextMessage("No area in capture region matched reference image. Alignment failed.")
 
 
-def noResetImageThresholdError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Reset Image must have a custom threshold. Please set one and check that it is valid")
-    msgBox.exec_()
+def noKeywordImageError(self, keyword):
+    setTextMessage(f"Your split image folder does not contain an image with the keyword \"{keyword}\".")
 
 
-def resetHotkeyError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Your split image folder contains a reset image, but no reset hotkey is set.")
-    msgBox.exec_()
+def multipleKeywordImagesError(keyword):
+    setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
 
 
-def dummySplitsError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText(
-        "Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
-    msgBox.exec_()
+def resetHotkeyError():
+    setTextMessage("Your split image folder contains a reset image, but no reset hotkey is set.")
 
-def settingsNotFoundError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No settings file found. The settings file is saved when the program is closed.")
-    msgBox.exec_()
 
-def oldVersionSettingsFileError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Old version settings file detected. This version allows settings files from v1.3 and above.")
-    msgBox.exec_()
+def dummySplitsError():
+    setTextMessage("Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
 
-def invalidSettingsError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Invalid settings file.")
-    msgBox.exec_()
 
-def noSettingsFileOnOpenError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("No settings file found. One can be loaded on open if placed in the same folder as AutoSplit.exe")
-    msgBox.exec_()
+def oldVersionSettingsFileError():
+    setTextMessage("Old version settings file detected. This version allows settings files from v1.3 and above.")
 
-def tooManySettingsFilesOnOpenError(self):
-    msgBox = QtGui.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
-    msgBox.exec_()
+
+def invalidSettingsError():
+    setTextMessage("Invalid settings file.")
+
+
+def noSettingsFileOnOpenError():
+    setTextMessage("No settings file found. One can be loaded on open if placed in the same folder as AutoSplit.exe")
+
+
+def tooManySettingsFilesOnOpenError():
+    setTextMessage("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
