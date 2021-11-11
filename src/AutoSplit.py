@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtGui, QtCore, QtTest
-from menu_bar import about, VERSION, viewHelp
 from win32 import win32gui
 import sys
 import os
@@ -14,7 +13,6 @@ import keyboard
 import numpy as np
 
 import design
-import about
 import compare
 import capture_windows
 import split_parser
