@@ -20,7 +20,7 @@ keyboard
 pyautogui
 PySide6
 #
-# Comment this out if you don't want to create AutoSplit.exe:
+# Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller
 #
 # Comment this out if you don't want to install the PyQt designer

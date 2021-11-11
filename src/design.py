@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file './res/design.ui'
+# Form implementation generated from reading ui file '.\res\design.ui'
 #
 # Created by: PyQt6 UI code generator 6.1.0
 #
@@ -136,19 +136,19 @@ class Ui_MainWindow(object):
         self.resetLineEdit.setReadOnly(True)
         self.resetLineEdit.setObjectName("resetLineEdit")
         self.setsplithotkeyButton = QtWidgets.QPushButton(self.centralwidget)
-        self.setsplithotkeyButton.setGeometry(QtCore.QRect(390, 314, 71, 21))
+        self.setsplithotkeyButton.setGeometry(QtCore.QRect(390, 314, 81, 21))
         self.setsplithotkeyButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setsplithotkeyButton.setObjectName("setsplithotkeyButton")
         self.setresethotkeyButton = QtWidgets.QPushButton(self.centralwidget)
-        self.setresethotkeyButton.setGeometry(QtCore.QRect(390, 339, 71, 21))
+        self.setresethotkeyButton.setGeometry(QtCore.QRect(390, 339, 81, 21))
         self.setresethotkeyButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setresethotkeyButton.setObjectName("setresethotkeyButton")
         self.setskipsplithotkeyButton = QtWidgets.QPushButton(self.centralwidget)
-        self.setskipsplithotkeyButton.setGeometry(QtCore.QRect(390, 365, 71, 21))
+        self.setskipsplithotkeyButton.setGeometry(QtCore.QRect(390, 365, 81, 21))
         self.setskipsplithotkeyButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setskipsplithotkeyButton.setObjectName("setskipsplithotkeyButton")
         self.setundosplithotkeyButton = QtWidgets.QPushButton(self.centralwidget)
-        self.setundosplithotkeyButton.setGeometry(QtCore.QRect(390, 391, 71, 21))
+        self.setundosplithotkeyButton.setGeometry(QtCore.QRect(390, 391, 81, 21))
         self.setundosplithotkeyButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setundosplithotkeyButton.setObjectName("setundosplithotkeyButton")
         self.line_left = QtWidgets.QFrame(self.centralwidget)
@@ -246,7 +246,7 @@ class Ui_MainWindow(object):
         self.yLabel.setGeometry(QtCore.QRect(81, 139, 7, 16))
         self.yLabel.setObjectName("yLabel")
         self.comparisonmethodComboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comparisonmethodComboBox.setGeometry(QtCore.QRect(133, 299, 81, 22))
+        self.comparisonmethodComboBox.setGeometry(QtCore.QRect(123, 299, 91, 22))
         self.comparisonmethodComboBox.setObjectName("comparisonmethodComboBox")
         self.comparisonmethodComboBox.addItem("")
         self.comparisonmethodComboBox.addItem("")
@@ -284,7 +284,7 @@ class Ui_MainWindow(object):
         self.pausehotkeyLineEdit.setReadOnly(True)
         self.pausehotkeyLineEdit.setObjectName("pausehotkeyLineEdit")
         self.setpausehotkeyButton = QtWidgets.QPushButton(self.centralwidget)
-        self.setpausehotkeyButton.setGeometry(QtCore.QRect(390, 416, 71, 21))
+        self.setpausehotkeyButton.setGeometry(QtCore.QRect(390, 416, 81, 21))
         self.setpausehotkeyButton.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setpausehotkeyButton.setObjectName("setpausehotkeyButton")
         self.loopCheckBox = QtWidgets.QCheckBox(self.centralwidget)

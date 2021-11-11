@@ -160,5 +160,6 @@ def compare_phash_masked(source, capture, mask):
 
 def checkIfImageHasTransparency(image_path: str):
     source = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+    # TODO check for first transparent pixel, no need to iterate through the whole image
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     return source.shape[2] == 4 and np.mean(source[:, :, 3]) != 255
