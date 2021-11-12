@@ -3,6 +3,8 @@ from ctypes.wintypes import LONG, RECT, HBITMAP
 from typing import Dict
 from win32 import win32gui
 import sys
+from packaging import version
+import platform
 import numpy as np
 import win32ui
 import win32con
@@ -10,7 +12,7 @@ import win32con
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
 accelerated_windows: Dict[int, bool] = {}
-is_windows_11 = sys.getwindowsversion().build >= 22000
+is_windows_11 = version.parse(platform.version()) >= version.parse("10.0.22000")
 
 
 def capture_region(hwnd: int, rect: RECT):
