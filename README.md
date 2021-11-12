@@ -1,6 +1,7 @@
 # <img src="https://raw.githubusercontent.com/TouFool/Auto-Split/master/res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
 
-This program compares split images to a capture region of any window (OBS, xsplit, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
+Easy to use image comparison based auto splitter for speedrunning on console or PC.
+This program compares split images to a capture region of any window (OBS Studio, Streamlabs OBS, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
 
 ![Example](res/example1.5.0.gif)
 
@@ -181,6 +182,7 @@ There is a LiveSplit Component available that will directly connect AutoSplit wi
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
 - [KaDiWa](https://github.com/KaDiWa4) for the LiveSplit integration.
+- [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 
 ## Donate
