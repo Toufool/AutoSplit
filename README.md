@@ -1,6 +1,7 @@
-# <img src="https://raw.githubusercontent.com/TouFool/Auto-Split/master/res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
+# <img src="res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
+
 This program compares split images to a capture region of any window (OBS Studio, Streamlabs OBS, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
 
 ![Example](res/example1.5.0.gif)
@@ -108,7 +109,7 @@ Masked images are very useful if only a certain part of the capture region is co
 
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
-![Mask Example](res/mask_example_image.PNG)
+![Mask Example](res/mask_example_image.png)
 
 ### Reset image
 
@@ -169,6 +170,7 @@ There is a LiveSplit Component available that will directly connect AutoSplit wi
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
+- Capturing a harware accelerated window or using Windows 11 altogether will cause performance drops. But as long as the window you are capturing (not the selected region, but rather the actual window size) is not too large, you should still be able to obtain a Max FPS of over 60.
 
 ## Resources
 
@@ -182,7 +184,7 @@ There is a LiveSplit Component available that will directly connect AutoSplit wi
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
 - [KaDiWa](https://github.com/KaDiWa4) for the LiveSplit integration.
-- [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing
+- [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing.
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 
 ## Donate

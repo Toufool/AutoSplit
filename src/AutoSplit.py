@@ -14,10 +14,10 @@ import threading
 import time
 
 from menu_bar import about, VERSION, viewHelp
-import error_messages
+import capture_windows
 import compare
 import design
-import capture_windows
+import error_messages
 import split_parser
 
 

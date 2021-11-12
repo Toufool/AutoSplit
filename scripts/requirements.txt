@@ -17,6 +17,7 @@ Pillow
 ImageHash
 pywin32
 keyboard
+packaging
 pyautogui
 PySide6
 #

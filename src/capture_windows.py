@@ -1,9 +1,8 @@
 from ctypes import windll
 from ctypes.wintypes import LONG, RECT, HBITMAP
+from packaging import version
 from typing import Dict
 from win32 import win32gui
-import sys
-from packaging import version
 import platform
 import numpy as np
 import win32ui
