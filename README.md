@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/austinryan/Auto-Split/master/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit</h1>
 
-Easy to use image comparison based auto splitter for Speedrunning on console or PC.
+Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
 This program compares split images to a capture region of any window (OBS, Streamlabs OBS, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits. 
 
@@ -154,6 +154,7 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - [amaringos](https://twitter.com/amaringos) for the icon.
 - [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
+- [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 
 ## Donate
