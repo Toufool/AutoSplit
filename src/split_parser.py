@@ -154,7 +154,5 @@ def is_start_auto_splitter_image(filename):
     @param filename: String containing the file's name
     @return: True if its a reset image
     """
-    print(filename.upper())
-    print('START_AUTO_SPLITTER' in filename.upper())
     return ('START_AUTO_SPLITTER' in filename.upper())
 
