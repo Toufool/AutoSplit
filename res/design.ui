@@ -104,7 +104,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>253</y>
+      <y>252</y>
       <width>129</width>
       <height>20</height>
      </rect>
@@ -457,7 +457,7 @@ Default value</string>
      <rect>
       <x>390</x>
       <y>314</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -473,7 +473,7 @@ Default value</string>
      <rect>
       <x>390</x>
       <y>339</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -489,7 +489,7 @@ Default value</string>
      <rect>
       <x>390</x>
       <y>365</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -505,7 +505,7 @@ Default value</string>
      <rect>
       <x>390</x>
       <y>391</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -763,7 +763,7 @@ Default value</string>
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>251</y>
+      <y>250</y>
       <width>92</width>
       <height>24</height>
      </rect>
@@ -844,9 +844,9 @@ Default value</string>
    <widget class="QComboBox" name="comparisonmethodComboBox">
     <property name="geometry">
      <rect>
-      <x>133</x>
-      <y>299</y>
-      <width>81</width>
+      <x>123</x>
+      <y>300</y>
+      <width>91</width>
       <height>22</height>
      </rect>
     </property>
@@ -993,7 +993,7 @@ Default value</string>
      <rect>
       <x>390</x>
       <y>416</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>

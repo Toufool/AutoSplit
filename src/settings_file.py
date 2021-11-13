@@ -166,9 +166,8 @@ def loadSettings(self):
             self.load_settings_file_path = self.settings_files[0]
 
     else:
-        self.load_settings_file_path = str(QtWidgets.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+        self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)")[0]
 
-        #
         if self.load_settings_file_path == '':
             return
 
@@ -194,8 +193,8 @@ def loadSettings(self):
                         self.width,
                         self.height,
                         self.hwnd_title,
-                        0,
-                        0,
+                        _,
+                        _,
                         self.group_dummy_splits_undo_skip_setting,
                         self.loop_setting,
                         self.auto_start_on_reset_setting] = pickle.load(f)
@@ -217,8 +216,8 @@ def loadSettings(self):
                         self.width,
                         self.height,
                         self.hwnd_title,
-                        0,
-                        0,
+                        _,
+                        _,
                         self.group_dummy_splits_undo_skip_setting,
                         self.loop_setting] = pickle.load(f)
                 self.pause_key = ''

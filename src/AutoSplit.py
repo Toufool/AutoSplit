@@ -14,10 +14,10 @@ import threading
 import time
 
 from menu_bar import about, VERSION, viewHelp
-import error_messages
+import capture_windows
 import compare
 import design
-import capture_windows
+import error_messages
 import split_parser
 
 
@@ -25,7 +25,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
     from screen_region import selectRegion, selectWindow, alignRegion
-    from hotkeys import afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, setUndoSplitHotkey, setPauseHotkey
+    from hotkeys import afterSettingHotkey, beforeSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, \
+        setUndoSplitHotkey, setPauseHotkey
 
     myappid = f'Toufool.AutoSplit.v{VERSION}'
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
