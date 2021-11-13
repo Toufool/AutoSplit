@@ -88,6 +88,7 @@ def loop_from_filename(filename):
 
 
 DUMMY_FLAG = 1 << 0
+MASK_FLAG = 1 << 1 #Legacy flag. Allows support for {md}, {mp}, or {mb} flags previously required to detect transparancy.
 BELOW_FLAG = 1 << 2
 PAUSE_FLAG = 1 << 3
 
@@ -119,6 +120,8 @@ def flags_from_filename(filename):
     for c in flags_str:
         if c.upper() == 'D':
             flags |= DUMMY_FLAG
+        elif c.upper() == 'M':
+            flags |= MASK_FLAG
         elif c.upper() == 'B':
             flags |= BELOW_FLAG
         elif c.upper() == 'P':
