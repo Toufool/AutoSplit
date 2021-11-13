@@ -65,8 +65,9 @@ def _send_hotkey(key_or_scan_code):
     if (not (key_or_scan_code.startswith('num ') or key_or_scan_code == 'decimal')):
         return keyboard.send(key_or_scan_code)
 
-    # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the defautl (wrong) key
+    # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the default (wrong) key
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
+    print(key_or_scan_code)
     pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
 
 
@@ -161,7 +162,7 @@ def setSplitHotkey(self):
             # hotkey. A try and except is needed if a hotkey hasn't been set yet. I'm not
             # allowing for these multiple-key hotkeys because it can cause crashes, and
             # not many people are going to really use or need this.
-            if __is_key_already_set(self, key_name) or '+' in key_name:
+            if __is_key_already_set(self, key_name) or (key_name != '+' and '+' in key_name):
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -197,7 +198,7 @@ def setResetHotkey(self):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(self, key_name) or '+' in key_name:
+            if __is_key_already_set(self, key_name) or (key_name != '+' and '+' in key_name):
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -226,7 +227,7 @@ def setSkipSplitHotkey(self):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(self, key_name) or '+' in key_name:
+            if __is_key_already_set(self, key_name) or (key_name != '+' and '+' in key_name):
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -255,7 +256,7 @@ def setUndoSplitHotkey(self):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(self, key_name) or '+' in key_name:
+            if __is_key_already_set(self, key_name) or (key_name != '+' and '+' in key_name):
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -284,7 +285,7 @@ def setPauseHotkey(self):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(self, key_name) or '+' in key_name:
+            if __is_key_already_set(self, key_name) or (key_name != '+' and '+' in key_name):
                 self.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:

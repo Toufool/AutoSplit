@@ -106,7 +106,11 @@ def saveSettings(self):
 
 def saveSettingsAs(self):
     # User picks save destination
-    self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(self, "Save Settings As", "", "PKL (*.pkl)")[0]
+    self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
+        self,
+        "Save Settings As",
+        "settings.pkl",
+        "PKL (*.pkl)")[0]
 
     # If user cancels save destination window, don't save settings
     if not self.save_settings_file_path:
@@ -166,7 +170,11 @@ def loadSettings(self):
             self.load_settings_file_path = self.settings_files[0]
 
     else:
-        self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)")[0]
+        self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            "Load Settings",
+            "settings.pkl",
+            "PKL (*.pkl)")[0]
 
         if self.load_settings_file_path == '':
             return
