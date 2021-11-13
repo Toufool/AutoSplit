@@ -81,7 +81,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Browse..</string>
+     <string>Browse...</string>
     </property>
    </widget>
    <widget class="QLabel" name="xLabel">

@@ -86,6 +86,12 @@ def loop_from_filename(filename):
     else:
         return loop
 
+
+DUMMY_FLAG = 1 << 0
+BELOW_FLAG = 1 << 2
+PAUSE_FLAG = 1 << 3
+
+
 def flags_from_filename(filename):
     """
     Retrieve the flags from the filename, if there are no flags then 0 is returned
@@ -107,10 +113,6 @@ def flags_from_filename(filename):
         flags_str = filename.split('{', 1)[1].split('}')[0]
     except:
         return 0
-
-    DUMMY_FLAG = 1 << 0
-    BELOW_FLAG = 1 << 2
-    PAUSE_FLAG = 1 << 3
 
     flags = 0x00
 

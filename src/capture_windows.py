@@ -1,12 +1,14 @@
+from typing import Dict
+
 from ctypes import windll
 from ctypes.wintypes import LONG, RECT, HBITMAP
 from packaging import version
-from typing import Dict
 from win32 import win32gui
 import platform
 import numpy as np
 import win32ui
 import win32con
+
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002

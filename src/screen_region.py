@@ -1,16 +1,20 @@
+from __future__ import annotations
+from typing import cast, Callable, TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
-from typing import cast, Callable
-import capture_windows
 import ctypes
 import ctypes.wintypes
 import cv2
 import numpy as np
 
+import capture_windows
 import error_messages
 
 
-def selectRegion(self):
+def selectRegion(self: AutoSplit):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -75,7 +79,7 @@ def selectRegion(self):
     self.checkLiveImage()
 
 
-def selectWindow(self):
+def selectWindow(self: AutoSplit):
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -122,7 +126,7 @@ def selectWindow(self):
     self.checkLiveImage()
 
 
-def alignRegion(self):
+def alignRegion(self: AutoSplit):
     # check to see if a region has been set
     if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
         error_messages.regionError()

@@ -421,7 +421,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "AutoSplit"))
         self.splitimagefolderLabel.setText(_translate("MainWindow", "Split Image Folder:"))
-        self.browseButton.setText(_translate("MainWindow", "Browse.."))
+        self.browseButton.setText(_translate("MainWindow", "Browse..."))
         self.xLabel.setText(_translate("MainWindow", "X"))
         self.liveimageCheckBox.setText(_translate("MainWindow", "Live Capture Region"))
         self.selectregionButton.setText(_translate("MainWindow", "Select Region"))

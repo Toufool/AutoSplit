@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 import keyboard
 import pyautogui
 import threading
@@ -6,7 +11,7 @@ pyautogui.FAILSAFE = False
 
 
 # do all of these after you click "set hotkey" but before you type the hotkey.
-def beforeSettingHotkey(self):
+def beforeSettingHotkey(self: AutoSplit):
     self.startautosplitterButton.setEnabled(False)
     self.setsplithotkeyButton.setEnabled(False)
     self.setresethotkeyButton.setEnabled(False)
@@ -17,7 +22,7 @@ def beforeSettingHotkey(self):
 
 # do all of these things after you set a hotkey. a signal connects to this because
 # changing GUI stuff in the hotkey thread was causing problems
-def afterSettingHotkey(self):
+def afterSettingHotkey(self: AutoSplit):
     self.setsplithotkeyButton.setText('Set Hotkey')
     self.setresethotkeyButton.setText('Set Hotkey')
     self.setskipsplithotkeyButton.setText('Set Hotkey')
@@ -39,7 +44,7 @@ def is_digit(key):
         return False
 
 
-def send_command(self, command):
+def send_command(self: AutoSplit, command):
     if self.is_auto_controlled:
         print(command, flush=True)
     else:
@@ -55,6 +60,8 @@ def send_command(self, command):
 
 # Supports sending the appropriate scan code for all the special cases
 def _send_hotkey(key_or_scan_code):
+    if not key_or_scan_code:
+        return
     hotkey_type = type(key_or_scan_code)
 
     # Deal with regular inputs
@@ -67,7 +74,6 @@ def _send_hotkey(key_or_scan_code):
 
     # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the default (wrong) key
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
-    print(key_or_scan_code)
     pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
 
 
@@ -116,7 +122,7 @@ def __get_key_name(keyboard_event):
         else keyboard_event.name
 
 
-def __is_key_already_set(self, key_name):
+def __is_key_already_set(self: AutoSplit, key_name):
     return key_name == self.splitLineEdit.text() \
         or key_name == self.resetLineEdit.text() \
         or key_name == self.skipsplitLineEdit.text() \
@@ -127,7 +133,7 @@ def __is_key_already_set(self, key_name):
 # --------------------HOTKEYS--------------------------
 # TODO: Refactor to de-duplicate all this code, including settings_file.py
 # Going to comment on one func, and others will be similar.
-def setSplitHotkey(self):
+def setSplitHotkey(self: AutoSplit):
     self.setsplithotkeyButton.setText('Press a key...')
 
     # disable some buttons
@@ -185,7 +191,7 @@ def setSplitHotkey(self):
     t.start()
 
 
-def setResetHotkey(self):
+def setResetHotkey(self: AutoSplit):
     self.setresethotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
@@ -214,7 +220,7 @@ def setResetHotkey(self):
     t.start()
 
 
-def setSkipSplitHotkey(self):
+def setSkipSplitHotkey(self: AutoSplit):
     self.setskipsplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
@@ -243,7 +249,7 @@ def setSkipSplitHotkey(self):
     t.start()
 
 
-def setUndoSplitHotkey(self):
+def setUndoSplitHotkey(self: AutoSplit):
     self.setundosplithotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
@@ -272,7 +278,7 @@ def setUndoSplitHotkey(self):
     t.start()
 
 
-def setPauseHotkey(self):
+def setPauseHotkey(self: AutoSplit):
     self.setpausehotkeyButton.setText('Press a key...')
     self.beforeSettingHotkey()
 
