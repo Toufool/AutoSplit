@@ -615,12 +615,23 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # find reset image then remove it from the list
         self.findResetImage()
 
+        # find start_auto_splitter_image and then remove it from the list
+        self.removeStartAutoSplitterImage()
+
         # Check that there's only one reset image
         for image in self.split_image_filenames:
 
             if split_parser.is_reset_image(image):
                 self.guiChangesOnReset()
                 error_messages.multipleKeywordImagesError('reset')
+                return
+
+        # Check that there's only one auto_start_autosplitter image
+        for image in self.split_image_filenames:
+
+            if split_parser.is_start_auto_splitter_image(image):
+                self.guiChangesOnReset()
+                error_messages.multipleKeywordImagesError('start_auto_splitter')
                 return
 
         # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
@@ -1001,6 +1012,18 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.reset_image = cv2.resize(self.reset_image, COMPARISON_RESIZE)
+
+    def removeStartAutoSplitterImage(self):
+        start_auto_splitter_image_file = None
+        for i, image in enumerate(self.split_image_filenames):
+            if split_parser.is_start_auto_splitter_image(image):
+                start_auto_splitter_image_file = image
+                break
+
+        if start_auto_splitter_image_file is None:
+            return
+
+        self.split_image_filenames.remove(start_auto_splitter_image_file)
 
     def updateSplitImage(self, custom_image_file=None):
         # get split image path
