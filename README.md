@@ -24,9 +24,9 @@ This program compares split images to a capture region of any window (OBS Studio
 (This is not required for normal use)
 
 - Microsoft Visual C++ 14.0 or greater may be required. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-- Read [requirements.txt](/scripts/requirements.txt) for information on how to run/build the python code
+- Read [requirements.txt](/scripts/requirements.txt) for information on how to install, run and build the python code
   - Run `.\scripts\install.bat` to install all dependencies
-  - Run the app directly with `py .\src\AutoSplit.py`
+  - Run the app directly with `py .\src\AutoSplit.py [--auto-controlled]`
   - Run `.\scripts\build.bat` to build an executable
 - Recompile resources after modifications by running `.\scripts\compile_resources.bat`
 

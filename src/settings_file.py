@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 from win32 import win32gui
 from PyQt6 import QtWidgets
 import glob
@@ -9,7 +14,7 @@ from hotkeys import _hotkey_action
 import error_messages
 
 
-def getSaveSettingsValues(self):
+def getSaveSettingsValues(self: AutoSplit):
     # get values to be able to save settings
     self.x = self.xSpinBox.value()
     self.y = self.ySpinBox.value()
@@ -41,7 +46,7 @@ def getSaveSettingsValues(self):
     else:
         self.auto_start_on_reset_setting = 0
 
-def haveSettingsChanged(self):
+def haveSettingsChanged(self: AutoSplit):
     self.getSaveSettingsValues()
     self.current_save_settings = [
         self.split_image_directory,
@@ -73,7 +78,7 @@ def haveSettingsChanged(self):
     else:
         return True
 
-def saveSettings(self):
+def saveSettings(self: AutoSplit):
     if self.last_successfully_loaded_settings_file_path == None:
         self.saveSettingsAs()
     else:
@@ -104,7 +109,7 @@ def saveSettings(self):
             pickle.dump(self.last_saved_settings, f)
 
 
-def saveSettingsAs(self):
+def saveSettingsAs(self: AutoSplit):
     # User picks save destination
     self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         self,
@@ -148,7 +153,7 @@ def saveSettingsAs(self):
     self.last_successfully_loaded_settings_file_path = self.save_settings_file_path
 
 
-def loadSettings(self):
+def loadSettings(self: AutoSplit):
     # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
     self.split_hotkey = ""
     self.reset_hotkey = ""

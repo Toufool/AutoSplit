@@ -1,11 +1,16 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 from PyQt6 import QtWidgets
-import about
 import os
 
+import about
 import resources_rc  # noqa: F401
 
 # AutoSplit Version number
-VERSION = "1.5.1"
+VERSION = "1.5.2"
 
 
 # About Window
@@ -23,5 +28,5 @@ def viewHelp():
     os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
 
 
-def about(self):
+def about(self: AutoSplit):
     self.AboutWidget = AboutWidget()

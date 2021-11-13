@@ -1,7 +1,8 @@
 from PIL import Image
+import cv2
 import imagehash
 import numpy as np
-import cv2
+
 
 def compare_histograms(source, capture):
     """
