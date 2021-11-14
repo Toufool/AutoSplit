@@ -278,9 +278,9 @@ def loadSettings(self: AutoSplit):
         except (AttributeError, KeyError):
             pass
         try:
-          if not self.is_auto_controlled:
             self.splitLineEdit.setText(self.split_key)
-            self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
+            if not self.is_auto_controlled:
+                self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
         except (ValueError, KeyError):
             pass
 
@@ -290,7 +290,8 @@ def loadSettings(self: AutoSplit):
             pass
         try:
             self.resetLineEdit.setText(self.reset_key)
-            self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
+            if not self.is_auto_controlled:
+                self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
         except (ValueError, KeyError):
             pass
 
@@ -300,7 +301,8 @@ def loadSettings(self: AutoSplit):
             pass
         try:
             self.skipsplitLineEdit.setText(self.skip_split_key)
-            self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
+            if not self.is_auto_controlled:
+                self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
         except (ValueError, KeyError):
             pass
 
@@ -310,7 +312,8 @@ def loadSettings(self: AutoSplit):
             pass
         try:
             self.undosplitLineEdit.setText(self.undo_split_key)
-            self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
+            if not self.is_auto_controlled:
+                self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
         except (ValueError, KeyError):
             pass
 
@@ -320,7 +323,8 @@ def loadSettings(self: AutoSplit):
             pass
         try:
             self.pausehotkeyLineEdit.setText(self.pause_key)
-            self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
+            if not self.is_auto_controlled:
+                self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
         except (ValueError, KeyError):
             pass
 
