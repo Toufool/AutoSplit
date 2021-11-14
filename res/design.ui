@@ -60,7 +60,7 @@
      <rect>
       <x>130</x>
       <y>10</y>
-      <width>411</width>
+      <width>407</width>
       <height>22</height>
      </rect>
     </property>
@@ -538,14 +538,17 @@ Default value</string>
    <widget class="QLabel" name="timerglobalhotkeysLabel">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>230</x>
       <y>293</y>
-      <width>113</width>
-      <height>16</height>
+      <width>251</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Timer Global Hotkeys</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="Line" name="line_right">
@@ -1145,7 +1148,7 @@ Default value</string>
      <x>0</x>
      <y>0</y>
      <width>632</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
