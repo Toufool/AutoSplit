@@ -81,6 +81,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.skipsplitLineEdit.setEnabled(False)
             self.undosplitLineEdit.setEnabled(False)
             self.pausehotkeyLineEdit.setEnabled(False)
+            self.timerglobalhotkeysLabel.setText("Hotkeys Inactive - Use LiveSplit Hotkeys")
 
             # Send version and process ID to stdout
             print(f"{VERSION}\n{os.getpid()}", flush=True)
