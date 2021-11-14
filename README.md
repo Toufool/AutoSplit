@@ -162,7 +162,7 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
 - If you are upgrading to Windows 11, it's possible that save files may not transfer perfectly. You may need to readjust or reselect your Capture Region, for example.
 
-## LiveSplit integration
+## LiveSplit Integration
 
 This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allows you to control AutoSplit using LiveSplits hotkeys directly. 
 - Click [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration/blob/main/update/Components/LiveSplit.AutoSplitIntegration.dll?raw=true) to download the component. 
