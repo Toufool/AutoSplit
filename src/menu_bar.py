@@ -10,7 +10,7 @@ import about
 import resources_rc  # noqa: F401
 
 # AutoSplit Version number
-VERSION = "1.5.2"
+VERSION = "1.6.0"
 
 
 # About Window
