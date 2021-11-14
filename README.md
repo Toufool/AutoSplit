@@ -4,7 +4,7 @@ Easy to use image comparison based auto splitter for speedrunning on console or 
 
 This program compares split images to a capture region of any window (OBS Studio, Streamlabs OBS, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.). The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
 
-![Example](res/example1.5.0.gif)
+![Example](res/example1.6.0.gif)
 
 # TUTORIAL
 
@@ -164,13 +164,18 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 ## LiveSplit integration
 
-There is a LiveSplit Component available that will directly connect AutoSplit with LiveSplit. You can get it [here](/KaDiWa4/LiveSplit.AutoSplitIntegration).
+This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allows you to control AutoSplit using LiveSplits hotkeys directly. 
+- Click [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration/blob/main/update/Components/LiveSplit.AutoSplitIntegration.dll?raw=true) to download the component. 
+- Place the .dll file into your `..\LiveSplit\Components` folder. 
+- Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
+- In Layout Settings -> AutoSplit Integration, use the Browse button to locate AutoSplit.exe.
+
 
 ## Known Limitations
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
-- Capturing a harware accelerated window or using Windows 11 altogether will cause performance drops. But as long as the window you are capturing (not the selected region, but rather the actual window size) is not too large, you should still be able to obtain a Max FPS of over 60.
+- Capturing a hardware accelerated window or using Windows 11 altogether will cause performance drops. But as long as the window you are capturing (not the selected region, but rather the actual window size) is not too large, you should still be able to obtain a Max FPS of over 60.
 
 ## Resources
 
