@@ -5,7 +5,8 @@ if TYPE_CHECKING:
 
 from win32 import win32gui
 from PyQt6 import QtWidgets
-import glob
+import os
+import sys
 import keyboard
 import pickle
 import logging
@@ -162,7 +163,19 @@ def loadSettings(self: AutoSplit):
     self.pause_hotkey = ""
 
     if self.load_settings_on_open:
-        self.settings_files = glob.glob("*.pkl")
+
+        if getattr(sys, 'frozen', False):
+            # If the application is run as a bundle, the PyInstaller bootloader
+            # extends the sys module by a flag frozen=True
+            self.auto_split_exe_directory = os.path.dirname(sys.executable)
+        else:
+            self.auto_split_exe_directory = os.path.dirname(os.path.abspath(__file__))
+
+        self.settings_files = []
+        for file in os.listdir(self.auto_split_exe_directory):
+            if file.endswith(".pkl"):
+                self.settings_files.append(file)
+
         if len(self.settings_files) < 1:
             error_messages.noSettingsFileOnOpenError()
             self.last_loaded_settings = None
@@ -172,7 +185,7 @@ def loadSettings(self: AutoSplit):
             self.last_loaded_settings = None
             return
         else:
-            self.load_settings_file_path = self.settings_files[0]
+            self.load_settings_file_path = self.auto_split_exe_directory+'\\'+self.settings_files[0]
 
     else:
         self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
