@@ -14,14 +14,7 @@ import logging
 from hotkeys import _hotkey_action
 import error_messages
 
-def getAutoSplitDirectory():
-    if getattr(sys, 'frozen', False):
-        # If the application is run as a bundle, the PyInstaller bootloader
-        # extends the sys module by a flag frozen=True
-        auto_split_directory = os.path.dirname(sys.executable)
-    else:
-        auto_split_directory = os.path.dirname(os.path.abspath(__file__))
-    return auto_split_directory
+auto_split_directory = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 
 def getSaveSettingsValues(self: AutoSplit):
     # get values to be able to save settings
@@ -119,14 +112,12 @@ def saveSettings(self: AutoSplit):
 
 
 def saveSettingsAs(self: AutoSplit):
-    # get the directory of either AutoSplit.exe or AutoSplit.py
-    auto_split_directory = getAutoSplitDirectory()
 
     # User picks save destination
     self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         self,
         "Save Settings As",
-        auto_split_directory+"\settings.pkl",
+        os.path.join(auto_split_directory, "settings.pkl"),
         "PKL (*.pkl)")[0]
 
     # If user cancels save destination window, don't save settings
@@ -173,9 +164,6 @@ def loadSettings(self: AutoSplit):
     self.undo_split_hotkey = ""
     self.pause_hotkey = ""
 
-    # get the directory of either AutoSplit.exe or AutoSplit.py
-    auto_split_directory = getAutoSplitDirectory()
-
     if self.load_settings_on_open:
 
         self.settings_files = []
@@ -198,7 +186,7 @@ def loadSettings(self: AutoSplit):
         self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Load Settings",
-            auto_split_directory+"\settings.pkl",
+            os.path.join(auto_split_directory, "settings.pkl"),
             "PKL (*.pkl)")[0]
 
         if self.load_settings_file_path == '':
