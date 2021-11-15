@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -36,7 +36,7 @@ def afterSettingHotkey(self: AutoSplit):
     self.setpausehotkeyButton.setEnabled(True)
 
 
-def is_digit(key):
+def is_digit(key: str):
     try:
         key_as_num = int(key)
         return key_as_num >= 0 and key_as_num <= 9
@@ -44,7 +44,7 @@ def is_digit(key):
         return False
 
 
-def send_command(self: AutoSplit, command):
+def send_command(self: AutoSplit, command: str):
     if self.is_auto_controlled:
         print(command, flush=True)
     else:
@@ -59,7 +59,7 @@ def send_command(self: AutoSplit, command):
 
 
 # Supports sending the appropriate scan code for all the special cases
-def _send_hotkey(key_or_scan_code):
+def _send_hotkey(key_or_scan_code: Union[int, str, Any]):
     if not key_or_scan_code:
         return
     hotkey_type = type(key_or_scan_code)
@@ -68,7 +68,7 @@ def _send_hotkey(key_or_scan_code):
     if hotkey_type is int:
         return keyboard.send(key_or_scan_code)
     elif hotkey_type is not str:
-        raise TypeError(f'key_or_scan_code "{key_or_scan_code}" {hotkey_type} should be an int or str')
+        raise TypeError(f'key_or_scan_code "{key_or_scan_code}" ({hotkey_type}) should be an int or str')
     if (not (key_or_scan_code.startswith('num ') or key_or_scan_code == 'decimal')):
         return keyboard.send(key_or_scan_code)
 
@@ -77,7 +77,7 @@ def _send_hotkey(key_or_scan_code):
     pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
 
 
-def __validate_keypad(expected_key, keyboard_event):
+def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent):
     # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
     # as well as "." and "(keypad)./decimal"
     if keyboard_event.scan_code == 83 or keyboard_event.scan_code == 52:
@@ -111,18 +111,18 @@ def __validate_keypad(expected_key, keyboard_event):
 #
 # Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
 # We're also trying to achieve the same hotkey behaviour as LiveSplit has.
-def _hotkey_action(keyboard_event, key_name, action):
+def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action):
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
         action()
 
 
-def __get_key_name(keyboard_event):
+def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
     return f"num {keyboard_event.name}"  \
         if keyboard_event.is_keypad and is_digit(keyboard_event.name) \
-        else keyboard_event.name
+        else str(keyboard_event.name)
 
 
-def __is_key_already_set(self: AutoSplit, key_name):
+def __is_key_already_set(self: AutoSplit, key_name: str):
     return key_name == self.splitLineEdit.text() \
         or key_name == self.resetLineEdit.text() \
         or key_name == self.skipsplitLineEdit.text() \

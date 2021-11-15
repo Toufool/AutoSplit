@@ -133,11 +133,11 @@ def alignRegion(self: AutoSplit):
         return
     # This is the image used for aligning the capture region
     # to the best fit for the user.
-    template_filename = str(QtWidgets.QFileDialog.getOpenFileName(
+    template_filename = QtWidgets.QFileDialog.getOpenFileName(
         self,
         "Select Reference Image",
         "",
-        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"))
+        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)")[0]
 
     # return if the user presses cancel
     if template_filename == '':
