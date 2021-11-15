@@ -46,4 +46,8 @@
     "*.qrc": "xml",
     "*.ui": "xml"
   },
+  "markdownlint.config": {
+    "default": true,
+    "MD025": false,
+  }
 }

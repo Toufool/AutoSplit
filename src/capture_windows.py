@@ -42,7 +42,7 @@ def capture_region(hwnd: int, rect: RECT):
     return __get_image(hwnd, rect, is_accelerated_window)
 
 
-def __get_image(hwnd: int, rect: RECT, print_window=False):
+def __get_image(hwnd: int, rect: RECT, print_window: bool = False):
     width: LONG = rect.right - rect.left
     height: LONG = rect.bottom - rect.top
     windowDC: int = win32gui.GetWindowDC(hwnd)

@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-next-line MD033 -->
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
@@ -165,11 +166,11 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 ## LiveSplit Integration
 
 This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allows you to control AutoSplit using LiveSplits hotkeys directly. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher.
-- Click [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration/blob/main/update/Components/LiveSplit.AutoSplitIntegration.dll?raw=true) to download the component. 
-- Place the .dll file into your `..\LiveSplit\Components` folder. 
+
+- Click [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration/blob/main/update/Components/LiveSplit.AutoSplitIntegration.dll?raw=true) to download the component.
+- Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
 - In Layout Settings -> AutoSplit Integration, use the Browse button to locate AutoSplit.exe.
-
 
 ## Known Limitations
 
