@@ -18,7 +18,7 @@ def splitImageDirectoryNotFoundError():
 
 
 def imageTypeError(image):
-    setTextMessage('"' + image + '" is not a valid image file or the full image file path contains a special character.')
+    setTextMessage(f"\"{image}\" is not a valid image file or the full image file path contains a special character.")
 
 
 def regionError():

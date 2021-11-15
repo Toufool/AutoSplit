@@ -14,14 +14,9 @@ import logging
 from hotkeys import _hotkey_action
 import error_messages
 
-def getAutoSplitDirectory():
-    if getattr(sys, 'frozen', False):
-        # If the application is run as a bundle, the PyInstaller bootloader
-        # extends the sys module by a flag frozen=True
-        auto_split_directory = os.path.dirname(sys.executable)
-    else:
-        auto_split_directory = os.path.dirname(os.path.abspath(__file__))
-    return auto_split_directory
+# Get the directory of either AutoSplit.exe or AutoSplit.py
+auto_split_directory = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
+
 
 def getSaveSettingsValues(self: AutoSplit):
     # get values to be able to save settings
@@ -29,16 +24,16 @@ def getSaveSettingsValues(self: AutoSplit):
     self.y = self.ySpinBox.value()
     self.width = self.widthSpinBox.value()
     self.height = self.heightSpinBox.value()
-    self.split_image_directory = str(self.splitimagefolderLineEdit.text())
+    self.split_image_directory = self.splitimagefolderLineEdit.text()
     self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
     self.comparison_index = self.comparisonmethodComboBox.currentIndex()
     self.pause = self.pauseDoubleSpinBox.value()
     self.fps_limit = self.fpslimitSpinBox.value()
-    self.split_key = str(self.splitLineEdit.text())
-    self.reset_key = str(self.resetLineEdit.text())
-    self.skip_split_key = str(self.skipsplitLineEdit.text())
-    self.undo_split_key = str(self.undosplitLineEdit.text())
-    self.pause_key = str(self.pausehotkeyLineEdit.text())
+    self.split_key = self.splitLineEdit.text()
+    self.reset_key = self.resetLineEdit.text()
+    self.skip_split_key = self.skipsplitLineEdit.text()
+    self.undo_split_key = self.undosplitLineEdit.text()
+    self.pause_key = self.pausehotkeyLineEdit.text()
 
     if self.groupDummySplitsCheckBox.isChecked():
         self.group_dummy_splits_undo_skip_setting = 1
@@ -119,14 +114,11 @@ def saveSettings(self: AutoSplit):
 
 
 def saveSettingsAs(self: AutoSplit):
-    # get the directory of either AutoSplit.exe or AutoSplit.py
-    auto_split_directory = getAutoSplitDirectory()
-
     # User picks save destination
     self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         self,
         "Save Settings As",
-        auto_split_directory+"\settings.pkl",
+        os.path.join(auto_split_directory, "settings.pkl"),
         "PKL (*.pkl)")[0]
 
     # If user cancels save destination window, don't save settings
@@ -173,32 +165,29 @@ def loadSettings(self: AutoSplit):
     self.undo_split_hotkey = ""
     self.pause_hotkey = ""
 
-    # get the directory of either AutoSplit.exe or AutoSplit.py
-    auto_split_directory = getAutoSplitDirectory()
-
     if self.load_settings_on_open:
 
-        self.settings_files = []
+        settings_files = []
         for file in os.listdir(auto_split_directory):
             if file.endswith(".pkl"):
-                self.settings_files.append(file)
+                settings_files.append(file)
 
-        if len(self.settings_files) < 1:
+        if len(settings_files) < 1:
             error_messages.noSettingsFileOnOpenError()
             self.last_loaded_settings = None
             return
-        elif len(self.settings_files) > 1:
+        elif len(settings_files) > 1:
             error_messages.tooManySettingsFilesOnOpenError()
             self.last_loaded_settings = None
             return
         else:
-            self.load_settings_file_path = auto_split_directory+'\\'+self.settings_files[0]
+            self.load_settings_file_path = os.path.join(auto_split_directory, settings_files[0])
 
     else:
         self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Load Settings",
-            auto_split_directory+"\settings.pkl",
+            os.path.join(auto_split_directory, "settings.pkl"),
             "PKL (*.pkl)")[0]
 
         if self.load_settings_file_path == '':
@@ -259,7 +248,6 @@ def loadSettings(self: AutoSplit):
                 error_messages.oldVersionSettingsFileError()
                 return
 
-        self.split_image_directory = str(self.split_image_directory)
         self.splitimagefolderLineEdit.setText(self.split_image_directory)
         self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
         self.pauseDoubleSpinBox.setValue(self.pause)
@@ -287,7 +275,7 @@ def loadSettings(self: AutoSplit):
         try:
             self.splitLineEdit.setText(self.split_key)
             if not self.is_auto_controlled:
-                self.split_hotkey = keyboard.hook_key(str(self.split_key), lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
+                self.split_hotkey = keyboard.hook_key(self.split_key, lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
         except (ValueError, KeyError):
             pass
 

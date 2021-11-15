@@ -55,7 +55,7 @@ def compare_l2_norm(source, capture):
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * 255
 
-    return 1 - (error/max_error)
+    return 1 - (error / max_error)
 
 def compare_l2_norm_masked(source, capture, mask):
     """
@@ -93,7 +93,7 @@ def compare_template(source, capture):
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = source.size * 255 * 255
 
-    return 1 - (min_val/max_error)
+    return 1 - (min_val / max_error)
 
 def compare_template_masked(source, capture, mask):
     """
@@ -129,7 +129,7 @@ def compare_phash(source, capture):
     source_hash = imagehash.phash(source)
     capture_hash = imagehash.phash(capture)
 
-    return 1 - ((source_hash - capture_hash)/64.0)
+    return 1 - ((source_hash - capture_hash) / 64.0)
 
 def compare_phash_masked(source, capture, mask):
     """
@@ -156,7 +156,7 @@ def compare_phash_masked(source, capture, mask):
     source_hash = imagehash.phash(source)
     capture_hash = imagehash.phash(capture)
 
-    return 1 - ((source_hash - capture_hash)/64.0)
+    return 1 - ((source_hash - capture_hash) / 64.0)
 
 
 def checkIfImageHasTransparency(image_path: str):

@@ -1,6 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from typing import Optional
+
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
@@ -202,16 +204,16 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
         # User selects the file with the split images in it.
-        self.split_image_directory = \
-            f"{QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Split Image Directory')}/"
+        new_split_image_directory = QtWidgets.QFileDialog.getExistingDirectory(
+                self,
+                'Select Split Image Directory',
+                os.path.join(self.split_image_directory, ".."))
 
-        # If the user doesn't select a folder, it defaults to /. Set it back to whats in the LineEdit, and return
-        if self.split_image_directory == '/':
-            self.split_image_directory = self.splitimagefolderLineEdit.text()
-            return
-
-        # set the split image folder line to the directory text
-        self.splitimagefolderLineEdit.setText(self.split_image_directory)
+        # If the user doesn't select a folder, it defaults to "".
+        if new_split_image_directory:
+            # set the split image folder line to the directory text
+            self.split_image_directory: Optional[str] = new_split_image_directory
+            self.splitimagefolderLineEdit.setText(new_split_image_directory + '/')
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -283,7 +285,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_image_number = 0
         self.loop_number = 1
         self.start_image_mask = None
-        path = self.split_image_directory + self.start_image_name
+        path = os.path.join(self.split_image_directory, self.start_image_name)
 
         # if image has transparency, create a mask
         if compare.checkIfImageHasTransparency(path):
@@ -401,7 +403,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             error_messages.splitImageDirectoryError()
             return
-        if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
+        if not os.path.exists(self.splitimagefolderLineEdit.text()):
             error_messages.splitImageDirectoryNotFoundError()
             return
         if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
@@ -413,9 +415,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # Below starts the FileNameNumber at #001 up to #999. After that it will go to 1000,
         # which is a problem, but I doubt anyone will get to 1000 split images...
         i = 1
-        while os.path.exists(self.split_image_directory + take_screenshot_filename + '.png') == True:
+        while os.path.exists(os.path.join(self.split_image_directory, f"{take_screenshot_filename}.png")):
             FileNameNumber = (f"{i:03}")
-            take_screenshot_filename = FileNameNumber + '_SplitImage'
+            take_screenshot_filename = f"{FileNameNumber}_SplitImage"
             i = i + 1
 
         # grab screenshot of capture region
@@ -423,8 +425,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
         # save and open image
-        cv2.imwrite(self.split_image_directory + take_screenshot_filename + '.png', capture)
-        os.startfile(self.split_image_directory + take_screenshot_filename + '.png')
+        cv2.imwrite(os.path.join(self.split_image_directory, f"{take_screenshot_filename}.png"), capture)
+        os.startfile(os.path.join(self.split_image_directory, f"{take_screenshot_filename}.png"))
 
     # check max FPS button connects here.
     def checkFPS(self):
@@ -436,7 +438,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         split_image_filenames = os.listdir(split_image_directory)
         for image in split_image_filenames:
-            if cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None:
+            if cv2.imread(os.path.join(self.split_image_directory, image), cv2.IMREAD_COLOR) is None:
                 error_messages.imageTypeError(image)
                 return
             else:
@@ -477,9 +479,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # calculate FPS
         t1 = time.time()
-        FPS = int(10 / (t1 - t0))
-        FPS = str(FPS)
-        self.fpsvalueLabel.setText(FPS)
+        fps = str(int(10 / (t1 - t0)))
+        self.fpsvalueLabel.setText(fps)
 
     def is_current_split_out_of_range(self):
         return len(self.split_image_loop_amount) <= self.split_image_number or self.split_image_number < 0
@@ -578,11 +579,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def autoSplitter(self):
         # error checking:
-        if str(self.splitimagefolderLineEdit.text()) == 'No Folder Selected':
+        if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
             self.guiChangesOnReset()
             error_messages.splitImageDirectoryError()
             return
-        if os.path.exists(self.splitimagefolderLineEdit.text()) == False:
+        if not os.path.exists(self.splitimagefolderLineEdit.text()):
             self.guiChangesOnReset()
             error_messages.splitImageDirectoryNotFoundError()
             return
@@ -598,9 +599,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # according to all of the settings selected by the user.
         for image in self.split_image_filenames:
             # Test for image without transparency
-            if (cv2.imread(self.split_image_directory + image, cv2.IMREAD_COLOR) is None
+            if (cv2.imread(os.path.join(self.split_image_directory, image), cv2.IMREAD_COLOR) is None
                     # Test for image with transparency
-                    and cv2.imread(self.split_image_directory + image, cv2.IMREAD_UNCHANGED) is None):
+                    and cv2.imread(os.path.join(self.split_image_directory, image), cv2.IMREAD_UNCHANGED) is None):
                 # Opencv couldn't open this file as an image, this isn't a correct
                 # file format that is supported
                 self.guiChangesOnReset()
@@ -992,7 +993,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_image_filenames.remove(reset_image_file)
 
         # create reset image and keep in memory
-        path = self.split_image_directory + reset_image_file
+        path = os.path.join(self.split_image_directory, reset_image_file)
 
         # Override values if they have been specified on the file
         pause_from_filename = split_parser.pause_from_filename(reset_image_file)
@@ -1038,9 +1039,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if self.is_current_split_out_of_range():
             self.reset()
             return
+
         # get split image path
         split_image_file = custom_image_file or self.split_image_filenames[0 + self.split_image_number]
-        self.split_image_path = self.split_image_directory + split_image_file
+        self.split_image_path = os.path.join(self.split_image_directory, split_image_file)
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
