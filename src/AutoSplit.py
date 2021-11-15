@@ -1,8 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from typing import Optional
-
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
@@ -16,6 +14,7 @@ import threading
 import time
 
 from menu_bar import about, VERSION, viewHelp
+from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
 import compare
@@ -36,7 +35,7 @@ CAPTURE_RESIZE = (CAPTURE_RESIZE_WIDTH, CAPTURE_RESIZE_HEIGHT)
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
     from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
-    from screen_region import selectRegion, selectWindow, alignRegion
+    from screen_region import selectRegion, selectWindow, alignRegion, validateBeforeComparison
     from hotkeys import afterSettingHotkey, beforeSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, \
         setUndoSplitHotkey, setPauseHotkey
 
@@ -167,6 +166,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.timerLiveImage = QtCore.QTimer()
         self.timerLiveImage.timeout.connect(self.liveImageFunction)
 
+        # Initialize a few attributes
+        self.last_saved_settings = None
+        self.live_image_function_on_open = True
+        self.split_image_loop_amount = []
+        self.split_image_number = 0
+        self.loop_number = 1
+        self.split_image_directory = ""
+
         # Default Settings for the region capture
         self.hwnd = 0
         self.hwnd_title = ''
@@ -180,13 +187,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.load_settings_on_open = True
         self.loadSettings()
         self.load_settings_on_open = False
-
-        # Initialize a few attributes
-        self.last_saved_settings = None
-        self.live_image_function_on_open = True
-        self.split_image_loop_amount = []
-        self.split_image_number = 0
-        self.loop_number = 1
 
         # Automatic timer start
         self.timerStartImage = QtCore.QTimer()
@@ -207,13 +207,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         new_split_image_directory = QtWidgets.QFileDialog.getExistingDirectory(
                 self,
                 'Select Split Image Directory',
-                os.path.join(self.split_image_directory, ".."))
+                os.path.join(self.split_image_directory or auto_split_directory, ".."))
 
         # If the user doesn't select a folder, it defaults to "".
         if new_split_image_directory:
             # set the split image folder line to the directory text
-            self.split_image_directory: Optional[str] = new_split_image_directory
-            self.splitimagefolderLineEdit.setText(new_split_image_directory + '/')
+            self.split_image_directory = new_split_image_directory
+            self.splitimagefolderLineEdit.setText(f"{new_split_image_directory}/")
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -224,14 +224,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def liveImageFunction(self):
         try:
-            if win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == True:
+            if win32gui.GetWindowText(self.hwnd) == '':
                 self.timerLiveImage.stop()
-                self.live_image_function_on_open = False
-                return
-
-            elif win32gui.GetWindowText(self.hwnd) == '' and self.live_image_function_on_open == False:
-                error_messages.regionError()
-                self.timerLiveImage.stop()
+                if self.live_image_function_on_open:
+                    self.live_image_function_on_open = False
+                else:
+                    error_messages.regionError()
                 return
 
             ctypes.windll.user32.SetProcessDPIAware()
@@ -255,15 +253,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.startImageLabel.setText("Start image: not found")
         QtWidgets.QApplication.processEvents()
 
-        if self.splitimagefolderLineEdit.text() == 'No Folder Selected' \
-                or not os.path.exists(self.split_image_directory):
-            # Only show error messages if the user clicked the button
-            if started_by_button:
-                error_messages.splitImageDirectoryError()
-            return
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            if started_by_button:
-                error_messages.regionError()
+        if not self.validateBeforeComparison(started_by_button):
             return
 
         self.start_image_name = None
@@ -399,15 +389,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.currentSplitImage.setPixmap(pix)
 
     def takeScreenshot(self):
-        # error checks
-        if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
-            error_messages.splitImageDirectoryError()
-            return
-        if not os.path.exists(self.splitimagefolderLineEdit.text()):
-            error_messages.splitImageDirectoryNotFoundError()
-            return
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            error_messages.regionError()
+        if not self.validateBeforeComparison():
             return
         take_screenshot_filename = '001_SplitImage'
 
@@ -430,32 +412,21 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     # check max FPS button connects here.
     def checkFPS(self):
-        # error checking
-        split_image_directory = self.splitimagefolderLineEdit.text()
-        if split_image_directory == 'No Folder Selected' or split_image_directory is None:
-            error_messages.splitImageDirectoryError()
+        if not self.validateBeforeComparison():
             return
 
-        split_image_filenames = os.listdir(split_image_directory)
-        for image in split_image_filenames:
-            if cv2.imread(os.path.join(self.split_image_directory, image), cv2.IMREAD_COLOR) is None:
+        split_image_filenames = os.listdir(self.split_image_directory)
+        split_images = [
+            cv2.imread(os.path.join(self.split_image_directory, image), cv2.IMREAD_COLOR)
+            for image
+            in split_image_filenames]
+        for image in split_images:
+            if image is None:
                 error_messages.imageTypeError(image)
                 return
-            else:
-                pass
-
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            error_messages.regionError()
-            return
-
-        if self.width == 0 or self.height == 0:
-            error_messages.regionSizeError()
-            return
 
         # grab first image in the split image folder
-        split_image_file = split_image_filenames[0]
-        split_image_path = split_image_directory + split_image_file
-        split_image = cv2.imread(split_image_path, cv2.IMREAD_COLOR)
+        split_image = split_images[0]
         split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
         split_image = cv2.resize(split_image, COMPARISON_RESIZE)
 
@@ -469,11 +440,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             if self.comparisonmethodComboBox.currentIndex() == 0:
-                similarity = compare.compare_l2_norm(split_image, capture)
+                _ = compare.compare_l2_norm(split_image, capture)
             elif self.comparisonmethodComboBox.currentIndex() == 1:
-                similarity = compare.compare_histograms(split_image, capture)
+                _ = compare.compare_histograms(split_image, capture)
             elif self.comparisonmethodComboBox.currentIndex() == 2:
-                similarity = compare.compare_phash(split_image, capture)
+                _ = compare.compare_phash(split_image, capture)
 
             count = count + 1
 
@@ -578,18 +549,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         return False
 
     def autoSplitter(self):
-        # error checking:
-        if self.splitimagefolderLineEdit.text() == 'No Folder Selected':
-            self.guiChangesOnReset()
-            error_messages.splitImageDirectoryError()
-            return
-        if not os.path.exists(self.splitimagefolderLineEdit.text()):
-            self.guiChangesOnReset()
-            error_messages.splitImageDirectoryNotFoundError()
-            return
-        if self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
-            self.guiChangesOnReset()
-            error_messages.regionError()
+        if not self.validateBeforeComparison():
             return
 
         # get split image filenames

@@ -17,6 +17,10 @@ def splitImageDirectoryNotFoundError():
     setTextMessage("The Split Image Folder does not exist.")
 
 
+def splitImageDirectoryEmpty():
+    setTextMessage("The Split Image Folder is empty.")
+
+
 def imageTypeError(image):
     setTextMessage(f"\"{image}\" is not a valid image file or the full image file path contains a special character.")
 

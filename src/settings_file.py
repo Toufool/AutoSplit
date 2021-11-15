@@ -24,7 +24,6 @@ def getSaveSettingsValues(self: AutoSplit):
     self.y = self.ySpinBox.value()
     self.width = self.widthSpinBox.value()
     self.height = self.heightSpinBox.value()
-    self.split_image_directory = self.splitimagefolderLineEdit.text()
     self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
     self.comparison_index = self.comparisonmethodComboBox.currentIndex()
     self.pause = self.pauseDoubleSpinBox.value()
