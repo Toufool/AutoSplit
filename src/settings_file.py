@@ -14,6 +14,14 @@ import logging
 from hotkeys import _hotkey_action
 import error_messages
 
+def getAutoSplitDirectory():
+    if getattr(sys, 'frozen', False):
+        # If the application is run as a bundle, the PyInstaller bootloader
+        # extends the sys module by a flag frozen=True
+        auto_split_directory = os.path.dirname(sys.executable)
+    else:
+        auto_split_directory = os.path.dirname(os.path.abspath(__file__))
+    return auto_split_directory
 
 def getSaveSettingsValues(self: AutoSplit):
     # get values to be able to save settings
@@ -111,11 +119,14 @@ def saveSettings(self: AutoSplit):
 
 
 def saveSettingsAs(self: AutoSplit):
+    # get the directory of either AutoSplit.exe or AutoSplit.py
+    auto_split_directory = getAutoSplitDirectory()
+
     # User picks save destination
     self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         self,
         "Save Settings As",
-        "settings.pkl",
+        auto_split_directory+"\settings.pkl",
         "PKL (*.pkl)")[0]
 
     # If user cancels save destination window, don't save settings
@@ -162,17 +173,13 @@ def loadSettings(self: AutoSplit):
     self.undo_split_hotkey = ""
     self.pause_hotkey = ""
 
+    # get the directory of either AutoSplit.exe or AutoSplit.py
+    auto_split_directory = getAutoSplitDirectory()
+
     if self.load_settings_on_open:
 
-        if getattr(sys, 'frozen', False):
-            # If the application is run as a bundle, the PyInstaller bootloader
-            # extends the sys module by a flag frozen=True
-            self.auto_split_exe_directory = os.path.dirname(sys.executable)
-        else:
-            self.auto_split_exe_directory = os.path.dirname(os.path.abspath(__file__))
-
         self.settings_files = []
-        for file in os.listdir(self.auto_split_exe_directory):
+        for file in os.listdir(auto_split_directory):
             if file.endswith(".pkl"):
                 self.settings_files.append(file)
 
@@ -185,13 +192,13 @@ def loadSettings(self: AutoSplit):
             self.last_loaded_settings = None
             return
         else:
-            self.load_settings_file_path = self.auto_split_exe_directory+'\\'+self.settings_files[0]
+            self.load_settings_file_path = auto_split_directory+'\\'+self.settings_files[0]
 
     else:
         self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Load Settings",
-            "settings.pkl",
+            auto_split_directory+"\settings.pkl",
             "PKL (*.pkl)")[0]
 
         if self.load_settings_file_path == '':
