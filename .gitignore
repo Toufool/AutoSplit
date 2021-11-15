@@ -16,5 +16,3 @@ dist/
 
 # Dev settings
 *.pkl
-# Defaut settings
-!src/settings.pkl

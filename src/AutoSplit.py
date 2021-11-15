@@ -95,7 +95,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                 def run(self):
                     while True:
-                        line = input()
+                        try:
+                            line = input()
+                        except RuntimeError:
+                            # stdin not supported or lost, stop looking for inputs
+                            break
                         # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
                         # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
                         # For now this can only used in a Development environment
@@ -477,18 +481,21 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         FPS = str(FPS)
         self.fpsvalueLabel.setText(FPS)
 
+    def is_current_split_out_of_range(self):
+        return len(self.split_image_loop_amount) <= self.split_image_number or self.split_image_number < 0
+
     # undo split button and hotkey connect to here
     def undoSplit(self):
         # Can't undo until timer is started
         # or Undoing past the first image
         if (not self.undosplitButton.isEnabled() and not self.is_auto_controlled) \
-                or len(self.split_image_loop_amount) <= self.split_image_number or self.split_image_number < 0:
+                or self.is_current_split_out_of_range():
             return
 
-        if self.loop_number != 1 and self.groupDummySplitsCheckBox.isChecked() == False:
+        if self.loop_number != 1 and not self.groupDummySplitsCheckBox.isChecked():
             self.loop_number = self.loop_number - 1
 
-        elif self.groupDummySplitsCheckBox.isChecked() == True:
+        elif self.groupDummySplitsCheckBox.isChecked():
             for i, group in enumerate(self.split_groups):
                 if i > 0 and self.split_image_number in group:
                     self.split_image_number = self.split_groups[i - 1][0]
@@ -507,12 +514,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
         if (not self.skipsplitButton.isEnabled() and not self.is_auto_controlled) \
-                or len(self.split_image_loop_amount) <= self.split_image_number or self.split_image_number < 0:
+                or self.is_current_split_out_of_range():
             return
 
-        if self.loop_number < self.split_image_loop_amount[self.split_image_number] and self.groupDummySplitsCheckBox.isChecked() == False:
+        if self.loop_number < self.split_image_loop_amount[self.split_image_number] and not self.groupDummySplitsCheckBox.isChecked():
             self.loop_number = self.loop_number + 1
-        elif self.groupDummySplitsCheckBox.isChecked() == True:
+        elif self.groupDummySplitsCheckBox.isChecked():
             for group in self.split_groups:
                 if self.split_image_number in group:
                     self.split_image_number = group[-1] + 1
@@ -1016,7 +1023,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def removeStartAutoSplitterImage(self):
         start_auto_splitter_image_file = None
-        for i, image in enumerate(self.split_image_filenames):
+        for _, image in enumerate(self.split_image_filenames):
             if split_parser.is_start_auto_splitter_image(image):
                 start_auto_splitter_image_file = image
                 break
@@ -1027,6 +1034,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_image_filenames.remove(start_auto_splitter_image_file)
 
     def updateSplitImage(self, custom_image_file=None):
+        # Splitting/skipping when there are no images left or Undoing past the first image
+        if self.is_current_split_out_of_range():
+            self.reset()
+            return
         # get split image path
         split_image_file = custom_image_file or self.split_image_filenames[0 + self.split_image_number]
         self.split_image_path = self.split_image_directory + split_image_file
@@ -1096,7 +1107,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.001
 
     # exit safely when closing the window
-    def closeEvent(self, event=None):
+    def closeEvent(self, event: QtGui.QCloseEvent = None):
         def exit():
             if event is not None:
                 event.accept()
@@ -1137,6 +1148,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 event.ignore()
         else:
             exit()
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
