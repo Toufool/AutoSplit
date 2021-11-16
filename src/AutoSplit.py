@@ -389,7 +389,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.currentSplitImage.setPixmap(pix)
 
     def takeScreenshot(self):
-        if not self.validateBeforeComparison():
+        if not self.validateBeforeComparison(check_empty_directory=False):
             return
         take_screenshot_filename = '001_SplitImage'
 

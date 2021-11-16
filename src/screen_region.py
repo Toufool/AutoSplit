@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import cast, Callable, TYPE_CHECKING
+from typing import Callable, cast, TYPE_CHECKING
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -212,19 +212,19 @@ def alignRegion(self: AutoSplit):
     self.heightSpinBox.setValue(best_height)
 
 
-def validateBeforeComparison(self: AutoSplit, show_error_condition: bool = True):
+def validateBeforeComparison(self: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
     error = None
     if not self.split_image_directory:
         error = error_messages.splitImageDirectoryError
     elif not os.path.isdir(self.split_image_directory):
         error = error_messages.splitImageDirectoryNotFoundError
-    elif not os.listdir(self.split_image_directory):
+    elif check_empty_directory and not os.listdir(self.split_image_directory):
         error = error_messages.splitImageDirectoryEmpty
     elif self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
         error = error_messages.regionError
     elif self.width == 0 or self.height == 0:
         error = error_messages.regionSizeError
-    if error and show_error_condition:
+    if error and show_error:
         error()
     return not error
 
