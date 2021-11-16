@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
+import os
 import ctypes
 import ctypes.wintypes
 import cv2
@@ -209,6 +210,22 @@ def alignRegion(self: AutoSplit):
     self.ySpinBox.setValue(self.rect.top)
     self.widthSpinBox.setValue(best_width)
     self.heightSpinBox.setValue(best_height)
+
+
+def validateBeforeComparison(self: AutoSplit, show_error_condition: bool = True):
+    if not self.split_image_directory:
+        error = error_messages.splitImageDirectoryError
+    elif not os.path.isdir(self.split_image_directory):
+        error = error_messages.splitImageDirectoryNotFoundError
+    elif not os.listdir(self.split_image_directory):
+        error = error_messages.splitImageDirectoryEmpty
+    elif self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+        error = error_messages.regionError
+    elif self.width == 0 or self.height == 0:
+        error = error_messages.regionSizeError
+    if error and show_error_condition:
+        error()
+    return not error
 
 
 # widget to select a window and obtain its bounds
