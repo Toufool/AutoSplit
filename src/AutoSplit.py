@@ -289,7 +289,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.start_image = cv2.cvtColor(self.start_image, cv2.COLOR_BGRA2BGR)
 
-        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. Capture with nearest neighbor interpolation only if the split image has transparency to support older setups.
         else:
             self.start_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE)
@@ -929,8 +929,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def getCaptureForComparison(self):
         # grab screenshot of capture region
         capture = capture_windows.capture_region(self.hwnd, self.rect)
-        # Capture with nearest neighbor interpolation
-        capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+        # Capture with nearest neighbor interpolation only if the split image has transparency to support older setups
+        if self.imageHasTransparency:
+            capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+        else:
+            capture = cv2.resize(capture, COMPARISON_RESIZE)
         # convert to BGR
         return cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
@@ -977,7 +980,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.reset_image = cv2.cvtColor(self.reset_image, cv2.COLOR_BGRA2BGR)
 
-        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally. Capture with nearest neighbor interpolation only if the split image has transparency to support older setups
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
             self.reset_image = cv2.resize(self.reset_image, COMPARISON_RESIZE)
