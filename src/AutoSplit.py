@@ -289,10 +289,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.start_image = cv2.cvtColor(self.start_image, cv2.COLOR_BGRA2BGR)
 
-        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally.
         else:
             self.start_image = cv2.imread(path, cv2.IMREAD_COLOR)
-            self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE)
+            self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
         start_image_pause = split_parser.pause_from_filename(self.start_image_name)
         if wait_for_delay and start_image_pause is not None and start_image_pause > 0:
@@ -428,7 +428,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # grab first image in the split image folder
         split_image = split_images[0]
         split_image = cv2.cvtColor(split_image, cv2.COLOR_BGR2RGB)
-        split_image = cv2.resize(split_image, COMPARISON_RESIZE)
+        split_image = cv2.resize(split_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
         # run 10 iterations of screenshotting capture region + comparison.
         count = 0
@@ -436,7 +436,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         while count < 10:
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
-            capture = cv2.resize(capture, COMPARISON_RESIZE)
+            capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             if self.comparisonmethodComboBox.currentIndex() == 0:
@@ -977,10 +977,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.reset_image = cv2.cvtColor(self.reset_image, cv2.COLOR_BGRA2BGR)
 
-        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally.
         else:
             self.reset_image = cv2.imread(path, cv2.IMREAD_COLOR)
-            self.reset_image = cv2.resize(self.reset_image, COMPARISON_RESIZE)
+            self.reset_image = cv2.resize(self.reset_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
     def removeStartAutoSplitterImage(self):
         start_auto_splitter_image_file = None
@@ -1040,10 +1040,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set split image as BGR
             self.split_image = cv2.cvtColor(self.split_image, cv2.COLOR_BGRA2BGR)
 
-        # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
+        # otherwise, open image normally.
         else:
             split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
-            self.split_image = cv2.resize(split_image, COMPARISON_RESIZE)
+            self.split_image = cv2.resize(split_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             self.mask = None
 
         # Override values if they have been specified on the file
