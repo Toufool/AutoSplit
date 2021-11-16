@@ -20,6 +20,8 @@ keyboard
 packaging
 pyautogui
 PySide6
+flake8
+mypy
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

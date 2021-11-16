@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Union
+from typing import Any, Callable, TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -111,7 +111,7 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
 #
 # Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
 # We're also trying to achieve the same hotkey behaviour as LiveSplit has.
-def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action):
+def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action: Callable[[]]):
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
         action()
 

@@ -13,8 +13,8 @@
   "[python]": {
     "editor.tabSize": 4,
     "editor.rulers": [
-      72,
       79,
+      100,
       120,
     ]
   },
@@ -23,15 +23,30 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": false,
   },
-  "python.linting.pylintEnabled": false,
-  // Using flake8 as other linters are incomplete or have too many false positives last I tried
-  "python.linting.flake8Enabled": true,
   "python.linting.enabled": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticSeverityOverrides": {
+    // Too many false positives with pywin32 (all functions have 0 arguments in type stub)
+    "reportGeneralTypeIssues":"none"
+  },
+  // https://code.visualstudio.com/docs/python/linting#_specific-linters
+  // Maybe consider PyLint once all Flake8 linting is fixed
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  // Flake8 is already a pycodestyle wrapper
   "python.linting.pycodestyleEnabled": false,
+  "python.linting.pylintArgs": [
+    "--disable=no-member",
+    "--max-line-length=120"
+  ],
+  "python.linting.flake8CategorySeverity.E": "Warning",
   "python.linting.flake8Args": [
     "--max-line-length=120"
   ],
-  "python.linting.flake8CategorySeverity.F": "Warning",
+  "python.linting.mypyArgs": [
+    "--max-line-length=120"
+  ],
   "python.formatting.autopep8Args": [
     "--max-line-length=120"
   ],
@@ -49,5 +64,5 @@
   "markdownlint.config": {
     "default": true,
     "MD025": false,
-  }
+  },
 }
