@@ -213,6 +213,7 @@ def alignRegion(self: AutoSplit):
 
 
 def validateBeforeComparison(self: AutoSplit, show_error_condition: bool = True):
+    error = None
     if not self.split_image_directory:
         error = error_messages.splitImageDirectoryError
     elif not os.path.isdir(self.split_image_directory):
