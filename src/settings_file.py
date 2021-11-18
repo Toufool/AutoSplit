@@ -156,7 +156,7 @@ def saveSettingsAs(self: AutoSplit):
     self.last_successfully_loaded_settings_file_path = self.save_settings_file_path
 
 
-def loadSettings(self: AutoSplit):
+def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_settings_from_livesplit: bool = False):
     # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
     self.split_hotkey = ""
     self.reset_hotkey = ""
@@ -164,13 +164,14 @@ def loadSettings(self: AutoSplit):
     self.undo_split_hotkey = ""
     self.pause_hotkey = ""
 
-    if self.load_settings_on_open:
+    if load_settings_on_open:
 
         settings_files = []
         for file in os.listdir(auto_split_directory):
             if file.endswith(".pkl"):
                 settings_files.append(file)
 
+        # find all .pkls in AutoSplit folder, error if there is none or more than 1
         if len(settings_files) < 1:
             error_messages.noSettingsFileOnOpenError()
             self.last_loaded_settings = None
@@ -182,7 +183,8 @@ def loadSettings(self: AutoSplit):
         else:
             self.load_settings_file_path = os.path.join(auto_split_directory, settings_files[0])
 
-    else:
+    elif not load_settings_on_open and not load_settings_from_livesplit:
+
         self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Load Settings",

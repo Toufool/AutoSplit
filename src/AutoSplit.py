@@ -115,6 +115,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                             self.autosplit.startUndoSplit()
                         elif line == 'reset':
                             self.autosplit.startReset()
+                        elif line.startswith('settings|'):
+                            self.autosplit.load_settings_file_path = line.split('settings|')[1]
+                            self.autosplit.loadSettings(load_settings_from_livesplit=True)
                         # TODO: Not yet implemented in AutoSplit Integration
                         # elif line == 'pause':
                         #     self.startPause()
@@ -183,10 +186,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.last_loaded_settings = None
         self.last_successfully_loaded_settings_file_path = None
 
-        # find all .pkls in AutoSplit folder, error if there is none or more than 1
-        self.load_settings_on_open = True
-        self.loadSettings()
-        self.load_settings_on_open = False
+        if not self.is_auto_controlled:
+            self.loadSettings(load_settings_on_open=True)
 
         # Automatic timer start
         self.timerStartImage = QtCore.QTimer()
