@@ -167,10 +167,13 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allows you to control AutoSplit using LiveSplits hotkeys directly. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher.
 
-- Click [here](https://github.com/KaDiWa4/LiveSplit.AutoSplitIntegration/blob/main/update/Components/LiveSplit.AutoSplitIntegration.dll?raw=true) to download the component.
+- Click [here](https://github.com/Toufool/LiveSplit.AutoSplitIntegration/raw/main/update/Components/LiveSplit.AutoSplitIntegration.dll) to download the component.
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
-- In Layout Settings -> AutoSplit Integration, use the Browse button to locate AutoSplit.exe.
+- Click Layout Settings -> AutoSplit Integration
+- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Settings Path (path to your AutoSplit `.pkl` settings file) respectively.
+  - If you have not yet set saved a settings file, you can do so using AutoSplit, and then go back and set your Settings Path.
+- Once set, click OK and save your LiveSplit Splits file. AutoSplit and its settings will now open automatically when opening the LiveSplit Splits file.
 
 ## Known Limitations
 
