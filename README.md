@@ -165,8 +165,12 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 ## LiveSplit Integration
 
-This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allows you to control AutoSplit using LiveSplits hotkeys directly. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher.
+The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher. This integration will allow you to:
 
+- Use hotkeys directly from LiveSplit to control AutoSplit.
+- Load AutoSplit and any AutoSplit settings automatically when opening a LiveSplit layout.
+
+### LiveSplit Integration Tutorial
 - Click [here](https://github.com/Toufool/LiveSplit.AutoSplitIntegration/raw/main/update/Components/LiveSplit.AutoSplitIntegration.dll) to download the component.
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
