@@ -173,7 +173,7 @@ This LiveSplit Component will directly connect AutoSplit with LiveSplit. It allo
 - Click Layout Settings -> AutoSplit Integration
 - Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Settings Path (path to your AutoSplit `.pkl` settings file) respectively.
   - If you have not yet set saved a settings file, you can do so using AutoSplit, and then go back and set your Settings Path.
-- Once set, click OK and save your LiveSplit Splits file. AutoSplit and its settings will now open automatically when opening the LiveSplit Splits file.
+- Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and its settings will now open automatically when opening that LiveSplit Layout `.lsl` file.
 
 ## Known Limitations
 
