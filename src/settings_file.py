@@ -249,7 +249,7 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 if not load_settings_from_livesplit:
                     error_messages.oldVersionSettingsFileError()
                 return
-    except FileNotFoundError:
+    except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
         # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
         # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
         # but in the mean time, this will do.
