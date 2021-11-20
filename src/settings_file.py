@@ -246,87 +246,91 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 self.pause_key = ''
                 self.auto_start_on_reset_setting = 0
             elif self.settings_count < 18:
-                error_messages.oldVersionSettingsFileError()
+                if not load_settings_from_livesplit:
+                    error_messages.oldVersionSettingsFileError()
                 return
+    except FileNotFoundError:
+        # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
+        # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
+        # but in the mean time, this will do.
+        if not load_settings_from_livesplit:
+            error_messages.invalidSettingsError()
+        return
 
-        self.splitimagefolderLineEdit.setText(self.split_image_directory)
-        self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-        self.pauseDoubleSpinBox.setValue(self.pause)
-        self.fpslimitSpinBox.setValue(self.fps_limit)
-        self.xSpinBox.setValue(self.x)
-        self.ySpinBox.setValue(self.y)
-        self.widthSpinBox.setValue(self.width)
-        self.heightSpinBox.setValue(self.height)
-        self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
-        self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
+    self.splitimagefolderLineEdit.setText(self.split_image_directory)
+    self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
+    self.pauseDoubleSpinBox.setValue(self.pause)
+    self.fpslimitSpinBox.setValue(self.fps_limit)
+    self.xSpinBox.setValue(self.x)
+    self.ySpinBox.setValue(self.y)
+    self.widthSpinBox.setValue(self.width)
+    self.heightSpinBox.setValue(self.height)
+    self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
+    self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
 
-        # set custom checkbox's accordingly
-        self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
-        self.loopCheckBox.setChecked(self.loop_setting == 1)
-        self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
-        self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
+    # set custom checkbox's accordingly
+    self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
+    self.loopCheckBox.setChecked(self.loop_setting == 1)
+    self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
+    self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
 
-        # TODO: Reuse code from hotkeys rather than duplicating here
-        # try to set hotkeys from when user last closed the window
-        try:
-            keyboard.unhook_key(self.split_hotkey)
-        # pass if the key is an empty string (hotkey was never set)
-        except (AttributeError, KeyError):
-            pass
-        try:
-            self.splitLineEdit.setText(self.split_key)
-            if not self.is_auto_controlled:
-                self.split_hotkey = keyboard.hook_key(self.split_key, lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
-        except (ValueError, KeyError):
-            pass
+    # TODO: Reuse code from hotkeys rather than duplicating here
+    # try to set hotkeys from when user last closed the window
+    try:
+        keyboard.unhook_key(self.split_hotkey)
+    # pass if the key is an empty string (hotkey was never set)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.splitLineEdit.setText(self.split_key)
+        if not self.is_auto_controlled:
+            self.split_hotkey = keyboard.hook_key(self.split_key, lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
+    except (ValueError, KeyError):
+        pass
 
-        try:
-            keyboard.unhook_key(self.reset_hotkey)
-        except (AttributeError, KeyError):
-            pass
-        try:
-            self.resetLineEdit.setText(self.reset_key)
-            if not self.is_auto_controlled:
-                self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
-        except (ValueError, KeyError):
-            pass
+    try:
+        keyboard.unhook_key(self.reset_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.resetLineEdit.setText(self.reset_key)
+        if not self.is_auto_controlled:
+            self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
+    except (ValueError, KeyError):
+        pass
 
-        try:
-            keyboard.unhook_key(self.skip_split_hotkey)
-        except (AttributeError, KeyError):
-            pass
-        try:
-            self.skipsplitLineEdit.setText(self.skip_split_key)
-            if not self.is_auto_controlled:
-                self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
-        except (ValueError, KeyError):
-            pass
+    try:
+        keyboard.unhook_key(self.skip_split_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.skipsplitLineEdit.setText(self.skip_split_key)
+        if not self.is_auto_controlled:
+            self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
+    except (ValueError, KeyError):
+        pass
 
-        try:
-            keyboard.unhook_key(self.undo_split_hotkey)
-        except (AttributeError, KeyError):
-            pass
-        try:
-            self.undosplitLineEdit.setText(self.undo_split_key)
-            if not self.is_auto_controlled:
-                self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
-        except (ValueError, KeyError):
-            pass
+    try:
+        keyboard.unhook_key(self.undo_split_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.undosplitLineEdit.setText(self.undo_split_key)
+        if not self.is_auto_controlled:
+            self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
+    except (ValueError, KeyError):
+        pass
 
-        try:
-            keyboard.unhook_key(self.pause_hotkey)
-        except (AttributeError, KeyError):
-            pass
-        try:
-            self.pausehotkeyLineEdit.setText(self.pause_key)
-            if not self.is_auto_controlled:
-                self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
-        except (ValueError, KeyError):
-            pass
+    try:
+        keyboard.unhook_key(self.pause_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.pausehotkeyLineEdit.setText(self.pause_key)
+        if not self.is_auto_controlled:
+            self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
+    except (ValueError, KeyError):
+        pass
 
-        self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
-        self.checkLiveImage()
-
-    except Exception:
-        logging.error(logging.traceback.format_exc())
-        error_messages.invalidSettingsError()
+    self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
+    self.checkLiveImage()
