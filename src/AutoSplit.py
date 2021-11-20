@@ -88,9 +88,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             print(f"{VERSION}\n{os.getpid()}", flush=True)
 
             class Worker(QtCore.QObject):
-                autosplit: AutoSplit = None
-
-                def __init__(self, autosplit):
+                def __init__(self, autosplit: AutoSplit):
                     self.autosplit = autosplit
                     super().__init__()
 
@@ -115,8 +113,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                             self.autosplit.startUndoSplit()
                         elif line == 'reset':
                             self.autosplit.startReset()
-                        elif line.startswith('settings|'):
-                            self.autosplit.load_settings_file_path = line.split('settings|')[1]
+                        elif line.startswith('settings'):
+                            # Allow for any split character between "settings" and the path
+                            self.autosplit.load_settings_file_path = line[9:]
                             self.autosplit.loadSettings(load_settings_from_livesplit=True)
                         # TODO: Not yet implemented in AutoSplit Integration
                         # elif line == 'pause':
