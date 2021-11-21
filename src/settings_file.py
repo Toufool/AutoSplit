@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Union
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -9,7 +9,6 @@ import os
 import sys
 import keyboard
 import pickle
-import logging
 
 from hotkeys import _hotkey_action
 import error_messages
@@ -49,9 +48,10 @@ def getSaveSettingsValues(self: AutoSplit):
     else:
         self.auto_start_on_reset_setting = 0
 
+
 def haveSettingsChanged(self: AutoSplit):
     self.getSaveSettingsValues()
-    self.current_save_settings = [
+    current_save_settings = [
         self.split_image_directory,
         self.similarity_threshold,
         self.comparison_index,
@@ -73,13 +73,11 @@ def haveSettingsChanged(self: AutoSplit):
         self.loop_setting,
         self.auto_start_on_reset_setting]
 
-    #one small caveat in this: if you load a settings file from an old version, but dont change settings,
-    #the current save settings and last load settings will have different # of elements and it will ask
-    #the user to save changes upon closing even though there were none
-    if self.current_save_settings == self.last_loaded_settings or self.current_save_settings == self.last_saved_settings:
-        return False
-    else:
-        return True
+    # One small caveat in this: if you load a settings file from an old version, but dont change settings,
+    # the current save settings and last load settings will have different # of elements and it will ask
+    # the user to save changes upon closing even though there were none
+    return current_save_settings not in (self.last_loaded_settings, self.last_saved_settings)
+
 
 def saveSettings(self: AutoSplit):
     if self.last_successfully_loaded_settings_file_path == None:
@@ -196,60 +194,43 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
 
     try:
         with open(self.load_settings_file_path, 'rb') as f:
-            self.settings_count = len(pickle.load(f))
-            #v1.5 settings
-            if self.settings_count == 20:
-                with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [
-                        self.split_image_directory,
-                        self.similarity_threshold,
-                        self.comparison_index,
-                        self.pause,
-                        self.fps_limit,
-                        self.split_key,
-                        self.reset_key,
-                        self.skip_split_key,
-                        self.undo_split_key,
-                        self.pause_key,
-                        self.x,
-                        self.y,
-                        self.width,
-                        self.height,
-                        self.hwnd_title,
-                        _,
-                        _,
-                        self.group_dummy_splits_undo_skip_setting,
-                        self.loop_setting,
-                        self.auto_start_on_reset_setting] = pickle.load(f)
-            # v1.3-1.4 settings. add a blank pause key.
-            elif self.settings_count == 18:
-                with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [
-                        self.split_image_directory,
-                        self.similarity_threshold,
-                        self.comparison_index,
-                        self.pause,
-                        self.fps_limit,
-                        self.split_key,
-                        self.reset_key,
-                        self.skip_split_key,
-                        self.undo_split_key,
-                        self.x,
-                        self.y,
-                        self.width,
-                        self.height,
-                        self.hwnd_title,
-                        _,
-                        _,
-                        self.group_dummy_splits_undo_skip_setting,
-                        self.loop_setting] = pickle.load(f)
-                self.pause_key = ''
-                self.auto_start_on_reset_setting = 0
-            elif self.settings_count < 18:
+            settings: List[Union[str, int]] = pickle.load(f)
+            settings_count = len(settings)
+            if settings_count < 18:
                 if not load_settings_from_livesplit:
                     error_messages.oldVersionSettingsFileError()
                 return
-    except FileNotFoundError:
+            # v1.3-1.4 settings. Add default pause_key and auto_start_on_reset_setting
+            if settings_count == 18:
+                settings.insert(9, '')
+                settings.insert(20, 0)
+            # v1.5 settings
+            elif settings_count != 20:
+                if not load_settings_from_livesplit:
+                    error_messages.invalidSettingsError()
+                return
+            self.last_loaded_settings = [
+                self.split_image_directory,
+                self.similarity_threshold,
+                self.comparison_index,
+                self.pause,
+                self.fps_limit,
+                self.split_key,
+                self.reset_key,
+                self.skip_split_key,
+                self.undo_split_key,
+                self.pause_key,
+                self.x,
+                self.y,
+                self.width,
+                self.height,
+                self.hwnd_title,
+                _,
+                _,
+                self.group_dummy_splits_undo_skip_setting,
+                self.loop_setting,
+                self.auto_start_on_reset_setting] = settings
+    except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
         # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
         # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
         # but in the mean time, this will do.
