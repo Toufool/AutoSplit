@@ -4,7 +4,7 @@ import imagehash
 import numpy as np
 
 
-def compare_histograms(source, capture):
+def compare_histograms(source, capture) -> float:
     """
     Compares two images by calculating their histograms, normalizing them, and
     then comparing them using Bhattacharyya distance.
@@ -22,7 +22,7 @@ def compare_histograms(source, capture):
 
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
-def compare_histograms_masked(source, capture, mask):
+def compare_histograms_masked(source, capture, mask) -> float:
     """
     Compares two images by calculating their histograms using a mask, normalizing
     them, and then comparing them using Bhattacharyya distance.
@@ -40,7 +40,7 @@ def compare_histograms_masked(source, capture, mask):
 
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
-def compare_l2_norm(source, capture):
+def compare_l2_norm(source, capture) -> float:
     """
     Compares two images by calculating the L2 Error (square-root
     of sum of squared error)
@@ -49,7 +49,6 @@ def compare_l2_norm(source, capture):
     @param capture: Image matching the dimensions of the source
     @return: The similarity between the images as a number 0 to 1.
     """
-
     error = cv2.norm(source, capture, cv2.NORM_L2)
 
     # The L2 Error is summed across all pixels, so this normalizes
@@ -57,7 +56,7 @@ def compare_l2_norm(source, capture):
 
     return 1 - (error / max_error)
 
-def compare_l2_norm_masked(source, capture, mask):
+def compare_l2_norm_masked(source, capture, mask) -> float:
     """
     Compares two images by calculating the L2 Error (square-root
     of sum of squared error)
@@ -75,7 +74,7 @@ def compare_l2_norm_masked(source, capture, mask):
 
     return 1 - (error / max_error)
 
-def compare_template(source, capture):
+def compare_template(source, capture) -> float:
     """
     Checks if the source is located within the capture by using
     the sum of square differences.
@@ -95,7 +94,7 @@ def compare_template(source, capture):
 
     return 1 - (min_val / max_error)
 
-def compare_template_masked(source, capture, mask):
+def compare_template_masked(source, capture, mask) -> float:
     """
     Checks if the source is located within the capture by using
     the sum of square differences. The mask is used to search for
@@ -159,8 +158,7 @@ def compare_phash_masked(source, capture, mask):
     return 1 - ((source_hash - capture_hash) / 64.0)
 
 
-def checkIfImageHasTransparency(image_path: str):
-    source = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+def checkIfImageHasTransparency(image):
     # TODO check for first transparent pixel, no need to iterate through the whole image
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
-    return source.shape[2] == 4 and np.mean(source[:, :, 3]) != 255
+    return image.shape[2] == 4 and np.mean(image[:, :, 3]) != 255
