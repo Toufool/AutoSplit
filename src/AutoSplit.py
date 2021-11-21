@@ -13,7 +13,7 @@ import signal
 import threading
 import time
 
-from menu_bar import about, VERSION, viewHelp
+from menu_bar import about, VERSION, viewHelp, checkForUpdates
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
@@ -61,6 +61,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # close all processes when closing window
         self.actionView_Help.triggered.connect(viewHelp)
         self.actionAbout.triggered.connect(lambda: about(self))
+        self.actionCheck_For_Updates.triggered.connect(lambda: checkForUpdates(self))
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
@@ -1134,6 +1135,7 @@ def main():
     w = AutoSplit()
     w.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w.show()
+    checkForUpdates(AutoSplit, check_for_updates_on_open=True)
     sys.exit(app.exec())
 
 
