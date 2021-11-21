@@ -171,6 +171,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Load AutoSplit and any AutoSplit settings automatically when opening a LiveSplit layout.
 
 ### LiveSplit Integration Tutorial
+
 - Click [here](https://github.com/Toufool/LiveSplit.AutoSplitIntegration/raw/main/update/Components/LiveSplit.AutoSplitIntegration.dll) to download the component.
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
