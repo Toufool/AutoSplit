@@ -61,7 +61,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # close all processes when closing window
         self.actionView_Help.triggered.connect(viewHelp)
         self.actionAbout.triggered.connect(lambda: about(self))
-        self.actionCheck_For_Updates.triggered.connect(lambda: checkForUpdates(self))
+        self.actionCheck_for_Updates.triggered.connect(lambda: checkForUpdates(self))
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)

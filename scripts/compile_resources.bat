@@ -1,4 +1,5 @@
 cd "%~dp0.."
 pyuic6 ".\res\about.ui" -o ".\src\about.py"
 pyuic6 ".\res\design.ui" -o ".\src\design.py"
+pyuic6 ".\res\update_checker.ui" -o ".\src\update_checker.py"
 pyside6-rcc ".\res\resources.qrc" -o ".\src\resources_rc.py"

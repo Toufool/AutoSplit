@@ -20,7 +20,7 @@ VERSION = "1.6.0"
 # About Window
 class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
     def __init__(self):
-        super(AboutWidget, self).__init__()
+        super().__init__()
         self.setupUi(self)
         self.createdbyLabel.setOpenExternalLinks(True)
         self.donatebuttonLabel.setOpenExternalLinks(True)
@@ -28,23 +28,28 @@ class AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
         self.show()
 
 class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
-    def __init__(self, current_version, latest_version, update_available, check_for_updates_on_open):
-        super(UpdateCheckerWidget, self).__init__()
+    def __init__(self, latest_version, check_for_updates_on_open):
+        super().__init__()
         self.setupUi(self)
-        self.labelCurrentVersionNumber.setText(current_version)
+        self.labelCurrentVersionNumber.setText(VERSION)
         self.labelLatestVersionNumber.setText(latest_version)
-        if update_available:
+        self.pushButtonLeft.clicked.connect(self.openUpdate)
+        if version.parse(latest_version) > version.parse(VERSION):
             self.labelUpdateStatus.setText("There is an update available for AutoSplit.")
             self.labelGoToDownload.setText("Open download page?")
             self.pushButtonLeft.setVisible(True)
             self.pushButtonLeft.setText("Open")
             self.pushButtonRight.setText("Later")
             self.show()
-        elif not update_available and not check_for_updates_on_open:
+        elif not check_for_updates_on_open:
             self.labelUpdateStatus.setText("You are on the latest AutoSplit version.")
             self.pushButtonLeft.setVisible(False)
             self.pushButtonRight.setText("OK")
             self.show()
+
+    def openUpdate(self):
+        os.system("start \"\" https://github.com/Toufool/Auto-Split/releases/latest")
+        self.close()
 
 def viewHelp():
     os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
@@ -57,12 +62,9 @@ def checkForUpdates(self: AutoSplit, check_for_updates_on_open: bool = False):
     try:
         response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
         latest_version = response.json()["name"].split("v")[1]
-        current_version = VERSION
-        update_available = version.parse(latest_version) > version.parse(current_version)
-        self.UpdateCheckerWidget = UpdateCheckerWidget(current_version, latest_version, update_available, check_for_updates_on_open)
+        self.UpdateCheckerWidget = UpdateCheckerWidget(latest_version, check_for_updates_on_open)
     except:
         if not check_for_updates_on_open:
             error_messages.checkForUpdatesError()
         else:
             pass
-
