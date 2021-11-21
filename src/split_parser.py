@@ -56,11 +56,11 @@ def delay_from_filename(filename):
     try:
         delay = float(filename.split('#', 1)[1].split('#')[0])
     except:
-        return 0
+        return 0.0
 
     # Delay times should always be positive or zero
     if (delay < 0):
-        return 0
+        return 0.0
     else:
         return delay
 

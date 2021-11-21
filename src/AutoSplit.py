@@ -315,7 +315,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.updateSplitImage(self.start_image_name)
 
         self.highest_similarity = 0.0
-
+        self.start_image_split_below_threshold = False
         self.timerStartImage.start(int(1000 / self.fpslimitSpinBox.value()))
 
         QtWidgets.QApplication.processEvents()
@@ -334,7 +334,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
         start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
             or self.similaritythresholdDoubleSpinBox.value()
-        start_image_split_below_threshold = False
         start_image_flags = split_parser.flags_from_filename(self.start_image_name)
         start_image_delay = split_parser.delay_from_filename(self.start_image_name)
 
@@ -355,12 +354,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
         if start_image_flags & BELOW_FLAG == BELOW_FLAG \
-                and not start_image_split_below_threshold \
+                and not self.start_image_split_below_threshold \
                 and start_image_similarity >= start_image_threshold:
-            start_image_split_below_threshold = True
+            self.start_image_split_below_threshold = True
             return
         if (start_image_flags & BELOW_FLAG == BELOW_FLAG
-            and start_image_split_below_threshold
+            and self.start_image_split_below_threshold
             and start_image_similarity < start_image_threshold) \
                 or (start_image_similarity >= start_image_threshold and start_image_flags & BELOW_FLAG == 0):
             def split():
@@ -372,10 +371,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.timerStartImage.stop()
             self.startImageLabel.setText("Start image: started")
 
-            if start_image_delay > 0:
-                threading.Timer(start_image_delay / 1000, split).start()
-            else:
-                split()
+            self.start_image_split_below_threshold = False
+            threading.Timer(start_image_delay / 1000, split).start()
 
     # update x, y, width, height when spinbox values are changed
     def updateX(self):
