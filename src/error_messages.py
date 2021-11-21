@@ -81,4 +81,4 @@ def tooManySettingsFilesOnOpenError():
     setTextMessage("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
 
 def checkForUpdatesError():
-    setTextMessage("An error occurred attempting to check for updates")
+    setTextMessage("An error occurred while attempting to check for updates. Please check your connection.")
