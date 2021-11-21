@@ -21,8 +21,8 @@ def splitImageDirectoryEmpty():
     setTextMessage("The Split Image Folder is empty.")
 
 
-def imageTypeError(image):
-    setTextMessage(f"\"{image}\" is not a valid image file or the full image file path contains a special character.")
+def imageTypeError(image: str):
+    setTextMessage(f"\"{image}\" is not a valid image file, does not exist, or the full image file path contains a special character.")
 
 
 def regionError():
@@ -49,11 +49,11 @@ def alignmentNotMatchedError():
     setTextMessage("No area in capture region matched reference image. Alignment failed.")
 
 
-def noKeywordImageError(keyword):
+def noKeywordImageError(keyword: str):
     setTextMessage(f"Your split image folder does not contain an image with the keyword \"{keyword}\".")
 
 
-def multipleKeywordImagesError(keyword):
+def multipleKeywordImagesError(keyword: str):
     setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
 
 

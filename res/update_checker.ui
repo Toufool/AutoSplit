@@ -152,5 +152,22 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButtonRight</sender>
+   <signal>clicked()</signal>
+   <receiver>UpdateChecker</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

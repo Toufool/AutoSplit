@@ -27,9 +27,9 @@ import split_parser
 COMPARISON_RESIZE_WIDTH = 320
 COMPARISON_RESIZE_HEIGHT = 240
 COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
-CAPTURE_RESIZE_WIDTH = 240
-CAPTURE_RESIZE_HEIGHT = 180
-CAPTURE_RESIZE = (CAPTURE_RESIZE_WIDTH, CAPTURE_RESIZE_HEIGHT)
+DISPLAY_RESIZE_WIDTH = 240
+DISPLAY_RESIZE_HEIGHT = 180
+DISPLAY_RESIZE = (DISPLAY_RESIZE_WIDTH, DISPLAY_RESIZE_HEIGHT)
 
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
@@ -61,7 +61,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # close all processes when closing window
         self.actionView_Help.triggered.connect(viewHelp)
         self.actionAbout.triggered.connect(lambda: about(self))
-        self.actionCheck_For_Updates.triggered.connect(lambda: checkForUpdates(self))
+        self.actionCheck_for_Updates.triggered.connect(lambda: checkForUpdates(self))
         self.actionSave_Settings.triggered.connect(self.saveSettings)
         self.actionSave_Settings_As.triggered.connect(self.saveSettingsAs)
         self.actionLoad_Settings.triggered.connect(self.loadSettings)
@@ -236,13 +236,16 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             ctypes.windll.user32.SetProcessDPIAware()
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
-            capture = cv2.resize(capture, CAPTURE_RESIZE)
+            capture = cv2.resize(capture, DISPLAY_RESIZE)
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
             # Convert to set it on the label
-            qImg = QtGui.QImage(capture, capture.shape[1], capture.shape[0], capture.shape[1] * 3,
-                                QtGui.QImage.Format.Format_RGB888)
-            pix = QtGui.QPixmap(qImg)
+            qImage = QtGui.QImage(capture,
+                                  capture.shape[1],
+                                  capture.shape[0],
+                                  capture.shape[1] * 3,
+                                  QtGui.QImage.Format.Format_RGB888)
+            pix = QtGui.QPixmap(qImage)
             self.liveImage.setPixmap(pix)
 
         except AttributeError:
@@ -278,11 +281,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.start_image_mask = None
         path = os.path.join(self.split_image_directory, self.start_image_name)
 
+        self.start_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        if self.start_image is None:
+            error_messages.imageTypeError(path)
+            return
         # if image has transparency, create a mask
-        if compare.checkIfImageHasTransparency(path):
-            # create mask based on resized, nearest neighbor interpolated split image
-            self.start_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        if compare.checkIfImageHasTransparency(self.start_image):
             self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+            # Create mask based on resized, nearest neighbor interpolated split image
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
             self.start_image_mask = cv2.inRange(self.start_image, lower, upper)
@@ -385,8 +391,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.checkLiveImage()
 
     # update current split image. needed this to avoid updating it through the hotkey thread.
-    def updateSplitImageGUI(self, qImg):
-        pix = QtGui.QPixmap(qImg)
+    def updateSplitImageGUI(self, qImage: QtGui.QImage):
+        pix = QtGui.QPixmap(qImage)
         self.currentSplitImage.setPixmap(pix)
 
     def takeScreenshot(self):
@@ -412,6 +418,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         os.startfile(os.path.join(self.split_image_directory, f"{take_screenshot_filename}.png"))
 
     # check max FPS button connects here.
+    # TODO: Average on all images and check for transparency (cv2.COLOR_BGRA2RGB and cv2.IMREAD_UNCHANGED)
     def checkFPS(self):
         if not self.validateBeforeComparison():
             return
@@ -692,7 +699,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     capture = self.getCaptureForComparison()
 
                 # calculate similarity for split image
-                self.similarity = self.compareImage(self.split_image, self.mask, capture)
+                self.similarity = self.compareImage(self.split_image, self.image_mask, capture)
 
                 # show live similarity if the checkbox is checked
                 if self.showlivesimilarityCheckBox.isChecked():
@@ -912,6 +919,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 
     def compareImage(self, image, mask, capture):
+        if image is None or capture is None:
+            return 0.0
         if mask is None:
             if self.comparisonmethodComboBox.currentIndex() == 0:
                 return compare.compare_l2_norm(image, capture)
@@ -926,6 +935,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 return compare.compare_histograms_masked(image, capture, mask)
             elif self.comparisonmethodComboBox.currentIndex() == 2:
                 return compare.compare_phash_masked(image, capture, mask)
+        return 0.0
 
     def getCaptureForComparison(self):
         # grab screenshot of capture region
@@ -969,11 +979,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             if threshold_from_filename is None \
             else threshold_from_filename
 
+        self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        if self.reset_image is None:
+            error_messages.imageTypeError(path)
+            return
         # if image has transparency, create a mask
-        if compare.checkIfImageHasTransparency(path):
-            # create mask based on resized, nearest neighbor interpolated split image
-            self.reset_image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        if compare.checkIfImageHasTransparency(self.reset_image):
             self.reset_image = cv2.resize(self.reset_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+            # Create mask based on resized, nearest neighbor interpolated split image
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
             self.reset_mask = cv2.inRange(self.reset_image, lower, upper)
@@ -1010,45 +1023,45 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
-        self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image_path)
 
-        # set current split image in UI
-        # if flagged as mask, transform transparency into UI's gray BG color
-        if (self.imageHasTransparency):
-            self.split_image_display = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
-            transparent_mask = self.split_image_display[:, :, 3] == 0
-            self.split_image_display[transparent_mask] = [240, 240, 240, 255]
-            self.split_image_display = cv2.cvtColor(self.split_image_display, cv2.COLOR_BGRA2RGB)
-            self.split_image_display = cv2.resize(self.split_image_display, CAPTURE_RESIZE)
-        # if not flagged as mask, open normally
-        else:
-            self.split_image_display = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
-            self.split_image_display = cv2.cvtColor(self.split_image_display, cv2.COLOR_BGR2RGB)
-            self.split_image_display = cv2.resize(self.split_image_display, CAPTURE_RESIZE)
-
-        qImg = QtGui.QImage(self.split_image_display, self.split_image_display.shape[1],
-                            self.split_image_display.shape[0], self.split_image_display.shape[1] * 3,
-                            QtGui.QImage.Format.Format_RGB888)
-        self.updateCurrentSplitImage.emit(qImg)
-        self.currentsplitimagefileLabel.setText(split_image_file)
-
+        split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
+        if self.split_image is None:
+            error_messages.imageTypeError(self.split_image_path)
+            return
+        self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image)
         # if image has transparency, create a mask
-        if (self.imageHasTransparency):
-            # create mask based on resized, nearest neighbor interpolated split image
-            self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
+        if self.imageHasTransparency:
+            # Transform transparency into UI's gray BG color
+            transparent_mask = split_image_display[:, :, 3] == 0
+            split_image_display[:, :, 3] == 0
+            split_image_display[transparent_mask] = [240, 240, 240, 255]
+            split_image_display = cv2.cvtColor(split_image_display, cv2.COLOR_BGRA2RGB)
+
             self.split_image = cv2.resize(self.split_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+            # Create mask based on resized, nearest neighbor interpolated split image
             lower = np.array([0, 0, 0, 1], dtype="uint8")
             upper = np.array([255, 255, 255, 255], dtype="uint8")
-            self.mask = cv2.inRange(self.split_image, lower, upper)
+            self.image_mask = cv2.inRange(self.split_image, lower, upper)
 
             # set split image as BGR
             self.split_image = cv2.cvtColor(self.split_image, cv2.COLOR_BGRA2BGR)
 
         # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
-            split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
-            self.split_image = cv2.resize(split_image, COMPARISON_RESIZE)
-            self.mask = None
+            split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
+            split_image_display = cv2.cvtColor(split_image_display, cv2.COLOR_BGR2RGB)
+            self.split_image = cv2.resize(self.split_image, COMPARISON_RESIZE)
+            self.image_mask = None
+
+        split_image_display = cv2.resize(split_image_display, DISPLAY_RESIZE, interpolation=cv2.INTER_NEAREST)
+        # Set current split image in UI
+        qImage = QtGui.QImage(split_image_display,
+                              split_image_display.shape[1],
+                              split_image_display.shape[0],
+                              split_image_display.shape[1] * 3,
+                              QtGui.QImage.Format.Format_RGB888)
+        self.updateCurrentSplitImage.emit(qImage)
+        self.currentsplitimagefileLabel.setText(split_image_file)
 
         # Override values if they have been specified on the file
         pause_from_filename = split_parser.pause_from_filename(split_image_file)

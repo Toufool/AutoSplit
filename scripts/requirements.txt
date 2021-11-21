@@ -12,7 +12,7 @@
 # Dependencies:
 wheel
 PyQt6
-opencv-python
+opencv-python<=4.5.3.56 # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
 Pillow
 ImageHash
 pywin32
