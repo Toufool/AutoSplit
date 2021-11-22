@@ -298,7 +298,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             error_messages.imageTypeError(path)
             return
         # if image has transparency, create a mask
-        if compare.checkIfImageHasTransparency(self.start_image):
+        self.imageHasTransparency = compare.checkIfImageHasTransparency(self.start_image)
+        if self.imageHasTransparency:
             self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             # Create mask based on resized, nearest neighbor interpolated split image
             lower = np.array([0, 0, 0, 1], dtype="uint8")
@@ -326,7 +327,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.updateSplitImage(self.start_image_name)
 
         self.highest_similarity = 0.0
-
+        self.start_image_split_below_threshold = False
         self.timerStartImage.start(int(1000 / self.fpslimitSpinBox.value()))
 
         QtWidgets.QApplication.processEvents()
@@ -345,22 +346,32 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
         start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
             or self.similaritythresholdDoubleSpinBox.value()
-        start_image_split_below_threshold = False
         start_image_flags = split_parser.flags_from_filename(self.start_image_name)
         start_image_delay = split_parser.delay_from_filename(self.start_image_name)
 
+        # Show live similarity if the checkbox is checked
+        self.livesimilarityLabel.setText(str(start_image_similarity)[:4]
+                                         if self.showlivesimilarityCheckBox.isChecked()
+                                         else ' ')
+
+        # If the similarity becomes higher than highest similarity, set it as such.
         if start_image_similarity > self.highest_similarity:
             self.highest_similarity = start_image_similarity
+
+        # Show live highest similarity if the checkbox is checked
+        self.highestsimilarityLabel.setText(str(self.highest_similarity)[:4]
+                                            if self.showlivesimilarityCheckBox.isChecked()
+                                            else ' ')
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
         if start_image_flags & BELOW_FLAG == BELOW_FLAG \
-                and not start_image_split_below_threshold \
+                and not self.start_image_split_below_threshold \
                 and start_image_similarity >= start_image_threshold:
-            start_image_split_below_threshold = True
+            self.start_image_split_below_threshold = True
             return
         if (start_image_flags & BELOW_FLAG == BELOW_FLAG
-            and start_image_split_below_threshold
+            and self.start_image_split_below_threshold
             and start_image_similarity < start_image_threshold) \
                 or (start_image_similarity >= start_image_threshold and start_image_flags & BELOW_FLAG == 0):
             def split():
@@ -372,10 +383,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.timerStartImage.stop()
             self.startImageLabel.setText("Start image: started")
 
-            if start_image_delay > 0:
-                threading.Timer(start_image_delay / 1000, split).start()
-            else:
-                split()
+            self.start_image_split_below_threshold = False
+            threading.Timer(start_image_delay / 1000, split).start()
 
     # update x, y, width, height when spinbox values are changed
     def updateX(self):
@@ -1023,9 +1032,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.split_image_filenames.remove(start_auto_splitter_image_file)
 
-    def updateSplitImage(self, custom_image_file=None):
+    def updateSplitImage(self, custom_image_file: str = ''):
         # Splitting/skipping when there are no images left or Undoing past the first image
-        if self.is_current_split_out_of_range():
+        # Start image is expected to be out of range (index 0 of 0-length array)
+        if "START_AUTO_SPLITTER" not in custom_image_file.upper() and self.is_current_split_out_of_range():
             self.reset()
             return
 

@@ -45,7 +45,7 @@ def pause_from_filename(filename):
 def delay_from_filename(filename):
     """
     Retrieve the delay time from the filename, if there is no delay time or the delay time
-    isn't a valid number, then None is returned
+    isn't a valid number, then 0 is returned
 
     @param filename: String containing the file's name
     @return: A valid delay time, if not then 0
@@ -56,11 +56,11 @@ def delay_from_filename(filename):
     try:
         delay = float(filename.split('#', 1)[1].split('#')[0])
     except:
-        return 0
+        return 0.0
 
     # Delay times should always be positive or zero
     if (delay < 0):
-        return 0
+        return 0.0
     else:
         return delay
 
