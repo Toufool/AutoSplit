@@ -72,11 +72,14 @@ def about(self: AutoSplit):
     self.AboutWidget = AboutWidget()
 
 def checkForUpdates(autosplit: AutoSplit, check_for_updates_on_open: bool = False):
-    response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
-    latest_version = response.json()["name"].split("v")[1]
-    autosplit.UpdateCheckerWidget = UpdateCheckerWidget(latest_version, autosplit, check_for_updates_on_open)
-    if not check_for_updates_on_open:
-        error_messages.checkForUpdatesError()
-    else:
-        pass
+    try:
+        response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
+        latest_version = response.json()["name"].split("v")[1]
+        autosplit.UpdateCheckerWidget = UpdateCheckerWidget(latest_version, autosplit, check_for_updates_on_open)
+    except:
+        if not check_for_updates_on_open:
+            error_messages.checkForUpdatesError()
+        else:
+            pass
+
 
