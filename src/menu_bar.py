@@ -6,17 +6,15 @@ if TYPE_CHECKING:
 import os
 from PyQt6 import QtWidgets
 
-import about
 import requests
 from packaging import version
 import update_checker
 import error_messages
 import resources_rc  # noqa: F401
 from about import Ui_aboutAutoSplitWidget
-from PyQt6 import QtCore
 
 # AutoSplit Version number
-VERSION = "1.3.0"
+VERSION = "1.6.0"
 
 
 # About Window
@@ -81,5 +79,3 @@ def checkForUpdates(autosplit: AutoSplit, check_for_updates_on_open: bool = Fals
             error_messages.checkForUpdatesError()
         else:
             pass
-
-
