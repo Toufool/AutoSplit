@@ -49,6 +49,7 @@ class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
             self.labelUpdateStatus.setText("You are on the latest AutoSplit version.")
             self.pushButtonLeft.setVisible(False)
             self.pushButtonRight.setText("OK")
+            self.checkBoxDoNotAskMeAgain.setVisible(False)
             self.show()
 
     def openUpdate(self):
