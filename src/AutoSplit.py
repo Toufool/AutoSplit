@@ -206,9 +206,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # Try to load start image
         self.loadStartImage(wait_for_delay=False)
 
-        if self.actionCheck_for_Updates_on_Open.isChecked():
-            checkForUpdates(self, check_for_updates_on_open=True)
-
     # FUNCTIONS
 
     def getGlobalSettingsValues(self):
@@ -1158,9 +1155,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
-    w = AutoSplit()
-    w.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
-    w.show()
+    main_window = AutoSplit()
+    main_window.show()
+    if main_window.actionCheck_for_Updates_on_Open.isChecked():
+        checkForUpdates(main_window, check_for_updates_on_open=True)
     sys.exit(app.exec())
 
 
