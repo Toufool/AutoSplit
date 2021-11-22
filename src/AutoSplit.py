@@ -16,6 +16,7 @@ import time
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
+import update_checker
 import capture_windows
 import compare
 import design
@@ -54,6 +55,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self, parent=None):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
+
+        #These are only global settings values. They are not *pkl settings values.
+        self.getGlobalSettingsValues()
+        check_for_updates_on_open = self.setting_check_for_updates_on_open.value('check_for_updates_on_open', True, type=bool)
+        self.actionCheck_for_Updates_on_Open.setChecked(check_for_updates_on_open)
 
         # Parse command line args
         self.is_auto_controlled = ('--auto-controlled' in sys.argv)
@@ -200,7 +206,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # Try to load start image
         self.loadStartImage(wait_for_delay=False)
 
+        if self.actionCheck_for_Updates_on_Open.isChecked():
+            checkForUpdates(self, check_for_updates_on_open=True)
+
     # FUNCTIONS
+
+    def getGlobalSettingsValues(self):
+        self.setting_check_for_updates_on_open = QtCore.QSettings('AutoSplit', 'Check For Updates On Open')
 
     # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
@@ -1087,6 +1099,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     # exit safely when closing the window
     def closeEvent(self, event: QtGui.QCloseEvent = None):
+        #save global setting values here
+        self.setting_check_for_updates_on_open.setValue('check_for_updates_on_open',
+                                                        self.actionCheck_for_Updates_on_Open.isChecked())
+
         def exit():
             if event is not None:
                 event.accept()
@@ -1135,7 +1151,6 @@ def main():
     w = AutoSplit()
     w.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
     w.show()
-    checkForUpdates(AutoSplit, check_for_updates_on_open=True)
     sys.exit(app.exec())
 
 

@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::WheelFocus</enum>
+   <enum>Qt::NoFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Update Checker</string>
@@ -86,7 +86,7 @@
    <property name="geometry">
     <rect>
      <x>17</x>
-     <y>103</y>
+     <y>76</y>
      <width>241</width>
      <height>16</height>
     </rect>
@@ -148,6 +148,19 @@
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxDoNotAskMeAgain">
+   <property name="geometry">
+    <rect>
+     <x>17</x>
+     <y>100</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Do not ask me again</string>
    </property>
   </widget>
  </widget>

@@ -1158,6 +1158,7 @@ Default value</string>
     <addaction name="actionView_Help"/>
     <addaction name="actionAbout"/>
     <addaction name="actionCheck_for_Updates"/>
+    <addaction name="actionCheck_for_Updates_on_Open"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -1203,6 +1204,20 @@ Default value</string>
   <action name="actionCheck_for_Updates">
    <property name="text">
     <string>Check for Updates...</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_Updates_on_Open">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Check for Updates on Open</string>
    </property>
   </action>
  </widget>
