@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-next-line MD033 -->
-# <img src="res/icon.ico" alt="LiveSplit" height="42" width="45" align="top"/> AutoSplit
+# <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
@@ -11,7 +11,7 @@ This program compares split images to a capture region of any window (OBS, Strea
 
 ## DOWNLOAD AND OPEN
 
-### Compatability
+### Compatibility
 
 - Windows 7, 10, and 11.
 

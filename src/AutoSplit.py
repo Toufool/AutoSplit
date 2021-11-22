@@ -16,7 +16,6 @@ import time
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
-import update_checker
 import capture_windows
 import compare
 import design
@@ -241,8 +240,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     error_messages.regionError()
                 return
-
-            ctypes.windll.user32.SetProcessDPIAware()
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
             capture = cv2.resize(capture, DISPLAY_RESIZE)
@@ -1155,10 +1152,19 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+
     main_window = AutoSplit()
     main_window.show()
     if main_window.actionCheck_for_Updates_on_Open.isChecked():
         checkForUpdates(main_window, check_for_updates_on_open=True)
+
+    # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
+    timer = QtCore.QTimer()
+    timer.timeout.connect(lambda: None)
+    timer.start(500)
+    # Catch Keyboard Interrupts for a clean close
+    signal.signal(signal.SIGINT, lambda _,  __: sys.exit(app))
+
     sys.exit(app.exec())
 
 

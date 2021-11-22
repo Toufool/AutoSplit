@@ -28,6 +28,11 @@
     <height>490</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>AutoSplit</string>
   </property>

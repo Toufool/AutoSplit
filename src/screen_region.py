@@ -234,7 +234,6 @@ class SelectWindowWidget(QtWidgets.QWidget):
     def __init__(self):
         super(SelectWindowWidget, self).__init__()
         user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
 
         self.x = -1
         self.y = -1
@@ -266,7 +265,6 @@ class SelectRegionWidget(QtWidgets.QWidget):
     def __init__(self):
         super(SelectRegionWidget, self).__init__()
         user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
 
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
