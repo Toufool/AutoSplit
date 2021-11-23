@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
@@ -1040,13 +1041,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
 
-        split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
+        self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
         if self.split_image is None:
             error_messages.imageTypeError(self.split_image_path)
             return
         self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image)
         # if image has transparency, create a mask
         if self.imageHasTransparency:
+            split_image_display = copy(self.split_image)
             # Transform transparency into UI's gray BG color
             transparent_mask = split_image_display[:, :, 3] == 0
             split_image_display[:, :, 3] == 0
@@ -1064,8 +1066,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
-            split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
-            split_image_display = cv2.cvtColor(split_image_display, cv2.COLOR_BGR2RGB)
+            self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
+            split_image_display = cv2.cvtColor(copy(self.split_image), cv2.COLOR_BGR2RGB)
             self.split_image = cv2.resize(self.split_image, COMPARISON_RESIZE)
             self.image_mask = None
 
