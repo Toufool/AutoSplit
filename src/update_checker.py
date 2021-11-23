@@ -54,7 +54,7 @@ class Ui_UpdateChecker(object):
         self.pushButtonRight.setText("")
         self.pushButtonRight.setObjectName("pushButtonRight")
         self.labelCurrentVersionNumber = QtWidgets.QLabel(UpdateChecker)
-        self.labelCurrentVersionNumber.setGeometry(QtCore.QRect(120, 32, 181, 16))
+        self.labelCurrentVersionNumber.setGeometry(QtCore.QRect(120, 30, 181, 16))
         self.labelCurrentVersionNumber.setText("")
         self.labelCurrentVersionNumber.setObjectName("labelCurrentVersionNumber")
         self.labelLatestVersionNumber = QtWidgets.QLabel(UpdateChecker)
