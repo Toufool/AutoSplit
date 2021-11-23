@@ -328,10 +328,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.currentSplitImage.setText('none (paused)')
             self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
             self.highestsimilarityLabel.setText(' ')
+            self.currentsimilaritythresholdnumberLabel.setText(' ')
         else:
             self.check_start_image_timestamp = 0.0
             self.startImageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image_name)
+            self.updateSplitImage(self.start_image_name, from_load_start_image=True)
 
         self.highest_similarity = 0.0
         self.start_image_split_below_threshold = False
@@ -353,6 +354,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
         start_image_threshold = split_parser.threshold_from_filename(self.start_image_name) \
             or self.similaritythresholdDoubleSpinBox.value()
+        self.currentsimilaritythresholdnumberLabel.setText("{:.2f}".format(start_image_threshold))
         start_image_flags = split_parser.flags_from_filename(self.start_image_name)
         start_image_delay = split_parser.delay_from_filename(self.start_image_name)
 
@@ -650,8 +652,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.split_image_filenames_including_loops.append(filename)
                 current_loop = current_loop + 1
 
-
-
         # construct a list of corresponding loop number to the filenames
         self.loop_numbers = []
         for i, filename in enumerate(self.split_image_filenames_including_loops):
@@ -666,7 +666,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.loop_numbers.append(loop_count)
 
         #merge them
-
         self.split_image_filenames_and_loop_number = [(self.split_image_filenames_including_loops[i], self.loop_numbers[i]) for i in range(0, len(self.split_image_filenames_including_loops))]
 
         # construct groups of splits if needed
@@ -932,6 +931,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.currentsplitimagefileLabel.setText(' ')
         self.livesimilarityLabel.setText(' ')
         self.highestsimilarityLabel.setText(' ')
+        self.currentsimilaritythresholdnumberLabel.setText(' ')
         self.browseButton.setEnabled(True)
         self.groupDummySplitsCheckBox.setEnabled(True)
         self.startImageReloadButton.setEnabled(True)
@@ -1044,7 +1044,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.split_image_filenames.remove(start_auto_splitter_image_file)
 
-    def updateSplitImage(self, custom_image_file: str = ''):
+    def updateSplitImage(self, custom_image_file: str = '', from_load_start_image: bool = False):
         # Splitting/skipping when there are no images left or Undoing past the first image
         # Start image is expected to be out of range (index 0 of 0-length array)
         if "START_AUTO_SPLITTER" not in custom_image_file.upper() and self.is_current_split_out_of_range():
@@ -1107,12 +1107,16 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value() \
             if threshold_from_filename is None \
             else threshold_from_filename
+        self.currentsimilaritythresholdnumberLabel.setText("{:.2f}".format(self.similarity_threshold))
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
 
         # Set Image Loop #
-        self.imageloopLabel.setText("Image Loop #: " + str(self.split_image_filenames_and_loop_number[self.split_image_number][1]))
+        if not from_load_start_image:
+            self.imageloopLabel.setText("Image Loop #: " + str(self.split_image_filenames_and_loop_number[self.split_image_number][1]))
+        else:
+            self.imageloopLabel.setText("Image Loop #: 1")
 
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
