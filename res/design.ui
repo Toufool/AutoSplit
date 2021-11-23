@@ -241,12 +241,12 @@
      <rect>
       <x>7</x>
       <y>439</y>
-      <width>112</width>
+      <width>131</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Default pause time:</string>
+     <string>Default pause time (sec):</string>
     </property>
    </widget>
    <widget class="QPushButton" name="checkfpsButton">
