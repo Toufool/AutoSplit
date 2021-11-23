@@ -31,6 +31,11 @@
     <height>133</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="focusPolicy">
    <enum>Qt::NoFocus</enum>
   </property>

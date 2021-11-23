@@ -29,10 +29,6 @@ def regionError():
     setTextMessage("No region is selected or the Capture Region window is not open. Select a region or load settings while the Capture Region window is open.")
 
 
-def regionSizeError():
-    setTextMessage("Width and height cannot be 0. Please select a larger region.")
-
-
 def splitHotkeyError():
     setTextMessage("No split hotkey has been set.")
 

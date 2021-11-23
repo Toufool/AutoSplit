@@ -1,3 +1,5 @@
+@ECHO OFF
+
 IF NOT DEFINED PYTHONPATH (
   FOR /f "delims=" %%p in ('where python') do SET PYTHONPATH=%%p
 )

@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 import sys
@@ -16,7 +17,6 @@ import time
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
-import update_checker
 import capture_windows
 import compare
 import design
@@ -240,8 +240,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     error_messages.regionError()
                 return
-
-            ctypes.windll.user32.SetProcessDPIAware()
 
             capture = capture_windows.capture_region(self.hwnd, self.rect)
             capture = cv2.resize(capture, DISPLAY_RESIZE)
@@ -1048,13 +1046,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # get flags
         self.flags = split_parser.flags_from_filename(split_image_file)
 
-        split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
+        self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_UNCHANGED)
         if self.split_image is None:
             error_messages.imageTypeError(self.split_image_path)
             return
         self.imageHasTransparency = compare.checkIfImageHasTransparency(self.split_image)
         # if image has transparency, create a mask
         if self.imageHasTransparency:
+            split_image_display = copy(self.split_image)
             # Transform transparency into UI's gray BG color
             transparent_mask = split_image_display[:, :, 3] == 0
             split_image_display[:, :, 3] == 0
@@ -1072,8 +1071,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # otherwise, open image normally. don't interpolate nearest neighbor here so setups before 1.2.0 still work.
         else:
-            split_image_display = self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
-            split_image_display = cv2.cvtColor(split_image_display, cv2.COLOR_BGR2RGB)
+            self.split_image = cv2.imread(self.split_image_path, cv2.IMREAD_COLOR)
+            split_image_display = cv2.cvtColor(copy(self.split_image), cv2.COLOR_BGR2RGB)
             self.split_image = cv2.resize(self.split_image, COMPARISON_RESIZE)
             self.image_mask = None
 
@@ -1160,10 +1159,19 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+
     main_window = AutoSplit()
     main_window.show()
     if main_window.actionCheck_for_Updates_on_Open.isChecked():
         checkForUpdates(main_window, check_for_updates_on_open=True)
+
+    # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
+    timer = QtCore.QTimer()
+    timer.timeout.connect(lambda: None)
+    timer.start(500)
+    # Catch Keyboard Interrupts for a clean close
+    signal.signal(signal.SIGINT, lambda _,  __: sys.exit(app))
+
     sys.exit(app.exec())
 
 

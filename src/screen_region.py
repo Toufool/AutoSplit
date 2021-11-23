@@ -14,6 +14,8 @@ import numpy as np
 import capture_windows
 import error_messages
 
+user32 = ctypes.windll.user32
+
 
 def selectRegion(self: AutoSplit):
     # Create a screen selector widget
@@ -21,13 +23,8 @@ def selectRegion(self: AutoSplit):
 
     # Need to wait until the user has selected a region using the widget before moving on with
     # selecting the window settings
-    while selector.height == -1 and selector.width == -1:
+    while selector.height <= 0 and selector.width <= 0:
         QtTest.QTest.qWait(1)
-
-    # return an error if width or height are zero.
-    if selector.width == 0 or selector.height == 0:
-        error_messages.regionSizeError()
-        return
 
     # Width and Height of the spinBox
     self.widthSpinBox.setValue(selector.width)
@@ -220,101 +217,96 @@ def validateBeforeComparison(self: AutoSplit, show_error: bool = True, check_emp
         error = error_messages.splitImageDirectoryNotFoundError
     elif check_empty_directory and not os.listdir(self.split_image_directory):
         error = error_messages.splitImageDirectoryEmpty
-    elif self.hwnd == 0 or win32gui.GetWindowText(self.hwnd) == '':
+    elif self.hwnd <= 0 or win32gui.GetWindowText(self.hwnd) == '':
         error = error_messages.regionError
-    elif self.width == 0 or self.height == 0:
+    elif self.width <= 0 or self.height <= 0:
         error = error_messages.regionSizeError
     if error and show_error:
         error()
     return not error
 
 
-# widget to select a window and obtain its bounds
-class SelectWindowWidget(QtWidgets.QWidget):
+class BaseSelectWidget(QtWidgets.QWidget):
+    # We need to pull the monitor information to correctly draw the geometry covering all portions
+    # of the user's screen. These parameters create the bounding box with left, top, width, and height
+    SM_XVIRTUALSCREEN: int = user32.GetSystemMetrics(76)
+    SM_YVIRTUALSCREEN: int = user32.GetSystemMetrics(77)
+    SM_CXVIRTUALSCREEN: int = user32.GetSystemMetrics(78)
+    SM_CYVIRTUALSCREEN: int = user32.GetSystemMetrics(79)
+
     def __init__(self):
-        super(SelectWindowWidget, self).__init__()
-        user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
-
-        self.x = -1
-        self.y = -1
-
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.SM_XVIRTUALSCREEN = user32.GetSystemMetrics(76)
-        self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
-        self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
-        self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
-                         self.SM_CYVIRTUALSCREEN)
+        super().__init__()
+        self.setGeometry(
+            self.SM_XVIRTUALSCREEN,
+            self.SM_YVIRTUALSCREEN,
+            self.SM_CXVIRTUALSCREEN,
+            self.SM_CYVIRTUALSCREEN)
         self.setWindowTitle(' ')
-
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == QtCore.Qt.Key.Key_Escape:
+            self.close()
+
+
+# Widget to select a window and obtain its bounds
+class SelectWindowWidget(BaseSelectWidget):
+    x: int = -1
+    y: int = -1
+
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
-        self.close()
         self.x = int(event.position().x())
         self.y = int(event.position().y())
+        self.close()
 
 
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
-class SelectRegionWidget(QtWidgets.QWidget):
+class SelectRegionWidget(BaseSelectWidget):
+    height: int = 0
+    width: int = 0
+    left: int = -1
+    top: int = -1
+    right: int = -1
+    bottom: int = -1
+    __begin = QtCore.QPoint()
+    __end = QtCore.QPoint()
+
     def __init__(self):
-        super(SelectRegionWidget, self).__init__()
-        user32 = ctypes.windll.user32
-        user32.SetProcessDPIAware()
-
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.SM_XVIRTUALSCREEN = user32.GetSystemMetrics(76)
-        self.SM_YVIRTUALSCREEN = user32.GetSystemMetrics(77)
-        self.SM_CXVIRTUALSCREEN = user32.GetSystemMetrics(78)
-        self.SM_CYVIRTUALSCREEN = user32.GetSystemMetrics(79)
-
-        self.setGeometry(self.SM_XVIRTUALSCREEN, self.SM_YVIRTUALSCREEN, self.SM_CXVIRTUALSCREEN,
-                         self.SM_CYVIRTUALSCREEN)
-        self.setWindowTitle(' ')
-
-        self.height = -1
-        self.width = -1
-
-        self.begin = QtCore.QPoint()
-        self.end = QtCore.QPoint()
-        self.setWindowOpacity(0.5)
+        super().__init__()
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
-        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
-        self.show()
 
     def paintEvent(self, event: QtGui.QPaintEvent):
-        qp = QtGui.QPainter(self)
-        qp.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-        qp.setBrush(QtGui.QColor('opaque'))
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
+        if self.__begin != self.__end:
+            qPainter = QtGui.QPainter(self)
+            qPainter.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
+            qPainter.setBrush(QtGui.QColor('opaque'))
+            qPainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
     def mousePressEvent(self, event: QtGui.QMouseEvent):
-        self.begin = event.position().toPoint()
-        self.end = self.begin
+        self.__begin = event.position().toPoint()
+        self.__end = self.__begin
         self.update()
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent):
-        self.end = event.position().toPoint()
+        self.__end = event.position().toPoint()
         self.update()
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
-        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
-        self.close()
-
         # The coordinates are pulled relative to the top left of the set geometry,
-        # so the added virtual screen offsets convert them back to the virtual
-        # screen coordinates
-        self.left = int(min(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN)
-        self.top = int(min(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN)
-        self.right = int(max(self.begin.x(), self.end.x()) + self.SM_XVIRTUALSCREEN)
-        self.bottom = int(max(self.begin.y(), self.end.y()) + self.SM_YVIRTUALSCREEN)
+        # so the added virtual screen offsets convert them back to the virtual screen coordinates
+        self.left = min(self.__begin.x(), self.__end.x()) + self.SM_XVIRTUALSCREEN
+        self.top = min(self.__begin.y(), self.__end.y()) + self.SM_YVIRTUALSCREEN
+        self.right = max(self.__begin.x(), self.__end.x()) + self.SM_XVIRTUALSCREEN
+        self.bottom = max(self.__begin.y(), self.__end.y()) + self.SM_YVIRTUALSCREEN
 
         self.height = self.bottom - self.top
         self.width = self.right - self.left
+        if self.__begin != self.__end:
+            self.close()
+
+    def close(self):
+        QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
+        super().close()
