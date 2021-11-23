@@ -219,8 +219,6 @@ def validateBeforeComparison(self: AutoSplit, show_error: bool = True, check_emp
         error = error_messages.splitImageDirectoryEmpty
     elif self.hwnd <= 0 or win32gui.GetWindowText(self.hwnd) == '':
         error = error_messages.regionError
-    elif self.width <= 0 or self.height <= 0:
-        error = error_messages.regionSizeError
     if error and show_error:
         error()
     return not error
