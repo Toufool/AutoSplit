@@ -827,12 +827,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.send_command("split")
 
             # if loop check box is checked and its the last split, go to first split.
-            # else if current loop amount is back to 1, add 1 to split image number
-            # else pass, dont change split image number.
+            # else go to the next split image.
             if self.loopCheckBox.isChecked() and self.split_image_number == self.number_of_split_images - 1:
                 self.split_image_number = 0
             else:
-                pass
+                self.split_image_number = self.split_image_number + 1
 
             # set a "pause" split image number. This is done so that it can detect if user hit split/undo split while paused.
             pause_split_image_number = self.split_image_number
