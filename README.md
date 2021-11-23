@@ -143,8 +143,6 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
 - If you are in the 6th image and press the undo key, it will end up on the 3rd image
 
-Please note this option cannot currently be used if you have any loop parameter `@@` greater than 1 in any image.
-
 ### Loop Split Images
 
 If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
