@@ -180,7 +180,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.live_image_function_on_open = True
         self.split_image_loop_amount = []
         self.split_image_number = 0
-        self.loop_number = 1
         self.split_image_directory = ""
 
         # Default Settings for the region capture
@@ -286,7 +285,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.split_image_filenames = os.listdir(self.split_image_directory)
         self.split_image_number = 0
-        self.loop_number = 1
         self.start_image_mask = None
         path = os.path.join(self.split_image_directory, self.start_image_name)
 
@@ -480,7 +478,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.fpsvalueLabel.setText(fps)
 
     def is_current_split_out_of_range(self):
-        return len(self.split_image_loop_amount) <= self.split_image_number or self.split_image_number < 0
+        return self.split_image_number < 0 or self.split_image_number > len(self.split_image_filenames_including_loops)
 
     # undo split button and hotkey connect to here
     def undoSplit(self):
@@ -490,9 +488,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 or self.is_current_split_out_of_range():
             return
 
-        if self.loop_number != 1 and not self.groupDummySplitsCheckBox.isChecked():
-            self.loop_number = self.loop_number - 1
-
         elif self.groupDummySplitsCheckBox.isChecked():
             for i, group in enumerate(self.split_groups):
                 if i > 0 and self.split_image_number in group:
@@ -501,7 +496,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         else:
             self.split_image_number = self.split_image_number - 1
-            self.loop_number = self.split_image_loop_amount[self.split_image_number]
 
         self.updateSplitImage()
 
@@ -511,20 +505,16 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def skipSplit(self):
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
-        if (not self.skipsplitButton.isEnabled() and not self.is_auto_controlled) \
-                or self.is_current_split_out_of_range():
+        if (not self.skipsplitButton.isEnabled() and not self.is_auto_controlled) or self.is_current_split_out_of_range():
             return
 
-        if self.loop_number < self.split_image_loop_amount[self.split_image_number] and not self.groupDummySplitsCheckBox.isChecked():
-            self.loop_number = self.loop_number + 1
-        elif self.groupDummySplitsCheckBox.isChecked():
+        if self.groupDummySplitsCheckBox.isChecked():
             for group in self.split_groups:
                 if self.split_image_number in group:
                     self.split_image_number = group[-1] + 1
                     break
         else:
             self.split_image_number = self.split_image_number + 1
-            self.loop_number = 1
 
         self.updateSplitImage()
 
@@ -635,43 +625,66 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             error_messages.resetHotkeyError()
             return
 
+        # construct loop amounts for each split image
+        self.split_image_loop_amount = []
+        for i, image in enumerate(self.split_image_filenames):
+            self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
+
+        # construct a list of filenames, each filename copied with # of loops it has.
+        self.split_image_filenames_including_loops = []
+        for i, filename in enumerate(self.split_image_filenames):
+            current_loop = 1
+            while self.split_image_loop_amount[i] >= current_loop:
+                self.split_image_filenames_including_loops.append(filename)
+                current_loop = current_loop + 1
+
+
+
+        # construct a list of corresponding loop number to the filenames
+        self.loop_numbers = []
+        for i, filename in enumerate(self.split_image_filenames_including_loops):
+            if i == 0:
+                self.loop_numbers.append(1)
+            else:
+                if self.split_image_filenames_including_loops[i] != self.split_image_filenames_including_loops[i-1]:
+                    loop_count = 1
+                    self.loop_numbers.append(loop_count)
+                else:
+                    loop_count = loop_count + 1
+                    self.loop_numbers.append(loop_count)
+
+        #merge them
+
+        self.split_image_filenames_and_loop_number = [(self.split_image_filenames_including_loops[i], self.loop_numbers[i]) for i in range(0, len(self.split_image_filenames_including_loops))]
+
         # construct groups of splits if needed
         self.split_groups = []
         if self.groupDummySplitsCheckBox.isChecked():
             current_group = []
             self.split_groups.append(current_group)
 
-            for i, image in enumerate(self.split_image_filenames):
+            for i, image in enumerate(self.split_image_filenames_including_loops):
                 current_group.append(i)
 
                 flags = split_parser.flags_from_filename(image)
-                if flags & DUMMY_FLAG != DUMMY_FLAG and i < len(self.split_image_filenames) - 1:
+                if flags & DUMMY_FLAG != DUMMY_FLAG and i < len(self.split_image_filenames_including_loops) - 1:
                     current_group = []
                     self.split_groups.append(current_group)
 
+
         # construct dummy splits array
         self.dummy_splits_array = []
-        for i, image in enumerate(self.split_image_filenames):
+        for i, image in enumerate(self.split_image_filenames_including_loops):
             if split_parser.flags_from_filename(image) & DUMMY_FLAG == DUMMY_FLAG:
                 self.dummy_splits_array.append(True)
             else:
                 self.dummy_splits_array.append(False)
 
-        # construct loop amounts for each split image
-        self.split_image_loop_amount = []
-        for i, image in enumerate(self.split_image_filenames):
-            self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
-
-        if any(x > 1 for x in self.split_image_loop_amount) and self.groupDummySplitsCheckBox.isChecked() == True:
-            error_messages.dummySplitsError()
-            return
-
         self.guiChangesOnStart()
 
         # Initialize a few attributes
         self.split_image_number = 0
-        self.loop_number = 1
-        self.number_of_split_images = len(self.split_image_filenames)
+        self.number_of_split_images = len(self.split_image_filenames_including_loops)
         self.waiting_for_split_delay = False
         self.split_below_threshold = False
 
@@ -736,14 +749,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.highestsimilarityLabel.setText(' ')
 
                 if not self.is_auto_controlled:
-                    # if its the last split image and last loop number, disable the skip split button
-                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                    # if its the last split image or can't skip due to grouped dummy splits, disable the skip split button
+                    if (self.split_image_number == self.number_of_split_images - 1) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
                         self.skipsplitButton.setEnabled(False)
                     else:
                         self.skipsplitButton.setEnabled(True)
 
-                    # if its the first split image and first loop, disable the undo split button
-                    if self.split_image_number == 0 and self.loop_number == 1:
+                    # if its the first split image, disable the undo split button
+                    if self.split_image_number == 0:
                         self.undosplitButton.setEnabled(False)
                     else:
                         self.undosplitButton.setEnabled(True)
@@ -772,6 +785,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # We need to make sure that this isn't a dummy split before sending
             # the key press.
+            print('gothere')
             if not (self.flags & DUMMY_FLAG == DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
@@ -814,25 +828,16 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.send_command("split")
 
-            # increase loop number if needed, set to 1 if it was the last loop.
-            if self.loop_number < self.split_image_loop_amount[self.split_image_number]:
-                self.loop_number = self.loop_number + 1
-            else:
-                self.loop_number = 1
-
             # if loop check box is checked and its the last split, go to first split.
             # else if current loop amount is back to 1, add 1 to split image number
             # else pass, dont change split image number.
-            if self.loopCheckBox.isChecked() and self.split_image_number == self.number_of_split_images - 1 and self.loop_number == 1:
+            if self.loopCheckBox.isChecked() and self.split_image_number == self.number_of_split_images - 1:
                 self.split_image_number = 0
-            elif self.loop_number == 1:
-                self.split_image_number = self.split_image_number + 1
             else:
                 pass
 
             # set a "pause" split image number. This is done so that it can detect if user hit split/undo split while paused.
             pause_split_image_number = self.split_image_number
-            pause_loop_number = self.loop_number
 
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
@@ -843,13 +848,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                 if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
-                    if (self.split_image_number == self.number_of_split_images - 1 and self.loop_number == self.split_image_loop_amount[self.split_image_number]) or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
+                    if self.split_image_number == self.number_of_split_images - 1 or (self.groupDummySplitsCheckBox.isChecked() == True and self.dummy_splits_array[self.split_image_number:].count(False) <= 1):
                         self.skipsplitButton.setEnabled(False)
                     else:
                         self.skipsplitButton.setEnabled(True)
 
-                    # if its the first split image and first loop, disable the undo split button
-                    if self.split_image_number == 0 and self.loop_number == 1:
+                    # if its the first split image, disable the undo split button
+                    if self.split_image_number == 0:
                         self.undosplitButton.setEnabled(False)
                     else:
                         self.undosplitButton.setEnabled(True)
@@ -870,7 +875,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         return
 
                     # check for skip/undo split:
-                    if self.split_image_number != pause_split_image_number or self.loop_number != pause_loop_number:
+                    if self.split_image_number != pause_split_image_number:
                         break
 
                     # calculate similarity for reset image
@@ -1037,7 +1042,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
 
         # get split image path
-        split_image_file = custom_image_file or self.split_image_filenames[0 + self.split_image_number]
+        split_image_file = custom_image_file or self.split_image_filenames_including_loops[0 + self.split_image_number]
         self.split_image_path = os.path.join(self.split_image_directory, split_image_file)
 
         # get flags
@@ -1096,7 +1101,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_delay = split_parser.delay_from_filename(split_image_file)
 
         # Set Image Loop #
-        self.imageloopLabel.setText("Image Loop #: " + str(self.loop_number))
+        self.imageloopLabel.setText("Image Loop #: " + str(self.split_image_filenames_and_loop_number[self.split_image_number][1]))
 
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
