@@ -783,7 +783,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # We need to make sure that this isn't a dummy split before sending
             # the key press.
-            print('gothere')
             if not (self.flags & DUMMY_FLAG == DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
