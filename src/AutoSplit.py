@@ -1,5 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
+from typing import Callable, Optional
 
 from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
@@ -182,6 +183,19 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_image_number = 0
         self.loop_number = 1
         self.split_image_directory = ""
+
+        # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
+        # and for type safety in both hotkeys.py and settings_file.py
+        self.split_hotkey: Optional[Callable[[], None]] = None
+        self.reset_hotkey: Optional[Callable[[], None]] = None
+        self.skip_split_hotkey: Optional[Callable[[], None]] = None
+        self.undo_split_hotkey: Optional[Callable[[], None]] = None
+        self.pause_hotkey: Optional[Callable[[], None]] = None
+        self.split_key = ""
+        self.reset_key = ""
+        self.skip_split_key = ""
+        self.undo_split_key = ""
+        self.undo_split_key = ""
 
         # Default Settings for the region capture
         self.hwnd = 0

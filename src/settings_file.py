@@ -155,13 +155,6 @@ def saveSettingsAs(self: AutoSplit):
 
 
 def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_settings_from_livesplit: bool = False):
-    # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
-    self.split_hotkey = ""
-    self.reset_hotkey = ""
-    self.skip_split_hotkey = ""
-    self.undo_split_hotkey = ""
-    self.pause_hotkey = ""
-
     if load_settings_on_open:
 
         settings_files = []
