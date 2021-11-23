@@ -623,9 +623,9 @@ Default value</string>
    <widget class="QLabel" name="widthLabel">
     <property name="geometry">
      <rect>
-      <x>14</x>
+      <x>12</x>
       <y>177</y>
-      <width>31</width>
+      <width>33</width>
       <height>16</height>
      </rect>
     </property>
@@ -636,9 +636,9 @@ Default value</string>
    <widget class="QLabel" name="heightLabel">
     <property name="geometry">
      <rect>
-      <x>68</x>
+      <x>66</x>
       <y>177</y>
-      <width>31</width>
+      <width>41</width>
       <height>16</height>
      </rect>
     </property>
@@ -1153,7 +1153,7 @@ Default value</string>
      <x>0</x>
      <y>0</y>
      <width>632</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
