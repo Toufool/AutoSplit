@@ -476,7 +476,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.fpsvalueLabel.setText(fps)
 
     def is_current_split_out_of_range(self):
-        return self.split_image_number < 0 or self.split_image_number > len(self.split_image_filenames_including_loops)
+        return self.split_image_number < 0 or self.split_image_number > len(self.split_image_filenames_including_loops) - 1
 
     # undo split button and hotkey connect to here
     def undoSplit(self):
