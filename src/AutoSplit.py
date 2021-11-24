@@ -1,6 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
@@ -645,7 +645,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.split_image_loop_amount.append(split_parser.loop_from_filename(image))
 
         # construct a list of filenames, each filename copied with # of loops it has.
-        self.split_image_filenames_including_loops = []
+        self.split_image_filenames_including_loops: List[str] = []
         for i, filename in enumerate(self.split_image_filenames):
             current_loop = 1
             while self.split_image_loop_amount[i] >= current_loop:
@@ -653,7 +653,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 current_loop = current_loop + 1
 
         # construct a list of corresponding loop number to the filenames
-        self.loop_numbers = []
+        self.loop_numbers: List[int] = []
+        loop_count = 1
         for i, filename in enumerate(self.split_image_filenames_including_loops):
             if i == 0:
                 self.loop_numbers.append(1)
@@ -665,8 +666,11 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     loop_count = loop_count + 1
                     self.loop_numbers.append(loop_count)
 
-        #merge them
-        self.split_image_filenames_and_loop_number = [(self.split_image_filenames_including_loops[i], self.loop_numbers[i]) for i in range(0, len(self.split_image_filenames_including_loops))]
+        # Merge them
+        self.split_image_filenames_and_loop_number = [
+            (filename, self.loop_numbers[i], self.split_image_filenames_including_loops.count(filename))
+            for i, filename in enumerate(self.split_image_filenames_including_loops)
+        ]
 
         # construct groups of splits if needed
         self.split_groups = []
@@ -853,7 +857,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-                self.imageloopLabel.setText('Image Loop #:     -')
+                self.imageloopLabel.setText('Image Loop #    -')
 
                 if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
@@ -926,7 +930,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def guiChangesOnReset(self):
         self.startautosplitterButton.setText('Start Auto Splitter')
-        self.imageloopLabel.setText("Image Loop #:")
+        self.imageloopLabel.setText("Image Loop #    -")
         self.currentSplitImage.setText(' ')
         self.currentsplitimagefileLabel.setText(' ')
         self.livesimilarityLabel.setText(' ')
@@ -1114,9 +1118,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # Set Image Loop #
         if not from_load_start_image:
-            self.imageloopLabel.setText("Image Loop #: " + str(self.split_image_filenames_and_loop_number[self.split_image_number][1]))
+            loop_tuple = self.split_image_filenames_and_loop_number[self.split_image_number]
+            self.imageloopLabel.setText(f"Image Loop # {loop_tuple[1]}/{loop_tuple[2]}")
         else:
-            self.imageloopLabel.setText("Image Loop #: 1")
+            self.imageloopLabel.setText("Image Loop # 1/1")
 
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
