@@ -498,7 +498,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def undoSplit(self):
         # Can't undo until timer is started
         # or Undoing past the first image
-        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+        if self.startautosplitterButton.text() == 'Start Auto Splitter' or ("Delayed Split") in self.currentSplitImage.text():
             return
 
         if (not self.undosplitButton.isEnabled() and not self.is_auto_controlled) \
@@ -522,7 +522,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def skipSplit(self):
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
-        if self.startautosplitterButton.text() == 'Start Auto Splitter':
+        if self.startautosplitterButton.text() == 'Start Auto Splitter' or ("Delayed Split") in self.currentSplitImage.text():
             return
 
         if (not self.skipsplitButton.isEnabled() and not self.is_auto_controlled) or self.is_current_split_out_of_range():
