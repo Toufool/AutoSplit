@@ -3,7 +3,7 @@
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
-This program compares split images to a capture region of any window (OBS, Streamlabs, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), but can be integrated with LiveSplit. The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
+This program compares split images to a capture region of any window (OBS, Streamlabs, etc.) and automatically hits your split hotkey when there is a match. It can also be used to start and reset your timer, allowing for it to take full control of starting, splitting, and resetting your timer without ever having to touch a hotkey. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), but can be integrated with LiveSplit.
 
 ![Example](res/example1.6.0.gif)
 
