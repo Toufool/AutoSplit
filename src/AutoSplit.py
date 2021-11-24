@@ -155,7 +155,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.setpausehotkeyButton.clicked.connect(self.setPauseHotkey)
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
-        self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, False))
+        self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, True))
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -217,7 +217,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.check_start_image_timestamp = 0.0
 
         # Try to load start image
-        self.loadStartImage(wait_for_delay=False)
+        self.loadStartImage()
 
     # FUNCTIONS
 
@@ -322,17 +322,15 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.start_image = cv2.resize(self.start_image, COMPARISON_RESIZE)
 
         start_image_pause = split_parser.pause_from_filename(self.start_image_name)
-        if wait_for_delay and start_image_pause is not None and start_image_pause > 0:
+        if not wait_for_delay and start_image_pause is not None and start_image_pause > 0:
             self.check_start_image_timestamp = time.time() + start_image_pause
             self.startImageLabel.setText("Start image: paused")
-            self.currentSplitImage.setText('none (paused)')
-            self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
             self.highestsimilarityLabel.setText(' ')
             self.currentsimilaritythresholdnumberLabel.setText(' ')
         else:
             self.check_start_image_timestamp = 0.0
             self.startImageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image_name, from_load_start_image=True)
+            self.updateSplitImage(self.start_image_name, from_start_image=True)
 
         self.highest_similarity = 0.0
         self.start_image_split_below_threshold = False
@@ -341,14 +339,18 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         QtWidgets.QApplication.processEvents()
 
     def startImageFunction(self):
+        print(self.check_start_image_timestamp - time.time())
         if time.time() < self.check_start_image_timestamp \
                 or (not self.splitLineEdit.text() and not self.is_auto_controlled):
+            pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
+            self.currentSplitImage.setText(f'None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining')
+            self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             return
 
         if self.check_start_image_timestamp > 0:
             self.check_start_image_timestamp = 0.0
             self.startImageLabel.setText("Start image: ready")
-            self.updateSplitImage(self.start_image_name)
+            self.updateSplitImage(self.start_image_name, from_start_image=True)
 
         capture = self.getCaptureForComparison()
         start_image_similarity = self.compareImage(self.start_image, self.start_image_mask, capture)
@@ -1054,7 +1056,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.split_image_filenames.remove(start_auto_splitter_image_file)
 
-    def updateSplitImage(self, custom_image_file: str = '', from_load_start_image: bool = False):
+    def updateSplitImage(self, custom_image_file: str = '', from_start_image: bool = False):
         # Splitting/skipping when there are no images left or Undoing past the first image
         # Start image is expected to be out of range (index 0 of 0-length array)
         if "START_AUTO_SPLITTER" not in custom_image_file.upper() and self.is_current_split_out_of_range():
@@ -1123,7 +1125,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.split_delay = split_parser.delay_from_filename(split_image_file)
 
         # Set Image Loop #
-        if not from_load_start_image:
+        if not from_start_image:
             loop_tuple = self.split_image_filenames_and_loop_number[self.split_image_number]
             self.imageloopLabel.setText(f"Image Loop: {loop_tuple[1]}/{loop_tuple[2]}")
         else:
