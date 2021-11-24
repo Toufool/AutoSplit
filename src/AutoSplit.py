@@ -339,7 +339,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         QtWidgets.QApplication.processEvents()
 
     def startImageFunction(self):
-        print(self.check_start_image_timestamp - time.time())
         if time.time() < self.check_start_image_timestamp \
                 or (not self.splitLineEdit.text() and not self.is_auto_controlled):
             pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
