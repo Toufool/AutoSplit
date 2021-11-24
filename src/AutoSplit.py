@@ -857,7 +857,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
                 self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-                self.imageloopLabel.setText('Image Loop #    -')
+                self.imageloopLabel.setText('Image Loop: -')
 
                 if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
@@ -930,7 +930,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def guiChangesOnReset(self):
         self.startautosplitterButton.setText('Start Auto Splitter')
-        self.imageloopLabel.setText("Image Loop #    -")
+        self.imageloopLabel.setText('Image Loop: -')
         self.currentSplitImage.setText(' ')
         self.currentsplitimagefileLabel.setText(' ')
         self.livesimilarityLabel.setText(' ')
@@ -1119,9 +1119,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # Set Image Loop #
         if not from_load_start_image:
             loop_tuple = self.split_image_filenames_and_loop_number[self.split_image_number]
-            self.imageloopLabel.setText(f"Image Loop # {loop_tuple[1]}/{loop_tuple[2]}")
+            self.imageloopLabel.setText(f"Image Loop: {loop_tuple[1]}/{loop_tuple[2]}")
         else:
-            self.imageloopLabel.setText("Image Loop # 1/1")
+            self.imageloopLabel.setText("Image Loop: 1/1")
 
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False

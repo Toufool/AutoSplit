@@ -207,9 +207,9 @@
    <widget class="QPushButton" name="undosplitButton">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>494</x>
       <y>250</y>
-      <width>71</width>
+      <width>64</width>
       <height>24</height>
      </rect>
     </property>
@@ -955,14 +955,14 @@
    <widget class="QLabel" name="imageloopLabel">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>379</x>
       <y>252</y>
-      <width>108</width>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Image Loop #:</string>
+     <string>Image Loop:</string>
     </property>
    </widget>
    <widget class="QLabel" name="pausehotkeyLabel">
