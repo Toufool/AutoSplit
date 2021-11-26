@@ -67,11 +67,11 @@ def selectRegion(self: AutoSplit):
     self.rect.right = self.rect.left + selector.width
     self.rect.bottom = self.rect.top + selector.height
 
-    self.xSpinBox.setValue(self.rect.left)
-    self.ySpinBox.setValue(self.rect.top)
-
     # Delete that widget since it is no longer used from here on out
     del selector
+
+    self.xSpinBox.setValue(self.rect.left)
+    self.ySpinBox.setValue(self.rect.top)
 
     # check if live image needs to be turned on or just set a single image
     self.checkLiveImage()
@@ -89,10 +89,10 @@ def selectWindow(self: AutoSplit):
     # Grab the window handle from the coordinates selected by the widget
     self.hwnd = cast(int, win32gui.WindowFromPoint((selector.x, selector.y)))
 
+    del selector
+
     if self.hwnd == 0:
         return
-
-    del selector
 
     # Want to pull the parent window from the window handle
     # By using GetAncestor we are able to get the parent window instead
@@ -255,8 +255,8 @@ class SelectWindowWidget(BaseSelectWidget):
     y: int = -1
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
-        self.x = int(event.position().x())
-        self.y = int(event.position().y())
+        self.x = int(event.position().x()) + self.SM_XVIRTUALSCREEN
+        self.y = int(event.position().y()) + self.SM_YVIRTUALSCREEN
         self.close()
 
 
