@@ -3,7 +3,7 @@
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
-This program compares split images to a capture region of any window (OBS, Streamlabs, etc.) and automatically hits your split hotkey when there is a match. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), but can be integrated with LiveSplit. The purpose of this program is to remove the need to manually press your split hotkey and also increase the accuracy of your splits.
+This program compares split images to a capture region of any window (OBS, Streamlabs, etc.) and automatically hits your split hotkey when there is a match. It can also be used to start and reset your timer, allowing for it to take full control of starting, splitting, and resetting your timer without ever having to touch a hotkey. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), but can be integrated with LiveSplit.
 
 ![Example](res/example1.6.0.gif)
 
@@ -73,13 +73,21 @@ This program compares split images to a capture region of any window (OBS, Strea
 
 - Shows the highest similarity between the capture region and current split image.
 
-### Similarity Threshold
+### Current Similarity Threshold
 
 - When the live similarity goes above this value, the program hits your split hotkey and moves to the next split image.
+
+### Default Similarity Threshold
+
+- This value will be set as the threshold for an image if there is no custom threshold set for that image.
 
 ### Pause Time
 
 - Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
+
+### Default Pause Time
+
+- This value will be set as the Pause Time for an image if there is no custom Pause Time set for that image.
 
 ### Delay Time
 
@@ -129,9 +137,9 @@ The start image is similar to the reset image. You can only have one start image
 
 ### Group dummy splits when undoing / skipping
 
-If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through ths splits normally even if they are dummy splits (this was the normal behavior in versions 1.2.0 and older).
+If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through the images normally even if they have the dummy flag `{d}` applied to them.
 
-If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it in sync with LiveSplit/wsplit.
+If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it as in sync as possible with the real splits in LiveSplit/wsplit.
 
 Examples:
 Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
@@ -157,7 +165,6 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 ### Settings
 
 - Settings files use the extension `.pkl`. Settings files can be saved and opened by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
-- For v1.4 and below, settings work differently. Each time AutoSplit is closed, it saves a the setting file `settings.pkl` to the directory AutoSplit.exe is located in. This settings file must be in the same directory as AutoSplit.exe and is loaded upon opening the program. Settings can be reloaded using the Reload Settings button.
 - The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
 - If you are upgrading to Windows 11, it's possible that save files may not transfer perfectly. You may need to readjust or reselect your Capture Region, for example.
 
