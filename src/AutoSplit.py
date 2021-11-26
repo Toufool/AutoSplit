@@ -392,10 +392,20 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.startAutoSplitter()
 
             self.timerStartImage.stop()
-            self.startImageLabel.setText("Start image: started")
-
             self.start_image_split_below_threshold = False
-            threading.Timer(start_image_delay / 1000, split).start()
+
+            # delay start image if needed
+            if start_image_delay > 0:
+                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+                self.startImageLabel.setText("Start image: delaying start...")
+                delay_start_time = time.time()
+                while time.time() - delay_start_time < (start_image_delay / 1000):
+                    delay_time_left = round((start_image_delay / 1000) - (time.time() - delay_start_time), 1)
+                    self.currentSplitImage.setText(f'Delayed Before Starting:\n {delay_time_left} sec remaining')
+                    QtTest.QTest.qWait(1)
+
+            self.startImageLabel.setText("Start image: started")
+            split()
 
     # update x, y, width, height when spinbox values are changed
     def updateX(self):
