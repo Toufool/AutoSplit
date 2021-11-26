@@ -868,9 +868,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # if its not the last split image, pause for the amount set by the user
             if self.number_of_split_images != self.split_image_number:
-                # set current split image to none
-                self.currentsplitimagefileLabel.setText(' ')
-                self.imageloopLabel.setText('Image Loop: -')
 
                 if not self.is_auto_controlled:
                     # if its the last split image and last loop number, disable the skip split button
@@ -889,32 +886,35 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                 # I have a pause loop here so that it can check if the user presses skip split, undo split, or reset here.
                 # Also updates the current split image text, counting down the time until the next split image
-                pause_start_time = time.time()
-                while time.time() - pause_start_time < self.pause:
-                    pause_time_left = round(self.pause - (time.time() - pause_start_time), 1)
-                    self.currentSplitImage.setText(f'None (Paused). {pause_time_left} sec remaining')
+                if self.pause > 0:
+                    self.currentsplitimagefileLabel.setText(' ')
+                    self.imageloopLabel.setText('Image Loop: -')
+                    pause_start_time = time.time()
+                    while time.time() - pause_start_time < self.pause:
+                        pause_time_left = round(self.pause - (time.time() - pause_start_time), 1)
+                        self.currentSplitImage.setText(f'None (Paused). {pause_time_left} sec remaining')
 
-                    # check for reset
-                    if win32gui.GetWindowText(self.hwnd) == '':
-                        self.reset()
-                    if self.checkForReset():
-                        return
-
-                    # check for skip/undo split:
-                    if self.split_image_number != pause_split_image_number:
-                        break
-
-                    # calculate similarity for reset image
-                    if self.shouldCheckResetImage():
-                        capture = self.getCaptureForComparison()
-
-                        reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
-                        if reset_similarity >= self.reset_image_threshold:
-                            self.send_command("reset")
+                        # check for reset
+                        if win32gui.GetWindowText(self.hwnd) == '':
                             self.reset()
-                            continue
+                        if self.checkForReset():
+                            return
 
-                    QtTest.QTest.qWait(1)
+                        # check for skip/undo split:
+                        if self.split_image_number != pause_split_image_number:
+                            break
+
+                        # calculate similarity for reset image
+                        if self.shouldCheckResetImage():
+                            capture = self.getCaptureForComparison()
+
+                            reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                            if reset_similarity >= self.reset_image_threshold:
+                                self.send_command("reset")
+                                self.reset()
+                                continue
+
+                        QtTest.QTest.qWait(1)
 
         # loop breaks to here when the last image splits
         self.guiChangesOnReset()
