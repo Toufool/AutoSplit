@@ -10,7 +10,6 @@
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
 # Dependencies:
-wheel
 PyQt6
 opencv-python<=4.5.3.56 # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
 Pillow
@@ -22,6 +21,7 @@ pyautogui
 PySide6
 flake8
 mypy
+requests
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

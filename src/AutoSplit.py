@@ -12,7 +12,6 @@ import ctypes.wintypes
 import ctypes
 import numpy as np
 import signal
-import threading
 import time
 
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
@@ -344,7 +343,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 or (not self.splitLineEdit.text() and not self.is_auto_controlled):
             pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
             self.currentSplitImage.setText(f'None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining')
-            self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             return
 
         if self.check_start_image_timestamp > 0:
@@ -396,7 +394,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # delay start image if needed
             if start_image_delay > 0:
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.startImageLabel.setText("Start image: delaying start...")
                 delay_start_time = time.time()
                 while time.time() - delay_start_time < (start_image_delay / 1000):
@@ -827,7 +824,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
-                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
@@ -874,7 +870,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop: -')
 
                 if not self.is_auto_controlled:

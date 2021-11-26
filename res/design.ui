@@ -65,7 +65,7 @@
      <rect>
       <x>130</x>
       <y>10</y>
-      <width>407</width>
+      <width>412</width>
       <height>22</height>
      </rect>
     </property>
@@ -76,7 +76,7 @@
    <widget class="QPushButton" name="browseButton">
     <property name="geometry">
      <rect>
-      <x>539</x>
+      <x>540</x>
       <y>9</y>
       <width>75</width>
       <height>24</height>
@@ -93,7 +93,7 @@
     <property name="geometry">
      <rect>
       <x>25</x>
-      <y>139</y>
+      <y>145</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -128,7 +128,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>67</y>
+      <y>70</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -577,7 +577,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>69</y>
+      <y>70</y>
       <width>240</width>
       <height>180</height>
      </rect>
@@ -587,13 +587,16 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="currentSplitImage">
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>69</y>
+      <y>70</y>
       <width>240</width>
       <height>180</height>
      </rect>
@@ -603,6 +606,9 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="currentsplitimageLabel">
@@ -622,7 +628,7 @@
     <property name="geometry">
      <rect>
       <x>12</x>
-      <y>177</y>
+      <y>185</y>
       <width>33</width>
       <height>16</height>
      </rect>
@@ -635,7 +641,7 @@
     <property name="geometry">
      <rect>
       <x>66</x>
-      <y>177</y>
+      <y>185</y>
       <width>41</width>
       <height>16</height>
      </rect>
@@ -661,7 +667,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>193</y>
+      <y>200</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -680,7 +686,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>193</y>
+      <y>200</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -712,7 +718,7 @@
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>251</y>
+      <y>252</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -725,7 +731,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>248</y>
+      <y>250</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -768,9 +774,9 @@
    <widget class="QPushButton" name="takescreenshotButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>260</x>
       <y>250</y>
-      <width>92</width>
+      <width>101</width>
       <height>24</height>
      </rect>
     </property>
@@ -785,7 +791,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>154</y>
+      <y>160</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -813,7 +819,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>154</y>
+      <y>160</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -838,7 +844,7 @@
     <property name="geometry">
      <rect>
       <x>81</x>
-      <y>139</y>
+      <y>145</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -908,7 +914,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>92</y>
+      <y>95</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -940,7 +946,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>117</y>
+      <y>120</y>
       <width>101</width>
       <height>23</height>
      </rect>
