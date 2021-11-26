@@ -327,7 +327,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.check_start_image_timestamp = time.time() + start_image_pause
             self.startImageLabel.setText("Start image: paused")
             self.currentSplitImage.setText('none (paused)')
-            self.currentSplitImage.setAlignment(QtCore.Qt.AlignCenter)
             self.highestsimilarityLabel.setText(' ')
             self.currentsimilaritythresholdnumberLabel.setText(' ')
         else:
@@ -810,7 +809,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.undosplitButton.setEnabled(False)
                     self.skipsplitButton.setEnabled(False)
                     self.currentsplitimagefileLabel.setText(' ')
-                    self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time.time()
@@ -857,7 +855,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             if self.number_of_split_images != self.split_image_number:
                 # set current split image to none
                 self.currentsplitimagefileLabel.setText(' ')
-                self.currentSplitImage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                 self.imageloopLabel.setText('Image Loop #    -')
 
                 if not self.is_auto_controlled:
