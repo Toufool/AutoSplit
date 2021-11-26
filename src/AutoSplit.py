@@ -252,6 +252,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 if self.live_image_function_on_open:
                     self.live_image_function_on_open = False
                 else:
+                    self.liveImage.clear()
                     error_messages.regionError()
                 return
 
