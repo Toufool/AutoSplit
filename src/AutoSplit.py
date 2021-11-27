@@ -1105,7 +1105,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.split_image = cv2.resize(self.split_image, COMPARISON_RESIZE)
             self.image_mask = None
 
-        split_image_display = cv2.resize(split_image_display, DISPLAY_RESIZE, interpolation=cv2.INTER_NEAREST)
+        split_image_display = cv2.resize(split_image_display, DISPLAY_RESIZE)
         # Set current split image in UI
         qImage = QtGui.QImage(split_image_display,
                               split_image_display.shape[1],
