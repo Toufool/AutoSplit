@@ -116,7 +116,7 @@ This program compares split images to a capture region of any window (OBS, Strea
 
 Masked images are very useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate.
 
-The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on how to creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
+The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
 ![Mask Example](res/mask_example_image.png)
 
@@ -184,6 +184,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Settings Path (path to your AutoSplit `.pkl` settings file) respectively.
   - If you have not yet set saved a settings file, you can do so using AutoSplit, and then go back and set your Settings Path.
 - Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and its settings will now open automatically when opening that LiveSplit Layout `.lsl` file.
+- If you are using any dummy splits, it is recommended that you check the "Group dummy splits when undoing / skipping" checkbox when using LiveSplit integration so that your LiveSplit splits stay in sync with AutoSplit.
 
 ## Known Limitations
 
