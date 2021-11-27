@@ -6,7 +6,7 @@ def threshold_from_filename(filename):
     @param filename: String containing the file's name
     @return: A valid threshold, if not then None
     """
-    
+
     # Check to make sure there is a valid floating point number between
     # parentheses of the filename
     try:
@@ -45,7 +45,7 @@ def pause_from_filename(filename):
 def delay_from_filename(filename):
     """
     Retrieve the delay time from the filename, if there is no delay time or the delay time
-    isn't a valid number, then None is returned
+    isn't a valid number, then 0 is returned
 
     @param filename: String containing the file's name
     @return: A valid delay time, if not then 0
@@ -56,11 +56,11 @@ def delay_from_filename(filename):
     try:
         delay = float(filename.split('#', 1)[1].split('#')[0])
     except:
-        return 0
+        return 0.0
 
     # Delay times should always be positive or zero
     if (delay < 0):
-        return 0
+        return 0.0
     else:
         return delay
 
@@ -86,6 +86,13 @@ def loop_from_filename(filename):
     else:
         return loop
 
+
+DUMMY_FLAG = 1 << 0
+MASK_FLAG = 1 << 1 #Legacy flag. Allows support for {md}, {mp}, or {mb} flags previously required to detect transparancy.
+BELOW_FLAG = 1 << 2
+PAUSE_FLAG = 1 << 3
+
+
 def flags_from_filename(filename):
     """
     Retrieve the flags from the filename, if there are no flags then 0 is returned
@@ -97,7 +104,6 @@ def flags_from_filename(filename):
     """
     List of flags:
     'd' = dummy, do nothing when this split is found
-    'm' = mask, use a mask when comparing this split
     'b' = below threshold, after threshold is met, split when it goes below the threhsold.
     'p' = pause, hit pause key when this split is found
     """
@@ -109,13 +115,8 @@ def flags_from_filename(filename):
     except:
         return 0
 
-    DUMMY_FLAG = 1 << 0
-    MASK_FLAG = 1 << 1
-    BELOW_FLAG = 1 << 2
-    PAUSE_FLAG = 1 << 3
-
     flags = 0x00
-    
+
     for c in flags_str:
         if c.upper() == 'D':
             flags |= DUMMY_FLAG
@@ -134,7 +135,7 @@ def flags_from_filename(filename):
     # For instance, we can't have a dummy split also pause
     if (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & PAUSE_FLAG == PAUSE_FLAG):
         return 0
-    
+
     return flags
 
 def is_reset_image(filename):
@@ -145,3 +146,13 @@ def is_reset_image(filename):
     @return: True if its a reset image
     """
     return ('RESET' in filename.upper())
+
+def is_start_auto_splitter_image(filename):
+    """
+    Checks if the image is used to start AutoSplit
+
+    @param filename: String containing the file's name
+    @return: True if its a reset image
+    """
+    return ('START_AUTO_SPLITTER' in filename.upper())
+
