@@ -750,6 +750,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
                         self.send_command("reset")
+                        self.reset()
 
                 if self.checkForReset():
                     return
