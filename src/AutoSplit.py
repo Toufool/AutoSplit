@@ -207,13 +207,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        # Last loaded settings and last successful loaded settings file path to None until we try to load them
-        self.last_loaded_settings = None
-        self.last_successfully_loaded_settings_file_path = None
-
-        if not self.is_auto_controlled:
-            self.loadSettings(load_settings_on_open=True)
-
         # Automatic timer start
         self.timerStartImage = QtCore.QTimer()
         self.timerStartImage.timeout.connect(self.startImageFunction)
@@ -222,8 +215,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.check_start_image_timestamp = 0.0
 
-        # Try to load start image
-        self.loadStartImage()
+        # Last loaded settings and last successful loaded settings file path to None until we try to load them
+        self.last_loaded_settings = None
+        self.last_successfully_loaded_settings_file_path = None
+
+        if not self.is_auto_controlled:
+            self.loadSettings(load_settings_on_open=True)
 
     # FUNCTIONS
 
@@ -243,6 +240,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.split_image_directory = new_split_image_directory
             self.splitimagefolderLineEdit.setText(f"{new_split_image_directory}/")
+            self.loadStartImage()
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -302,6 +300,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 error_messages.noKeywordImageError('start_auto_splitter')
             return
 
+        if self.start_image_name is not None and (not self.splitLineEdit.text() or not self.resetLineEdit.text() or not self.pausehotkeyLineEdit.text()) and not self.is_auto_controlled:
+            error_messages.loadStartImageError()
+            return
+
         self.split_image_filenames = os.listdir(self.split_image_directory)
         self.split_image_number = 0
         self.start_image_mask = None
@@ -346,8 +348,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         QtWidgets.QApplication.processEvents()
 
     def startImageFunction(self):
-        if time.time() < self.check_start_image_timestamp \
-                or (not self.splitLineEdit.text() and not self.is_auto_controlled):
+        if time.time() < self.check_start_image_timestamp:
             pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
             self.currentSplitImage.setText(f'None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining')
             return

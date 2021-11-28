@@ -303,3 +303,4 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
 
     self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
     self.checkLiveImage()
+    self.loadStartImage()

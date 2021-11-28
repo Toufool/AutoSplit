@@ -88,6 +88,8 @@ def tooManySettingsFilesOnOpenError():
 def checkForUpdatesError():
     setTextMessage("An error occurred while attempting to check for updates. Please check your connection.")
 
+def loadStartImageError():
+    setTextMessage("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. Please set these hotkeys, and then click the Reload Start Image button.")
 
 def stdinLostError():
     setTextMessage("stdin not supported or lost, external control like LiveSplit integration will not work.")
