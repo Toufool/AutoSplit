@@ -157,10 +157,11 @@ def saveSettingsAs(self: AutoSplit):
 def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_settings_from_livesplit: bool = False):
     if load_settings_on_open:
 
-        settings_files = []
-        for file in os.listdir(auto_split_directory):
-            if file.endswith(".pkl"):
-                settings_files.append(file)
+        settings_files = [
+            file for file
+            in os.listdir(auto_split_directory)
+            if file.endswith(".pkl")
+        ]
 
         # find all .pkls in AutoSplit folder, error if there is none or more than 1
         if len(settings_files) < 1:
@@ -190,8 +191,7 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
             settings: List[Union[str, int]] = pickle.load(f)
             settings_count = len(settings)
             if settings_count < 18:
-                if not load_settings_from_livesplit:
-                    error_messages.oldVersionSettingsFileError()
+                self.showErrorSignal.emit(error_messages.oldVersionSettingsFileError)
                 return
             # v1.3-1.4 settings. Add default pause_key and auto_start_on_reset_setting
             if settings_count == 18:
@@ -199,8 +199,7 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 settings.insert(20, 0)
             # v1.5 settings
             elif settings_count != 20:
-                if not load_settings_from_livesplit:
-                    error_messages.invalidSettingsError()
+                self.showErrorSignal.emit(error_messages.invalidSettingsError)
                 return
             self.last_loaded_settings = [
                 self.split_image_directory,
@@ -224,11 +223,7 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 self.loop_setting,
                 self.auto_start_on_reset_setting] = settings
     except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
-        # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
-        # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
-        # but in the mean time, this will do.
-        if not load_settings_from_livesplit:
-            error_messages.invalidSettingsError()
+        self.showErrorSignal.emit(error_messages.invalidSettingsError)
         return
 
     self.splitimagefolderLineEdit.setText(self.split_image_directory)

@@ -1,5 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
+from types import FunctionType
 from typing import Callable, List, Optional
 
 from copy import copy
@@ -51,6 +52,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     undoSplitSignal = QtCore.pyqtSignal()
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
+    # Use this signal when trying to show an error from outside the main thread
+    showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
     def __init__(self, parent=None):
         super(AutoSplit, self).__init__(parent)
@@ -104,7 +107,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         try:
                             line = input()
                         except RuntimeError:
-                            # stdin not supported or lost, stop looking for inputs
+                            self.autosplit.showErrorSignal.emit(error_messages.stdinLostError)
                             break
                         # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
                         # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
@@ -169,6 +172,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
+        self.showErrorSignal.connect(lambda errorMessageBox: errorMessageBox())
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
