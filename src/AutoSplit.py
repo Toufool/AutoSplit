@@ -1236,7 +1236,7 @@ def excepthook(exceptionType: Type[BaseException], exception: BaseException, tra
         sys.exit(0)
     error_messages.exceptionTraceback(
             "AutoSplit encountered an unhandled exception and will try to recover, "
-            f"however, there is no guarantee everything will work correctly. {CREATE_NEW_ISSUE_MESSAGE}",
+            f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
             exception)
 
 
