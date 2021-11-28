@@ -246,16 +246,18 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def liveImageFunction(self):
         try:
-            if win32gui.GetWindowText(self.hwnd) == '':
+            windowText = win32gui.GetWindowText(self.hwnd)
+            self.captureregionwindowLabel.setText(windowText)
+            if not windowText:
                 self.timerLiveImage.stop()
+                self.liveImage.clear()
                 if self.live_image_function_on_open:
                     self.live_image_function_on_open = False
                 else:
-                    self.liveImage.clear()
                     error_messages.regionError()
                 return
 
-            capture = capture_windows.capture_region(self.hwnd, self.rect)
+            capture = capture_windows.capture_region(self.hwnd, self.rect, self.forcePrintWindowCheckBox.isChecked())
             capture = cv2.resize(capture, DISPLAY_RESIZE)
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
@@ -449,7 +451,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             i = i + 1
 
         # grab screenshot of capture region
-        capture = capture_windows.capture_region(self.hwnd, self.rect)
+        capture = capture_windows.capture_region(self.hwnd, self.rect, self.forcePrintWindowCheckBox.isChecked())
         capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
         # save and open image
@@ -482,7 +484,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         t0 = time.time()
         while count < 10:
 
-            capture = capture_windows.capture_region(self.hwnd, self.rect)
+            capture = capture_windows.capture_region(self.hwnd, self.rect, self.forcePrintWindowCheckBox.isChecked())
             capture = cv2.resize(capture, COMPARISON_RESIZE)
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
 
@@ -990,7 +992,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def getCaptureForComparison(self):
         # grab screenshot of capture region
-        capture = capture_windows.capture_region(self.hwnd, self.rect)
+        capture = capture_windows.capture_region(self.hwnd, self.rect, self.forcePrintWindowCheckBox.isChecked())
         # Capture with nearest neighbor interpolation only if the split image has transparency to support older setups
         if self.imageHasTransparency:
             capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)

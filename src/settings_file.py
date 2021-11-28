@@ -71,7 +71,8 @@ def haveSettingsChanged(self: AutoSplit):
         0,
         self.group_dummy_splits_undo_skip_setting,
         self.loop_setting,
-        self.auto_start_on_reset_setting]
+        self.auto_start_on_reset_setting,
+        self.forcePrintWindowCheckBox.isChecked()]
 
     # One small caveat in this: if you load a settings file from an old version, but dont change settings,
     # the current save settings and last load settings will have different # of elements and it will ask
@@ -104,7 +105,8 @@ def saveSettings(self: AutoSplit):
             0,
             self.group_dummy_splits_undo_skip_setting,
             self.loop_setting,
-            self.auto_start_on_reset_setting]
+            self.auto_start_on_reset_setting,
+            self.forcePrintWindowCheckBox.isChecked()]
         # save settings to a .pkl file
         with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
             pickle.dump(self.last_saved_settings, f)
@@ -143,7 +145,8 @@ def saveSettingsAs(self: AutoSplit):
         0,
         self.group_dummy_splits_undo_skip_setting,
         self.loop_setting,
-        self.auto_start_on_reset_setting]
+        self.auto_start_on_reset_setting,
+        self.forcePrintWindowCheckBox.isChecked()]
 
     # save settings to a .pkl file
     with open(self.save_settings_file_path, 'wb') as f:
@@ -198,7 +201,10 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 settings.insert(9, '')
                 settings.insert(20, 0)
             # v1.5 settings
-            elif settings_count != 20:
+            if settings_count == 20:
+                settings.insert(21, False)
+            # v1.6.X settings
+            elif settings_count != 21:
                 if not load_settings_from_livesplit:
                     error_messages.invalidSettingsError()
                 return
@@ -222,7 +228,9 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
                 _,
                 self.group_dummy_splits_undo_skip_setting,
                 self.loop_setting,
-                self.auto_start_on_reset_setting] = settings
+                self.auto_start_on_reset_setting,
+                forcePrintWindowCheckBox] = settings
+            self.forcePrintWindowCheckBox.setChecked(forcePrintWindowCheckBox)
     except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
         # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
         # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
