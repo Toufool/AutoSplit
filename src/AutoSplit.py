@@ -33,7 +33,9 @@ COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
 DISPLAY_RESIZE_WIDTH = 240
 DISPLAY_RESIZE_HEIGHT = 180
 DISPLAY_RESIZE = (DISPLAY_RESIZE_WIDTH, DISPLAY_RESIZE_HEIGHT)
-
+CREATE_NEW_ISSUE_MESSAGE = \
+    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
+"github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
@@ -1216,9 +1218,7 @@ def main():
         # Print error to console if not running in executable
         if getattr(sys, 'frozen', False):
             error_messages.exceptionTraceback(
-                "AutoSplit encountered an unrecoverable exception and will now close itself.<br/>"
-                "Please copy the following message over at<br/>"
-                "<a href='https://github.com/Toufool/Auto-Split/issues'>github.com/Toufool/Auto-Split/issues</a>",
+                f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}",
                 exception)
         else:
             traceback.print_exception(type(exception), exception, exception.__traceback__)
@@ -1236,9 +1236,7 @@ def excepthook(exceptionType: Type[BaseException], exception: BaseException, tra
         sys.exit(0)
     error_messages.exceptionTraceback(
             "AutoSplit encountered an unhandled exception and will try to recover, "
-            "however, things may not work quite right.<br/>"
-            "Please copy the following message over at<br/>"
-            "<a href='https://github.com/Toufool/Auto-Split/issues'>github.com/Toufool/Auto-Split/issues</a>",
+            f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
             exception)
 
 
