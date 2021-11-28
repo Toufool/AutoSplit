@@ -1,12 +1,20 @@
 # Error messages
-from PyQt6 import QtWidgets
+import traceback
+from PyQt6 import QtCore, QtWidgets
 
 
-def setTextMessage(message: str):
-    msgBox = QtWidgets.QMessageBox()
-    msgBox.setWindowTitle('Error')
-    msgBox.setText(message)
-    msgBox.exec()
+def setTextMessage(message: str, details: str = ''):
+    messageBox = QtWidgets.QMessageBox()
+    messageBox.setWindowTitle('Error')
+    messageBox.setTextFormat(QtCore.Qt.TextFormat.RichText)
+    messageBox.setText(message)
+    if details:
+        messageBox.setDetailedText(details)
+        for button in messageBox.buttons():
+            if messageBox.buttonRole(button) == QtWidgets.QMessageBox.ButtonRole.ActionRole:
+                button.click()
+                break
+    messageBox.exec()
 
 
 def splitImageDirectoryError():
@@ -83,3 +91,9 @@ def checkForUpdatesError():
 
 def stdinLostError():
     setTextMessage("stdin not supported or lost, external control like LiveSplit integration will not work.")
+
+
+def exceptionTraceback(message: str, exception: Exception):
+    setTextMessage(
+        message,
+        "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))

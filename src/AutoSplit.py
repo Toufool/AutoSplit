@@ -1,7 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
-from types import FunctionType
-from typing import Callable, List, Optional
+import traceback
+from types import FunctionType, TracebackType
+from typing import Callable, List, Optional, Type
 
 from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
@@ -1197,22 +1198,50 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+    try:
+        app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+        main_window = AutoSplit()
+        main_window.show()
+        # Needs to be after main_window.show() to be shown over
+        if main_window.actionCheck_for_Updates_on_Open.isChecked():
+            checkForUpdates(main_window, check_for_updates_on_open=True)
 
-    main_window = AutoSplit()
-    main_window.show()
-    if main_window.actionCheck_for_Updates_on_Open.isChecked():
-        checkForUpdates(main_window, check_for_updates_on_open=True)
+        # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
+        timer = QtCore.QTimer()
+        timer.timeout.connect(lambda: None)
+        timer.start(500)
 
-    # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
-    timer = QtCore.QTimer()
-    timer.timeout.connect(lambda: None)
-    timer.start(500)
+        exit_code = app.exec()
+    except Exception as exception:
+        # Print error to console if not running in executable
+        if getattr(sys, 'frozen', False):
+            error_messages.exceptionTraceback(
+                "AutoSplit encountered an unrecoverable exception and will now close itself.<br/>"
+                "Please copy the following message over at<br/>"
+                "<a href='https://github.com/Toufool/Auto-Split/issues'>github.com/Toufool/Auto-Split/issues</a>",
+                exception)
+        else:
+            traceback.print_exception(type(exception), exception, exception.__traceback__)
+        sys.exit(1)
+
     # Catch Keyboard Interrupts for a clean close
-    signal.signal(signal.SIGINT, lambda _,  __: sys.exit(app))
+    signal.signal(signal.SIGINT, lambda code,  _: sys.exit(code))
 
-    sys.exit(app.exec())
+    sys.exit(exit_code)
+
+
+def excepthook(exceptionType: Type[BaseException], exception: BaseException, traceback: Optional[TracebackType]):
+    # Catch Keyboard Interrupts for a clean close
+    if exceptionType is KeyboardInterrupt:
+        sys.exit(0)
+    error_messages.exceptionTraceback(
+            "AutoSplit encountered an unhandled exception and will try to recover, "
+            "however, things may not work quite right.<br/>"
+            "Please copy the following message over at<br/>"
+            "<a href='https://github.com/Toufool/Auto-Split/issues'>github.com/Toufool/Auto-Split/issues</a>",
+            exception)
 
 
 if __name__ == '__main__':
+    sys.excepthook = excepthook
     main()
