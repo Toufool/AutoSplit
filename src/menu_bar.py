@@ -14,7 +14,7 @@ import resources_rc  # noqa: F401
 from about import Ui_aboutAutoSplitWidget
 
 # AutoSplit Version number
-VERSION = "1.6.0"
+VERSION = "1.6.1"
 
 
 # About Window
