@@ -4,13 +4,14 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 from win32 import win32gui
-from PyQt6 import QtWidgets
+from PyQt6 import QtCore, QtWidgets
 import os
 import sys
 import keyboard
 import pickle
 
 from hotkeys import _hotkey_action
+import design
 import error_messages
 
 # Get the directory of either AutoSplit.exe or AutoSplit.py
@@ -308,3 +309,26 @@ def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_sett
 
     self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
     self.checkLiveImage()
+
+
+def load_check_for_updates_on_open(designWindow: design.Ui_MainWindow):
+    """
+    Retrieve the 'Check For Updates On Open' QSettings and set the checkbox state
+    These are only global settings values. They are not *pkl settings values.
+    """
+
+    value = QtCore \
+        .QSettings('AutoSplit', 'Check For Updates On Open') \
+        .value('check_for_updates_on_open', True, type=bool)
+    designWindow.actionCheck_for_Updates_on_Open.setChecked(value)
+
+
+def set_check_for_updates_on_open(designWindow: design.Ui_MainWindow, value: bool):
+    """
+    Sets the 'Check For Updates On Open' QSettings value and the checkbox state
+    """
+
+    designWindow.actionCheck_for_Updates_on_Open.setChecked(value)
+    QtCore \
+        .QSettings('AutoSplit', 'Check For Updates On Open') \
+        .setValue('check_for_updates_on_open', value)
