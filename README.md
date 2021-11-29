@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-next-line MD033 -->
-# <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit
+# <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 

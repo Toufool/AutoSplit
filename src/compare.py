@@ -12,7 +12,12 @@ histSize = [8, 8, 8]
 ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 
 
-def compareImage(comparisonMethod: int, image: Optional[cv2.ndarray], capture: Optional[cv2.ndarray], mask: Optional[cv2.ndarray] = None):
+def compareImage(
+    comparisonMethod: int,
+    image: Optional[cv2.ndarray],
+    capture: Optional[cv2.ndarray],
+    mask: Optional[cv2.ndarray] = None
+):
     if image is None or capture is None:
         return 0.0
     if comparisonMethod == 0:

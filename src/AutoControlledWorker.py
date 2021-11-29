@@ -25,9 +25,9 @@ class AutoControlledWorker(QtCore.QObject):
             if line == 'kill':
                 self.autosplit.closeEvent()
                 break
-            elif line == 'start':
+            if line == 'start':
                 self.autosplit.startAutoSplitter()
-            elif line == 'split' or line == 'skip':
+            elif line in ('split', 'skip'):
                 self.autosplit.startSkipSplit()
             elif line == 'undo':
                 self.autosplit.startUndoSplit()

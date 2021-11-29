@@ -1,0 +1,67 @@
+# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
+[tool.black]
+line-length = 120
+# Auto generated
+force-exclude = "src/gen/.*\\.py$"
+
+# https://github.com/hhatto/autopep8#usage
+# https://github.com/hhatto/autopep8#more-advanced-usage
+[tool.autopep8]
+max_line_length = 120
+recursive = true
+aggressive = 3
+
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
+[tool.pyright]
+pythonPlatform = "Windows"
+typeCheckingMode = "strict"
+ignore = [
+  # Auto generated
+  "src/gen/",
+  "typings/",
+]
+reportMissingTypeStubs = "information"
+# False positives with TYPE_CHECKING
+reportImportCycles = "information"
+# PyQt .connect
+reportFunctionMemberAccess = "information"
+# Extra runtime safety
+reportUnnecessaryComparison = "warning"
+# Flake8 does a better job
+reportUnusedImport = "none"
+# numpy has way too many complex types that triggers this
+reportUnknownMemberType = "none"
+
+# https://mypy.readthedocs.io/en/stable/command_line.html#disallow-dynamic-typing
+[tool.mypy]
+show_column_numbers = true
+show_error_codes = true
+no_color_output = false
+color_output = true
+
+ignore_missing_imports = true
+follow_imports = "silent"
+
+# Note: exclude is ignored when linting file by file so VSCode will still show errors in typings
+# typings are incomplete as we only add types for what we need, cannot disable specific rules per file
+# Auto generated
+exclude = "(typings/|src/gen/)"
+
+# Redundant
+disallow_untyped_defs = false
+# Doesn't see our cv2 type stubs
+warn_return_any = false
+# False positives when it's needed for other linting libraries
+warn_unused_ignores = false
+# Doesn't see imports from src/gen/
+disallow_any_unimported = false
+disallow_subclassing_any = false
+# False positives with ndarray
+disable_error_code = "no-untyped-def"
+
+strict = true
+# Doesn't see types from some imports
+disallow_any_expr = false
+disallow_any_decorated = true
+disallow_any_explicit = true
+warn_unreachable = true

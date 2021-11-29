@@ -305,7 +305,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 error_messages.noKeywordImageError('start_auto_splitter')
             return
 
-        if self.start_image_name is not None and (not self.splitLineEdit.text() or not self.resetLineEdit.text() or not self.pausehotkeyLineEdit.text()) and not self.is_auto_controlled:
+        if self.start_image_name is not None \
+            and not self.is_auto_controlled \
+            and (not self.splitLineEdit.text()
+                 or not self.resetLineEdit.text()
+                 or not self.pausehotkeyLineEdit.text()):
             error_messages.loadStartImageError()
             return
 

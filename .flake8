@@ -12,3 +12,4 @@ per-file-ignores =
     ; line too long
     ; mixed case
     __init__.pyi:F401,E501,N816
+inline-quotes = "
