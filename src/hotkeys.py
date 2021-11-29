@@ -132,7 +132,7 @@ def setSplitHotkey(autosplit: AutoSplit):
     autosplit.setsplithotkeyButton.setText('Press a key...')
 
     # disable some buttons
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     # new thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
@@ -190,7 +190,7 @@ def setSplitHotkey(autosplit: AutoSplit):
 
 def setResetHotkey(autosplit: AutoSplit):
     autosplit.setresethotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -221,7 +221,7 @@ def setResetHotkey(autosplit: AutoSplit):
 
 def setSkipSplitHotkey(autosplit: AutoSplit):
     autosplit.setskipsplithotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -252,7 +252,7 @@ def setSkipSplitHotkey(autosplit: AutoSplit):
 
 def setUndoSplitHotkey(autosplit: AutoSplit):
     autosplit.setundosplithotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -283,7 +283,7 @@ def setUndoSplitHotkey(autosplit: AutoSplit):
 
 def setPauseHotkey(autosplit: AutoSplit):
     autosplit.setpausehotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:

@@ -54,7 +54,7 @@ def getSaveSettingsValues(autosplit: AutoSplit):
 
 
 def haveSettingsChanged(autosplit: AutoSplit):
-    autosplit.getSaveSettingsValues()
+    getSaveSettingsValues(autosplit)
     current_save_settings = [
         autosplit.split_image_directory,
         autosplit.similarity_threshold,
@@ -85,9 +85,9 @@ def haveSettingsChanged(autosplit: AutoSplit):
 
 def saveSettings(autosplit: AutoSplit):
     if not autosplit.last_successfully_loaded_settings_file_path:
-        autosplit.saveSettingsAs()
+        saveSettingsAs(autosplit)
     else:
-        autosplit.getSaveSettingsValues()
+        getSaveSettingsValues(autosplit)
         autosplit.last_saved_settings = [
             autosplit.split_image_directory,
             autosplit.similarity_threshold,
@@ -126,7 +126,7 @@ def saveSettingsAs(autosplit: AutoSplit):
     if not autosplit.save_settings_file_path:
         return
 
-    autosplit.getSaveSettingsValues()
+    getSaveSettingsValues(autosplit)
     autosplit.last_saved_settings = [
         autosplit.split_image_directory,
         autosplit.similarity_threshold,

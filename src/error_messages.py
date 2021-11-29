@@ -95,7 +95,8 @@ def checkForUpdatesError():
 
 
 def loadStartImageError():
-    setTextMessage("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. Please set these hotkeys, and then click the Reload Start Image button.")
+    setTextMessage("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
+                   "Please set these hotkeys, and then click the Reload Start Image button.")
 
 
 def stdinLostError():

@@ -32,36 +32,55 @@ reportUnusedImport = "none"
 # numpy has way too many complex types that triggers this
 reportUnknownMemberType = "none"
 
-# https://mypy.readthedocs.io/en/stable/command_line.html#disallow-dynamic-typing
-[tool.mypy]
-show_column_numbers = true
-show_error_codes = true
-no_color_output = false
-color_output = true
+# https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
+# https://pylint.pycqa.org/en/latest/technical_reference/features.html
+[tool.pylint.MASTER]
+# https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
+load-plugins = [
+  "pylint.extensions.broad_try_clause",
+  "pylint.extensions.code_style",
+  "pylint.extensions.emptystring",
+  "pylint.extensions.comparetozero",
+  "pylint.extensions.comparison_placement",
+  "pylint.extensions.confusing_elif",
+  "pylint.extensions.for_any_all",
+  "pylint.extensions.consider_ternary_expression",
+  "pylint.extensions.bad_builtin",
+  "pylint.extensions.mccabe",
+  "pylint.extensions.docstyle",
+  "pylint.extensions.check_elif",
+  "pylint.extensions.redefined_variable_type",
+  "pylint.extensions.overlapping_exceptions",
+  "pylint.extensions.docparams",
+  "pylint.extensions.empty_comment",
+  "pylint.extensions.set_membership",
+  "pylint.extensions.typing",
+  "pylint.extensions.while_used",
+]
+ignore-paths = [
+  # Haven't looked into disabling specific rules per file
+  "^typings/.*$",
+  # Auto generated
+  "^src/gen/.*$",
+]
+extension-pkg-allow-list = ["PyQt6", "win32ui"]
 
-ignore_missing_imports = true
-follow_imports = "silent"
+[tool.pylint.FORMAT]
+max-line-length = 120
 
-# Note: exclude is ignored when linting file by file so VSCode will still show errors in typings
-# typings are incomplete as we only add types for what we need, cannot disable specific rules per file
-# Auto generated
-exclude = "(typings/|src/gen/)"
+[tool.pylint.'MESSAGES CONTROL']
+disable = [
+  "missing-docstring",
+  # TODO: We want to configure this
+  # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
+  "invalid-name",
+  # We group imports
+  "wrong-import-position",
+  # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
+  "unused-argument",
+  # Already taken care of by Flake8
+  "unused-import",
+]
 
-# Redundant
-disallow_untyped_defs = false
-# Doesn't see our cv2 type stubs
-warn_return_any = false
-# False positives when it's needed for other linting libraries
-warn_unused_ignores = false
-# Doesn't see imports from src/gen/
-disallow_any_unimported = false
-disallow_subclassing_any = false
-# False positives with ndarray
-disable_error_code = "no-untyped-def"
-
-strict = true
-# Doesn't see types from some imports
-disallow_any_expr = false
-disallow_any_decorated = true
-disallow_any_explicit = true
-warn_unreachable = true
+[tool.pylint.TYPECHECK]
+generated-members = "cv2"

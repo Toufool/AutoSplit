@@ -11,7 +11,7 @@
 #
 # Dependencies:
 numpy>=1.22.0rc1
-opencv-python<=4.5.3.56 # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
+opencv-python<=4.5.3.56  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
 PyQt6
 Pillow
 ImageHash
@@ -21,10 +21,11 @@ keyboard
 packaging
 pyautogui
 PySide6
-flake8
-mypy
-pylint
 requests
+# Linting
+flake8
+type-requests
+pylint
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

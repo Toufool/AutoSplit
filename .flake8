@@ -1,8 +1,6 @@
 [flake8]
 color=always
 max-line-length=120
-; TODO: Bring WAY down
-max-complexity=55
 ; Auto generated
 exclude=src/gen/
 ; TODO: We want to configure this
@@ -12,4 +10,6 @@ per-file-ignores =
     ; line too long
     ; mixed case
     __init__.pyi:F401,E501,N816
+; TODO: Bring WAY down
+max-complexity=55
 inline-quotes = "

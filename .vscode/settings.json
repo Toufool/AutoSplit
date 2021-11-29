@@ -31,7 +31,8 @@
   "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
   "python.linting.flake8CategorySeverity.E": "Warning",
-  "python.linting.mypyEnabled": true,
+  // PyRight obsoletes mypy
+  "python.linting.mypyEnabled": false,
   // Is already wrapped by Flake8, prospector and pylama
   "python.linting.pycodestyleEnabled": false,
   // Just another wrapper, use Flake8 OR this
