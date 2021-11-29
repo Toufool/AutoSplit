@@ -123,7 +123,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     return 1 - (hash_diff / 64.0)
 
 
-def checkIfImageHasTransparency(image: cv2.ndarray):
+def checkIfImageHasTransparency(image: cv2.ndarray) -> bool:
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False

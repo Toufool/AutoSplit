@@ -1,9 +1,9 @@
-echo "`nRunning Pylint..."
-pylint --score=n --output-format=text,colorized $(git ls-files '**/*.py*')
-# pylint --reports=y --output-format=text,colorized $(git ls-files '**/*.py*')
-
 echo "`nRunning Pyright..."
 pyright
+
+echo "`nRunning Pylint..."
+pylint --score=n --output-format=colorized $(git ls-files '**/*.py*')
+# pylint --reports=y --output-format=colorized $(git ls-files '**/*.py*')
 
 echo "`nRunning Bandit..."
 bandit -f custom --silent --severity-level medium -r .

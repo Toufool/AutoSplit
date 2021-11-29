@@ -3,9 +3,9 @@ import traceback
 from PyQt6 import QtCore, QtWidgets
 
 
-def setTextMessage(message: str, details: str = ''):
+def setTextMessage(message: str, details: str = ""):
     messageBox = QtWidgets.QMessageBox()
-    messageBox.setWindowTitle('Error')
+    messageBox.setWindowTitle("Error")
     messageBox.setTextFormat(QtCore.Qt.TextFormat.RichText)
     messageBox.setText(message)
     if details:
@@ -30,7 +30,7 @@ def splitImageDirectoryEmpty():
 
 
 def imageTypeError(image: str):
-    setTextMessage(f"\"{image}\" is not a valid image file, does not exist, "
+    setTextMessage(f'"{image}" is not a valid image file, does not exist, '
                    "or the full image file path contains a special character.")
 
 
@@ -57,11 +57,11 @@ def alignmentNotMatchedError():
 
 
 def noKeywordImageError(keyword: str):
-    setTextMessage(f"Your split image folder does not contain an image with the keyword \"{keyword}\".")
+    setTextMessage(f'Your split image folder does not contain an image with the keyword "{keyword}".')
 
 
 def multipleKeywordImagesError(keyword: str):
-    setTextMessage(f"Only one image with the keyword \"{keyword}\" is allowed.")
+    setTextMessage(f'Only one image with the keyword "{keyword}" is allowed.')
 
 
 def resetHotkeyError():

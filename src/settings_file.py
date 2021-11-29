@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, List, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -14,14 +14,14 @@ import error_messages
 from hotkeys import _hotkey_action
 
 # Get the directory of either AutoSplit.exe or AutoSplit.py
-auto_split_directory = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
+auto_split_directory = os.path.dirname(sys.executable if getattr(sys, "frozen", False) else os.path.abspath(__file__))
 
 
 def loadPyQtSettings(autosplit: AutoSplit):
     # These are only global settings values. They are not *pkl settings values.
     autosplit.getGlobalSettingsValues()
     check_for_updates_on_open = autosplit.setting_check_for_updates_on_open.value(
-        'check_for_updates_on_open',
+        "check_for_updates_on_open",
         True,
         type=bool)
     autosplit.actionCheck_for_Updates_on_Open.setChecked(check_for_updates_on_open)
@@ -110,7 +110,7 @@ def saveSettings(autosplit: AutoSplit):
             autosplit.loop_setting,
             autosplit.auto_start_on_reset_setting]
         # save settings to a .pkl file
-        with open(autosplit.last_successfully_loaded_settings_file_path, 'wb') as f:
+        with open(autosplit.last_successfully_loaded_settings_file_path, "wb") as f:
             pickle.dump(autosplit.last_saved_settings, f)
 
 
@@ -150,7 +150,7 @@ def saveSettingsAs(autosplit: AutoSplit):
         autosplit.auto_start_on_reset_setting]
 
     # save settings to a .pkl file
-    with open(autosplit.save_settings_file_path, 'wb') as f:
+    with open(autosplit.save_settings_file_path, "wb") as f:
         pickle.dump(autosplit.last_saved_settings, f)
 
     # Wording is kinda off here but this needs to be here for an edge case:
@@ -188,15 +188,15 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
             return
 
     try:
-        with open(autosplit.load_settings_file_path, 'rb') as f:
-            settings: List[Any] = pickle.load(f)
+        with open(autosplit.load_settings_file_path, "rb") as f:
+            settings: list[Any] = pickle.load(f)
             settings_count = len(settings)
             if settings_count < 18:
                 autosplit.showErrorSignal.emit(error_messages.oldVersionSettingsFileError)
                 return
             # v1.3-1.4 settings. Add default pause_key and auto_start_on_reset_setting
             if settings_count == 18:
-                settings.insert(9, '')
+                settings.insert(9, "")
                 settings.insert(20, 0)
             # v1.5 settings
             elif settings_count != 20:
