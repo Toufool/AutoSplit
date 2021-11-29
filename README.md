@@ -24,7 +24,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 (This is not required for normal use)
 
-- Microsoft Visual C++ 14.0 or greater may be required. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- Node is optional, but required for complete linting (using Pyright).
 - Read [requirements.txt](/scripts/requirements.txt) for information on how to install, run and build the python code
   - Run `.\scripts\install.bat` to install all dependencies
   - Run the app directly with `py .\src\AutoSplit.py [--auto-controlled]`
@@ -195,6 +196,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 ## Resources
 
 Still need help?
+
 - [Open an issue](../../issues)
 - Join the [AutoSplit Discord](https://discord.gg/Qcbxv9y)
 

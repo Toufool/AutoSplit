@@ -4,21 +4,18 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
-from PyQt6 import QtWidgets
-
 import requests
+from PyQt6 import QtWidgets
 from packaging import version
-import update_checker
+from gen import about as about_, resources_rc, update_checker  # noqa: F401
 import error_messages
-import resources_rc  # noqa: F401
-from about import Ui_aboutAutoSplitWidget
 
 # AutoSplit Version number
 VERSION = "1.6.1"
 
 
 # About Window
-class AboutWidget(QtWidgets.QWidget, Ui_aboutAutoSplitWidget):
+class AboutWidget(QtWidgets.QWidget, about_.Ui_aboutAutoSplitWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -26,6 +23,7 @@ class AboutWidget(QtWidgets.QWidget, Ui_aboutAutoSplitWidget):
         self.donatebuttonLabel.setOpenExternalLinks(True)
         self.versionLabel.setText(f"Version: {VERSION}")
         self.show()
+
 
 class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def __init__(self, latest_version: str, autosplit: AutoSplit, check_for_updates_on_open: bool = False):
@@ -63,20 +61,21 @@ class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
             self.autosplit.actionCheck_for_Updates_on_Open.setChecked(False)
         self.close()
 
+
 def viewHelp():
     os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
 
 
-def about(self: AutoSplit):
-    self.AboutWidget = AboutWidget()
+def about(autosplit: AutoSplit):
+    autosplit.aboutWidget = AboutWidget()
+
 
 def checkForUpdates(autosplit: AutoSplit, check_for_updates_on_open: bool = False):
     try:
         response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
         latest_version = response.json()["name"].split("v")[1]
-        autosplit.UpdateCheckerWidget = UpdateCheckerWidget(latest_version, autosplit, check_for_updates_on_open)
-    except:
+    except Exception:
         if not check_for_updates_on_open:
             error_messages.checkForUpdatesError()
-        else:
-            pass
+    else:
+        autosplit.updateCheckerWidget = UpdateCheckerWidget(latest_version, autosplit, check_for_updates_on_open)

@@ -7,6 +7,9 @@ __pycache__/
 env/
 build/
 dist/
+# Generated
+**/gen/*.py
+!**/gen/*.pyi
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -1,0 +1,23 @@
+; http://pylint-messages.wikidot.com/all-codes
+[MASTER]
+max-line-length=120
+ignore-paths=
+  ; Haven't looked into disabling specific rules per file
+  ^typings/.*$,
+  ; Auto generated
+  ^src/gen/.*$
+disable=
+  missing-docstring,
+  ; TODO: We want to configure this
+  ; https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
+  invalid-name,
+  ; We group imports
+  wrong-import-position,
+  ; Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
+  unused-argument,
+  ; Already taken care of by Flake8
+  unused-import,
+extension-pkg-allow-list=PyQt6,win32ui
+
+[TYPECHECK]
+generated-members=cv2
