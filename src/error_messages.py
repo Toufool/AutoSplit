@@ -30,11 +30,13 @@ def splitImageDirectoryEmpty():
 
 
 def imageTypeError(image: str):
-    setTextMessage(f"\"{image}\" is not a valid image file, does not exist, or the full image file path contains a special character.")
+    setTextMessage(f"\"{image}\" is not a valid image file, does not exist, "
+                   "or the full image file path contains a special character.")
 
 
 def regionError():
-    setTextMessage("No region is selected or the Capture Region window is not open. Select a region or load settings while the Capture Region window is open.")
+    setTextMessage("No region is selected or the Capture Region window is not open. "
+                   "Select a region or load settings while the Capture Region window is open.")
 
 
 def splitHotkeyError():
@@ -42,7 +44,8 @@ def splitHotkeyError():
 
 
 def pauseHotkeyError():
-    setTextMessage("Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.")
+    setTextMessage("Your split image folder contains an image filename with a pause flag {p}, "
+                   "but no pause hotkey is set.")
 
 
 def alignRegionImageTypeError():
@@ -66,7 +69,8 @@ def resetHotkeyError():
 
 
 def dummySplitsError():
-    setTextMessage("Group dummy splits when undoing/skipping cannot be checked if any split image has a loop parameter greater than 1")
+    setTextMessage("Group dummy splits when undoing/skipping cannot be checked "
+                   "if any split image has a loop parameter greater than 1")
 
 
 def oldVersionSettingsFileError():
@@ -82,20 +86,23 @@ def noSettingsFileOnOpenError():
 
 
 def tooManySettingsFilesOnOpenError():
-    setTextMessage("Too many settings files found. Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
+    setTextMessage("Too many settings files found. "
+                   "Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
 
 
 def checkForUpdatesError():
     setTextMessage("An error occurred while attempting to check for updates. Please check your connection.")
 
+
 def loadStartImageError():
     setTextMessage("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. Please set these hotkeys, and then click the Reload Start Image button.")
+
 
 def stdinLostError():
     setTextMessage("stdin not supported or lost, external control like LiveSplit integration will not work.")
 
 
-def exceptionTraceback(message: str, exception: Exception):
+def exceptionTraceback(message: str, exception: BaseException):
     setTextMessage(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))

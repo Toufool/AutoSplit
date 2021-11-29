@@ -1,0 +1,19 @@
+{
+  "typeCheckingMode": "strict",
+  // Auto generated
+  "ignore": [
+    // "src/gen/",
+    "typings/",
+  ],
+  "reportMissingTypeStubs": "information",
+  // False positives with TYPE_CHECKING
+  "reportImportCycles": "information",
+  // PyQt .connect
+  "reportFunctionMemberAccess": "information",
+  // Extra runtime safety
+  "reportUnnecessaryComparison": "warning",
+  // Flake8 does a better job
+  "reportUnusedImport": "none",
+  // numpy has way too many complex types that triggers this
+  "reportUnknownMemberType": "none",
+}
