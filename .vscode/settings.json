@@ -33,7 +33,7 @@
   // Maybe consider PyLint once all Flake8 linting is fixed
   "python.linting.pylintEnabled": false,
   "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": true,
+  "python.linting.mypyEnabled": false,
   // Flake8 is already a pycodestyle wrapper
   "python.linting.pycodestyleEnabled": false,
   "python.linting.pylintArgs": [
@@ -42,9 +42,6 @@
   ],
   "python.linting.flake8CategorySeverity.E": "Warning",
   "python.linting.flake8Args": [
-    "--max-line-length=120"
-  ],
-  "python.linting.mypyArgs": [
     "--max-line-length=120"
   ],
   "python.formatting.autopep8Args": [

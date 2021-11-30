@@ -15,7 +15,7 @@ import signal
 import time
 
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
-from settings_file import auto_split_directory
+from settings_file import auto_split_directory, open_update_checker
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
 import compare
@@ -52,6 +52,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     undoSplitSignal = QtCore.pyqtSignal()
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
+    updateCheckerWidgetSignal = QtCore.pyqtSignal(str, bool)
 
     def __init__(self, parent=None):
         super(AutoSplit, self).__init__(parent)
@@ -167,6 +168,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.connect(self.updateSplitImageGUI)
         self.afterSettingHotkeySignal.connect(self.afterSettingHotkey)
         self.startAutoSplitterSignal.connect(self.autoSplitter)
+        self.updateCheckerWidgetSignal.connect(lambda latest_version, check_on_open:
+                                               open_update_checker(self, latest_version, check_on_open))
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
