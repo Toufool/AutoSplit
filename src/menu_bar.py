@@ -53,7 +53,7 @@ class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def openUpdate(self):
         if self.checkBoxDoNotAskMeAgain.isChecked():
             self.autosplit.actionCheck_for_Updates_on_Open.setChecked(False)
-        os.system("start \"\" https://github.com/Toufool/Auto-Split/releases/latest")
+        os.system('start "" https://github.com/Toufool/Auto-Split/releases/latest')
         self.close()
 
     def closeWindow(self):
@@ -63,7 +63,7 @@ class UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
 
 
 def viewHelp():
-    os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
+    os.system('start "" https://github.com/Toufool/Auto-Split#tutorial')
 
 
 def about(autosplit: AutoSplit):
@@ -74,7 +74,7 @@ def checkForUpdates(autosplit: AutoSplit, check_for_updates_on_open: bool = Fals
     try:
         response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
         latest_version = response.json()["name"].split("v")[1]
-    except Exception:
+    except requests.exceptions.RequestException:
         if not check_for_updates_on_open:
             error_messages.checkForUpdatesError()
     else:

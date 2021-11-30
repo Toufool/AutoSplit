@@ -13,9 +13,11 @@
   "[python]": {
     "editor.tabSize": 4,
     "editor.rulers": [
-      79,
-      100,
-      120,
+      72, // PEP8-17 docstrings
+      // 79, // PEP8-17 default max
+      // 88, // Black default
+      99, // PEP8-17 acceptable max
+      120, // Our hard rule
     ]
   },
   "editor.formatOnSave": true,
@@ -23,16 +25,14 @@
     "source.fixAll": true,
     "source.fixAll.markdownlint": true,
   },
-  // Set to trace when sending error reports to Pylance
-  // "python.analysis.logLevel": "Trace",
-  // https://code.visualstudio.com/docs/python/linting#_specific-linters
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "python.linting.pylintCategorySeverity.convention": "Warning",
   "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
   "python.linting.flake8CategorySeverity.E": "Warning",
-  "python.linting.mypyEnabled": true,
+  // PyRight obsoletes mypy
+  "python.linting.mypyEnabled": false,
   // Is already wrapped by Flake8, prospector and pylama
   "python.linting.pycodestyleEnabled": false,
   // Just another wrapper, use Flake8 OR this
@@ -66,5 +66,5 @@
     "**/bower_components": true,
     "**/*.code-search": true,
     "typings": true,
-  }
+  },
 }

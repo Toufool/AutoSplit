@@ -1,9 +1,11 @@
-import os
-from typing import List
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
+import os
 import cv2
 
-from AutoSplit import AutoSplit
 import error_messages
 
 
@@ -27,8 +29,8 @@ def threshold_from_filename(filename: str):
     # Check to make sure there is a valid floating point number between
     # parentheses of the filename
     try:
-        threshold = float(filename.split('(', 1)[1].split(')')[0])
-    except Exception:
+        threshold = float(filename.split("(", 1)[1].split(")")[0])
+    except (IndexError, ValueError):
         return None
 
     # Check to make sure if it is a valid threshold
@@ -47,8 +49,8 @@ def pause_from_filename(filename: str):
     # Check to make sure there is a valid pause time between brackets
     # of the filename
     try:
-        pause = float(filename.split('[', 1)[1].split(']')[0])
-    except Exception:
+        pause = float(filename.split("[", 1)[1].split("]")[0])
+    except (IndexError, ValueError):
         return None
 
     # Pause times should always be positive or zero
@@ -67,8 +69,8 @@ def delay_from_filename(filename: str):
     # Check to make sure there is a valid delay time between brackets
     # of the filename
     try:
-        delay = float(filename.split('#', 1)[1].split('#')[0])
-    except Exception:
+        delay = float(filename.split("#", 1)[1].split("#")[0])
+    except (IndexError, ValueError):
         return 0.0
 
     # Delay times should always be positive or zero
@@ -87,8 +89,8 @@ def loop_from_filename(filename: str):
     # Check to make sure there is a valid delay time between brackets
     # of the filename
     try:
-        loop = int(filename.split('@', 1)[1].split('@')[0])
-    except Exception:
+        loop = int(filename.split("@", 1)[1].split("@")[0])
+    except (IndexError, ValueError):
         return 1
 
     # Loop should always be positive
@@ -102,29 +104,29 @@ def flags_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: The flags as an integer, if invalid flags are found it returns 0
 
-    List of flags:
-    'd' = dummy, do nothing when this split is found
-    'b' = below threshold, after threshold is met, split when it goes below the threhsold.
-    'p' = pause, hit pause key when this split is found
+    list of flags:
+    "d" = dummy, do nothing when this split is found
+    "b" = below threshold, after threshold is met, split when it goes below the threhsold.
+    "p" = pause, hit pause key when this split is found
     """
 
     # Check to make sure there are flags between curly braces
     # of the filename
     try:
-        flags_str = filename.split('{', 1)[1].split('}')[0]
-    except Exception:
+        flags_str = filename.split("{", 1)[1].split("}")[0]
+    except (IndexError, ValueError):
         return 0
 
     flags = 0x00
 
     for c in flags_str:
-        if c.upper() == 'D':
+        if c.upper() == "D":
             flags |= DUMMY_FLAG
-        elif c.upper() == 'M':
+        elif c.upper() == "M":
             flags |= MASK_FLAG
-        elif c.upper() == 'B':
+        elif c.upper() == "B":
             flags |= BELOW_FLAG
-        elif c.upper() == 'P':
+        elif c.upper() == "P":
             flags |= PAUSE_FLAG
         else:
             # An invalid flag was caught, this filename was written incorrectly
@@ -146,7 +148,7 @@ def is_reset_image(filename: str):
     @param filename: String containing the file's name
     @return: True if its a reset image
     """
-    return 'RESET' in filename.upper()
+    return "RESET" in filename.upper()
 
 
 def is_start_auto_splitter_image(filename: str):
@@ -156,10 +158,10 @@ def is_start_auto_splitter_image(filename: str):
     @param filename: String containing the file's name
     @return: True if its a reset image
     """
-    return 'START_AUTO_SPLITTER' in filename.upper()
+    return "START_AUTO_SPLITTER" in filename.upper()
 
 
-def removeStartAutoSplitterImage(split_image_filenames: List[str]):
+def removeStartAutoSplitterImage(split_image_filenames: list[str]):
     start_auto_splitter_image_file = None
     for image in split_image_filenames:
         if is_start_auto_splitter_image(image):
@@ -207,7 +209,7 @@ def validate_images_before_parsing(autosplit: AutoSplit):
                 return
             if already_found_reset_image:
                 autosplit.guiChangesOnReset()
-                error_messages.multipleKeywordImagesError('reset')
+                error_messages.multipleKeywordImagesError("reset")
                 return
             already_found_reset_image = True
 
@@ -215,6 +217,6 @@ def validate_images_before_parsing(autosplit: AutoSplit):
         if is_start_auto_splitter_image(image):
             if already_found_start_image:
                 autosplit.guiChangesOnReset()
-                error_messages.multipleKeywordImagesError('start_auto_splitter')
+                error_messages.multipleKeywordImagesError("start_auto_splitter")
                 return
             already_found_start_image = True

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -84,12 +84,12 @@ def selectWindow(autosplit: AutoSplit):
 
     # Need to wait until the user has selected a region using the widget before moving on with
     # selecting the window settings
-    while selector.x == -1 and selector.y == -1:
+    while selector.x() == -1 and selector.y() == -1:
         # Email sent to pyqt@riverbankcomputing.com
         QtTest.QTest.qWait(1)  # type: ignore
 
     # Grab the window handle from the coordinates selected by the widget
-    autosplit.hwnd = cast(int, win32gui.WindowFromPoint((selector.x, selector.y)))
+    autosplit.hwnd = cast(int, win32gui.WindowFromPoint((selector.x(), selector.y())))
 
     del selector
 
@@ -111,7 +111,7 @@ def selectWindow(autosplit: AutoSplit):
     # also the top bar with the window name is not accounted for
     # I hardcoded the x and y coordinates to fix this
     # This is not an ideal solution because it assumes every window will have a top bar
-    selection: Tuple[int, int, int, int] = win32gui.GetClientRect(autosplit.hwnd)
+    selection: tuple[int, int, int, int] = win32gui.GetClientRect(autosplit.hwnd)
     autosplit.selection.left = 8
     autosplit.selection.top = 31
     autosplit.selection.right = 8 + selection[2]
@@ -151,7 +151,10 @@ def alignRegion(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture = capture_windows.capture_region(autosplit.hwnd, autosplit.selection)
+    capture = capture_windows.capture_region(
+        autosplit.hwnd,
+        autosplit.selection,
+        autosplit.forcePrintWindowCheckBox.isChecked())
     capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
     # Obtain the best matching point for the template within the
@@ -235,7 +238,7 @@ class BaseSelectWidget(QtWidgets.QWidget):
             user32.GetSystemMetrics(SM_YVIRTUALSCREEN),
             user32.GetSystemMetrics(SM_CXVIRTUALSCREEN),
             user32.GetSystemMetrics(SM_CYVIRTUALSCREEN))
-        self.setWindowTitle(' ')
+        self.setWindowTitle(" ")
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
@@ -247,9 +250,18 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
 # Widget to select a window and obtain its bounds
 class SelectWindowWidget(BaseSelectWidget):
+    __x = -1
+    __y = -1
+
+    def x(self):
+        return self.__x
+
+    def y(self):
+        return self.__y
+
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
-        self.x = lambda: int(a0.position().x()) + self.geometry().x()
-        self.y = lambda: int(a0.position().y()) + self.geometry().y()
+        self.__x = int(a0.position().x()) + self.geometry().x()
+        self.__y = int(a0.position().y()) + self.geometry().y()
         self.close()
 
 
@@ -276,8 +288,8 @@ class SelectRegionWidget(BaseSelectWidget):
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qPainter = QtGui.QPainter(self)
-            qPainter.setPen(QtGui.QPen(QtGui.QColor('red'), 2))
-            qPainter.setBrush(QtGui.QColor('opaque'))
+            qPainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
+            qPainter.setBrush(QtGui.QColor("opaque"))
             qPainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent):

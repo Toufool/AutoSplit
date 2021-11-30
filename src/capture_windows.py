@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, cast
+from typing import cast
 
 import ctypes
 import ctypes.wintypes
@@ -17,7 +17,7 @@ from win32typing import PyCBitmap, PyCDC
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
-accelerated_windows: Dict[int, bool] = {}
+accelerated_windows: dict[int, bool] = {}
 is_windows_11 = version.parse(platform.version()) >= version.parse("10.0.22000")
 
 
@@ -30,7 +30,7 @@ class Rect(ctypes.wintypes.RECT):
     bottom: int = -1  # type: ignore
 
 
-def capture_region(hwnd: int, selection: Rect):
+def capture_region(hwnd: int, selection: Rect, forcePrintWindow: bool):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -42,7 +42,7 @@ def capture_region(hwnd: int, selection: Rect):
 
     # Windows 11 has some jank, and we're not ready to fully investigate it
     # for now let's ensure it works at the cost of performance
-    is_accelerated_window = is_windows_11 or accelerated_windows.get(hwnd)
+    is_accelerated_window = forcePrintWindow or is_windows_11 or accelerated_windows.get(hwnd)
 
     # The window type is not yet known, let's find out!
     if is_accelerated_window is None:
@@ -79,7 +79,7 @@ def __get_image(hwnd: int, selection: Rect, print_window: bool = False):
     except (win32ui.error, pywintypes.error):  # type: ignore
         return np.array([0, 0, 0, 1], dtype="uint8")
 
-    image: cv2.ndarray = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype='uint8')
+    image: cv2.ndarray = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
     image.shape = (height, width, 4)
 
     try:

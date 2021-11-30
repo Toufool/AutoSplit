@@ -12,7 +12,12 @@ histSize = [8, 8, 8]
 ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 
 
-def compareImage(comparisonMethod: int, image: Optional[cv2.ndarray], capture: Optional[cv2.ndarray], mask: Optional[cv2.ndarray] = None):
+def compareImage(
+    comparisonMethod: int,
+    image: Optional[cv2.ndarray],
+    capture: Optional[cv2.ndarray],
+    mask: Optional[cv2.ndarray] = None
+):
     if image is None or capture is None:
         return 0.0
     if comparisonMethod == 0:
@@ -47,7 +52,6 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
 def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
     Compares two images by calculating the L2 Error (square-root of sum of squared error)
-
     @param source: Image of any given shape
     @param capture: Image matching the dimensions of the source
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
@@ -118,7 +122,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     return 1 - (hash_diff / 64.0)
 
 
-def checkIfImageHasTransparency(image: cv2.ndarray):
+def checkIfImageHasTransparency(image: cv2.ndarray) -> bool:
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False
