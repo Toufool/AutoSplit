@@ -89,7 +89,7 @@ class __CheckForUpdatesThread(QThread):
             self.autosplit.updateCheckerWidgetSignal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):
             if not self.check_on_open:
-                error_messages.checkForUpdatesError()
+                self.autosplit.showErrorSignal(error_messages.checkForUpdatesError)
 
 
 def checkForUpdates(autosplit: AutoSplit, check_on_open: bool = False):

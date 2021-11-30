@@ -1,6 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
-from typing import Callable, List, Optional
+import traceback
+from types import FunctionType, TracebackType
+from typing import Callable, List, Optional, Type
 
 from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
@@ -14,8 +16,8 @@ import numpy as np
 import signal
 import time
 
-from menu_bar import about, VERSION, viewHelp, checkForUpdates
-from settings_file import auto_split_directory, open_update_checker
+from menu_bar import about, VERSION, viewHelp, checkForUpdates, open_update_checker
+from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
 import compare
@@ -31,7 +33,9 @@ COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
 DISPLAY_RESIZE_WIDTH = 240
 DISPLAY_RESIZE_HEIGHT = 180
 DISPLAY_RESIZE = (DISPLAY_RESIZE_WIDTH, DISPLAY_RESIZE_HEIGHT)
-
+CREATE_NEW_ISSUE_MESSAGE = \
+    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
+"github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
@@ -53,6 +57,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
     updateCheckerWidgetSignal = QtCore.pyqtSignal(str, bool)
+    # Use this signal when trying to show an error from outside the main thread
+    showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
     def __init__(self, parent=None):
         super(AutoSplit, self).__init__(parent)
@@ -103,7 +109,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         try:
                             line = input()
                         except RuntimeError:
-                            # stdin not supported or lost, stop looking for inputs
+                            self.autosplit.showErrorSignal.emit(error_messages.stdinLostError)
                             break
                         # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
                         # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
@@ -173,6 +179,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
+        self.showErrorSignal.connect(lambda errorMessageBox: errorMessageBox())
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
@@ -204,13 +211,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        # Last loaded settings and last successful loaded settings file path to None until we try to load them
-        self.last_loaded_settings = None
-        self.last_successfully_loaded_settings_file_path = None
-
-        if not self.is_auto_controlled:
-            self.loadSettings(load_settings_on_open=True)
-
         # Automatic timer start
         self.timerStartImage = QtCore.QTimer()
         self.timerStartImage.timeout.connect(self.startImageFunction)
@@ -219,8 +219,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.check_start_image_timestamp = 0.0
 
-        # Try to load start image
-        self.loadStartImage()
+        # Last loaded settings and last successful loaded settings file path to None until we try to load them
+        self.last_loaded_settings = None
+        self.last_successfully_loaded_settings_file_path = None
+
+        if not self.is_auto_controlled:
+            self.loadSettings(load_settings_on_open=True)
 
     # FUNCTIONS
 
@@ -237,6 +241,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.split_image_directory = new_split_image_directory
             self.splitimagefolderLineEdit.setText(f"{new_split_image_directory}/")
+            self.loadStartImage()
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -296,6 +301,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 error_messages.noKeywordImageError('start_auto_splitter')
             return
 
+        if self.start_image_name is not None and (not self.splitLineEdit.text() or not self.resetLineEdit.text() or not self.pausehotkeyLineEdit.text()) and not self.is_auto_controlled:
+            error_messages.loadStartImageError()
+            return
+
         self.split_image_filenames = os.listdir(self.split_image_directory)
         self.split_image_number = 0
         self.start_image_mask = None
@@ -340,8 +349,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         QtWidgets.QApplication.processEvents()
 
     def startImageFunction(self):
-        if time.time() < self.check_start_image_timestamp \
-                or (not self.splitLineEdit.text() and not self.is_auto_controlled):
+        if time.time() < self.check_start_image_timestamp:
             pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
             self.currentSplitImage.setText(f'None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining')
             return
@@ -751,6 +759,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
                     if reset_similarity >= self.reset_image_threshold:
                         self.send_command("reset")
+                        self.reset()
 
                 if self.checkForReset():
                     return
@@ -1189,22 +1198,46 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+    try:
+        app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
+        main_window = AutoSplit()
+        main_window.show()
+        # Needs to be after main_window.show() to be shown over
+        if main_window.actionCheck_for_Updates_on_Open.isChecked():
+            checkForUpdates(main_window, check_on_open=True)
 
-    main_window = AutoSplit()
-    main_window.show()
-    if main_window.actionCheck_for_Updates_on_Open.isChecked():
-        checkForUpdates(main_window, check_on_open=True)
+        # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
+        timer = QtCore.QTimer()
+        timer.timeout.connect(lambda: None)
+        timer.start(500)
 
-    # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
-    timer = QtCore.QTimer()
-    timer.timeout.connect(lambda: None)
-    timer.start(500)
+        exit_code = app.exec()
+    except Exception as exception:
+        # Print error to console if not running in executable
+        if getattr(sys, 'frozen', False):
+            error_messages.exceptionTraceback(
+                f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}",
+                exception)
+        else:
+            traceback.print_exception(type(exception), exception, exception.__traceback__)
+        sys.exit(1)
+
     # Catch Keyboard Interrupts for a clean close
-    signal.signal(signal.SIGINT, lambda _,  __: sys.exit(app))
+    signal.signal(signal.SIGINT, lambda code,  _: sys.exit(code))
 
-    sys.exit(app.exec())
+    sys.exit(exit_code)
+
+
+def excepthook(exceptionType: Type[BaseException], exception: BaseException, traceback: Optional[TracebackType]):
+    # Catch Keyboard Interrupts for a clean close
+    if exceptionType is KeyboardInterrupt:
+        sys.exit(0)
+    error_messages.exceptionTraceback(
+            "AutoSplit encountered an unhandled exception and will try to recover, "
+            f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
+            exception)
 
 
 if __name__ == '__main__':
+    sys.excepthook = excepthook
     main()
