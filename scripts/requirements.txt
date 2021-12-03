@@ -13,22 +13,21 @@
 numpy>=1.22.0rc1
 opencv-python<=4.5.3.56  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
 PyQt6
+PyQt6-tools
+PySide6
 Pillow
 ImageHash
 pywin32
-pywin32-stubs
 keyboard
 packaging
 pyautogui
-PySide6
 requests
-# Linting
+# Linting and Types
+pywin32-stubs
+types-requests
 flake8
-type-requests
 pylint
+bandit
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller
-#
-# Comment this out if you don't want to install the PyQt designer
-PyQt6-tools

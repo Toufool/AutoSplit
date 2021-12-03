@@ -52,7 +52,6 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
 def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
     Compares two images by calculating the L2 Error (square-root of sum of squared error)
-
     @param source: Image of any given shape
     @param capture: Image matching the dimensions of the source
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale

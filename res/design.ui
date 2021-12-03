@@ -615,7 +615,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>50</y>
+      <y>38</y>
       <width>102</width>
       <height>16</height>
      </rect>
@@ -705,7 +705,7 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>50</y>
+      <y>38</y>
       <width>82</width>
       <height>16</height>
      </rect>
@@ -759,7 +759,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>270</y>
+      <y>50</y>
       <width>241</width>
       <height>20</height>
      </rect>
@@ -1076,10 +1076,10 @@
    <widget class="QLabel" name="startImageLabel">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>440</x>
       <y>270</y>
-      <width>241</width>
-      <height>16</height>
+      <width>181</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -1110,6 +1110,38 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="captureregionwindowLabel">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>50</y>
+      <width>241</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="forcePrintWindowCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>270</y>
+      <width>221</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Force Full Content Rendering (slower)</string>
     </property>
    </widget>
    <zorder>splitimagefolderLabel</zorder>
@@ -1178,6 +1210,8 @@
    <zorder>startImageLabel</zorder>
    <zorder>currentsimilaritythresholdLabel</zorder>
    <zorder>currentsimilaritythresholdnumberLabel</zorder>
+   <zorder>captureregionwindowLabel</zorder>
+   <zorder>forcePrintWindowCheckBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

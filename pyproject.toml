@@ -34,7 +34,11 @@ reportUnknownMemberType = "none"
 
 # https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
+[tool.pylint.REPORTS]
+# Just like default but any error will make drop to 9 or less
+evaluation="10.0 - error - ((float(warning + refactor + convention) / statement) * 10)"
 [tool.pylint.MASTER]
+fail-under=9.0
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
 load-plugins = [
   "pylint.extensions.emptystring",

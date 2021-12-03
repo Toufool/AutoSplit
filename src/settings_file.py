@@ -11,10 +11,17 @@ from win32 import win32gui
 from PyQt6 import QtWidgets
 
 import error_messages
-from hotkeys import _hotkey_action
+# TODO with settings refactoring
+from hotkeys import _hotkey_action  # type: ignore
 
 # Get the directory of either AutoSplit.exe or AutoSplit.py
 auto_split_directory = os.path.dirname(sys.executable if getattr(sys, "frozen", False) else os.path.abspath(__file__))
+
+
+class RestrictedUnpickler(pickle.Unpickler):
+
+    def find_class(self, module: str, name: str):
+        raise pickle.UnpicklingError("'%s.%s' is forbidden" % (module, name))
 
 
 def loadPyQtSettings(autosplit: AutoSplit):
@@ -29,10 +36,6 @@ def loadPyQtSettings(autosplit: AutoSplit):
 
 def getSaveSettingsValues(autosplit: AutoSplit):
     # get values to be able to save settings
-    autosplit.x = autosplit.xSpinBox.value()
-    autosplit.y = autosplit.ySpinBox.value()
-    autosplit.width = autosplit.widthSpinBox.value()
-    autosplit.height = autosplit.heightSpinBox.value()
     autosplit.similarity_threshold = autosplit.similaritythresholdDoubleSpinBox.value()
     autosplit.comparison_index = autosplit.comparisonmethodComboBox.currentIndex()
     autosplit.pause = autosplit.pauseDoubleSpinBox.value()
@@ -66,16 +69,17 @@ def haveSettingsChanged(autosplit: AutoSplit):
         autosplit.skip_split_key,
         autosplit.undo_split_key,
         autosplit.pause_key,
-        autosplit.x,
-        autosplit.y,
-        autosplit.width,
-        autosplit.height,
+        autosplit.xSpinBox.value(),
+        autosplit.ySpinBox.value(),
+        autosplit.widthSpinBox.value(),
+        autosplit.heightSpinBox.value(),
         autosplit.hwnd_title,
         0,
         0,
         autosplit.group_dummy_splits_undo_skip_setting,
         autosplit.loop_setting,
-        autosplit.auto_start_on_reset_setting]
+        autosplit.auto_start_on_reset_setting,
+        autosplit.forcePrintWindowCheckBox.isChecked()]
 
     # One small caveat in this: if you load a settings file from an old version, but dont change settings,
     # the current save settings and last load settings will have different # of elements and it will ask
@@ -99,16 +103,17 @@ def saveSettings(autosplit: AutoSplit):
             autosplit.skip_split_key,
             autosplit.undo_split_key,
             autosplit.pause_key,
-            autosplit.x,
-            autosplit.y,
-            autosplit.width,
-            autosplit.height,
+            autosplit.xSpinBox.value(),
+            autosplit.ySpinBox.value(),
+            autosplit.widthSpinBox.value(),
+            autosplit.heightSpinBox.value(),
             autosplit.hwnd_title,
             0,
             0,
             autosplit.group_dummy_splits_undo_skip_setting,
             autosplit.loop_setting,
-            autosplit.auto_start_on_reset_setting]
+            autosplit.auto_start_on_reset_setting,
+            autosplit.forcePrintWindowCheckBox.isChecked()]
         # save settings to a .pkl file
         with open(autosplit.last_successfully_loaded_settings_file_path, "wb") as f:
             pickle.dump(autosplit.last_saved_settings, f)
@@ -138,16 +143,17 @@ def saveSettingsAs(autosplit: AutoSplit):
         autosplit.skip_split_key,
         autosplit.undo_split_key,
         autosplit.pause_key,
-        autosplit.x,
-        autosplit.y,
-        autosplit.width,
-        autosplit.height,
+        autosplit.xSpinBox.value(),
+        autosplit.ySpinBox.value(),
+        autosplit.widthSpinBox.value(),
+        autosplit.heightSpinBox.value(),
         autosplit.hwnd_title,
         0,
         0,
         autosplit.group_dummy_splits_undo_skip_setting,
         autosplit.loop_setting,
-        autosplit.auto_start_on_reset_setting]
+        autosplit.auto_start_on_reset_setting,
+        autosplit.forcePrintWindowCheckBox.isChecked()]
 
     # save settings to a .pkl file
     with open(autosplit.save_settings_file_path, "wb") as f:
@@ -189,7 +195,7 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
 
     try:
         with open(autosplit.load_settings_file_path, "rb") as f:
-            settings: list[Any] = pickle.load(f)
+            settings: list[Any] = RestrictedUnpickler(f).load()
             settings_count = len(settings)
             if settings_count < 18:
                 autosplit.showErrorSignal.emit(error_messages.oldVersionSettingsFileError)
@@ -199,8 +205,12 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
                 settings.insert(9, "")
                 settings.insert(20, 0)
             # v1.5 settings
-            elif settings_count != 20:
-                autosplit.showErrorSignal.emit(error_messages.invalidSettingsError)
+            if settings_count == 20:
+                settings.insert(21, False)
+            # v1.6.X settings
+            elif settings_count != 21:
+                if not load_settings_from_livesplit:
+                    autosplit.showErrorSignal.emit(error_messages.invalidSettingsError)
                 return
             autosplit.last_loaded_settings = [
                 autosplit.split_image_directory,
@@ -213,17 +223,21 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
                 autosplit.skip_split_key,
                 autosplit.undo_split_key,
                 autosplit.pause_key,
-                autosplit.x,
-                autosplit.y,
-                autosplit.width,
-                autosplit.height,
+                region_x,
+                region_y,
+                region_width,
+                region_height,
                 autosplit.hwnd_title,
                 _,
                 _,
                 autosplit.group_dummy_splits_undo_skip_setting,
                 autosplit.loop_setting,
-                autosplit.auto_start_on_reset_setting] = settings
-    except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
+                autosplit.auto_start_on_reset_setting,
+                forcePrintWindowCheckBox] = settings
+
+            autosplit.forcePrintWindowCheckBox.setChecked(forcePrintWindowCheckBox)
+    except (FileNotFoundError, MemoryError, pickle.UnpicklingError) as e:
+        print(e)
         autosplit.showErrorSignal.emit(error_messages.invalidSettingsError)
         return
 
@@ -231,10 +245,10 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
     autosplit.similaritythresholdDoubleSpinBox.setValue(autosplit.similarity_threshold)
     autosplit.pauseDoubleSpinBox.setValue(autosplit.pause)
     autosplit.fpslimitSpinBox.setValue(autosplit.fps_limit)
-    autosplit.xSpinBox.setValue(autosplit.x)
-    autosplit.ySpinBox.setValue(autosplit.y)
-    autosplit.widthSpinBox.setValue(autosplit.width)
-    autosplit.heightSpinBox.setValue(autosplit.height)
+    autosplit.xSpinBox.setValue(region_x)
+    autosplit.ySpinBox.setValue(region_y)
+    autosplit.widthSpinBox.setValue(region_width)
+    autosplit.heightSpinBox.setValue(region_height)
     autosplit.comparisonmethodComboBox.setCurrentIndex(autosplit.comparison_index)
     # https://github.com/kaluluosi/pywin32-stubs/issues/7
     autosplit.hwnd = win32gui.FindWindow(None, autosplit.hwnd_title)  # type: ignore

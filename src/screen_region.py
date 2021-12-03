@@ -151,7 +151,10 @@ def alignRegion(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture = capture_windows.capture_region(autosplit.hwnd, autosplit.selection)
+    capture = capture_windows.capture_region(
+        autosplit.hwnd,
+        autosplit.selection,
+        autosplit.forcePrintWindowCheckBox.isChecked())
     capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
     # Obtain the best matching point for the template within the

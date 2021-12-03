@@ -30,7 +30,7 @@ class Rect(ctypes.wintypes.RECT):
     bottom: int = -1  # type: ignore
 
 
-def capture_region(hwnd: int, selection: Rect):
+def capture_region(hwnd: int, selection: Rect, forcePrintWindow: bool):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -42,7 +42,7 @@ def capture_region(hwnd: int, selection: Rect):
 
     # Windows 11 has some jank, and we're not ready to fully investigate it
     # for now let's ensure it works at the cost of performance
-    is_accelerated_window = is_windows_11 or accelerated_windows.get(hwnd)
+    is_accelerated_window = forcePrintWindow or is_windows_11 or accelerated_windows.get(hwnd)
 
     # The window type is not yet known, let's find out!
     if is_accelerated_window is None:

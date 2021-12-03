@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Imports grouping:
@@ -89,10 +89,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     skip_split_key = ""
     undo_split_key = ""
     pause_key = ""
-    x: int
-    y: int
-    width: int
-    height: int
     hwnd_title = ""
     group_dummy_splits_undo_skip_setting: Literal[0, 1]
     loop_setting: Literal[0, 1]
@@ -144,12 +140,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     similarity: float
     reset_image_threshold: float
     reset_image_pause_time: float
-    split_delay: int
+    split_delay: float
     flags: int
     reset_image: Optional[cv2.ndarray]
     reset_mask: Optional[cv2.ndarray]
     split_image: cv2.ndarray
-    image_mask: cv2.ndarray
+    image_mask: Optional[cv2.ndarray]
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -161,9 +157,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.actionView_Help.triggered.connect(viewHelp)
         self.actionAbout.triggered.connect(lambda: about(self))
         self.actionCheck_for_Updates.triggered.connect(lambda: checkForUpdates(self))
-        self.actionSave_Settings.triggered.connect(lambda: settings.saveSettings)
-        self.actionSave_Settings_As.triggered.connect(lambda: settings.saveSettingsAs)
-        self.actionLoad_Settings.triggered.connect(lambda: settings.loadSettings)
+        self.actionSave_Settings.triggered.connect(lambda: settings.saveSettings(self))
+        self.actionSave_Settings_As.triggered.connect(lambda: settings.saveSettingsAs(self))
+        self.actionLoad_Settings.triggered.connect(lambda: settings.loadSettings(self))
 
         # disable buttons upon open
         self.undosplitButton.setEnabled(False)
@@ -273,16 +269,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def liveImageFunction(self):
         try:
-            if not win32gui.GetWindowText(self.hwnd):
+            windowText = win32gui.GetWindowText(self.hwnd)
+            self.captureregionwindowLabel.setText(windowText)
+            if not windowText:
                 self.timerLiveImage.stop()
+                self.liveImage.clear()
                 if self.live_image_function_on_open:
                     self.live_image_function_on_open = False
                 else:
-                    self.liveImage.clear()
                     error_messages.regionError()
                 return
 
-            capture = capture_region(self.hwnd, self.selection)
+            capture = capture_region(self.hwnd, self.selection, self.forcePrintWindowCheckBox.isChecked())
             capture = cv2.resize(capture, DISPLAY_RESIZE, interpolation=cv2.INTER_NEAREST)
 
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
@@ -494,7 +492,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             i += 1
 
         # grab screenshot of capture region
-        capture = capture_region(self.hwnd, self.selection)
+        capture = capture_region(self.hwnd, self.selection, self.forcePrintWindowCheckBox.isChecked())
         capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
         # save and open image
@@ -526,7 +524,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         count = 0
         t0 = time()
         while count < 10:
-            capture = capture_region(self.hwnd, self.selection)
+            capture = capture_region(self.hwnd, self.selection, self.forcePrintWindowCheckBox.isChecked())
             capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2RGB)
             compareImage(self.comparisonmethodComboBox.currentIndex(), split_image, capture)
@@ -970,7 +968,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def getCaptureForComparison(self):
         # grab screenshot of capture region
-        capture = capture_region(self.hwnd, self.selection)
+        capture = capture_region(self.hwnd, self.selection, self.forcePrintWindowCheckBox.isChecked())
         capture = cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
         # convert to BGR
         return cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
