@@ -42,6 +42,10 @@
   <property name="windowTitle">
    <string>Update Checker</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+  </property>
   <widget class="QLabel" name="labelUpdateStatus">
    <property name="geometry">
     <rect>
@@ -169,7 +173,9 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pushButtonRight</sender>

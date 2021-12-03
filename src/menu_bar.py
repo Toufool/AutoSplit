@@ -12,12 +12,10 @@ from requests.exceptions import RequestException
 from simplejson.errors import JSONDecodeError
 import requests
 
-import about
-import design
+
 import error_messages
-import settings_file
-import resources_rc  # noqa: F401
-import update_checker
+import settings_file as settings
+from gen import about, design, resources_rc, update_checker  # noqa: F401
 
 # AutoSplit Version number
 VERSION = "1.6.1"
@@ -34,8 +32,8 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
         self.show()
 
 
-def about(self: AutoSplit):
-    self.AboutWidget = __AboutWidget()
+def open_about(autosplit: AutoSplit):
+    autosplit.AboutWidget = __AboutWidget()
 
 
 class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
@@ -59,11 +57,11 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
             self.show()
 
     def openUpdate(self):
-        os.system("start \"\" https://github.com/Toufool/Auto-Split/releases/latest")
+        os.system('start "" https://github.com/Toufool/Auto-Split/releases/latest')
         self.close()
 
     def doNotAskMeAgainStateChanged(self):
-        settings_file.set_check_for_updates_on_open(
+        settings.set_check_for_updates_on_open(
             self.design_window,
             self.checkBoxDoNotAskMeAgain.isChecked())
 
@@ -73,7 +71,7 @@ def open_update_checker(autosplit: AutoSplit, latest_version: str, check_on_open
 
 
 def viewHelp():
-    os.system("start \"\" https://github.com/Toufool/Auto-Split#tutorial")
+    os.system('start "" https://github.com/Toufool/Auto-Split#tutorial')
 
 
 class __CheckForUpdatesThread(QThread):
@@ -89,7 +87,7 @@ class __CheckForUpdatesThread(QThread):
             self.autosplit.updateCheckerWidgetSignal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):
             if not self.check_on_open:
-                self.autosplit.showErrorSignal(error_messages.checkForUpdatesError)
+                self.autosplit.showErrorSignal.emit(error_messages.checkForUpdatesError)
 
 
 def checkForUpdates(autosplit: AutoSplit, check_on_open: bool = False):

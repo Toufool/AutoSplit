@@ -1,0 +1,15 @@
+[flake8]
+color=always
+max-line-length=120
+; Auto generated
+exclude=src/gen/
+; TODO: We want to configure this
+ignore=W503,N801,N802,N803,N806,N815,N816
+per-file-ignores =
+    ; imported but unused
+    ; line too long
+    ; mixed case
+    __init__.pyi:F401,E501,N816
+; TODO: Bring WAY down
+max-complexity=55
+inline-quotes = "

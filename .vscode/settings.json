@@ -13,42 +13,34 @@
   "[python]": {
     "editor.tabSize": 4,
     "editor.rulers": [
-      79,
-      100,
-      120,
+      72, // PEP8-17 docstrings
+      // 79, // PEP8-17 default max
+      // 88, // Black default
+      99, // PEP8-17 acceptable max
+      120, // Our hard rule
     ]
   },
-  // Keeping autoformat to false for now to keep minimal changes
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": false,
+    "source.fixAll": true,
+    "source.fixAll.markdownlint": true,
   },
   "python.linting.enabled": true,
-  "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.diagnosticSeverityOverrides": {
-    // Too many false positives with pywin32 (all functions have 0 arguments in type stub)
-    "reportGeneralTypeIssues":"none"
-  },
-  // https://code.visualstudio.com/docs/python/linting#_specific-linters
-  // Maybe consider PyLint once all Flake8 linting is fixed
-  "python.linting.pylintEnabled": false,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintCategorySeverity.convention": "Warning",
+  "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": false,
-  // Flake8 is already a pycodestyle wrapper
-  "python.linting.pycodestyleEnabled": false,
-  "python.linting.pylintArgs": [
-    "--disable=no-member",
-    "--max-line-length=120"
-  ],
   "python.linting.flake8CategorySeverity.E": "Warning",
-  "python.linting.flake8Args": [
-    "--max-line-length=120"
-  ],
-  "python.formatting.autopep8Args": [
-    "--max-line-length=120"
-  ],
+  // PyRight obsoletes mypy
+  "python.linting.mypyEnabled": false,
+  // Is already wrapped by Flake8, prospector and pylama
+  "python.linting.pycodestyleEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.prospectorEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.pylamaEnabled": false,
+  "python.linting.banditEnabled": true,
   "files.insertFinalNewline": true,
-  "trailing-spaces.deleteModifiedLinesOnly": true,
   "trailing-spaces.includeEmptyLines": true,
   "trailing-spaces.trimOnSave": true,
   "trailing-spaces.syntaxIgnore": [
@@ -58,8 +50,21 @@
     "*.qrc": "xml",
     "*.ui": "xml"
   },
-  "markdownlint.config": {
-    "default": true,
-    "MD025": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "build": true,
+    ".mypy_cache": true,
+    "**/__pycache__": true,
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "typings": true,
   },
 }

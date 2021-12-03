@@ -1,11 +1,12 @@
 {
   "recommendations": [
-    "ms-python.vscode-pylance",
-    "ms-python.python",
-    "sonarsource.sonarlint-vscode",
+    "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
+    "eamodio.gitlens",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
     "shardulm94.trailing-spaces",
-    "eamodio.gitlens"
+    "sonarsource.sonarlint-vscode"
   ],
   "unwantedRecommendations": [
     "ms-pyright.pyright",
