@@ -15,7 +15,6 @@ aggressive = 3
 [tool.pyright]
 pythonPlatform = "Windows"
 typeCheckingMode = "strict"
-stubPath = "typings/"
 ignore = [
   # Auto generated
   "src/gen/",
