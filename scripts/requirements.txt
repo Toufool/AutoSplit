@@ -10,24 +10,25 @@
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
 # Dependencies:
+ImageHash
+keyboard
 numpy>=1.22.0rc1
 opencv-python<=4.5.3.56  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
+packaging
+Pillow
 PyQt6
 PyQt6-tools
 PySide6
-Pillow
-ImageHash
-pywin32
-keyboard
-packaging
 pyautogui
+pywin32
 requests
 # Linting and Types
+bandit
+flake8
+flake8-quotes
+pylint
 pywin32-stubs
 types-requests
-flake8
-pylint
-bandit
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

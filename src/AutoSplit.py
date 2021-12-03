@@ -1134,8 +1134,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.similarity = 0
         self.highest_similarity = 0.001
 
-    # exit safely when closing the window
     def closeEvent(self, a0: Optional[QtGui.QCloseEvent] = None):
+        """
+        Exit safely when closing the window
+        """
+
         def exitProgram():
             if a0 is not None:
                 a0.accept()

@@ -327,7 +327,7 @@ def loadSettings(autosplit: AutoSplit, load_settings_on_open: bool = False, load
 
 def load_check_for_updates_on_open(designWindow: design.Ui_MainWindow):
     """
-    Retrieve the 'Check For Updates On Open' QSettings and set the checkbox state
+    Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *pkl settings values.
     """
 

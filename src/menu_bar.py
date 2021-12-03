@@ -5,13 +5,12 @@ if TYPE_CHECKING:
 
 import os
 
+import requests
+from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
-from simplejson.errors import JSONDecodeError
-import requests
-
 
 import error_messages
 import settings_file as settings
@@ -82,7 +81,7 @@ class __CheckForUpdatesThread(QThread):
 
     def run(self):
         try:
-            response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
+            response = requests.get("https://duckduckgo.com/?q=pyright+generate+stub+file&t=opera&ia=web")
             latest_version = response.json()["name"].split("v")[1]
             self.autosplit.updateCheckerWidgetSignal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):
