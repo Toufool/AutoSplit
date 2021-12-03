@@ -16,7 +16,7 @@ import numpy as np
 import signal
 import time
 
-from menu_bar import about, VERSION, viewHelp, checkForUpdates
+from menu_bar import about, VERSION, viewHelp, checkForUpdates, open_update_checker
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
@@ -39,7 +39,8 @@ CREATE_NEW_ISSUE_MESSAGE = \
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
-    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
+    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues, \
+        load_check_for_updates_on_open, set_check_for_updates_on_open
     from screen_region import selectRegion, selectWindow, alignRegion, validateBeforeComparison
     from hotkeys import afterSettingHotkey, beforeSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, \
         setUndoSplitHotkey, setPauseHotkey
@@ -55,6 +56,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     undoSplitSignal = QtCore.pyqtSignal()
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
+    updateCheckerWidgetSignal = QtCore.pyqtSignal(str, bool)
     # Use this signal when trying to show an error from outside the main thread
     showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
@@ -62,10 +64,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
 
-        #These are only global settings values. They are not *pkl settings values.
-        self.getGlobalSettingsValues()
-        check_for_updates_on_open = self.setting_check_for_updates_on_open.value('check_for_updates_on_open', True, type=bool)
-        self.actionCheck_for_Updates_on_Open.setChecked(check_for_updates_on_open)
+        self.load_check_for_updates_on_open()
 
         # Parse command line args
         self.is_auto_controlled = ('--auto-controlled' in sys.argv)
@@ -161,6 +160,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
         self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, True))
+        self.actionCheck_for_Updates_on_Open.changed.connect(lambda: self.set_check_for_updates_on_open(
+            self.actionCheck_for_Updates_on_Open.isChecked())
+        )
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -172,6 +174,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.connect(self.updateSplitImageGUI)
         self.afterSettingHotkeySignal.connect(self.afterSettingHotkey)
         self.startAutoSplitterSignal.connect(self.autoSplitter)
+        self.updateCheckerWidgetSignal.connect(lambda latest_version, check_on_open:
+                                               open_update_checker(self, latest_version, check_on_open))
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
@@ -223,9 +227,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.loadSettings(load_settings_on_open=True)
 
     # FUNCTIONS
-
-    def getGlobalSettingsValues(self):
-        self.setting_check_for_updates_on_open = QtCore.QSettings('AutoSplit', 'Check For Updates On Open')
 
     # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
@@ -1153,10 +1154,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     # exit safely when closing the window
     def closeEvent(self, event: QtGui.QCloseEvent = None):
-        #save global setting values here
-        self.setting_check_for_updates_on_open.setValue('check_for_updates_on_open',
-                                                        self.actionCheck_for_Updates_on_Open.isChecked())
-
         def exit():
             if event is not None:
                 event.accept()
@@ -1207,7 +1204,7 @@ def main():
         main_window.show()
         # Needs to be after main_window.show() to be shown over
         if main_window.actionCheck_for_Updates_on_Open.isChecked():
-            checkForUpdates(main_window, check_for_updates_on_open=True)
+            checkForUpdates(main_window, check_on_open=True)
 
         # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
         timer = QtCore.QTimer()
