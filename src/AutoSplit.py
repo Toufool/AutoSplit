@@ -1,8 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 import traceback
-from types import FunctionType, TracebackType
-from typing import Callable, List, Optional, Type
+from types import FunctionType
+from typing import Callable, List, Optional
 
 from copy import copy
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
@@ -17,14 +17,13 @@ import signal
 import time
 
 from menu_bar import about, VERSION, viewHelp, checkForUpdates, open_update_checker
-from settings_file import auto_split_directory
+from settings_file import auto_split_directory, FROZEN
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
 import compare
 import design
 import error_messages
 import split_parser
-
 
 # Resize to these width and height so that FPS performance increases
 COMPARISON_RESIZE_WIDTH = 320
@@ -33,9 +32,8 @@ COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
 DISPLAY_RESIZE_WIDTH = 240
 DISPLAY_RESIZE_HEIGHT = 180
 DISPLAY_RESIZE = (DISPLAY_RESIZE_WIDTH, DISPLAY_RESIZE_HEIGHT)
-CREATE_NEW_ISSUE_MESSAGE = \
-    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
-"github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
+CREATE_NEW_ISSUE_MESSAGE = "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>" \
+    "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
@@ -61,7 +59,13 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
     def __init__(self, parent=None):
-        super(AutoSplit, self).__init__(parent)
+        super().__init__(parent)
+
+        # Setup global error handling
+        self.showErrorSignal.connect(lambda errorMessageBox: errorMessageBox())
+        # Whithin LiveSplit excepthook needs to use main_window's signals to show errors
+        sys.excepthook = lambda _, exception, __: excepthook(exception, self)
+
         self.setupUi(self)
 
         self.load_check_for_updates_on_open()
@@ -179,7 +183,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
-        self.showErrorSignal.connect(lambda errorMessageBox: errorMessageBox())
 
         # live image checkbox
         self.liveimageCheckBox.clicked.connect(self.checkLiveImage)
@@ -226,6 +229,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if not self.is_auto_controlled:
             self.loadSettings(load_settings_on_open=True)
 
+        self.show()
+
+        # Needs to be after Ui_MainWindow.show() to be shown overtop
+        if self.actionCheck_for_Updates_on_Open.isChecked():
+            checkForUpdates(self, check_on_open=True)
+            
     # FUNCTIONS
 
     # TODO add checkbox for going back to image 1 when resetting.
@@ -1196,15 +1205,22 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             exit()
 
 
+def excepthook(exception: BaseException, main_window: AutoSplit):
+    # Catch Keyboard Interrupts for a clean close
+    if type(exception) is KeyboardInterrupt:
+        sys.exit(0)
+    main_window.showErrorSignal.emit(lambda: error_messages.exceptionTraceback(
+                "AutoSplit encountered an unhandled exception and will try to recover, "
+                f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
+                exception)) \
+
+
 def main():
+    # Call to QApplication outside the try-except so we can show error messages
     app = QtWidgets.QApplication(sys.argv)
     try:
         app.setWindowIcon(QtGui.QIcon(':/resources/icon.ico'))
-        main_window = AutoSplit()
-        main_window.show()
-        # Needs to be after main_window.show() to be shown over
-        if main_window.actionCheck_for_Updates_on_Open.isChecked():
-            checkForUpdates(main_window, check_on_open=True)
+        AutoSplit()
 
         # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
         timer = QtCore.QTimer()
@@ -1213,12 +1229,12 @@ def main():
 
         exit_code = app.exec()
     except Exception as exception:
+        message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
         # Print error to console if not running in executable
-        if getattr(sys, 'frozen', False):
-            error_messages.exceptionTraceback(
-                f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}",
-                exception)
+        if FROZEN:
+            error_messages.exceptionTraceback(message, exception)
         else:
+            print(message)
             traceback.print_exception(type(exception), exception, exception.__traceback__)
         sys.exit(1)
 
@@ -1228,16 +1244,5 @@ def main():
     sys.exit(exit_code)
 
 
-def excepthook(exceptionType: Type[BaseException], exception: BaseException, traceback: Optional[TracebackType]):
-    # Catch Keyboard Interrupts for a clean close
-    if exceptionType is KeyboardInterrupt:
-        sys.exit(0)
-    error_messages.exceptionTraceback(
-            "AutoSplit encountered an unhandled exception and will try to recover, "
-            f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
-            exception)
-
-
 if __name__ == '__main__':
-    sys.excepthook = excepthook
     main()
