@@ -31,13 +31,13 @@ import settings_file as settings
 import split_parser
 from AutoControlledWorker import AutoControlledWorker
 from capture_windows import capture_region, Rect
-from gen import design
+from compare import checkIfImageHasTransparency, compareImage
+from gen import about, design, update_checker
 from hotkeys import send_command, afterSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, \
     setUndoSplitHotkey, setPauseHotkey
-from menu_bar import AboutWidget, VERSION, UpdateCheckerWidget, about, viewHelp, checkForUpdates
+from menu_bar import open_about, VERSION, viewHelp, checkForUpdates, open_update_checker
 from screen_region import selectRegion, selectWindow, alignRegion, validateBeforeComparison
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
-from compare import checkIfImageHasTransparency, compareImage
 
 
 # Resize to these width and height so that FPS performance increases
@@ -67,6 +67,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     undoSplitSignal = QtCore.pyqtSignal()
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
+    updateCheckerWidgetSignal = QtCore.pyqtSignal(str, bool)
     # Use this signal when trying to show an error from outside the main thread
     showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
@@ -75,8 +76,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     timerStartImage = QtCore.QTimer()
 
     # Windows
-    aboutWidget: AboutWidget
-    updateCheckerWidget: UpdateCheckerWidget
+    AboutWidget: about.Ui_aboutAutoSplitWidget
+    UpdateCheckerWidget: update_checker.Ui_UpdateChecker
+    CheckForUpdatesThread: QtCore.QThread
 
     # Settings
     split_image_directory = ""
@@ -155,7 +157,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # close all processes when closing window
         self.actionView_Help.triggered.connect(viewHelp)
-        self.actionAbout.triggered.connect(lambda: about(self))
+        self.actionAbout.triggered.connect(lambda: open_about(self))
         self.actionCheck_for_Updates.triggered.connect(lambda: checkForUpdates(self))
         self.actionSave_Settings.triggered.connect(lambda: settings.saveSettings(self))
         self.actionSave_Settings_As.triggered.connect(lambda: settings.saveSettingsAs(self))
@@ -210,6 +212,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.alignregionButton.clicked.connect(lambda: alignRegion(self))
         self.selectwindowButton.clicked.connect(lambda: selectWindow(self))
         self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, True))
+        self.actionCheck_for_Updates_on_Open.changed.connect(lambda: self.set_check_for_updates_on_open(
+            self.actionCheck_for_Updates_on_Open.isChecked())
+        )
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -221,6 +226,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.connect(self.updateSplitImageGUI)
         self.afterSettingHotkeySignal.connect(lambda: afterSettingHotkey(self))
         self.startAutoSplitterSignal.connect(self.autoSplitter)
+        self.updateCheckerWidgetSignal.connect(lambda latest_version, check_on_open:
+                                               open_update_checker(self, latest_version, check_on_open))
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
@@ -1107,10 +1114,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # exit safely when closing the window
 
     def closeEvent(self, a0: Optional[QtGui.QCloseEvent] = None):
-        # save global setting values here
-        self.setting_check_for_updates_on_open.setValue("check_for_updates_on_open",
-                                                        self.actionCheck_for_Updates_on_Open.isChecked())
-
         def exitProgram():
             if a0 is not None:
                 a0.accept()
@@ -1161,7 +1164,7 @@ def main():
         main_window.show()
         # Needs to be after main_window.show() to be shown over
         if main_window.actionCheck_for_Updates_on_Open.isChecked():
-            checkForUpdates(main_window, check_for_updates_on_open=True)
+            checkForUpdates(main_window, check_on_open=True)
 
         # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
         timer = QtCore.QTimer()
