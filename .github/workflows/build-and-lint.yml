@@ -1,0 +1,111 @@
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+name: Build and lint
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 2.0.0
+  pull_request:
+    branches:
+      - main
+      - master
+      - dev
+      - dev*
+jobs:
+  Pyright:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "scripts/requirements.txt"
+          npm install -g pyright
+      - run: scripts/compile_resources.bat
+      - name: Analysing the code with ${{ job.name }}
+        run: pyright
+  Pylint:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "scripts/requirements.txt"
+      - run: scripts/compile_resources.bat
+      - name: Analysing the code with ${{ job.name }}
+        run: pylint --reports=y --output-format=colorized $(git ls-files '**/*.py*')
+  Bandit:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "scripts/requirements.txt"
+      - run: scripts/compile_resources.bat
+      - name: Analysing the code with ${{ job.name }}
+        run: bandit -n 1 --severity-level medium --recursive src
+  Flake8:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "scripts/requirements.txt"
+      - run: scripts/compile_resources.bat
+      - name: Analysing the code with ${{ job.name }}
+        run: flake8
+  Build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "scripts/requirements.txt"
+      - run: scripts/build.bat

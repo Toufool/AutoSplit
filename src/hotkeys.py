@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Optional, Callable, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union
+from collections.abc import Callable
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -24,11 +25,11 @@ def beforeSettingHotkey(autosplit: AutoSplit):
 # do all of these things after you set a hotkey. a signal connects to this because
 # changing GUI stuff in the hotkey thread was causing problems
 def afterSettingHotkey(autosplit: AutoSplit):
-    autosplit.setsplithotkeyButton.setText('Set Hotkey')
-    autosplit.setresethotkeyButton.setText('Set Hotkey')
-    autosplit.setskipsplithotkeyButton.setText('Set Hotkey')
-    autosplit.setundosplithotkeyButton.setText('Set Hotkey')
-    autosplit.setpausehotkeyButton.setText('Set Hotkey')
+    autosplit.setsplithotkeyButton.setText("Set Hotkey")
+    autosplit.setresethotkeyButton.setText("Set Hotkey")
+    autosplit.setskipsplithotkeyButton.setText("Set Hotkey")
+    autosplit.setundosplithotkeyButton.setText("Set Hotkey")
+    autosplit.setpausehotkeyButton.setText("Set Hotkey")
     autosplit.startautosplitterButton.setEnabled(True)
     autosplit.setsplithotkeyButton.setEnabled(True)
     autosplit.setresethotkeyButton.setEnabled(True)
@@ -49,15 +50,14 @@ def is_digit(key: Optional[str]):
 def send_command(autosplit: AutoSplit, command: str):
     if autosplit.is_auto_controlled:
         print(command, flush=True)
+    elif command in {"split", "start"}:
+        _send_hotkey(autosplit.splitLineEdit.text())
+    elif command == "pause":
+        _send_hotkey(autosplit.pausehotkeyLineEdit.text())
+    elif command == "reset":
+        _send_hotkey(autosplit.resetLineEdit.text())
     else:
-        if command in ("split", "start"):
-            _send_hotkey(autosplit.splitLineEdit.text())
-        elif command == "pause":
-            _send_hotkey(autosplit.pausehotkeyLineEdit.text())
-        elif command == "reset":
-            _send_hotkey(autosplit.resetLineEdit.text())
-        else:
-            raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
+        raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
 
 
 # Supports sending the appropriate scan code for all the special cases
@@ -67,20 +67,19 @@ def _send_hotkey(key_or_scan_code: Union[int, str]):
 
     # Deal with regular inputs
     if isinstance(key_or_scan_code, int) \
-            or not (key_or_scan_code.startswith('num ') or key_or_scan_code == 'decimal'):
+            or not (key_or_scan_code.startswith("num ") or key_or_scan_code == "decimal"):
         keyboard.send(key_or_scan_code)
-        keyboard.key_to_scan_codes
         return
 
-    # Deal with problematic keys. Even by sending specific scan code 'keyboard' still sends the default (wrong) key
+    # Deal with problematic keys. Even by sending specific scan code "keyboard" still sends the default (wrong) key
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
-    pyautogui.hotkey(key_or_scan_code.replace(' ', ''))
+    pyautogui.hotkey(key_or_scan_code.replace(" ", ""))
 
 
 def __validate_keypad(expected_key: str, keyboard_event: KeyboardEvent) -> bool:
     # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
     # as well as "." and "(keypad)./decimal"
-    if keyboard_event.scan_code in (83, 52):
+    if keyboard_event.scan_code in {83, 52}:
         # TODO: "del" won't work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
         return expected_key == keyboard_event.name
     # Prevent "action keys" from triggering "keypad keys"
@@ -99,11 +98,11 @@ def __validate_keypad(expected_key: str, keyboard_event: KeyboardEvent) -> bool:
 # Windows reports different physical keys with the same scan code.
 # For example, "Home", "Num Home" and "Num 7" are all "71".
 # See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684
-#
+
 # We're doing the check here instead of saving the key code because it'll
 # cause issues with save files and the non-keypad shared keys are localized
 # while the keypad ones aren't.
-#
+
 # Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
 # We're also trying to achieve the same hotkey behaviour as LiveSplit has.
 def _hotkey_action(keyboard_event: KeyboardEvent, key_name: str, action: Callable[[], None]):
@@ -129,10 +128,10 @@ def __is_key_already_set(autosplit: AutoSplit, key_name: str):
 # TODO: Refactor to de-duplicate all this code, including settings_file.py
 # Going to comment on one func, and others will be similar.
 def setSplitHotkey(autosplit: AutoSplit):
-    autosplit.setsplithotkeyButton.setText('Press a key...')
+    autosplit.setsplithotkeyButton.setText("Press a key...")
 
     # disable some buttons
-    autosplit.beforeSettingHotkey()
+    beforeSettingHotkey(autosplit)
 
     # new thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
@@ -163,7 +162,7 @@ def setSplitHotkey(autosplit: AutoSplit):
             # hotkey. A try and except is needed if a hotkey hasn't been set yet. I'm not
             # allowing for these multiple-key hotkeys because it can cause crashes, and
             # not many people are going to really use or need this.
-            if __is_key_already_set(autosplit, key_name) or (key_name != '+' and '+' in key_name):
+            if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
                 autosplit.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -189,8 +188,8 @@ def setSplitHotkey(autosplit: AutoSplit):
 
 
 def setResetHotkey(autosplit: AutoSplit):
-    autosplit.setresethotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    autosplit.setresethotkeyButton.setText("Press a key...")
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -201,7 +200,7 @@ def setResetHotkey(autosplit: AutoSplit):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(autosplit, key_name) or (key_name != '+' and '+' in key_name):
+            if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
                 autosplit.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -220,8 +219,8 @@ def setResetHotkey(autosplit: AutoSplit):
 
 
 def setSkipSplitHotkey(autosplit: AutoSplit):
-    autosplit.setskipsplithotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    autosplit.setskipsplithotkeyButton.setText("Press a key...")
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -232,7 +231,7 @@ def setSkipSplitHotkey(autosplit: AutoSplit):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(autosplit, key_name) or (key_name != '+' and '+' in key_name):
+            if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
                 autosplit.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -251,8 +250,8 @@ def setSkipSplitHotkey(autosplit: AutoSplit):
 
 
 def setUndoSplitHotkey(autosplit: AutoSplit):
-    autosplit.setundosplithotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    autosplit.setundosplithotkeyButton.setText("Press a key...")
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -263,7 +262,7 @@ def setUndoSplitHotkey(autosplit: AutoSplit):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(autosplit, key_name) or (key_name != '+' and '+' in key_name):
+            if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
                 autosplit.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:
@@ -282,8 +281,8 @@ def setUndoSplitHotkey(autosplit: AutoSplit):
 
 
 def setPauseHotkey(autosplit: AutoSplit):
-    autosplit.setpausehotkeyButton.setText('Press a key...')
-    autosplit.beforeSettingHotkey()
+    autosplit.setpausehotkeyButton.setText("Press a key...")
+    beforeSettingHotkey(autosplit)
 
     def callback(hotkey: Callable[[], None]):
         try:
@@ -294,7 +293,7 @@ def setPauseHotkey(autosplit: AutoSplit):
         key_name = __get_key_name(keyboard.read_event(True))
 
         try:
-            if __is_key_already_set(autosplit, key_name) or (key_name != '+' and '+' in key_name):
+            if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
                 autosplit.afterSettingHotkeySignal.emit()
                 return
         except AttributeError:

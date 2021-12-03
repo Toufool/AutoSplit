@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 from PyQt6 import QtCore
 
 import error_messages
+import settings_file as settings
 
 
 class AutoControlledWorker(QtCore.QObject):
@@ -22,21 +23,21 @@ class AutoControlledWorker(QtCore.QObject):
             # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
             # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
             # For now this can only used in a Development environment
-            if line == 'kill':
+            if line == "kill":
                 self.autosplit.closeEvent()
                 break
-            elif line == 'start':
+            if line == "start":
                 self.autosplit.startAutoSplitter()
-            elif line == 'split' or line == 'skip':
+            elif line in {"split", "skip"}:
                 self.autosplit.startSkipSplit()
-            elif line == 'undo':
+            elif line == "undo":
                 self.autosplit.startUndoSplit()
-            elif line == 'reset':
+            elif line == "reset":
                 self.autosplit.startReset()
-            elif line.startswith('settings'):
+            elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
                 self.autosplit.load_settings_file_path = line[9:]
-                self.autosplit.loadSettings(load_settings_from_livesplit=True)
+                settings.loadSettings(self.autosplit, load_settings_from_livesplit=True)
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
             #     self.startPause()

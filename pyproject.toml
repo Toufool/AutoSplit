@@ -1,0 +1,96 @@
+# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
+[tool.black]
+line-length = 120
+# Auto generated
+force-exclude = "src/gen/.*\\.py$"
+
+# https://github.com/hhatto/autopep8#usage
+# https://github.com/hhatto/autopep8#more-advanced-usage
+[tool.autopep8]
+max_line_length = 120
+recursive = true
+aggressive = 3
+
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
+[tool.pyright]
+pythonPlatform = "Windows"
+typeCheckingMode = "strict"
+stubPath = "typings/"
+ignore = [
+  # Auto generated
+  "src/gen/",
+  "typings/",
+]
+reportMissingTypeStubs = "information"
+# False positives with TYPE_CHECKING
+reportImportCycles = "information"
+# PyQt .connect
+reportFunctionMemberAccess = "information"
+# Extra runtime safety
+reportUnnecessaryComparison = "warning"
+# Flake8 does a better job
+reportUnusedImport = "none"
+# numpy has way too many complex types that triggers this
+reportUnknownMemberType = "none"
+
+# https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
+# https://pylint.pycqa.org/en/latest/technical_reference/features.html
+[tool.pylint.REPORTS]
+# Just like default but any error will make drop to 9 or less
+evaluation="10.0 - error - ((float(warning + refactor + convention) / statement) * 10)"
+[tool.pylint.MASTER]
+fail-under=9.0
+# https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
+load-plugins = [
+  "pylint.extensions.emptystring",
+  "pylint.extensions.confusing_elif",
+  "pylint.extensions.consider_ternary_expression",
+  "pylint.extensions.bad_builtin",
+  "pylint.extensions.mccabe",
+  "pylint.extensions.check_elif",
+  "pylint.extensions.redefined_variable_type",
+  "pylint.extensions.overlapping_exceptions",
+  "pylint.extensions.empty_comment",
+  "pylint.extensions.set_membership",
+  "pylint.extensions.typing",
+  # TODO: Maybe later
+  # "pylint.extensions.docparams",
+  # Not wanted/needed
+  # "pylint.extensions.broad_try_clause",
+  # "pylint.extensions.code_style",
+  # "pylint.extensions.comparetozero",
+  # "pylint.extensions.docstyle",
+  # "pylint.extensions.while_used",
+  # Didn't work
+  # "pylint.extensions.comparison_placement",
+  # "pylint.extensions.for_any_all",
+]
+ignore-paths = [
+  # Haven't looked into disabling specific rules per file
+  "^typings/.*$",
+  # Auto generated
+  "^src/gen/.*$",
+]
+# No need to mention the fixmes
+disable=["fixme"]
+extension-pkg-allow-list = ["PyQt6", "win32ui"]
+
+[tool.pylint.FORMAT]
+max-line-length = 120
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = [
+  "missing-docstring",
+  # TODO: We want to configure this
+  # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
+  "invalid-name",
+  # We group imports
+  "wrong-import-position",
+  # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
+  "unused-argument",
+  # Already taken care of by Flake8
+  "unused-import",
+]
+
+[tool.pylint.TYPECHECK]
+generated-members = "cv2"
