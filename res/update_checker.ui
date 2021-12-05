@@ -45,9 +45,9 @@
   <widget class="QLabel" name="labelUpdateStatus">
    <property name="geometry">
     <rect>
-     <x>17</x>
+     <x>20</x>
      <y>10</y>
-     <width>281</width>
+     <width>218</width>
      <height>16</height>
     </rect>
    </property>
@@ -58,13 +58,13 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string/>
+    <string>There is an update available for AutoSplit.</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelCurrentVersion">
    <property name="geometry">
     <rect>
-     <x>17</x>
+     <x>20</x>
      <y>30</y>
      <width>91</width>
      <height>16</height>
@@ -77,7 +77,7 @@
   <widget class="QLabel" name="labelLatestVersion">
    <property name="geometry">
     <rect>
-     <x>17</x>
+     <x>20</x>
      <y>50</y>
      <width>81</width>
      <height>16</height>
@@ -90,14 +90,14 @@
   <widget class="QLabel" name="labelGoToDownload">
    <property name="geometry">
     <rect>
-     <x>17</x>
-     <y>76</y>
-     <width>241</width>
+     <x>20</x>
+     <y>80</y>
+     <width>119</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Open download page?</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonLeft">
@@ -113,7 +113,7 @@
     <enum>Qt::NoFocus</enum>
    </property>
    <property name="text">
-    <string/>
+    <string>Open</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonRight">
@@ -126,7 +126,7 @@
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Later</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelCurrentVersionNumber">
@@ -158,9 +158,9 @@
   <widget class="QCheckBox" name="checkBoxDoNotAskMeAgain">
    <property name="geometry">
     <rect>
-     <x>17</x>
-     <y>100</y>
-     <width>141</width>
+     <x>20</x>
+     <y>102</y>
+     <width>131</width>
      <height>20</height>
     </rect>
    </property>

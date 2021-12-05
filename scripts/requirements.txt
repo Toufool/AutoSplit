@@ -20,8 +20,8 @@ packaging
 pyautogui
 PySide6
 flake8
-mypy
 requests
+types-requests
 #
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

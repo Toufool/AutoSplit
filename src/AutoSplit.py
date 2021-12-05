@@ -16,7 +16,7 @@ import numpy as np
 import signal
 import time
 
-from menu_bar import about, VERSION, viewHelp, checkForUpdates
+from menu_bar import about, VERSION, viewHelp, checkForUpdates, open_update_checker
 from settings_file import auto_split_directory
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
 import capture_windows
@@ -39,7 +39,8 @@ CREATE_NEW_ISSUE_MESSAGE = \
 
 class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     from hotkeys import send_command
-    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues
+    from settings_file import saveSettings, saveSettingsAs, loadSettings, haveSettingsChanged, getSaveSettingsValues, \
+        load_check_for_updates_on_open, set_check_for_updates_on_open
     from screen_region import selectRegion, selectWindow, alignRegion, validateBeforeComparison
     from hotkeys import afterSettingHotkey, beforeSettingHotkey, setSplitHotkey, setResetHotkey, setSkipSplitHotkey, \
         setUndoSplitHotkey, setPauseHotkey
@@ -55,6 +56,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
     undoSplitSignal = QtCore.pyqtSignal()
     pauseSignal = QtCore.pyqtSignal()
     afterSettingHotkeySignal = QtCore.pyqtSignal()
+    updateCheckerWidgetSignal = QtCore.pyqtSignal(str, bool)
     # Use this signal when trying to show an error from outside the main thread
     showErrorSignal = QtCore.pyqtSignal(FunctionType)
 
@@ -62,10 +64,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         super(AutoSplit, self).__init__(parent)
         self.setupUi(self)
 
-        #These are only global settings values. They are not *pkl settings values.
-        self.getGlobalSettingsValues()
-        check_for_updates_on_open = self.setting_check_for_updates_on_open.value('check_for_updates_on_open', True, type=bool)
-        self.actionCheck_for_Updates_on_Open.setChecked(check_for_updates_on_open)
+        self.load_check_for_updates_on_open()
 
         # Parse command line args
         self.is_auto_controlled = ('--auto-controlled' in sys.argv)
@@ -161,6 +160,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.alignregionButton.clicked.connect(self.alignRegion)
         self.selectwindowButton.clicked.connect(self.selectWindow)
         self.startImageReloadButton.clicked.connect(lambda: self.loadStartImage(True, True))
+        self.actionCheck_for_Updates_on_Open.changed.connect(lambda: self.set_check_for_updates_on_open(
+            self.actionCheck_for_Updates_on_Open.isChecked())
+        )
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.xSpinBox.valueChanged.connect(self.updateX)
@@ -172,6 +174,8 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.updateCurrentSplitImage.connect(self.updateSplitImageGUI)
         self.afterSettingHotkeySignal.connect(self.afterSettingHotkey)
         self.startAutoSplitterSignal.connect(self.autoSplitter)
+        self.updateCheckerWidgetSignal.connect(lambda latest_version, check_on_open:
+                                               open_update_checker(self, latest_version, check_on_open))
         self.resetSignal.connect(self.reset)
         self.skipSplitSignal.connect(self.skipSplit)
         self.undoSplitSignal.connect(self.undoSplit)
@@ -207,13 +211,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.hwnd_title = ''
         self.rect = ctypes.wintypes.RECT()
 
-        # Last loaded settings and last successful loaded settings file path to None until we try to load them
-        self.last_loaded_settings = None
-        self.last_successfully_loaded_settings_file_path = None
-
-        if not self.is_auto_controlled:
-            self.loadSettings(load_settings_on_open=True)
-
         # Automatic timer start
         self.timerStartImage = QtCore.QTimer()
         self.timerStartImage.timeout.connect(self.startImageFunction)
@@ -222,13 +219,14 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.check_start_image_timestamp = 0.0
 
-        # Try to load start image
-        self.loadStartImage()
+        # Last loaded settings and last successful loaded settings file path to None until we try to load them
+        self.last_loaded_settings = None
+        self.last_successfully_loaded_settings_file_path = None
+
+        if not self.is_auto_controlled:
+            self.loadSettings(load_settings_on_open=True)
 
     # FUNCTIONS
-
-    def getGlobalSettingsValues(self):
-        self.setting_check_for_updates_on_open = QtCore.QSettings('AutoSplit', 'Check For Updates On Open')
 
     # TODO add checkbox for going back to image 1 when resetting.
     def browse(self):
@@ -243,6 +241,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.split_image_directory = new_split_image_directory
             self.splitimagefolderLineEdit.setText(f"{new_split_image_directory}/")
+            self.loadStartImage()
 
     def checkLiveImage(self):
         if self.liveimageCheckBox.isChecked():
@@ -304,6 +303,10 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 error_messages.noKeywordImageError('start_auto_splitter')
             return
 
+        if self.start_image_name is not None and (not self.splitLineEdit.text() or not self.resetLineEdit.text() or not self.pausehotkeyLineEdit.text()) and not self.is_auto_controlled:
+            error_messages.loadStartImageError()
+            return
+
         self.split_image_filenames = os.listdir(self.split_image_directory)
         self.split_image_number = 0
         self.start_image_mask = None
@@ -348,8 +351,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
         QtWidgets.QApplication.processEvents()
 
     def startImageFunction(self):
-        if time.time() < self.check_start_image_timestamp \
-                or (not self.splitLineEdit.text() and not self.is_auto_controlled):
+        if time.time() < self.check_start_image_timestamp:
             pause_time_left = "{:.1f}".format(self.check_start_image_timestamp - time.time())
             self.currentSplitImage.setText(f'None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining')
             return
@@ -1154,10 +1156,6 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     # exit safely when closing the window
     def closeEvent(self, event: QtGui.QCloseEvent = None):
-        #save global setting values here
-        self.setting_check_for_updates_on_open.setValue('check_for_updates_on_open',
-                                                        self.actionCheck_for_Updates_on_Open.isChecked())
-
         def exit():
             if event is not None:
                 event.accept()
@@ -1208,7 +1206,7 @@ def main():
         main_window.show()
         # Needs to be after main_window.show() to be shown over
         if main_window.actionCheck_for_Updates_on_Open.isChecked():
-            checkForUpdates(main_window, check_for_updates_on_open=True)
+            checkForUpdates(main_window, check_on_open=True)
 
         # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
         timer = QtCore.QTimer()
