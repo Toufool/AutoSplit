@@ -19,6 +19,7 @@ import traceback
 from copy import copy
 from time import time
 
+import certifi
 import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest
@@ -49,6 +50,9 @@ DISPLAY_RESIZE_HEIGHT = 180
 DISPLAY_RESIZE = (DISPLAY_RESIZE_WIDTH, DISPLAY_RESIZE_HEIGHT)
 CREATE_NEW_ISSUE_MESSAGE = "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>" \
     "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
+
+# Needed when compiled, along with the custom hook-requests PyInstaller hook
+os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 
 
 def make_excepthook(main_window: AutoSplit):
@@ -1188,13 +1192,14 @@ def main():
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
         AutoSplit()
 
-        # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
-        timer = QtCore.QTimer()
-        timer.timeout.connect(lambda: None)
-        timer.start(500)
+        if not FROZEN:
+            # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
+            timer = QtCore.QTimer()
+            timer.timeout.connect(lambda: None)
+            timer.start(500)
 
         exit_code = app.exec()
-    except Exception as exception:  # pylint: disable=broad-except
+    except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
         message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
         # Print error to console if not running in executable
         if FROZEN:

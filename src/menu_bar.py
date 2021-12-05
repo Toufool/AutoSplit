@@ -81,7 +81,7 @@ class __CheckForUpdatesThread(QThread):
 
     def run(self):
         try:
-            response = requests.get("https://duckduckgo.com/?q=pyright+generate+stub+file&t=opera&ia=web")
+            response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
             latest_version = response.json()["name"].split("v")[1]
             self.autosplit.updateCheckerWidgetSignal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):

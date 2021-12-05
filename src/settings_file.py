@@ -16,7 +16,7 @@ from gen import design
 from hotkeys import _hotkey_action  # type: ignore
 
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
-FROZEN = getattr(sys, "frozen", False)
+FROZEN = hasattr(sys, "frozen")
 
 # Get the directory of either AutoSplit.exe or AutoSplit.py
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
