@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QMainWindow
 
 
 class Ui_MainWindow():
-    actionCheck_for_Updates_on_Open: QAction
+    action_check_for_updates_on_open: QAction
 
     def setupUi(self, MainWindow: QMainWindow) -> None:
         ...

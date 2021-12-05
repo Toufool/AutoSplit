@@ -10,11 +10,9 @@ import error_messages
 
 
 [DUMMY_FLAG,
- # Legacy flag. Allows support for {md}, {mp}, or {mb} flags previously required to detect transparency.
- MASK_FLAG,
  BELOW_FLAG,
  PAUSE_FLAG,
- *_] = [1 << i for i in range(31)]
+ *_] = [1 << i for i in range(31)]  # 32 bits of flags
 
 
 def threshold_from_filename(filename: str):
@@ -119,15 +117,17 @@ def flags_from_filename(filename: str):
 
     flags = 0x00
 
-    for c in flags_str:
-        if c.upper() == "D":
+    for character in flags_str:
+        character = character.upper()
+        if character == "D":
             flags |= DUMMY_FLAG
-        elif c.upper() == "M":
-            flags |= MASK_FLAG
-        elif c.upper() == "B":
+        elif character == "B":
             flags |= BELOW_FLAG
-        elif c.upper() == "P":
+        elif character == "P":
             flags |= PAUSE_FLAG
+        # Legacy flags
+        elif character == "M":
+            continue
         else:
             # An invalid flag was caught, this filename was written incorrectly
             # return 0. We don't want to interpret any misleading filenames
@@ -161,7 +161,7 @@ def is_start_auto_splitter_image(filename: str):
     return "START_AUTO_SPLITTER" in filename.upper()
 
 
-def removeStartAutoSplitterImage(split_image_filenames: list[str]):
+def remove_start_auto_splitter_image(split_image_filenames: list[str]):
     start_auto_splitter_image_file = None
     for image in split_image_filenames:
         if is_start_auto_splitter_image(image):
@@ -188,35 +188,35 @@ def validate_images_before_parsing(autosplit: AutoSplit):
                 and cv2.imread(os.path.join(autosplit.split_image_directory, image), cv2.IMREAD_UNCHANGED) is None):
             # Opencv couldn't open this file as an image, this isn't a correct
             # file format that is supported
-            autosplit.guiChangesOnReset()
-            error_messages.imageTypeError(image)
+            autosplit.gui_changes_on_reset()
+            error_messages.image_type(image)
             return
 
         # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (not autosplit.pausehotkeyLineEdit.text()
+        if (not autosplit.pause_hotkey_input.text()
                 and flags_from_filename(image) & PAUSE_FLAG == PAUSE_FLAG
                 and not autosplit.is_auto_controlled):
-            autosplit.guiChangesOnReset()
-            error_messages.pauseHotkeyError()
+            autosplit.gui_changes_on_reset()
+            error_messages.pause_hotkey()
             return
 
         # Check that there's only one reset image
         if is_reset_image(image):
             # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
-            if not autosplit.resetLineEdit.text() and not autosplit.is_auto_controlled:
-                autosplit.guiChangesOnReset()
-                error_messages.resetHotkeyError()
+            if not autosplit.reset_input.text() and not autosplit.is_auto_controlled:
+                autosplit.gui_changes_on_reset()
+                error_messages.reset_hotkey()
                 return
             if already_found_reset_image:
-                autosplit.guiChangesOnReset()
-                error_messages.multipleKeywordImagesError("reset")
+                autosplit.gui_changes_on_reset()
+                error_messages.multiple_keyword_images("reset")
                 return
             already_found_reset_image = True
 
         # Check that there's only one auto_start_autosplitter image
         if is_start_auto_splitter_image(image):
             if already_found_start_image:
-                autosplit.guiChangesOnReset()
-                error_messages.multipleKeywordImagesError("start_auto_splitter")
+                autosplit.gui_changes_on_reset()
+                error_messages.multiple_keyword_images("start_auto_splitter")
                 return
             already_found_start_image = True

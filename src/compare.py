@@ -8,23 +8,23 @@ import numpy as np
 
 MAXRANGE = MAXBYTE + 1
 channels = [0, 1, 2]
-histSize = [8, 8, 8]
+histogram_size = [8, 8, 8]
 ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 
 
-def compareImage(
-    comparisonMethod: int,
+def compare_image(
+    comparison_method: int,
     image: Optional[cv2.ndarray],
     capture: Optional[cv2.ndarray],
     mask: Optional[cv2.ndarray] = None
 ):
     if image is None or capture is None:
         return 0.0
-    if comparisonMethod == 0:
+    if comparison_method == 0:
         return compare_l2_norm(image, capture, mask)
-    if comparisonMethod == 1:
+    if comparison_method == 1:
         return compare_histograms(image, capture, mask)
-    if comparisonMethod == 2:
+    if comparison_method == 2:
         return compare_phash(image, capture, mask)
     return 0.0
 
@@ -40,8 +40,8 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
     @return: The similarity between the histograms as a number 0 to 1.
     """
 
-    source_hist = cv2.calcHist([source], channels, mask, histSize, ranges)
-    capture_hist = cv2.calcHist([capture], channels, mask, histSize, ranges)
+    source_hist = cv2.calcHist([source], channels, mask, histogram_size, ranges)
+    capture_hist = cv2.calcHist([capture], channels, mask, histogram_size, ranges)
 
     cv2.normalize(source_hist, source_hist)
     cv2.normalize(capture_hist, capture_hist)
@@ -122,7 +122,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     return 1 - (hash_diff / 64.0)
 
 
-def checkIfImageHasTransparency(image: cv2.ndarray) -> bool:
+def check_if_image_has_transparency(image: cv2.ndarray) -> bool:
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False

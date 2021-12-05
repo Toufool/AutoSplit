@@ -18,7 +18,7 @@ class AutoControlledWorker(QtCore.QObject):
             try:
                 line = input()
             except RuntimeError:
-                self.autosplit.showErrorSignal.emit(error_messages.stdinLostError)
+                self.autosplit.show_error_signal.emit(error_messages.stdin_lost)
                 break
             # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
             # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
@@ -27,17 +27,17 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.closeEvent()
                 break
             if line == "start":
-                self.autosplit.startAutoSplitter()
+                self.autosplit.start_suto_splitter()
             elif line in {"split", "skip"}:
-                self.autosplit.startSkipSplit()
+                self.autosplit.start_skip_split()
             elif line == "undo":
-                self.autosplit.startUndoSplit()
+                self.autosplit.start_undo_split()
             elif line == "reset":
-                self.autosplit.startReset()
+                self.autosplit.start_reset()
             elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
                 self.autosplit.load_settings_file_path = line[9:]
-                settings.loadSettings(self.autosplit, load_settings_from_livesplit=True)
+                settings.load_settings(self.autosplit, load_settings_from_livesplit=True)
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
-            #     self.startPause()
+            #     self.start_pause()

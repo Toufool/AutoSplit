@@ -46,8 +46,8 @@
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="splitimagefolderLabel">
+  <widget class="QWidget" name="central_widget">
+   <widget class="QLabel" name="split_image_folder_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -60,7 +60,7 @@
      <string>Split Image Folder:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="splitimagefolderLineEdit">
+   <widget class="QLineEdit" name="split_image_folder_input">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -73,7 +73,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="browseButton">
+   <widget class="QPushButton" name="browse_button">
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -89,7 +89,7 @@
      <string>Browse...</string>
     </property>
    </widget>
-   <widget class="QLabel" name="xLabel">
+   <widget class="QLabel" name="x_label">
     <property name="geometry">
      <rect>
       <x>25</x>
@@ -102,7 +102,7 @@
      <string>X</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="liveimageCheckBox">
+   <widget class="QCheckBox" name="live_image_checkbox">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -124,7 +124,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="selectregionButton">
+   <widget class="QPushButton" name="select_region_button">
     <property name="geometry">
      <rect>
       <x>5</x>
@@ -140,7 +140,7 @@
      <string>Select Region</string>
     </property>
    </widget>
-   <widget class="QLabel" name="similaritythresholdLabel">
+   <widget class="QLabel" name="similarity_threshold_label">
     <property name="geometry">
      <rect>
       <x>7</x>
@@ -153,7 +153,7 @@
      <string>Default similarity threshold:</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="similaritythresholdDoubleSpinBox">
+   <widget class="QDoubleSpinBox" name="similarity_threshold_spinbox">
     <property name="geometry">
      <rect>
       <x>155</x>
@@ -172,7 +172,7 @@
      <double>0.900000000000000</double>
     </property>
    </widget>
-   <widget class="QPushButton" name="startautosplitterButton">
+   <widget class="QPushButton" name="start_auto_splitter_button">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -188,7 +188,7 @@
      <string>Start Auto Splitter</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="resetButton">
+   <widget class="QPushButton" name="reset_button">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -204,7 +204,7 @@
      <string>Reset</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="undosplitButton">
+   <widget class="QPushButton" name="undo_split_button">
     <property name="geometry">
      <rect>
       <x>494</x>
@@ -220,7 +220,7 @@
      <string>Undo Split</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="skipsplitButton">
+   <widget class="QPushButton" name="skip_split_button">
     <property name="geometry">
      <rect>
       <x>560</x>
@@ -236,7 +236,7 @@
      <string>Skip Split</string>
     </property>
    </widget>
-   <widget class="QLabel" name="pauseLabel">
+   <widget class="QLabel" name="pause_label">
     <property name="geometry">
      <rect>
       <x>7</x>
@@ -249,7 +249,7 @@
      <string>Default pause time (sec):</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="checkfpsButton">
+   <widget class="QPushButton" name="check_fps_button">
     <property name="geometry">
      <rect>
       <x>5</x>
@@ -265,7 +265,7 @@
      <string>Max FPS</string>
     </property>
    </widget>
-   <widget class="QLabel" name="fpsLabel">
+   <widget class="QLabel" name="fps_label">
     <property name="geometry">
      <rect>
       <x>87</x>
@@ -278,7 +278,7 @@
      <string>FPS</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="showlivesimilarityCheckBox">
+   <widget class="QCheckBox" name="show_live_similarity_checkbox">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -300,7 +300,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QCheckBox" name="showhighestsimilarityCheckBox">
+   <widget class="QCheckBox" name="show_highest_similarity_checkbox">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -322,7 +322,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="livesimilarityLabel">
+   <widget class="QLabel" name="live_similarity_label">
     <property name="geometry">
      <rect>
       <x>171</x>
@@ -335,7 +335,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="highestsimilarityLabel">
+   <widget class="QLabel" name="highest_similarity_label">
     <property name="geometry">
      <rect>
       <x>171</x>
@@ -348,7 +348,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="splitLabel">
+   <widget class="QLabel" name="split_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -361,7 +361,7 @@
      <string>Start / Split</string>
     </property>
    </widget>
-   <widget class="QLabel" name="resetLabel">
+   <widget class="QLabel" name="reset_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -374,7 +374,7 @@
      <string>Reset</string>
     </property>
    </widget>
-   <widget class="QLabel" name="skiptsplitLabel">
+   <widget class="QLabel" name="skip_split_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -387,7 +387,7 @@
      <string>Skip Split</string>
     </property>
    </widget>
-   <widget class="QLabel" name="undosplitLabel">
+   <widget class="QLabel" name="undo_split_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -400,7 +400,7 @@
      <string>Undo Split</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="splitLineEdit">
+   <widget class="QLineEdit" name="split_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -413,7 +413,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="undosplitLineEdit">
+   <widget class="QLineEdit" name="undo_split_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -429,7 +429,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="skipsplitLineEdit">
+   <widget class="QLineEdit" name="skip_split_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -442,7 +442,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="resetLineEdit">
+   <widget class="QLineEdit" name="reset_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -455,7 +455,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="setsplithotkeyButton">
+   <widget class="QPushButton" name="set_split_hotkey_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -471,7 +471,7 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="setresethotkeyButton">
+   <widget class="QPushButton" name="set_reset_hotkey_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -487,7 +487,7 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="setskipsplithotkeyButton">
+   <widget class="QPushButton" name="set_skip_split_hotkey_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -503,7 +503,7 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="setundosplithotkeyButton">
+   <widget class="QPushButton" name="set_undo_split_hotkey_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -519,7 +519,7 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="Line" name="line_left">
+   <widget class="Line" name="left_line">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -538,7 +538,7 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="timerglobalhotkeysLabel">
+   <widget class="QLabel" name="timer_global_hotkeys_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -554,7 +554,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="Line" name="line_right">
+   <widget class="Line" name="right_line">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -573,7 +573,7 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="liveImage">
+   <widget class="QLabel" name="live_image">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -592,7 +592,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="currentSplitImage">
+   <widget class="QLabel" name="current_split_image">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -611,7 +611,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="currentsplitimageLabel">
+   <widget class="QLabel" name="current_split_image_label">
     <property name="geometry">
      <rect>
       <x>450</x>
@@ -624,7 +624,7 @@
      <string>Current Split Image</string>
     </property>
    </widget>
-   <widget class="QLabel" name="widthLabel">
+   <widget class="QLabel" name="width_label">
     <property name="geometry">
      <rect>
       <x>12</x>
@@ -637,7 +637,7 @@
      <string>Width</string>
     </property>
    </widget>
-   <widget class="QLabel" name="heightLabel">
+   <widget class="QLabel" name="height_label">
     <property name="geometry">
      <rect>
       <x>66</x>
@@ -650,7 +650,7 @@
      <string>Height</string>
     </property>
    </widget>
-   <widget class="QLabel" name="fpsvalueLabel">
+   <widget class="QLabel" name="fps_value_label">
     <property name="geometry">
      <rect>
       <x>58</x>
@@ -663,7 +663,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QSpinBox" name="widthSpinBox">
+   <widget class="QSpinBox" name="width_spinbox">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -682,7 +682,7 @@
      <number>640</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="heightSpinBox">
+   <widget class="QSpinBox" name="height_spinbox">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -701,7 +701,7 @@
      <number>480</number>
     </property>
    </widget>
-   <widget class="QLabel" name="captureregionLabel">
+   <widget class="QLabel" name="capture_region_label">
     <property name="geometry">
      <rect>
       <x>200</x>
@@ -714,7 +714,7 @@
      <string>Capture Region</string>
     </property>
    </widget>
-   <widget class="QLabel" name="fpslimitLabel">
+   <widget class="QLabel" name="fps_limit_label">
     <property name="geometry">
      <rect>
       <x>8</x>
@@ -727,7 +727,7 @@
      <string>FPS Limit:</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="fpslimitSpinBox">
+   <widget class="QDoubleSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -755,7 +755,7 @@
      <double>60.000000000000000</double>
     </property>
    </widget>
-   <widget class="QLabel" name="currentsplitimagefileLabel">
+   <widget class="QLabel" name="current_split_image_file_label">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -771,7 +771,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="takescreenshotButton">
+   <widget class="QPushButton" name="take_screenshot_button">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -787,7 +787,7 @@
      <string>Take Screenshot</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="xSpinBox">
+   <widget class="QSpinBox" name="x_spinbox">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -815,7 +815,7 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="ySpinBox">
+   <widget class="QSpinBox" name="y_spinbox">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -840,7 +840,7 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QLabel" name="yLabel">
+   <widget class="QLabel" name="y_label">
     <property name="geometry">
      <rect>
       <x>81</x>
@@ -853,7 +853,7 @@
      <string>Y</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comparisonmethodComboBox">
+   <widget class="QComboBox" name="comparison_method_combobox">
     <property name="geometry">
      <rect>
       <x>125</x>
@@ -878,7 +878,7 @@
      </property>
     </item>
    </widget>
-   <widget class="QDoubleSpinBox" name="pauseDoubleSpinBox">
+   <widget class="QDoubleSpinBox" name="pause_spinbox">
     <property name="geometry">
      <rect>
       <x>155</x>
@@ -897,7 +897,7 @@
      <double>10.000000000000000</double>
     </property>
    </widget>
-   <widget class="QLabel" name="comparisonmethodLabel">
+   <widget class="QLabel" name="comparison_method_label">
     <property name="geometry">
      <rect>
       <x>7</x>
@@ -910,7 +910,7 @@
      <string>Comparison Method</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="alignregionButton">
+   <widget class="QPushButton" name="align_region_button">
     <property name="geometry">
      <rect>
       <x>5</x>
@@ -926,7 +926,7 @@
      <string>Align Region</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="groupDummySplitsCheckBox">
+   <widget class="QCheckBox" name="group_dummy_splits_checkbox">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -942,7 +942,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="selectwindowButton">
+   <widget class="QPushButton" name="select_window_button">
     <property name="geometry">
      <rect>
       <x>5</x>
@@ -958,7 +958,7 @@
      <string>Select Window</string>
     </property>
    </widget>
-   <widget class="QLabel" name="imageloopLabel">
+   <widget class="QLabel" name="image_loop_label">
     <property name="geometry">
      <rect>
       <x>379</x>
@@ -971,7 +971,7 @@
      <string>Image Loop:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="pausehotkeyLabel">
+   <widget class="QLabel" name="pause_hotkey_label">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -984,7 +984,7 @@
      <string>Pause</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="pausehotkeyLineEdit">
+   <widget class="QLineEdit" name="pause_hotkey_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -1000,7 +1000,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="setpausehotkeyButton">
+   <widget class="QPushButton" name="set_pause_hotkey_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -1016,7 +1016,7 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="loopCheckBox">
+   <widget class="QCheckBox" name="loop_checkbox">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -1038,7 +1038,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QCheckBox" name="autostartonresetCheckBox">
+   <widget class="QCheckBox" name="auto_start_on_reset_checkbox">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -1057,7 +1057,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="startImageReloadButton">
+   <widget class="QPushButton" name="start_image_reload_button">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -1073,7 +1073,7 @@
      <string>Reload Start Image</string>
     </property>
    </widget>
-   <widget class="QLabel" name="startImageLabel">
+   <widget class="QLabel" name="start_image_label">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -1086,7 +1086,7 @@
      <string>Start image:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="currentsimilaritythresholdLabel">
+   <widget class="QLabel" name="current_similarity_threshold_label">
     <property name="geometry">
      <rect>
       <x>7</x>
@@ -1099,7 +1099,7 @@
      <string>Current similarity threshold:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="currentsimilaritythresholdnumberLabel">
+   <widget class="QLabel" name="current_similarity_threshold_number_label">
     <property name="geometry">
      <rect>
       <x>171</x>
@@ -1112,7 +1112,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="captureregionwindowLabel">
+   <widget class="QLabel" name="capture_region_window_label">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -1128,7 +1128,7 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QCheckBox" name="forcePrintWindowCheckBox">
+   <widget class="QCheckBox" name="force_print_window_checkbox">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -1144,76 +1144,76 @@
      <string>Force Full Content Rendering (slower)</string>
     </property>
    </widget>
-   <zorder>splitimagefolderLabel</zorder>
-   <zorder>splitimagefolderLineEdit</zorder>
-   <zorder>browseButton</zorder>
-   <zorder>xLabel</zorder>
-   <zorder>liveimageCheckBox</zorder>
-   <zorder>selectregionButton</zorder>
-   <zorder>similaritythresholdLabel</zorder>
-   <zorder>similaritythresholdDoubleSpinBox</zorder>
-   <zorder>startautosplitterButton</zorder>
-   <zorder>resetButton</zorder>
-   <zorder>undosplitButton</zorder>
-   <zorder>skipsplitButton</zorder>
-   <zorder>pauseLabel</zorder>
-   <zorder>checkfpsButton</zorder>
-   <zorder>fpsLabel</zorder>
-   <zorder>showlivesimilarityCheckBox</zorder>
-   <zorder>showhighestsimilarityCheckBox</zorder>
-   <zorder>livesimilarityLabel</zorder>
-   <zorder>highestsimilarityLabel</zorder>
-   <zorder>splitLabel</zorder>
-   <zorder>resetLabel</zorder>
-   <zorder>skiptsplitLabel</zorder>
-   <zorder>undosplitLabel</zorder>
-   <zorder>splitLineEdit</zorder>
-   <zorder>undosplitLineEdit</zorder>
-   <zorder>skipsplitLineEdit</zorder>
-   <zorder>resetLineEdit</zorder>
-   <zorder>setsplithotkeyButton</zorder>
-   <zorder>setresethotkeyButton</zorder>
-   <zorder>setskipsplithotkeyButton</zorder>
-   <zorder>setundosplithotkeyButton</zorder>
-   <zorder>line_left</zorder>
-   <zorder>timerglobalhotkeysLabel</zorder>
-   <zorder>line_right</zorder>
-   <zorder>currentsplitimageLabel</zorder>
-   <zorder>liveImage</zorder>
-   <zorder>currentSplitImage</zorder>
-   <zorder>widthLabel</zorder>
-   <zorder>heightLabel</zorder>
-   <zorder>fpsvalueLabel</zorder>
-   <zorder>widthSpinBox</zorder>
-   <zorder>heightSpinBox</zorder>
-   <zorder>captureregionLabel</zorder>
-   <zorder>fpslimitLabel</zorder>
-   <zorder>fpslimitSpinBox</zorder>
-   <zorder>currentsplitimagefileLabel</zorder>
-   <zorder>takescreenshotButton</zorder>
-   <zorder>xSpinBox</zorder>
-   <zorder>ySpinBox</zorder>
-   <zorder>yLabel</zorder>
-   <zorder>comparisonmethodComboBox</zorder>
-   <zorder>pauseDoubleSpinBox</zorder>
-   <zorder>comparisonmethodLabel</zorder>
-   <zorder>alignregionButton</zorder>
-   <zorder>groupDummySplitsCheckBox</zorder>
-   <zorder>selectwindowButton</zorder>
-   <zorder>imageloopLabel</zorder>
-   <zorder>pausehotkeyLabel</zorder>
-   <zorder>pausehotkeyLineEdit</zorder>
-   <zorder>setpausehotkeyButton</zorder>
-   <zorder>loopCheckBox</zorder>
-   <zorder>autostartonresetCheckBox</zorder>
-   <zorder>startImageReloadButton</zorder>
-   <zorder>startImageLabel</zorder>
-   <zorder>currentsimilaritythresholdLabel</zorder>
-   <zorder>currentsimilaritythresholdnumberLabel</zorder>
-   <zorder>captureregionwindowLabel</zorder>
-   <zorder>forcePrintWindowCheckBox</zorder>
+   <zorder>split_image_folder_label</zorder>
+   <zorder>split_image_folder_input</zorder>
+   <zorder>browse_button</zorder>
+   <zorder>x_label</zorder>
+   <zorder>live_image_checkbox</zorder>
+   <zorder>select_region_button</zorder>
+   <zorder>similarity_threshold_label</zorder>
+   <zorder>similarity_threshold_spinbox</zorder>
+   <zorder>start_auto_splitter_button</zorder>
+   <zorder>reset_button</zorder>
+   <zorder>undo_split_button</zorder>
+   <zorder>skip_split_button</zorder>
+   <zorder>pause_label</zorder>
+   <zorder>check_fps_button</zorder>
+   <zorder>fps_label</zorder>
+   <zorder>show_live_similarity_checkbox</zorder>
+   <zorder>show_highest_similarity_checkbox</zorder>
+   <zorder>live_similarity_label</zorder>
+   <zorder>highest_similarity_label</zorder>
+   <zorder>split_label</zorder>
+   <zorder>reset_label</zorder>
+   <zorder>skip_split_label</zorder>
+   <zorder>undo_split_label</zorder>
+   <zorder>split_input</zorder>
+   <zorder>undo_split_input</zorder>
+   <zorder>skip_split_input</zorder>
+   <zorder>reset_input</zorder>
+   <zorder>set_split_hotkey_button</zorder>
+   <zorder>set_reset_hotkey_button</zorder>
+   <zorder>set_skip_split_hotkey_button</zorder>
+   <zorder>set_undo_split_hotkey_button</zorder>
+   <zorder>left_line</zorder>
+   <zorder>timer_global_hotkeys_label</zorder>
+   <zorder>right_line</zorder>
+   <zorder>current_split_image_label</zorder>
+   <zorder>live_image</zorder>
+   <zorder>current_split_image</zorder>
+   <zorder>width_label</zorder>
+   <zorder>height_label</zorder>
+   <zorder>fps_value_label</zorder>
+   <zorder>width_spinbox</zorder>
+   <zorder>height_spinbox</zorder>
+   <zorder>capture_region_label</zorder>
+   <zorder>fps_limit_label</zorder>
+   <zorder>fps_limit_spinbox</zorder>
+   <zorder>current_split_image_file_label</zorder>
+   <zorder>take_screenshot_button</zorder>
+   <zorder>x_spinbox</zorder>
+   <zorder>y_spinbox</zorder>
+   <zorder>y_label</zorder>
+   <zorder>comparison_method_combobox</zorder>
+   <zorder>pause_spinbox</zorder>
+   <zorder>comparison_method_label</zorder>
+   <zorder>align_region_button</zorder>
+   <zorder>group_dummy_splits_checkbox</zorder>
+   <zorder>select_window_button</zorder>
+   <zorder>image_loop_label</zorder>
+   <zorder>pause_hotkey_label</zorder>
+   <zorder>pause_hotkey_input</zorder>
+   <zorder>set_pause_hotkey_button</zorder>
+   <zorder>loop_checkbox</zorder>
+   <zorder>auto_start_on_reset_checkbox</zorder>
+   <zorder>start_image_reload_button</zorder>
+   <zorder>start_image_label</zorder>
+   <zorder>current_similarity_threshold_label</zorder>
+   <zorder>current_similarity_threshold_number_label</zorder>
+   <zorder>capture_region_window_label</zorder>
+   <zorder>force_print_window_checkbox</zorder>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -1222,62 +1222,57 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuHelp">
+   <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionView_Help"/>
-    <addaction name="actionAbout"/>
-    <addaction name="actionCheck_for_Updates"/>
-    <addaction name="actionCheck_for_Updates_on_Open"/>
+    <addaction name="action_view_help"/>
+    <addaction name="action_about"/>
+    <addaction name="action_check_for_updates"/>
+    <addaction name="action_check_for_updates_on_open"/>
    </widget>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSave_Settings"/>
-    <addaction name="actionSave_Settings_As"/>
-    <addaction name="actionLoad_Settings"/>
+    <addaction name="action_save_settings"/>
+    <addaction name="action_save_settings_as"/>
+    <addaction name="action_load_settings"/>
    </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuHelp"/>
+   <addaction name="menu_file"/>
+   <addaction name="menu_help"/>
   </widget>
-  <action name="actionView_Help">
+  <action name="action_view_help">
    <property name="text">
     <string>View Help</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="action_about">
    <property name="text">
     <string>About</string>
    </property>
   </action>
-  <action name="actionSplit_Settings">
-   <property name="text">
-    <string>Split Image Settings</string>
-   </property>
-  </action>
-  <action name="actionSave_Settings">
+  <action name="action_save_settings">
    <property name="text">
     <string>Save Settings</string>
    </property>
   </action>
-  <action name="actionLoad_Settings">
+  <action name="action_load_settings">
    <property name="text">
     <string>Load Settings</string>
    </property>
   </action>
-  <action name="actionSave_Settings_As">
+  <action name="action_save_settings_as">
    <property name="text">
     <string>Save Settings As...</string>
    </property>
   </action>
-  <action name="actionCheck_for_Updates">
+  <action name="action_check_for_updates">
    <property name="text">
     <string>Check for Updates...</string>
    </property>
   </action>
-  <action name="actionCheck_for_Updates_on_Open">
+  <action name="action_check_for_updates_on_open">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1293,23 +1288,23 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>splitimagefolderLineEdit</tabstop>
-  <tabstop>xSpinBox</tabstop>
-  <tabstop>ySpinBox</tabstop>
-  <tabstop>widthSpinBox</tabstop>
-  <tabstop>heightSpinBox</tabstop>
-  <tabstop>fpslimitSpinBox</tabstop>
-  <tabstop>liveimageCheckBox</tabstop>
-  <tabstop>comparisonmethodComboBox</tabstop>
-  <tabstop>showlivesimilarityCheckBox</tabstop>
-  <tabstop>showhighestsimilarityCheckBox</tabstop>
-  <tabstop>similaritythresholdDoubleSpinBox</tabstop>
-  <tabstop>pauseDoubleSpinBox</tabstop>
-  <tabstop>splitLineEdit</tabstop>
-  <tabstop>resetLineEdit</tabstop>
-  <tabstop>skipsplitLineEdit</tabstop>
-  <tabstop>undosplitLineEdit</tabstop>
-  <tabstop>groupDummySplitsCheckBox</tabstop>
+  <tabstop>split_image_folder_input</tabstop>
+  <tabstop>x_spinbox</tabstop>
+  <tabstop>y_spinbox</tabstop>
+  <tabstop>width_spinbox</tabstop>
+  <tabstop>height_spinbox</tabstop>
+  <tabstop>fps_limit_spinbox</tabstop>
+  <tabstop>live_image_checkbox</tabstop>
+  <tabstop>comparison_method_combobox</tabstop>
+  <tabstop>show_live_similarity_checkbox</tabstop>
+  <tabstop>show_highest_similarity_checkbox</tabstop>
+  <tabstop>similarity_threshold_spinbox</tabstop>
+  <tabstop>pause_spinbox</tabstop>
+  <tabstop>split_input</tabstop>
+  <tabstop>reset_input</tabstop>
+  <tabstop>skip_split_input</tabstop>
+  <tabstop>undo_split_input</tabstop>
+  <tabstop>group_dummy_splits_checkbox</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

@@ -13,7 +13,7 @@
 ImageHash
 keyboard
 numpy>=1.22.0rc1
-opencv-python<=4.5.3.56  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
+opencv-python
 packaging
 Pillow
 PyQt6

@@ -16,6 +16,7 @@ on:
       - master
       - dev
       - dev*
+      - 2.0.0
     paths:
       - '**.py'
       - '**.pyi'

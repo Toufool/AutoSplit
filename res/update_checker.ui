@@ -46,7 +46,7 @@
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
-  <widget class="QLabel" name="labelUpdateStatus">
+  <widget class="QLabel" name="update_status_label">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -65,7 +65,7 @@
     <string>There is an update available for AutoSplit.</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelCurrentVersion">
+  <widget class="QLabel" name="current_version_label">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -78,7 +78,7 @@
     <string>Current Version:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelLatestVersion">
+  <widget class="QLabel" name="latest_version_label">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -91,7 +91,7 @@
     <string>Latest Version:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelGoToDownload">
+  <widget class="QLabel" name="go_to_download_label">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -104,7 +104,7 @@
     <string>Open download page?</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonLeft">
+  <widget class="QPushButton" name="left_button">
    <property name="geometry">
     <rect>
      <x>150</x>
@@ -120,7 +120,7 @@
     <string>Open</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonRight">
+  <widget class="QPushButton" name="right_button">
    <property name="geometry">
     <rect>
      <x>230</x>
@@ -133,7 +133,7 @@
     <string>Later</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelCurrentVersionNumber">
+  <widget class="QLabel" name="current_version_number_label">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -146,7 +146,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="labelLatestVersionNumber">
+  <widget class="QLabel" name="latest_version_number_label">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -159,7 +159,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBoxDoNotAskMeAgain">
+  <widget class="QCheckBox" name="do_not_ask_again_checkbox">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -178,7 +178,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>pushButtonRight</sender>
+   <sender>right_button</sender>
    <signal>clicked()</signal>
    <receiver>UpdateChecker</receiver>
    <slot>close()</slot>

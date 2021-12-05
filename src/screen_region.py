@@ -19,7 +19,7 @@ DWMWA_EXTENDED_FRAME_BOUNDS = 9
 user32 = ctypes.windll.user32
 
 
-def selectRegion(autosplit: AutoSplit):
+def select_region(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -41,9 +41,9 @@ def selectRegion(autosplit: AutoSplit):
     while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
         autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
 
-    windowText = win32gui.GetWindowText(autosplit.hwnd)
-    if autosplit.hwnd > 0 or windowText:
-        autosplit.hwnd_title = windowText
+    window_text = win32gui.GetWindowText(autosplit.hwnd)
+    if autosplit.hwnd > 0 or window_text:
+        autosplit.hwnd_title = window_text
 
     # Convert the Desktop Coordinates to Window Coordinates
     # Pull the window's coordinates relative to desktop into selection
@@ -57,9 +57,9 @@ def selectRegion(autosplit: AutoSplit):
     # TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
     # Research needs to be done to figure out why it was used it over win32gui in the first place...
     # I have a feeling it was due to a misunderstanding and not getting the correct parent window before.
-    windowRect = win32gui.GetWindowRect(autosplit.hwnd)
-    offset_left = autosplit.selection.left - windowRect[0]
-    offset_top = autosplit.selection.top - windowRect[1]
+    window_rect = win32gui.GetWindowRect(autosplit.hwnd)
+    offset_left = autosplit.selection.left - window_rect[0]
+    offset_top = autosplit.selection.top - window_rect[1]
 
     autosplit.selection.left = selector.left - (autosplit.selection.left - offset_left)
     autosplit.selection.top = selector.top - (autosplit.selection.top - offset_top)
@@ -69,16 +69,16 @@ def selectRegion(autosplit: AutoSplit):
     # Delete that widget since it is no longer used from here on out
     del selector
 
-    autosplit.widthSpinBox.setValue(width)
-    autosplit.heightSpinBox.setValue(height)
-    autosplit.xSpinBox.setValue(autosplit.selection.left)
-    autosplit.ySpinBox.setValue(autosplit.selection.top)
+    autosplit.width_spinbox.setValue(width)
+    autosplit.height_spinbox.setValue(height)
+    autosplit.x_spinbox.setValue(autosplit.selection.left)
+    autosplit.y_spinbox.setValue(autosplit.selection.top)
 
     # check if live image needs to be turned on or just set a single image
-    autosplit.checkLiveImage()
+    autosplit.check_live_image()
 
 
-def selectWindow(autosplit: AutoSplit):
+def select_window(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -102,9 +102,9 @@ def selectWindow(autosplit: AutoSplit):
     while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
         autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
 
-    windowText = win32gui.GetWindowText(autosplit.hwnd)
-    if autosplit.hwnd > 0 or windowText:
-        autosplit.hwnd_title = windowText
+    window_text = win32gui.GetWindowText(autosplit.hwnd)
+    if autosplit.hwnd > 0 or window_text:
+        autosplit.hwnd_title = window_text
 
     # getting window bounds
     # on windows there are some invisble pixels that are not accounted for
@@ -117,18 +117,18 @@ def selectWindow(autosplit: AutoSplit):
     autosplit.selection.right = 8 + selection[2]
     autosplit.selection.bottom = 31 + selection[3]
 
-    autosplit.widthSpinBox.setValue(selection[2])
-    autosplit.heightSpinBox.setValue(selection[3])
-    autosplit.xSpinBox.setValue(autosplit.selection.left)
-    autosplit.ySpinBox.setValue(autosplit.selection.top)
+    autosplit.width_spinbox.setValue(selection[2])
+    autosplit.height_spinbox.setValue(selection[3])
+    autosplit.x_spinbox.setValue(autosplit.selection.left)
+    autosplit.y_spinbox.setValue(autosplit.selection.top)
 
-    autosplit.checkLiveImage()
+    autosplit.check_live_image()
 
 
-def alignRegion(autosplit: AutoSplit):
+def align_region(autosplit: AutoSplit):
     # check to see if a region has been set
     if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
-        error_messages.regionError()
+        error_messages.region()
         return
     # This is the image used for aligning the capture region
     # to the best fit for the user.
@@ -146,7 +146,7 @@ def alignRegion(autosplit: AutoSplit):
 
     # shouldn't need this, but just for caution, throw a type error if file is not a valid image file
     if template is None:
-        error_messages.alignRegionImageTypeError()
+        error_messages.align_region_image_type()
         return
 
     # Obtaining the capture of a region which contains the
@@ -154,7 +154,7 @@ def alignRegion(autosplit: AutoSplit):
     capture = capture_windows.capture_region(
         autosplit.hwnd,
         autosplit.selection,
-        autosplit.forcePrintWindowCheckBox.isChecked())
+        autosplit.force_print_window_checkbox.isChecked())
     capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
     # Obtain the best matching point for the template within the
@@ -197,7 +197,7 @@ def alignRegion(autosplit: AutoSplit):
     # Go ahead and check if this satisfies our requirement before setting the region
     # We don't want a low similarity image to be aligned.
     if best_match < 0.9:
-        error_messages.alignmentNotMatchedError()
+        error_messages.alignment_not_matched()
         return
 
     # The new region can be defined by using the min_loc point and the
@@ -207,22 +207,22 @@ def alignRegion(autosplit: AutoSplit):
     autosplit.selection.right = autosplit.selection.left + best_width
     autosplit.selection.bottom = autosplit.selection.top + best_height
 
-    autosplit.xSpinBox.setValue(autosplit.selection.left)
-    autosplit.ySpinBox.setValue(autosplit.selection.top)
-    autosplit.widthSpinBox.setValue(best_width)
-    autosplit.heightSpinBox.setValue(best_height)
+    autosplit.x_spinbox.setValue(autosplit.selection.left)
+    autosplit.y_spinbox.setValue(autosplit.selection.top)
+    autosplit.width_spinbox.setValue(best_width)
+    autosplit.height_spinbox.setValue(best_height)
 
 
-def validateBeforeComparison(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
+def validate_before_comparison(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
     error = None
     if not autosplit.split_image_directory:
-        error = error_messages.splitImageDirectoryError
+        error = error_messages.split_image_directory
     elif not os.path.isdir(autosplit.split_image_directory):
-        error = error_messages.splitImageDirectoryNotFoundError
+        error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.split_image_directory):
-        error = error_messages.splitImageDirectoryEmpty
+        error = error_messages.split_image_directory_empty
     elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
-        error = error_messages.regionError
+        error = error_messages.region
     if error and show_error:
         error()
     return not error
@@ -287,10 +287,10 @@ class SelectRegionWidget(BaseSelectWidget):
 
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
-            qPainter = QtGui.QPainter(self)
-            qPainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
-            qPainter.setBrush(QtGui.QColor("opaque"))
-            qPainter.drawRect(QtCore.QRect(self.__begin, self.__end))
+            qpainter = QtGui.QPainter(self)
+            qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
+            qpainter.setBrush(QtGui.QColor("opaque"))
+            qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent):
         self.__begin = a0.position().toPoint()
