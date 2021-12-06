@@ -118,3 +118,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r "scripts/requirements.txt"
       - run: scripts/build.bat
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: AutoSplit
+          path: /dist/AutoSplit.exe

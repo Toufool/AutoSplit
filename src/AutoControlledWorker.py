@@ -21,7 +21,6 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.show_error_signal.emit(error_messages.stdin_lost)
                 break
             # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
-            # TODO: See if we can also get LiveSplit to wait on Exit in "AutoSplit Integration"
             # For now this can only used in a Development environment
             if line == "kill":
                 self.autosplit.closeEvent()
