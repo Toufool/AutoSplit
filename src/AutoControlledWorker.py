@@ -26,17 +26,17 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.closeEvent()
                 break
             if line == "start":
-                self.autosplit.start_suto_splitter()
+                self.autosplit.start_auto_splitter()
             elif line in {"split", "skip"}:
-                self.autosplit.start_skip_split()
+                self.autosplit.skip_split_signal.emit()
             elif line == "undo":
-                self.autosplit.start_undo_split()
+                self.autosplit.undo_split_signal.emit()
             elif line == "reset":
-                self.autosplit.start_reset()
+                self.autosplit.reset_signal.emit()
             elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
                 self.autosplit.load_settings_file_path = line[9:]
                 settings.load_settings(self.autosplit, load_settings_from_livesplit=True)
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
-            #     self.start_pause()
+            #     self.pause_signal.emit()

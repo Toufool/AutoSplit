@@ -77,9 +77,13 @@ extension-pkg-allow-list = ["PyQt6", "win32ui"]
 [tool.pylint.FORMAT]
 max-line-length = 120
 
+[tool.pylint.DESIGN]
+max-attributes = 15
+
 [tool.pylint.'MESSAGES CONTROL']
 # Same as SonarLint
 max-complexity = 15
+# At least same as max-complexity
 max-branches = 15
 # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
 module-naming-style = "any"

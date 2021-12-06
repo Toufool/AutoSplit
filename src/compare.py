@@ -12,24 +12,7 @@ histogram_size = [8, 8, 8]
 ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 
 
-def compare_image(
-    comparison_method: int,
-    image: Optional[cv2.ndarray],
-    capture: Optional[cv2.ndarray],
-    mask: Optional[cv2.ndarray] = None
-):
-    if image is None or capture is None:
-        return 0.0
-    if comparison_method == 0:
-        return compare_l2_norm(image, capture, mask)
-    if comparison_method == 1:
-        return compare_histograms(image, capture, mask)
-    if comparison_method == 2:
-        return compare_phash(image, capture, mask)
-    return 0.0
-
-
-def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None) -> float:
+def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
     Compares two images by calculating their histograms, normalizing
     them, and then comparing them using Bhattacharyya distance.
@@ -67,11 +50,11 @@ def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv
         else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
 
     if not max_error:
-        return 0
+        return 0.0
     return 1 - (error / max_error)
 
 
-def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None) -> float:
+def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
     Checks if the source is located within the capture by using the sum of square differences.
     The mask is used to search for non-rectangular images within the capture
@@ -95,7 +78,7 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[c
     return 1 - (min_val / max_error)
 
 
-def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None) -> float:
+def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
     Compares the pHash of the two given images and returns the similarity between the two.
 
@@ -110,7 +93,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     # each of the images. As a result of this, this function is not going to be very
     # helpful for large masks as the images when shrinked down to 8x8 will mostly be
     # the same
-    if mask:
+    if mask is not None:
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 
@@ -118,15 +101,15 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     capture_hash = imagehash.phash(Image.fromarray(capture))
     hash_diff = source_hash - capture_hash
     if not hash_diff:
-        return 0
+        return 0.0
     return 1 - (hash_diff / 64.0)
 
 
-def check_if_image_has_transparency(image: cv2.ndarray) -> bool:
+def check_if_image_has_transparency(image: cv2.ndarray):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False
-    mean = np.mean(image[:, :, 3])
+    mean: float = np.mean(image[:, :, 3])
     if mean == 0:
         # Non-transparent images code path is usually faster and simpler, so let's return that
         return False
