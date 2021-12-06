@@ -263,15 +263,15 @@
      <rect>
       <x>5</x>
       <y>225</y>
-      <width>53</width>
-      <height>21</height>
+      <width>54</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Max FPS</string>
+     <string>Avg. FPS</string>
     </property>
    </widget>
    <widget class="QLabel" name="fps_label">
@@ -662,7 +662,7 @@
    <widget class="QLabel" name="fps_value_label">
     <property name="geometry">
      <rect>
-      <x>58</x>
+      <x>60</x>
       <y>225</y>
       <width>26</width>
       <height>20</height>

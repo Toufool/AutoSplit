@@ -41,6 +41,7 @@ CREATE_NEW_ISSUE_MESSAGE = "Please create a New Issue at <a href='https://github
     "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below"
 START_IMAGE_TEXT = "Start Image"
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
+CHECK_FPS_ITERATIONS = 10
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
@@ -446,15 +447,30 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # run X iterations of screenshotting capture region + comparison + displaying.
         t0 = time()
-        while count < 10:
-            capture = self.__get_capture_for_comparison()
-            _ = image.compare_with_capture(self, capture)
-            count += 1
+        for image in images:
+            count = 0
+            while count < CHECK_FPS_ITERATIONS:
+                capture = self.__get_capture_for_comparison()
+                _ = image.compare_with_capture(self, capture)
+                # Fallback to capture bytes just for test and type safety
+                numpy_array = image.bytes if image.bytes is not None else capture
+                # Set current split image in UI
+                split_image_display = cv2.cvtColor(numpy_array, cv2.COLOR_BGRA2RGBA)
+                qimage = QtGui.QImage(split_image_display.data,
+                                      split_image_display.shape[1],
+                                      split_image_display.shape[0],
+                                      split_image_display.shape[1] * split_image_display.shape[2],
+                                      QtGui.QImage.Format.Format_RGBA8888)
+                self.current_split_image.setPixmap(QtGui.QPixmap(qimage).scaled(
+                    self.current_split_image.size(),
+                    QtCore.Qt.AspectRatioMode.IgnoreAspectRatio))
+                count += 1
+        self.current_split_image.clear()
 
         # calculate FPS
         t1 = time()
-        fps = str(int(10 / (t1 - t0)))
-        self.fps_value_label.setText(fps)
+        fps = int((CHECK_FPS_ITERATIONS * len(images)) / (t1 - t0))
+        self.fps_value_label.setText(str(fps))
 
     def __is_current_split_out_of_range(self):
         return self.split_image_number < 0 \
