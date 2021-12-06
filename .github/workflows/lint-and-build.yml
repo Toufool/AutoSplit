@@ -39,6 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           pip install -r "scripts/requirements.txt"
           npm install -g pyright
       - run: scripts/compile_resources.bat
@@ -59,6 +60,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ job.name }}
@@ -78,6 +80,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ job.name }}
@@ -97,6 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ job.name }}
@@ -116,5 +120,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/build.bat
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: AutoSplit (Python ${{ matrix.python-version }})
+          path: dist/AutoSplit.exe

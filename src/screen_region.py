@@ -41,10 +41,6 @@ def select_region(autosplit: AutoSplit):
     while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
         autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
 
-    window_text = win32gui.GetWindowText(autosplit.hwnd)
-    if autosplit.hwnd > 0 or window_text:
-        autosplit.hwnd_title = window_text
-
     # Convert the Desktop Coordinates to Window Coordinates
     # Pull the window's coordinates relative to desktop into selection
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
@@ -102,10 +98,6 @@ def select_window(autosplit: AutoSplit):
     while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
         autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
 
-    window_text = win32gui.GetWindowText(autosplit.hwnd)
-    if autosplit.hwnd > 0 or window_text:
-        autosplit.hwnd_title = window_text
-
     # getting window bounds
     # on windows there are some invisble pixels that are not accounted for
     # also the top bar with the window name is not accounted for
@@ -155,7 +147,6 @@ def align_region(autosplit: AutoSplit):
         autosplit.hwnd,
         autosplit.selection,
         autosplit.force_print_window_checkbox.isChecked())
-    capture = cv2.cvtColor(capture, cv2.COLOR_BGRA2BGR)
 
     # Obtain the best matching point for the template within the
     # capture. This assumes that the template is actually smaller
@@ -213,7 +204,7 @@ def align_region(autosplit: AutoSplit):
     autosplit.height_spinbox.setValue(best_height)
 
 
-def validate_before_comparison(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
+def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
     error = None
     if not autosplit.split_image_directory:
         error = error_messages.split_image_directory

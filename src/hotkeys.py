@@ -63,8 +63,18 @@ def send_command(autosplit: AutoSplit, command: str):
         raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
 
 
-# Supports sending the appropriate scan code for all the special cases
+def _unhook(hotkey: Optional[Callable[[], None]]):
+    try:
+        if hotkey:
+            keyboard.unhook_key(hotkey)
+    except (AttributeError, KeyError, ValueError):
+        pass
+
+
 def _send_hotkey(key_or_scan_code: Union[int, str]):
+    """
+    Supports sending the appropriate scan code for all the special cases
+    """
     if not key_or_scan_code:
         return
 
@@ -130,7 +140,7 @@ def __is_key_already_set(autosplit: AutoSplit, key_name: str):
 # --------------------HOTKEYS--------------------------
 # TODO: Refactor to de-duplicate all this code, including settings_file.py
 # Going to comment on one func, and others will be similar.
-def set_split_hotkey(autosplit: AutoSplit):
+def set_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
     autosplit.set_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
 
     # disable some buttons
@@ -138,22 +148,10 @@ def set_split_hotkey(autosplit: AutoSplit):
 
     # new thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
-    def callback(hotkey: Callable[[], None]):
-        # try to remove the previously set hotkey if there is one.
-        try:
-            keyboard.unhook_key(hotkey)
-        # KeyError was coming up when loading the program and
-        # the lineEdit area was empty (no hotkey set), then you
-        # set one, reload the setting once back to blank works,
-        # but if you click reload settings again, it errors
-        # we can just have it pass, but don'thread want to throw in
-        # generic exception here in case another one of these
-        # pops up somewhere.
-        except (AttributeError, KeyError):
-            pass
-
+    def callback():
+        # use the selected key OR
         # wait until user presses the hotkey, then keyboard module reads the input
-        key_name = __get_key_name(keyboard.read_event(True))
+        key_name = preselected_key if preselected_key else __get_key_name(keyboard.read_event(True))
         try:
             # If the key the user presses is equal to itself or another hotkey already set,
             # this causes issues. so here, it catches that, and will make no changes to the hotkey.
@@ -181,26 +179,22 @@ def set_split_hotkey(autosplit: AutoSplit):
         # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
         autosplit.split_hotkey = keyboard.hook_key(
             key_name,
-            lambda error: _hotkey_action(error, key_name, autosplit.start_suto_splitter))
+            lambda error: _hotkey_action(error, key_name, autosplit.start_auto_splitter))
         autosplit.split_input.setText(key_name)
-        autosplit.split_key = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    thread = threading.Thread(target=callback, args=(autosplit.split_hotkey,))
+    # try to remove the previously set hotkey if there is one.
+    _unhook(autosplit.split_hotkey)
+    thread = threading.Thread(target=callback)
     thread.start()
 
 
-def set_reset_hotkey(autosplit: AutoSplit):
+def set_reset_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
     autosplit.set_reset_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
-    def callback(hotkey: Callable[[], None]):
-        try:
-            keyboard.unhook_key(hotkey)
-        except (AttributeError, KeyError):
-            pass
-
-        key_name = __get_key_name(keyboard.read_event(True))
+    def callback():
+        key_name = preselected_key if preselected_key else __get_key_name(keyboard.read_event(True))
 
         try:
             if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
@@ -212,26 +206,21 @@ def set_reset_hotkey(autosplit: AutoSplit):
 
         autosplit.reset_hotkey = keyboard.hook_key(
             key_name,
-            lambda error: _hotkey_action(error, key_name, autosplit.start_reset))
+            lambda error: _hotkey_action(error, key_name, autosplit.reset_signal.emit))
         autosplit.reset_input.setText(key_name)
-        autosplit.reset_key = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    thread = threading.Thread(target=callback, args=(autosplit.reset_hotkey,))
+    _unhook(autosplit.reset_hotkey)
+    thread = threading.Thread(target=callback)
     thread.start()
 
 
-def set_skip_split_hotkey(autosplit: AutoSplit):
+def set_skip_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
     autosplit.set_skip_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
-    def callback(hotkey: Callable[[], None]):
-        try:
-            keyboard.unhook_key(hotkey)
-        except (AttributeError, KeyError):
-            pass
-
-        key_name = __get_key_name(keyboard.read_event(True))
+    def callback():
+        key_name = preselected_key if preselected_key else __get_key_name(keyboard.read_event(True))
 
         try:
             if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
@@ -243,26 +232,21 @@ def set_skip_split_hotkey(autosplit: AutoSplit):
 
         autosplit.skip_split_hotkey = keyboard.hook_key(
             key_name,
-            lambda error: _hotkey_action(error, key_name, autosplit.start_skip_split))
+            lambda error: _hotkey_action(error, key_name, autosplit.skip_split_signal.emit))
         autosplit.skip_split_input.setText(key_name)
-        autosplit.skip_split_key = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    thread = threading.Thread(target=callback, args=(autosplit.skip_split_hotkey,))
+    _unhook(autosplit.skip_split_hotkey)
+    thread = threading.Thread(target=callback)
     thread.start()
 
 
-def set_undo_split_hotkey(autosplit: AutoSplit):
+def set_undo_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
     autosplit.set_undo_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
-    def callback(hotkey: Callable[[], None]):
-        try:
-            keyboard.unhook_key(hotkey)
-        except (AttributeError, KeyError):
-            pass
-
-        key_name = __get_key_name(keyboard.read_event(True))
+    def callback():
+        key_name = preselected_key if preselected_key else __get_key_name(keyboard.read_event(True))
 
         try:
             if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
@@ -274,26 +258,21 @@ def set_undo_split_hotkey(autosplit: AutoSplit):
 
         autosplit.undo_split_hotkey = keyboard.hook_key(
             key_name,
-            lambda error: _hotkey_action(error, key_name, autosplit.start_undo_split))
+            lambda error: _hotkey_action(error, key_name, autosplit.undo_split_signal.emit))
         autosplit.undo_split_input.setText(key_name)
-        autosplit.undo_split_key = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    thread = threading.Thread(target=callback, args=(autosplit.undo_split_hotkey,))
+    _unhook(autosplit.undo_split_hotkey)
+    thread = threading.Thread(target=callback)
     thread.start()
 
 
-def set_pause_hotkey(autosplit: AutoSplit):
+def set_pause_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
     autosplit.set_pause_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
-    def callback(hotkey: Callable[[], None]):
-        try:
-            keyboard.unhook_key(hotkey)
-        except (AttributeError, KeyError):
-            pass
-
-        key_name = __get_key_name(keyboard.read_event(True))
+    def callback():
+        key_name = preselected_key if preselected_key else __get_key_name(keyboard.read_event(True))
 
         try:
             if __is_key_already_set(autosplit, key_name) or (key_name != "+" and "+" in key_name):
@@ -305,10 +284,10 @@ def set_pause_hotkey(autosplit: AutoSplit):
 
         autosplit.pause_hotkey = keyboard.hook_key(
             key_name,
-            lambda error: _hotkey_action(error, key_name, autosplit.start_pause))
+            lambda error: _hotkey_action(error, key_name, autosplit.pause_signal.emit))
         autosplit.pause_hotkey_input.setText(key_name)
-        autosplit.undo_split_key = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    thread = threading.Thread(target=callback, args=(autosplit.pause_hotkey,))
+    _unhook(autosplit.pause_hotkey)
+    thread = threading.Thread(target=callback)
     thread.start()

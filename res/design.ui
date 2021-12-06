@@ -189,6 +189,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="reset_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -205,6 +208,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="undo_split_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>494</x>
@@ -221,6 +227,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="skip_split_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>560</x>
@@ -254,15 +263,15 @@
      <rect>
       <x>5</x>
       <y>225</y>
-      <width>53</width>
-      <height>21</height>
+      <width>54</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Max FPS</string>
+     <string>Avg. FPS</string>
     </property>
    </widget>
    <widget class="QLabel" name="fps_label">
@@ -653,7 +662,7 @@
    <widget class="QLabel" name="fps_value_label">
     <property name="geometry">
      <rect>
-      <x>58</x>
+      <x>60</x>
       <y>225</y>
       <width>26</width>
       <height>20</height>
@@ -727,7 +736,7 @@
      <string>FPS Limit:</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="fps_limit_spinbox">
+   <widget class="QSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
       <x>62</x>
@@ -739,20 +748,20 @@
     <property name="prefix">
      <string/>
     </property>
-    <property name="decimals">
-     <number>0</number>
-    </property>
     <property name="minimum">
-     <double>30.000000000000000</double>
+     <number>30</number>
     </property>
     <property name="maximum">
-     <double>5000.000000000000000</double>
+     <number>5000</number>
     </property>
     <property name="singleStep">
-     <double>1.000000000000000</double>
+     <number>1</number>
     </property>
     <property name="value">
-     <double>60.000000000000000</double>
+     <number>60</number>
+    </property>
+    <property name="decimals" stdset="0">
+     <number>0</number>
     </property>
    </widget>
    <widget class="QLabel" name="current_split_image_file_label">

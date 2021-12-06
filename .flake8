@@ -3,7 +3,10 @@ color=always
 max-line-length=120
 ; Auto generated
 exclude=src/gen/
-ignores=Y015
+; Linebreak before binary operator
+; Allow default value other than "..."
+; Allow imports at the bottom of file
+ignore=W503,Y015,E402
 per-file-ignores=
     ; Quotes
     __init__.pyi:Q000

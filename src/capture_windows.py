@@ -47,16 +47,16 @@ def capture_region(hwnd: int, selection: Rect, force_print_window: bool):
     # The window type is not yet known, let's find out!
     if is_accelerated_window is None:
         # We need to get the image at least once to check if it's full black
-        image = __get_image(hwnd, selection, False)
+        image = __get_capture_image(hwnd, selection, False)
         # TODO check for first non-black pixel, no need to iterate through the whole image
         is_accelerated_window = not np.count_nonzero(image)
         accelerated_windows[hwnd] = is_accelerated_window
-        return __get_image(hwnd, selection, True) if is_accelerated_window else image
+        return __get_capture_image(hwnd, selection, True) if is_accelerated_window else image
 
-    return __get_image(hwnd, selection, is_accelerated_window)
+    return __get_capture_image(hwnd, selection, is_accelerated_window)
 
 
-def __get_image(hwnd: int, selection: Rect, print_window: bool = False):
+def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
     width: int = selection.right - selection.left
     height: int = selection.bottom - selection.top
     # If the window closes while it's being manipulated, it could cause a crash

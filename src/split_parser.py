@@ -4,9 +4,9 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
-import cv2
 
 import error_messages
+from AutoSplitImage import AutoSplitImage, ImageType
 
 
 [DUMMY_FLAG,
@@ -141,82 +141,57 @@ def flags_from_filename(filename: str):
     return flags
 
 
-def is_reset_image(filename: str):
-    """
-    Checks if the image is used for resetting
+def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
+    for image in split_image:
+        if image.image_type == image_type:
+            split_image.remove(image)
+            return image
 
-    @param filename: String containing the file's name
-    @return: True if its a reset image
-    """
-    return "RESET" in filename.upper()
-
-
-def is_start_auto_splitter_image(filename: str):
-    """
-    Checks if the image is used to start AutoSplit
-
-    @param filename: String containing the file's name
-    @return: True if its a reset image
-    """
-    return "START_AUTO_SPLITTER" in filename.upper()
+    return None
 
 
-def remove_start_auto_splitter_image(split_image_filenames: list[str]):
-    start_auto_splitter_image_file = None
-    for image in split_image_filenames:
-        if is_start_auto_splitter_image(image):
-            start_auto_splitter_image_file = image
-            break
+def parse_and_validate_images(autosplit: AutoSplit):
+    # Get split images
+    all_images = [
+        AutoSplitImage(os.path.join(autosplit.split_image_directory, image_name))
+        for image_name
+        in os.listdir(autosplit.split_image_directory)]
 
-    if start_auto_splitter_image_file is None:
-        return
+    # Find non-split images and then remove them from the list
+    autosplit.start_image = __pop_image_type(all_images, ImageType.START)
+    autosplit.reset_image = __pop_image_type(all_images, ImageType.RESET)
+    autosplit.split_images = all_images
 
-    split_image_filenames.remove(start_auto_splitter_image_file)
-
-
-# TODO: When split, reset and start image are all a proper class
-# let's also extract reset and start from the list here and return them
-def validate_images_before_parsing(autosplit: AutoSplit):
-    already_found_reset_image = False
-    already_found_start_image = False
     # Make sure that each of the images follows the guidelines for correct format
     # according to all of the settings selected by the user.
-    for image in autosplit.split_image_filenames:
+    for image in autosplit.split_images:
         # Test for image without transparency
-        if (cv2.imread(os.path.join(autosplit.split_image_directory, image), cv2.IMREAD_COLOR) is None
-                # Test for image with transparency
-                and cv2.imread(os.path.join(autosplit.split_image_directory, image), cv2.IMREAD_UNCHANGED) is None):
-            # Opencv couldn't open this file as an image, this isn't a correct
-            # file format that is supported
+        if image.bytes is None:
             autosplit.gui_changes_on_reset()
-            error_messages.image_type(image)
-            return
+            return False
 
         # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
         if (not autosplit.pause_hotkey_input.text()
-                and flags_from_filename(image) & PAUSE_FLAG == PAUSE_FLAG
+                and image.check_flag(PAUSE_FLAG)
                 and not autosplit.is_auto_controlled):
             autosplit.gui_changes_on_reset()
             error_messages.pause_hotkey()
-            return
+            return False
 
         # Check that there's only one reset image
-        if is_reset_image(image):
+        if image.image_type == ImageType.RESET:
             # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
             if not autosplit.reset_input.text() and not autosplit.is_auto_controlled:
                 autosplit.gui_changes_on_reset()
                 error_messages.reset_hotkey()
-                return
-            if already_found_reset_image:
-                autosplit.gui_changes_on_reset()
-                error_messages.multiple_keyword_images("reset")
-                return
-            already_found_reset_image = True
+                return False
+            autosplit.gui_changes_on_reset()
+            error_messages.multiple_keyword_images("reset")
+            return False
 
-        # Check that there's only one auto_start_autosplitter image
-        if is_start_auto_splitter_image(image):
-            if already_found_start_image:
-                autosplit.gui_changes_on_reset()
-                error_messages.multiple_keyword_images("start_auto_splitter")
-                return
-            already_found_start_image = True
+        # Check that there's only one start image
+        if image.image_type == ImageType.START:
+            autosplit.gui_changes_on_reset()
+            error_messages.multiple_keyword_images("start_auto_splitter")
+            return False
+    return True
