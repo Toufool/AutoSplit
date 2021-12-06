@@ -36,9 +36,9 @@ reportUnknownMemberType = "none"
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
 [tool.pylint.REPORTS]
 # Just like default but any error will make drop to 9 or less
-evaluation="10.0 - error - ((float(warning + refactor + convention) / statement) * 10)"
+evaluation = "10.0 - error - ((float(warning + refactor + convention) / statement) * 10)"
 [tool.pylint.MASTER]
-fail-under=9.0
+fail-under = 9.0
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
 load-plugins = [
   "pylint.extensions.emptystring",
@@ -71,18 +71,27 @@ ignore-paths = [
   "^src/gen/.*$",
 ]
 # No need to mention the fixmes
-disable=["fixme"]
+disable = ["fixme"]
 extension-pkg-allow-list = ["PyQt6", "win32ui"]
 
 [tool.pylint.FORMAT]
 max-line-length = 120
 
 [tool.pylint.'MESSAGES CONTROL']
+# Same as SonarLint
+max-complexity = 15
+max-branches = 15
+# https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
+module-naming-style = "any"
+# Can't make private class with PascalCase
+class-rgx = "_?_?[a-zA-Z]+?$"
+good-names = [
+  # PyQt methods
+  "closeEvent", "paintEvent", "keyPressEvent", "mousePressEvent", "mouseMoveEvent", "mouseReleaseEvent",
+  # https://github.com/PyCQA/pylint/issues/2018
+  "x", "y", "a0", "i", "t0", "t1"]
 disable = [
   "missing-docstring",
-  # TODO: We want to configure this
-  # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
-  "invalid-name",
   # We group imports
   "wrong-import-position",
   # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride

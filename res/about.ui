@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>aboutAutoSplitWidget</class>
- <widget class="QWidget" name="aboutAutoSplitWidget">
+ <class>AboutAutoSplitWidget</class>
+ <widget class="QWidget" name="AboutAutoSplitWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,7 +34,7 @@
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
-  <widget class="QPushButton" name="okButton">
+  <widget class="QPushButton" name="ok_button">
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -47,7 +47,7 @@
     <string>OK</string>
    </property>
   </widget>
-  <widget class="QLabel" name="createdbyLabel">
+  <widget class="QLabel" name="created_by_label">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -60,7 +60,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://twitter.com/toufool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Maintained by &lt;a href=&quot;https://twitter.com/Avasam06&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Avasam&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLabel" name="versionLabel">
+  <widget class="QLabel" name="version_label">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -73,7 +73,7 @@
     <string>Version: </string>
    </property>
   </widget>
-  <widget class="QLabel" name="donatetextLabel">
+  <widget class="QLabel" name="donate_text_label">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -90,7 +90,7 @@ consider donating. Thank you!</string>
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="donatebuttonLabel">
+  <widget class="QLabel" name="donate_button_label">
    <property name="geometry">
     <rect>
      <x>60</x>
@@ -109,7 +109,7 @@ consider donating. Thank you!</string>
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="iconLabel">
+  <widget class="QLabel" name="icon_label">
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -131,9 +131,9 @@ consider donating. Thank you!</string>
  </resources>
  <connections>
   <connection>
-   <sender>okButton</sender>
+   <sender>ok_button</sender>
    <signal>clicked()</signal>
-   <receiver>aboutAutoSplitWidget</receiver>
+   <receiver>AboutAutoSplitWidget</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -30,7 +30,7 @@ class Rect(ctypes.wintypes.RECT):
     bottom: int = -1  # type: ignore
 
 
-def capture_region(hwnd: int, selection: Rect, forcePrintWindow: bool):
+def capture_region(hwnd: int, selection: Rect, force_print_window: bool):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -42,7 +42,7 @@ def capture_region(hwnd: int, selection: Rect, forcePrintWindow: bool):
 
     # Windows 11 has some jank, and we're not ready to fully investigate it
     # for now let's ensure it works at the cost of performance
-    is_accelerated_window = forcePrintWindow or is_windows_11 or accelerated_windows.get(hwnd)
+    is_accelerated_window = force_print_window or is_windows_11 or accelerated_windows.get(hwnd)
 
     # The window type is not yet known, let's find out!
     if is_accelerated_window is None:
@@ -61,19 +61,19 @@ def __get_image(hwnd: int, selection: Rect, print_window: bool = False):
     height: int = selection.bottom - selection.top
     # If the window closes while it's being manipulated, it could cause a crash
     try:
-        windowDC: int = win32gui.GetWindowDC(hwnd)
+        window_dc: int = win32gui.GetWindowDC(hwnd)
         # https://github.com/kaluluosi/pywin32-stubs/issues/6
-        dcObject: PyCDC = win32ui.CreateDCFromHandle(windowDC)  # type: ignore
+        dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)  # type: ignore
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
         if print_window:
-            ctypes.windll.user32.PrintWindow(hwnd, dcObject.GetSafeHdc(), PW_RENDERFULLCONTENT)
+            ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
-        compatibleDC = cast(PyCDC, dcObject.CreateCompatibleDC())
+        compatible_dc = cast(PyCDC, dc_object.CreateCompatibleDC())
         bitmap: PyCBitmap = win32ui.CreateBitmap()
-        bitmap.CreateCompatibleBitmap(dcObject, width, height)
-        compatibleDC.SelectObject(bitmap)
-        compatibleDC.BitBlt((0, 0), (width, height), dcObject, (selection.left, selection.top), win32con.SRCCOPY)
+        bitmap.CreateCompatibleBitmap(dc_object, width, height)
+        compatible_dc.SelectObject(bitmap)
+        compatible_dc.BitBlt((0, 0), (width, height), dc_object, (selection.left, selection.top), win32con.SRCCOPY)
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
@@ -83,9 +83,9 @@ def __get_image(hwnd: int, selection: Rect, print_window: bool = False):
     image.shape = (height, width, 4)
 
     try:
-        dcObject.DeleteDC()
-        compatibleDC.DeleteDC()
-        win32gui.ReleaseDC(hwnd, windowDC)
+        dc_object.DeleteDC()
+        compatible_dc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, window_dc)
         win32gui.DeleteObject(bitmap.GetHandle())
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     except win32ui.error:  # type: ignore
