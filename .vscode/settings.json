@@ -10,36 +10,11 @@
   },
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
-  "[python]": {
-    "editor.tabSize": 4,
-    "editor.rulers": [
-      72, // PEP8-17 docstrings
-      // 79, // PEP8-17 default max
-      // 88, // Black default
-      99, // PEP8-17 acceptable max
-      120, // Our hard rule
-    ]
-  },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.fixAll.markdownlint": true,
   },
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.pylintCategorySeverity.convention": "Warning",
-  "python.linting.pylintCategorySeverity.refactor": "Warning",
-  "python.linting.flake8Enabled": true,
-  "python.linting.flake8CategorySeverity.E": "Warning",
-  // PyRight obsoletes mypy
-  "python.linting.mypyEnabled": false,
-  // Is already wrapped by Flake8, prospector and pylama
-  "python.linting.pycodestyleEnabled": false,
-  // Just another wrapper, use Flake8 OR this
-  "python.linting.prospectorEnabled": false,
-  // Just another wrapper, use Flake8 OR this
-  "python.linting.pylamaEnabled": false,
-  "python.linting.banditEnabled": true,
   "files.insertFinalNewline": true,
   "trailing-spaces.includeEmptyLines": true,
   "trailing-spaces.trimOnSave": true,
@@ -66,5 +41,42 @@
     "**/bower_components": true,
     "**/*.code-search": true,
     "typings": true,
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.rulers": [
+      72, // PEP8-17 docstrings
+      // 79, // PEP8-17 default max
+      // 88, // Black default
+      99, // PEP8-17 acceptable max
+      120, // Our hard rule
+    ]
+  },
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintCategorySeverity.convention": "Warning",
+  "python.linting.pylintCategorySeverity.refactor": "Warning",
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8CategorySeverity.E": "Warning",
+  // PyRight obsoletes mypy
+  "python.linting.mypyEnabled": false,
+  // Is already wrapped by Flake8, prospector and pylama
+  "python.linting.pycodestyleEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.prospectorEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.pylamaEnabled": false,
+  "python.linting.banditEnabled": true,
+  // Copy those over to your user settings
+  "sonarlint.rules": {
+    "python:S1192": {
+      "level": "off"
+    },
+    "python:S3776": {
+      "level": "off"
+    },
+    "python:S107": {
+      "level": "off"
+    },
   },
 }

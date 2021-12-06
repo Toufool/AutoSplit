@@ -10,13 +10,16 @@ import keyboard  # https://github.com/boppreh/keyboard/issues/505
 from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
 
-from gen import design
 import error_messages
+from gen import design
 # TODO with settings refactoring
 from hotkeys import _hotkey_action  # type: ignore
 
+# Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
+FROZEN = hasattr(sys, "frozen")
+
 # Get the directory of either AutoSplit.exe or AutoSplit.py
-auto_split_directory = os.path.dirname(sys.executable if getattr(sys, "frozen", False) else os.path.abspath(__file__))
+auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 
 
 class RestrictedUnpickler(pickle.Unpickler):

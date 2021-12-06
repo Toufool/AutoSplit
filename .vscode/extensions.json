@@ -1,3 +1,4 @@
+// Keep in alphabetical order
 {
   "recommendations": [
     "bungcip.better-toml",
@@ -5,11 +6,22 @@
     "eamodio.gitlens",
     "ms-python.python",
     "ms-python.vscode-pylance",
+    "pkief.material-icon-theme",
     "shardulm94.trailing-spaces",
     "sonarsource.sonarlint-vscode"
   ],
   "unwantedRecommendations": [
+    // VSCode has implemented an optimized version
+    "coenraads.bracket-pair-colorizer",
+    "coenraads.bracket-pair-colorizer-2",
+    // Lots of conflicts
+    "esbenp.prettier-vscode",
+    // Replaced by ESLint
+    "eg2.tslint",
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    // Obsoleted by Pylance
     "ms-pyright.pyright",
-    "esbenp.prettier-vscode"
+    // The ESLint plugin is sufficient in JS-only projects
+    "sonarsource.sonarlint-vscode",
   ]
 }

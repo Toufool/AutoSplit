@@ -13,9 +13,8 @@ from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
 
 import error_messages
-import settings_file
+import settings_file as settings
 from gen import about, design, resources_rc, update_checker  # noqa: F401
-
 
 # AutoSplit Version number
 VERSION = "1.6.1"
@@ -32,8 +31,8 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_aboutAutoSplitWidget):
         self.show()
 
 
-def open_about(self: AutoSplit):
-    self.AboutWidget = __AboutWidget()
+def open_about(autosplit: AutoSplit):
+    autosplit.AboutWidget = __AboutWidget()
 
 
 class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
@@ -61,7 +60,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         self.close()
 
     def doNotAskMeAgainStateChanged(self):
-        settings_file.set_check_for_updates_on_open(
+        settings.set_check_for_updates_on_open(
             self.design_window,
             self.checkBoxDoNotAskMeAgain.isChecked())
 
@@ -82,7 +81,7 @@ class __CheckForUpdatesThread(QThread):
 
     def run(self):
         try:
-            response = requests.get("https://duckduckgo.com/?q=pyright+generate+stub+file&t=opera&ia=web")
+            response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
             latest_version = response.json()["name"].split("v")[1]
             self.autosplit.updateCheckerWidgetSignal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):
