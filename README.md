@@ -1,5 +1,12 @@
 <!-- markdownlint-disable-next-line MD033 -->
-# <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![Build and lint](/../../actions/workflows/build-and-lint.yml/badge.svg)](/../../actions/workflows/build-and-lint.yml) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
+# <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
+
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
