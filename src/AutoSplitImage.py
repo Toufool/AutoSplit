@@ -36,7 +36,7 @@ class AutoSplitImage():
     mask: Optional[cv2.ndarray] = None
     # This value is internal, check for mask instead
     _has_transparency: bool
-    # These values should be overriden by defaults if null, use getters instead
+    # These values should be overriden by Defaults if None. Use getters instead
     __pause_time: Optional[float] = None
     __similarity_threshold: Optional[float] = None
 
@@ -64,7 +64,7 @@ class AutoSplitImage():
         self.flags = flags_from_filename(self.filename)
         self.loops = loop_from_filename(self.filename)
         self.delay = delay_from_filename(self.filename)
-        self._pause_time = pause_from_filename(self.filename)
+        self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
         self.__read_image_bytes(path)
 

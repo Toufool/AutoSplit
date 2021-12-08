@@ -31,23 +31,26 @@ def select_region(autosplit: AutoSplit):
     while True:
         width = selector.width()
         height = selector.height()
-        left = selector.left
-        top = selector.top
+        x = selector.x()
+        y = selector.y()
         if width > 0 and height > 0:
             break
         # Email sent to pyqt@riverbankcomputing.com
         QtTest.QTest.qWait(1)  # type: ignore
     del selector
 
-    hwnd = __window_handle_from_point(left, top)
-    if not hwnd:
+    hwnd, window_text = __get_window_from_point(x, y)
+    # Don't select desktop
+    if not hwnd or not window_text:
+        error_messages.region()
         return
     autosplit.hwnd = hwnd
+    autosplit.window_text = window_text
 
     offset_x, offset_y, *_ = win32gui.GetWindowRect(autosplit.hwnd)
     __set_region_values(autosplit,
-                        left=left - offset_x,
-                        top=top - offset_y,
+                        left=x - offset_x,
+                        top=y - offset_y,
                         width=width,
                         height=height)
 
@@ -67,16 +70,19 @@ def select_window(autosplit: AutoSplit):
         QtTest.QTest.qWait(1)  # type: ignore
     del selector
 
-    hwnd = __window_handle_from_point(x, y)
-    if not hwnd:
+    hwnd, window_text = __get_window_from_point(x, y)
+    # Don't select desktop
+    if not hwnd or not window_text:
+        error_messages.region()
         return
     autosplit.hwnd = hwnd
+    autosplit.window_text = window_text
 
     # Getting window bounds
-    # On Windows there is a shadow around the windows that we need to account for.
-    # The top bar with the window name is also not accounted for.
-    # This is not an ideal solution because it assumes every window will have a top bar and shadows of default size.
-    # Which results in cutting *into* windows which don't have shadows or have a smaller top bars
+    # On Windows there is a shadow around the windows that we need to account for
+    # The top bar with the window name is also not accounted for
+    # HACK: This isn't an ideal solution because it assumes every window will have a top bar and shadows of default size
+    # FIXME: Which results in cutting *into* windows which don't have shadows or have a smaller top bars
     _, __, width, height = win32gui.GetClientRect(autosplit.hwnd)
     __set_region_values(autosplit,
                         left=WINDOWS_SHADOW_SIZE,
@@ -85,7 +91,7 @@ def select_window(autosplit: AutoSplit):
                         height=height - WINDOWS_TOPBAR_SIZE)
 
 
-def __window_handle_from_point(x: int, y: int):
+def __get_window_from_point(x: int, y: int):
     # Grab the window handle from the coordinates selected by the widget
     hwnd = cast(int, win32gui.WindowFromPoint((x, y)))
 
@@ -97,12 +103,7 @@ def __window_handle_from_point(x: int, y: int):
 
     window_text = win32gui.GetWindowText(hwnd)
 
-    # Don't select desktop
-    if not window_text:
-        error_messages.region()
-        return 0
-
-    return hwnd
+    return hwnd, window_text
 
 
 def align_region(autosplit: AutoSplit):
@@ -157,10 +158,6 @@ def align_region(autosplit: AutoSplit):
 
 
 def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
-    """
-    left and top values are based on the virtual screen and can be negative
-    width and height are the action selection's size
-    """
     autosplit.selection.left = left
     autosplit.selection.top = top
     autosplit.selection.right = left + width
@@ -230,6 +227,15 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
 
 
 class BaseSelectWidget(QtWidgets.QWidget):
+    _x = 0
+    _y = 0
+
+    def x(self):
+        return self._x
+
+    def y(self):
+        return self._y
+
     def __init__(self):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
@@ -251,28 +257,17 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
 # Widget to select a window and obtain its bounds
 class SelectWindowWidget(BaseSelectWidget):
-    __x = 0
-    __y = 0
-
-    def x(self):
-        return self.__x
-
-    def y(self):
-        return self.__y
-
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
-        self.__x = int(a0.position().x()) + self.geometry().x()
-        self.__y = int(a0.position().y()) + self.geometry().y()
+        self._x = int(a0.position().x()) + self.geometry().x()
+        self._y = int(a0.position().y()) + self.geometry().y()
         self.close()
 
 
 # Widget for dragging screen region
 # https://github.com/harupy/snipping-tool
 class SelectRegionWidget(BaseSelectWidget):
-    left: int = -1
-    top: int = -1
-    right: int = -1
-    bottom: int = -1
+    _right: int = 0
+    _bottom: int = 0
     __begin = QtCore.QPoint()
     __end = QtCore.QPoint()
 
@@ -281,10 +276,10 @@ class SelectRegionWidget(BaseSelectWidget):
         super().__init__()
 
     def height(self):
-        return self.bottom - self.top
+        return self._bottom - self._y
 
     def width(self):
-        return self.right - self.left
+        return self._right - self._x
 
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
@@ -306,10 +301,10 @@ class SelectRegionWidget(BaseSelectWidget):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
             # so the added virtual screen offsets convert them back to the virtual screen coordinates
-            self.left = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
-            self.top = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
-            self.right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()
-            self.bottom = max(self.__begin.y(), self.__end.y()) + self.geometry().y()
+            self._x = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
+            self._y = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
+            self._right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()
+            self._bottom = max(self.__begin.y(), self.__end.y()) + self.geometry().y()
 
             self.close()
 

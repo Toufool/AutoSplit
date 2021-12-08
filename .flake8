@@ -12,6 +12,7 @@ per-file-ignores=
     __init__.pyi:Q000
 ; PyQt methods
 ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,mouseReleaseEvent
-; TODO: Bring down to 15, same as SonarLint
-max-complexity=55
+; McCabe max-complexity is also taken care of by Pylint and doesn't fail teh build there
+; So this is the hard limit
+max-complexity=32
 inline-quotes="

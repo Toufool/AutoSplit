@@ -3,7 +3,6 @@ from typing import Optional, cast
 
 import ctypes
 import ctypes.wintypes
-import platform
 from dataclasses import dataclass
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
@@ -13,26 +12,25 @@ import numpy as np
 import win32con
 import win32ui
 import pywintypes
-from packaging import version
 from win32 import win32gui
 from win32typing import PyCBitmap, PyCDC
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
-accelerated_windows: dict[int, bool] = {}
-is_windows_11 = version.parse(platform.version()) >= version.parse("10.0.22000")
 
 
-# ctypes.wintypes.RECT has c_long which doesn't have math operators implemented
 @dataclass
 class Rect(ctypes.wintypes.RECT):
+    """
+    Overrides `ctypes.wintypes.RECT` to replace c_long with int for math operators
+    """
     left: int = -1  # type: ignore
     top: int = -1  # type: ignore
     right: int = -1  # type: ignore
     bottom: int = -1  # type: ignore
 
 
-def capture_region(hwnd: int, selection: Rect, force_print_window: bool):
+def capture_region(hwnd: int, selection: Rect, print_window: bool):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -42,26 +40,6 @@ def capture_region(hwnd: int, selection: Rect, force_print_window: bool):
     @return: The image of the region in the window in BGRA format
     """
 
-    # Windows 11 has some jank, and we're not ready to fully investigate it
-    # for now let's ensure it works at the cost of performance
-    is_accelerated_window = force_print_window or is_windows_11 or accelerated_windows.get(hwnd)
-
-    # The window type is not yet known, let's find out!
-    if is_accelerated_window is None:
-        # We need to get the image at least once to check if it's full black
-        image = __get_capture_image(hwnd, selection, False)
-        # TODO check for first non-black pixel, no need to iterate through the whole image
-        is_accelerated_window = not np.count_nonzero(image)
-        accelerated_windows[hwnd] = is_accelerated_window
-        if is_accelerated_window:
-            image = __get_capture_image(hwnd, selection, True)
-    else:
-        image = __get_capture_image(hwnd, selection, is_accelerated_window)
-
-    return None if image.size == 0 else image
-
-
-def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
     width: int = selection.right - selection.left
     height: int = selection.bottom - selection.top
     # If the window closes while it's being manipulated, it could cause a crash
@@ -82,7 +60,7 @@ def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
-        return np.array([0, 0, 0, 1], dtype="uint8")
+        return None
 
     image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
     image.shape = (height, width, 4)
@@ -101,7 +79,9 @@ def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):
     if image is None:
-        qlabel.clear()
+        # Clear current pixmap if image is None. But don't clear text
+        if not qlabel.text():
+            qlabel.clear()
     else:
         if transparency:
             color_code = cv2.COLOR_BGRA2RGBA

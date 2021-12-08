@@ -98,6 +98,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_image_directory = ""
     hwnd = 0
     """Window Handle used for Capture Region"""
+    window_text = ""
     selection = Rect()
     last_saved_settings: list[Union[str, float, int, bool]] = []
     save_settings_file_path = ""
@@ -116,13 +117,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     check_start_image_timestamp = 0.0
 
     # Define all other attributes
-    setting_check_for_updates_on_open: QtCore.QSettings
     start_image_split_below_threshold: bool
     waiting_for_split_delay: bool
     split_below_threshold: bool
     run_start_time: float
     similarity: float
-    split_delay: float
     start_image: Optional[AutoSplitImage] = None
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
@@ -138,7 +137,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.setupUi(self)
 
-        settings.load_pyqt_settings(self)
+        settings.load_check_for_updates_on_open(self)
 
         # close all processes when closing window
         self.action_view_help.triggered.connect(view_help)
@@ -255,18 +254,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __live_image_function(self):
         try:
-            window_text = win32gui.GetWindowText(self.hwnd)
-            self.capture_region_window_label.setText(window_text)
-            if not window_text:
+            self.capture_region_window_label.setText(self.window_text)
+            if not self.window_text:
                 self.timer_live_image.stop()
                 self.live_image.clear()
                 if self.live_image_function_on_open:
                     self.live_image_function_on_open = False
                 return
-
             # Set live image in UI
-            capture = capture_region(self.hwnd, self.selection, self.force_print_window_checkbox.isChecked())
-            set_ui_image(self.live_image, capture, False)
+            if self.hwnd:
+                capture = capture_region(self.hwnd, self.selection, self.force_print_window_checkbox.isChecked())
+                set_ui_image(self.live_image, capture, False)
 
         except AttributeError:
             pass
@@ -376,7 +374,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.start_image_label.setText(f"{START_IMAGE_TEXT}: started")
             send_command(self, "start")
             # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(1 / self.fps_limit_spinbox.value())  # type: ignore
+            QtTest.QTest.qWait(int(1 / self.fps_limit_spinbox.value()))  # type: ignore
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -554,10 +552,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             current_group: list[int] = []
             self.split_groups.append(current_group)
 
-            for i, image in enumerate(self.split_images):
+            for i, image in enumerate(self.split_images_and_loop_number):
                 current_group.append(i)
 
-                if not image.check_flag(DUMMY_FLAG) and i < len(self.split_images) - 1:
+                if not image[0].check_flag(DUMMY_FLAG) and i < len(self.split_images_and_loop_number) - 1:
                     current_group = []
                     self.split_groups.append(current_group)
         self.gui_changes_on_start()
@@ -654,8 +652,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if not self.split_image.check_flag(DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
-                if self.split_delay > 0 and not self.waiting_for_split_delay:
-                    split_time = int(round(time() * 1000) + self.split_delay)
+                split_delay = self.split_image.delay / 1000
+                if split_delay > 0 and not self.waiting_for_split_delay:
+                    split_time = round(time() + split_delay * 1000)
                     self.waiting_for_split_delay = True
                     self.undo_split_button.setEnabled(False)
                     self.skip_split_button.setEnabled(False)
@@ -663,7 +662,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time()
-                    split_delay = self.split_delay / 1000
                     while time() - delay_start_time < split_delay:
                         delay_time_left = round(split_delay - (time() - delay_start_time), 1)
                         self.current_split_image.setText(f"Delayed Split: {delay_time_left} sec remaining")
@@ -711,8 +709,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Also updates the current split image text, counting down the time until the next split image
             pause_time = self.split_image.get_pause_time(self)
             if pause_time > 0:
-                self.current_split_image_file_label.setText(" ")
-                self.image_loop_label.setText("Image Loop: -")
                 pause_start_time = time()
                 while time() - pause_start_time < pause_time:
                     pause_time_left = round(pause_time - (time() - pause_start_time), 1)
@@ -788,6 +784,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         Grab capture region and resize for comparison
         """
         capture = capture_region(self.hwnd, self.selection, self.force_print_window_checkbox.isChecked())
+
+        # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
+        if capture is None:
+            # Try to recover by using the window name
+            self.live_image.setText("Trying to recover window...")
+            # https://github.com/kaluluosi/pywin32-stubs/issues/7
+            hwnd = win32gui.FindWindow(None, self.window_text)  # type: ignore
+            # Don't fallback to desktop
+            if hwnd:
+                self.hwnd = hwnd
+                capture = capture_region(self.hwnd, self.selection, self.force_print_window_checkbox.isChecked())
         return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):
@@ -872,7 +879,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             if warning is QMessageBox.StandardButton.Yes:
                 # TODO: Don't close if user cancelled the save
-                self.save_settings_as()
+                settings.save_settings_as(self)
                 exit_program()
             if warning is QMessageBox.StandardButton.No:
                 exit_program()
@@ -902,7 +909,6 @@ def main():
         if FROZEN:
             error_messages.exception_traceback(message, exception)
         else:
-            print(message)
             traceback.print_exception(type(exception), exception, exception.__traceback__)
         sys.exit(1)
 
