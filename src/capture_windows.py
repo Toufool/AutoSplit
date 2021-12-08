@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import cast
+from typing import Optional, cast
 
 import ctypes
 import ctypes.wintypes
 import platform
 from dataclasses import dataclass
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtWidgets import QLabel
 
 import cv2
 import numpy as np
@@ -51,9 +53,12 @@ def capture_region(hwnd: int, selection: Rect, force_print_window: bool):
         # TODO check for first non-black pixel, no need to iterate through the whole image
         is_accelerated_window = not np.count_nonzero(image)
         accelerated_windows[hwnd] = is_accelerated_window
-        return __get_capture_image(hwnd, selection, True) if is_accelerated_window else image
+        if is_accelerated_window:
+            image = __get_capture_image(hwnd, selection, True)
+    else:
+        image = __get_capture_image(hwnd, selection, is_accelerated_window)
 
-    return __get_capture_image(hwnd, selection, is_accelerated_window)
+    return None if image.size == 0 else image
 
 
 def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
@@ -79,7 +84,7 @@ def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
     except (win32ui.error, pywintypes.error):  # type: ignore
         return np.array([0, 0, 0, 1], dtype="uint8")
 
-    image: cv2.ndarray = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
+    image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
     image.shape = (height, width, 4)
 
     try:
@@ -92,3 +97,23 @@ def __get_capture_image(hwnd: int, selection: Rect, print_window: bool = False):
         pass
 
     return image
+
+
+def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):
+    if image is None:
+        qlabel.clear()
+    else:
+        if transparency:
+            color_code = cv2.COLOR_BGRA2RGBA
+            image_format = QtGui.QImage.Format.Format_RGBA8888
+        else:
+            color_code = cv2.COLOR_BGRA2BGR
+            image_format = QtGui.QImage.Format.Format_BGR888
+
+        capture = cv2.cvtColor(image, color_code)
+        height, width, channels = capture.shape
+        qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
+        qlabel.setPixmap(QtGui.QPixmap(qimage).scaled(
+            qlabel.size(),
+            QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
+            QtCore.Qt.TransformationMode.SmoothTransformation))

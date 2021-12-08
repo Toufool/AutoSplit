@@ -1,11 +1,28 @@
-echo "`nRunning Pyright..."
-pyright
+$originalDirectory = $pwd
+cd "$PSScriptRoot\.."
+Write-Host $Script:MyInvocation.MyCommand.Path
+$exitCodes = 0
 
-echo "`nRunning Pylint..."
+Write-Host "`nRunning Pyright..."
+pyright --warnings
+$exitCodes += $LastExitCode
+
+Write-Host "`nRunning Pylint..."
 pylint --score=n --output-format=colorized $(git ls-files '**/*.py*')
+$exitCodes += $LastExitCode
 
-echo "`nRunning Flake8..."
+Write-Host "`nRunning Flake8..."
 flake8
+$exitCodes += $LastExitCode
 
-echo "`nRunning Bandit..."
+Write-Host "`nRunning Bandit..."
 bandit -f custom --silent --recursive src
+# $exitCodes += $LastExitCode # Returns 1 on low
+
+if ($exitCodes -gt 0) {
+  Write-Host "`nLinting failed ($exitCodes)" -ForegroundColor Red
+} else {
+  Write-Host "`nLinting passed" -ForegroundColor Green
+}
+
+cd $originalDirectory

@@ -44,7 +44,7 @@ jobs:
           npm install -g pyright
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ job.name }}
-        run: pyright
+        run: pyright --warnings
   Pylint:
     runs-on: windows-latest
     strategy:

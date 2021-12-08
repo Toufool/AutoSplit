@@ -78,7 +78,11 @@ extension-pkg-allow-list = ["PyQt6", "win32ui"]
 max-line-length = 120
 
 [tool.pylint.DESIGN]
-max-attributes = 15
+# Same as SonarLint
+max-args = 7
+# Arbitrary to 2 bytes
+max-attributes = 16
+max-locals = 16
 
 [tool.pylint.'MESSAGES CONTROL']
 # Same as SonarLint

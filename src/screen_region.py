@@ -7,6 +7,7 @@ import os
 import ctypes
 import ctypes.wintypes
 import cv2
+
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
@@ -15,7 +16,9 @@ from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_
 import capture_windows
 import error_messages
 
-DWMWA_EXTENDED_FRAME_BOUNDS = 9
+
+WINDOWS_SHADOW_SIZE = 8
+WINDOWS_TOPBAR_SIZE = 24
 user32 = ctypes.windll.user32
 
 
@@ -28,50 +31,25 @@ def select_region(autosplit: AutoSplit):
     while True:
         width = selector.width()
         height = selector.height()
+        left = selector.left
+        top = selector.top
         if width > 0 and height > 0:
             break
         # Email sent to pyqt@riverbankcomputing.com
         QtTest.QTest.qWait(1)  # type: ignore
-
-    # Grab the window handle from the coordinates selected by the widget
-    autosplit.hwnd = cast(int, win32gui.WindowFromPoint((selector.left, selector.top)))
-    # Want to pull the parent window from the window handle
-    # By using GetAncestor we are able to get the parent window instead
-    # of the owner window.
-    while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
-        autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
-
-    # Convert the Desktop Coordinates to Window Coordinates
-    # Pull the window's coordinates relative to desktop into selection
-    ctypes.windll.dwmapi.DwmGetWindowAttribute(
-        autosplit.hwnd,
-        ctypes.wintypes.DWORD(DWMWA_EXTENDED_FRAME_BOUNDS),
-        ctypes.byref(autosplit.selection),
-        ctypes.sizeof(autosplit.selection))
-
-    # On Windows 10 the windows have offsets due to invisible pixels not accounted for in DwmGetWindowAttribute
-    # TODO: Since this occurs on Windows 10, is DwmGetWindowAttribute even required over GetWindowRect alone?
-    # Research needs to be done to figure out why it was used it over win32gui in the first place...
-    # I have a feeling it was due to a misunderstanding and not getting the correct parent window before.
-    window_rect = win32gui.GetWindowRect(autosplit.hwnd)
-    offset_left = autosplit.selection.left - window_rect[0]
-    offset_top = autosplit.selection.top - window_rect[1]
-
-    autosplit.selection.left = selector.left - (autosplit.selection.left - offset_left)
-    autosplit.selection.top = selector.top - (autosplit.selection.top - offset_top)
-    autosplit.selection.right = autosplit.selection.left + width
-    autosplit.selection.bottom = autosplit.selection.top + height
-
-    # Delete that widget since it is no longer used from here on out
     del selector
 
-    autosplit.width_spinbox.setValue(width)
-    autosplit.height_spinbox.setValue(height)
-    autosplit.x_spinbox.setValue(autosplit.selection.left)
-    autosplit.y_spinbox.setValue(autosplit.selection.top)
+    hwnd = __window_handle_from_point(left, top)
+    if not hwnd:
+        return
+    autosplit.hwnd = hwnd
 
-    # check if live image needs to be turned on or just set a single image
-    autosplit.check_live_image()
+    offset_x, offset_y, *_ = win32gui.GetWindowRect(autosplit.hwnd)
+    __set_region_values(autosplit,
+                        left=left - offset_x,
+                        top=top - offset_y,
+                        width=width,
+                        height=height)
 
 
 def select_window(autosplit: AutoSplit):
@@ -80,63 +58,73 @@ def select_window(autosplit: AutoSplit):
 
     # Need to wait until the user has selected a region using the widget before moving on with
     # selecting the window settings
-    while selector.x() == -1 and selector.y() == -1:
+    while True:
+        x = selector.x()
+        y = selector.y()
+        if x and y:
+            break
         # Email sent to pyqt@riverbankcomputing.com
         QtTest.QTest.qWait(1)  # type: ignore
-
-    # Grab the window handle from the coordinates selected by the widget
-    autosplit.hwnd = cast(int, win32gui.WindowFromPoint((selector.x(), selector.y())))
-
     del selector
 
-    if autosplit.hwnd <= 0:
+    hwnd = __window_handle_from_point(x, y)
+    if not hwnd:
         return
+    autosplit.hwnd = hwnd
+
+    # Getting window bounds
+    # On Windows there is a shadow around the windows that we need to account for.
+    # The top bar with the window name is also not accounted for.
+    # This is not an ideal solution because it assumes every window will have a top bar and shadows of default size.
+    # Which results in cutting *into* windows which don't have shadows or have a smaller top bars
+    _, __, width, height = win32gui.GetClientRect(autosplit.hwnd)
+    __set_region_values(autosplit,
+                        left=WINDOWS_SHADOW_SIZE,
+                        top=WINDOWS_SHADOW_SIZE + WINDOWS_TOPBAR_SIZE,
+                        width=width,
+                        height=height - WINDOWS_TOPBAR_SIZE)
+
+
+def __window_handle_from_point(x: int, y: int):
+    # Grab the window handle from the coordinates selected by the widget
+    hwnd = cast(int, win32gui.WindowFromPoint((x, y)))
 
     # Want to pull the parent window from the window handle
     # By using GetAncestor we are able to get the parent window instead
     # of the owner window.
-    while win32gui.IsChild(win32gui.GetParent(autosplit.hwnd), autosplit.hwnd):
-        autosplit.hwnd = user32.GetAncestor(autosplit.hwnd, GA_ROOT)
+    while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
+        hwnd = cast(int, user32.GetAncestor(hwnd, GA_ROOT))
 
-    # getting window bounds
-    # on windows there are some invisble pixels that are not accounted for
-    # also the top bar with the window name is not accounted for
-    # I hardcoded the x and y coordinates to fix this
-    # This is not an ideal solution because it assumes every window will have a top bar
-    selection: tuple[int, int, int, int] = win32gui.GetClientRect(autosplit.hwnd)
-    autosplit.selection.left = 8
-    autosplit.selection.top = 31
-    autosplit.selection.right = 8 + selection[2]
-    autosplit.selection.bottom = 31 + selection[3]
+    window_text = win32gui.GetWindowText(hwnd)
 
-    autosplit.width_spinbox.setValue(selection[2])
-    autosplit.height_spinbox.setValue(selection[3])
-    autosplit.x_spinbox.setValue(autosplit.selection.left)
-    autosplit.y_spinbox.setValue(autosplit.selection.top)
+    # Don't select desktop
+    if not window_text:
+        error_messages.region()
+        return 0
 
-    autosplit.check_live_image()
+    return hwnd
 
 
 def align_region(autosplit: AutoSplit):
-    # check to see if a region has been set
+    # Check to see if a region has been set
     if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
         error_messages.region()
         return
-    # This is the image used for aligning the capture region
-    # to the best fit for the user.
+    # This is the image used for aligning the capture region to the best fit for the user.
     template_filename = QtWidgets.QFileDialog.getOpenFileName(
         autosplit,
         "Select Reference Image",
         "",
-        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)")[0]
+        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"
+    )[0]
 
-    # return if the user presses cancel
+    # Return if the user presses cancel
     if not template_filename:
         return
 
     template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
 
-    # shouldn't need this, but just for caution, throw a type error if file is not a valid image file
+    # Validate template is a valid image file
     if template is None:
         error_messages.align_region_image_type()
         return
@@ -148,6 +136,45 @@ def align_region(autosplit: AutoSplit):
         autosplit.selection,
         autosplit.force_print_window_checkbox.isChecked())
 
+    if capture is None:
+        error_messages.region()
+        return
+
+    best_match, best_height, best_width, best_loc = __test_alignment(capture, template)
+
+    # Go ahead and check if this satisfies our requirement before setting the region
+    # We don't want a low similarity image to be aligned.
+    if best_match < 0.9:
+        error_messages.alignment_not_matched()
+        return
+
+    # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
+    __set_region_values(autosplit,
+                        left=autosplit.selection.left + best_loc[0],
+                        top=autosplit.selection.top + best_loc[1],
+                        width=best_width,
+                        height=best_height)
+
+
+def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
+    """
+    left and top values are based on the virtual screen and can be negative
+    width and height are the action selection's size
+    """
+    autosplit.selection.left = left
+    autosplit.selection.top = top
+    autosplit.selection.right = left + width
+    autosplit.selection.bottom = top + height
+
+    autosplit.x_spinbox.setValue(left)
+    autosplit.y_spinbox.setValue(top)
+    autosplit.width_spinbox.setValue(width)
+    autosplit.height_spinbox.setValue(height)
+
+    autosplit.check_live_image()
+
+
+def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):
     # Obtain the best matching point for the template within the
     # capture. This assumes that the template is actually smaller
     # than the dimensions of the capture. Since we are using SQDIFF
@@ -184,24 +211,7 @@ def align_region(autosplit: AutoSplit):
             best_width = width
             best_height = height
             best_loc = min_loc
-
-    # Go ahead and check if this satisfies our requirement before setting the region
-    # We don't want a low similarity image to be aligned.
-    if best_match < 0.9:
-        error_messages.alignment_not_matched()
-        return
-
-    # The new region can be defined by using the min_loc point and the
-    # height and width of the template.
-    autosplit.selection.left = autosplit.selection.left + best_loc[0]
-    autosplit.selection.top = autosplit.selection.top + best_loc[1]
-    autosplit.selection.right = autosplit.selection.left + best_width
-    autosplit.selection.bottom = autosplit.selection.top + best_height
-
-    autosplit.x_spinbox.setValue(autosplit.selection.left)
-    autosplit.y_spinbox.setValue(autosplit.selection.top)
-    autosplit.width_spinbox.setValue(best_width)
-    autosplit.height_spinbox.setValue(best_height)
+    return best_match, best_height, best_width, best_loc
 
 
 def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
@@ -241,8 +251,8 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
 # Widget to select a window and obtain its bounds
 class SelectWindowWidget(BaseSelectWidget):
-    __x = -1
-    __y = -1
+    __x = 0
+    __y = 0
 
     def x(self):
         return self.__x
