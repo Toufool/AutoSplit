@@ -18,6 +18,7 @@ typeCheckingMode = "strict"
 ignore = [
   # Auto generated
   "src/gen/",
+  # We expect stub files to be incomplete or contain useless statements as they're external
   "typings/",
 ]
 reportMissingTypeStubs = "information"
@@ -36,7 +37,7 @@ reportUnknownMemberType = "none"
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
 [tool.pylint.REPORTS]
 # Just like default but any error will make drop to 9 or less
-evaluation = "10.0 - error - ((float(warning + refactor + convention) / statement) * 10)"
+evaluation = "10.0 - error - ((float(warning * 10 + refactor + convention) / statement) * 10)"
 [tool.pylint.MASTER]
 fail-under = 9.0
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
@@ -65,10 +66,10 @@ load-plugins = [
   # "pylint.extensions.for_any_all",
 ]
 ignore-paths = [
-  # Haven't looked into disabling specific rules per file
-  "^typings/.*$",
   # Auto generated
   "^src/gen/.*$",
+  # We expect stub files to be incomplete or contain useless statements as they're external
+  "^typings/.*$",
 ]
 # No need to mention the fixmes
 disable = ["fixme"]
@@ -78,7 +79,11 @@ extension-pkg-allow-list = ["PyQt6", "win32ui"]
 max-line-length = 120
 
 [tool.pylint.DESIGN]
-max-attributes = 15
+# Same as SonarLint
+max-args = 7
+# Arbitrary to 2 bytes
+max-attributes = 16
+max-locals = 16
 
 [tool.pylint.'MESSAGES CONTROL']
 # Same as SonarLint

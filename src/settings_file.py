@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
-
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
 import sys
 import pickle
+
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
 from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
@@ -17,7 +17,6 @@ from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, s
 
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
 FROZEN = hasattr(sys, "frozen")
-
 # Get the directory of either AutoSplit.exe or AutoSplit.py
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 
@@ -26,16 +25,6 @@ class RestrictedUnpickler(pickle.Unpickler):
 
     def find_class(self, module: str, name: str):
         raise pickle.UnpicklingError(f"'{module}.{name}' is forbidden")
-
-
-def load_pyqt_settings(autosplit: AutoSplit):
-    # These are only global settings values. They are not *pkl settings values.
-    autosplit.setting_check_for_updates_on_open = QtCore.QSettings("AutoSplit", "Check For Updates On Open")
-    check_for_updates_on_open = autosplit.setting_check_for_updates_on_open.value(
-        "check_for_updates_on_open",
-        True,
-        type=bool)
-    autosplit.action_check_for_updates_on_open.setChecked(check_for_updates_on_open)
 
 
 def get_save_settings_values(autosplit: AutoSplit):
@@ -54,7 +43,7 @@ def get_save_settings_values(autosplit: AutoSplit):
         autosplit.y_spinbox.value(),
         autosplit.width_spinbox.value(),
         autosplit.height_spinbox.value(),
-        win32gui.GetWindowText(autosplit.hwnd),
+        autosplit.window_text,
         0,
         0,
         int(autosplit.group_dummy_splits_checkbox.isChecked()),
@@ -133,22 +122,6 @@ def __load_settings_from_file(autosplit: AutoSplit):
     autosplit.comparison_method_combobox.setCurrentIndex(settings[2])
     autosplit.pause_spinbox.setValue(settings[3])
     autosplit.fps_limit_spinbox.setValue(settings[4])
-    autosplit.split_input.setText(settings[5])
-    autosplit.reset_input.setText(settings[6])
-    autosplit.skip_split_input.setText(settings[7])
-    autosplit.undo_split_input.setText(settings[8])
-    autosplit.pause_hotkey_input.setText(settings[9])
-    autosplit.x_spinbox.setValue(settings[10])
-    autosplit.y_spinbox.setValue(settings[11])
-    autosplit.width_spinbox.setValue(settings[12])
-    autosplit.height_spinbox.setValue(settings[13])
-    # https://github.com/kaluluosi/pywin32-stubs/issues/7
-    autosplit.hwnd = win32gui.FindWindow(None, settings[14])  # type: ignore
-    autosplit.group_dummy_splits_checkbox.setChecked(bool(settings[17]))
-    autosplit.loop_checkbox.setChecked(bool(settings[18]))
-    autosplit.auto_start_on_reset_checkbox.setChecked(bool(settings[19]))
-    autosplit.force_print_window_checkbox.setChecked(settings[20])
-
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
         set_split_hotkey(autosplit, settings[5])
@@ -156,6 +129,25 @@ def __load_settings_from_file(autosplit: AutoSplit):
         set_skip_split_hotkey(autosplit, settings[7])
         set_undo_split_hotkey(autosplit, settings[8])
         set_pause_hotkey(autosplit, settings[9])
+    autosplit.x_spinbox.setValue(settings[10])
+    autosplit.y_spinbox.setValue(settings[11])
+    autosplit.width_spinbox.setValue(settings[12])
+    autosplit.height_spinbox.setValue(settings[13])
+    autosplit.window_text = settings[14]
+    autosplit.group_dummy_splits_checkbox.setChecked(bool(settings[17]))
+    autosplit.loop_checkbox.setChecked(bool(settings[18]))
+    autosplit.auto_start_on_reset_checkbox.setChecked(bool(settings[19]))
+    autosplit.force_print_window_checkbox.setChecked(settings[20])
+
+    if autosplit.window_text:
+        # https://github.com/kaluluosi/pywin32-stubs/issues/7
+        hwnd = win32gui.FindWindow(None, autosplit.window_text)  # type: ignore
+        if hwnd:
+            autosplit.hwnd = hwnd
+        else:
+            autosplit.live_image.setText("Reload settings after opening"
+                                         f'\n"{autosplit.window_text}"'
+                                         "\nto automatically load Live Capture")
 
 
 def load_settings(
@@ -196,16 +188,15 @@ def load_settings(
     autosplit.load_start_image()
 
 
-def load_check_for_updates_on_open(design_window: design.Ui_MainWindow):
+def load_check_for_updates_on_open(autosplit: AutoSplit):
     """
     Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *pkl settings values.
     """
-
     value = QtCore \
         .QSettings("AutoSplit", "Check For Updates On Open") \
         .value("check_for_updates_on_open", True, type=bool)
-    design_window.action_check_for_updates_on_open.setChecked(value)
+    autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):

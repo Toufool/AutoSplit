@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-import os
+import webbrowser
 
 import requests
 from simplejson.errors import JSONDecodeError
@@ -56,7 +56,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
             self.show()
 
     def open_update(self):
-        os.system('start "" https://github.com/Toufool/Auto-Split/releases/latest')
+        webbrowser.open("https://github.com/Toufool/Auto-Split/releases/latest")
         self.close()
 
     def do_not_ask_me_again_state_changed(self):
@@ -70,7 +70,7 @@ def open_update_checker(autosplit: AutoSplit, latest_version: str, check_on_open
 
 
 def view_help():
-    os.system('start "" https://github.com/Toufool/Auto-Split#tutorial')
+    webbrowser.open("https://github.com/Toufool/Auto-Split#tutorial")
 
 
 class __CheckForUpdatesThread(QThread):
