@@ -213,10 +213,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>494</x>
-      <y>250</y>
+      <x>340</x>
+      <y>440</y>
       <width>64</width>
-      <height>24</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -232,10 +232,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>250</y>
+      <x>410</x>
+      <y>440</y>
       <width>61</width>
-      <height>24</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -786,7 +786,7 @@
       <x>260</x>
       <y>250</y>
       <width>101</width>
-      <height>24</height>
+      <height>23</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -866,9 +866,9 @@
     <property name="geometry">
      <rect>
       <x>125</x>
-      <y>296</y>
+      <y>295</y>
       <width>91</width>
-      <height>22</height>
+      <height>23</height>
      </rect>
     </property>
     <item>
@@ -935,22 +935,6 @@
      <string>Align Region</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="group_dummy_splits_checkbox">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>442</y>
-      <width>261</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Group dummy splits when undoing/skipping</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QPushButton" name="select_window_button">
     <property name="geometry">
      <rect>
@@ -993,7 +977,7 @@
      <string>Pause</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="pause_hotkey_input">
+   <widget class="QLineEdit" name="pause_input">
     <property name="geometry">
      <rect>
       <x>300</x>
@@ -1153,6 +1137,44 @@
      <string>Force Full Content Rendering (slower)</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="next_image_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>250</y>
+      <width>61</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Next Img.</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="previous_image_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>494</x>
+      <y>250</y>
+      <width>64</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Prev. Img.</string>
+    </property>
+   </widget>
    <zorder>split_image_folder_label</zorder>
    <zorder>split_image_folder_input</zorder>
    <zorder>browse_button</zorder>
@@ -1207,11 +1229,10 @@
    <zorder>pause_spinbox</zorder>
    <zorder>comparison_method_label</zorder>
    <zorder>align_region_button</zorder>
-   <zorder>group_dummy_splits_checkbox</zorder>
    <zorder>select_window_button</zorder>
    <zorder>image_loop_label</zorder>
    <zorder>pause_hotkey_label</zorder>
-   <zorder>pause_hotkey_input</zorder>
+   <zorder>pause_input</zorder>
    <zorder>set_pause_hotkey_button</zorder>
    <zorder>loop_checkbox</zorder>
    <zorder>auto_start_on_reset_checkbox</zorder>
@@ -1221,6 +1242,8 @@
    <zorder>current_similarity_threshold_number_label</zorder>
    <zorder>capture_region_window_label</zorder>
    <zorder>force_print_window_checkbox</zorder>
+   <zorder>next_image_button</zorder>
+   <zorder>previous_image_button</zorder>
   </widget>
   <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
@@ -1313,7 +1336,6 @@
   <tabstop>reset_input</tabstop>
   <tabstop>skip_split_input</tabstop>
   <tabstop>undo_split_input</tabstop>
-  <tabstop>group_dummy_splits_checkbox</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

@@ -38,7 +38,7 @@ def get_save_settings_values(autosplit: AutoSplit):
         autosplit.reset_input.text(),
         autosplit.skip_split_input.text(),
         autosplit.undo_split_input.text(),
-        autosplit.pause_hotkey_input.text(),
+        autosplit.pause_input.text(),
         autosplit.x_spinbox.value(),
         autosplit.y_spinbox.value(),
         autosplit.width_spinbox.value(),
@@ -46,7 +46,7 @@ def get_save_settings_values(autosplit: AutoSplit):
         autosplit.window_text,
         0,
         0,
-        int(autosplit.group_dummy_splits_checkbox.isChecked()),
+        1,
         int(autosplit.loop_checkbox.isChecked()),
         int(autosplit.auto_start_on_reset_checkbox.isChecked()),
         autosplit.force_print_window_checkbox.isChecked()]
@@ -134,7 +134,6 @@ def __load_settings_from_file(autosplit: AutoSplit):
     autosplit.width_spinbox.setValue(settings[12])
     autosplit.height_spinbox.setValue(settings[13])
     autosplit.window_text = settings[14]
-    autosplit.group_dummy_splits_checkbox.setChecked(bool(settings[17]))
     autosplit.loop_checkbox.setChecked(bool(settings[18]))
     autosplit.auto_start_on_reset_checkbox.setChecked(bool(settings[19]))
     autosplit.force_print_window_checkbox.setChecked(settings[20])

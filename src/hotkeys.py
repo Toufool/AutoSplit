@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Literal, Optional, TYPE_CHECKING, Union
 from collections.abc import Callable
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -50,15 +50,23 @@ def is_digit(key: Optional[str]):
         return False
 
 
-def send_command(autosplit: AutoSplit, command: str):
+Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
+
+
+def send_command(autosplit: AutoSplit, command: Commands):
     if autosplit.is_auto_controlled:
         print(command, flush=True)
     elif command in {"split", "start"}:
         _send_hotkey(autosplit.split_input.text())
     elif command == "pause":
-        _send_hotkey(autosplit.pause_hotkey_input.text())
+        _send_hotkey(autosplit.pause_input.text())
     elif command == "reset":
         _send_hotkey(autosplit.reset_input.text())
+    elif command == "skip":
+        _send_hotkey(autosplit.skip_split_input.text())
+    elif command == "undo":
+        _send_hotkey(autosplit.undo_split_input.text())
+
     else:
         raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
 
@@ -134,7 +142,7 @@ def __is_key_already_set(autosplit: AutoSplit, key_name: str):
                         autosplit.reset_input.text(),
                         autosplit.skip_split_input.text(),
                         autosplit.undo_split_input.text(),
-                        autosplit.pause_hotkey_input.text())
+                        autosplit.pause_input.text())
 
 
 # --------------------HOTKEYS--------------------------
@@ -285,7 +293,7 @@ def set_pause_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.pause_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.pause_signal.emit))
-        autosplit.pause_hotkey_input.setText(key_name)
+        autosplit.pause_input.setText(key_name)
         autosplit.after_setting_hotkey_signal.emit()
 
     _unhook(autosplit.pause_hotkey)

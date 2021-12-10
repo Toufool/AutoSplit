@@ -33,9 +33,9 @@ This program can be used to automatically start, split, and reset your preferred
 
 - Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 - Node is optional, but required for complete linting (using Pyright).
-- Read [requirements.txt](/scripts/requirements.txt) for information on how to install, run and build the python code
+- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code
   - Run `.\scripts\install.bat` to install all dependencies
-  - Run the app directly with `py .\src\AutoSplit.py [--auto-controlled]`
+  - Run the app directly with `.\scripts\start.bat [--auto-controlled]`
   - Run `.\scripts\build.bat` to build an executable
 - Recompile resources after modifications by running `.\scripts\compile_resources.bat`
 
@@ -59,9 +59,9 @@ This program can be used to automatically start, split, and reset your preferred
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
 - You can save a screenshot of the capture region to your split image folder using the Take Screenshot button.
 
-## Max FPS
+## Avg. FPS
 
-- Calculates the maximum comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+- Calculates the average comparison rate of the capture region to split images. This value will likely be much higher than needed (unless you [Force Full-Content-Rendering](#Full-Content-Rendering)), so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
 ## OPTIONS
 
@@ -71,6 +71,10 @@ This program can be used to automatically start, split, and reset your preferred
   - L2 Norm: This method should be fine to use for most cases. it finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
   - pHash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
+
+### Full Content Rendering
+
+- Certain windows (namely hardware accelerated ones) won't always render their content. To work around this, you can "Force Full Content Rendering". This option is not recommended unless you really need it. It will cause a 10-15x performance drop based on the size of the complete window that's being captured (not the selected region, but rather the actual window size). It can also mess with some applications' rendering pipeline.
 
 ### Show Live Similarity
 
@@ -142,11 +146,9 @@ The start image is similar to the reset image. You can only have one start image
 - All of these actions can also be handled by their corresponding buttons.
 - Note that pressing your Pause Hotkey does not serve any function in AutoSplit itself and is strictly used for the Pause flag.
 
-### Group dummy splits when undoing / skipping
+### Dummy splits when undoing / skipping
 
-If this option is disabled, AutoSplit will not account for dummy splits when undoing/skipping. Meaning it will cycle through the images normally even if they have the dummy flag `{d}` applied to them.
-
-If it is enabled, AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it as in sync as possible with the real splits in LiveSplit/wsplit.
+AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it as in sync as possible with the real splits in LiveSplit/wsplit. If they are out of sync, you can always use "Previous Image" and "Next Image".
 
 Examples:
 Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
@@ -192,13 +194,11 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Settings Path (path to your AutoSplit `.pkl` settings file) respectively.
   - If you have not yet set saved a settings file, you can do so using AutoSplit, and then go back and set your Settings Path.
 - Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and its settings will now open automatically when opening that LiveSplit Layout `.lsl` file.
-- If you are using any dummy splits, it is recommended that you check the "Group dummy splits when undoing / skipping" checkbox when using LiveSplit integration so that your LiveSplit splits stay in sync with AutoSplit.
 
 ## Known Limitations
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
-- Capturing a hardware accelerated window or using Windows 11 altogether will cause performance drops. But as long as the window you are capturing (not the selected region, but rather the actual window size) is not too large, you should still be able to obtain a Max FPS of over 60.
 
 ## Resources
 

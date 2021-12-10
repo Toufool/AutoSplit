@@ -121,7 +121,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     waiting_for_split_delay: bool
     split_below_threshold: bool
     run_start_time: float
-    similarity: float
     start_image: Optional[AutoSplitImage] = None
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
@@ -158,7 +157,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.reset_input.setEnabled(False)
             self.skip_split_input.setEnabled(False)
             self.undo_split_input.setEnabled(False)
-            self.pause_hotkey_input.setEnabled(False)
+            self.pause_input.setEnabled(False)
             self.timer_global_hotkeys_label.setText("Hotkeys Inactive - Use LiveSplit Hotkeys")
 
             # Send version and process ID to stdout
@@ -183,6 +182,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.reset_button.clicked.connect(self.reset)
         self.skip_split_button.clicked.connect(self.__skip_split)
         self.undo_split_button.clicked.connect(self.__undo_split)
+        self.next_image_button.clicked.connect(lambda: self.__skip_split(True))
+        self.previous_image_button.clicked.connect(lambda: self.__undo_split(True))
         self.set_split_hotkey_button.clicked.connect(lambda: set_split_hotkey(self))
         self.set_reset_hotkey_button.clicked.connect(lambda: set_reset_hotkey(self))
         self.set_skip_split_hotkey_button.clicked.connect(lambda: set_skip_split_hotkey(self))
@@ -278,7 +279,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if not self.is_auto_controlled \
             and (not self.split_input.text()
                  or not self.reset_input.text()
-                 or not self.pause_hotkey_input.text()):
+                 or not self.pause_input.text()):
             error_messages.load_start_image()
             return
 
@@ -301,7 +302,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         else:
             self.check_start_image_timestamp = 0.0
             self.start_image_label.setText(f"{START_IMAGE_TEXT}: ready")
-            self.__update_split_image(self.start_image, from_start_image=True)
+            self.__update_split_image(self.start_image)
 
         self.highest_similarity = 0.0
         self.start_image_split_below_threshold = False
@@ -322,7 +323,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if self.check_start_image_timestamp > 0:
             self.check_start_image_timestamp = 0.0
             self.start_image_label.setText(f"{START_IMAGE_TEXT}: ready")
-            self.__update_split_image(self.start_image, from_start_image=True)
+            self.__update_split_image(self.start_image)
 
         capture = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
@@ -340,7 +341,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Show live highest similarity if the checkbox is checked
         self.highest_similarity_label.setText(str(self.highest_similarity)[:4]
-                                              if self.show_live_similarity_checkbox.isChecked()
+                                              if self.show_highest_similarity_checkbox.isChecked()
                                               else " ")
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
@@ -457,8 +458,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return self.split_image_number < 0 \
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
 
-    # undo split button and hotkey connect to here
-    def __undo_split(self):
+    def __undo_split(self, navigate_image_only: bool = False):
+        """
+        "Undo Split" and "Prev. Img." buttons and hotkey connect to here
+        """
         # Can't undo until timer is started
         # or Undoing past the first image
         if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
@@ -467,7 +470,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 or self.__is_current_split_out_of_range():
             return
 
-        if self.group_dummy_splits_checkbox.isChecked():
+        if not navigate_image_only:
             for i, group in enumerate(self.split_groups):
                 if i > 0 and self.split_image_number in group:
                     self.split_image_number = self.split_groups[i - 1][0]
@@ -476,9 +479,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_image_number -= 1
 
         self.__update_split_image()
+        if not navigate_image_only:
+            send_command(self, "undo")
 
-    # skip split button and hotkey connect to here
-    def __skip_split(self):
+    def __skip_split(self, navigate_image_only: bool = False):
+        """
+        "Skip Split" and "Next Img." buttons and hotkey connect to here
+        """
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
         if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
@@ -487,7 +494,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 or self.__is_current_split_out_of_range():
             return
 
-        if self.group_dummy_splits_checkbox.isChecked():
+        if not navigate_image_only:
             for group in self.split_groups:
                 if self.split_image_number in group:
                     self.split_image_number = group[-1] + 1
@@ -496,6 +503,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_image_number += 1
 
         self.__update_split_image()
+        if not navigate_image_only:
+            send_command(self, "skip")
 
     def pause(self):
         # TODO add what to do when you hit pause hotkey, if this even needs to be done
@@ -546,18 +555,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 in self.split_images]
             for item in flattenlist]
 
-        # Construct groups of splits if needed
+        # Construct groups of splits
         self.split_groups = []
-        if self.group_dummy_splits_checkbox.isChecked():
-            current_group: list[int] = []
-            self.split_groups.append(current_group)
+        current_group: list[int] = []
+        self.split_groups.append(current_group)
+        for i, image in enumerate(self.split_images_and_loop_number):
+            current_group.append(i)
+            if not image[0].check_flag(DUMMY_FLAG) and i < len(self.split_images_and_loop_number) - 1:
+                current_group = []
+                self.split_groups.append(current_group)
 
-            for i, image in enumerate(self.split_images_and_loop_number):
-                current_group.append(i)
-
-                if not image[0].check_flag(DUMMY_FLAG) and i < len(self.split_images_and_loop_number) - 1:
-                    current_group = []
-                    self.split_groups.append(current_group)
         self.gui_changes_on_start()
 
         # Initialize a few attributes
@@ -566,7 +573,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.split_below_threshold = False
         split_time = 0
         number_of_split_images = len(self.split_images_and_loop_number)
-        dummy_splits_array = [image.check_flag(DUMMY_FLAG) for image in self.split_images]
+        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
         self.run_start_time = time()
 
         # First while loop: stays in this loop until all of the split images have been split
@@ -615,14 +622,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     if self.show_highest_similarity_checkbox.isChecked()
                     else " ")
 
+                # If its the last split image and last loop number, disable the next image button
+                # If its the first split image, disable the undo split and previous image buttons
+                self.next_image_button.setEnabled(self.split_image_number != number_of_split_images - 1)
+                self.previous_image_button.setEnabled(self.split_image_number != 0)
                 if not self.is_auto_controlled:
-                    # if its the last split image or can't skip due to grouped dummy splits, disable skip split button
-                    is_last = self.split_image_number == number_of_split_images - 1 \
-                        or (self.group_dummy_splits_checkbox.isChecked()
-                            and dummy_splits_array[self.split_image_number:].count(False) <= 1)
-                    self.skip_split_button.setEnabled(not is_last)
-
-                    # if its the first split image, disable the undo split button
+                    # If its the last non-dummy split image and last loop number, disable the skip split button
+                    self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
                     self.undo_split_button.setEnabled(self.split_image_number != 0)
 
                 # if the b flag is set, let similarity go above threshold first,
@@ -694,15 +700,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # if its not the last split image, pause for the amount set by the user
             if number_of_split_images != self.split_image_number:
 
+                # If its the last split image and last loop number, disable the next image button
+                # If its the first split image, disable the undo split and previous image buttons
+                self.next_image_button.setEnabled(self.split_image_number != number_of_split_images - 1)
+                self.previous_image_button.setEnabled(self.split_image_number != 0)
                 if not self.is_auto_controlled:
-                    # if its the last split image and last loop number, disable skip split button
-                    is_last = self.split_image_number == number_of_split_images - 1 \
-                        or (self.group_dummy_splits_checkbox.isChecked()
-                            and dummy_splits_array[self.split_image_number:].count(False) <= 1)
-                    self.skip_split_button.setEnabled(not is_last)
-
-                    # if its the first split image, disable the undo split button
+                    # If its the last non-dummy split image and last loop number, disable the skip split button
+                    self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
                     self.undo_split_button.setEnabled(self.split_image_number != 0)
+
                 QApplication.processEvents()
 
             # A pause loop to check if the user presses skip split, undo split, or reset here.
@@ -737,8 +743,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.stop()
         self.start_auto_splitter_button.setText("Running...")
         self.browse_button.setEnabled(False)
-        self.group_dummy_splits_checkbox.setEnabled(False)
         self.start_image_reload_button.setEnabled(False)
+        self.previous_image_button.setEnabled(True)
+        self.next_image_button.setEnabled(True)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
@@ -762,8 +769,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.highest_similarity_label.setText(" ")
         self.current_similarity_threshold_number_label.setText(" ")
         self.browse_button.setEnabled(True)
-        self.group_dummy_splits_checkbox.setEnabled(True)
         self.start_image_reload_button.setEnabled(True)
+        self.previous_image_button.setEnabled(False)
+        self.next_image_button.setEnabled(False)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(True)
@@ -813,7 +821,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.reset()
         return should_reset
 
-    def __update_split_image(self, specific_image: Optional[AutoSplitImage] = None, from_start_image: bool = False):
+    def __update_split_image(self, specific_image: Optional[AutoSplitImage] = None):
         # Splitting/skipping when there are no images left or Undoing past the first image
         # Start image is expected to be out of range (index 0 of 0-length array)
         if (not specific_image or specific_image.image_type != ImageType.START) \
@@ -830,17 +838,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.current_similarity_threshold_number_label.setText(f"{self.split_image.get_similarity_threshold(self):.2f}")
 
         # Set Image Loop #
-        if not from_start_image:
+        if specific_image and specific_image.image_type == ImageType.START:
+            self.image_loop_label.setText("Image Loop: N/A")
+        else:
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_label.setText(f"Image Loop: {loop_tuple[1]}/{loop_tuple[0].loops}")
-        else:
-            self.image_loop_label.setText("Image Loop: N/A")
 
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
 
-        self.similarity = 0
-        self.highest_similarity = 0.001
+        self.highest_similarity = 0.0
 
     def closeEvent(self, a0: Optional[QtGui.QCloseEvent] = None):
         """
