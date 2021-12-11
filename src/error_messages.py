@@ -68,11 +68,6 @@ def reset_hotkey():
     set_text_message("Your split image folder contains a reset image, but no reset hotkey is set.")
 
 
-def dummy_splits():
-    set_text_message("Group dummy splits when undoing/skipping cannot be checked "
-                     "if any split image has a loop parameter greater than 1")
-
-
 def old_version_settings_file():
     set_text_message("Old version settings file detected. This version allows settings files from v1.3 and above.")
 

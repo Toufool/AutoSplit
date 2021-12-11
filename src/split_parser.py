@@ -171,7 +171,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
             return False
 
         # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (not autosplit.pause_hotkey_input.text()
+        if (not autosplit.pause_input.text()
                 and image.check_flag(PAUSE_FLAG)
                 and not autosplit.is_auto_controlled):
             autosplit.gui_changes_on_reset()
