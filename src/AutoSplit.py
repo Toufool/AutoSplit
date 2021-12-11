@@ -101,16 +101,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     window_text = ""
     selection = Rect()
     last_saved_settings: list[Union[str, float, int, bool]] = []
-    save_settings_file_path = ""
-    load_settings_file_path = ""
     live_image_function_on_open = True
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
 
-    # Last loaded settings and last successful loaded settings file path to None until we try to load them
+    # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
     last_loaded_settings: list[Union[str, float, int]] = []
     last_successfully_loaded_settings_file_path: Optional[str] = None
+    """For when a file has never loaded, but you successfully "Save File As"."""
 
     # Automatic timer start
     highest_similarity = 0.0
@@ -221,7 +220,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.timeout.connect(self.__start_image_function)
 
         if not self.is_auto_controlled:
-            settings.load_settings(self, load_settings_on_open=True)
+            settings.load_settings_on_open(self)
 
         self.show()
 
@@ -844,10 +843,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_label.setText(f"Image Loop: {loop_tuple[1]}/{loop_tuple[0].loops}")
 
+        self.highest_similarity = 0.0
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
-
-        self.highest_similarity = 0.0
 
     def closeEvent(self, a0: Optional[QtGui.QCloseEvent] = None):
         """
@@ -876,18 +874,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             settings_file_name = "Untitled" \
                 if self.last_successfully_loaded_settings_file_path is None \
                 else os.path.basename(self.last_successfully_loaded_settings_file_path)
-            warning_message = f"Do you want to save changes made to settings file {settings_file_name}?"
 
             warning = QMessageBox.warning(
                 self,
                 "AutoSplit",
-                warning_message,
+                f"Do you want to save changes made to settings file {settings_file_name}?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
 
             if warning is QMessageBox.StandardButton.Yes:
-                # TODO: Don't close if user cancelled the save
-                settings.save_settings_as(self)
-                exit_program()
+                if settings.save_settings(self):
+                    exit_program()
+                else:
+                    a0.ignore()
             if warning is QMessageBox.StandardButton.No:
                 exit_program()
             if warning is QMessageBox.StandardButton.Cancel:

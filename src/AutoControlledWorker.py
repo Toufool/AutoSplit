@@ -35,8 +35,7 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.reset_signal.emit()
             elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
-                self.autosplit.load_settings_file_path = line[9:]
-                settings.load_settings(self.autosplit, load_settings_from_livesplit=True)
+                settings.load_settings(self.autosplit, line[9:])
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
             #     self.pause_signal.emit()

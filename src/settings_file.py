@@ -60,46 +60,53 @@ def have_settings_changed(autosplit: AutoSplit):
 
 
 def save_settings(autosplit: AutoSplit):
+    """
+    @return: The save settings filepath. Or None if "Save Settings As" is cancelled
+    """
     if not autosplit.last_successfully_loaded_settings_file_path:
-        save_settings_as(autosplit)
-    else:
-        autosplit.last_saved_settings = get_save_settings_values(autosplit)
-        # save settings to a .pkl file
-        with open(autosplit.last_successfully_loaded_settings_file_path, "wb") as file:
-            pickle.dump(autosplit.last_saved_settings, file)
+        return save_settings_as(autosplit)
+
+    autosplit.last_saved_settings = get_save_settings_values(autosplit)
+    # Save settings to a .pkl file
+    with open(autosplit.last_successfully_loaded_settings_file_path, "wb") as file:
+        pickle.dump(autosplit.last_saved_settings, file)
+    return autosplit.last_successfully_loaded_settings_file_path
 
 
 def save_settings_as(autosplit: AutoSplit):
+    """
+    @return: The save settings filepath selected. Empty if cancelled
+    """
     # User picks save destination
-    autosplit.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
+    save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         autosplit,
         "Save Settings As",
-        os.path.join(auto_split_directory, "settings.pkl"),
+        autosplit.last_successfully_loaded_settings_file_path
+        or os.path.join(auto_split_directory, "settings.pkl"),
         "PKL (*.pkl)")[0]
 
     # If user cancels save destination window, don't save settings
-    if not autosplit.save_settings_file_path:
-        return
+    if not save_settings_file_path:
+        return ""
 
     autosplit.last_saved_settings = get_save_settings_values(autosplit)
 
-    # save settings to a .pkl file
-    with open(autosplit.save_settings_file_path, "wb") as file:
+    # Save settings to a .pkl file
+    with open(save_settings_file_path, "wb") as file:
         pickle.dump(autosplit.last_saved_settings, file)
 
-    # Wording is kinda off here but this needs to be here for an edge case:
-    # for when a file has never loaded, but you save file as successfully.
-    autosplit.last_successfully_loaded_settings_file_path = autosplit.save_settings_file_path
+    autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
+    return save_settings_file_path
 
 
-def __load_settings_from_file(autosplit: AutoSplit):
+def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str):
     try:
-        with open(autosplit.load_settings_file_path, "rb") as file:
+        with open(load_settings_file_path, "rb") as file:
             settings: list[Any] = RestrictedUnpickler(file).load()
             settings_count = len(settings)
             if settings_count < 18:
                 autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
-                return
+                return False
             # v1.3-1.4 settings. Add default pause_key and auto_start_on_reset_setting
             if settings_count == 18:
                 settings.insert(9, "")
@@ -110,11 +117,11 @@ def __load_settings_from_file(autosplit: AutoSplit):
             # v1.6.X settings
             elif settings_count != 21:
                 autosplit.show_error_signal.emit(error_messages.invalid_settings)
-                return
+                return False
             autosplit.last_loaded_settings = settings
     except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
-        return
+        return False
 
     autosplit.split_image_directory = settings[0]
     autosplit.split_image_folder_input.setText(settings[0])
@@ -147,44 +154,42 @@ def __load_settings_from_file(autosplit: AutoSplit):
             autosplit.live_image.setText("Reload settings after opening"
                                          f'\n"{autosplit.window_text}"'
                                          "\nto automatically load Live Capture")
+    return True
 
 
 def load_settings(
     autosplit: AutoSplit,
-    load_settings_on_open: bool = False,
-    load_settings_from_livesplit: bool = False
+    from_path: str = ""
 ):
-    if load_settings_on_open:
-        settings_files = [
-            file for file
-            in os.listdir(auto_split_directory)
-            if file.endswith(".pkl")]
+    load_settings_file_path = from_path or QtWidgets.QFileDialog.getOpenFileName(
+        autosplit,
+        "Load Settings",
+        os.path.join(auto_split_directory, "settings.pkl"),
+        "PKL (*.pkl)")[0]
+    if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
+        return
 
-        # find all .pkls in AutoSplit folder, error if there is none or more than 1
-        if len(settings_files) < 1:
-            error_messages.no_settings_file_on_open()
-            autosplit.last_loaded_settings = []
-            return
-        if len(settings_files) > 1:
-            error_messages.too_many_settings_files_on_open()
-            autosplit.last_loaded_settings = []
-            return
-        autosplit.load_settings_file_path = os.path.join(auto_split_directory, settings_files[0])
-
-    elif not load_settings_on_open and not load_settings_from_livesplit:
-        autosplit.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
-            autosplit,
-            "Load Settings",
-            os.path.join(auto_split_directory, "settings.pkl"),
-            "PKL (*.pkl)")[0]
-        if not autosplit.load_settings_file_path:
-            return
-
-    __load_settings_from_file(autosplit)
-
-    autosplit.last_successfully_loaded_settings_file_path = autosplit.load_settings_file_path
+    autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     autosplit.check_live_image()
     autosplit.load_start_image()
+
+
+def load_settings_on_open(autosplit: AutoSplit):
+    settings_files = [
+        file for file
+        in os.listdir(auto_split_directory)
+        if file.endswith(".pkl")]
+
+    # find all .pkls in AutoSplit folder, error if there is none or more than 1
+    if len(settings_files) < 1:
+        error_messages.no_settings_file_on_open()
+        autosplit.last_loaded_settings = []
+        return
+    if len(settings_files) > 1:
+        error_messages.too_many_settings_files_on_open()
+        autosplit.last_loaded_settings = []
+        return
+    load_settings(autosplit, os.path.join(auto_split_directory, settings_files[0]))
 
 
 def load_check_for_updates_on_open(autosplit: AutoSplit):
