@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dialog_settings</class>
+ <widget class="QDialog" name="dialog_settings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>289</width>
+    <height>570</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>289</width>
+    <height>570</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>289</width>
+    <height>570</height>
+   </size>
+  </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
+  <property name="windowTitle">
+   <string>Settings</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <widget class="QDialogButtonBox" name="save_cancel_dialog_button_box">
+   <property name="geometry">
+    <rect>
+     <x>127</x>
+     <y>538</y>
+     <width>156</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="capture_settings_groupbox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>180</y>
+     <width>271</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Capture Settings</string>
+   </property>
+   <widget class="QCheckBox" name="force_print_window_checkbox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>73</y>
+      <width>204</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Force a full render of the capture window, which is required for some applications to be captured</string>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Force Full Render (slower Max FPS)</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="fps_limit_spinbox">
+    <property name="geometry">
+     <rect>
+      <x>138</x>
+      <y>25</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="prefix">
+     <string/>
+    </property>
+    <property name="decimals">
+     <number>0</number>
+    </property>
+    <property name="minimum">
+     <double>30.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>5000.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>60.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="fps_limit_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>27</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>This value will limit the amount of frames per second that AutoSplit will run comparisons</string>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Comparison FPS Limit:</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="live_capture_region_checkbox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>49</y>
+      <width>129</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Live Capture Region</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="image_settings_groupbox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>290</y>
+     <width>271</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Image Settings</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <widget class="QComboBox" name="default_comparison_method">
+    <property name="geometry">
+     <rect>
+      <x>167</x>
+      <y>26</y>
+      <width>88</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string notr="true"/>
+    </property>
+    <item>
+     <property name="text">
+      <string>L2 Norm</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Histograms</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>pHash</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="default_comparison_method_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>29</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Default Comparison Method:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="default_pause_time_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>117</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Default Pause Time (sec):</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="default_pause_time_double_spinbox">
+    <property name="geometry">
+     <rect>
+      <x>167</x>
+      <y>114</y>
+      <width>87</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>The amount of time in seconds that comparison will be paused before moving to the next image.</string>
+    </property>
+    <property name="decimals">
+     <number>2</number>
+    </property>
+    <property name="maximum">
+     <double>999999999.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>10.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="default_similarity_threshold_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>58</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Default Similarity Threshold:</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="default_similarity_threshold_double_spinbox">
+    <property name="geometry">
+     <rect>
+      <x>167</x>
+      <y>56</y>
+      <width>52</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Threshold that the live similarity will need to go above to consider the image a match.</string>
+    </property>
+    <property name="maximum">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.010000000000000</double>
+    </property>
+    <property name="value">
+     <double>0.900000000000000</double>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="loop_splits_checkbox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>144</y>
+      <width>235</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Loop Last Split Image to First Split Image</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>173</y>
+      <width>261</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="whatsThis">
+     <string>teset</string>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="default_pause_time_label_2">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>88</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="text">
+     <string>Default Delay Time (ms):</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="default_delay_time_spinbox">
+    <property name="geometry">
+     <rect>
+      <x>167</x>
+      <y>85</y>
+      <width>87</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
+    </property>
+    <property name="prefix">
+     <string/>
+    </property>
+    <property name="decimals">
+     <number>0</number>
+    </property>
+    <property name="minimum">
+     <double>0.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>36000000.000000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>1.000000000000000</double>
+    </property>
+    <property name="value">
+     <double>0.000000000000000</double>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="hotkeys_groupbox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>271</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Hotkeys</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <widget class="QPushButton" name="set_pause_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>133</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="split_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>28</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="undo_split_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>80</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="split_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>31</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start / Split:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="reset_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>53</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>IBeamCursor</cursorShape>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_undo_split_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>80</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="reset_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>55</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reset:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_reset_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>53</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_split_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>28</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="pause_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>132</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pause:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="pause_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>133</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="undo_split_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>82</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Undo Split:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_skip_split_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>106</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="skip_split_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>108</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Skip Split:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="skip_split_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>106</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>split_input</tabstop>
+  <tabstop>reset_input</tabstop>
+  <tabstop>undo_split_input</tabstop>
+  <tabstop>skip_split_input</tabstop>
+  <tabstop>pause_input</tabstop>
+  <tabstop>default_comparison_method</tabstop>
+  <tabstop>default_similarity_threshold_double_spinbox</tabstop>
+  <tabstop>default_pause_time_double_spinbox</tabstop>
+  <tabstop>loop_splits_checkbox</tabstop>
+  <tabstop>fps_limit_spinbox</tabstop>
+  <tabstop>live_capture_region_checkbox</tabstop>
+  <tabstop>force_print_window_checkbox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>save_cancel_dialog_button_box</sender>
+   <signal>accepted()</signal>
+   <receiver>dialog_settings</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>541</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>save_cancel_dialog_button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>dialog_settings</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>541</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
