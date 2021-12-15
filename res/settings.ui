@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>dialog_settings</class>
- <widget class="QDialog" name="dialog_settings">
+ <class>DialogSettings</class>
+ <widget class="QDialog" name="DialogSettings">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>570</height>
+    <height>540</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>289</width>
-    <height>570</height>
+    <height>540</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>289</width>
-    <height>570</height>
+    <height>540</height>
    </size>
   </property>
   <property name="cursor">
@@ -40,19 +40,6 @@
   <property name="modal">
    <bool>false</bool>
   </property>
-  <widget class="QDialogButtonBox" name="save_cancel_dialog_button_box">
-   <property name="geometry">
-    <rect>
-     <x>127</x>
-     <y>538</y>
-     <width>156</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">
     <rect>
@@ -93,7 +80,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="fps_limit_spinbox">
+   <widget class="QSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
       <x>138</x>
@@ -102,23 +89,17 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="prefix">
-     <string/>
-    </property>
-    <property name="decimals">
-     <number>0</number>
+    <property name="cursor">
+     <cursorShape>ArrowCursor</cursorShape>
     </property>
     <property name="minimum">
-     <double>30.000000000000000</double>
+     <number>20</number>
     </property>
     <property name="maximum">
-     <double>5000.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>1.000000000000000</double>
+     <number>240</number>
     </property>
     <property name="value">
-     <double>60.000000000000000</double>
+     <number>60</number>
     </property>
    </widget>
    <widget class="QLabel" name="fps_limit_label">
@@ -244,7 +225,7 @@
      <string>Default Pause Time (sec):</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="default_pause_time_double_spinbox">
+   <widget class="QDoubleSpinBox" name="default_pause_time_spinbox">
     <property name="geometry">
      <rect>
       <x>167</x>
@@ -288,7 +269,7 @@
      <string>Default Similarity Threshold:</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="default_similarity_threshold_double_spinbox">
+   <widget class="QDoubleSpinBox" name="default_similarity_threshold_spinbox">
     <property name="geometry">
      <rect>
       <x>167</x>
@@ -332,7 +313,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="custom_image_settings_info_label">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -351,10 +332,10 @@
      <string>teset</string>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="default_pause_time_label_2">
+   <widget class="QLabel" name="default_delay_time_label">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -373,7 +354,7 @@
      <string>Default Delay Time (ms):</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="default_delay_time_spinbox">
+   <widget class="QSpinBox" name="default_delay_time_spinbox">
     <property name="geometry">
      <rect>
       <x>167</x>
@@ -382,26 +363,14 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="cursor">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
     <property name="toolTip">
      <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
     </property>
-    <property name="prefix">
-     <string/>
-    </property>
-    <property name="decimals">
-     <number>0</number>
-    </property>
-    <property name="minimum">
-     <double>0.000000000000000</double>
-    </property>
     <property name="maximum">
-     <double>36000000.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>1.000000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.000000000000000</double>
+     <number>999999999</number>
     </property>
    </widget>
   </widget>
@@ -430,7 +399,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>133</y>
+      <y>130</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -443,10 +412,13 @@
     </property>
    </widget>
    <widget class="QLineEdit" name="split_input">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>76</x>
-      <y>28</y>
+      <y>30</y>
       <width>94</width>
       <height>20</height>
      </rect>
@@ -481,7 +453,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>31</y>
+      <y>32</y>
       <width>71</width>
       <height>16</height>
      </rect>
@@ -494,7 +466,7 @@
     <property name="geometry">
      <rect>
       <x>76</x>
-      <y>53</y>
+      <y>55</y>
       <width>94</width>
       <height>20</height>
      </rect>
@@ -532,7 +504,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>55</y>
+      <y>57</y>
       <width>41</width>
       <height>16</height>
      </rect>
@@ -545,7 +517,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>53</y>
+      <y>55</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -590,7 +562,7 @@
     <property name="geometry">
      <rect>
       <x>76</x>
-      <y>133</y>
+      <y>130</y>
       <width>94</width>
       <height>20</height>
      </rect>
@@ -622,7 +594,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>106</y>
+      <y>105</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -638,7 +610,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>108</y>
+      <y>107</y>
       <width>61</width>
       <height>16</height>
      </rect>
@@ -651,7 +623,7 @@
     <property name="geometry">
      <rect>
       <x>76</x>
-      <y>106</y>
+      <y>105</y>
       <width>94</width>
       <height>20</height>
      </rect>
@@ -672,46 +644,13 @@
   <tabstop>skip_split_input</tabstop>
   <tabstop>pause_input</tabstop>
   <tabstop>default_comparison_method</tabstop>
-  <tabstop>default_similarity_threshold_double_spinbox</tabstop>
-  <tabstop>default_pause_time_double_spinbox</tabstop>
+  <tabstop>default_similarity_threshold_spinbox</tabstop>
+  <tabstop>default_pause_time_spinbox</tabstop>
   <tabstop>loop_splits_checkbox</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
   <tabstop>force_print_window_checkbox</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>save_cancel_dialog_button_box</sender>
-   <signal>accepted()</signal>
-   <receiver>dialog_settings</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>194</x>
-     <y>541</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>140</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>save_cancel_dialog_button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>dialog_settings</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>194</x>
-     <y>541</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>140</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

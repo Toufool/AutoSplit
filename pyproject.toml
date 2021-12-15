@@ -15,6 +15,11 @@ aggressive = 3
 [tool.pyright]
 pythonPlatform = "Windows"
 typeCheckingMode = "strict"
+# Extra strict
+reportPropertyTypeMismatch=true
+reportUninitializedInstanceVariable=true
+reportCallInDefaultInitializer=true
+reportImplicitStringConcatenation=true
 ignore = [
   # Auto generated
   "src/gen/",

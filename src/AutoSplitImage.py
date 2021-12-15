@@ -46,7 +46,7 @@ class AutoSplitImage():
         """
         default_value: float = default \
             if isinstance(default, float) \
-            else default.pause_spinbox.value()
+            else default.settings_dict["default_pause_time"]
         return default_value if self.__pause_time is None else self.__pause_time
 
     def get_similarity_threshold(self, default: Union[AutoSplit, float]):
@@ -55,7 +55,7 @@ class AutoSplitImage():
         """
         default_value: float = default \
             if isinstance(default, float) \
-            else default.similarity_threshold_spinbox.value()
+            else default.settings_dict["default_similarity_threshold"]
         return default_value if self.__similarity_threshold is None else self.__similarity_threshold
 
     def __init__(self, path: str):
@@ -109,7 +109,7 @@ class AutoSplitImage():
         """
         comparison_method: int = comparison \
             if isinstance(comparison, int) \
-            else comparison.comparison_method_combobox.currentIndex()
+            else comparison.settings_dict["default_comparison_method"]
 
         if self.bytes is None or capture is None:
             return 0.0
