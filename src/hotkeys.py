@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Literal, Optional, TYPE_CHECKING, Union
 from collections.abc import Callable
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -18,27 +19,29 @@ PRESS_A_KEY_TEXT = "Press a key..."
 # do all of these after you click "Set Hotkey" but before you type the hotkey.
 def before_setting_hotkey(autosplit: AutoSplit):
     autosplit.start_auto_splitter_button.setEnabled(False)
-    autosplit.set_split_hotkey_button.setEnabled(False)
-    autosplit.set_reset_hotkey_button.setEnabled(False)
-    autosplit.set_skip_split_hotkey_button.setEnabled(False)
-    autosplit.set_undo_split_hotkey_button.setEnabled(False)
-    autosplit.set_pause_hotkey_button.setEnabled(False)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_split_hotkey_button.setEnabled(False)
+        autosplit.SettingsWidget.set_reset_hotkey_button.setEnabled(False)
+        autosplit.SettingsWidget.set_skip_split_hotkey_button.setEnabled(False)
+        autosplit.SettingsWidget.set_undo_split_hotkey_button.setEnabled(False)
+        autosplit.SettingsWidget.set_pause_hotkey_button.setEnabled(False)
 
 
 # do all of these things after you set a hotkey. a signal connects to this because
 # changing GUI stuff in the hotkey thread was causing problems
 def after_setting_hotkey(autosplit: AutoSplit):
-    autosplit.set_split_hotkey_button.setText(SET_HOTKEY_TEXT)
-    autosplit.set_reset_hotkey_button.setText(SET_HOTKEY_TEXT)
-    autosplit.set_skip_split_hotkey_button.setText(SET_HOTKEY_TEXT)
-    autosplit.set_undo_split_hotkey_button.setText(SET_HOTKEY_TEXT)
-    autosplit.set_pause_hotkey_button.setText(SET_HOTKEY_TEXT)
     autosplit.start_auto_splitter_button.setEnabled(True)
-    autosplit.set_split_hotkey_button.setEnabled(True)
-    autosplit.set_reset_hotkey_button.setEnabled(True)
-    autosplit.set_skip_split_hotkey_button.setEnabled(True)
-    autosplit.set_undo_split_hotkey_button.setEnabled(True)
-    autosplit.set_pause_hotkey_button.setEnabled(True)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_split_hotkey_button.setText(SET_HOTKEY_TEXT)
+        autosplit.SettingsWidget.set_reset_hotkey_button.setText(SET_HOTKEY_TEXT)
+        autosplit.SettingsWidget.set_skip_split_hotkey_button.setText(SET_HOTKEY_TEXT)
+        autosplit.SettingsWidget.set_undo_split_hotkey_button.setText(SET_HOTKEY_TEXT)
+        autosplit.SettingsWidget.set_pause_hotkey_button.setText(SET_HOTKEY_TEXT)
+        autosplit.SettingsWidget.set_split_hotkey_button.setEnabled(True)
+        autosplit.SettingsWidget.set_reset_hotkey_button.setEnabled(True)
+        autosplit.SettingsWidget.set_skip_split_hotkey_button.setEnabled(True)
+        autosplit.SettingsWidget.set_undo_split_hotkey_button.setEnabled(True)
+        autosplit.SettingsWidget.set_pause_hotkey_button.setEnabled(True)
 
 
 def is_digit(key: Optional[str]):
@@ -57,15 +60,15 @@ def send_command(autosplit: AutoSplit, command: Commands):
     if autosplit.is_auto_controlled:
         print(command, flush=True)
     elif command in {"split", "start"}:
-        _send_hotkey(autosplit.split_input.text())
+        _send_hotkey(autosplit.settings_dict["split_hotkey"])
     elif command == "pause":
-        _send_hotkey(autosplit.pause_input.text())
+        _send_hotkey(autosplit.settings_dict["pause_hotkey"])
     elif command == "reset":
-        _send_hotkey(autosplit.reset_input.text())
+        _send_hotkey(autosplit.settings_dict["reset_hotkey"])
     elif command == "skip":
-        _send_hotkey(autosplit.skip_split_input.text())
+        _send_hotkey(autosplit.settings_dict["skip_split_hotkey"])
     elif command == "undo":
-        _send_hotkey(autosplit.undo_split_input.text())
+        _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
 
     else:
         raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
@@ -138,18 +141,19 @@ def __get_key_name(keyboard_event: KeyboardEvent):
 
 
 def __is_key_already_set(autosplit: AutoSplit, key_name: str):
-    return key_name in (autosplit.split_input.text(),
-                        autosplit.reset_input.text(),
-                        autosplit.skip_split_input.text(),
-                        autosplit.undo_split_input.text(),
-                        autosplit.pause_input.text())
+    return key_name in (autosplit.settings_dict["split_hotkey"],
+                        autosplit.settings_dict["reset_hotkey"],
+                        autosplit.settings_dict["skip_split_hotkey"],
+                        autosplit.settings_dict["undo_split_hotkey"],
+                        autosplit.settings_dict["pause_hotkey"])
 
 
 # --------------------HOTKEYS--------------------------
 # TODO: Refactor to de-duplicate all this code, including settings_file.py
 # Going to comment on one func, and others will be similar.
 def set_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
-    autosplit.set_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
 
     # disable some buttons
     before_setting_hotkey(autosplit)
@@ -188,7 +192,9 @@ def set_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.split_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.start_auto_splitter))
-        autosplit.split_input.setText(key_name)
+        if autosplit.SettingsWidget:
+            autosplit.SettingsWidget.split_input.setText(key_name)
+        autosplit.settings_dict["split_hotkey"] = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
     # try to remove the previously set hotkey if there is one.
@@ -198,7 +204,8 @@ def set_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
 
 
 def set_reset_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
-    autosplit.set_reset_hotkey_button.setText(PRESS_A_KEY_TEXT)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_reset_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
     def callback():
@@ -215,7 +222,9 @@ def set_reset_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.reset_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.reset_signal.emit))
-        autosplit.reset_input.setText(key_name)
+        if autosplit.SettingsWidget:
+            autosplit.SettingsWidget.reset_input.setText(key_name)
+        autosplit.settings_dict["reset_hotkey"] = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
     _unhook(autosplit.reset_hotkey)
@@ -224,7 +233,8 @@ def set_reset_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
 
 
 def set_skip_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
-    autosplit.set_skip_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_skip_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
     def callback():
@@ -241,7 +251,9 @@ def set_skip_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.skip_split_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.skip_split_signal.emit))
-        autosplit.skip_split_input.setText(key_name)
+        if autosplit.SettingsWidget:
+            autosplit.SettingsWidget.skip_split_input.setText(key_name)
+        autosplit.settings_dict["skip_split_hotkey"] = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
     _unhook(autosplit.skip_split_hotkey)
@@ -250,7 +262,8 @@ def set_skip_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
 
 
 def set_undo_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
-    autosplit.set_undo_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_undo_split_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
     def callback():
@@ -267,7 +280,9 @@ def set_undo_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.undo_split_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.undo_split_signal.emit))
-        autosplit.undo_split_input.setText(key_name)
+        if autosplit.SettingsWidget:
+            autosplit.SettingsWidget.undo_split_input.setText(key_name)
+        autosplit.settings_dict["undo_split_hotkey"] = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
     _unhook(autosplit.undo_split_hotkey)
@@ -276,7 +291,8 @@ def set_undo_split_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
 
 
 def set_pause_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
-    autosplit.set_pause_hotkey_button.setText(PRESS_A_KEY_TEXT)
+    if autosplit.SettingsWidget:
+        autosplit.SettingsWidget.set_pause_hotkey_button.setText(PRESS_A_KEY_TEXT)
     before_setting_hotkey(autosplit)
 
     def callback():
@@ -293,7 +309,9 @@ def set_pause_hotkey(autosplit: AutoSplit, preselected_key: str = ""):
         autosplit.pause_hotkey = keyboard.hook_key(
             key_name,
             lambda error: _hotkey_action(error, key_name, autosplit.pause_signal.emit))
-        autosplit.pause_input.setText(key_name)
+        if autosplit.SettingsWidget:
+            autosplit.SettingsWidget.pause_input.setText(key_name)
+        autosplit.settings_dict["pause_hotkey"] = key_name
         autosplit.after_setting_hotkey_signal.emit()
 
     _unhook(autosplit.pause_hotkey)

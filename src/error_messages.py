@@ -31,12 +31,12 @@ def split_image_directory_empty():
 
 def image_type(image: str):
     set_text_message(f'"{image}" is not a valid image file, does not exist, '
-                     "or the full image file path contains a special character.")
+                     + "or the full image file path contains a special character.")
 
 
 def region():
     set_text_message("No region is selected or the Capture Region window is not open. "
-                     "Select a region or load settings while the Capture Region window is open.")
+                     + "Select a region or load settings while the Capture Region window is open.")
 
 
 def split_hotkey():
@@ -45,7 +45,7 @@ def split_hotkey():
 
 def pause_hotkey():
     set_text_message("Your split image folder contains an image filename with a pause flag {p}, "
-                     "but no pause hotkey is set.")
+                     + "but no pause hotkey is set.")
 
 
 def align_region_image_type():
@@ -82,7 +82,7 @@ def no_settings_file_on_open():
 
 def too_many_settings_files_on_open():
     set_text_message("Too many settings files found. "
-                     "Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
+                     + "Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
 
 
 def check_for_updates():
@@ -91,7 +91,7 @@ def check_for_updates():
 
 def load_start_image():
     set_text_message("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
-                     "Please set these hotkeys, and then click the Reload Start Image button.")
+                     + "Please set these hotkeys, and then click the Reload Start Image button.")
 
 
 def stdin_lost():

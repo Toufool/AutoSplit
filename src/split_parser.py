@@ -153,9 +153,9 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
 def parse_and_validate_images(autosplit: AutoSplit):
     # Get split images
     all_images = [
-        AutoSplitImage(os.path.join(autosplit.split_image_directory, image_name))
+        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
         for image_name
-        in os.listdir(autosplit.split_image_directory)]
+        in os.listdir(autosplit.settings_dict["split_image_directory"])]
 
     # Find non-split images and then remove them from the list
     autosplit.start_image = __pop_image_type(all_images, ImageType.START)
@@ -171,7 +171,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
             return False
 
         # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (not autosplit.pause_input.text()
+        if (not autosplit.settings_dict["pause_hotkey"]
                 and image.check_flag(PAUSE_FLAG)
                 and not autosplit.is_auto_controlled):
             autosplit.gui_changes_on_reset()
@@ -181,7 +181,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
         # Check that there's only one reset image
         if image.image_type == ImageType.RESET:
             # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
-            if not autosplit.reset_input.text() and not autosplit.is_auto_controlled:
+            if not autosplit.settings_dict["reset_hotkey"] and not autosplit.is_auto_controlled:
                 autosplit.gui_changes_on_reset()
                 error_messages.reset_hotkey()
                 return False

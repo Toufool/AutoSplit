@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -12,6 +13,7 @@ from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
 
 import error_messages
+from capture_windows import Region
 from gen import design
 from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_split_hotkey, set_undo_split_hotkey
 
@@ -19,6 +21,26 @@ from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, s
 FROZEN = hasattr(sys, "frozen")
 # Get the directory of either AutoSplit.exe or AutoSplit.py
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
+
+
+class SettingsDict(TypedDict):
+    split_hotkey: str
+    reset_hotkey: str
+    undo_split_hotkey: str
+    skip_split_hotkey: str
+    pause_hotkey: str
+    fps_limit: int
+    live_capture_region: bool
+    force_print_window: bool
+    default_comparison_method: int
+    default_similarity_threshold: float
+    default_delay_time: int
+    default_pause_time: float
+    loop_splits: bool
+
+    split_image_directory: str
+    captured_window_title: str
+    capture_region: Region
 
 
 class RestrictedUnpickler(pickle.Unpickler):
@@ -29,27 +51,27 @@ class RestrictedUnpickler(pickle.Unpickler):
 
 def get_save_settings_values(autosplit: AutoSplit):
     return [
-        autosplit.split_image_directory,
-        autosplit.similarity_threshold_spinbox.value(),
-        autosplit.comparison_method_combobox.currentIndex(),
-        autosplit.pause_spinbox.value(),
-        int(autosplit.fps_limit_spinbox.value()),
-        autosplit.split_input.text(),
-        autosplit.reset_input.text(),
-        autosplit.skip_split_input.text(),
-        autosplit.undo_split_input.text(),
-        autosplit.pause_input.text(),
-        autosplit.x_spinbox.value(),
-        autosplit.y_spinbox.value(),
-        autosplit.width_spinbox.value(),
-        autosplit.height_spinbox.value(),
-        autosplit.window_text,
+        autosplit.settings_dict["split_image_directory"],
+        autosplit.settings_dict["default_similarity_threshold"],
+        autosplit.settings_dict["default_comparison_method"],
+        autosplit.settings_dict["default_pause_time"],
+        autosplit.settings_dict["fps_limit"],
+        autosplit.settings_dict["split_hotkey"],
+        autosplit.settings_dict["reset_hotkey"],
+        autosplit.settings_dict["skip_split_hotkey"],
+        autosplit.settings_dict["undo_split_hotkey"],
+        autosplit.settings_dict["pause_hotkey"],
+        autosplit.settings_dict["capture_region"].x,
+        autosplit.settings_dict["capture_region"].y,
+        autosplit.settings_dict["capture_region"].width,
+        autosplit.settings_dict["capture_region"].height,
+        autosplit.settings_dict["captured_window_title"],
         0,
         0,
         1,
-        int(autosplit.loop_checkbox.isChecked()),
-        int(autosplit.auto_start_on_reset_checkbox.isChecked()),
-        autosplit.force_print_window_checkbox.isChecked()]
+        autosplit.settings_dict["loop_splits"],
+        0,
+        autosplit.settings_dict["force_print_window"]]
 
 
 def have_settings_changed(autosplit: AutoSplit):
@@ -123,12 +145,12 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    autosplit.split_image_directory = settings[0]
+    autosplit.settings_dict["split_image_directory"] = settings[0]
     autosplit.split_image_folder_input.setText(settings[0])
-    autosplit.similarity_threshold_spinbox.setValue(settings[1])
-    autosplit.comparison_method_combobox.setCurrentIndex(settings[2])
-    autosplit.pause_spinbox.setValue(settings[3])
-    autosplit.fps_limit_spinbox.setValue(settings[4])
+    autosplit.settings_dict["default_similarity_threshold"] = settings[1]
+    autosplit.settings_dict["default_comparison_method"] = settings[2]
+    autosplit.settings_dict["default_pause_time"] = settings[3]
+    autosplit.settings_dict["fps_limit"] = settings[4]
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
         set_split_hotkey(autosplit, settings[5])
@@ -140,20 +162,19 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     autosplit.y_spinbox.setValue(settings[11])
     autosplit.width_spinbox.setValue(settings[12])
     autosplit.height_spinbox.setValue(settings[13])
-    autosplit.window_text = settings[14]
-    autosplit.loop_checkbox.setChecked(bool(settings[18]))
-    autosplit.auto_start_on_reset_checkbox.setChecked(bool(settings[19]))
-    autosplit.force_print_window_checkbox.setChecked(settings[20])
+    autosplit.settings_dict["captured_window_title"] = settings[14]
+    autosplit.settings_dict["loop_splits"] = settings[18]
+    autosplit.settings_dict["force_print_window"] = settings[20]
 
-    if autosplit.window_text:
+    if autosplit.settings_dict["captured_window_title"]:
         # https://github.com/kaluluosi/pywin32-stubs/issues/7
-        hwnd = win32gui.FindWindow(None, autosplit.window_text)  # type: ignore
+        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])  # type: ignore
         if hwnd:
             autosplit.hwnd = hwnd
         else:
             autosplit.live_image.setText("Reload settings after opening"
-                                         f'\n"{autosplit.window_text}"'
-                                         "\nto automatically load Live Capture")
+                                         + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+                                         + "\nto automatically load Capture Region")
     return True
 
 
@@ -170,7 +191,6 @@ def load_settings(
         return
 
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
-    autosplit.check_live_image()
     autosplit.load_start_image()
 
 

@@ -45,7 +45,7 @@ def select_region(autosplit: AutoSplit):
         error_messages.region()
         return
     autosplit.hwnd = hwnd
-    autosplit.window_text = window_text
+    autosplit.settings_dict["captured_window_title"] = window_text
 
     offset_x, offset_y, *_ = win32gui.GetWindowRect(autosplit.hwnd)
     __set_region_values(autosplit,
@@ -76,7 +76,7 @@ def select_window(autosplit: AutoSplit):
         error_messages.region()
         return
     autosplit.hwnd = hwnd
-    autosplit.window_text = window_text
+    autosplit.settings_dict["captured_window_title"] = window_text
 
     # Getting window bounds
     # On Windows there is a shadow around the windows that we need to account for
@@ -134,8 +134,8 @@ def align_region(autosplit: AutoSplit):
     # subregion being searched for to align the image.
     capture = capture_windows.capture_region(
         autosplit.hwnd,
-        autosplit.selection,
-        autosplit.force_print_window_checkbox.isChecked())
+        autosplit.settings_dict["capture_region"],
+        autosplit.settings_dict["force_print_window"])
 
     if capture is None:
         error_messages.region()
@@ -151,24 +151,22 @@ def align_region(autosplit: AutoSplit):
 
     # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
     __set_region_values(autosplit,
-                        left=autosplit.selection.left + best_loc[0],
-                        top=autosplit.selection.top + best_loc[1],
+                        left=autosplit.settings_dict["capture_region"].x + best_loc[0],
+                        top=autosplit.settings_dict["capture_region"].y + best_loc[1],
                         width=best_width,
                         height=best_height)
 
 
 def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
-    autosplit.selection.left = left
-    autosplit.selection.top = top
-    autosplit.selection.right = left + width
-    autosplit.selection.bottom = top + height
+    autosplit.settings_dict["capture_region"].x = left
+    autosplit.settings_dict["capture_region"].y = top
+    autosplit.settings_dict["capture_region"].width = width
+    autosplit.settings_dict["capture_region"].height = height
 
     autosplit.x_spinbox.setValue(left)
     autosplit.y_spinbox.setValue(top)
     autosplit.width_spinbox.setValue(width)
     autosplit.height_spinbox.setValue(height)
-
-    autosplit.check_live_image()
 
 
 def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):
@@ -213,11 +211,11 @@ def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):
 
 def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
     error = None
-    if not autosplit.split_image_directory:
+    if not autosplit.settings_dict["split_image_directory"]:
         error = error_messages.split_image_directory
-    elif not os.path.isdir(autosplit.split_image_directory):
+    elif not os.path.isdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_not_found
-    elif check_empty_directory and not os.listdir(autosplit.split_image_directory):
+    elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
     elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
         error = error_messages.region
