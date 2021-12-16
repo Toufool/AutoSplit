@@ -300,9 +300,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 or not self.start_image \
                 or time() < self.check_start_image_timestamp \
                 or (not self.settings_dict["split_hotkey"] and not self.is_auto_controlled):
-            pause_time_left = f"{self.check_start_image_timestamp - time():.1f}"
+            pause_time_left = self.check_start_image_timestamp - time()
             self.current_split_image.setText(
-                f"None\n (Paused before loading Start Image).\n {pause_time_left} sec remaining")
+                f"None\n (Paused before loading Start Image).\n {seconds_remaining_text(pause_time_left)}")
             return
 
         if self.check_start_image_timestamp > 0:
@@ -347,9 +347,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 delay_start_time = time()
                 start_delay = self.start_image.delay / 1000
                 while time() - delay_start_time < start_delay:
-                    delay_time_left = round(start_delay - (time() - delay_start_time), 1)
+                    delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
-                        f"Delayed Before Starting:\n {delay_time_left} sec remaining")
+                        f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
                     # Email sent to pyqt@riverbankcomputing.com
                     QtTest.QTest.qWait(1)  # type: ignore
 
@@ -636,8 +636,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     # check for reset while delayed and display a counter of the remaining split delay time
                     delay_start_time = time()
                     while time() - delay_start_time < split_delay:
-                        delay_time_left = round(split_delay - (time() - delay_start_time), 1)
-                        self.current_split_image.setText(f"Delayed Split: {delay_time_left} sec remaining")
+                        delay_time_left = split_delay - (time() - delay_start_time)
+                        self.current_split_image.setText(f"Delayed Split: {seconds_remaining_text(delay_time_left)}")
                         if self.__check_for_reset():
                             return
 
@@ -684,8 +684,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if pause_time > 0:
                 pause_start_time = time()
                 while time() - pause_start_time < pause_time:
-                    pause_time_left = round(pause_time - (time() - pause_start_time), 1)
-                    self.current_split_image.setText(f"None (Paused). {pause_time_left} sec remaining")
+                    pause_time_left = pause_time - (time() - pause_start_time)
+                    self.current_split_image.setText(f"None (Paused). {seconds_remaining_text(pause_time_left)}")
 
                     if self.__check_for_reset():
                         return
@@ -867,6 +867,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 a0.ignore()
         else:
             exit_program()
+
+
+def seconds_remaining_text(seconds: float):
+    return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
 def main():
