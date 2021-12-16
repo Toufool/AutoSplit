@@ -67,10 +67,10 @@ This program can be used to automatically start, split, and reset your preferred
 
 ### Comparison Method
 
-- There are three comparison methods to choose from: L2 Norm, Histograms, and pHash.
+- There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (or pHash).
   - L2 Norm: This method should be fine to use for most cases. it finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
-  - pHash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
+  - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
 
 ### Full Content Rendering
 

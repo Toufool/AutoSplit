@@ -398,7 +398,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # save and open image
         cv2.imwrite(screenshot_path, capture)
-        os.startfile(screenshot_path)
+        os.startfile(screenshot_path)  # nosec
 
     def __check_fps(self):
         self.fps_value_label.clear()

@@ -18,7 +18,15 @@ class KeyboardEvent:
     modifiers: Optional[Unknown] = ...
     is_keypad: Optional[bool] = ...
 
-    def __init__(self, event_type: event_type, scan_code, name: name = ..., time: time = ..., device: device = ..., modifiers: modifiers = ..., is_keypad: is_keypad = ...) -> None:
+    def __init__(self,
+                 event_type: event_type,
+                 scan_code,
+                 name: name = ...,
+                 time: time = ...,
+                 device: device = ...,
+                 modifiers: modifiers = ...,
+                 is_keypad: is_keypad = ...
+                 ) -> None:
         ...
 
     def to_json(self, ensure_ascii: bool = ...) -> str:

@@ -13,7 +13,7 @@ if ($LastExitCode -gt 0) {
 }
 
 Write-Host "`nRunning Pylint..."
-pylint --score=n --output-format=colorized $(git ls-files '**/*.py*')
+pylint --score=n --output-format=colorized $(git ls-files '**/*.py')
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Pylint failed ($LastExitCode)" -ForegroundColor Red

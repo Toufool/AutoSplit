@@ -25,6 +25,7 @@ requests
 # Linting and Types
 bandit
 flake8
+flake8-pyi
 flake8-quotes
 pylint
 pywin32-stubs
