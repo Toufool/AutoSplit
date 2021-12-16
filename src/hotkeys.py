@@ -6,10 +6,10 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import threading
-from keyboard._keyboard_event import KeyboardEvent, KEY_DOWN
+
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
 import pyautogui  # https://github.com/asweigart/pyautogui/issues/645
-# While not usually recommended, we don'thread manipulate the mouse, and we don'thread want the extra delay
+# While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
 pyautogui.FAILSAFE = False
 
 SET_HOTKEY_TEXT = "Set Hotkey"
@@ -100,11 +100,11 @@ def _send_hotkey(key_or_scan_code: Union[int, str]):
     pyautogui.hotkey(key_or_scan_code.replace(" ", ""))
 
 
-def __validate_keypad(expected_key: str, keyboard_event: KeyboardEvent) -> bool:
+def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent) -> bool:
     # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
     # as well as "." and "(keypad)./decimal"
     if keyboard_event.scan_code in {83, 52}:
-        # TODO: "del" won'thread work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
+        # TODO: "del" won't work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
         return expected_key == keyboard_event.name
     # Prevent "action keys" from triggering "keypad keys"
     if keyboard_event.name and is_digit(keyboard_event.name[-1]):
@@ -125,16 +125,16 @@ def __validate_keypad(expected_key: str, keyboard_event: KeyboardEvent) -> bool:
 
 # We're doing the check here instead of saving the key code because it'll
 # cause issues with save files and the non-keypad shared keys are localized
-# while the keypad ones aren'thread.
+# while the keypad ones aren't.
 
-# Since we reuse the key string we set to send to LiveSplit, we can'thread use fake names like "num home".
+# Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
 # We're also trying to achieve the same hotkey behaviour as LiveSplit has.
-def _hotkey_action(keyboard_event: KeyboardEvent, key_name: str, action: Callable[[], None]):
-    if keyboard_event.event_type == KEY_DOWN and __validate_keypad(key_name, keyboard_event):
+def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action: Callable[[], None]):
+    if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
         action()
 
 
-def __get_key_name(keyboard_event: KeyboardEvent):
+def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
     return f"num {keyboard_event.name}"  \
         if keyboard_event.is_keypad and is_digit(keyboard_event.name) \
         else str(keyboard_event.name)
