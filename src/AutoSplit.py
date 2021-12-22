@@ -54,7 +54,7 @@ def make_excepthook(autosplit: AutoSplit):
             sys.exit(0)
         autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(
             "AutoSplit encountered an unhandled exception and will try to recover, "
-            + f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
+            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
             exception))
     return excepthook
 
@@ -411,9 +411,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             while count < CHECK_FPS_ITERATIONS:
                 capture = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
-                set_ui_image(self.current_split_image, image.bytes, True)
                 count += 1
-        self.current_split_image.clear()
 
         # calculate FPS
         t1 = time()
@@ -437,9 +435,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
 
         if not navigate_image_only:
-            for i, group in enumerate(self.split_groups):
+            for i, group in enumerate(self.split_groups,):
                 if i > 0 and self.split_image_number in group:
-                    self.split_image_number = self.split_groups[i - 1][0]
+                    self.split_image_number = self.split_groups[i - 1][-1]
                     break
         else:
             self.split_image_number -= 1
