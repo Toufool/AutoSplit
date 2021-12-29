@@ -23,7 +23,7 @@ class ImageNotFoundException(PyAutoGUIException):
     ...
 
 
-if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3, 2)):
+if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3, 2)):  # noqa: Y003,Y006
     # Python 2 and 3.1 and 3.2 uses collections.Sequence
     import collections
 

@@ -29,8 +29,8 @@ ignore = [
 reportMissingTypeStubs = "information"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# PyQt .connect
-reportFunctionMemberAccess = "information"
+# False positives with PyQt .connect. pylint(no-member) works instead
+reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"
 # Flake8 does a better job

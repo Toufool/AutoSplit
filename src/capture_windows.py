@@ -48,12 +48,15 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
         if print_window:
             ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
-        compatible_dc = cast(PyCDC, dc_object.CreateCompatibleDC())
+        compatible_dc = dc_object.CreateCompatibleDC()
         bitmap: PyCBitmap = win32ui.CreateBitmap()
         bitmap.CreateCompatibleBitmap(dc_object, selection.width, selection.height)
         compatible_dc.SelectObject(bitmap)
-        compatible_dc.BitBlt((0, 0), (selection.width, selection.height), dc_object,
-                             (selection.x, selection.y), win32con.SRCCOPY)
+        compatible_dc.BitBlt((0, 0),
+                             (selection.width, selection.height),
+                             dc_object,
+                             (selection.x, selection.y),
+                             win32con.SRCCOPY)
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
