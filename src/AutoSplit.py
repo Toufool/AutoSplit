@@ -54,7 +54,7 @@ def make_excepthook(autosplit: AutoSplit):
             sys.exit(0)
         autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(
             "AutoSplit encountered an unhandled exception and will try to recover, "
-            + f"however, there is no guarantee everything will work properly. {CREATE_NEW_ISSUE_MESSAGE}",
+            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
             exception))
     return excepthook
 
@@ -100,7 +100,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     """Window Handle used for Capture Region"""
     last_saved_settings: list[Union[str, float, int, bool]] = []
     similarity = 0.0
-    live_image_function_on_open = True
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
@@ -238,22 +237,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.load_start_image()
 
     def __live_image_function(self):
-        try:
-            self.capture_region_window_label.setText(self.settings_dict["captured_window_title"])
-            if not self.settings_dict["captured_window_title"]:
-                self.timer_live_image.stop()
-                self.live_image.clear()
-                if self.live_image_function_on_open:
-                    self.live_image_function_on_open = False
-                return
-            # Set live image in UI
-            if self.hwnd:
-                capture = capture_region(self.hwnd, self.settings_dict["capture_region"],
-                                         self.settings_dict["force_print_window"])
-                set_ui_image(self.live_image, capture, False)
-
-        except AttributeError:
-            pass
+        self.capture_region_window_label.setText(self.settings_dict["captured_window_title"])
+        if not (self.settings_dict["live_capture_region"] and self.settings_dict["captured_window_title"]):
+            self.live_image.clear()
+            return
+        # Set live image in UI
+        if self.hwnd:
+            capture = capture_region(self.hwnd,
+                                     self.settings_dict["capture_region"],
+                                     self.settings_dict["force_print_window"])
+            set_ui_image(self.live_image, capture, False)
 
     def load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         self.timer_start_image.stop()
@@ -418,9 +411,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             while count < CHECK_FPS_ITERATIONS:
                 capture = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
-                set_ui_image(self.current_split_image, image.bytes, True)
                 count += 1
-        self.current_split_image.clear()
 
         # calculate FPS
         t1 = time()
@@ -444,9 +435,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
 
         if not navigate_image_only:
-            for i, group in enumerate(self.split_groups):
+            for i, group in enumerate(self.split_groups,):
                 if i > 0 and self.split_image_number in group:
-                    self.split_image_number = self.split_groups[i - 1][0]
+                    self.split_image_number = self.split_groups[i - 1][-1]
                     break
         else:
             self.split_image_number -= 1
