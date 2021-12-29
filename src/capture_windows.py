@@ -1,18 +1,17 @@
 from __future__ import annotations
-from typing import Optional, TypedDict, cast
 
 import ctypes
 import ctypes.wintypes
-from PyQt6 import QtCore, QtGui
-from PyQt6.QtWidgets import QLabel
+from typing import Optional, TypedDict, cast
 
 import cv2
 import numpy as np
+import pywintypes
 import win32con
 import win32ui
-import pywintypes
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtWidgets import QLabel
 from win32 import win32gui
-from win32typing import PyCBitmap, PyCDC
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
@@ -44,15 +43,15 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
 
     # If the window closes while it's being manipulated, it could cause a crash
     try:
-        window_dc: int = win32gui.GetWindowDC(hwnd)
-        dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)
+        window_dc = win32gui.GetWindowDC(hwnd)
+        dc_object = win32ui.CreateDCFromHandle(window_dc)
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
         if print_window:
             ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
         compatible_dc = dc_object.CreateCompatibleDC()
-        bitmap: PyCBitmap = win32ui.CreateBitmap()
+        bitmap = win32ui.CreateBitmap()
         bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
         compatible_dc.SelectObject(bitmap)
         compatible_dc.BitBlt(
