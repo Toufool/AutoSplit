@@ -15,7 +15,7 @@ from PyQt6 import QtCore, QtWidgets
 import error_messages
 from capture_windows import Region
 from gen import design
-from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_split_hotkey, set_undo_split_hotkey
+from hotkeys import set_hotkey
 
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
 FROZEN = hasattr(sys, "frozen")
@@ -153,11 +153,11 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     autosplit.settings_dict["fps_limit"] = settings[4]
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
-        set_split_hotkey(autosplit, settings[5])
-        set_reset_hotkey(autosplit, settings[6])
-        set_skip_split_hotkey(autosplit, settings[7])
-        set_undo_split_hotkey(autosplit, settings[8])
-        set_pause_hotkey(autosplit, settings[9])
+        set_hotkey(autosplit, "split", settings[5])
+        set_hotkey(autosplit, "reset", settings[6])
+        set_hotkey(autosplit, "skip_split", settings[7])
+        set_hotkey(autosplit, "undo_split", settings[8])
+        set_hotkey(autosplit, "pause", settings[9])
     autosplit.x_spinbox.setValue(settings[10])
     autosplit.y_spinbox.setValue(settings[11])
     autosplit.width_spinbox.setValue(settings[12])
