@@ -9,6 +9,7 @@ from threading import Lock as _Lock
 from ._keyboard_event import KEY_DOWN, KEY_UP, KeyboardEvent
 from ._generic import GenericListener as _GenericListener
 from ._canonical_names import all_modifiers, normalize_name, sided_modifiers
+__all__ = ["all_modifiers", "normalize_name", "sided_modifiers", "KEY_DOWN", "KEY_UP", "KeyboardEvent"]
 
 __all__ = [
     "KEY_DOWN",

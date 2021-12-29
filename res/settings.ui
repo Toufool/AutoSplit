@@ -427,7 +427,7 @@
      <string/>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="undo_split_input">
@@ -476,9 +476,6 @@
     </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="frame">
-     <bool>true</bool>
     </property>
     <property name="readOnly">
      <bool>true</bool>
