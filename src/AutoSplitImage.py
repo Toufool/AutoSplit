@@ -127,6 +127,7 @@ class AutoSplitImage():
         """
         Compare image with capture using image's comparison method. Falls back to combobox
         """
+
         if self.bytes is None or capture is None:
             return 0.0
         comparison_method = self.__get_comparison_method(default)
