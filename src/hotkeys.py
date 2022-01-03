@@ -182,7 +182,6 @@ def __read_hotkey():
         if keyboard_event.event_type == keyboard.KEY_UP:
             break
         key_name = __get_key_name(keyboard_event)
-        print(key_name)
         # Ignore long presses
         if names and names[-1] == key_name:
             continue
@@ -244,5 +243,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # Try to remove the previously set hotkey if there is one.
     _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-    thread = threading.Thread(target=callback)
-    thread.start()
+    threading.Thread(target=callback).start()

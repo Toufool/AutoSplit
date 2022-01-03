@@ -74,6 +74,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     pause_signal = QtCore.pyqtSignal()
     after_setting_hotkey_signal = QtCore.pyqtSignal()
     update_checker_widget_signal = QtCore.pyqtSignal(str, bool)
+    load_start_image_signal = QtCore.pyqtSignal([], [bool], [bool, bool])
     # Use this signal when trying to show an error from outside the main thread
     show_error_signal = QtCore.pyqtSignal(FunctionType)
 
@@ -156,6 +157,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.start_auto_splitter_button.setEnabled(False)
 
             # Send version and process ID to stdout
+            # THIS HAS TO BE THE FIRST TWO LINES SENT
             print(f"{VERSION}\n{os.getpid()}", flush=True)
 
             # Use and Start the thread that checks for updates from LiveSplit
@@ -181,7 +183,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.clicked.connect(lambda: self.__undo_split(True))
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
-        self.reload_start_image_button.clicked.connect(lambda: self.load_start_image(True, True))
+        self.reload_start_image_button.clicked.connect(lambda: self.__load_start_image(True, True))
         self.action_check_for_updates_on_open.changed.connect(lambda: settings.set_check_for_updates_on_open(
             self,
             self.action_check_for_updates_on_open.isChecked())
@@ -198,14 +200,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
         self.update_checker_widget_signal.connect(lambda latest_version, check_on_open:
                                                   open_update_checker(self, latest_version, check_on_open))
+        self.load_start_image_signal.connect(self.__load_start_image)
+        self.load_start_image_signal[bool].connect(self.__load_start_image)
+        self.load_start_image_signal[bool, bool].connect(self.__load_start_image)
         self.reset_signal.connect(self.reset)
         self.skip_split_signal.connect(self.__skip_split)
         self.undo_split_signal.connect(self.__undo_split)
         self.pause_signal.connect(self.pause)
 
         # live image checkbox
-        self.timer_live_image.start(int(1000 / 60))
         self.timer_live_image.timeout.connect(self.__live_image_function)
+        self.timer_live_image.start(int(1000 / 60))
 
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__start_image_function)
@@ -221,7 +226,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     # FUNCTIONS
 
-    # TODO add checkbox for going back to image 1 when resetting.
     def __browse(self):
         # User selects the file with the split images in it.
         new_split_image_directory = QFileDialog.getExistingDirectory(
@@ -234,7 +238,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.settings_dict["split_image_directory"] = new_split_image_directory
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
-            self.load_start_image()
+            self.load_start_image_signal.emit()
 
     def __live_image_function(self):
         self.capture_region_window_label.setText(self.settings_dict["captured_window_title"])
@@ -248,7 +252,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                                      self.settings_dict["force_print_window"])
             set_ui_image(self.live_image, capture, False)
 
-    def load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
+    def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
+        print(started_by_button, wait_for_delay)
+        """
+        Not thread safe (if triggered by LiveSplit for example). Use `load_start_image_signal.emit` instead.
+        """
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
@@ -746,7 +754,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.skip_split_button.setEnabled(False)
 
         QApplication.processEvents()
-        self.load_start_image(False, False)
+        self.load_start_image_signal[bool, bool].emit(False, False)
 
     def __get_capture_for_comparison(self):
         """
