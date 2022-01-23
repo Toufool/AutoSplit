@@ -42,6 +42,27 @@ def pause_from_filename(filename):
     else:
         return pause
 
+def fail_from_filename(filename):
+    """
+    Retrieve the fail time from the filename, if there is no fail time or the fail time
+    isn't a valid number, then None is returned
+
+    @param filename: String containing the file's name
+    @return: A valid fail time, if not then None
+    """
+
+    # Check to make sure there is a valid fail time between less than and greater than signs of the filename
+    try:
+        fail = float(filename.split('<', 1)[1].split('>')[0])
+    except:
+        return None
+
+    # Fail times should always be positive or zero
+    if (fail < 0.0):
+        return None
+    else:
+        return fail
+
 def delay_from_filename(filename):
     """
     Retrieve the delay time from the filename, if there is no delay time or the delay time
@@ -91,6 +112,7 @@ DUMMY_FLAG = 1 << 0
 MASK_FLAG = 1 << 1 #Legacy flag. Allows support for {md}, {mp}, or {mb} flags previously required to detect transparancy.
 BELOW_FLAG = 1 << 2
 PAUSE_FLAG = 1 << 3
+IGNORE_FLAG = 1 << 4
 
 
 def flags_from_filename(filename):
@@ -103,9 +125,10 @@ def flags_from_filename(filename):
 
     """
     List of flags:
-    'd' = dummy, do nothing when this split is found
-    'b' = below threshold, after threshold is met, split when it goes below the threhsold.
-    'p' = pause, hit pause key when this split is found
+    'd' = dummy, do nothing when this split is found.
+    'b' = below threshold, after threshold is met, split when it goes below the threshold.
+    'p' = pause, hit pause key when this split is found.
+    'i' = ignore, hit the pause key when the split is found, and hit the pause key again when the split goes below the threshold.
     """
 
     # Check to make sure there are flags between curly braces
@@ -126,6 +149,8 @@ def flags_from_filename(filename):
             flags |= BELOW_FLAG
         elif c.upper() == 'P':
             flags |= PAUSE_FLAG
+        elif c.upper() == 'I':
+            flags |= IGNORE_FLAG
         else:
             # An invalid flag was caught, this filename was written incorrectly
             # return 0. We don't want to interpret any misleading filenames
@@ -134,6 +159,12 @@ def flags_from_filename(filename):
     # Check for any conflicting flags that were set
     # For instance, we can't have a dummy split also pause
     if (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & PAUSE_FLAG == PAUSE_FLAG):
+        return 0
+    elif (flags & DUMMY_FLAG == DUMMY_FLAG) and (flags & IGNORE_FLAG == IGNORE_FLAG):
+        return 0
+    elif (flags & BELOW_FLAG == BELOW_FLAG) and (flags & IGNORE_FLAG == IGNORE_FLAG):
+        return 0
+    elif (flags & PAUSE_FLAG == PAUSE_FLAG) and (flags & IGNORE_FLAG == IGNORE_FLAG):
         return 0
 
     return flags

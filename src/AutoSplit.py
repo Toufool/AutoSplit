@@ -16,7 +16,7 @@ import time
 
 from menu_bar import about, VERSION, viewHelp, checkForUpdates
 from settings_file import auto_split_directory
-from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG
+from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, IGNORE_FLAG
 import capture_windows
 import compare
 import design
@@ -734,7 +734,12 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # second while loop: stays in this loop until similarity threshold is met
             # skip loop if we just finished waiting for the split delay and need to press the split key!
+            # if the split can fail and runs out of time, skip the split
             start = time.time()
+            can_fail = False
+            failed = False
+            if self.split_fail != None:
+                can_fail = True;
             while True:
                 # reset if the set screen region window was closed
                 if win32gui.GetWindowText(self.hwnd) == '':
@@ -794,7 +799,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
                 # if the b flag is set, let similarity go above threshold first,
                 # then split on similarity below threshold.
-                # if no b flag, just split when similarity goes above threshold.
+                # if the i flag is set, pause when similarity goes above theshold,
+                # then unpause when similarity below threshold.
+                # if no b or i flag, just split when similarity goes above threshold.
                 if not self.waiting_for_split_delay:
                     if self.flags & BELOW_FLAG == BELOW_FLAG and not self.split_below_threshold:
                         if self.similarity >= self.similarity_threshold:
@@ -804,7 +811,21 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         if self.similarity < self.similarity_threshold:
                             self.split_below_threshold = False
                             break
+                    elif self.flags & IGNORE_FLAG == IGNORE_FLAG and not self.split_below_threshold:
+                        if self.similarity >= self.similarity_threshold:
+                            self.split_below_threshold = True
+                            self.send_command("pause")
+                            continue
+                    elif self.flags & IGNORE_FLAG == IGNORE_FLAG and self.split_below_threshold:
+                        if self.similarity < self.similarity_threshold:
+                            self.split_below_threshold = False
+                            break
                     elif self.similarity >= self.similarity_threshold:
+                        break
+
+                if can_fail:
+                    if time.time - start > self.split_fail/1000:
+                        failed = True
                         break
 
                 # limit the number of time the comparison runs to reduce cpu usage
@@ -814,48 +835,50 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
             # comes here when threshold gets met
 
-            # We need to make sure that this isn't a dummy split before sending
-            # the key press.
-            if not (self.flags & DUMMY_FLAG == DUMMY_FLAG):
-                # If it's a delayed split, check if the delay has passed
-                # Otherwise calculate the split time for the key press
-                if self.split_delay > 0 and self.waiting_for_split_delay == False:
-                    self.split_time = int(round(time.time() * 1000)) + self.split_delay
-                    self.waiting_for_split_delay = True
-                    self.undosplitButton.setEnabled(False)
-                    self.skipsplitButton.setEnabled(False)
-                    self.currentsplitimagefileLabel.setText(' ')
+            if failed == False:
+                # We need to make sure that this isn't a dummy split before sending
+                # the key press.
+                if not (self.flags & DUMMY_FLAG == DUMMY_FLAG):
+                    # If it's a delayed split, check if the delay has passed
+                    # Otherwise calculate the split time for the key press
+                    # If it's an ignore split, delay will ocur to unpausing not pausing.
+                    if self.split_delay > 0 and self.waiting_for_split_delay == False:
+                        self.split_time = int(round(time.time() * 1000)) + self.split_delay
+                        self.waiting_for_split_delay = True
+                        self.undosplitButton.setEnabled(False)
+                        self.skipsplitButton.setEnabled(False)
+                        self.currentsplitimagefileLabel.setText(' ')
 
-                    # check for reset while delayed and display a counter of the remaining split delay time
-                    delay_start_time = time.time()
-                    while time.time() - delay_start_time < (self.split_delay / 1000):
-                        delay_time_left = round((self.split_delay / 1000) - (time.time() - delay_start_time), 1)
-                        self.currentSplitImage.setText(f'Delayed Split: {delay_time_left} sec remaining')
-                        # check for reset
-                        if win32gui.GetWindowText(self.hwnd) == '':
-                            self.reset()
-                        if self.checkForReset():
-                            return
-
-                        # calculate similarity for reset image
-                        if self.shouldCheckResetImage():
-                            capture = self.getCaptureForComparison()
-
-                            reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
-                            if reset_similarity >= self.reset_image_threshold:
-                                self.send_command("reset")
+                        # check for reset while delayed and display a counter of the remaining split delay time
+                        delay_start_time = time.time()
+                        while time.time() - delay_start_time < (self.split_delay / 1000):
+                            delay_time_left = round((self.split_delay / 1000) - (time.time() - delay_start_time), 1)
+                            self.currentSplitImage.setText(f'Delayed Split: {delay_time_left} sec remaining')
+                            # check for reset
+                            if win32gui.GetWindowText(self.hwnd) == '':
                                 self.reset()
-                                continue
+                            if self.checkForReset():
+                                return
 
-                        QtTest.QTest.qWait(1)
+                            # calculate similarity for reset image
+                            if self.shouldCheckResetImage():
+                                capture = self.getCaptureForComparison()
 
-                self.waiting_for_split_delay = False
+                                reset_similarity = self.compareImage(self.reset_image, self.reset_mask, capture)
+                                if reset_similarity >= self.reset_image_threshold:
+                                    self.send_command("reset")
+                                    self.reset()
+                                    continue
 
-                # if {p} flag hit pause key, otherwise hit split hotkey
-                if (self.flags & PAUSE_FLAG == PAUSE_FLAG):
-                    self.send_command("pause")
-                else:
-                    self.send_command("split")
+                            QtTest.QTest.qWait(1)
+
+                    self.waiting_for_split_delay = False
+
+                    # if {p} or {i} flag hit pause key, otherwise hit split hotkey
+                    if (self.flags & PAUSE_FLAG == PAUSE_FLAG or self.flags & IGNORE_FLAG == IGNORE_FLAG):
+                        self.send_command("pause")
+                    else:
+                        self.send_command("split")
 
             # if loop check box is checked and its the last split, go to first split.
             # else go to the next split image.
@@ -1129,6 +1152,9 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         # Get delay for split, if any
         self.split_delay = split_parser.delay_from_filename(split_image_file)
+
+        # Get fail time for split, if any
+        self.split_fail = split_parser.fail_from_filename(split_image_file)
 
         # Set Image Loop #
         if not from_start_image:
