@@ -22,6 +22,9 @@
     "markdown"
   ],
   "files.associations": {
+    "*.json": "json",
+    "extensions.json": "jsonc",
+    "settings.json": "jsonc",
     "*.qrc": "xml",
     "*.ui": "xml"
   },

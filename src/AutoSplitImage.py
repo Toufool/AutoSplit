@@ -70,7 +70,7 @@ class AutoSplitImage():
 
     def get_similarity_threshold(self, default: Union[AutoSplit, float]):
         """
-        Get image's similarity threashold or fallback to the default value from spinbox
+        Get image's similarity threshold or fallback to the default value from spinbox
         """
         default_value = default \
             if isinstance(default, float) \
