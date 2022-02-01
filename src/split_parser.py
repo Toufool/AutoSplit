@@ -53,7 +53,7 @@ def fail_from_filename(filename):
 
     # Check to make sure there is a valid fail time between less than and greater than signs of the filename
     try:
-        fail = float(filename.split('<', 1)[1].split('>')[0])
+        fail = float(filename.split('$', 1)[1].split('$')[0])
     except:
         return None
 

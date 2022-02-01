@@ -103,7 +103,7 @@ This program can be used to automatically start, split, and reset your preferred
 - Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
 - Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
-- Custom fail times are placed between less than and greater than signs `<>` in the file name. Note that these are in milliseconds. For example, failing to split if 10 seconds pass would be `<10000>`.
+- Custom fail times are placed between dollar signs `$$` in the file name. Note that these are in milliseconds. For example, failing to split if 10 seconds pass would be `$10000$`.
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hotkey.
@@ -117,7 +117,7 @@ This program can be used to automatically start, split, and reset your preferred
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
   - `003_SplitName_(0.85)_[20]_#3500#.png` is the third split image with a threshold of 0.85, pause time of 20 and has a delay split time of 3.5 seconds.
   - `004_SplitName_(0.9)_[10]_#3500#_@3@_{b}.png` is the fourth split image with a threshold of 0.9, pause time of 10 seconds, delay split time of 3.5 seconds, will loop 3 times, and will split when similarity is below the threshold rather than above.
-  - `005_SplitName_(0.7)_<10000>_{i}.png` is the fith split image with a threshold of .7, will fail after 10 seconds, and will ignore the image
+  - `005_SplitName_(0.7)_$10000$_{i}.png` is the fith split image with a threshold of .7, will fail after 10 seconds, and will ignore the image
 
 ### How to Create a Masked Image
 
