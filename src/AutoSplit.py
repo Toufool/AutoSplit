@@ -824,7 +824,7 @@ class AutoSplit(QtWidgets.QMainWindow, design.Ui_MainWindow):
                         break
 
                 if can_fail:
-                    if time.time - start > self.split_fail/1000:
+                    if time.time() - start > self.split_fail/1000:
                         failed = True
                         break
 
