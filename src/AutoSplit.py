@@ -125,7 +125,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_images: list[AutoSplitImage] = []
     split_image: AutoSplitImage
 
-    def __init__(self, parent: Optional[QWidget] = None):
+    def __init__(self, parent: Optional[QWidget] = None):  # pylint: disable=too-many-statements
         super().__init__(parent)
 
         # Setup global error handling
@@ -501,7 +501,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.start_auto_splitter_signal.emit()
 
-    def __check_for_reset(self):
+    def __check_for_reset_state_update_ui(self):
+        """
+        Check if AutoSplit is started, if not either restart (loop splits) or update the GUI
+        """
         if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
             if self.settings_dict["loop_splits"]:
                 self.start_auto_splitter_signal.emit()
@@ -561,67 +564,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             self.__update_split_image()
 
-            # second while loop: stays in this loop until similarity threshold is met
-            # skip loop if we just finished waiting for the split delay and need to press the split key!
-            start = time()
-            while True:
-                if self.__check_for_reset():
-                    return
+            # Second while loop: stays in this loop until similarity threshold is met
+            if self.__similarity_threshold_loop(number_of_split_images, dummy_splits_array):
+                return
 
-                # calculate similarity for reset image
-                capture = self.__get_capture_for_comparison()
-
-                _ = self.__reset_if_should(capture)
-
-                if self.__check_for_reset():
-                    return
-
-                # calculate similarity for split image
-                similarity = self.split_image.compare_with_capture(self, capture)
-
-                # show live similarity if the checkbox is checked
-                self.table_current_image_live_label.setText(f"{similarity:.2f}")
-
-                # if the similarity becomes higher than highest similarity, set it as such.
-                if similarity > self.highest_similarity:
-                    self.highest_similarity = similarity
-
-                # show live highest similarity if the checkbox is checked
-                self.table_current_image_highest_label.setText(f"{self.highest_similarity:.2f}")
-
-                # If its the last split image and last loop number, disable the next image button
-                # If its the first split image, disable the undo split and previous image buttons
-                self.next_image_button.setEnabled(self.split_image_number != number_of_split_images - 1)
-                self.previous_image_button.setEnabled(self.split_image_number != 0)
-                if not self.is_auto_controlled:
-                    # If its the last non-dummy split image and last loop number, disable the skip split button
-                    self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
-                    self.undo_split_button.setEnabled(self.split_image_number != 0)
-
-                # if the b flag is set, let similarity go above threshold first,
-                # then split on similarity below threshold.
-                # if no b flag, just split when similarity goes above threshold.
-                if not self.waiting_for_split_delay:
-                    if similarity >= self.split_image.get_similarity_threshold(self):
-                        if not self.split_image.check_flag(BELOW_FLAG):
-                            break
-                        if not self.split_below_threshold:
-                            self.split_below_threshold = True
-                            continue
-                    elif self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold:
-                        self.split_below_threshold = False
-                        break
-
-                # limit the number of time the comparison runs to reduce cpu usage
-                frame_interval: float = 1 / self.settings_dict["fps_limit"]
-                # Email sent to pyqt@riverbankcomputing.com
-                QtTest.QTest.qWait(int(frame_interval - (time() - start) % frame_interval))  # type: ignore
-                QApplication.processEvents()
-
-            # comes here when threshold gets met
-
-            # We need to make sure that this isn't a dummy split before sending
-            # the key press.
+            # We need to make sure that this isn't a dummy split before sending the key press.
             if not self.split_image.check_flag(DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
@@ -634,19 +581,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     self.current_image_file_label.clear()
 
                     # check for reset while delayed and display a counter of the remaining split delay time
-                    delay_start_time = time()
-                    while time() - delay_start_time < split_delay:
-                        delay_time_left = split_delay - (time() - delay_start_time)
-                        self.current_split_image.setText(f"Delayed Split: {seconds_remaining_text(delay_time_left)}")
-                        if self.__check_for_reset():
-                            return
-
-                        # calculate similarity for reset image
-                        capture = self.__get_capture_for_comparison()
-                        if self.__reset_if_should(capture):
-                            continue
-                        # Email sent to pyqt@riverbankcomputing.com
-                        QtTest.QTest.qWait(1)  # type: ignore
+                    if self.__pause_loop(split_delay, "Delayed Split:"):
+                        return
 
                 self.waiting_for_split_delay = False
 
@@ -660,51 +596,107 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             else:
                 self.split_image_number += 1
 
-            # Set a "pause" split image number.
-            # This is done so that it can detect if user hit split/undo split while paused.
-            pause_split_image_number = self.split_image_number
-
-            # if its not the last split image, pause for the amount set by the user
-            if number_of_split_images != self.split_image_number:
-
-                # If its the last split image and last loop number, disable the next image button
-                # If its the first split image, disable the undo split and previous image buttons
-                self.next_image_button.setEnabled(self.split_image_number != number_of_split_images - 1)
-                self.previous_image_button.setEnabled(self.split_image_number != 0)
-                if not self.is_auto_controlled:
-                    # If its the last non-dummy split image and last loop number, disable the skip split button
-                    self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
-                    self.undo_split_button.setEnabled(self.split_image_number != 0)
-
-                QApplication.processEvents()
-
+            # If its not the last split image, pause for the amount set by the user
             # A pause loop to check if the user presses skip split, undo split, or reset here.
             # Also updates the current split image text, counting down the time until the next split image
             pause_time = self.split_image.get_pause_time(self)
-            if pause_time > 0:
-                pause_start_time = time()
-                while time() - pause_start_time < pause_time:
-                    pause_time_left = pause_time - (time() - pause_start_time)
-                    self.current_split_image.setText(f"None (Paused). {seconds_remaining_text(pause_time_left)}")
-
-                    if self.__check_for_reset():
-                        return
-
-                    # check for skip/undo split:
-                    if self.split_image_number != pause_split_image_number:
-                        break
-
-                    # calculate similarity for reset image
-                    capture = self.__get_capture_for_comparison()
-                    if self.__reset_if_should(capture):
-                        send_command(self, "reset")
-                        self.reset()
-                        continue
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+            if self.__pause_loop(pause_time, "None (Paused)."):
+                return
 
         # loop breaks to here when the last image splits
         self.gui_changes_on_reset()
+
+    def __similarity_threshold_loop(self, number_of_split_images: int, dummy_splits_array: list[bool]):
+        """
+        Wait until the similarity threshold is met.
+
+        Returns True if the loop was interrupted by a reset.
+        """
+        start = time()
+        while True:
+            capture = self.__get_capture_for_comparison()
+
+            if self.__reset_if_should(capture):
+                return True
+
+            similarity = self.split_image.compare_with_capture(self, capture)
+
+            # Show live similarity
+            self.table_current_image_live_label.setText(f"{similarity:.2f}")
+
+            # if the similarity becomes higher than highest similarity, set it as such.
+            if similarity > self.highest_similarity:
+                self.highest_similarity = similarity
+
+            # show live highest similarity if the checkbox is checked
+            self.table_current_image_highest_label.setText(f"{self.highest_similarity:.2f}")
+
+            # If its the last split image and last loop number, disable the next image button
+            # If its the first split image, disable the undo split and previous image buttons
+            self.next_image_button.setEnabled(self.split_image_number != number_of_split_images - 1)
+            self.previous_image_button.setEnabled(self.split_image_number != 0)
+            if not self.is_auto_controlled:
+                # If its the last non-dummy split image and last loop number, disable the skip split button
+                self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
+                self.undo_split_button.setEnabled(self.split_image_number != 0)
+            QApplication.processEvents()
+
+            # Limit the number of time the comparison runs to reduce cpu usage
+            # Use a time delta to have a consistant check interval
+            frame_interval: float = 1 / self.settings_dict["fps_limit"]
+            wait_delta = int(frame_interval - (time() - start) % frame_interval)
+
+            # if the b flag is set, let similarity go above threshold first,
+            # then split on similarity below threshold.
+            # if no b flag, just split when similarity goes above threshold.
+            if not self.waiting_for_split_delay:
+                if similarity >= self.split_image.get_similarity_threshold(self):
+                    if not self.split_image.check_flag(BELOW_FLAG):
+                        break
+                    if not self.split_below_threshold:
+                        self.split_below_threshold = True
+                        # Email sent to pyqt@riverbankcomputing.com
+                        QtTest.QTest.qWait(wait_delta)  # type: ignore
+                        continue
+                elif self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold:
+                    self.split_below_threshold = False
+                    break
+
+            # Email sent to pyqt@riverbankcomputing.com
+            QtTest.QTest.qWait(wait_delta)  # type: ignore
+
+    def __pause_loop(self, stop_time: float, message: str):
+        """
+        Wait for a certain time and show the timer to the user.
+        Can be stopped early if the current split goes past the one when the loop started.
+
+        Returns True if the loop was interrupted by a reset.
+        """
+        if stop_time <= 0:
+            return False
+        start_time = time()
+        # Set a "pause" split image number.
+        # This is done so that it can detect if user hit split/undo split while paused.
+        pause_split_image_number = self.split_image_number
+        while True:
+            # Calculate similarity for reset image
+            if self.__reset_if_should(self.__get_capture_for_comparison()):
+                return True
+
+            time_delta = time() - start_time
+            if (
+                # Check for end of the pause/delay
+                time_delta >= stop_time
+                # Check for skip split / next image:
+                or self.split_image_number > pause_split_image_number
+            ):
+                break
+
+            self.current_split_image.setText(f"{message} {seconds_remaining_text(stop_time - time_delta)}")
+
+            # Email sent to pyqt@riverbankcomputing.com
+            QtTest.QTest.qWait(1)  # type: ignore
+        return False
 
     def gui_changes_on_start(self):
         self.timer_start_image.stop()
@@ -804,6 +796,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if should_reset:
             send_command(self, "reset")
             self.reset()
+            self.__check_for_reset_state_update_ui()
         return should_reset
 
     def __update_split_image(self, specific_image: Optional[AutoSplitImage] = None):
