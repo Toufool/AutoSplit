@@ -98,13 +98,24 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
+    def __update_default_threshold(self, value: Any):
+        self.__set_value("default_similarity_threshold", value)
+        self.autosplit.table_current_image_threshold_label.setText(
+            f"{self.autosplit.split_image.get_similarity_threshold(self.autosplit):.2f}"
+            if self.autosplit.split_image
+            else "-")
+        self.autosplit.table_reset_image_threshold_label.setText(
+            f"{self.autosplit.reset_image.get_similarity_threshold(self.autosplit):.2f}"
+            if self.autosplit.reset_image
+            else "-")
+
+    def __set_value(self, key: str, value: Any):
+        self.autosplit.settings_dict[key] = value
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
-
-        def set_value(key: str, value: Any):
-            autosplit.settings_dict[key] = value
 
 # region Set initial values
         # Hotkeys
@@ -135,30 +146,29 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.set_pause_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "pause"))
 
         # Capture Settings
-        self.fps_limit_spinbox.valueChanged.connect(lambda: set_value(
+        self.fps_limit_spinbox.valueChanged.connect(lambda: self.__set_value(
             "fps_limit",
             self.fps_limit_spinbox.value()))
-        self.live_capture_region_checkbox.stateChanged.connect(lambda: set_value(
+        self.live_capture_region_checkbox.stateChanged.connect(lambda: self.__set_value(
             "live_capture_region",
             self.live_capture_region_checkbox.isChecked()))
-        self.force_print_window_checkbox.stateChanged.connect(lambda: set_value(
+        self.force_print_window_checkbox.stateChanged.connect(lambda: self.__set_value(
             "force_print_window",
             self.force_print_window_checkbox.isChecked()))
 
         # Image Settings
-        self.default_comparison_method.currentIndexChanged.connect(lambda: set_value(
+        self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
             "default_comparison_method",
             self.default_comparison_method.currentIndex()))
-        self.default_similarity_threshold_spinbox.valueChanged.connect(lambda: set_value(
-            "default_similarity_threshold",
+        self.default_similarity_threshold_spinbox.valueChanged.connect(lambda: self.__update_default_threshold(
             self.default_similarity_threshold_spinbox.value()))
-        self.default_delay_time_spinbox.valueChanged.connect(lambda: set_value(
+        self.default_delay_time_spinbox.valueChanged.connect(lambda: self.__set_value(
             "default_delay_time",
             self.default_delay_time_spinbox.value()))
-        self.default_pause_time_spinbox.valueChanged.connect(lambda: set_value(
+        self.default_pause_time_spinbox.valueChanged.connect(lambda: self.__set_value(
             "default_pause_time",
             self.default_pause_time_spinbox.value()))
-        self.loop_splits_checkbox.stateChanged.connect(lambda: set_value(
+        self.loop_splits_checkbox.stateChanged.connect(lambda: self.__set_value(
             "loop_splits",
             self.loop_splits_checkbox.isChecked()))
 # endregion

@@ -16,4 +16,3 @@ START "Qt Designer" "%PYTHONPATH:~0,-11%\Lib\site-packages\qt6_applications\Qt\b
  "%~d0%~p0..\res\about.ui"^
  "%~d0%~p0..\res\settings.ui"^
  "%~d0%~p0..\res\update_checker.ui"
-

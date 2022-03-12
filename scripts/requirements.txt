@@ -22,6 +22,7 @@ PySide6
 pyautogui
 pywin32
 requests
+certifi
 # Linting and Types
 bandit
 flake8

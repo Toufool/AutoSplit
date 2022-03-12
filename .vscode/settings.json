@@ -60,7 +60,12 @@
   "python.linting.pylintCategorySeverity.convention": "Warning",
   "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
+  // Errors
   "python.linting.flake8CategorySeverity.E": "Warning",
+  // Pyflakes
+  "python.linting.flake8CategorySeverity.F": "Warning",
+  // PEP8 Naming convention
+  "python.linting.flake8CategorySeverity.N": "Warning",
   // PyRight obsoletes mypy
   "python.linting.mypyEnabled": false,
   // Is already wrapped by Flake8, prospector and pylama
