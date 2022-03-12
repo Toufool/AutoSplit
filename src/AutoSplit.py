@@ -113,7 +113,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Automatic timer start
     highest_similarity = 0.0
     reset_highest_similarity = 0.0
-    check_start_image_timestamp = 0.0
 
     # Define all other attributes
     start_image_split_below_threshold: bool
@@ -260,7 +259,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
-        QApplication.processEvents()
 
         if not self.is_auto_controlled \
             and (not self.settings_dict["split_hotkey"]
@@ -284,12 +282,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         start_pause_time = self.start_image.get_pause_time(self)
         if not wait_for_delay and start_pause_time > 0:
-            self.check_start_image_timestamp = time() + start_pause_time
             self.start_image_status_value_label.setText("paused")
             self.table_current_image_highest_label.setText("-")
             self.table_current_image_threshold_label.setText("-")
         else:
-            self.check_start_image_timestamp = 0.0
             self.start_image_status_value_label.setText("ready")
             self.__update_split_image(self.start_image)
 
@@ -301,19 +297,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         QApplication.processEvents()
 
     def __start_image_function(self):
-        if self.start_image is None \
-                or not self.start_image \
-                or time() < self.check_start_image_timestamp \
-                or (not self.settings_dict["split_hotkey"] and not self.is_auto_controlled):
-            pause_time_left = self.check_start_image_timestamp - time()
-            self.current_split_image.setText(
-                f"None\n (Paused before loading Start Image).\n {seconds_remaining_text(pause_time_left)}")
+        if not self.start_image:
             return
 
-        if self.check_start_image_timestamp > 0:
-            self.check_start_image_timestamp = 0.0
-            self.start_image_status_value_label.setText("ready")
-            self.__update_split_image(self.start_image)
+        self.start_image_status_value_label.setText("ready")
+        self.__update_split_image(self.start_image)
 
         capture = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
@@ -333,15 +321,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
         below_flag = self.start_image.check_flag(BELOW_FLAG)
+
+        # Negative means belove threshold, positive means above
+        similarity_diff = start_image_threshold - start_image_similarity
         if below_flag \
                 and not self.start_image_split_below_threshold \
-                and start_image_similarity >= start_image_threshold:
+                and similarity_diff >= 0:
             self.start_image_split_below_threshold = True
             return
-        if (below_flag
-            and self.start_image_split_below_threshold
-            and start_image_similarity < start_image_threshold) \
-                or (start_image_similarity >= start_image_threshold and not below_flag):
+        if (below_flag and self.start_image_split_below_threshold and similarity_diff < 0) \
+                or (not below_flag and similarity_diff >= 0):
 
             self.timer_start_image.stop()
             self.start_image_split_below_threshold = False
@@ -782,22 +771,22 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         Check if we should reset, resets if it's the case, and returns the result
         """
         if self.reset_image:
-        similarity = self.reset_image.compare_with_capture(self, capture)
-        threshold = self.reset_image.get_similarity_threshold(self)
+            similarity = self.reset_image.compare_with_capture(self, capture)
+            threshold = self.reset_image.get_similarity_threshold(self)
 
-        if similarity > self.reset_highest_similarity:
-            self.reset_highest_similarity = similarity
+            if similarity > self.reset_highest_similarity:
+                self.reset_highest_similarity = similarity
 
-        self.table_reset_image_live_label.setText(f"{similarity:.2f}")
-        self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
-        self.table_reset_image_threshold_label.setText(f"{threshold:.2f}")
+            self.table_reset_image_live_label.setText(f"{similarity:.2f}")
+            self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
+            self.table_reset_image_threshold_label.setText(f"{threshold:.2f}")
 
             should_reset = similarity >= threshold \
                 and time() - self.run_start_time > self.reset_image.get_pause_time(self)
 
-        if should_reset:
-            send_command(self, "reset")
-            self.reset()
+            if should_reset:
+                send_command(self, "reset")
+                self.reset()
 
         return self.__check_for_reset_state_update_ui()
 
