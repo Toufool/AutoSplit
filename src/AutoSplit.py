@@ -267,14 +267,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                  or not self.settings_dict["reset_hotkey"]
                  or not self.settings_dict["pause_hotkey"]):
             error_messages.load_start_image()
+            QApplication.processEvents()
             return
 
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
+            QApplication.processEvents()
             return
 
         if self.start_image is None:
             if started_by_button:
                 error_messages.no_keyword_image("start_auto_splitter")
+            QApplication.processEvents()
             return
 
         self.split_image_number = 0
@@ -778,13 +781,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         Check if we should reset, resets if it's the case, and returns the result
         """
-        if not self.reset_image:
-            return False
-
+        if self.reset_image:
         similarity = self.reset_image.compare_with_capture(self, capture)
         threshold = self.reset_image.get_similarity_threshold(self)
-        should_reset = similarity >= threshold \
-            and time() - self.run_start_time > self.reset_image.get_pause_time(self)
 
         if similarity > self.reset_highest_similarity:
             self.reset_highest_similarity = similarity
@@ -793,11 +792,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
         self.table_reset_image_threshold_label.setText(f"{threshold:.2f}")
 
+            should_reset = similarity >= threshold \
+                and time() - self.run_start_time > self.reset_image.get_pause_time(self)
+
         if should_reset:
             send_command(self, "reset")
             self.reset()
-            self.__check_for_reset_state_update_ui()
-        return should_reset
+
+        return self.__check_for_reset_state_update_ui()
 
     def __update_split_image(self, specific_image: Optional[AutoSplitImage] = None):
         # Splitting/skipping when there are no images left or Undoing past the first image
