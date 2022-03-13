@@ -9,7 +9,7 @@
 from __future__ import annotations
 from collections.abc import Callable
 from types import FunctionType, TracebackType
-from typing import Optional, Union
+from typing import Optional
 
 import sys
 import os
@@ -26,15 +26,15 @@ from win32 import win32gui
 from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 
 import error_messages
-import settings_file as settings
+import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from capture_windows import capture_region, set_ui_image
-from gen import about, design, settings as settings_ui, update_checker
+from gen import about, design, settings, update_checker
 from hotkeys import send_command, after_setting_hotkey
 from menu_bar import get_default_settings_from_ui, open_about, VERSION, open_settings, view_help, check_for_updates, \
     open_update_checker
 from screen_region import select_region, select_window, align_region, validate_before_parsing
-from settings_file import FROZEN
+from user_profile import DEFAULT_PROFILE, FROZEN
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 
 CREATE_NEW_ISSUE_MESSAGE = (
@@ -86,7 +86,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     AboutWidget: Optional[about.Ui_AboutAutoSplitWidget] = None
     UpdateCheckerWidget: Optional[update_checker.Ui_UpdateChecker] = None
     CheckForUpdatesThread: Optional[QtCore.QThread] = None
-    SettingsWidget: Optional[settings_ui.Ui_DialogSettings] = None
+    SettingsWidget: Optional[settings.Ui_DialogSettings] = None
 
     # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
     # and for type safety in both hotkeys.py and settings_file.py
@@ -99,14 +99,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Initialize a few attributes
     hwnd = 0
     """Window Handle used for Capture Region"""
-    last_saved_settings: list[Union[str, float, int, bool]] = []
+    last_saved_settings = DEFAULT_PROFILE
     similarity = 0.0
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
-    last_loaded_settings: list[Union[str, float, int]] = []
+    last_loaded_settings = DEFAULT_PROFILE
     last_successfully_loaded_settings_file_path: Optional[str] = None
     """For when a file has never loaded, but you successfully "Save File As"."""
 
@@ -136,15 +136,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
-        settings.load_check_for_updates_on_open(self)
+        user_profile.load_check_for_updates_on_open(self)
 
         self.action_view_help.triggered.connect(view_help)
         self.action_about.triggered.connect(lambda: open_about(self))
         self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
         self.action_settings.triggered.connect(lambda: open_settings(self))
-        self.action_save_profile.triggered.connect(lambda: settings.save_settings(self))
-        self.action_save_profile_as.triggered.connect(lambda: settings.save_settings_as(self))
-        self.action_load_profile.triggered.connect(lambda: settings.load_settings(self))
+        self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
+        self.action_save_profile_as.triggered.connect(lambda: user_profile.save_settings_as(self))
+        self.action_load_profile.triggered.connect(lambda: user_profile.load_settings(self))
 
         if self.SettingsWidget:
             self.SettingsWidget.split_input.setEnabled(False)
@@ -184,7 +184,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
         self.reload_start_image_button.clicked.connect(lambda: self.__load_start_image(True, True))
-        self.action_check_for_updates_on_open.changed.connect(lambda: settings.set_check_for_updates_on_open(
+        self.action_check_for_updates_on_open.changed.connect(lambda: user_profile.set_check_for_updates_on_open(
             self,
             self.action_check_for_updates_on_open.isChecked())
         )
@@ -216,7 +216,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.timeout.connect(self.__start_image_function)
 
         if not self.is_auto_controlled:
-            settings.load_settings_on_open(self)
+            user_profile.load_settings_on_open(self)
 
         self.show()
 
@@ -231,7 +231,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         new_split_image_directory = QFileDialog.getExistingDirectory(
             self,
             "Select Split Image Directory",
-            os.path.join(self.settings_dict["split_image_directory"] or settings.auto_split_directory, ".."))
+            os.path.join(self.settings_dict["split_image_directory"] or user_profile.auto_split_directory, ".."))
 
         # If the user doesn't select a folder, it defaults to "".
         if new_split_image_directory:
@@ -355,16 +355,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     # update x, y, width, height when spinbox values are changed
     def __update_x(self):
-        self.settings_dict["capture_region"].x = self.x_spinbox.value()
+        self.settings_dict["capture_region"]["x"] = self.x_spinbox.value()
 
     def __update_y(self):
-        self.settings_dict["capture_region"].y = self.y_spinbox.value()
+        self.settings_dict["capture_region"]["y"] = self.y_spinbox.value()
 
     def __update_width(self):
-        self.settings_dict["capture_region"].width = self.width_spinbox.value()
+        self.settings_dict["capture_region"]["width"] = self.width_spinbox.value()
 
     def __update_height(self):
-        self.settings_dict["capture_region"].height = self.height_spinbox.value()
+        self.settings_dict["capture_region"]["height"] = self.height_spinbox.value()
 
     def __take_screenshot(self):
         if not validate_before_parsing(self, check_empty_directory=False):
@@ -838,7 +838,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if a0 is None:
             exit_program()
 
-        if settings.have_settings_changed(self):
+        if user_profile.have_settings_changed(self):
             # Give a different warning if there was never a settings file that was loaded successfully,
             # and "save as" instead of "save".
             settings_file_name = "Untitled" \
@@ -852,7 +852,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
 
             if warning is QMessageBox.StandardButton.Yes:
-                if settings.save_settings(self):
+                if user_profile.save_settings(self):
                     exit_program()
                 else:
                     a0.ignore()

@@ -3,7 +3,6 @@ from typing import Optional, cast
 
 import ctypes
 import ctypes.wintypes
-from dataclasses import dataclass
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
 
@@ -19,13 +18,22 @@ from win32typing import PyCBitmap, PyCDC
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-@dataclass
-class Region():
-    def __init__(self, x: int, y: int, width: int, height: int):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+# @dataclass
+# class Region():
+#     def __init__(self, x: int, y: int, width: int, height: int):
+#         self.x = x
+#         self.y = y
+#         self.width = width
+#         self.height = height
+# class Region(TypedDict):
+#     x: int
+#     y: int
+#     width: int
+#     height: int
+
+# toml.dump does not support TypedDicts or dataclasses
+# TODO: Check if we can just "cast" or "map" it before parsing it as TOML
+Region = dict[str, int]
 
 
 def capture_region(hwnd: int, selection: Region, print_window: bool):
@@ -50,17 +58,21 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
 
         compatible_dc = cast(PyCDC, dc_object.CreateCompatibleDC())
         bitmap: PyCBitmap = win32ui.CreateBitmap()
-        bitmap.CreateCompatibleBitmap(dc_object, selection.width, selection.height)
+        bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
         compatible_dc.SelectObject(bitmap)
-        compatible_dc.BitBlt((0, 0), (selection.width, selection.height), dc_object,
-                             (selection.x, selection.y), win32con.SRCCOPY)
+        compatible_dc.BitBlt(
+            (0, 0),
+            (selection["width"], selection["height"]),
+            dc_object,
+            (selection["x"], selection["y"]),
+            win32con.SRCCOPY)
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
         return None
 
     image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
-    image.shape = (selection.height, selection.width, 4)
+    image.shape = (selection["height"], selection["width"], 4)
 
     try:
         dc_object.DeleteDC()

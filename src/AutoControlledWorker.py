@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 from PyQt6 import QtCore
 
 import error_messages
-import settings_file as settings
+import user_profile
 
 
 class AutoControlledWorker(QtCore.QObject):
@@ -37,7 +37,7 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.reset_signal.emit()
             elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
-                settings.load_settings(self.autosplit, line[9:])
+                user_profile.load_settings(self.autosplit, line[9:])
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
             #     self.pause_signal.emit()

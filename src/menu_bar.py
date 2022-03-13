@@ -14,8 +14,7 @@ from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
 
 import error_messages
-import settings_file as settings
-from capture_windows import Region
+import user_profile
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -63,7 +62,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         self.close()
 
     def do_not_ask_me_again_state_changed(self):
-        settings.set_check_for_updates_on_open(
+        user_profile.set_check_for_updates_on_open(
             self.design_window,
             self.do_not_ask_again_checkbox.isChecked())
 
@@ -184,7 +183,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
     temp_dialog = QtWidgets.QDialog()
     default_settings_dialog = settings_ui.Ui_DialogSettings()
     default_settings_dialog.setupUi(temp_dialog)
-    default_settings: settings.SettingsDict = {
+    default_settings: user_profile.UserProfileDict = {
         "split_hotkey": default_settings_dialog.split_input.text(),
         "reset_hotkey": default_settings_dialog.reset_input.text(),
         "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
@@ -201,11 +200,12 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
 
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "captured_window_title": "",
-        "capture_region": Region(
-            autosplit.x_spinbox.value(),
-            autosplit.y_spinbox.value(),
-            autosplit.width_spinbox.value(),
-            autosplit.height_spinbox.value())
+        "capture_region": {
+            "x": autosplit.x_spinbox.value(),
+            "y": autosplit.y_spinbox.value(),
+            "width": autosplit.width_spinbox.value(),
+            "height": autosplit.height_spinbox.value(),
+        }
     }
     del temp_dialog
     return default_settings
