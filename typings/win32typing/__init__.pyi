@@ -1118,7 +1118,7 @@ Returns:
         """
         ...
 
-    def GetAuditedPermissionsFromAcl(self, trustee: PyTRUSTEE) -> Tuple[Any, Any]:
+    def GetAuditedPermissionsFromAcl(self, trustee: PyTRUSTEE) -> tuple[Any, Any]:
         """
          Return types of access for
 
@@ -1130,7 +1130,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -1164,7 +1164,7 @@ class PyBITMAP:
 
 
 class PyBLENDFUNCTION:
-    """Tuple of four small ints used to fill a BLENDFUNCTION struct
+    """tuple of four small ints used to fill a BLENDFUNCTION struct
 
 Each int must fit in a byte (0-255)."""
 
@@ -1222,7 +1222,7 @@ Returns:
         """
         ...
 
-    def CertEnumCertificatesInStore(self) -> List[PyCERT_CONTEXT]:
+    def CertEnumCertificatesInStore(self) -> list[PyCERT_CONTEXT]:
         """
          Lists all certificates in the store
 
@@ -1232,12 +1232,12 @@ Args:
 
 Returns:
 
-      List[PyCERT_CONTEXT]
+      list[PyCERT_CONTEXT]
 
         """
         ...
 
-    def CertEnumCTLsInStore(self) -> List[PyCTL_CONTEXT]:
+    def CertEnumCTLsInStore(self) -> list[PyCTL_CONTEXT]:
         """
          Finds all Certificate Trust Lists in store
 
@@ -1247,7 +1247,7 @@ Args:
 
 Returns:
 
-      List[PyCTL_CONTEXT]
+      list[PyCTL_CONTEXT]
 
         """
         ...
@@ -1559,7 +1559,7 @@ class PyCERT_CONTEXT:
         ...
 
     @property
-    def Extension(self) -> Tuple[PyCERT_EXTENSION, ...]:
+    def Extension(self) -> tuple[PyCERT_EXTENSION, ...]:
         """Sequence of CERT_EXTENSION dicts containing certificate's extensions"""
         ...
 
@@ -1588,7 +1588,7 @@ Returns:
         """
         ...
 
-    def CertEnumCertificateContextProperties(self) -> List[Any]:
+    def CertEnumCertificateContextProperties(self) -> list[Any]:
         """
          Lists property ids for the certificate
 
@@ -1598,12 +1598,12 @@ Args:
 
 Returns:
 
-      List[Any]
+      list[Any]
 
         """
         ...
 
-    def CryptAcquireCertificatePrivateKey(self, Flags: Any = 0) -> Tuple[Any, PyCRYPTPROV]:
+    def CryptAcquireCertificatePrivateKey(self, Flags: Any = 0) -> tuple[Any, PyCRYPTPROV]:
         """
          Retrieves the private key associated
 
@@ -1615,7 +1615,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, PyCRYPTPROV]:Combination of CRYPT_ACQUIRE_*_FLAG constants
+      tuple[Any, PyCRYPTPROV]:Combination of CRYPT_ACQUIRE_*_FLAG constants
 Comments
 
 Only the owner of the certificate can use this method
@@ -2024,7 +2024,7 @@ class PyCREDENTIAL:
 
     @property
     def Attributes(self) -> Any:
-        """Tuple of PyCREDENTIAL_ATTRIBUTE dicts containing application-specific data, can be None"""
+        """tuple of PyCREDENTIAL_ATTRIBUTE dicts containing application-specific data, can be None"""
         ...
 
     @property
@@ -2102,8 +2102,8 @@ class PyCREDENTIAL_TARGET_INFORMATION:
         ...
 
     @property
-    def CredTypes(self) -> Tuple[Any, ...]:
-        """Tuple of CRED_TYPE_* values indicating which types of credentials are acceptable to target"""
+    def CredTypes(self) -> tuple[Any, ...]:
+        """tuple of CRED_TYPE_* values indicating which types of credentials are acceptable to target"""
         ...
 
 
@@ -2599,7 +2599,7 @@ class PyCRYPT_ATTRIBUTE:
         ...
 
     @property
-    def Value(self) -> Tuple[Any, ...]:
+    def Value(self) -> tuple[Any, ...]:
         """A sequence of buffers containing the attribute values"""
         ...
 
@@ -2627,7 +2627,7 @@ class PyCRYPT_DECRYPT_MESSAGE_PARA:
         raise Exception('This class just for typing, can not be instanced!')
 
     @property
-    def CertStores(self) -> Tuple[Any, ...]:
+    def CertStores(self) -> tuple[Any, ...]:
         """Sequence of certificate stores to be searched for a certificate with a private key that can be used to decrypt the message"""
         ...
 
@@ -2700,22 +2700,22 @@ class PyCRYPT_SIGN_MESSAGE_PARA:
         ...
 
     @property
-    def MsgCert(self) -> Tuple[PyCERT_CONTEXT, ...]:
+    def MsgCert(self) -> tuple[PyCERT_CONTEXT, ...]:
         """Optional sequence of certificate to be included in the message."""
         ...
 
     @property
-    def MsgCrl(self) -> Tuple[Any, ...]:
+    def MsgCrl(self) -> tuple[Any, ...]:
         """Optional. Sequence of certificate revocation lists. Not yet supported, use only None."""
         ...
 
     @property
-    def AuthAttr(self) -> Tuple[PyCRYPT_ATTRIBUTE, ...]:
+    def AuthAttr(self) -> tuple[PyCRYPT_ATTRIBUTE, ...]:
         """Sequence of canonical attributes to be added to the message"""
         ...
 
     @property
-    def UnauthAttr(self) -> Tuple[PyCRYPT_ATTRIBUTE, ...]:
+    def UnauthAttr(self) -> tuple[PyCRYPT_ATTRIBUTE, ...]:
         """Sequence of arbitrary attributes"""
         ...
 
@@ -2762,7 +2762,7 @@ class PyCRYPT_VERIFY_MESSAGE_PARA:
 
 
 class PyCTL_CONTEXT:
-    """Object containing a Certificate Trust List"""
+    """Object containing a Certificate Trust list"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -2787,7 +2787,7 @@ Returns:
         """
         ...
 
-    def CertEnumCTLContextProperties(self) -> Tuple[Any, ...]:
+    def CertEnumCTLContextProperties(self) -> tuple[Any, ...]:
         """
          Lists property id's for the context
 
@@ -2797,12 +2797,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
 
-    def CertEnumSubjectInSortedCTL(self) -> Tuple[Tuple[Any, Any], ...]:
+    def CertEnumSubjectInSortedCTL(self) -> tuple[tuple[Any, Any], ...]:
         """
          Retrieves trusted subjects contained in CRL
 
@@ -2812,7 +2812,7 @@ Args:
 
 Returns:
 
-      Tuple[Tuple[Any, Any], ...]:PyCTL_CONTEXT.CertEnumSubjectInSortedCTL
+      tuple[tuple[Any, Any], ...]:PyCTL_CONTEXT.CertEnumSubjectInSortedCTL
 
 ((str,str),...) = CertEnumSubjectInSortedCTL()Retrieves trusted subjects contained in CRL
 Return ValueReturns a sequence of tuples containing two strings (SubjectIdentifier, EncodedAttributes)
@@ -2881,7 +2881,7 @@ Returns:
         """
         ...
 
-    def GetConsoleCursorInfo(self) -> Tuple[Any, Any]:
+    def GetConsoleCursorInfo(self) -> tuple[Any, Any]:
         """
          Retrieves size and visibility of console's
 
@@ -2893,7 +2893,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:PyConsoleScreenBuffer.GetConsoleCursorInfo
+      tuple[Any, Any]:PyConsoleScreenBuffer.GetConsoleCursorInfo
 
 (Size, bVisible) = GetConsoleCursorInfo()Retrieves size and visibility of console's
 
@@ -3153,7 +3153,7 @@ Returns:
         """
         ...
 
-    def ReadConsoleOutputAttribute(self, Length: Any, ReadCoord: PyCOORD) -> Tuple[Any, ...]:
+    def ReadConsoleOutputAttribute(self, Length: Any, ReadCoord: PyCOORD) -> tuple[Any, ...]:
         """
          Retrieves attributes from consecutive character
 
@@ -3166,7 +3166,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]:The screen position from which to start readingReturn ValueReturns a sequence of ints containing the attributes of a range of characters
+      tuple[Any, ...]:The screen position from which to start readingReturn ValueReturns a sequence of ints containing the attributes of a range of characters
 
 
         """
@@ -3189,13 +3189,13 @@ Returns:
         """
         ...
 
-    def WriteConsoleOutputAttribute(self, Attributes: Tuple[Any, ...], WriteCoord: PyCOORD) -> Any:
+    def WriteConsoleOutputAttribute(self, Attributes: tuple[Any, ...], WriteCoord: PyCOORD) -> Any:
         """
          Sets the attributes of a range of character cells
 
 Args:
 
-      Attributes(Tuple[Any, ...]):A sequence of ints containing the attributes to be set
+      Attributes(tuple[Any, ...]):A sequence of ints containing the attributes to be set
       WriteCoord(PyCOORD):The screen position at which to start writingReturn ValueReturns the number of attributes set
 
 Returns:
@@ -3231,7 +3231,7 @@ Returns:
         """
         ...
 
-    def GetCurrentConsoleFont(self, MaximumWindow: Any = False) -> Tuple[Any, PyCOORD]:
+    def GetCurrentConsoleFont(self, MaximumWindow: Any = False) -> tuple[Any, PyCOORD]:
         """
          Returns currently displayed font
 
@@ -3241,7 +3241,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, PyCOORD]:If True, retrieves font size for maximum window size
+      tuple[Any, PyCOORD]:If True, retrieves font size for maximum window size
 Comments
 
 Only exists on XP or later.
@@ -3316,13 +3316,13 @@ Returns:
         """
         ...
 
-    def WriteConsoleInput(self, Buffer: Tuple[PyINPUT_RECORD, ...]) -> Any:
+    def WriteConsoleInput(self, Buffer: tuple[PyINPUT_RECORD, ...]) -> Any:
         """
          Places input records in the console's input queue
 
 Args:
 
-      Buffer(Tuple[PyINPUT_RECORD, ...]):A sequence of PyINPUT_RECORD objectsReturn ValueReturns the number of records written
+      Buffer(tuple[PyINPUT_RECORD, ...]):A sequence of PyINPUT_RECORD objectsReturn ValueReturns the number of records written
 
 Returns:
 
@@ -3332,7 +3332,7 @@ Returns:
         """
         ...
 
-    def ReadConsoleInput(self, Length: Any) -> Tuple[PyINPUT_RECORD, ...]:
+    def ReadConsoleInput(self, Length: Any) -> tuple[PyINPUT_RECORD, ...]:
         """
          Reads input records and removes them from
 
@@ -3344,7 +3344,7 @@ Args:
 
 Returns:
 
-      Tuple[PyINPUT_RECORD, ...]:The number of input records to readComments
+      tuple[PyINPUT_RECORD, ...]:The number of input records to readComments
 
 This functions blocks until at least one record is read.
 
@@ -3355,7 +3355,7 @@ Return ValueReturns a sequence of PyINPUT_RECORD objects
         """
         ...
 
-    def PeekConsoleInput(self, Length: Any) -> Tuple[PyINPUT_RECORD, ...]:
+    def PeekConsoleInput(self, Length: Any) -> tuple[PyINPUT_RECORD, ...]:
         """
          Returns pending input records without
 
@@ -3367,7 +3367,7 @@ Args:
 
 Returns:
 
-      Tuple[PyINPUT_RECORD, ...]:The number of input records to readComments
+      tuple[PyINPUT_RECORD, ...]:The number of input records to readComments
 
 This function does not block as ReadConsoleInput does.
 
@@ -4387,7 +4387,7 @@ When the object is destroyed, EvtClose is called."""
 
 
 class PyEVT_RPC_LOGIN:
-    """Tuple containing login credentials for a remote Event Log connection"""
+    """tuple containing login credentials for a remote Event Log connection"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -4440,7 +4440,7 @@ class PyEventLogRecord:
         ...
 
     @property
-    def StringInserts(self) -> Tuple[str, ...]:
+    def StringInserts(self) -> tuple[str, ...]:
         ...
 
     @property
@@ -4664,7 +4664,7 @@ Returns:
         """
         ...
 
-    def EnumDesktopWindows(self) -> Tuple[int, ...]:
+    def EnumDesktopWindows(self) -> tuple[int, ...]:
         """
          Returns a list of handles to all top-level windows on desktop
 
@@ -4674,7 +4674,7 @@ Args:
 
 Returns:
 
-      Tuple[int, ...]
+      tuple[int, ...]
 
         """
         ...
@@ -5058,7 +5058,7 @@ class PyHWINSTA:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def EnumDesktops(self) -> Tuple[Any, ...]:
+    def EnumDesktops(self) -> tuple[Any, ...]:
         """
          Lists names of desktops in the window station
 
@@ -5068,7 +5068,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -5105,7 +5105,7 @@ Returns:
 
 
 class PyICONINFO:
-    """Tuple describing an icon or cursor"""
+    """tuple describing an icon or cursor"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -5675,7 +5675,7 @@ Returns:
 
 
 class PyPOINT:
-    """Tuple of two ints (x,y) representing a POINT struct"""
+    """tuple of two ints (x,y) representing a POINT struct"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -5751,7 +5751,7 @@ class PyPrinterHANDLE:
 
 
 class PyRECT:
-    """Tuple of 4 ints defining a rectangle: (left, top, right, bottom)"""
+    """tuple of 4 ints defining a rectangle: (left, top, right, bottom)"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -5861,7 +5861,7 @@ Returns:
         """
         ...
 
-    def GetSecurityDescriptorControl(self) -> Tuple[Any, Any]:
+    def GetSecurityDescriptorControl(self) -> tuple[Any, Any]:
         """
          Returns tuple of Control bit flags and
 
@@ -5873,7 +5873,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -6813,7 +6813,7 @@ Returns:
         """
         ...
 
-    def GetSidIdentifierAuthority(self) -> Tuple[Any, Any, Any, Any, Any, Any]:
+    def GetSidIdentifierAuthority(self) -> tuple[Any, Any, Any, Any, Any, Any]:
         """
          Returns a tuple of 6 SID_IDENTIFIER_AUTHORITY
 
@@ -6825,7 +6825,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any, Any, Any]
 
         """
         ...
@@ -6838,7 +6838,7 @@ class PySID_AND_ATTRIBUTES:
 
 
 class PySIZE:
-    """Tuple of two ints (cx,cy) representing a SIZE struct"""
+    """tuple of two ints (cx,cy) representing a SIZE struct"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -8966,7 +8966,7 @@ class RASDIALPARAMS:
 
 
 class SC_ACTION:
-    """Tuple of 2 ints (Type,Delay) used to represent an SC_ACTION structure"""
+    """tuple of 2 ints (Type,Delay) used to represent an SC_ACTION structure"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -9178,7 +9178,7 @@ Returns:
         """
         ...
 
-    def fetchmany(self) -> List[Any]:
+    def fetchmany(self) -> list[Any]:
         """
          Fetch many rows of data
 
@@ -9188,12 +9188,12 @@ Args:
 
 Returns:
 
-      List[Any]
+      list[Any]
 
         """
         ...
 
-    def fetchall(self) -> List[Any]:
+    def fetchall(self) -> list[Any]:
         """
          Fetch all rows of data
 
@@ -9203,7 +9203,7 @@ Args:
 
 Returns:
 
-      List[Any]
+      list[Any]
 
         """
         ...
@@ -9535,11 +9535,11 @@ class FUNCDESC:
         ...
 
     @property
-    def scodeArray(self) -> Tuple[Any, ...]:
+    def scodeArray(self) -> tuple[Any, ...]:
         ...
 
     @property
-    def args(self) -> Tuple[Any, ...]:
+    def args(self) -> tuple[Any, ...]:
         ...
 
     @property
@@ -9607,17 +9607,17 @@ class NT_CONSOLE_PROPS:
         ...
 
     @property
-    def ScreenBufferSize(self) -> Tuple[Any, Any]:
+    def ScreenBufferSize(self) -> tuple[Any, Any]:
         """Size of console screen buffer, in character cells"""
         ...
 
     @property
-    def WindowSize(self) -> Tuple[Any, Any]:
+    def WindowSize(self) -> tuple[Any, Any]:
         """Size of console window in character cells"""
         ...
 
     @property
-    def WindowOrigin(self) -> Tuple[Any, Any]:
+    def WindowOrigin(self) -> tuple[Any, Any]:
         """Window position, in screen coordinates"""
         ...
 
@@ -9632,7 +9632,7 @@ class NT_CONSOLE_PROPS:
         ...
 
     @property
-    def FontSize(self) -> Tuple[Any, Any]:
+    def FontSize(self) -> tuple[Any, Any]:
         """Size of font"""
         ...
 
@@ -9689,7 +9689,7 @@ class NT_CONSOLE_PROPS:
 
     @property
     def ColorTable(self) -> Any:
-        """Tuple of 16 ints containing console's color attributes"""
+        """tuple of 16 ints containing console's color attributes"""
         ...
 
     @property
@@ -9754,7 +9754,7 @@ class PyADS_ATTR_INFO:
         ...
 
     @property
-    def Values(self) -> List[Any]:
+    def Values(self) -> list[Any]:
         ...
 
 
@@ -10112,7 +10112,7 @@ class PyDSOP_UPLEVEL_FILTER_FLAGS:
 
 
 class PyFORMATETC:
-    """Tuple representing a FORMATETC struct describing an OLE data format"""
+    """tuple representing a FORMATETC struct describing an OLE data format"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -10491,7 +10491,7 @@ Returns:
         """
         ...
 
-    def GetAccessRights(self, ObjectType: PyIID, Flags: Any) -> Tuple[Any, Any]:
+    def GetAccessRights(self, ObjectType: PyIID, Flags: Any) -> tuple[Any, Any]:
         """
          Retrieves permission that can be set
 
@@ -10502,7 +10502,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:Indicates which page is requesting the access rights (SI_ADVANCED, SI_EDIT_AUDITS,
+      tuple[Any, Any]:Indicates which page is requesting the access rights (SI_ADVANCED, SI_EDIT_AUDITS,
 
 SI_EDIT_PROPERTIES)Return ValueThis method should return a 2-tuple containing a sequence of SI_ACCESS tuples,
 
@@ -10533,7 +10533,7 @@ Return ValueThis method should return the input bitmask will all generic rights 
         """
         ...
 
-    def GetInheritTypes(self) -> Tuple[Any, ...]:
+    def GetInheritTypes(self) -> tuple[Any, ...]:
         """
          Requests types of inheritance that your
 
@@ -10545,7 +10545,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]:PyGSecurityInformation.GetInheritTypes
+      tuple[Any, ...]:PyGSecurityInformation.GetInheritTypes
 
 (SI_INHERIT_TYPE,...) = GetInheritTypes()Requests types of inheritance that your
 
@@ -11615,7 +11615,7 @@ class PyIActiveScriptDebug:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetScriptTextAttributes(self, pstrCode: str, pstrDelimiter: str, dwFlags: Any) -> Tuple[Any, ...]:
+    def GetScriptTextAttributes(self, pstrCode: str, pstrDelimiter: str, dwFlags: Any) -> tuple[Any, ...]:
         """
          Returns the text attributes for an arbitrary block
 
@@ -11629,7 +11629,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -11982,7 +11982,7 @@ Returns:
         """
         ...
 
-    def OnScriptErrorDebug(self) -> Tuple[Any, Any]:
+    def OnScriptErrorDebug(self) -> tuple[Any, Any]:
         """
          Allows a smart host to control the handling of runtime
 
@@ -11994,7 +11994,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:PyIActiveScriptSiteDebug.OnScriptErrorDebug
+      tuple[Any, Any]:PyIActiveScriptSiteDebug.OnScriptErrorDebug
 
 int, int = OnScriptErrorDebug()Allows a smart host to control the handling of runtime
 
@@ -12582,7 +12582,7 @@ Returns:
         """
         ...
 
-    def EnumClassesOfCategories(self, listIIdImplemented: List[PyIID] = None, listIIdRequired: Any = None) -> Any:
+    def EnumClassesOfCategories(self, listIIdImplemented: list[PyIID] = None, listIIdRequired: Any = None) -> Any:
         """
          Returns an enumerator over the classes that
 
@@ -12590,7 +12590,7 @@ implement one or more interfaces.
 
 Args:
 
-      listIIdImplemented(List[PyIID]):A sequence of PyIID objects, or None.
+      listIIdImplemented(list[PyIID]):A sequence of PyIID objects, or None.
       listIIdRequired(Any):A sequence of PyIID objects, or None.
 
 Returns:
@@ -12607,7 +12607,7 @@ class PyICatRegister:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def RegisterCategories(self, arg: List[Any]) -> None:
+    def RegisterCategories(self, arg: list[Any]) -> None:
         """
          Registers one or more component categories. Each component category
 
@@ -12615,7 +12615,7 @@ consists of a CATID and a list of locale-dependent description strings.
 
 Args:
 
-      arg(List[Any]):A sequence of category descriptions.
+      arg(list[Any]):A sequence of category descriptions.
 
 Returns:
 
@@ -12624,13 +12624,13 @@ Returns:
         """
         ...
 
-    def UnRegisterCategories(self, arg: List[PyIID]) -> None:
+    def UnRegisterCategories(self, arg: list[PyIID]) -> None:
         """
          Unregister one or more previously registered categories.
 
 Args:
 
-      arg(List[PyIID]):The list of category IDs to be unregistered.
+      arg(list[PyIID]):The list of category IDs to be unregistered.
 
 Returns:
 
@@ -12639,7 +12639,7 @@ Returns:
         """
         ...
 
-    def RegisterClassImplCategories(self, clsid: PyIID, arg: List[PyIID]) -> None:
+    def RegisterClassImplCategories(self, clsid: PyIID, arg: list[PyIID]) -> None:
         """
          Registers the class as implementing one or more component
 
@@ -12648,7 +12648,7 @@ categories.
 Args:
 
       clsid(PyIID):Class ID of the relevent class
-      arg(List[PyIID]):A sequence of category IDs to be associated with the class.
+      arg(list[PyIID]):A sequence of category IDs to be associated with the class.
 
 Returns:
 
@@ -12657,7 +12657,7 @@ Returns:
         """
         ...
 
-    def UnRegisterClassImplCategories(self, clsid: PyIID, arg: List[PyIID]) -> None:
+    def UnRegisterClassImplCategories(self, clsid: PyIID, arg: list[PyIID]) -> None:
         """
          Unregisters the class as implementing one or more component
 
@@ -12666,7 +12666,7 @@ categories.
 Args:
 
       clsid(PyIID):Class ID of the relevent class
-      arg(List[PyIID]):A sequence of category IDs to be unregistered from the class.
+      arg(list[PyIID]):A sequence of category IDs to be unregistered from the class.
 
 Returns:
 
@@ -12675,7 +12675,7 @@ Returns:
         """
         ...
 
-    def RegisterClassReqCategories(self, clsid: PyIID, arg: List[PyIID]) -> None:
+    def RegisterClassReqCategories(self, clsid: PyIID, arg: list[PyIID]) -> None:
         """
          Registers the class as requiring one or more component
 
@@ -12684,7 +12684,7 @@ categories.
 Args:
 
       clsid(PyIID):Class ID of the relevent class
-      arg(List[PyIID]):A sequence of category IDs to be associated with the class.
+      arg(list[PyIID]):A sequence of category IDs to be associated with the class.
 
 Returns:
 
@@ -12693,7 +12693,7 @@ Returns:
         """
         ...
 
-    def UnRegisterClassReqCategories(self, clsid: PyIID, arg: List[PyIID]) -> None:
+    def UnRegisterClassReqCategories(self, clsid: PyIID, arg: list[PyIID]) -> None:
         """
          Unregisters the class as requiring one or more component
 
@@ -12702,7 +12702,7 @@ categories.
 Args:
 
       clsid(PyIID):Class ID of the relevent class
-      arg(List[PyIID]):A sequence of category IDs to be unregistered for the class.
+      arg(list[PyIID]):A sequence of category IDs to be unregistered for the class.
 
 Returns:
 
@@ -13147,7 +13147,7 @@ Returns:
         """
         ...
 
-    def GetProperty(self, rGuid: PyIID) -> Tuple[Any, Any]:
+    def GetProperty(self, rGuid: PyIID) -> tuple[Any, Any]:
         """
          Retrieves a context property
 
@@ -13157,7 +13157,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:GUID that identifies a context propertyReturn ValueReturns flags (CPFLAGS is reserved, no defined values) and the IUnknown interface set for the property
+      tuple[Any, Any]:GUID that identifies a context propertyReturn ValueReturns flags (CPFLAGS is reserved, no defined values) and the IUnknown interface set for the property
 
 
         """
@@ -13216,7 +13216,7 @@ Returns:
 
 Args:
 
-      pici(Any):Tuple of parameters representing a CMINVOKECOMMANDINFO struct
+      pici(Any):tuple of parameters representing a CMINVOKECOMMANDINFO struct
 
 Returns:
 
@@ -13504,14 +13504,14 @@ Returns:
         """
         ...
 
-    def SetFuncAndParamNames(self, index: Any, rgszNames: Tuple[Any, ...]) -> None:
+    def SetFuncAndParamNames(self, index: Any, rgszNames: tuple[Any, ...]) -> None:
         """
          Description of SetFuncAndParamNames.
 
 Args:
 
       index(Any):Index of the item to set.
-      rgszNames(Tuple[Any, ...]):A sequence of unicode or String objects.
+      rgszNames(tuple[Any, ...]):A sequence of unicode or String objects.
 
 Returns:
 
@@ -14008,7 +14008,7 @@ Returns:
         """
         ...
 
-    def BeginList(self, riid: PyIID) -> Tuple[Any, Any]:
+    def BeginList(self, riid: PyIID) -> tuple[Any, Any]:
         """
          Clears the jump list and prepares it to be
 
@@ -14020,7 +14020,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:The interface to return
+      tuple[Any, Any]:The interface to return
 Return ValueReturns the number of slots and a collection of all destinations removed from the jump list
 
 
@@ -14159,7 +14159,7 @@ class PyIDataObject:
 
 Args:
 
-      pformatetcIn(Any):Tuple representing a FORMATETC struct describing how the data should be returned
+      pformatetcIn(Any):tuple representing a FORMATETC struct describing how the data should be returned
 
 Returns:
 
@@ -14174,7 +14174,7 @@ Returns:
 
 Args:
 
-      pformatetcIn(Any):Tuple representing a FORMATETC struct describing how the data should be returned
+      pformatetcIn(Any):tuple representing a FORMATETC struct describing how the data should be returned
 
 Returns:
 
@@ -14189,11 +14189,11 @@ Returns:
 
 Args:
 
-      pformatetc(Any):Tuple representing a FORMATETC struct describing how the data should be returnedReturn ValueReturns None if the object supports the specified format, otherwise an error is raised.
+      pformatetc(Any):tuple representing a FORMATETC struct describing how the data should be returnedReturn ValueReturns None if the object supports the specified format, otherwise an error is raised.
 
 Returns:
 
-      None:Tuple representing a FORMATETC struct describing how the data should be
+      None:tuple representing a FORMATETC struct describing how the data should be
 
 returnedReturn ValueReturns None if the object supports the specified format, otherwise an error is raised.
 
@@ -14209,7 +14209,7 @@ format that the object supports
 
 Args:
 
-      pformatectIn(Any):Tuple representing a FORMATETC struct describing how the data should be returned
+      pformatectIn(Any):tuple representing a FORMATETC struct describing how the data should be returned
 
 Returns:
 
@@ -14224,7 +14224,7 @@ Returns:
 
 Args:
 
-      pformatetc(Any):Tuple representing a FORMATETC struct describing the type of data to be set
+      pformatetc(Any):tuple representing a FORMATETC struct describing the type of data to be set
       pmedium(Any):The data to be placed in the object
       fRelease(Any):If True, transfers ownership of the data to the object.  If False, caller is responsible for releasing the STGMEDIUM.
 
@@ -16705,28 +16705,28 @@ Returns:
         """
         ...
 
-    def GetObjectAttributes(self, names: Tuple[str, ...]) -> Tuple[Any, ...]:
+    def GetObjectAttributes(self, names: tuple[str, ...]) -> tuple[Any, ...]:
         """
          None
 
 Args:
 
-      names(Tuple[str, ...]):
+      names(tuple[str, ...]):
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
 
-    def SetObjectAttributes(self, attrs: Tuple[Any, ...]) -> Any:
+    def SetObjectAttributes(self, attrs: tuple[Any, ...]) -> Any:
         """
          None
 
 Args:
 
-      attrs(Tuple[Any, ...]):The attributes to set
+      attrs(tuple[Any, ...]):The attributes to set
 
 Returns:
 
@@ -16735,14 +16735,14 @@ Returns:
         """
         ...
 
-    def CreateDSObject(self, rdn: str, attrs: Tuple[Any, ...]) -> Any:
+    def CreateDSObject(self, rdn: str, attrs: tuple[Any, ...]) -> Any:
         """
          None
 
 Args:
 
       rdn(str):The relative distinguished name (relative path) of the object to be created.
-      attrs(Tuple[Any, ...]):The attributes to set.
+      attrs(tuple[Any, ...]):The attributes to set.
 
 Returns:
 
@@ -16772,7 +16772,7 @@ class PyIDirectorySearch:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def SetSearchPreference(self, prefs: Any) -> Tuple[Any, Any, Any]:
+    def SetSearchPreference(self, prefs: Any) -> tuple[Any, Any, Any]:
         """
          None
 
@@ -16782,7 +16782,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]:Return ValueThe result is the hresult of the call, and a list of integer status
+      tuple[Any, Any, Any]:Return ValueThe result is the hresult of the call, and a list of integer status
 
 codes for each of the preferences set.
 
@@ -16790,14 +16790,14 @@ codes for each of the preferences set.
         """
         ...
 
-    def ExecuteSearch(self, _filter: str, attrNames: List[str]) -> Any:
+    def ExecuteSearch(self, _filter: str, attrNames: list[str]) -> Any:
         """
          None
 
 Args:
 
       _filter(str):
-      attrNames(List[str]):Return ValueThe result is an integer search handle.  PyIDirectorySearch::CloseSearchHandle should be called to close the handle.
+      attrNames(list[str]):Return ValueThe result is an integer search handle.  PyIDirectorySearch::CloseSearchHandle should be called to close the handle.
 
 Returns:
 
@@ -16887,7 +16887,7 @@ Returns:
         """
         ...
 
-    def GetColumn(self, handle: Any, name: str) -> Tuple[Any, Any, Any]:
+    def GetColumn(self, handle: Any, name: str) -> tuple[Any, Any, Any]:
         """
          None
 
@@ -16898,7 +16898,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -16928,7 +16928,7 @@ class PyIDispatch:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Invoke(self, dispid: Any, lcid: Any, flags: Any, bResultWanted: Any, arg: Tuple[Any, ...]) -> Any:
+    def Invoke(self, dispid: Any, lcid: Any, flags: Any, bResultWanted: Any, arg: tuple[Any, ...]) -> Any:
         """
          Invokes a DISPID, using the passed arguments.
 
@@ -16938,7 +16938,7 @@ Args:
       lcid(Any):The locale id to use.
       flags(Any):The flags for the call.  The following flags can be used.FlagDescriptionDISPATCH_METHODThe member is invoked as a method. If a property has the same name, both this and the DISPATCH_PROPERTYGET flag may be set.DISPATCH_PROPERTYGETThe member is retrieved as a property or data member.DISPATCH_PROPERTYPUTThe member is changed as a property or data member.DISPATCH_PROPERTYPUTREFThe member is changed by a reference assignment, rather than a value assignment. This flag is valid only when the property accepts a reference to an object.
       bResultWanted(Any):Indicates if the result of the call should be requested.
-      arg(Tuple[Any, ...]):The parameters to ....Return ValueIf the bResultWanted parameter is False, then the result will be None. Otherwise, the result is determined by the COM object itself (and may still be None)
+      arg(tuple[Any, ...]):The parameters to ....Return ValueIf the bResultWanted parameter is False, then the result will be None. Otherwise, the result is determined by the COM object itself (and may still be None)
 
 Returns:
 
@@ -16956,8 +16956,8 @@ Otherwise, the result is determined by the COM object itself (and may still be N
             lcid: Any,
             wFlags: Any,
             resultTypeDesc: Any,
-            typeDescs: Tuple[Any, ...],
-            args: Tuple[Any, ...]) -> Any:
+            typeDescs: tuple[Any, ...],
+            args: tuple[Any, ...]) -> Any:
         """
          Invokes a DISPID, using the passed arguments and type descriptions.
 
@@ -16967,8 +16967,8 @@ Args:
       lcid(Any):The locale ID.  Please see PyIDispatch::Invoke.
       wFlags(Any):Flags for the call.  Please see PyIDispatch::Invoke.
       resultTypeDesc(Any):A tuple describing the type of the result.  See the comments for more information.
-      typeDescs(Tuple[Any, ...]):A sequence of tuples describing the types of the parameters for the function.  See the comments for more information.
-      args(Tuple[Any, ...]):The args to the function.CommentsThe Microsoft documentation for IDispatch should be used for all params except 'resultTypeDesc' and 'typeDescs'. 'resultTypeDesc' describes the return value of the function, and is a tuple of (type_id, flags). 'typeDescs' describes the type of each parameters, and is a list of the same (type_id, flags) tuple.itemDescriptiontype_idA valid "variant type" constant (eg, VT_I4 | VT_ARRAY, VT_DATE, etc - see VARIANT at MSDN).flagsOne of the PARAMFLAG constants (eg, PARAMFLAG_FIN, PARAMFLAG_FOUT etc - see PARAMFLAG at MSDN).ExampleAn example from the makepy generated file for Wordclass Cells(DispatchBaseClass):...    def SetWidth(self, ColumnWidth=..., RulerStyle=...):	return self._oleobj_.InvokeTypes(202, LCID, 1, (24, 0), ((4, 1), (3, 1)),...)The interesting bits areresultTypeDesc: (24, 0) - (VT_VOID, &ltno flags&gt)typeDescs: ((4, 1), (3, 1)) - ((VT_R4, PARAMFLAG_FIN), (VT_I4, PARAMFLAG_FIN))So, in this example, the function returns no value and takes 2 "in" params - ColumnWidth is a float, and RulerStule is an int.
+      typeDescs(tuple[Any, ...]):A sequence of tuples describing the types of the parameters for the function.  See the comments for more information.
+      args(tuple[Any, ...]):The args to the function.CommentsThe Microsoft documentation for IDispatch should be used for all params except 'resultTypeDesc' and 'typeDescs'. 'resultTypeDesc' describes the return value of the function, and is a tuple of (type_id, flags). 'typeDescs' describes the type of each parameters, and is a list of the same (type_id, flags) tuple.itemDescriptiontype_idA valid "variant type" constant (eg, VT_I4 | VT_ARRAY, VT_DATE, etc - see VARIANT at MSDN).flagsOne of the PARAMFLAG constants (eg, PARAMFLAG_FIN, PARAMFLAG_FOUT etc - see PARAMFLAG at MSDN).ExampleAn example from the makepy generated file for Wordclass Cells(DispatchBaseClass):...    def SetWidth(self, ColumnWidth=..., RulerStyle=...):	return self._oleobj_.InvokeTypes(202, LCID, 1, (24, 0), ((4, 1), (3, 1)),...)The interesting bits areresultTypeDesc: (24, 0) - (VT_VOID, &ltno flags&gt)typeDescs: ((4, 1), (3, 1)) - ((VT_R4, PARAMFLAG_FIN), (VT_I4, PARAMFLAG_FIN))So, in this example, the function returns no value and takes 2 "in" params - ColumnWidth is a float, and RulerStule is an int.
 
 Returns:
 
@@ -16977,7 +16977,7 @@ Returns:
         """
         ...
 
-    def GetIDsOfNames(self, name: str, arg: Any) -> Tuple[Any, Any]:
+    def GetIDsOfNames(self, name: str, arg: Any) -> tuple[Any, Any]:
         """
          Get the DISPID for the passed names.
 
@@ -16988,7 +16988,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:A sequence of string names to query
+      tuple[Any, Any]:A sequence of string names to query
 Comments
 
 Currently the LCID can not be specified, and  LOCALE_SYSTEM_DEFAULT is used.
@@ -17061,8 +17061,8 @@ Returns:
             dispid: Any,
             lcid: Any,
             flags: Any,
-            args: List[Any],
-            types: List[Any] = None,
+            args: list[Any],
+            types: list[Any] = None,
             returnDesc: Any = 1,
             serviceProvider: Any = None) -> Any:
         """
@@ -17073,8 +17073,8 @@ Args:
       dispid(Any):
       lcid(Any):
       flags(Any):
-      args(List[Any]):The arguments.
-      types(List[Any]):A tuple of type description object, or None if type descriptions are not available.
+      args(list[Any]):The arguments.
+      types(list[Any]):A tuple of type description object, or None if type descriptions are not available.
       returnDesc(Any):If types==None, should be a BOOL indicating if the result is needed.  If types is a tuple, then should a be type description.
       serviceProvider(Any):A service provider object supplied by the caller which allows the object to obtain services from the caller. Can be None.
 
@@ -17177,14 +17177,14 @@ class PyIDocHostUIHandler:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def ShowContextMenu(self, dwID: Any, pt: Tuple[Any, Any], pcmdtReserved: Any, pdispReserved: Any) -> None:
+    def ShowContextMenu(self, dwID: Any, pt: tuple[Any, Any], pcmdtReserved: Any, pdispReserved: Any) -> None:
         """
          Description of ShowContextMenu.
 
 Args:
 
       dwID(Any):Description for dwID
-      pt(Tuple[Any, Any]):Description for ppt
+      pt(tuple[Any, Any]):Description for ppt
       pcmdtReserved(Any):Description for pcmdtReserved
       pdispReserved(Any):Description for pdispReserved
 
@@ -17304,13 +17304,13 @@ Returns:
         """
         ...
 
-    def ResizeBorder(self, prcBorder: Tuple[Any, Any, Any, Any], pUIWindow: Any, fRameWindow: Any) -> None:
+    def ResizeBorder(self, prcBorder: tuple[Any, Any, Any, Any], pUIWindow: Any, fRameWindow: Any) -> None:
         """
          Description of ResizeBorder.
 
 Args:
 
-      prcBorder(Tuple[Any, Any, Any, Any]):Description for prcBorder
+      prcBorder(tuple[Any, Any, Any, Any]):Description for prcBorder
       pUIWindow(Any):Description for pUIWindow
       fRameWindow(Any):Description for fRameWindow
 
@@ -17459,7 +17459,7 @@ class PyIDropTarget:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def DragEnter(self, pDataObj: Any, grfKeyState: Any, pt: Tuple[Any, Any], pdwEffect: Any) -> Any:
+    def DragEnter(self, pDataObj: Any, grfKeyState: Any, pt: tuple[Any, Any], pdwEffect: Any) -> Any:
         """
          Called when an object is initially dragged into a window
 
@@ -17467,7 +17467,7 @@ Args:
 
       pDataObj(Any):IDataObject interface that contains the object being dragged
       grfKeyState(Any):Combination of win32con.MK_* flags containing keyboard modifier state
-      pt(Tuple[Any, Any]):(x,y) Screen coordinates of cursor
+      pt(tuple[Any, Any]):(x,y) Screen coordinates of cursor
       pdwEffect(Any):shellcon.DROPEFFECT_* valueReturn ValueYour implementation of this function should return a shellcon.DROPEFFECT_* value indicating if the object can be accepted
 
 Returns:
@@ -17480,14 +17480,14 @@ be accepted
         """
         ...
 
-    def DragOver(self, grfKeyState: Any, pt: Tuple[Any, Any], pdwEffect: Any) -> Any:
+    def DragOver(self, grfKeyState: Any, pt: tuple[Any, Any], pdwEffect: Any) -> Any:
         """
          Called as the dragged object moves over the window
 
 Args:
 
       grfKeyState(Any):Combination of win32con.MK_* flags containing keyboard modifier state
-      pt(Tuple[Any, Any]):(x,y) Screen coordinates of cursor
+      pt(tuple[Any, Any]):(x,y) Screen coordinates of cursor
       pdwEffect(Any):shellcon.DROPEFFECT_* valueReturn ValueYour implementation of this function should return a shellcon.DROPEFFECT_* value indicating if the object can be accepted at the current position
 
 Returns:
@@ -17515,7 +17515,7 @@ Returns:
         """
         ...
 
-    def Drop(self, pDataObj: Any, grfKeyState: Any, pt: Tuple[Any, Any], dwEffect: Any) -> Any:
+    def Drop(self, pDataObj: Any, grfKeyState: Any, pt: tuple[Any, Any], dwEffect: Any) -> Any:
         """
          Called when the object is dropped onto the window
 
@@ -17523,7 +17523,7 @@ Args:
 
       pDataObj(Any):IDataObject interface containing the dropped object
       grfKeyState(Any):Combination of win32con.MK_* flags containing keyboard modifier state
-      pt(Tuple[Any, Any]):(x,y) Screen coordinates of cursor
+      pt(tuple[Any, Any]):(x,y) Screen coordinates of cursor
       dwEffect(Any):shellcon.DROPEFFECT_* valueReturn ValueYour implementation of this function should return one of the shellcon.DROPEFFECT_* values
 
 Returns:
@@ -17541,7 +17541,7 @@ class PyIDropTargetHelper:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def DragEnter(self, hwnd: int, pDataObj: Any, pt: Tuple[Any, Any], dwEffect: Any) -> None:
+    def DragEnter(self, hwnd: int, pDataObj: Any, pt: tuple[Any, Any], dwEffect: Any) -> None:
         """
          Description of DragEnter.
 
@@ -17549,7 +17549,7 @@ Args:
 
       hwnd(int):Handle to target window
       pDataObj(Any):Object that is dragged onto the window
-      pt(Tuple[Any, Any]):Coordinates where drag operation entered the window
+      pt(tuple[Any, Any]):Coordinates where drag operation entered the window
       dwEffect(Any):One of shellcon.DROPEFFECT_* values
 
 Returns:
@@ -17559,14 +17559,14 @@ Returns:
         """
         ...
 
-    def DragOver(self, hwnd: Any, pt: Tuple[Any, Any], pdwEffect: Any) -> None:
+    def DragOver(self, hwnd: Any, pt: tuple[Any, Any], pdwEffect: Any) -> None:
         """
          Description of DragOver.
 
 Args:
 
       hwnd(Any):
-      pt(Tuple[Any, Any]):Description for pt
+      pt(tuple[Any, Any]):Description for pt
       pdwEffect(Any):Description for pdwEffect
 
 Returns:
@@ -17591,14 +17591,14 @@ Returns:
         """
         ...
 
-    def Drop(self, pDataObj: Any, pt: Tuple[Any, Any], dwEffect: Any) -> None:
+    def Drop(self, pDataObj: Any, pt: tuple[Any, Any], dwEffect: Any) -> None:
         """
          Description of Drop.
 
 Args:
 
       pDataObj(Any):Description for pDataObj
-      pt(Tuple[Any, Any]):Description for pt
+      pt(tuple[Any, Any]):Description for pt
       dwEffect(Any):Description for dwEffect
 
 Returns:
@@ -17619,7 +17619,7 @@ class PyIDsObjectPicker:
             targetComputer: str,
             scopeInfos: Any,
             options: Any = 0,
-            attrNames: List[str] = None) -> None:
+            attrNames: list[str] = None) -> None:
         """
          Initializes the IDsObjectPicker interface with information about the scopes, filters, and options used by the object picker dialog box.
 
@@ -17628,7 +17628,7 @@ Args:
       targetComputer(str):
       scopeInfos(Any):
       options(Any):
-      attrNames(List[str]):
+      attrNames(list[str]):
 
 Returns:
 
@@ -17720,7 +17720,7 @@ class PyIEnumCATEGORYINFO:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[Tuple[PyIID, Any, str], ...]:
+    def Next(self, num: Any = 1) -> tuple[tuple[PyIID, Any, str], ...]:
         """
          Retrieves a specified number of items in the
 
@@ -17732,7 +17732,7 @@ Args:
 
 Returns:
 
-      Tuple[Tuple[PyIID, Any, str], ...]:Number of items to retrieve.
+      tuple[tuple[PyIID, Any, str], ...]:Number of items to retrieve.
 Return ValueThe result is a tuple of (IID object, LCID, string description) tuples,
 
 one for each element returned.
@@ -17795,7 +17795,7 @@ class PyIEnumConnectionPoints:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[Any, ...]:
+    def Next(self, num: Any = 1) -> tuple[Any, ...]:
         """
          Retrieves a specified number of items in the
 
@@ -17807,7 +17807,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -17935,7 +17935,7 @@ class PyIEnumContextProps:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[Tuple[PyIID, Any, Any], ...]:
+    def Next(self, num: Any = 1) -> tuple[tuple[PyIID, Any, Any], ...]:
         """
          Retrieves a specified number of items in
 
@@ -17947,7 +17947,7 @@ Args:
 
 Returns:
 
-      Tuple[Tuple[PyIID, Any, Any], ...]:Number of items to retrieve.
+      tuple[tuple[PyIID, Any, Any], ...]:Number of items to retrieve.
 Return ValueReturns a tuple of 3-tuples representing ContextProperty structs:
 
  First item is GUID identifying the property, second is Flags (reserved), third is the interface set as the
@@ -18512,7 +18512,7 @@ class PyIEnumGUID:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[PyIID, ...]:
+    def Next(self, num: Any = 1) -> tuple[PyIID, ...]:
         """
          Retrieves a specified number of items in the enumeration sequence.
 
@@ -18522,7 +18522,7 @@ Args:
 
 Returns:
 
-      Tuple[PyIID, ...]:Number of items to retrieve.
+      tuple[PyIID, ...]:Number of items to retrieve.
 Return ValueThe result is a tuple of PyIID objects,
 
 one for each element returned.  Note that if zero elements are returned, it is not considered
@@ -18731,7 +18731,7 @@ class PyIEnumObjects:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, riid: PyIID, num: Any = 1) -> Tuple[Any, ...]:
+    def Next(self, riid: PyIID, num: Any = 1) -> tuple[Any, ...]:
         """
          Retrieves a specified number of items in the enumeration sequence.
 
@@ -18742,7 +18742,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -19149,7 +19149,7 @@ class PyIEnumSTATSTG:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[Any, ...]:
+    def Next(self, num: Any = 1) -> tuple[Any, ...]:
         """
          Retrieves a specified number of items in the enumeration sequence.
 
@@ -19159,7 +19159,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -19218,7 +19218,7 @@ class PyIEnumShellItems:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[Any, ...]:
+    def Next(self, num: Any = 1) -> tuple[Any, ...]:
         """
          Retrieves a specified number of items in the enumeration
 
@@ -19230,7 +19230,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -19289,7 +19289,7 @@ class PyIEnumString:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Next(self, num: Any = 1) -> Tuple[str, ...]:
+    def Next(self, num: Any = 1) -> tuple[str, ...]:
         """
          Retrieves a specified number of items in the enumeration sequence.
 
@@ -19299,7 +19299,7 @@ Args:
 
 Returns:
 
-      Tuple[str, ...]
+      tuple[str, ...]
 
         """
         ...
@@ -19970,14 +19970,14 @@ class PyIExtractImage:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetLocation(self, dwPriority: Any, size: Tuple[Any, Any], dwRecClrDepth: Any, pdwFlags: Any) -> None:
+    def GetLocation(self, dwPriority: Any, size: tuple[Any, Any], dwRecClrDepth: Any, pdwFlags: Any) -> None:
         """
          Description of GetLocation.
 
 Args:
 
       dwPriority(Any):Description for dwPriority
-      size(Tuple[Any, Any]):Description for prgSize
+      size(tuple[Any, Any]):Description for prgSize
       dwRecClrDepth(Any):Description for dwRecClrDepth
       pdwFlags(Any):Description for pdwFlags
 
@@ -21168,7 +21168,7 @@ Returns:
         """
         ...
 
-    def GetFolderIds(self) -> Tuple[PyIID, ...]:
+    def GetFolderIds(self) -> tuple[PyIID, ...]:
         """
          Retrieves all known folder ids.
 
@@ -21178,7 +21178,7 @@ Args:
 
 Returns:
 
-      Tuple[PyIID, ...]
+      tuple[PyIID, ...]
 
         """
         ...
@@ -21283,7 +21283,7 @@ Returns:
             hwnd: int,
             flags: Any,
             TargetPath: Any,
-            Exclusion: Tuple[PyIID, ...]) -> None:
+            Exclusion: tuple[PyIID, ...]) -> None:
         """
          Redirects a known folder to an alternate location
 
@@ -21293,7 +21293,7 @@ Args:
       hwnd(int):Handle of window to be used for user interaction
       flags(Any):Combination of KF_REDIRECT_* flags
       TargetPath(Any):Path to which the known folder will be redirected
-      Exclusion(Tuple[PyIID, ...]):Sequence of known folder ids of subfolders to be excluded from redirection
+      Exclusion(tuple[PyIID, ...]):Sequence of known folder ids of subfolders to be excluded from redirection
 
 Returns:
 
@@ -21646,7 +21646,7 @@ class PyIMAPIProp:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetProps(self, propList: Any, flags: Any = 0) -> Tuple[Any, Any, Any]:
+    def GetProps(self, propList: Any, flags: Any = 0) -> tuple[Any, Any, Any]:
         """
          Returns a list of property values.
 
@@ -21657,12 +21657,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
 
-    def DeleteProps(self, propList: Any, wantProblems: Any = False) -> Tuple[Any, Any, Any]:
+    def DeleteProps(self, propList: Any, wantProblems: Any = False) -> tuple[Any, Any, Any]:
         """
          Deletes a set of properties.
 
@@ -21673,43 +21673,43 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
 
-    def SetProps(self, propList: Tuple[Any, Any], wantProblems: Any = False) -> Tuple[Any, Any, Any]:
+    def SetProps(self, propList: tuple[Any, Any], wantProblems: Any = False) -> tuple[Any, Any, Any]:
         """
          Sets a set of properties.
 
 Args:
 
-      propList(Tuple[Any, Any]):The list of properties
+      propList(tuple[Any, Any]):The list of properties
       wantProblems(Any):Return detailed error information
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
 
     def CopyTo(
             self,
-            IIDExcludeList: Tuple[Any, Any],
+            IIDExcludeList: tuple[Any, Any],
             propTags: Any,
             uiParam: Any,
             progress: Any,
             resultIID: PyIID,
             dest: Any,
             flags: Any,
-            wantProblems: Any = False) -> Tuple[Any, Any, Any]:
+            wantProblems: Any = False) -> tuple[Any, Any, Any]:
         """
          Copies an object to another
 
 Args:
 
-      IIDExcludeList(Tuple[Any, Any]):A sequence of IIDs to exclude.
+      IIDExcludeList(tuple[Any, Any]):A sequence of IIDs to exclude.
       propTags(Any):The property tags to exclude.
       uiParam(Any):Handle to the parent window of the progress object
       progress(Any):Reserved - must ... None
@@ -21720,13 +21720,13 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
 
     def CopyProps(self, propTags: Any, uiParam: Any, progress: Any, resultIID: PyIID,
-                  dest: Any, flags: Any, wantProblems: Any = False) -> Tuple[Any, Any, Any]:
+                  dest: Any, flags: Any, wantProblems: Any = False) -> tuple[Any, Any, Any]:
         """
          Copies a set of properties to another object
 
@@ -21742,7 +21742,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -21781,7 +21781,7 @@ Returns:
         """
         ...
 
-    def GetNamesFromIDs(self, propTags: Any, propSetGuid: PyIID = None, flags: Any = 0) -> Tuple[Any, Any, Any]:
+    def GetNamesFromIDs(self, propTags: Any, propSetGuid: PyIID = None, flags: Any = 0) -> tuple[Any, Any, Any]:
         """
          Determines property names
 
@@ -21793,7 +21793,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -22560,7 +22560,7 @@ Returns:
         """
         ...
 
-    def CreateAttach(self, interface: PyIID, flags: Any) -> Tuple[Any, Any]:
+    def CreateAttach(self, interface: PyIID, flags: Any) -> tuple[Any, Any]:
         """
          Creates an attachment
 
@@ -22571,7 +22571,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:Bitmask of flags that controls how the attachment is created.Return ValueThe result is a tuple of (attachmentNum, attachmentObject)
+      tuple[Any, Any]:Bitmask of flags that controls how the attachment is created.Return ValueThe result is a tuple of (attachmentNum, attachmentObject)
 
 
         """
@@ -22826,7 +22826,7 @@ Returns:
         """
         ...
 
-    def ConfigureMsgService(self, iid: PyIID, ulUIParam: Any, ulFlags: Any, arg: List[Any]) -> None:
+    def ConfigureMsgService(self, iid: PyIID, ulUIParam: Any, ulFlags: Any, arg: list[Any]) -> None:
         """
          Reconfigures a message service.
 
@@ -22835,7 +22835,7 @@ Args:
       iid(PyIID):The unique identifier for the message service to configure.
       ulUIParam(Any):Handle of the parent window for the configuration property sheet.
       ulFlags(Any):Bitmask of flags that controls the display of the property sheet.
-      arg(List[Any]):Property values describing the properties to display in the property sheet.  Should not be None if the service is to be configured without a message service.
+      arg(list[Any]):Property values describing the properties to display in the property sheet.  Should not be None if the service is to be configured without a message service.
 
 Returns:
 
@@ -22964,7 +22964,7 @@ Returns:
         """
         ...
 
-    def GetReceiveFolder(self, messageClass: str = None, flags: Any = 0) -> Tuple[PyIID, str]:
+    def GetReceiveFolder(self, messageClass: str = None, flags: Any = 0) -> tuple[PyIID, str]:
         """
          Obtains the folder that was established as the destination for incoming messages of a specified message class or the default receive folder for the message store.
 
@@ -22975,7 +22975,7 @@ Args:
 
 Returns:
 
-      Tuple[PyIID, str]
+      tuple[PyIID, str]
 
         """
         ...
@@ -23085,14 +23085,14 @@ class PyINameSpaceTreeControl:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Initialize(self, hwndParent: Any, prc: Tuple[Any, Any, Any, Any], nsctsFlags: Any) -> None:
+    def Initialize(self, hwndParent: Any, prc: tuple[Any, Any, Any, Any], nsctsFlags: Any) -> None:
         """
          Description of Initialize.
 
 Args:
 
       hwndParent(Any):Description for hwndParent
-      prc(Tuple[Any, Any, Any, Any]):Description for prc
+      prc(tuple[Any, Any, Any, Any]):Description for prc
       nsctsFlags(Any):Description for nsctsFlags
 
 Returns:
@@ -23339,13 +23339,13 @@ Returns:
         """
         ...
 
-    def HitTest(self, pt: Tuple[Any, Any]) -> None:
+    def HitTest(self, pt: tuple[Any, Any]) -> None:
         """
          Description of HitTest.
 
 Args:
 
-      pt(Tuple[Any, Any]):Description for ppt
+      pt(tuple[Any, Any]):Description for ppt
 
 Returns:
 
@@ -23886,16 +23886,16 @@ Returns:
 
     def TransformCoords(
             self,
-            PtlHimetric: Tuple[Any, Any],
-            pPtfContainer: Tuple[float, float],
+            PtlHimetric: tuple[Any, Any],
+            pPtfContainer: tuple[float, float],
             dwFlags: Any) -> None:
         """
          Description of TransformCoords.
 
 Args:
 
-      PtlHimetric(Tuple[Any, Any]):Description for pPtlHimetric
-      pPtfContainer(Tuple[float, float]):Description for pPtfContainer
+      PtlHimetric(tuple[Any, Any]):Description for pPtlHimetric
+      pPtfContainer(tuple[float, float]):Description for pPtfContainer
       dwFlags(Any):Description for dwFlagsReturn ValueThe result is a tuple of the transformed input points - ie, a tuple of ((int, int), (float, float))
 
 Returns:
@@ -24006,13 +24006,13 @@ Returns:
         """
         ...
 
-    def ResizeBorder(self, rcBorder: Tuple[Any, Any, Any, Any], pUIWindow: Any, fFrameWindow: Any) -> None:
+    def ResizeBorder(self, rcBorder: tuple[Any, Any, Any, Any], pUIWindow: Any, fFrameWindow: Any) -> None:
         """
          Description of ResizeBorder.
 
 Args:
 
-      rcBorder(Tuple[Any, Any, Any, Any]):Description for prcBorder
+      rcBorder(tuple[Any, Any, Any, Any]):Description for prcBorder
       pUIWindow(Any):Description for pUIWindow
       fFrameWindow(Any):Description for fFrameWindow
 
@@ -24497,14 +24497,14 @@ Returns:
         """
         ...
 
-    def GetDC(self, grfFlags: Any, rect: Tuple[Any, Any, Any, Any]) -> None:
+    def GetDC(self, grfFlags: Any, rect: tuple[Any, Any, Any, Any]) -> None:
         """
          Description of GetDC.
 
 Args:
 
       grfFlags(Any):Description for grfFlags
-      rect(Tuple[Any, Any, Any, Any]):
+      rect(tuple[Any, Any, Any, Any]):
 
 Returns:
 
@@ -24528,13 +24528,13 @@ Returns:
         """
         ...
 
-    def InvalidateRect(self, rect: Tuple[Any, Any, Any, Any], fErase: Any) -> None:
+    def InvalidateRect(self, rect: tuple[Any, Any, Any, Any], fErase: Any) -> None:
         """
          Description of InvalidateRect.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):
+      rect(tuple[Any, Any, Any, Any]):
       fErase(Any):Description for fErase
 
 Returns:
@@ -24630,13 +24630,13 @@ Returns:
         """
         ...
 
-    def RequestBorderSpace(self, borderwidths: Tuple[Any, Any, Any, Any]) -> None:
+    def RequestBorderSpace(self, borderwidths: tuple[Any, Any, Any, Any]) -> None:
         """
          Description of RequestBorderSpace.
 
 Args:
 
-      borderwidths(Tuple[Any, Any, Any, Any]):Description for pborderwidths
+      borderwidths(tuple[Any, Any, Any, Any]):Description for pborderwidths
 
 Returns:
 
@@ -24645,13 +24645,13 @@ Returns:
         """
         ...
 
-    def SetBorderSpace(self, borderwidths: Tuple[Any, Any, Any, Any]) -> None:
+    def SetBorderSpace(self, borderwidths: tuple[Any, Any, Any, Any]) -> None:
         """
          Description of SetBorderSpace.
 
 Args:
 
-      borderwidths(Tuple[Any, Any, Any, Any]):Description for pborderwidths
+      borderwidths(tuple[Any, Any, Any, Any]):Description for pborderwidths
 
 Returns:
 
@@ -24809,7 +24809,7 @@ Returns:
         ...
 
     def DoVerb(self, iVerb: Any, msg: PyMSG, pActiveSite: Any, lindex: Any,
-               hwndParent: Any, rect: Tuple[Any, Any, Any, Any]) -> None:
+               hwndParent: Any, rect: tuple[Any, Any, Any, Any]) -> None:
         """
          Description of DoVerb.
 
@@ -24820,7 +24820,7 @@ Args:
       pActiveSite(Any):Description for pActiveSite
       lindex(Any):Description for lindex
       hwndParent(Any):Description for hwndParent
-      rect(Tuple[Any, Any, Any, Any]):
+      rect(tuple[Any, Any, Any, Any]):
 
 Returns:
 
@@ -24904,14 +24904,14 @@ Returns:
         """
         ...
 
-    def SetExtent(self, dwDrawAspect: Any, size: Tuple[Any, Any]) -> None:
+    def SetExtent(self, dwDrawAspect: Any, size: tuple[Any, Any]) -> None:
         """
          Description of SetExtent.
 
 Args:
 
       dwDrawAspect(Any):Description for dwDrawAspect
-      size(Tuple[Any, Any]):Size limit for the object.
+      size(tuple[Any, Any]):Size limit for the object.
 
 Returns:
 
@@ -24920,14 +24920,14 @@ Returns:
         """
         ...
 
-    def GetExtent(self, dwDrawAspect: Any, size: Tuple[Any, Any]) -> None:
+    def GetExtent(self, dwDrawAspect: Any, size: tuple[Any, Any]) -> None:
         """
          Description of GetExtent.
 
 Args:
 
       dwDrawAspect(Any):Description for dwDrawAspect
-      size(Tuple[Any, Any]):Size limit for the object.
+      size(tuple[Any, Any]):Size limit for the object.
 
 Returns:
 
@@ -26103,7 +26103,7 @@ Returns:
         """
         ...
 
-    def GetRelativeDescription(self, var1: Any, var2: Any) -> Tuple[Any, Any]:
+    def GetRelativeDescription(self, var1: Any, var2: Any) -> tuple[Any, Any]:
         """
          Compares two values
 
@@ -26114,7 +26114,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -26168,7 +26168,7 @@ Returns:
         """
         ...
 
-    def GetConditionType(self) -> Tuple[Any, Any]:
+    def GetConditionType(self) -> tuple[Any, Any]:
         """
          Returns options that determine how the property is used
 
@@ -26180,7 +26180,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:PyIPropertyDescription.GetConditionType
+      tuple[Any, Any]:PyIPropertyDescription.GetConditionType
 
 (int, int) = GetConditionType()Returns options that determine how the property is used
 
@@ -26639,30 +26639,30 @@ Supports iteration to list properties."""
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def ReadMultiple(self, props: Tuple[Any, ...]) -> Tuple[Any, ...]:
+    def ReadMultiple(self, props: tuple[Any, ...]) -> tuple[Any, ...]:
         """
          Reads specified properties from the current property set.
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence of property IDs or names.Return ValueReturned values are automatically converted to an appropriate python type
+      props(tuple[Any, ...]):Sequence of property IDs or names.Return ValueReturned values are automatically converted to an appropriate python type
 
 Returns:
 
-      Tuple[Any, ...]:Sequence of property IDs or names.Return ValueReturned values are automatically converted to an appropriate python type
+      tuple[Any, ...]:Sequence of property IDs or names.Return ValueReturned values are automatically converted to an appropriate python type
 
 
         """
         ...
 
-    def WriteMultiple(self, props: Tuple[Any, ...], values: Tuple[Any, ...], propidNameFirst: Any = 2) -> None:
+    def WriteMultiple(self, props: tuple[Any, ...], values: tuple[Any, ...], propidNameFirst: Any = 2) -> None:
         """
          Creates or modifies properties in the property set
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence containing names or integer ids of properties to write
-      values(Tuple[Any, ...]):The values for the properties.
+      props(tuple[Any, ...]):Sequence containing names or integer ids of properties to write
+      values(tuple[Any, ...]):The values for the properties.
       propidNameFirst(Any):Minimum property id to be assigned to new properties specified by name
 
 Returns:
@@ -26672,13 +26672,13 @@ Returns:
         """
         ...
 
-    def DeleteMultiple(self, props: Tuple[Any, ...]) -> None:
+    def DeleteMultiple(self, props: tuple[Any, ...]) -> None:
         """
          Deletes properties from the property set
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence containing names or IDs of properties to be deleted
+      props(tuple[Any, ...]):Sequence containing names or IDs of properties to be deleted
 
 Returns:
 
@@ -26687,7 +26687,7 @@ Returns:
         """
         ...
 
-    def ReadPropertyNames(self, props: Tuple[Any, ...]) -> Tuple[Any, ...]:
+    def ReadPropertyNames(self, props: tuple[Any, ...]) -> tuple[Any, ...]:
         """
          Retrieves any existing string names for the specified
 
@@ -26695,16 +26695,16 @@ property identifiers.
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence of ints containing property IDs.
+      props(tuple[Any, ...]):Sequence of ints containing property IDs.
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
 
-    def WritePropertyNames(self, props: Tuple[Any, ...], names: Tuple[str, ...]) -> None:
+    def WritePropertyNames(self, props: tuple[Any, ...], names: tuple[str, ...]) -> None:
         """
          Assigns string names to a specified array of property IDs in the
 
@@ -26712,8 +26712,8 @@ current property set.
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence containing the property IDs.
-      names(Tuple[str, ...]):Equal length sequence of property names.
+      props(tuple[Any, ...]):Sequence containing the property IDs.
+      names(tuple[str, ...]):Equal length sequence of property names.
 
 Returns:
 
@@ -26722,13 +26722,13 @@ Returns:
         """
         ...
 
-    def DeletePropertyNames(self, props: Tuple[Any, ...]) -> None:
+    def DeletePropertyNames(self, props: tuple[Any, ...]) -> None:
         """
          Removes property names from specified properties.
 
 Args:
 
-      props(Tuple[Any, ...]):Sequence of ints containing property IDs.
+      props(tuple[Any, ...]):Sequence of ints containing property IDs.
 
 Returns:
 
@@ -26938,7 +26938,7 @@ Returns:
         """
         ...
 
-    def GetValueAndState(self, key: Any) -> Tuple[Any, Any]:
+    def GetValueAndState(self, key: Any) -> tuple[Any, Any]:
         """
          Retrieves the current value and state of a
 
@@ -26950,7 +26950,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -27935,7 +27935,7 @@ class PyIScheduledWorkItem:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateTrigger(self) -> Tuple[Any, Any]:
+    def CreateTrigger(self) -> tuple[Any, Any]:
         """
          Creates a new trigger for a task, returns index and
 
@@ -27947,7 +27947,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -28014,7 +28014,7 @@ Returns:
         """
         ...
 
-    def GetRunTimes(self, Count: Any, Begin: PyTime, End: PyTime) -> Tuple[PyTime, Any, Any, Any]:
+    def GetRunTimes(self, Count: Any, Begin: PyTime, End: PyTime) -> tuple[PyTime, Any, Any, Any]:
         """
          Return specified number of run times within given time
 
@@ -28028,7 +28028,7 @@ Args:
 
 Returns:
 
-      Tuple[PyTime, Any, Any, Any]
+      tuple[PyTime, Any, Any, Any]
 
         """
         ...
@@ -28064,7 +28064,7 @@ Returns:
         """
         ...
 
-    def GetIdleWait(self) -> Tuple[Any, Any]:
+    def GetIdleWait(self) -> tuple[Any, Any]:
         """
          Gets IdleMinutes and DeadlineMinutes parms for task with trigger
 
@@ -28076,7 +28076,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -28157,7 +28157,7 @@ Returns:
         """
         ...
 
-    def GetExitCode(self) -> Tuple[Any, Any]:
+    def GetExitCode(self) -> tuple[Any, Any]:
         """
          Returns tuple of task's exit code and error returned to Task
 
@@ -28169,7 +28169,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -28501,7 +28501,7 @@ namespace extensions."""
 Args:
 
       hmenuShared(int):Newly created menu that contains no items
-      lpMenuWidths(Any):Tuple of 6 ints.  Items 0,2,and 4 are updated when the tuple is returned.
+      lpMenuWidths(Any):tuple of 6 ints.  Items 0,2,and 4 are updated when the tuple is returned.
 
 Returns:
 
@@ -28842,13 +28842,13 @@ Returns:
         """
         ...
 
-    def GetAttributesOf(self, pidl: Tuple[Any, ...], rgfInOut: Any) -> Any:
+    def GetAttributesOf(self, pidl: tuple[Any, ...], rgfInOut: Any) -> Any:
         """
          Queries attributes of items within the shell folder
 
 Args:
 
-      pidl(Tuple[Any, ...]):A sequence of single-level pidls identifying items directly contained by the folder
+      pidl(tuple[Any, ...]):A sequence of single-level pidls identifying items directly contained by the folder
       rgfInOut(Any):Combination of shellcon.SFGAO_* constantsReturn ValueThe requested attributes are only returned if they are common to all of the specified items
 
 Returns:
@@ -28862,10 +28862,10 @@ Returns:
     def GetUIObjectOf(
             self,
             hwndOwner: int,
-            pidl: Tuple[Any, ...],
+            pidl: tuple[Any, ...],
             riid: PyIID,
             iidout: PyIID,
-            Reserved: Any = 0) -> Tuple[Any, Any]:
+            Reserved: Any = 0) -> tuple[Any, Any]:
         """
          Creates an interface to one or more items in a shell
 
@@ -28874,14 +28874,14 @@ folder
 Args:
 
       hwndOwner(int):Specifies a window in which to display any required dialogs or errors, can be 0
-      pidl(Tuple[Any, ...]):A sequence of single-level pidls identifying items in the folder
+      pidl(tuple[Any, ...]):A sequence of single-level pidls identifying items in the folder
       riid(PyIID):The interface to create, one of IID_IContextMenu, IID_IContextMenu2, IID_IDataObject, IID_IDropTarget, IID_IExtractIcon, IID_IQueryInfo
       iidout(PyIID):The interface to return.  Can be used in the case where there is not a python wrapper for the desired interface.  You must make certain that the interface identified by riid actually supports the iidout interface, or Bad Things Will Happen. It should always be safe to return PyIUnknown, which is the base for all interfaces.Return ValueReturns the Reserved parameter and the requested interface
       Reserved(Any):Reserved, use 0 if passed in
 
 Returns:
 
-      Tuple[Any, Any]:The interface to return.  Can be used in the case where there is not a
+      tuple[Any, Any]:The interface to return.  Can be used in the case where there is not a
 
 python wrapper for the desired interface.  You must make certain that the interface identified by riid
 
@@ -28967,7 +28967,7 @@ Returns:
         """
         ...
 
-    def GetDefaultColumn(self) -> Tuple[Any, Any]:
+    def GetDefaultColumn(self) -> tuple[Any, Any]:
         """
          Returns the columns used for sorting and display
 
@@ -28977,7 +28977,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -29015,7 +29015,7 @@ Returns:
         """
         ...
 
-    def GetDetailsOf(self, pidl: Any, iColumn: Any) -> Tuple[Any, Any, Any]:
+    def GetDetailsOf(self, pidl: Any, iColumn: Any) -> tuple[Any, Any, Any]:
         """
          Returns the value or title of a column in the folder's Details
 
@@ -29028,7 +29028,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]:Zero based index of columnReturn ValueReturns a tuple representing a SHELLDETAILS struct, containing the formst (LVCFMT_*), column width in
+      tuple[Any, Any, Any]:Zero based index of columnReturn ValueReturns a tuple representing a SHELLDETAILS struct, containing the formst (LVCFMT_*), column width in
 
 characters,
 
@@ -29145,7 +29145,7 @@ Python's True and False should not be used, as S_OK==0==False.
         """
         ...
 
-    def GetOverlayInfo(self) -> Tuple[str, Any, Any]:
+    def GetOverlayInfo(self) -> tuple[str, Any, Any]:
         """
          Retrieves the path to the overlay
 
@@ -29157,7 +29157,7 @@ Args:
 
 Returns:
 
-      Tuple[str, Any, Any]:PyIShellIconOverlayIdentifier.GetOverlayInfo
+      tuple[str, Any, Any]:PyIShellIconOverlayIdentifier.GetOverlayInfo
 
 (PyUnicode, int, int) = GetOverlayInfo()Retrieves the path to the overlay
 
@@ -29389,7 +29389,7 @@ Returns:
         """
         ...
 
-    def GetPropertyStoreForKeys(self, Keys: Tuple[Any, ...], Flags: Any, riid: PyIID) -> Any:
+    def GetPropertyStoreForKeys(self, Keys: tuple[Any, ...], Flags: Any, riid: PyIID) -> Any:
         """
          Creates a property store containing just the
 
@@ -29397,7 +29397,7 @@ specified properties of the item
 
 Args:
 
-      Keys(Tuple[Any, ...]):A sequence of property identifiers
+      Keys(tuple[Any, ...]):A sequence of property identifiers
       Flags(Any):Combination of GETPROPERTYSTOREFLAGS values (shellcon.GPS_*)
       riid(PyIID):The interface to return
 
@@ -30155,7 +30155,7 @@ class PyIShellLink:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetPath(self, fFlags: Any, cchMaxPath: Any) -> Tuple[Any, WIN32_FIND_DATA]:
+    def GetPath(self, fFlags: Any, cchMaxPath: Any) -> tuple[Any, WIN32_FIND_DATA]:
         """
          Retrieves the target path and file name of a shell link
 
@@ -30168,7 +30168,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, WIN32_FIND_DATA]
+      tuple[Any, WIN32_FIND_DATA]
 
         """
         ...
@@ -30592,18 +30592,18 @@ Returns:
     def CreateViewWindow(
             self,
             psvPrevious: Any,
-            pfs: Tuple[Any, Any],
+            pfs: tuple[Any, Any],
             psb: Any,
-            prcView: Tuple[Any, Any, Any, Any]) -> Any:
+            prcView: tuple[Any, Any, Any, Any]) -> Any:
         """
          Description of CreateViewWindow.
 
 Args:
 
       psvPrevious(Any):Description for psvPrevious
-      pfs(Tuple[Any, Any]):Description for pfs
+      pfs(tuple[Any, Any]):Description for pfs
       psb(Any):Description for psb
-      prcView(Tuple[Any, Any, Any, Any]):Description for prcViewReturn ValueThe result is an integer handle to the new window.
+      prcView(tuple[Any, Any, Any, Any]):Description for prcViewReturn ValueThe result is an integer handle to the new window.
 
 Returns:
 
@@ -30802,13 +30802,13 @@ Returns:
         """
         ...
 
-    def CopyTo(self, rgiidExclude: Tuple[Any, Any], snbExclude: Any, stgDest: Any) -> None:
+    def CopyTo(self, rgiidExclude: tuple[Any, Any], snbExclude: Any, stgDest: Any) -> None:
         """
          Copies the entire contents of an open storage object to another storage object.
 
 Args:
 
-      rgiidExclude(Tuple[Any, Any]):List of IID's to be excluded.  Use empty seq to exclude all objects, or None to indicate no excludes.
+      rgiidExclude(tuple[Any, Any]):list of IID's to be excluded.  Use empty seq to exclude all objects, or None to indicate no excludes.
       snbExclude(Any):Reserved for later - Must be None
       stgDest(Any):The open storage object into which this storage object is to be copied. The destination storage object can be a different implementation of the PyIStorage interface from the source storage object. Thus, IStorage::CopyTo can only use publicly available methods of the destination storage object. If stgDest is open in transacted mode, it can be reverted by calling its PyIStorage::Revert method.
 
@@ -31434,7 +31434,7 @@ Returns:
         """
         ...
 
-    def Enum(self) -> Tuple[str, ...]:
+    def Enum(self) -> tuple[str, ...]:
         """
          Retrieve list of task names
 
@@ -31444,7 +31444,7 @@ Args:
 
 Returns:
 
-      Tuple[str, ...]
+      tuple[str, ...]
 
         """
         ...
@@ -31747,7 +31747,7 @@ Returns:
         """
         ...
 
-    def FileFailure(self, Item: Any, ItemName: Any, Error: Any) -> Tuple[Any, Any]:
+    def FileFailure(self, Item: Any, ItemName: Any, Error: Any) -> tuple[Any, Any]:
         """
          Notifies user of failure, and queries how to proceed
 
@@ -31759,7 +31759,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:HRESULT error code from operationReturn ValueReturns the HRESULT and new file name if renaming resolved the failure
+      tuple[Any, Any]:HRESULT error code from operationReturn ValueReturns the HRESULT and new file name if renaming resolved the failure
 
 
         """
@@ -31844,7 +31844,7 @@ Returns:
         ...
 
     def CreateItem(self, Name: Any, Attributes: Any, Size: Any, Flags: Any,
-                   riidItem: PyIID, riidResources: PyIID) -> Tuple[Any, Any, Any]:
+                   riidItem: PyIID, riidResources: PyIID) -> tuple[Any, Any, Any]:
         """
          Requests that a new item be created
 
@@ -31859,7 +31859,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]:Resource interface to return
+      tuple[Any, Any, Any]:Resource interface to return
 Return ValueReturns the HRESULT and requested interfaces.  Interfaces may be None if
 
 function returns one of the informational codes (shellcon.COPYENGINE_S_*)
@@ -31927,7 +31927,7 @@ Returns:
         """
         ...
 
-    def OpenItem(self, Item: Any, flags: Any, riid: PyIID) -> Tuple[Any, Any]:
+    def OpenItem(self, Item: Any, flags: Any, riid: PyIID) -> tuple[Any, Any]:
         """
          Initiates the copying of an item
 
@@ -31939,12 +31939,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def MoveItem(self, Item: Any, ParentDst: Any, NameDst: Any, flags: Any) -> Tuple[Any, Any]:
+    def MoveItem(self, Item: Any, ParentDst: Any, NameDst: Any, flags: Any) -> tuple[Any, Any]:
         """
          Moves a shell item into another folder
 
@@ -31957,7 +31957,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:Combination of shellcon.TSF_* flagsReturn ValueReturns the HRESULT from the operation and the new shell item, which may be None
+      tuple[Any, Any]:Combination of shellcon.TSF_* flagsReturn ValueReturns the HRESULT from the operation and the new shell item, which may be None
 
 when the code in one of the informational COPYENGINE_S_* values.  See MSDN for descriptions
 
@@ -31967,7 +31967,7 @@ of expected actions for specific error codes.
         """
         ...
 
-    def RecycleItem(self, Source: Any, ParentDest: Any, flags: Any) -> Tuple[Any, Any]:
+    def RecycleItem(self, Source: Any, ParentDest: Any, flags: Any) -> tuple[Any, Any]:
         """
          Moves an item to the recycle bin
 
@@ -31979,7 +31979,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -32001,7 +32001,7 @@ Returns:
         """
         ...
 
-    def RenameItem(self, Source: Any, NewName: Any, flags: Any) -> Tuple[Any, Any]:
+    def RenameItem(self, Source: Any, NewName: Any, flags: Any) -> tuple[Any, Any]:
         """
          Renames a shell item
 
@@ -32013,12 +32013,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def LinkItem(self, Source: Any, ParentDest: Any, NewName: Any, flags: Any) -> Tuple[Any, Any]:
+    def LinkItem(self, Source: Any, ParentDest: Any, NewName: Any, flags: Any) -> tuple[Any, Any]:
         """
          Not implemented, according to MSDN
 
@@ -32031,7 +32031,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -32147,7 +32147,7 @@ class PyITypeInfo:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetContainingTypeLib(self) -> Tuple[Any, Any]:
+    def GetContainingTypeLib(self) -> tuple[Any, Any]:
         """
          Retrieves the containing type library and the index of
 
@@ -32159,12 +32159,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetDocumentation(self, memberId: Any) -> Tuple[Any, Any, Any, Any]:
+    def GetDocumentation(self, memberId: Any) -> tuple[Any, Any, Any, Any]:
         """
          Retrieves the documentation string,
 
@@ -32176,7 +32176,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -32562,8 +32562,8 @@ class PyIViewObject:
             aspectFlags: Any,
             hdcTargetDev: Any,
             hdcDraw: Any,
-            arg: Tuple[Any, Any, Any, Any],
-            arg1: Tuple[Any, Any, Any, Any],
+            arg: tuple[Any, Any, Any, Any],
+            arg1: tuple[Any, Any, Any, Any],
             funcContinue: Any,
             obContinue: Any) -> None:
         """
@@ -32576,8 +32576,8 @@ Args:
       aspectFlags(Any):Integer value for the dwFlags item of the DVASPECTINFO structure.
       hdcTargetDev(Any):Description for hdcTargetDev
       hdcDraw(Any):Description for hdcDraw
-      arg(Tuple[Any, Any, Any, Any]):Bounds rectangle.
-      arg1(Tuple[Any, Any, Any, Any]):WBounds rectangle.
+      arg(tuple[Any, Any, Any, Any]):Bounds rectangle.
+      arg1(tuple[Any, Any, Any, Any]):WBounds rectangle.
       funcContinue(Any):A continue function.
       obContinue(Any):Value passed to the function.
 
@@ -32702,7 +32702,7 @@ class PyMAPINAMEIDArray:
 
 
 class PyOLEMENUGROUPWIDTHS:
-    """Tuple containing 6 ints indicating nbr of options in each menu group"""
+    """tuple containing 6 ints indicating nbr of options in each menu group"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -32949,14 +32949,14 @@ class SHFILEOPSTRUCT:
 
 
 class SI_ACCESS:
-    """Tuple of 4 items representing SI_ACCESS struct"""
+    """tuple of 4 items representing SI_ACCESS struct"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
 
 class SI_INHERIT_TYPE:
-    """Tuple of 3 items describing a method of inheritance"""
+    """tuple of 3 items describing a method of inheritance"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
@@ -33212,7 +33212,7 @@ Returns:
         """
         ...
 
-    def GetSize(self) -> Tuple[Any, Any]:
+    def GetSize(self) -> tuple[Any, Any]:
         """
          Returns the size of the bitmap object.
 
@@ -33222,7 +33222,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -33294,15 +33294,15 @@ Returns:
         """
         ...
 
-    def Paint(self, dcObject: Any, arg: Tuple[Any, Any, Any, Any], arg1: Tuple[Any, Any, Any, Any]) -> None:
+    def Paint(self, dcObject: Any, arg: tuple[Any, Any, Any, Any], arg1: tuple[Any, Any, Any, Any]) -> None:
         """
          Paint a bitmap.
 
 Args:
 
       dcObject(Any):The DC object to paint the bitmap to.
-      arg(Tuple[Any, Any, Any, Any]):The destination rectangle to paint to.
-      arg1(Tuple[Any, Any, Any, Any]):The source rectangle to paint from.
+      arg(tuple[Any, Any, Any, Any]):The destination rectangle to paint to.
+      arg1(tuple[Any, Any, Any, Any]):The source rectangle to paint from.
 
 Returns:
 
@@ -33420,7 +33420,7 @@ class PyCButton:
             self,
             caption: str,
             style: Any,
-            rect: Tuple[Any, Any, Any, Any],
+            rect: tuple[Any, Any, Any, Any],
             parent: Any,
             _id: Any) -> None:
         """
@@ -33430,7 +33430,7 @@ Args:
 
       caption(str):The caption (text) for the button.
       style(Any):The style for the button.  Use any of the win32con.BS_* constants.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the button.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the button.
       parent(Any):The parent window of the button.  Usually a PyCDialog.
       _id(Any):The buttons control ID.
 
@@ -33932,7 +33932,7 @@ Returns:
         """
         ...
 
-    def GetCustomColors(self) -> Tuple[Any, ...]:
+    def GetCustomColors(self) -> tuple[Any, ...]:
         """
          Gets the 16 currently defined custom colors
 
@@ -33942,7 +33942,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, ...]
+      tuple[Any, ...]
 
         """
         ...
@@ -34559,17 +34559,17 @@ Returns:
 
     def Arc(
             self,
-            rect: Tuple[Any, Any, Any, Any],
-            pointStart: Tuple[Any, Any],
-            pointEnd: Tuple[Any, Any]) -> None:
+            rect: tuple[Any, Any, Any, Any],
+            pointStart: tuple[Any, Any],
+            pointEnd: tuple[Any, Any]) -> None:
         """
          Draws an eliptical arc.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangle
-      pointStart(Tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's starting point (in logical units). This point does not have to lie exactly on the arc.
-      pointEnd(Tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's ending point (in logical units). This point does not have to lie exactly on the arc.CommentsThe arc drawn by using the function is a segment of the ellipse defined by the specified bounding rectangle. The actual starting point of the arc is the point at which a ray drawn from the center of the bounding rectangle through the specified starting point intersects the ellipse. The actual ending point of the arc is the point at which a ray drawn from the center of the bounding rectangle through the specified ending point intersects the ellipse. The arc is drawn in a counterclockwise direction. Since an arc is not a closed figure, it is not filled. Both the width and height of the rectangle must be greater than 2 units and less than 32,767 units.MFC References
+      rect(tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangle
+      pointStart(tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's starting point (in logical units). This point does not have to lie exactly on the arc.
+      pointEnd(tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's ending point (in logical units). This point does not have to lie exactly on the arc.CommentsThe arc drawn by using the function is a segment of the ellipse defined by the specified bounding rectangle. The actual starting point of the arc is the point at which a ray drawn from the center of the bounding rectangle through the specified starting point intersects the ellipse. The actual ending point of the arc is the point at which a ray drawn from the center of the bounding rectangle through the specified ending point intersects the ellipse. The arc is drawn in a counterclockwise direction. Since an arc is not a closed figure, it is not filled. Both the width and height of the rectangle must be greater than 2 units and less than 32,767 units.MFC References
 
 Returns:
 
@@ -34597,20 +34597,20 @@ Returns:
 
     def BitBlt(
             self,
-            destPos: Tuple[Any, Any],
-            size: Tuple[Any, Any],
+            destPos: tuple[Any, Any],
+            size: tuple[Any, Any],
             dc: Any,
-            srcPos: Tuple[Any, Any],
+            srcPos: tuple[Any, Any],
             rop: Any) -> None:
         """
          Copies a bitmap from the source device context to this device context.
 
 Args:
 
-      destPos(Tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
-      size(Tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
+      destPos(tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
+      size(tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
       dc(Any):Specifies the PyCDC object from which the bitmap will be copied. It must be None if rop specifies a raster operation that does not include a source.
-      srcPos(Tuple[Any, Any]):Specifies the logical x,y coordinates of the upper-left corner of the source bitmap.
+      srcPos(tuple[Any, Any]):Specifies the logical x,y coordinates of the upper-left corner of the source bitmap.
       rop(Any):Specifies the raster operation to be performed. See the win32 api documentation for details.MFC References
 
 Returns:
@@ -34622,17 +34622,17 @@ Returns:
 
     def Chord(
             self,
-            rect: Tuple[Any, Any, Any, Any],
-            pointStart: Tuple[Any, Any],
-            pointEnd: Tuple[Any, Any]) -> None:
+            rect: tuple[Any, Any, Any, Any],
+            pointStart: tuple[Any, Any],
+            pointEnd: tuple[Any, Any]) -> None:
         """
          Draws a chord.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangle
-      pointStart(Tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's starting point (in logical units). This point does not have to lie exactly on the arc.
-      pointEnd(Tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's ending point (in logical units). This point does not have to lie exactly on the arc.CommentsDraws a chord (a closed figure bounded by the intersection of an ellipse and a line segment). The rect parameter specify the upper-left and lower-right corners, respectively, of a rectangle bounding the ellipse that is part of the chord. The pointStart and pointEnd parameters specify the endpoints of a line that intersects the ellipse. The chord is drawn by using the selected pen and filled by using the selected brush.MFC References
+      rect(tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangle
+      pointStart(tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's starting point (in logical units). This point does not have to lie exactly on the arc.
+      pointEnd(tuple[Any, Any]):Specifies the x- and y-coordinates of the point that defines the arc's ending point (in logical units). This point does not have to lie exactly on the arc.CommentsDraws a chord (a closed figure bounded by the intersection of an ellipse and a line segment). The rect parameter specify the upper-left and lower-right corners, respectively, of a rectangle bounding the ellipse that is part of the chord. The pointStart and pointEnd parameters specify the endpoints of a line that intersects the ellipse. The chord is drawn by using the selected pen and filled by using the selected brush.MFC References
 
 Returns:
 
@@ -34688,19 +34688,19 @@ Returns:
         """
         ...
 
-    def DPtoLP(self, point: Tuple[Any, Any], x: Any, y: Any) -> Tuple[Any, Any]:
+    def DPtoLP(self, point: tuple[Any, Any], x: Any, y: Any) -> tuple[Any, Any]:
         """
          Converts device units into logical units.
 
 Args:
 
-      point(Tuple[Any, Any]):The point to convertAlternative Parameters
+      point(tuple[Any, Any]):The point to convertAlternative Parameters
       x(Any):The x coordinate to convert.
       y(Any):The y coordinate to convert.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::DPtoLP
+      tuple[Any, Any]:CDC::DPtoLP
  To Do Should really handle list of (x,y) points
 Return ValueThe converted coordinates.
 
@@ -34708,13 +34708,13 @@ Return ValueThe converted coordinates.
         """
         ...
 
-    def Draw3dRect(self, rect: Tuple[Any, Any, Any, Any], colorTopLeft: Any, colorBotRight: Any) -> None:
+    def Draw3dRect(self, rect: tuple[Any, Any, Any, Any], colorTopLeft: Any, colorBotRight: Any) -> None:
         """
          Draws a three-dimensional rectangle.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
       colorTopLeft(Any):Specifies the color of the top and left sides of the three-dimensional rectangle.
       colorBotRight(Any):Specifies the color of the bottom and right sides of the three-dimensional rectangle.MFC References
 
@@ -34725,7 +34725,7 @@ Returns:
         """
         ...
 
-    def DrawFocusRect(self, rect: Tuple[Any, Any, Any, Any]) -> None:
+    def DrawFocusRect(self, rect: tuple[Any, Any, Any, Any]) -> None:
         """
          Draws a rectangle in the style used to
 
@@ -34733,7 +34733,7 @@ indicate the rectangle has focus
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):The coordinates of the rectangleMFC References
+      rect(tuple[Any, Any, Any, Any]):The coordinates of the rectangleMFC References
 
 Returns:
 
@@ -34742,13 +34742,13 @@ Returns:
         """
         ...
 
-    def DrawFrameControl(self, rect: Tuple[Any, Any, Any, Any], typ: Any, state: Any) -> None:
+    def DrawFrameControl(self, rect: tuple[Any, Any, Any, Any], typ: Any, state: Any) -> None:
         """
          Draws a frame control of the specified type and style.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
       typ(Any):
       state(Any):MFC References
 
@@ -34759,13 +34759,13 @@ Returns:
         """
         ...
 
-    def DrawIcon(self, point: Tuple[Any, Any], hIcon: int) -> None:
+    def DrawIcon(self, point: tuple[Any, Any], hIcon: int) -> None:
         """
          Draws an icon on the DC.
 
 Args:
 
-      point(Tuple[Any, Any]):The point coordinate to draw to.
+      point(tuple[Any, Any]):The point coordinate to draw to.
       hIcon(int):The handle of the icon to draw.MFC References
 
 Returns:
@@ -34775,19 +34775,19 @@ Returns:
         """
         ...
 
-    def DrawText(self, s: str, _tuple: Tuple[Any, Any, Any, Any], _format: Any) -> Tuple[Any, Any, Any]:
+    def DrawText(self, s: str, _tuple: tuple[Any, Any, Any, Any], _format: Any) -> tuple[Any, Any, Any]:
         """
          Formats text in the given rectangle
 
 Args:
 
       s(str):The desired output string
-      _tuple(Tuple[Any, Any, Any, Any]):The bounding rectangle in the form: (left, top, right, bottom) expressed in logical units (depending on selected coordinate system - see PyCDC::SetMapMode)
+      _tuple(tuple[Any, Any, Any, Any]):The bounding rectangle in the form: (left, top, right, bottom) expressed in logical units (depending on selected coordinate system - see PyCDC::SetMapMode)
       _format(Any):Specifies one or more bit-or'd format values, such as DT_BOTTOM, DT_CENTERDT_RIGHT, DT_VCENTER. For a complete list, see the Microsoft Win32 API documentation.ExampleExampleimport win32ui&ltnl&gt import win32con&ltnl&gt INCH = 1440   # twips - 1440 per inch allows fine res&ltnl&gt def drawtext_test():&ltnl&gt     dc = win32ui.CreateDC()&ltnl&gt     dc.CreatePrinterDC()                # ties to default printer&ltnl&gt     dc.StartDoc('My Python Document')&ltnl&gt     dc.StartPage()&ltnl&gt &ltnl&gt     # note: upper left is 0,0 with x increasing to the right,&ltnl&gt     #       and y decreasing (negative) moving down&ltnl&gt     dc.SetMapMode(win32con.MM_TWIPS)&ltnl&gt &ltnl&gt     # Centers "TEST" about an inch down on page&ltnl&gt     dc.DrawText('TEST, (0,INCH*-1,INCH*8,INCH*-2), win32con.DT_CENTER )&ltnl&gt     dc.EndPage()&ltnl&gt     dc.EndDoc()&ltnl&gt     del dc&ltnl&gtReturn ValueHeight of text in pixelsThe return value is the height of the text, in logical units. If DT_VCENTER or DT_BOTTOM is specified, the return value is the offset from rect.top to the bottom of the drawn text. If the function fails, the return value is zero (no Python exception is thrown)
 
 Returns:
 
-      Tuple[Any, Any, Any]:Specifies one or more bit-or'd format values, such as
+      tuple[Any, Any, Any]:Specifies one or more bit-or'd format values, such as
 
 DT_BOTTOM, DT_CENTERDT_RIGHT, DT_VCENTER. For a complete list, see
 
@@ -34845,13 +34845,13 @@ If the function fails, the return value is zero (no Python exception is thrown)
         """
         ...
 
-    def Ellipse(self, rect: Tuple[Any, Any, Any, Any]) -> None:
+    def Ellipse(self, rect: tuple[Any, Any, Any, Any]) -> None:
         """
          Draws an Ellipse.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangleCommentsThe center of the ellipse is the center of the bounding rectangle specified by rect. The ellipse is drawn with the current pen, and its interior is filled with the current brush.MFC References
+      rect(tuple[Any, Any, Any, Any]):Specifies the ellipse's bounding rectangleCommentsThe center of the ellipse is the center of the bounding rectangle specified by rect. The ellipse is drawn with the current pen, and its interior is filled with the current brush.MFC References
 
 Returns:
 
@@ -34914,9 +34914,9 @@ Returns:
             _int: Any,
             _int1: Any,
             _int2: Any,
-            rect: Tuple[Any, Any, Any, Any],
+            rect: tuple[Any, Any, Any, Any],
             string: Any,
-            _tuple: Tuple[Tuple[Any, Any], ...]) -> None:
+            _tuple: tuple[tuple[Any, Any], ...]) -> None:
         """
          Writes text to the DC.
 
@@ -34925,9 +34925,9 @@ Args:
       _int(Any):The x coordinate to write the text to.
       _int1(Any):The y coordinate to write the text to.
       _int2(Any):Specifies the rectangle type. This parameter can be one, both, or neither of ETO_CLIPPED and ETO_OPAQUE
-      rect(Tuple[Any, Any, Any, Any]):Specifies the text's bounding rectangle.  (Can be None.)
+      rect(tuple[Any, Any, Any, Any]):Specifies the text's bounding rectangle.  (Can be None.)
       string(Any):The text to write.
-      _tuple(Tuple[Tuple[Any, Any], ...]):Optional array of values that indicate distance between origins of character cells.MFC References
+      _tuple(tuple[tuple[Any, Any], ...]):Optional array of values that indicate distance between origins of character cells.MFC References
 
 Returns:
 
@@ -34955,13 +34955,13 @@ Returns:
         """
         ...
 
-    def FillRect(self, rect: Tuple[Any, Any, Any, Any], brush: Any) -> None:
+    def FillRect(self, rect: tuple[Any, Any, Any, Any], brush: Any) -> None:
         """
          Fills a given rectangle with the specified brush
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
       brush(Any):Specifies the brush to use.MFC References
 
 Returns:
@@ -34971,13 +34971,13 @@ Returns:
         """
         ...
 
-    def FillSolidRect(self, rect: Tuple[Any, Any, Any, Any], color: Any) -> None:
+    def FillSolidRect(self, rect: tuple[Any, Any, Any, Any], color: Any) -> None:
         """
          Fills the given rectangle with the specified solid color.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
       color(Any):Specifies the color to use.MFC References
 
 Returns:
@@ -34987,13 +34987,13 @@ Returns:
         """
         ...
 
-    def FrameRect(self, rect: Tuple[Any, Any, Any, Any], brush: Any) -> None:
+    def FrameRect(self, rect: tuple[Any, Any, Any, Any], brush: Any) -> None:
         """
          Draws a border around the rectangle specified by rect
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.
       brush(Any):Specifies the brush to use.MFC References
 
 Returns:
@@ -35003,7 +35003,7 @@ Returns:
         """
         ...
 
-    def GetBrushOrg(self) -> Tuple[Any, Any]:
+    def GetBrushOrg(self) -> tuple[Any, Any]:
         """
          Retrieves the origin (in device units) of the brush currently selected for the
 
@@ -35015,12 +35015,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetClipBox(self) -> Tuple[Any, Any, Any, Any]:
+    def GetClipBox(self) -> tuple[Any, Any, Any, Any]:
         """
          Retrieves the dimensions of the smallest bounding rectangle
 
@@ -35032,14 +35032,14 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]:CDC::GetClipBox
+      tuple[Any, Any, Any, Any]:CDC::GetClipBox
 Return ValueA tuple of integers specifying the rectangle.
 
 
         """
         ...
 
-    def GetCurrentPosition(self) -> Tuple[Any, Any]:
+    def GetCurrentPosition(self) -> tuple[Any, Any]:
         """
          Retrieves the current position (in logical coordinates).
 
@@ -35049,7 +35049,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -35162,7 +35162,7 @@ Returns:
         """
         ...
 
-    def GetTextExtent(self, text: str) -> Tuple[Any, Any]:
+    def GetTextExtent(self, text: str) -> tuple[Any, Any]:
         """
          Calculates the width and height of a line of text using the current font to
 
@@ -35174,14 +35174,14 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CFC::GetTextExtent
+      tuple[Any, Any]:CFC::GetTextExtent
 Return ValueA tuple of integers with the size of the string, in logical units.
 
 
         """
         ...
 
-    def GetTextExtentPoint(self, text: str) -> Tuple[Any, Any]:
+    def GetTextExtentPoint(self, text: str) -> tuple[Any, Any]:
         """
          None
 
@@ -35191,7 +35191,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:The text to calculate for.Return ValueA tuple of integers with the size of the string, in logical units.
+      tuple[Any, Any]:The text to calculate for.Return ValueA tuple of integers with the size of the string, in logical units.
 
 
         """
@@ -35269,7 +35269,7 @@ tmDigitizedAspectY
         """
         ...
 
-    def GetViewportExt(self) -> Tuple[Any, Any]:
+    def GetViewportExt(self) -> tuple[Any, Any]:
         """
          Gets the viewport extent of the device context
 
@@ -35279,12 +35279,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetViewportOrg(self) -> Tuple[Any, Any]:
+    def GetViewportOrg(self) -> tuple[Any, Any]:
         """
          Gets the viewport origin of the device context
 
@@ -35294,12 +35294,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetWindowExt(self) -> Tuple[Any, Any]:
+    def GetWindowExt(self) -> tuple[Any, Any]:
         """
          Gets the window extent of the device context
 
@@ -35309,12 +35309,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetWindowOrg(self) -> Tuple[Any, Any]:
+    def GetWindowOrg(self) -> tuple[Any, Any]:
         """
          Retrieves the x- and y-coordinates of the origin of the window associated with the
 
@@ -35326,12 +35326,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def IntersectClipRect(self, rect: Tuple[Any, Any, Any, Any]) -> None:
+    def IntersectClipRect(self, rect: tuple[Any, Any, Any, Any]) -> None:
         """
          Creates a new clipping region by forming the intersection of the current region
 
@@ -35339,7 +35339,7 @@ and the rectangle specified
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.MFC References
+      rect(tuple[Any, Any, Any, Any]):Specifies the bounding rectangle, in logical units.MFC References
 
 Returns:
 
@@ -35365,13 +35365,13 @@ Returns:
         """
         ...
 
-    def LineTo(self, point: Tuple[Any, Any], x: Any, y: Any) -> None:
+    def LineTo(self, point: tuple[Any, Any], x: Any, y: Any) -> None:
         """
          Draws a line to a specified point, using the currently selected pen.
 
 Args:
 
-      point(Tuple[Any, Any]):The point coordinate to draw to.Alternative Parameters
+      point(tuple[Any, Any]):The point coordinate to draw to.Alternative Parameters
       x(Any):The x coordinate to draw to.
       y(Any):The y coordinate to draw to.MFC References
 
@@ -35382,45 +35382,45 @@ Returns:
         """
         ...
 
-    def LPtoDP(self, point: Tuple[Any, Any], x: Any, y: Any) -> Tuple[Any, Any]:
+    def LPtoDP(self, point: tuple[Any, Any], x: Any, y: Any) -> tuple[Any, Any]:
         """
          Converts logical units into device units.
 
 Args:
 
-      point(Tuple[Any, Any]):The point coordinate to convert.Alternative Parameters
+      point(tuple[Any, Any]):The point coordinate to convert.Alternative Parameters
       x(Any):The x coordinate to convert.
       y(Any):The y coordinate to convert.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::LPtoDP
+      tuple[Any, Any]:CDC::LPtoDP
 Return ValueThe converted coordinates.
 
 
         """
         ...
 
-    def MoveTo(self, point: Tuple[Any, Any], x: Any, y: Any) -> Tuple[Any, Any]:
+    def MoveTo(self, point: tuple[Any, Any], x: Any, y: Any) -> tuple[Any, Any]:
         """
          Moves the current position to a specified point.
 
 Args:
 
-      point(Tuple[Any, Any]):The point coordinate to move to.Alternative Parameters
+      point(tuple[Any, Any]):The point coordinate to move to.Alternative Parameters
       x(Any):The x coordinate to move to.
       y(Any):The y coordinate to move to.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::MoveTo
+      tuple[Any, Any]:CDC::MoveTo
 Return ValueThe previous position.
 
 
         """
         ...
 
-    def OffsetWindowOrg(self, arg: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def OffsetWindowOrg(self, arg: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Modifies the coordinates of the window origin relative to the coordinates of the
 
@@ -35428,17 +35428,17 @@ current window origin.
 
 Args:
 
-      arg(Tuple[Any, Any]):The new origin offset.Return ValueThe previous origin as a tuple (x,y)
+      arg(tuple[Any, Any]):The new origin offset.Return ValueThe previous origin as a tuple (x,y)
 
 Returns:
 
-      Tuple[Any, Any]:The new origin offset.Return ValueThe previous origin as a tuple (x,y)
+      tuple[Any, Any]:The new origin offset.Return ValueThe previous origin as a tuple (x,y)
 
 
         """
         ...
 
-    def OffsetViewportOrg(self, arg: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def OffsetViewportOrg(self, arg: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Modifies the coordinates of the viewport origin relative to the coordinates of
 
@@ -35446,24 +35446,24 @@ the current viewport origin
 
 Args:
 
-      arg(Tuple[Any, Any]):The new origin offset.Return ValueThe previous viewport origin as a tuple (x,y)
+      arg(tuple[Any, Any]):The new origin offset.Return ValueThe previous viewport origin as a tuple (x,y)
 
 Returns:
 
-      Tuple[Any, Any]:The new origin offset.Return ValueThe previous viewport origin as a tuple (x,y)
+      tuple[Any, Any]:The new origin offset.Return ValueThe previous viewport origin as a tuple (x,y)
 
 
         """
         ...
 
-    def PatBlt(self, destPos: Tuple[Any, Any], size: Tuple[Any, Any], rop: Any) -> None:
+    def PatBlt(self, destPos: tuple[Any, Any], size: tuple[Any, Any], rop: Any) -> None:
         """
          Creates a bit pattern on the device.
 
 Args:
 
-      destPos(Tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
-      size(Tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
+      destPos(tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
+      size(tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
       rop(Any):Specifies the raster operation to be performed. See the win32 api documentation for details.MFC References
 
 Returns:
@@ -35525,13 +35525,13 @@ Returns:
         """
         ...
 
-    def Polyline(self, points: List[Any]) -> None:
+    def Polyline(self, points: list[Any]) -> None:
         """
          Draws a Polyline.
 
 Args:
 
-      points(List[Any]):A sequence of points
+      points(list[Any]):A sequence of points
 
 Returns:
 
@@ -35582,7 +35582,7 @@ Returns:
         """
         ...
 
-    def RectVisible(self, rect: Tuple[Any, Any, Any, Any]) -> Any:
+    def RectVisible(self, rect: tuple[Any, Any, Any, Any]) -> Any:
         """
          Determines whether any part of the given rectangle lies within the clipping region of
 
@@ -35590,7 +35590,7 @@ the display context.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):The coordinates of the reactangle to be checked.MFC References
+      rect(tuple[Any, Any, Any, Any]):The coordinates of the reactangle to be checked.MFC References
 
 Returns:
 
@@ -35635,7 +35635,7 @@ An exception is raised if this function fails.
         """
         ...
 
-    def ScaleWindowExt(self) -> Tuple[Any, Any]:
+    def ScaleWindowExt(self) -> tuple[Any, Any]:
         """
          Modifies the window extents relative to the current values.
 
@@ -35645,12 +35645,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def ScaleViewportExt(self) -> Tuple[Any, Any]:
+    def ScaleViewportExt(self) -> tuple[Any, Any]:
         """
          Modifies the viewport extents relative to the current values.
 
@@ -35660,7 +35660,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -35735,7 +35735,7 @@ Return ValueThe return value is the previous background mode.
         """
         ...
 
-    def SetBrushOrg(self, point: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def SetBrushOrg(self, point: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Specifies the origin that GDI will assign to the next brush that the
 
@@ -35743,11 +35743,11 @@ application selects into the device context.
 
 Args:
 
-      point(Tuple[Any, Any]):The new origin in device units.MFC References
+      point(tuple[Any, Any]):The new origin in device units.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::SetBrushOrg
+      tuple[Any, Any]:CDC::SetBrushOrg
 Return ValueThe previous origin in device units.
 
 
@@ -35803,13 +35803,13 @@ Returns:
         """
         ...
 
-    def SetPolyFillMode(self, point: Tuple[Any, Any]) -> Any:
+    def SetPolyFillMode(self, point: tuple[Any, Any]) -> Any:
         """
          Sets the polygon-filling mode.
 
 Args:
 
-      point(Tuple[Any, Any]):The new origin in device units.MFC References
+      point(tuple[Any, Any]):The new origin in device units.MFC References
 
 Returns:
 
@@ -35873,66 +35873,66 @@ Return ValueThe return value is the previous text color.
         """
         ...
 
-    def SetWindowExt(self, size: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def SetWindowExt(self, size: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Sets the x,y extents of the window associated with the device context.
 
 Args:
 
-      size(Tuple[Any, Any]):The new size.MFC References
+      size(tuple[Any, Any]):The new size.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::SetWindowExt
+      tuple[Any, Any]:CDC::SetWindowExt
 Return ValueThe previous extents of the window (in logical units).
 
 
         """
         ...
 
-    def SetWindowOrg(self, arg: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def SetWindowOrg(self, arg: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Sets the window origin of the device context
 
 Args:
 
-      arg(Tuple[Any, Any]):The new origin.
+      arg(tuple[Any, Any]):The new origin.
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def SetViewportExt(self, size: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def SetViewportExt(self, size: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Sets the x,y extents of the viewport of the device context.
 
 Args:
 
-      size(Tuple[Any, Any]):The new size.MFC References
+      size(tuple[Any, Any]):The new size.MFC References
 
 Returns:
 
-      Tuple[Any, Any]:CDC::SetViewportExt
+      tuple[Any, Any]:CDC::SetViewportExt
 Return ValueThe previous extents of the viewport (in logical units).
 
 
         """
         ...
 
-    def SetViewportOrg(self, arg: Tuple[Any, Any]) -> Tuple[Any, Any]:
+    def SetViewportOrg(self, arg: tuple[Any, Any]) -> tuple[Any, Any]:
         """
          Sets the viewport origin of the device context
 
 Args:
 
-      arg(Tuple[Any, Any]):The new origin.
+      arg(tuple[Any, Any]):The new origin.
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -35989,22 +35989,22 @@ Returns:
 
     def StretchBlt(
             self,
-            destPos: Tuple[Any, Any],
-            size: Tuple[Any, Any],
+            destPos: tuple[Any, Any],
+            size: tuple[Any, Any],
             dc: Any,
-            srcPos: Tuple[Any, Any],
-            size1: Tuple[Any, Any],
+            srcPos: tuple[Any, Any],
+            size1: tuple[Any, Any],
             rop: Any) -> None:
         """
          Copies a bitmap from the source device context to this device context.
 
 Args:
 
-      destPos(Tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
-      size(Tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
+      destPos(tuple[Any, Any]):The logical x,y coordinates of the upper-left corner of the destination rectangle.
+      size(tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
       dc(Any):Specifies the PyCDC object from which the bitmap will be copied. It must be None if rop specifies a raster operation that does not include a source.
-      srcPos(Tuple[Any, Any]):Specifies the logical x,y coordinates of the upper-left corner of the source bitmap.
-      size1(Tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
+      srcPos(tuple[Any, Any]):Specifies the logical x,y coordinates of the upper-left corner of the source bitmap.
+      size1(tuple[Any, Any]):Specifies the width and height (in logical units) of the destination rectangle and source bitmap.
       rop(Any):Specifies the raster operation to be performed. See the win32 api documentation for details.MFC References
 
 Returns:
@@ -36133,7 +36133,7 @@ Returns:
         """
         ...
 
-    def MapDialogRect(self, rect: Tuple[Any, Any, Any, Any]) -> Tuple[Any, Any, Any, Any]:
+    def MapDialogRect(self, rect: tuple[Any, Any, Any, Any]) -> tuple[Any, Any, Any, Any]:
         """
          Converts the dialog-box units of a rectangle to screen
 
@@ -36141,11 +36141,11 @@ units.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):The rect to be converted
+      rect(tuple[Any, Any, Any, Any]):The rect to be converted
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -36386,15 +36386,15 @@ class PyCDockContext:
         raise Exception('This class just for typing, can not be instanced!')
 
     @property
-    def ptLast(self) -> Tuple[Any, Any]:
+    def ptLast(self) -> tuple[Any, Any]:
         ...
 
     @property
-    def rectLast(self) -> Tuple[Any, Any, Any, Any]:
+    def rectLast(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
-    def sizeLast(self) -> Tuple[Any, Any]:
+    def sizeLast(self) -> tuple[Any, Any]:
         ...
 
     @property
@@ -36402,19 +36402,19 @@ class PyCDockContext:
         ...
 
     @property
-    def rectDragHorz(self) -> Tuple[Any, Any, Any, Any]:
+    def rectDragHorz(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
-    def rectDragVert(self) -> Tuple[Any, Any, Any, Any]:
+    def rectDragVert(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
-    def rectFrameDragHorz(self) -> Tuple[Any, Any, Any, Any]:
+    def rectFrameDragHorz(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
-    def rectFrameDragVert(self) -> Tuple[Any, Any, Any, Any]:
+    def rectFrameDragVert(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
@@ -36455,7 +36455,7 @@ class PyCDockContext:
         ...
 
     @property
-    def rectMRUDockPos(self) -> Tuple[Any, Any, Any, Any]:
+    def rectMRUDockPos(self) -> tuple[Any, Any, Any, Any]:
         ...
 
     @property
@@ -36463,7 +36463,7 @@ class PyCDockContext:
         ...
 
     @property
-    def ptMRUFloatPos(self) -> Tuple[Any, Any]:
+    def ptMRUFloatPos(self) -> tuple[Any, Any]:
         """Sentinel"""
         ...
 
@@ -36482,13 +36482,13 @@ Returns:
         """
         ...
 
-    def StartDrag(self, pt: Tuple[Any, Any]) -> Any:
+    def StartDrag(self, pt: tuple[Any, Any]) -> Any:
         """
          None
 
 Args:
 
-      pt(Tuple[Any, Any]):
+      pt(tuple[Any, Any]):
 
 Returns:
 
@@ -36512,14 +36512,14 @@ Returns:
         """
         ...
 
-    def StartResize(self, hittest: Any, pt: Tuple[Any, Any]) -> Any:
+    def StartResize(self, hittest: Any, pt: tuple[Any, Any]) -> Any:
         """
          None
 
 Args:
 
       hittest(Any):
-      pt(Tuple[Any, Any]):
+      pt(tuple[Any, Any]):
 
 Returns:
 
@@ -36618,7 +36618,7 @@ Returns:
         """
         ...
 
-    def GetAllViews(self) -> List[Any]:
+    def GetAllViews(self) -> list[Any]:
         """
          Returns a list of all views for the current document.
 
@@ -36628,7 +36628,7 @@ Args:
 
 Returns:
 
-      List[Any]
+      list[Any]
 
         """
         ...
@@ -36874,14 +36874,14 @@ class PyCEdit:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates the window for a new Edit object.
 
 Args:
 
       style(Any):The style for the Edit.  Use any of the win32con.BS_* constants.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the Edit.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the Edit.
       parent(Any):The parent window of the Edit.  Usually a PyCDialog.
       _id(Any):The Edits control ID.
 
@@ -36971,7 +36971,7 @@ Return ValueThe zero-based index of the topmost visible line. For single-line ed
         """
         ...
 
-    def GetSel(self) -> Tuple[Any, Any]:
+    def GetSel(self) -> tuple[Any, Any]:
         """
          Returns the start and end of the current selection.
 
@@ -36981,7 +36981,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CEdit::GetSel
+      tuple[Any, Any]:CEdit::GetSel
 Return ValueThe return tuple is (the first character in the current selection, first nonselected character past the
 
 end of the current selection)
@@ -37656,7 +37656,7 @@ Returns:
             PyCWnd: Any,
             menuId: Any,
             styleEx: Any,
-            rect: Tuple[Any, Any, Any, Any] = None,
+            rect: tuple[Any, Any, Any, Any] = None,
             createContext: Any = None) -> Any:
         """
          Creates the actual window for the PyCFrameWnd object.
@@ -37669,7 +37669,7 @@ Args:
       PyCWnd(Any):The parent window
       menuId(Any):The string or integer id for the menu.
       styleEx(Any):The extended style of the window being created.MFC References
-      rect(Tuple[Any, Any, Any, Any]):The default rectangle
+      rect(tuple[Any, Any, Any, Any]):The default rectangle
       createContext(Any):A tuple representing a CREATECONTEXT structure.
 
 Returns:
@@ -37694,14 +37694,14 @@ Returns:
         """
         ...
 
-    def DockControlBar(self, controlBar: Any, arg: Tuple[Any, Any, Any, Any], dockBarId: Any = 0) -> None:
+    def DockControlBar(self, controlBar: Any, arg: tuple[Any, Any, Any, Any], dockBarId: Any = 0) -> None:
         """
          Docks a control bar.
 
 Args:
 
       controlBar(Any):The control bar to dock.
-      arg(Tuple[Any, Any, Any, Any]):Determines, in screen coordinates, where the control bar will be docked in the nonclient area of the destination frame window.MFC References
+      arg(tuple[Any, Any, Any, Any]):Determines, in screen coordinates, where the control bar will be docked in the nonclient area of the destination frame window.MFC References
       dockBarId(Any):Determines which sides of the frame window to consider for docking.
 
 Returns:
@@ -37726,14 +37726,14 @@ Returns:
         """
         ...
 
-    def FloatControlBar(self, controlBar: Any, arg: Tuple[Any, Any], style: Any) -> None:
+    def FloatControlBar(self, controlBar: Any, arg: tuple[Any, Any], style: Any) -> None:
         """
          Floats a control bar.
 
 Args:
 
       controlBar(Any):The control bar to dock.
-      arg(Tuple[Any, Any]):The location, in screen coordinates, where the top left corner of the control bar will be placed.
+      arg(tuple[Any, Any]):The location, in screen coordinates, where the top left corner of the control bar will be placed.
       style(Any):Determines which sides of the frame window to consider for docking.MFC References
 
 Returns:
@@ -38020,13 +38020,13 @@ class PyCImageList:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def Add(self, arg: Tuple[Any, Any], bitmap: Any, color: Any, hIcon: Any) -> Any:
+    def Add(self, arg: tuple[Any, Any], bitmap: Any, color: Any, hIcon: Any) -> Any:
         """
          Adds an image to the list.
 
 Args:
 
-      arg(Tuple[Any, Any]):2 Bitmaps to use (primary and mask)Alternative Parameters
+      arg(tuple[Any, Any]):2 Bitmaps to use (primary and mask)Alternative Parameters
       bitmap(Any):Bitmap to use
       color(Any):Color to use for the mask.Alternative Parameters
       hIcon(Any):Handle of an icon to add.Return ValueZero-based index of the first new image.
@@ -38072,7 +38072,7 @@ Returns:
 
     def GetBkColor(self) -> Any:
         """
-         Retrieves the background color of an Image List.
+         Retrieves the background color of an Image list.
 
 Args:
 
@@ -38133,7 +38133,7 @@ Returns:
 
     def SetBkColor(self, color: Any) -> None:
         """
-         Sets the background color for an Image List.
+         Sets the background color for an Image list.
 
 Args:
 
@@ -38601,14 +38601,14 @@ Returns:
         """
         ...
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], PyCWnd: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], PyCWnd: Any, _id: Any) -> None:
         """
          Creates the actual window for the object.
 
 Args:
 
       style(Any):The window style
-      rect(Tuple[Any, Any, Any, Any]):The default rectangle
+      rect(tuple[Any, Any, Any, Any]):The default rectangle
       PyCWnd(Any):The parent window
       _id(Any):The control IDMFC References
 
@@ -38740,7 +38740,7 @@ Returns:
         """
         ...
 
-    def GetItemRect(self, item: Any, bTextOnly: Any) -> Tuple[Any, Any, Any, Any]:
+    def GetItemRect(self, item: Any, bTextOnly: Any) -> tuple[Any, Any, Any, Any]:
         """
          Retrieves the bounding rectangle of a list view item.
 
@@ -38751,7 +38751,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -38804,7 +38804,7 @@ Returns:
         """
         ...
 
-    def CreateDragImage(self, item: Any) -> Tuple[Any, Any, Any]:
+    def CreateDragImage(self, item: Any) -> tuple[Any, Any, Any]:
         """
          Creates a dragging bitmap for the specified list view
 
@@ -38816,7 +38816,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -38909,7 +38909,7 @@ Returns:
 
 Args:
 
-      imageList(Any):The Image List to use.
+      imageList(Any):The Image list to use.
       imageType(Any):Type of image list. It can be one of (COMMCTRL.) LVSIL_NORMAL, LVSIL_SMALL or LVSIL_STATE
 
 Returns:
@@ -39246,7 +39246,7 @@ Returns:
         """
         ...
 
-    def HitTest(self, arg: Any) -> Tuple[Any, Any, Any]:
+    def HitTest(self, arg: Any) -> tuple[Any, Any, Any]:
         """
          Determines which list view item, if any, is at a specified position.
 
@@ -39256,7 +39256,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]:The point to test.Return ValueThe result is a tuple of (flags, item, subItem).
+      tuple[Any, Any, Any]:The point to test.Return ValueThe result is a tuple of (flags, item, subItem).
 
 flags may be a combination of the following values:
 
@@ -39284,7 +39284,7 @@ commctrl.LVHT_TORIGHTThe position is to the right of the list view control's cli
         """
         ...
 
-    def GetItemPosition(self, item: Any) -> Tuple[Any, Any]:
+    def GetItemPosition(self, item: Any) -> tuple[Any, Any]:
         """
          Determines the position of the specified item.
 
@@ -39294,7 +39294,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -39378,7 +39378,7 @@ Returns:
             title: str,
             style: Any,
             PyCWnd: Any,
-            rect: Tuple[Any, Any, Any, Any] = None,
+            rect: tuple[Any, Any, Any, Any] = None,
             createContext: Any = None) -> Any:
         """
          Creates the actual window for the PyCWnd object.
@@ -39389,7 +39389,7 @@ Args:
       title(str):The window title
       style(Any):The window style
       PyCWnd(Any):The parent window
-      rect(Tuple[Any, Any, Any, Any]):The default rectangle
+      rect(tuple[Any, Any, Any, Any]):The default rectangle
       createContext(Any):A tuple representing a CREATECONTEXT structure.CommentsYou do not need to call this method if you use the MFC Document/View framework.
 
 Returns:
@@ -39511,7 +39511,7 @@ Returns:
         """
         ...
 
-    def MDIGetActive(self) -> Tuple[Any, Any]:
+    def MDIGetActive(self) -> tuple[Any, Any]:
         """
          Retrieves the current active MDI child window, along
 
@@ -39523,7 +39523,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -39807,13 +39807,13 @@ Returns:
         """
         ...
 
-    def TrackPopupMenu(self, arg: Tuple[Any, Any], arg1: Any, arg2: Any) -> None:
+    def TrackPopupMenu(self, arg: tuple[Any, Any], arg1: Any, arg2: Any) -> None:
         """
          Creates a popup menu anywhere on the screen.
 
 Args:
 
-      arg(Tuple[Any, Any]):The position for the menu..
+      arg(tuple[Any, Any]):The position for the menu..
       arg1(Any):Flags for the menu.
       arg2(Any):The owner of the menu.CommentsThe TrackPopupMenu function displays a floating pop-up menu at the specified location and tracks the selection of items on the pop-up menu. The floating pop-up menu can appear anywhere on the screen.Return ValueIf the underlying MFC function fails, but TPM_RETURNCMD is set in the flags parameter, then None is returned instead of the normal exception.
 
@@ -40135,7 +40135,7 @@ Returns:
         """
         ...
 
-    def GetNextItem(self, pos: Any) -> Tuple[Any, Any]:
+    def GetNextItem(self, pos: Any) -> tuple[Any, Any]:
         """
          Call this function repeatedly to access each of
 
@@ -40147,7 +40147,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -41163,14 +41163,14 @@ class PyCProgressCtrl:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates the actual control.
 
 Args:
 
       style(Any):The style for the control.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the control.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the control.
       parent(Any):The parent window of the control.  Usually a PyCDialog.
       _id(Any):The control's ID.
 
@@ -41831,14 +41831,14 @@ Returns:
         """
         ...
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates a rich edit control window.
 
 Args:
 
       style(Any):The control style
-      rect(Tuple[Any, Any, Any, Any]):The position of the control
+      rect(tuple[Any, Any, Any, Any]):The position of the control
       parent(Any):The parent window.  Must not be None
       _id(Any):The control ID
 
@@ -41864,7 +41864,7 @@ Returns:
         """
         ...
 
-    def FindText(self, charPos: Any) -> Tuple[Any, Any, Any]:
+    def FindText(self, charPos: Any) -> tuple[Any, Any, Any]:
         """
          Finds text in the control
 
@@ -41874,7 +41874,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -41981,7 +41981,7 @@ Return ValueThe return value is a win32ui::PARAFORMAT tuple
         """
         ...
 
-    def GetSel(self) -> Tuple[Any, Any]:
+    def GetSel(self) -> tuple[Any, Any]:
         """
          Returns the start and end of the current selection.
 
@@ -41991,7 +41991,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CRichEditCtrl::GetSel
+      tuple[Any, Any]:CRichEditCtrl::GetSel
 Return ValueThe return tuple is (the first character in the current selection, first nonselected character past the
 
 end of the current selection)
@@ -42360,7 +42360,7 @@ Returns:
         """
         ...
 
-    def StreamIn(self, _format: Any, method: Any) -> Tuple[Any, Any]:
+    def StreamIn(self, _format: Any, method: Any) -> tuple[Any, Any]:
         """
          Invokes a callback to stream data into the control.
 
@@ -42371,14 +42371,14 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CRichEditCtrl::StreamIn
+      tuple[Any, Any]:CRichEditCtrl::StreamIn
 Return ValueThe return value is a tuple of (no bytes written, error code)
 
 
         """
         ...
 
-    def StreamOut(self, _format: Any, method: Any) -> Tuple[Any, Any]:
+    def StreamOut(self, _format: Any, method: Any) -> tuple[Any, Any]:
         """
          Invokes a callback to stream data into the control.
 
@@ -42389,7 +42389,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CRichEditCtrl::StreamOut
+      tuple[Any, Any]:CRichEditCtrl::StreamOut
 Return ValueThe return value is a tuple of (no bytes written, error code)
 
 
@@ -42514,7 +42514,7 @@ class PyCScrollView:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetDeviceScrollPosition(self) -> Tuple[Any, Any]:
+    def GetDeviceScrollPosition(self) -> tuple[Any, Any]:
         """
          Returns the positon of the scroll bars in device units.
 
@@ -42524,7 +42524,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -42544,7 +42544,7 @@ Returns:
         """
         ...
 
-    def GetScrollPosition(self) -> Tuple[Any, Any]:
+    def GetScrollPosition(self) -> tuple[Any, Any]:
         """
          Returns the current position of the scroll bars (in logical units).
 
@@ -42554,12 +42554,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
 
-    def GetTotalSize(self) -> Tuple[Any, Any]:
+    def GetTotalSize(self) -> tuple[Any, Any]:
         """
          Returns the total size of the view in logical units.
 
@@ -42569,7 +42569,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -42605,13 +42605,13 @@ Returns:
         """
         ...
 
-    def SetScaleToFitSize(self, size: Tuple[Any, Any]) -> None:
+    def SetScaleToFitSize(self, size: tuple[Any, Any]) -> None:
         """
          Scales the viewport size to the current window size automatically.
 
 Args:
 
-      size(Tuple[Any, Any]):The horizontal and vertical sizes to which the view is to be scaled. The scroll view's size is measured in logical units.
+      size(tuple[Any, Any]):The horizontal and vertical sizes to which the view is to be scaled. The scroll view's size is measured in logical units.
 
 Returns:
 
@@ -42620,13 +42620,13 @@ Returns:
         """
         ...
 
-    def ScrollToPosition(self, position: Tuple[Any, Any]) -> None:
+    def ScrollToPosition(self, position: tuple[Any, Any]) -> None:
         """
          Scrolls to a given point in the view.
 
 Args:
 
-      position(Tuple[Any, Any]):The position to scroll to.
+      position(tuple[Any, Any]):The position to scroll to.
 
 Returns:
 
@@ -42638,18 +42638,18 @@ Returns:
     def SetScrollSizes(
             self,
             mapMode: Any,
-            sizeTotal: Tuple[Any, Any],
-            arg: Tuple[Any, Any],
-            arg1: Tuple[Any, Any]) -> None:
+            sizeTotal: tuple[Any, Any],
+            arg: tuple[Any, Any],
+            arg1: tuple[Any, Any]) -> None:
         """
          Sets the sizes of the scroll bars
 
 Args:
 
       mapMode(Any):The mapping mode for this view.
-      sizeTotal(Tuple[Any, Any]):The total size of the view.  Sizes are in logical units.  Both x and y must be greater than zero.
-      arg(Tuple[Any, Any]):The number of untils to scroll in response to a page-down command.
-      arg1(Tuple[Any, Any]):The number of untils to scroll in response to a line-down command.
+      sizeTotal(tuple[Any, Any]):The total size of the view.  Sizes are in logical units.  Both x and y must be greater than zero.
+      arg(tuple[Any, Any]):The number of untils to scroll in response to a page-down command.
+      arg1(tuple[Any, Any]):The number of untils to scroll in response to a line-down command.
 
 Returns:
 
@@ -42679,14 +42679,14 @@ class PyCSliderCtrl:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates the actual control.
 
 Args:
 
       style(Any):The style for the control.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the control.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the control.
       parent(Any):The parent window of the control.  Usually a PyCDialog.
       _id(Any):The control's ID.
 
@@ -43135,7 +43135,7 @@ Returns:
         """
         ...
 
-    def CreateView(self, view: Any, row: Any, col: Any, arg: Tuple[Any, Any]) -> None:
+    def CreateView(self, view: Any, row: Any, col: Any, arg: tuple[Any, Any]) -> None:
         """
          Creates a view in a splitter window
 
@@ -43144,7 +43144,7 @@ Args:
       view(Any):The view to place in the splitter pane.
       row(Any):The row in the splitter to place the view.
       col(Any):The column in the splitter to place the view.
-      arg(Tuple[Any, Any]):The initial size of the new view.MFC References
+      arg(tuple[Any, Any]):The initial size of the new view.MFC References
 
 Returns:
 
@@ -43243,7 +43243,7 @@ class PyCStatusBar:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def GetPaneInfo(self, index: Any) -> Tuple[Any, Any, Any]:
+    def GetPaneInfo(self, index: Any) -> tuple[Any, Any, Any]:
         """
          Returns the id, style, and width of the indicator pane at the
 
@@ -43255,7 +43255,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -43314,14 +43314,14 @@ class PyCStatusBarCtrl:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates the actual control.
 
 Args:
 
       style(Any):The style for the control.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the control.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the control.
       parent(Any):The parent window of the control.  Usually a PyCDialog.
       _id(Any):The control's ID.
 
@@ -43332,7 +43332,7 @@ Returns:
         """
         ...
 
-    def GetBorders(self) -> Tuple[Any, Any, Any]:
+    def GetBorders(self) -> tuple[Any, Any, Any]:
         """
          Retrieve the status bar control's current widths of
 
@@ -43344,7 +43344,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any]
+      tuple[Any, Any, Any]
 
         """
         ...
@@ -43355,7 +43355,7 @@ Returns:
 
 Args:
 
-      nParts(Any):The number of coordinates to retrieveCommentsThis function, as designed in MFC, returns both the *number* of parts, and, through an OUT parameter, an array of ints giving the coordinates of the parts.  There is also an IN parameter saying how many coordinates to give back.  Here, we're explicitly changing the semantics a bit.GetParts() -&gt Tuple of all coordinates GetParts(n) -&gt Tuple of the first n coordinates (or all coordinates, if fewer than n)So, in Python, you can't simultaneously find out how many coordinates there are, and retrieve a subset of them.  In a reasonable universe, there would have been GetParts() -&gt int, and GetCoords() -&gt List.  This means that I need to call the MFC method twice; once to find out how many there are, and another time to get them.
+      nParts(Any):The number of coordinates to retrieveCommentsThis function, as designed in MFC, returns both the *number* of parts, and, through an OUT parameter, an array of ints giving the coordinates of the parts.  There is also an IN parameter saying how many coordinates to give back.  Here, we're explicitly changing the semantics a bit.GetParts() -&gt tuple of all coordinates GetParts(n) -&gt tuple of the first n coordinates (or all coordinates, if fewer than n)So, in Python, you can't simultaneously find out how many coordinates there are, and retrieve a subset of them.  In a reasonable universe, there would have been GetParts() -&gt int, and GetCoords() -&gt list.  This means that I need to call the MFC method twice; once to find out how many there are, and another time to get them.
 
 Returns:
 
@@ -43364,7 +43364,7 @@ Returns:
         """
         ...
 
-    def GetRect(self, nPane: Any) -> Tuple[Any, Any, Any, Any]:
+    def GetRect(self, nPane: Any) -> tuple[Any, Any, Any, Any]:
         """
          Retrieves the bounding rectangle of a part in a status
 
@@ -43376,7 +43376,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -43742,14 +43742,14 @@ Returns:
         """
         ...
 
-    def SetSizes(self, sizeButton: Tuple[Any, Any], sizeButton1: Tuple[Any, Any]) -> None:
+    def SetSizes(self, sizeButton: tuple[Any, Any], sizeButton1: tuple[Any, Any]) -> None:
         """
          Sets the size of each button.
 
 Args:
 
-      sizeButton(Tuple[Any, Any]):The size of each button.
-      sizeButton1(Tuple[Any, Any]):The size of each bitmap.
+      sizeButton(tuple[Any, Any]):The size of each button.
+      sizeButton1(tuple[Any, Any]):The size of each bitmap.
 
 Returns:
 
@@ -43858,14 +43858,14 @@ Returns:
         """
         ...
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], parent: Any, _id: Any) -> None:
         """
          Creates the window for a new toolbar object
 
 Args:
 
       style(Any):The style for the button.  Use any of the win32con.BS_* constants.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the button.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the button.
       parent(Any):The parent window of the button.  Usually a PyCDialog.
       _id(Any):The buttons control ID.MFC References
 
@@ -43969,7 +43969,7 @@ Returns:
         """
         ...
 
-    def GetItemRect(self, nID: Any) -> Tuple[Any, Any, Any, Any]:
+    def GetItemRect(self, nID: Any) -> tuple[Any, Any, Any, Any]:
         """
          Retrieve the bounding rectangle of a button in a
 
@@ -43981,12 +43981,12 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
 
-    def GetRows(self) -> Tuple[Any, Any, Any, Any]:
+    def GetRows(self) -> tuple[Any, Any, Any, Any]:
         """
          Retrieve the number of rows of buttons currently displayed
 
@@ -43996,7 +43996,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -44196,7 +44196,7 @@ Returns:
         """
         ...
 
-    def SetRows(self, nRows: Any, bLarger: Any) -> Tuple[Any, Any, Any, Any]:
+    def SetRows(self, nRows: Any, bLarger: Any) -> tuple[Any, Any, Any, Any]:
         """
          Ask the toolbar control to resize itself to the requested
 
@@ -44209,7 +44209,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -44253,7 +44253,7 @@ Returns:
         """
         ...
 
-    def AddTool(self, wnd: Any, text: str, _id: Any, rect: Tuple[Any, Any, Any, Any] = None) -> None:
+    def AddTool(self, wnd: Any, text: str, _id: Any, rect: tuple[Any, Any, Any, Any] = None) -> None:
         """
          Adds a tool to tooltip control.
 
@@ -44262,7 +44262,7 @@ Args:
       wnd(Any):The window of the tool.
       text(str):The text for the tool.
       _id(Any):The id of the tool
-      rect(Tuple[Any, Any, Any, Any]):The default rectangle
+      rect(tuple[Any, Any, Any, Any]):The default rectangle
 
 Returns:
 
@@ -44292,14 +44292,14 @@ class PyCTreeCtrl:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, style: Any, rect: Tuple[Any, Any, Any, Any], PyCWnd: Any, _id: Any) -> None:
+    def CreateWindow(self, style: Any, rect: tuple[Any, Any, Any, Any], PyCWnd: Any, _id: Any) -> None:
         """
          Creates the actual window for the object.
 
 Args:
 
       style(Any):The window style
-      rect(Tuple[Any, Any, Any, Any]):The default rectangle
+      rect(tuple[Any, Any, Any, Any]):The default rectangle
       PyCWnd(Any):The parent window
       _id(Any):The control IDMFC References
 
@@ -44376,7 +44376,7 @@ Returns:
 
 Args:
 
-      imageList(Any):The Image List to use.
+      imageList(Any):The Image list to use.
       imageType(Any):Type of image list. It can be one of (COMMCTRL.) LVSIL_NORMAL, LVSIL_SMALL or LVSIL_STATE
 
 Returns:
@@ -44598,7 +44598,7 @@ Returns:
         """
         ...
 
-    def GetItemState(self, item: Any, stateMask: Any) -> Tuple[Any, Any]:
+    def GetItemState(self, item: Any, stateMask: Any) -> tuple[Any, Any]:
         """
          Retrieves the state and mask of an item.
 
@@ -44609,7 +44609,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -44631,7 +44631,7 @@ Returns:
         """
         ...
 
-    def GetItemImage(self, item: Any) -> Tuple[Any, Any]:
+    def GetItemImage(self, item: Any) -> tuple[Any, Any]:
         """
          Retrieves the index of an items images.
 
@@ -44641,7 +44641,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]
+      tuple[Any, Any]
 
         """
         ...
@@ -44725,7 +44725,7 @@ Returns:
         """
         ...
 
-    def GetItemRect(self, item: Any, bTextOnly: Any) -> Tuple[Any, Any, Any, Any]:
+    def GetItemRect(self, item: Any, bTextOnly: Any) -> tuple[Any, Any, Any, Any]:
         """
          Retrieves the bounding rectangle of a tree view item.
 
@@ -44736,7 +44736,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -44997,7 +44997,7 @@ Returns:
         """
         ...
 
-    def HitTest(self, arg: Any) -> Tuple[Any, Any]:
+    def HitTest(self, arg: Any) -> tuple[Any, Any]:
         """
          Determines which tree view item, if any, is at a specified position.
 
@@ -45007,7 +45007,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:The point to test.Return ValueThe result is a tuple of (flags, hItem).
+      tuple[Any, Any]:The point to test.Return ValueThe result is a tuple of (flags, hItem).
 
 flags may be a combination of the following values:
 
@@ -45095,7 +45095,7 @@ class PyCView:
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')
 
-    def CreateWindow(self, parent: Any, arg: Any, arg1: Any, arg2: Tuple[Any, Any, Any, Any]) -> None:
+    def CreateWindow(self, parent: Any, arg: Any, arg1: Any, arg2: tuple[Any, Any, Any, Any]) -> None:
         """
          Creates the window for a view.
 
@@ -45104,7 +45104,7 @@ Args:
       parent(Any):The parent window (usually a frame)
       arg(Any):The child ID for the view
       arg1(Any):The style for the view
-      arg2(Tuple[Any, Any, Any, Any]):The default position of the window.
+      arg2(tuple[Any, Any, Any, Any]):The default position of the window.
 
 Returns:
 
@@ -45288,7 +45288,7 @@ Returns:
         """
         ...
 
-    def GetDocTemplateList(self) -> List[Any]:
+    def GetDocTemplateList(self) -> list[Any]:
         """
          Returns a list of all document templates.
 
@@ -45298,7 +45298,7 @@ Args:
 
 Returns:
 
-      List[Any]
+      list[Any]
 
         """
         ...
@@ -45619,7 +45619,7 @@ Returns:
         """
         ...
 
-    def BeginPaint(self) -> Tuple[Any, Any]:
+    def BeginPaint(self) -> tuple[Any, Any]:
         """
          Prepares a window for painting
 
@@ -45629,7 +45629,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:PyCWnd.BeginPaint
+      tuple[Any, Any]:PyCWnd.BeginPaint
 PyCDC, PAINTSTRUCT
 
  = BeginPaint()Prepares a window for painting
@@ -45639,7 +45639,7 @@ Return ValueYou must ... the PAINTSTRUCT param to the PyCWnd::EndPaint method.
         """
         ...
 
-    def CalcWindowRect(self, rect: Tuple[Any, Any, Any, Any], nAdjustType: Any) -> Tuple[Any, Any, Any, Any]:
+    def CalcWindowRect(self, rect: tuple[Any, Any, Any, Any], nAdjustType: Any) -> tuple[Any, Any, Any, Any]:
         """
          Computes the size of the window rectangle based on the desired client
 
@@ -45649,12 +45649,12 @@ size for the window object.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):The size to calculate from
+      rect(tuple[Any, Any, Any, Any]):The size to calculate from
       nAdjustType(Any):An enumerated type used for in-place editing. It can have the following values: CWnd::adjustBorder = 0, which means that scrollbar sizes are ignored in calculation; and CWnd::adjustOutside = 1, which means that they are added into the final measurements of the rectangle.MFC References
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -45710,7 +45710,7 @@ Returns:
         """
         ...
 
-    def ClientToScreen(self, point: Tuple[Any, Any], rect: Any) -> Tuple[Any, Any, Any, Any, Any]:
+    def ClientToScreen(self, point: tuple[Any, Any], rect: Any) -> tuple[Any, Any, Any, Any, Any]:
         """
          Converts the client coordinates of a given point on the display
 
@@ -45718,12 +45718,12 @@ to screen coordinates.
 
 Args:
 
-      point(Tuple[Any, Any]):The client coordinates.Alternative Parameters
+      point(tuple[Any, Any]):The client coordinates.Alternative Parameters
       rect(Any):The client coordinates.CommentsThe new screen coordinates are relative to the upper-left corner of the system display. This function assumes that the given pointis in client coordinates.MFC References
 
 Returns:
 
-      Tuple[Any, Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any, Any]
 
         """
         ...
@@ -45733,7 +45733,7 @@ Returns:
             classId: str,
             windowName: str,
             style: Any,
-            rect: Tuple[Any, Any, Any, Any],
+            rect: tuple[Any, Any, Any, Any],
             parent: Any,
             _id: Any,
             context: Any = None) -> None:
@@ -45745,7 +45745,7 @@ Args:
       classId(str):The class ID for the window, or None
       windowName(str):The title for the window, or None
       style(Any):The style for the window.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the window.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the window.
       parent(Any):The parent window of the new window..
       _id(Any):The control's ID.
       context(Any):A CreateContext object.MFC References
@@ -45763,7 +45763,7 @@ Returns:
             classId: str,
             windowName: str,
             style: Any,
-            rect: Tuple[Any, Any, Any, Any],
+            rect: tuple[Any, Any, Any, Any],
             parent: Any,
             _id: Any,
             createStruct1: Any,
@@ -45777,7 +45777,7 @@ Args:
       classId(str):The class ID for the window.  May not be None.
       windowName(str):The title for the window, or None
       style(Any):The style for the window.
-      rect(Tuple[Any, Any, Any, Any]):The size and position of the window.
+      rect(tuple[Any, Any, Any, Any]):The size and position of the window.
       parent(Any):The parent window of the new window..
       _id(Any):The control's ID.
       createStruct1(Any):A tuple representing a CREATESTRUCT structure.MFC References
@@ -45978,7 +45978,7 @@ Returns:
         """
         ...
 
-    def GetClientRect(self) -> Tuple[Any, Any, Any, Any]:
+    def GetClientRect(self) -> tuple[Any, Any, Any, Any]:
         """
          Returns the client coordinates of the window.  left and top
 
@@ -45990,7 +45990,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -46388,7 +46388,7 @@ normalposSpecifies the window's coordinates when the window is in the restored p
         """
         ...
 
-    def GetWindowRect(self) -> Tuple[Any, Any, Any, Any]:
+    def GetWindowRect(self) -> tuple[Any, Any, Any, Any]:
         """
          Returns the screen coordinates of the windows upper left
 
@@ -46400,7 +46400,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any, Any, Any]
+      tuple[Any, Any, Any, Any]
 
         """
         ...
@@ -46526,13 +46526,13 @@ Return ValueThe return value is the previous handler, or None.
         """
         ...
 
-    def InvalidateRect(self, arg: Tuple[Any, Any, Any, Any], bErase: Any = 1) -> None:
+    def InvalidateRect(self, arg: tuple[Any, Any, Any, Any], bErase: Any = 1) -> None:
         """
          Invalidates an area of a window.
 
 Args:
 
-      arg(Tuple[Any, Any, Any, Any]):Rectangle to be updated.  If default param is used, the entire window is invalidated.
+      arg(tuple[Any, Any, Any, Any]):Rectangle to be updated.  If default param is used, the entire window is invalidated.
       bErase(Any):Specifies whether the background within the update region is to be erased.MFC References
 
 Returns:
@@ -46678,7 +46678,7 @@ Returns:
         """
         ...
 
-    def MapWindowPoints(self, wnd: Any, points: List[Any]) -> None:
+    def MapWindowPoints(self, wnd: Any, points: list[Any]) -> None:
         """
          Converts (maps) a set of points from the coordinate space of a window to the
 
@@ -46687,7 +46687,7 @@ coordinate space of another window.
 Args:
 
       wnd(Any):
-      points(List[Any]):The points to mapReturn ValueA list of the mapped points from the coordinate space of the CWnd to the coordinate space of another window.
+      points(list[Any]):The points to mapReturn ValueA list of the mapped points from the coordinate space of the CWnd to the coordinate space of another window.
 
 Returns:
 
@@ -46775,13 +46775,13 @@ is already the same as requested and no change was made.
         """
         ...
 
-    def MoveWindow(self, rect: Tuple[Any, Any, Any, Any], bRepaint: Any = 1) -> None:
+    def MoveWindow(self, rect: tuple[Any, Any, Any, Any], bRepaint: Any = 1) -> None:
         """
          Move a window to a new location.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any]):The new location of the window, relative to the parent.
+      rect(tuple[Any, Any, Any, Any]):The new location of the window, relative to the parent.
       bRepaint(Any):Indicates if the window should be repainted after the move.MFC References
 
 Returns:
@@ -46838,13 +46838,13 @@ Returns:
         """
         ...
 
-    def OnNcHitTest(self, arg: Tuple[Any, Any]) -> Any:
+    def OnNcHitTest(self, arg: tuple[Any, Any]) -> Any:
         """
          Calls the base MFC OnNcHitTest function.
 
 Args:
 
-      arg(Tuple[Any, Any]):The pointSee Also
+      arg(tuple[Any, Any]):The pointSee Also
 
 Returns:
 
@@ -46932,7 +46932,7 @@ Returns:
         """
         ...
 
-    def OnWndMsg(self, msg: Any, wParam: Any, lParam: Any) -> Tuple[Any, Any]:
+    def OnWndMsg(self, msg: Any, wParam: Any, lParam: Any) -> tuple[Any, Any]:
         """
          Calls the default MFC Window Message handler.
 
@@ -46944,7 +46944,7 @@ Args:
 
 Returns:
 
-      Tuple[Any, Any]:CWnd::OnWndMsg
+      tuple[Any, Any]:CWnd::OnWndMsg
 Return ValueThe return value is a tuple of (int, int), being the
 
 return value from the MFC function call, and the value of the
@@ -46986,7 +46986,7 @@ Returns:
         """
         ...
 
-    def RedrawWindow(self, _object: Any, flags: Any, rect: Tuple[Any, Any, Any, Any] = None) -> None:
+    def RedrawWindow(self, _object: Any, flags: Any, rect: tuple[Any, Any, Any, Any] = None) -> None:
         """
          Updates the specified rectangle or region in the given window's client area.
 
@@ -46994,7 +46994,7 @@ Args:
 
       _object(Any):A region
       flags(Any):MFC References
-      rect(Tuple[Any, Any, Any, Any]):A rect, or None
+      rect(tuple[Any, Any, Any, Any]):A rect, or None
 
 Returns:
 
@@ -47167,14 +47167,14 @@ Returns:
         """
         ...
 
-    def SetWindowPos(self, hWndInsertAfter: Any, position: Tuple[Any, Any, Any, Any], flags: Any) -> None:
+    def SetWindowPos(self, hWndInsertAfter: Any, position: tuple[Any, Any, Any, Any], flags: Any) -> None:
         """
          Sets the windows position information
 
 Args:
 
       hWndInsertAfter(Any):A hwnd, else one of the win32con.HWND_* constants.
-      position(Tuple[Any, Any, Any, Any]):The new position of the window.
+      position(tuple[Any, Any, Any, Any]):The new position of the window.
       flags(Any):Window positioning flags.MFC References
 
 Returns:
@@ -47184,7 +47184,7 @@ Returns:
         """
         ...
 
-    def ScreenToClient(self, rect: Tuple[Any, Any, Any, Any, Any], pnt: Any) -> Tuple[Any, Any, Any, Any, Any]:
+    def ScreenToClient(self, rect: tuple[Any, Any, Any, Any, Any], pnt: Any) -> tuple[Any, Any, Any, Any, Any]:
         """
          Converts the screen coordinates of a given point
 
@@ -47192,12 +47192,12 @@ or rectangle on the display to client coordinates.
 
 Args:
 
-      rect(Tuple[Any, Any, Any, Any, Any]):The coordinates to convert.Alternative Parameters
+      rect(tuple[Any, Any, Any, Any, Any]):The coordinates to convert.Alternative Parameters
       pnt(Any):The coordinates to convert.MFC References
 
 Returns:
 
-      Tuple[Any, Any, Any, Any, Any]:CWnd::ScreenToClient
+      tuple[Any, Any, Any, Any, Any]:CWnd::ScreenToClient
 Return ValueThe result is the same size as the input argument.
 
 
@@ -47774,7 +47774,7 @@ Returns:
 
 
 class SCROLLINFO:
-    """Tuple representing a SCROLLINFO struct"""
+    """tuple representing a SCROLLINFO struct"""
 
     def __new__(cls):
         raise Exception('This class just for typing, can not be instanced!')

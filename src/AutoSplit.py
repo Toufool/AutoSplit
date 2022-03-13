@@ -650,7 +650,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         # Email sent to pyqt@riverbankcomputing.com
                         QtTest.QTest.qWait(wait_delta)  # type: ignore
                         continue
-                elif self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold:
+
+                elif (  # pylint: disable=confusing-consecutive-elif
+                        self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold):
                     self.split_below_threshold = False
                     break
 

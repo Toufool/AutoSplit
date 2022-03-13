@@ -43,7 +43,7 @@ jobs:
           pip install -r "scripts/requirements.txt"
           npm install -g pyright
       - run: scripts/compile_resources.bat
-      - name: Analysing the code with ${{ job.name }}
+      - name: Analysing the code with ${{ github.job }}
         run: pyright --warnings
   Pylint:
     runs-on: windows-latest
@@ -64,7 +64,7 @@ jobs:
           pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
-      - name: Analysing the code with ${{ job.name }}
+      - name: Analysing the code with ${{ github.job }}
         run: pylint --reports=y --output-format=colorized $(git ls-files '**/*.py')
   Flake8:
     runs-on: windows-latest
@@ -85,7 +85,7 @@ jobs:
           pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
-      - name: Analysing the code with ${{ job.name }}
+      - name: Analysing the code with ${{ github.job }}
         run: flake8
   Bandit:
     runs-on: windows-latest
@@ -106,7 +106,7 @@ jobs:
           pip install wheel
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
-      - name: Analysing the code with ${{ job.name }}
+      - name: Analysing the code with ${{ github.job }}
         run: bandit -n 1 --severity-level medium --recursive src
   Build:
     runs-on: windows-latest

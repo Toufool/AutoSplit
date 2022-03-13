@@ -75,8 +75,8 @@ def save_settings(autosplit: AutoSplit):
 
     autosplit.last_saved_settings = autosplit.settings_dict
     # Save settings to a .toml file
-    with open(autosplit.last_successfully_loaded_settings_file_path, "w") as file:
-        toml.dump(autosplit.last_saved_settings, file, encoder=toml.TomlNumpyEncoder())
+    with open(autosplit.last_successfully_loaded_settings_file_path, "w", encoding="utf-8") as file:
+        toml.dump(autosplit.last_saved_settings, file)
     return autosplit.last_successfully_loaded_settings_file_path
 
 
@@ -99,8 +99,8 @@ def save_settings_as(autosplit: AutoSplit):
     autosplit.last_saved_settings = autosplit.settings_dict
 
     # Save settings to a .toml file
-    with open(save_settings_file_path, "w") as file:
-        toml.dump(autosplit.last_saved_settings, file, encoder=toml.TomlNumpyEncoder())
+    with open(save_settings_file_path, "w", encoding="utf-8") as file:
+        toml.dump(autosplit.last_saved_settings, file)
 
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
@@ -111,7 +111,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
     try:
-        with open(load_settings_file_path, "r") as file:
+        with open(load_settings_file_path, "r", encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
             loaded_settings = cast(UserProfileDict, {

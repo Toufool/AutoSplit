@@ -1,11 +1,11 @@
 # Requirements file for AutoSplit
 #
-# Python: CPython 3.9+
+# Python: CPython 3.8+
 #
 # Usage: .\scripts\install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip3.9 uninstall -r .\scripts\requirements.txt
+# pip uninstall -r .\scripts\requirements.txt
 #
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
@@ -23,8 +23,7 @@ pywin32
 requests
 certifi
 toml
-# Not compatible with python 3.10 yet
-# PyQt6-tools
+#
 # Linting and Types
 bandit
 flake8
@@ -35,5 +34,10 @@ pywin32-stubs
 simplejson
 types-simplejson>=3.17.2
 types-requests
+#
+# Not compatible with python 3.10 yet, used to design the UI. Can be downloaded externally
+# Uncomment this if you want to run `designer.bat` to quickly open the bundled PyQt Designer
+# PyQt6-tools
+#
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

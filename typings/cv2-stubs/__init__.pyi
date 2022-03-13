@@ -2050,10 +2050,10 @@ def buildOpticalFlowPyramid(
 
 
 def calcBackProject(
-        images: typing.List[ndarray],
-        channels: typing.List[int],
+        images: list[ndarray],
+        channels: list[int],
         hist,
-        ranges: typing.List[int],
+        ranges: list[int],
         scale,
         dts: ndarray = ...) -> typing.Any:
     'calcBackProject(images, channels, hist, ranges, scale[, dst]) -> dst\n.   @overload'
@@ -2066,11 +2066,11 @@ def calcCovarMatrix(samples, mean, flags: int, covar=..., ctype=...) -> typing.A
 
 
 def calcHist(
-        images: typing.List[ndarray],
-        channels: typing.List[int],
+        images: list[ndarray],
+        channels: list[int],
         mask: typing.Optional[ndarray],
-        histSize: typing.List[int],
-        ranges: typing.List[int],
+        histSize: list[int],
+        ranges: list[int],
         hist=...,
         accumulate=...) -> ndarray:
     'calcHist(images, channels, mask, histSize, ranges[, hist[, accumulate]]) -> hist\n.   @overload'
@@ -3332,7 +3332,7 @@ def imshow(winname, mat) -> typing.Any:
     ...
 
 
-def imwrite(filename: str, img: ndarray, params: typing.List[int] = ...) -> bool:
+def imwrite(filename: str, img: ndarray, params: list[int] = ...) -> bool:
     "imwrite(filename, img[, params]) -> retval\n.   @brief Saves an image to a specified file.\n.   \n.   The function imwrite saves the image to the specified file. The image format is chosen based on the\n.   filename extension (see cv::imread for the list of extensions). In general, only 8-bit\n.   single-channel or 3-channel (with 'BGR' channel order) images\n.   can be saved using this function, with these exceptions:\n.   \n.   - 16-bit unsigned (CV_16U) images can be saved in the case of PNG, JPEG 2000, and TIFF formats\n.   - 32-bit float (CV_32F) images can be saved in PFM, TIFF, OpenEXR, and Radiance HDR formats;\n.     3-channel (CV_32FC3) TIFF images will be saved using the LogLuv high dynamic range encoding\n.     (4 bytes per pixel)\n.   - PNG images with an alpha channel can be saved using this function. To do this, create\n.   8-bit (or 16-bit) 4-channel image BGRA, where the alpha channel goes last. Fully transparent pixels\n.   should have alpha set to 0, fully opaque pixels should have alpha set to 255/65535 (see the code sample below).\n.   - Multiple images (vector of Mat) can be saved in TIFF format (see the code sample below).\n.   \n.   If the format, depth or channel order is different, use\n.   Mat::convertTo and cv::cvtColor to convert it before saving. Or, use the universal FileStorage I/O\n.   functions to save the image to XML or YAML format.\n.   \n.   The sample below shows how to create a BGRA image, how to set custom compression parameters and save it to a PNG file.\n.   It also demonstrates how to save multiple images in a TIFF file:\n.   @include snippets/imgcodecs_imwrite.cpp\n.   @param filename Name of the file.\n.   @param img (Mat or vector of Mat) Image or Images to be saved.\n.   @param params Format-specific parameters encoded as pairs (paramId_1, paramValue_1, paramId_2, paramValue_2, ... .) see cv::ImwriteFlags"
     ...
 
@@ -3505,8 +3505,7 @@ def minEnclosingTriangle(points, triangle=...) -> typing.Any:
     ...
 
 
-def minMaxLoc(src: ndarray, mask: ndarray = ...) -> typing.Tuple[float,
-                                                                 float, typing.Tuple[int, int], typing.Tuple[int, int]]:
+def minMaxLoc(src: ndarray, mask: ndarray = ...) -> tuple[float, float, tuple[int, int], tuple[int, int]]:
     'minMaxLoc(src[, mask]) -> minVal, maxVal, minLoc, maxLoc\n.   @brief Finds the global minimum and maximum in an array.\n.   \n.   The function cv::minMaxLoc finds the minimum and maximum element values and their positions. The\n.   extremums are searched across the whole array or, if mask is not an empty array, in the specified\n.   array region.\n.   \n.   The function do not work with multi-channel arrays. If you need to find minimum or maximum\n.   elements across all the channels, use Mat::reshape first to reinterpret the array as\n.   single-channel. Or you may extract the particular channel using either extractImageCOI , or\n.   mixChannels , or split .\n.   @param src input single-channel array.\n.   @param minVal pointer to the returned minimum value; NULL is used if not required.\n.   @param maxVal pointer to the returned maximum value; NULL is used if not required.\n.   @param minLoc pointer to the returned minimum location (in 2D case); NULL is used if not required.\n.   @param maxLoc pointer to the returned maximum location (in 2D case); NULL is used if not required.\n.   @param mask optional mask used to select a sub-array.\n.   @sa max, min, compare, inRange, extractImageCOI, mixChannels, split, Mat::reshape'
     ...
 
@@ -3782,7 +3781,7 @@ def reprojectImageTo3D(disparity, Q, _3dImage=..., handleMissingValues=..., ddep
     ...
 
 
-def resize(src: ndarray, dsize: typing.Tuple[int, int], dts: ndarray = ...,
+def resize(src: ndarray, dsize: tuple[int, int], dts: ndarray = ...,
            fx: int = ..., fy: int = ..., interpolation: int = ...) -> ndarray:
     'resize(src, dsize[, dst[, fx[, fy[, interpolation]]]]) -> dst\n.   @brief Resizes an image.\n.   \n.   The function resize resizes the image src down to or up to the specified size. Note that the\n.   initial dst type or size are not taken into account. Instead, the size and type are derived from\n.   the `src`,`dsize`,`fx`, and `fy`. If you want to resize src so that it fits the pre-created dst,\n.   you may call the function as follows:\n.   @code\n.       // explicitly specify dsize=dst.size(); fx and fy will be computed from that.\n.       resize(src, dst, dst.size(), 0, 0, interpolation);\n.   @endcode\n.   If you want to decimate the image by factor of 2 in each direction, you can call the function this\n.   way:\n.   @code\n.       // specify fx and fy and let the function compute the destination image size.\n.       resize(src, dst, Size(), 0.5, 0.5, interpolation);\n.   @endcode\n.   To shrink an image, it will generally look best with #INTER_AREA interpolation, whereas to\n.   enlarge an image, it will generally look best with c#INTER_CUBIC (slow) or #INTER_LINEAR\n.   (faster but still looks OK).\n.   \n.   @param src input image.\n.   @param dst output image; it has the size dsize (when it is non-zero) or the size computed from\n.   src.size(), fx, and fy; the type of dst is the same as of src.\n.   @param dsize output image size; if it equals zero, it is computed as:\n.    \\f[\\texttt{dsize = Size(round(fx*src.cols), round(fy*src.rows))}\\f]\n.    Either dsize or both fx and fy must be non-zero.\n.   @param fx scale factor along the horizontal axis; when it equals 0, it is computed as\n.   \\f[\\texttt{(double)dsize.width/src.cols}\\f]\n.   @param fy scale factor along the vertical axis; when it equals 0, it is computed as\n.   \\f[\\texttt{(double)dsize.height/src.rows}\\f]\n.   @param interpolation interpolation method, see #InterpolationFlags\n.   \n.   @sa  warpAffine, warpPerspective, remap'
     ...
@@ -4189,8 +4188,8 @@ def waitKeyEx(delay=...) -> typing.Any:
 
 def warpAffine(src: ndarray,
                M,
-               dsize: typing.Tuple[int,
-                                   int],
+               dsize: tuple[int,
+                            int],
                dts: ndarray = ...,
                flags: int = ...,
                borderMode=...,
@@ -4201,8 +4200,8 @@ def warpAffine(src: ndarray,
 
 def warpPerspective(src: ndarray,
                     M,
-                    dsize: typing.Tuple[int,
-                                        int],
+                    dsize: tuple[int,
+                                 int],
                     dts: ndarray = ...,
                     flags: int = ...,
                     borderMode=...,
@@ -4211,9 +4210,9 @@ def warpPerspective(src: ndarray,
     ...
 
 
-def warpPolar(src: ndarray, dsize: typing.Tuple[int, int], center,
+def warpPolar(src: ndarray, dsize: tuple[int, int], center,
               maxRadius, flags: int, dts: ndarray = ...) -> typing.Any:
-    'warpPolar(src, dsize: typing.Tuple[int, int], center, maxRadius, flags[, dst]) -> dst\n.   \\brief Remaps an image to polar or semilog-polar coordinates space\n.   \n.   @anchor polar_remaps_reference_image\n.   ![Polar remaps reference](pics/polar_remap_doc.png)\n.   \n.   Transform the source image using the following transformation:\n.   \\f[\n.   dst(\\rho , \\phi ) = src(x,y)\n.   \\f]\n.   \n.   where\n.   \\f[\n.   \\begin{array}{l}\n.   \\vec{I} = (x - center.x, \\;y - center.y) \\\\\n.   \\phi = Kangle \\cdot \\texttt{angle} (\\vec{I}) \\\\\n.   \\rho = \\left\\{\\begin{matrix}\n.   Klin \\cdot \\texttt{magnitude} (\\vec{I}) & default \\\\\n.   Klog \\cdot log_e(\\texttt{magnitude} (\\vec{I})) & if \\; semilog \\\\\n.   \\end{matrix}\\right.\n.   \\end{array}\n.   \\f]\n.   \n.   and\n.   \\f[\n.   \\begin{array}{l}\n.   Kangle = dsize.height / 2\\Pi \\\\\n.   Klin = dsize.width / maxRadius \\\\\n.   Klog = dsize.width / log_e(maxRadius) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   \n.   \\par Linear vs semilog mapping\n.   \n.   Polar mapping can be linear or semi-log. Add one of #WarpPolarMode to `flags` to specify the polar mapping mode.\n.   \n.   Linear is the default mode.\n.   \n.   The semilog mapping emulates the human "foveal" vision that permit very high acuity on the line of sight (central vision)\n.   in contrast to peripheral vision where acuity is minor.\n.   \n.   \\par Option on `dsize`:\n.   \n.   - if both values in `dsize <=0 ` (default),\n.   the destination image will have (almost) same area of source bounding circle:\n.   \\f[\\begin{array}{l}\n.   dsize.area  \\leftarrow (maxRadius^2 \\cdot \\Pi) \\\\\n.   dsize.width = \\texttt{cvRound}(maxRadius) \\\\\n.   dsize.height = \\texttt{cvRound}(maxRadius \\cdot \\Pi) \\\\\n.   \\end{array}\\f]\n.   \n.   \n.   - if only `dsize.height <= 0`,\n.   the destination image area will be proportional to the bounding circle area but scaled by `Kx * Kx`:\n.   \\f[\\begin{array}{l}\n.   dsize.height = \\texttt{cvRound}(dsize.width \\cdot \\Pi) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   - if both values in `dsize > 0 `,\n.   the destination image will have the given size therefore the area of the bounding circle will be scaled to `dsize`.\n.   \n.   \n.   \\par Reverse mapping\n.   \n.   You can get reverse mapping adding #WARP_INVERSE_MAP to `flags`\n.   \\snippet polar_transforms.cpp InverseMap\n.   \n.   In addiction, to calculate the original coordinate from a polar mapped coordinate \\f$(rho, phi)->(x, y)\\f$:\n.   \\snippet polar_transforms.cpp InverseCoordinate\n.   \n.   @param src Source image.\n.   @param dst Destination image. It will have same type as src.\n.   @param dsize The destination image size (see description for valid options).\n.   @param center The transformation center.\n.   @param maxRadius The radius of the bounding circle to transform. It determines the inverse magnitude scale parameter too.\n.   @param flags A combination of interpolation methods, #InterpolationFlags + #WarpPolarMode.\n.               - Add #WARP_POLAR_LINEAR to select linear polar mapping (default)\n.               - Add #WARP_POLAR_LOG to select semilog polar mapping\n.               - Add #WARP_INVERSE_MAP for reverse mapping.\n.   @note\n.   -  The function can not operate in-place.\n.   -  To calculate magnitude and angle in degrees #cartToPolar is used internally thus angles are measured from 0 to 360 with accuracy about 0.3 degrees.\n.   -  This function uses #remap. Due to current implementation limitations the size of an input and output images should be less than 32767x32767.\n.   \n.   @sa cv::remap'
+    'warpPolar(src, dsize: tuple[int, int], center, maxRadius, flags[, dst]) -> dst\n.   \\brief Remaps an image to polar or semilog-polar coordinates space\n.   \n.   @anchor polar_remaps_reference_image\n.   ![Polar remaps reference](pics/polar_remap_doc.png)\n.   \n.   Transform the source image using the following transformation:\n.   \\f[\n.   dst(\\rho , \\phi ) = src(x,y)\n.   \\f]\n.   \n.   where\n.   \\f[\n.   \\begin{array}{l}\n.   \\vec{I} = (x - center.x, \\;y - center.y) \\\\\n.   \\phi = Kangle \\cdot \\texttt{angle} (\\vec{I}) \\\\\n.   \\rho = \\left\\{\\begin{matrix}\n.   Klin \\cdot \\texttt{magnitude} (\\vec{I}) & default \\\\\n.   Klog \\cdot log_e(\\texttt{magnitude} (\\vec{I})) & if \\; semilog \\\\\n.   \\end{matrix}\\right.\n.   \\end{array}\n.   \\f]\n.   \n.   and\n.   \\f[\n.   \\begin{array}{l}\n.   Kangle = dsize.height / 2\\Pi \\\\\n.   Klin = dsize.width / maxRadius \\\\\n.   Klog = dsize.width / log_e(maxRadius) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   \n.   \\par Linear vs semilog mapping\n.   \n.   Polar mapping can be linear or semi-log. Add one of #WarpPolarMode to `flags` to specify the polar mapping mode.\n.   \n.   Linear is the default mode.\n.   \n.   The semilog mapping emulates the human "foveal" vision that permit very high acuity on the line of sight (central vision)\n.   in contrast to peripheral vision where acuity is minor.\n.   \n.   \\par Option on `dsize`:\n.   \n.   - if both values in `dsize <=0 ` (default),\n.   the destination image will have (almost) same area of source bounding circle:\n.   \\f[\\begin{array}{l}\n.   dsize.area  \\leftarrow (maxRadius^2 \\cdot \\Pi) \\\\\n.   dsize.width = \\texttt{cvRound}(maxRadius) \\\\\n.   dsize.height = \\texttt{cvRound}(maxRadius \\cdot \\Pi) \\\\\n.   \\end{array}\\f]\n.   \n.   \n.   - if only `dsize.height <= 0`,\n.   the destination image area will be proportional to the bounding circle area but scaled by `Kx * Kx`:\n.   \\f[\\begin{array}{l}\n.   dsize.height = \\texttt{cvRound}(dsize.width \\cdot \\Pi) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   - if both values in `dsize > 0 `,\n.   the destination image will have the given size therefore the area of the bounding circle will be scaled to `dsize`.\n.   \n.   \n.   \\par Reverse mapping\n.   \n.   You can get reverse mapping adding #WARP_INVERSE_MAP to `flags`\n.   \\snippet polar_transforms.cpp InverseMap\n.   \n.   In addiction, to calculate the original coordinate from a polar mapped coordinate \\f$(rho, phi)->(x, y)\\f$:\n.   \\snippet polar_transforms.cpp InverseCoordinate\n.   \n.   @param src Source image.\n.   @param dst Destination image. It will have same type as src.\n.   @param dsize The destination image size (see description for valid options).\n.   @param center The transformation center.\n.   @param maxRadius The radius of the bounding circle to transform. It determines the inverse magnitude scale parameter too.\n.   @param flags A combination of interpolation methods, #InterpolationFlags + #WarpPolarMode.\n.               - Add #WARP_POLAR_LINEAR to select linear polar mapping (default)\n.               - Add #WARP_POLAR_LOG to select semilog polar mapping\n.               - Add #WARP_INVERSE_MAP for reverse mapping.\n.   @note\n.   -  The function can not operate in-place.\n.   -  To calculate magnitude and angle in degrees #cartToPolar is used internally thus angles are measured from 0 to 360 with accuracy about 0.3 degrees.\n.   -  This function uses #remap. Due to current implementation limitations the size of an input and output images should be less than 32767x32767.\n.   \n.   @sa cv::remap'
     ...
 
 

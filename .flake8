@@ -8,19 +8,27 @@ exclude=src/gen/
 ; Allow imports at the bottom of file
 ignore=W503,Y015,E402
 per-file-ignores=
-    ; Uses "pass" for empty body
-    ; Default arguments
-    ; Doesn't work when using /** below for some reasons
-    ; win32typing.pyi:  Y010,Y011,
-    ; win32gui.pyi:     Y010,Y011,
-    ;
+    ; Function bodys contain other than just ... (eg: raise)
+    ; Default values for typed arguments
+    typings/win32typing/__init__.pyi: Q000,E704,E501,N8,  Y021,Y020,  Y010,Y011
+    typings/win32-stubs/win32gui.pyi: Q000,E704,E501,N8,  Y021,Y020,  Y010,Y011
+
+    ; Docstrings in type stubs
+    ; Quoted annotations
+    ; TypeAlias
+    typings/win32*/*:                 Q000,E704,E501,N8,  Y021,Y020,Y026
+
+    ; Docstrings in type stubs
+    ; Function bodys contain other than just ... (eg: raise)
+    ; TypeAlias
+    ; Single quote docstrings
+    typings/cv2-stubs/__init__.pyi:   Q000,E704,E501,N8,  Y021,Y010,Y026, Q002
+
     ; Quotes
-    ; undefined name 'Unknown'
-    ; allow ... on same line as def
+    ; Allow ... on same line as def
+    ; Line too long
     ; Naming stuff
-    ;
-    ; Q002 quote docstring for cv2-stubs
-    typings/**:       Q000,F821,E704,N8,E501,Y010,Y011,Q002
+    typings/**:                       Q000,E704,E501,N8
 
 ; PyQt methods
 ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,mouseReleaseEvent
