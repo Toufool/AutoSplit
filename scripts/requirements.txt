@@ -10,19 +10,21 @@
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
 # Dependencies:
+numpy>=1.22.0rc1
+opencv-python>=4.5.4
+PyQt6>=6.2.1
+PySide6
 ImageHash
 keyboard
-numpy>=1.22.0rc1
-opencv-python
 packaging
 Pillow
-PyQt6
-PyQt6-tools
-PySide6
 pyautogui
 pywin32
 requests
 certifi
+toml
+# Not compatible with python 3.10 yet
+# PyQt6-tools
 # Linting and Types
 bandit
 flake8
@@ -33,6 +35,5 @@ pywin32-stubs
 simplejson
 types-simplejson>=3.17.2
 types-requests
-#
 # Comment this out if you don't want to build AutoSplit.exe:
 PyInstaller
