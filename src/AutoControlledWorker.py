@@ -22,8 +22,7 @@ class AutoControlledWorker(QtCore.QObject):
                 break
             except EOFError:
                 continue
-            # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
-            # For now this can only used in a Development environment
+            # This is for use in a Development environment
             if line == "kill":
                 self.autosplit.closeEvent()
                 break

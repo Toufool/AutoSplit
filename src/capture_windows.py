@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Optional, cast
+from typing import Optional, TypedDict, cast
 
 import ctypes
 import ctypes.wintypes
@@ -25,15 +25,11 @@ PW_RENDERFULLCONTENT = 0x00000002
 #         self.y = y
 #         self.width = width
 #         self.height = height
-# class Region(TypedDict):
-#     x: int
-#     y: int
-#     width: int
-#     height: int
-
-# toml.dump does not support TypedDicts or dataclasses
-# TODO: Check if we can just "cast" or "map" it before parsing it as TOML
-Region = Dict[str, int]  # pylint: disable=deprecated-typing-alias
+class Region(TypedDict):
+    x: int
+    y: int
+    width: int
+    height: int
 
 
 def capture_region(hwnd: int, selection: Region, print_window: bool):

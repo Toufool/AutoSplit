@@ -58,7 +58,7 @@ DEFAULT_PROFILE = UserProfileDict(
     loop_splits=False,
     split_image_directory="",
     captured_window_title="",
-    capture_region={"x": 0, "y": 0, "width": 0, "height": 0},
+    capture_region=Region(x=0, y=0, width=1, height=1),
 )
 
 
