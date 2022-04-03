@@ -16,7 +16,24 @@ from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_
 import capture_windows
 import error_messages
 
-
+SUPPORTED_IMREAD_FORMATS = [
+    ("Windows bitmaps", "*.bmp *.dib"),
+    ("JPEG files", "*.jpeg *.jpg *.jpe"),
+    ("JPEG 2000 files", "*.jp2"),
+    ("Portable Network Graphics", "*.png"),
+    ("WebP", "*.webp"),
+    ("Portable image format", "*.pbm *.pgm *.ppm *.pxm *.pnm"),
+    ("PFM files", "*.pfm"),
+    ("Sun rasters", "*.sr *.ras"),
+    ("TIFF files", "*.tiff *.tif"),
+    ("OpenEXR Image files", "*.exr"),
+    ("Radiance HDR", "*.hdr *.pic"),
+]
+"""https://docs.opencv.org/4.5.4/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56"""
+IMREAD_EXT_FILTER = "All Files (" \
+    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
+    + ");;"\
+    + ";;".join([f"{format} ({extensions})" for format, extensions in SUPPORTED_IMREAD_FORMATS])
 WINDOWS_SHADOW_SIZE = 8
 WINDOWS_TOPBAR_SIZE = 24
 user32 = ctypes.windll.user32
@@ -116,7 +133,7 @@ def align_region(autosplit: AutoSplit):
         autosplit,
         "Select Reference Image",
         "",
-        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"
+        IMREAD_EXT_FILTER,
     )[0]
 
     # Return if the user presses cancel
