@@ -249,7 +249,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if self.hwnd:
             capture = capture_region(self.hwnd,
                                      self.settings_dict["capture_region"],
-                                     self.settings_dict["force_print_window"])
+                                     self.settings_dict["capture_method"])
             set_ui_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
@@ -385,7 +385,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Grab screenshot of capture region
         capture = capture_region(self.hwnd,
                                  self.settings_dict["capture_region"],
-                                 self.settings_dict["force_print_window"])
+                                 self.settings_dict["capture_method"])
         if capture is None:
             error_messages.region()
             return
@@ -752,7 +752,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         capture = capture_region(self.hwnd,
                                  self.settings_dict["capture_region"],
-                                 self.settings_dict["force_print_window"])
+                                 self.settings_dict["capture_method"])
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         if capture is None:
@@ -765,7 +765,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.hwnd = hwnd
                 capture = capture_region(self.hwnd,
                                          self.settings_dict["capture_region"],
-                                         self.settings_dict["force_print_window"])
+                                         self.settings_dict["capture_method"])
         return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):

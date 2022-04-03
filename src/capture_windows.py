@@ -3,8 +3,11 @@ from typing import Optional, TypedDict, cast
 
 import ctypes
 import ctypes.wintypes
+import d3dshot
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
+# from winrt.windows.graphics import capture
+# from winrt._winrt import initialize_with_window
 
 import cv2
 import numpy as np
@@ -14,17 +17,15 @@ import pywintypes
 from win32 import win32gui
 from win32typing import PyCBitmap, PyCDC
 
+from capture_method import CaptureMethod
+
+
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
 
+desktop_duplication = d3dshot.create(capture_output="numpy")
 
-# @dataclass
-# class Region():
-#     def __init__(self, x: int, y: int, width: int, height: int):
-#         self.x = x
-#         self.y = y
-#         self.width = width
-#         self.height = height
+
 class Region(TypedDict):
     x: int
     y: int
@@ -32,16 +33,8 @@ class Region(TypedDict):
     height: int
 
 
-def capture_region(hwnd: int, selection: Region, print_window: bool):
-    """
-    Captures an image of the region for a window matching the given
-    parameters of the bounding box
-
-    @param hwnd: Handle to the window being captured
-    @param selection: The coordinates of the region
-    @return: The image of the region in the window in BGRA format
-    """
-
+def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = False):
+    image: Optional[cv2.ndarray] = None
     # If the window closes while it's being manipulated, it could cause a crash
     try:
         window_dc: int = win32gui.GetWindowDC(hwnd)
@@ -49,7 +42,7 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
         dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)  # type: ignore
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
-        if print_window:
+        if render_full_content:
             ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
         compatible_dc = dc_object.CreateCompatibleDC()
@@ -62,14 +55,13 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
             dc_object,
             (selection["x"], selection["y"]),
             win32con.SRCCOPY)
+        image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
+        image.shape = (selection["height"], selection["width"], 4)
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
         return None
-
-    image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
-    image.shape = (selection["height"], selection["width"], 4)
-
+    # We already obtained the image, so we can ignore errors during cleanup
     try:
         dc_object.DeleteDC()
         compatible_dc.DeleteDC()
@@ -78,8 +70,42 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     except win32ui.error:  # type: ignore
         pass
-
     return image
+
+
+def __d3d_capture(hwnd: int, selection: Region):
+    offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
+    hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+    desktop_duplication.display = [
+        display for display in desktop_duplication.displays if display.hmonitor == hmonitor][0]
+    screenshot = desktop_duplication.screenshot((
+        selection["x"] + offset_x,
+        selection["y"] + offset_y,
+        selection["width"] + selection["x"] + offset_x,
+        selection["height"] + selection["y"] + offset_y))
+    return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
+
+
+def capture_region(hwnd: int, selection: Region, capture_method: CaptureMethod):
+    """
+    Captures an image of the region for a window matching the given
+    parameters of the bounding box
+
+    @param hwnd: Handle to the window being captured
+    @param selection: The coordinates of the region
+    @return: The image of the region in the window in BGRA format
+    """
+
+    if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        # Missing the InitializeWithWindow function in winrt https://github.com/microsoft/xlang/issues/756
+        return None
+        # picker = capture.GraphicsCapturePicker()
+        # initialize_with_window(picker, hwnd)
+
+    if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
+        return __d3d_capture(hwnd, selection)
+
+    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):

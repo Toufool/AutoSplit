@@ -15,6 +15,7 @@ from requests.exceptions import RequestException
 
 import error_messages
 import user_profile
+from capture_method import CAPTURE_METHODS, get_capture_method_by_index, get_capture_method_index
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -116,6 +117,16 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.setupUi(self)
         self.autosplit = autosplit
 
+        # Build the Capture method combobox
+        list_view = QtWidgets.QListView()
+        list_view.setWordWrap(True)
+        self.capture_method_combobox.setView(list_view)
+        capture_methods = [
+            f"- {method['name']} ({method['short_description']})"
+            for method in CAPTURE_METHODS.values()]
+        self.capture_method_combobox.setMinimumContentsLength(len(capture_methods) * 2)
+        self.capture_method_combobox.addItems(capture_methods)
+
 # region Set initial values
         # Hotkeys
         self.split_input.setText(autosplit.settings_dict["split_hotkey"])
@@ -127,7 +138,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         # Capture Settings
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
-        self.force_print_window_checkbox.setChecked(autosplit.settings_dict["force_print_window"])
+        self.capture_method_combobox.setCurrentIndex(
+            get_capture_method_index(autosplit.settings_dict["capture_method"]))
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
@@ -151,9 +163,9 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.live_capture_region_checkbox.stateChanged.connect(lambda: self.__set_value(
             "live_capture_region",
             self.live_capture_region_checkbox.isChecked()))
-        self.force_print_window_checkbox.stateChanged.connect(lambda: self.__set_value(
-            "force_print_window",
-            self.force_print_window_checkbox.isChecked()))
+        self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
+            "capture_method",
+            get_capture_method_by_index(self.capture_method_combobox.currentIndex())))
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
@@ -191,7 +203,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "pause_hotkey": default_settings_dialog.pause_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "force_print_window": default_settings_dialog.force_print_window_checkbox.isChecked(),
+        "capture_method": get_capture_method_by_index(default_settings_dialog.capture_method_combobox.currentIndex()),
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),

@@ -12,7 +12,8 @@ from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
 
 import error_messages
-from capture_windows import Region
+from capture_method import get_capture_method_by_index
+from capture_windows import CaptureMethod, Region
 from gen import design
 from hotkeys import set_hotkey
 
@@ -30,7 +31,7 @@ class UserProfileDict(TypedDict):
     pause_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    force_print_window: bool
+    capture_method: CaptureMethod
     default_comparison_method: int
     default_similarity_threshold: float
     default_delay_time: int
@@ -50,7 +51,7 @@ DEFAULT_PROFILE = UserProfileDict(
     pause_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    force_print_window=False,
+    capture_method=get_capture_method_by_index(0),
     default_comparison_method=0,
     default_similarity_threshold=0.95,
     default_delay_time=0,
@@ -70,14 +71,9 @@ def save_settings(autosplit: AutoSplit):
     """
     @return: The save settings filepath. Or None if "Save Settings As" is cancelled
     """
-    if not autosplit.last_successfully_loaded_settings_file_path:
-        return save_settings_as(autosplit)
-
-    autosplit.last_saved_settings = autosplit.settings_dict
-    # Save settings to a .toml file
-    with open(autosplit.last_successfully_loaded_settings_file_path, "w", encoding="utf-8") as file:
-        toml.dump(autosplit.last_saved_settings, file)
-    return autosplit.last_successfully_loaded_settings_file_path
+    return __save_settings_to_file(autosplit, autosplit.last_successfully_loaded_settings_file_path) \
+        if autosplit.last_successfully_loaded_settings_file_path \
+        else save_settings_as(autosplit)
 
 
 def save_settings_as(autosplit: AutoSplit):
@@ -96,12 +92,14 @@ def save_settings_as(autosplit: AutoSplit):
     if not save_settings_file_path:
         return ""
 
-    autosplit.last_saved_settings = autosplit.settings_dict
+    return __save_settings_to_file(autosplit, save_settings_file_path)
 
+
+def __save_settings_to_file(autosplit: AutoSplit, save_settings_file_path: str):
+    autosplit.last_saved_settings = autosplit.settings_dict
     # Save settings to a .toml file
     with open(save_settings_file_path, "w", encoding="utf-8") as file:
         toml.dump(autosplit.last_saved_settings, file)
-
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
 

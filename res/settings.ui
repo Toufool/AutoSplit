@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>540</height>
+    <height>572</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>289</width>
-    <height>540</height>
+    <height>572</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>289</width>
-    <height>540</height>
+    <height>572</height>
    </size>
   </property>
   <property name="cursor">
@@ -46,40 +46,12 @@
      <x>10</x>
      <y>180</y>
      <width>271</width>
-     <height>101</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="title">
     <string>Capture Settings</string>
    </property>
-   <widget class="QCheckBox" name="force_print_window_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>6</x>
-      <y>73</y>
-      <width>204</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Force a full render of the capture window, which is required for some applications to be captured</string>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Force Full Render (slower Max FPS)</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
@@ -143,12 +115,35 @@
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QComboBox" name="capture_method_combobox">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>97</y>
+      <width>251</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="capture_method_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>75</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture method:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="image_settings_groupbox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>290</y>
+     <y>320</y>
      <width>271</width>
      <height>241</height>
     </rect>
@@ -646,7 +641,6 @@
   <tabstop>loop_splits_checkbox</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
-  <tabstop>force_print_window_checkbox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

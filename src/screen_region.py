@@ -82,7 +82,7 @@ def select_window(autosplit: AutoSplit):
     # On Windows there is a shadow around the windows that we need to account for
     # The top bar with the window name is also not accounted for
     # HACK: This isn't an ideal solution because it assumes every window will have a top bar and shadows of default size
-    # FIXME: Which results in cutting *into* windows which don't have shadows or have a smaller top bars
+    # FIXME: Which results in cutting *into* windows which don't have shadows or have a smaller top bar
     _, __, width, height = win32gui.GetClientRect(autosplit.hwnd)
     __set_region_values(autosplit,
                         left=WINDOWS_SHADOW_SIZE,
@@ -135,7 +135,7 @@ def align_region(autosplit: AutoSplit):
     capture = capture_windows.capture_region(
         autosplit.hwnd,
         autosplit.settings_dict["capture_region"],
-        autosplit.settings_dict["force_print_window"])
+        autosplit.settings_dict["capture_method"])
 
     if capture is None:
         error_messages.region()
