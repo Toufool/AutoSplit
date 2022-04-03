@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import Optional, TypedDict, cast
+from typing import Optional, TypedDict, cast, TYPE_CHECKING
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 import ctypes
 import ctypes.wintypes
 import d3dshot
+# from winsdk.windows.graphics.capture import GraphicsCapturePicker
+# from winsdk._winrt import initialize_with_window
+
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
-# from winrt.windows.graphics import capture
-# from winrt._winrt import initialize_with_window
 
 import cv2
 import numpy as np
@@ -74,10 +77,14 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
 
 
 def __d3d_capture(hwnd: int, selection: Region):
-    offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
     hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
     desktop_duplication.display = [
-        display for display in desktop_duplication.displays if display.hmonitor == hmonitor][0]
+        display for display
+        in desktop_duplication.displays
+        if display.hmonitor == hmonitor][0]
+    offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
+    offset_x -= desktop_duplication.display.position["left"]
+    offset_y -= desktop_duplication.display.position["top"]
     screenshot = desktop_duplication.screenshot((
         selection["x"] + offset_x,
         selection["y"] + offset_y,
@@ -86,7 +93,13 @@ def __d3d_capture(hwnd: int, selection: Region):
     return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
 
 
-def capture_region(hwnd: int, selection: Region, capture_method: CaptureMethod):
+# def __windows_graphics_capture(hwnd: int, selection: Region, autosplit_hwnd: int):
+#     picker = GraphicsCapturePicker()
+#     initialize_with_window(picker, autosplit_hwnd)
+#     picker.pick_single_item_async()
+
+
+def capture_region(autosplit: AutoSplit):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -95,12 +108,12 @@ def capture_region(hwnd: int, selection: Region, capture_method: CaptureMethod):
     @param selection: The coordinates of the region
     @return: The image of the region in the window in BGRA format
     """
+    hwnd = autosplit.hwnd
+    selection = autosplit.settings_dict["capture_region"]
+    capture_method = autosplit.settings_dict["capture_method"]
 
-    if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        # Missing the InitializeWithWindow function in winrt https://github.com/microsoft/xlang/issues/756
-        return None
-        # picker = capture.GraphicsCapturePicker()
-        # initialize_with_window(picker, hwnd)
+    # if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+    #     return __windows_graphics_capture(hwnd, selection, autosplit.effectiveWinId().__int__())
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
         return __d3d_capture(hwnd, selection)

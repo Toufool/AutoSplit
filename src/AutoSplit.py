@@ -247,9 +247,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
         # Set live image in UI
         if self.hwnd:
-            capture = capture_region(self.hwnd,
-                                     self.settings_dict["capture_region"],
-                                     self.settings_dict["capture_method"])
+            capture = capture_region(self)
             set_ui_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
@@ -383,9 +381,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture = capture_region(self.hwnd,
-                                 self.settings_dict["capture_region"],
-                                 self.settings_dict["capture_method"])
+        capture = capture_region(self)
         if capture is None:
             error_messages.region()
             return
@@ -750,9 +746,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         Grab capture region and resize for comparison
         """
-        capture = capture_region(self.hwnd,
-                                 self.settings_dict["capture_region"],
-                                 self.settings_dict["capture_method"])
+        capture = capture_region(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         if capture is None:
@@ -763,9 +757,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd
-                capture = capture_region(self.hwnd,
-                                         self.settings_dict["capture_region"],
-                                         self.settings_dict["capture_method"])
+                capture = capture_region(self)
         return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):
