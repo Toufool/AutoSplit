@@ -9,8 +9,7 @@ import webbrowser
 import requests
 from simplejson.errors import JSONDecodeError
 from packaging import version
-from PyQt6 import QtWidgets
-from PyQt6.QtCore import QThread
+from PyQt6 import QtWidgets, QtCore
 from requests.exceptions import RequestException
 
 import error_messages
@@ -22,8 +21,9 @@ from hotkeys import set_hotkey
 # AutoSplit Version number
 VERSION = "1.6.1"
 
-
 # About Window
+
+
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
     def __init__(self):
         super().__init__()
@@ -76,7 +76,7 @@ def view_help():
     webbrowser.open("https://github.com/Toufool/Auto-Split#tutorial")
 
 
-class __CheckForUpdatesThread(QThread):
+class __CheckForUpdatesThread(QtCore.QThread):
     def __init__(self, autosplit: AutoSplit, check_on_open: bool):
         super().__init__()
         self.autosplit = autosplit
@@ -118,14 +118,21 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.autosplit = autosplit
 
         # Build the Capture method combobox
-        list_view = QtWidgets.QListView()
-        list_view.setWordWrap(True)
-        self.capture_method_combobox.setView(list_view)
         capture_methods = [
             f"- {method['name']} ({method['short_description']})"
             for method in CAPTURE_METHODS.values()]
-        self.capture_method_combobox.setMinimumContentsLength(len(capture_methods) * 2)
+        list_view = QtWidgets.QListView()
+        list_view.setWordWrap(True)
+        # HACK: The first time the dropdown is rendered, it does not have the right height
+        # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
+        lines = (2 * len(capture_methods)) + 1
+        list_view.setMinimumHeight((17 * lines) - 1)
+        list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_methods)
+        self.capture_method_combobox.setToolTip("\n\n".join([
+            f"{method['name']} :\n{method['description']}"
+            for method in CAPTURE_METHODS.values()]))
 
 # region Set initial values
         # Hotkeys

@@ -78,6 +78,8 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
 
 def __d3d_capture(hwnd: int, selection: Region):
     hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+    if not hmonitor:
+        return None
     desktop_duplication.display = [
         display for display
         in desktop_duplication.displays

@@ -39,36 +39,38 @@ CAPTURE_METHODS = OrderedDict({
         name="BitBlt",
         short_description="fast, issues with Hardware Acceleration and OpenGL",
         description=(
-            "A good default fast option. Allows recording background windows "
-            "(as long as they still decide to render in the background), "
-            "but it cannot properly record OpenGL or Hardware Accelerated Windows."
+            "\nA good default fast option. Allows recording background windows "
+            "\n(as long as they still decide to render in the background), "
+            "\nbut it cannot properly record OpenGL or Hardware Accelerated Windows. "
         ),
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description="Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
+        short_description=f"Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
         description=(
-            "Only available in recent Windows updates. Allows recording UWP apps "
-            "(hardware accelerated and fullscreen exclusives? To be tested). "
-            "Adds a yellow border around the recorded window."
+            "\nOnly available in recent Windows updates. Allows recording UWP apps "
+            "\n(hardware accelerated and fullscreen exclusives? To be tested). "
+            "\nAdds a yellow border around the recorded window. "
         ),
     ),
     CaptureMethod.DESKTOP_DUPLICATION: CaptureMethodInfo(
         name="Direct3D Desktop Duplication",
         short_description="very slow, bound to display, supports OpenGL and DirectX 11/12 exclusive fullscreen",
         description=(
-            "Duplicates the desktop using Direct3D. It can record OpenGL and Hardware Accelerated windows. "
-            "But it's about 10-15x slower than BitBlt, "
-            "overlapping windows will show up and can't record across displays."
+            "\nDuplicates the desktop using Direct3D. "
+            "\nIt can record OpenGL and Hardware Accelerated windows. "
+            "\nBut it's about 10-15x slower than BitBlt, "
+            "\noverlapping windows will show up and can't record across displays. "
         ),
     ),
     CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: CaptureMethodInfo(
         name="Force Full Content Rendering",
         short_description="very slow, can affect rendering pipeline",
         description=(
-            "Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the "
-            "entire desktop window. About 10-15x slower than BitBlt based on window size and can mess up some "
-            "applications' rendering pipelines."
+            "\nUses BitBlt behind the scene, but passes a special flag "
+            "\nto PrintWindow to force rendering the entire desktop window. "
+            "\nAbout 10-15x slower than BitBlt based on window size "
+            "\nand can mess up some applications' rendering pipelines. "
         ),
     ),
 })
