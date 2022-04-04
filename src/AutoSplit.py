@@ -7,35 +7,35 @@
 # - Externals
 # - Internals
 from __future__ import annotations
+
+import ctypes
+import os
+import signal
+import sys
+import traceback
 from collections.abc import Callable
+from time import time
 from types import FunctionType, TracebackType
 from typing import Optional
-
-import sys
-import os
-import ctypes
-import signal
-import traceback
-from time import time
 
 import certifi
 import cv2
 from PyQt6 import QtCore, QtGui, QtTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
-from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
+from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 from capture_windows import capture_region, set_ui_image
 from gen import about, design, settings, update_checker
-from hotkeys import send_command, after_setting_hotkey
-from menu_bar import get_default_settings_from_ui, open_about, VERSION, open_settings, view_help, check_for_updates, \
-    open_update_checker
-from screen_region import select_region, select_window, align_region, validate_before_parsing
-from user_profile import DEFAULT_PROFILE, FROZEN
+from hotkeys import after_setting_hotkey, send_command
+from menu_bar import (VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
+                      open_update_checker, view_help)
+from screen_region import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
+from user_profile import DEFAULT_PROFILE, FROZEN
 
 CREATE_NEW_ISSUE_MESSAGE = (
     "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
@@ -59,7 +59,7 @@ def make_excepthook(autosplit: AutoSplit):
     return excepthook
 
 
-class AutoSplit(QMainWindow, design.Ui_MainWindow):
+class AutoSplit(QMainWindow, design.Ui_main_window):
     myappid = f"Toufool.AutoSplit.v{VERSION}"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -220,7 +220,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.show()
 
-        # Needs to be after Ui_MainWindow.show() to be shown overtop
+        # Needs to be after Ui_main_window.show() to be shown overtop
         if self.action_check_for_updates_on_open.isChecked():
             check_for_updates(self, check_on_open=True)
 
@@ -758,8 +758,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if capture is None:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
-            # https://github.com/kaluluosi/pywin32-stubs/issues/7
-            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])  # type: ignore
+            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd

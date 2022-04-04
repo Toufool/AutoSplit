@@ -13,7 +13,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.markdownlint": true,
+    "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,
   "trailing-spaces.includeEmptyLines": true,
@@ -66,6 +66,8 @@
   "python.linting.flake8CategorySeverity.F": "Warning",
   // PEP8 Naming convention
   "python.linting.flake8CategorySeverity.N": "Warning",
+  // PYI
+  "python.linting.flake8CategorySeverity.Y": "Warning",
   // PyRight obsoletes mypy
   "python.linting.mypyEnabled": false,
   // Is already wrapped by Flake8, prospector and pylama

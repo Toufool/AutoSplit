@@ -16,17 +16,21 @@ aggressive = 3
 pythonPlatform = "Windows"
 typeCheckingMode = "strict"
 # Extra strict
-reportPropertyTypeMismatch=true
-reportUninitializedInstanceVariable=true
-reportCallInDefaultInitializer=true
-reportImplicitStringConcatenation=true
+reportImplicitStringConcatenation="error"
+reportCallInDefaultInitializer="error"
+reportMissingSuperCall="none" # False positives on base classes
+reportPropertyTypeMismatch="error"
+reportUninitializedInstanceVariable="error"
+reportUnnecessaryTypeIgnoreComment="error"
+reportUnusedCallResult="none"
 ignore = [
   # Auto generated
   "src/gen/",
   # We expect stub files to be incomplete or contain useless statements
   "typings/",
 ]
-reportMissingTypeStubs = "information"
+# Type stubs may not be completable
+reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
 # False positives with PyQt .connect. pylint(no-member) works instead
@@ -116,3 +120,7 @@ disable = [
 
 [tool.pylint.TYPECHECK]
 generated-members = "cv2"
+
+[tool.isort]
+line_length = 120
+combine_as_imports = true
