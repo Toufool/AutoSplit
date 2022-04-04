@@ -143,8 +143,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
             set_hotkey(autosplit, "pause", autosplit.settings_dict["pause_hotkey"])
 
     if autosplit.settings_dict["captured_window_title"]:
-        # https://github.com/kaluluosi/pywin32-stubs/issues/7
-        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])  # type: ignore
+        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
         if hwnd:
             autosplit.hwnd = hwnd
         else:
