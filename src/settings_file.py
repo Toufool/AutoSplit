@@ -27,7 +27,7 @@ class RestrictedUnpickler(pickle.Unpickler):
         raise pickle.UnpicklingError(f"'{module}.{name}' is forbidden")
 
 
-def get_save_settings_values(autosplit: AutoSplit):
+def get_save_settings_values(autosplit: AutoSplit) -> list[str | int]:
     return [
         autosplit.split_image_directory,
         autosplit.similarity_threshold_spinbox.value(),
@@ -146,14 +146,14 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     autosplit.force_print_window_checkbox.setChecked(settings[20])
 
     if autosplit.window_text:
-        # https://github.com/kaluluosi/pywin32-stubs/issues/7
-        hwnd = win32gui.FindWindow(None, autosplit.window_text)  # type: ignore
+        hwnd = win32gui.FindWindow(None, autosplit.window_text)
         if hwnd:
             autosplit.hwnd = hwnd
         else:
-            autosplit.live_image.setText("Reload settings after opening"
-                                         f'\n"{autosplit.window_text}"'
-                                         "\nto automatically load Live Capture")
+            autosplit.live_image.setText(
+                "Reload settings after opening"
+                + f'\n"{autosplit.window_text}"'
+                + "\nto automatically load Live Capture")
     return True
 
 
@@ -203,7 +203,7 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
-def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
+def set_check_for_updates_on_open(design_window: design.Ui_main_window, value: bool):
     """
     Sets the "Check For Updates On Open" QSettings value and the checkbox state
     """

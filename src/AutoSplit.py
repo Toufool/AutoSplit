@@ -59,7 +59,7 @@ def make_excepthook(main_window: AutoSplit):
     return excepthook
 
 
-class AutoSplit(QMainWindow, design.Ui_MainWindow):
+class AutoSplit(QMainWindow, design.Ui_main_window):
     myappid = f"Toufool.AutoSplit.v{VERSION}"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -224,7 +224,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.show()
 
-        # Needs to be after Ui_MainWindow.show() to be shown overtop
+        # Needs to be after Ui_main_window.show() to be shown overtop
         if self.action_check_for_updates_on_open.isChecked():
             check_for_updates(self, check_on_open=True)
 
@@ -796,8 +796,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if capture is None:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
-            # https://github.com/kaluluosi/pywin32-stubs/issues/7
-            hwnd = win32gui.FindWindow(None, self.window_text)  # type: ignore
+            hwnd = win32gui.FindWindow(None, self.window_text)
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd
