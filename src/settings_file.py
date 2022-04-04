@@ -146,8 +146,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     autosplit.force_print_window_checkbox.setChecked(settings[20])
 
     if autosplit.window_text:
-        # https://github.com/kaluluosi/pywin32-stubs/issues/7
-        hwnd = win32gui.FindWindow(None, autosplit.window_text)  # type: ignore
+        hwnd = win32gui.FindWindow(None, autosplit.window_text)
         if hwnd:
             autosplit.hwnd = hwnd
         else:

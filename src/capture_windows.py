@@ -45,8 +45,7 @@ def capture_region(hwnd: int, selection: Rect, print_window: bool):
     # If the window closes while it's being manipulated, it could cause a crash
     try:
         window_dc: int = win32gui.GetWindowDC(hwnd)
-        # https://github.com/kaluluosi/pywin32-stubs/issues/6
-        dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)  # type: ignore
+        dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
         if print_window:

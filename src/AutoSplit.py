@@ -796,8 +796,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if capture is None:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
-            # https://github.com/kaluluosi/pywin32-stubs/issues/7
-            hwnd = win32gui.FindWindow(None, self.window_text)  # type: ignore
+            hwnd = win32gui.FindWindow(None, self.window_text)
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd

@@ -15,13 +15,22 @@ aggressive = 3
 [tool.pyright]
 pythonPlatform = "Windows"
 typeCheckingMode = "strict"
+# Extra strict
+reportImplicitStringConcatenation="error"
+reportCallInDefaultInitializer="error"
+reportMissingSuperCall="none" # False positives on base classes
+reportPropertyTypeMismatch="error"
+reportUninitializedInstanceVariable="error"
+reportUnnecessaryTypeIgnoreComment="error"
+reportUnusedCallResult="none"
 ignore = [
   # Auto generated
   "src/gen/",
   # We expect stub files to be incomplete or contain useless statements as they're external
   "typings/",
 ]
-reportMissingTypeStubs = "information"
+# Type stubs may not be completable
+reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
 # PyQt .connect

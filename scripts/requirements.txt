@@ -26,8 +26,8 @@ requests
 bandit
 flake8
 flake8-quotes
-pylint
-pywin32-stubs
+pylint>=2.13
+git+https://github.com/Avasam/pywin32-stubs.git#egg=pywin32-stubs # https://github.com/kaluluosi/pywin32-stubs/pull/4
 simplejson
 types-simplejson>=3.17.2
 types-requests
