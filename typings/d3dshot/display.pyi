@@ -36,9 +36,6 @@ class Display:
             dxgi_adapter=...) -> None:
         ...
 
-    def __repr__(self) -> str:
-        ...
-
     def capture(self, process_func, region=...) -> None:
         ...
 

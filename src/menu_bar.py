@@ -210,7 +210,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "pause_hotkey": default_settings_dialog.pause_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "capture_method": get_capture_method_by_index(default_settings_dialog.capture_method_combobox.currentIndex()),
+        "capture_method": get_capture_method_by_index(0),
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
