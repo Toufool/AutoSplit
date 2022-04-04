@@ -1,6 +1,17 @@
-# Error messages
+"""Error messages"""
+import os
+import signal
+import sys
 import traceback
+
 from PyQt6 import QtCore, QtWidgets
+
+
+def __exit_program():
+    # stop main thread (which is probably blocked reading input) via an interrupt signal
+    # only available for windows in version 3.2 or higher
+    os.kill(os.getpid(), signal.SIGINT)
+    sys.exit(1)
 
 
 def set_text_message(message: str, details: str = ""):
@@ -9,7 +20,10 @@ def set_text_message(message: str, details: str = ""):
     message_box.setTextFormat(QtCore.Qt.TextFormat.RichText)
     message_box.setText(message)
     if details:
+        force_quit_button = message_box.addButton("Close AutoSplit", QtWidgets.QMessageBox.ButtonRole.ResetRole)
+        force_quit_button.clicked.connect(__exit_program)
         message_box.setDetailedText(details)
+        # Preopen the details
         for button in message_box.buttons():
             if message_box.buttonRole(button) == QtWidgets.QMessageBox.ButtonRole.ActionRole:
                 button.click()

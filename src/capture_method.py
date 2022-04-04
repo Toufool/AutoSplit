@@ -91,5 +91,5 @@ def get_capture_method_by_index(index: int):
 
 
 # Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD:
-    CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)  # Not yet implemented
+if int(version().split(".")[2]) < WCG_MIN_BUILD or True:  # TODO: Not yet implemented
+    CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)

@@ -497,18 +497,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self.settings_dict["loop_splits"]:
                 self.start_auto_splitter_signal.emit()
             else:
-                self.gui_changes_on_reset()
+                self.gui_changes_on_reset(True)
             return True
         return False
 
     def __auto_splitter(self):
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
-            self.gui_changes_on_reset()
+            self.gui_changes_on_reset(True)
             error_messages.split_hotkey()
             return
 
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
-            self.gui_changes_on_reset()
+            self.gui_changes_on_reset(True)
             return
 
         # Construct a list of images + loop count tuples.
@@ -592,7 +592,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 return
 
         # loop breaks to here when the last image splits
-        self.gui_changes_on_reset()
+        self.gui_changes_on_reset(True)
 
     def __similarity_threshold_loop(self, number_of_split_images: int, dummy_splits_array: list[bool]):
         """
@@ -711,7 +711,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         QApplication.processEvents()
 
-    def gui_changes_on_reset(self):
+    def gui_changes_on_reset(self, safe_to_reload_start_image: bool = False):
         self.start_auto_splitter_button.setText(START_AUTO_SPLITTER_TEXT)
         self.image_loop_value_label.setText("N/A")
         self.current_split_image.clear()
@@ -740,7 +740,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.skip_split_button.setEnabled(False)
 
         QApplication.processEvents()
-        self.load_start_image_signal[bool, bool].emit(False, False)
+        if safe_to_reload_start_image:
+            self.load_start_image_signal[bool, bool].emit(False, False)
 
     def __get_capture_for_comparison(self):
         """
