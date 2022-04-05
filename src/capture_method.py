@@ -1,20 +1,36 @@
-from typing import TypedDict
+import cv2
+from dataclasses import dataclass
 
 from platform import version
 from collections import OrderedDict
-from enum import Enum, unique
+from enum import Enum, EnumMeta, unique
+
+
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
-WCG_MIN_BUILD = 17134
+WCG_MIN_BUILD = 999999  # TODO: Change to 17134 once implemented
 
 
-class CaptureMethodInfo(TypedDict):
+@dataclass
+class DisplayCaptureMethodInfo():
     name: str
     short_description: str
     description: str
 
 
+class DisplayCaptureMethodMeta(EnumMeta):
+    # Allow checking if simple string is enum
+    def __contains__(cls, other: str):  # noqa:N805
+        try:
+            # pyright: reportGeneralTypeIssues=false
+            cls(other)  # pylint: disable=no-value-for-parameter
+        except ValueError:
+            return False
+        else:
+            return True
+
+
 @unique
-class CaptureMethod(Enum):
+class DisplayCaptureMethod(Enum, metaclass=DisplayCaptureMethodMeta):
     # Allow TOML to save as a simple string
     def __repr__(self):
         return self.value
@@ -34,8 +50,13 @@ class CaptureMethod(Enum):
     DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
 
 
-CAPTURE_METHODS = OrderedDict({
-    CaptureMethod.BITBLT: CaptureMethodInfo(
+class DisplayCaptureMethodDict(OrderedDict[DisplayCaptureMethod, DisplayCaptureMethodInfo]):
+    def get_method_by_index(self, index: int):
+        return list(self.keys())[index]
+
+
+DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
+    DisplayCaptureMethod.BITBLT: DisplayCaptureMethodInfo(
         name="BitBlt",
         short_description="fast, issues with Hardware Acceleration and OpenGL",
         description=(
@@ -44,7 +65,7 @@ CAPTURE_METHODS = OrderedDict({
             "\nbut it cannot properly record OpenGL or Hardware Accelerated Windows. "
         ),
     ),
-    CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
+    DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
         name="Windows Graphics Capture",
         short_description=f"Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
         description=(
@@ -53,7 +74,7 @@ CAPTURE_METHODS = OrderedDict({
             "\nAdds a yellow border around the recorded window. "
         ),
     ),
-    CaptureMethod.DESKTOP_DUPLICATION: CaptureMethodInfo(
+    DisplayCaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
         name="Direct3D Desktop Duplication",
         short_description="very slow, bound to display, supports OpenGL and DirectX 11/12 exclusive fullscreen",
         description=(
@@ -63,7 +84,7 @@ CAPTURE_METHODS = OrderedDict({
             "\noverlapping windows will show up and can't record across displays. "
         ),
     ),
-    CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: CaptureMethodInfo(
+    DisplayCaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: DisplayCaptureMethodInfo(
         name="Force Full Content Rendering",
         short_description="very slow, can affect rendering pipeline",
         description=(
@@ -76,20 +97,34 @@ CAPTURE_METHODS = OrderedDict({
 })
 
 
-def get_capture_method_index(capture_method: CaptureMethod):
-    """
-    Returns 0 if the capture_method is invalid or unsupported
-    """
-    try:
-        return list(CAPTURE_METHODS.keys()).index(capture_method)
-    except ValueError:
-        return 0
-
-
-def get_capture_method_by_index(index: int):
-    return list(CAPTURE_METHODS.keys())[index]
-
-
 # Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD or True:  # TODO: Not yet implemented
-    CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+if int(version().split(".")[2]) < WCG_MIN_BUILD:
+    DISPLAY_CAPTURE_METHODS.pop(DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+
+
+@dataclass
+class CameraInfo():
+    id: int
+    name: str
+    occupied: str
+
+
+def get_all_cameras():
+    index = 0
+    video_captures: list[CameraInfo] = []
+    while index < 8:
+        video_capture = cv2.VideoCapture(index)
+        video_capture.setExceptionMode(True)
+        try:
+            # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
+            print(video_capture.getBackendName())
+            video_capture.grab()
+        except cv2.error as error:
+            if error.code == cv2.Error.STS_ERROR:
+                video_captures.append(CameraInfo(index, f"Camera {index}", False))
+        else:
+            video_captures.append(CameraInfo(index, f"Camera {index}", True))
+
+        video_capture.release()
+        index += 1
+    return video_captures

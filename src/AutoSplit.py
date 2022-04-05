@@ -123,6 +123,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
     split_image: AutoSplitImage
+    camera: Optional[cv2.VideoCapture] = None
 
     def __init__(self, parent: Optional[QWidget] = None):  # pylint: disable=too-many-statements
         super().__init__(parent)
@@ -246,9 +247,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.live_image.clear()
             return
         # Set live image in UI
-        if self.hwnd:
-            capture = capture_region(self)
-            set_ui_image(self.live_image, capture, False)
+        # if self.hwnd:
+        capture = capture_region(self)
+        set_ui_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """

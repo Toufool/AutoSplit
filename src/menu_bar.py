@@ -1,5 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union, cast
+
+import cv2
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -14,7 +16,7 @@ from requests.exceptions import RequestException
 
 import error_messages
 import user_profile
-from capture_method import CAPTURE_METHODS, get_capture_method_by_index, get_capture_method_index
+from capture_method import DISPLAY_CAPTURE_METHODS, CameraInfo, DisplayCaptureMethod, get_all_cameras
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -98,6 +100,12 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
+    __camera_capture_methods: list[CameraInfo]
+    """
+    Used to temporarily store the existing cameras,
+    we don't want to call `get_all_cameras` agains and possibly have a different result
+    """
+
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
@@ -112,27 +120,63 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
+    def get_capture_method_by_current_index(self):
+        current_index = self.capture_method_combobox.currentIndex()
+        display_capture_methods_len = len(DISPLAY_CAPTURE_METHODS)
+        return self.__camera_capture_methods[current_index - display_capture_methods_len].name \
+            if current_index >= display_capture_methods_len \
+            else DISPLAY_CAPTURE_METHODS.get_method_by_index(current_index)
+
+    def get_capture_method_index(self, capture_method: Union[str, DisplayCaptureMethod]):
+        """
+        Returns 0 if the capture_method is invalid or unsupported
+        """
+        item_count = self.capture_method_combobox.count()
+        display_capture_methods_len = len(DISPLAY_CAPTURE_METHODS)
+        try:
+            return [camera.name for camera in self.__camera_capture_methods].index(cast(str, capture_method)) \
+                if item_count >= display_capture_methods_len \
+                else list(DISPLAY_CAPTURE_METHODS.keys()).index(cast(DisplayCaptureMethod, capture_method))
+        except ValueError:
+            return 0
+
+    def __capture_method_changed(self):
+        capture_method = self.get_capture_method_by_current_index()
+        if self.autosplit.camera:
+            self.autosplit.camera.release()
+            self.autosplit.camera = None
+        if capture_method not in DisplayCaptureMethod:
+            camera_index = self.capture_method_combobox.currentIndex() - len(DISPLAY_CAPTURE_METHODS)
+            camera_id = self.__camera_capture_methods[camera_index].id
+            self.autosplit.settings_dict["captured_window_title"] = cast(str, capture_method)
+            self.autosplit.camera = cv2.VideoCapture(camera_id)
+        return capture_method
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
 
-        # Build the Capture method combobox
-        capture_methods = [
-            f"- {method['name']} ({method['short_description']})"
-            for method in CAPTURE_METHODS.values()]
+# region Build the Capture method combobox
+        display_capture_methods = DISPLAY_CAPTURE_METHODS.values()
+        self.__camera_capture_methods = get_all_cameras()
+        capture_list_items = [
+            f"- {method.name} ({method.short_description})"
+            for method in display_capture_methods
+        ] + [f"* {camera.name}{'' if camera.occupied else ' (occupied)'}" for camera in self.__camera_capture_methods]
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
         # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        lines = (2 * len(capture_methods)) + 1
+        lines = (2 * len(display_capture_methods)) + 1 + len(self.__camera_capture_methods)
         list_view.setMinimumHeight((17 * lines) - 1)
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
-        self.capture_method_combobox.addItems(capture_methods)
+        self.capture_method_combobox.addItems(capture_list_items)
         self.capture_method_combobox.setToolTip("\n\n".join([
-            f"{method['name']} :\n{method['description']}"
-            for method in CAPTURE_METHODS.values()]))
+            f"{method.name} :\n{method.description}"
+            for method in display_capture_methods]))
+# endregion
 
 # region Set initial values
         # Hotkeys
@@ -146,7 +190,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            get_capture_method_index(autosplit.settings_dict["capture_method"]))
+            self.get_capture_method_index(autosplit.settings_dict["capture_method"]))
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
@@ -172,7 +216,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.live_capture_region_checkbox.isChecked()))
         self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
             "capture_method",
-            get_capture_method_by_index(self.capture_method_combobox.currentIndex())))
+            self.__capture_method_changed()))
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
@@ -210,13 +254,13 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "pause_hotkey": default_settings_dialog.pause_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "capture_method": get_capture_method_by_index(default_settings_dialog.capture_method_combobox.currentIndex()),
+        "capture_method": DISPLAY_CAPTURE_METHODS.get_method_by_index(
+            default_settings_dialog.capture_method_combobox.currentIndex()),
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
-
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "captured_window_title": "",
         "capture_region": {
@@ -224,7 +268,6 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
             "y": autosplit.y_spinbox.value(),
             "width": autosplit.width_spinbox.value(),
             "height": autosplit.height_spinbox.value(),
-        }
-    }
+        }}
     del temp_dialog
     return default_settings

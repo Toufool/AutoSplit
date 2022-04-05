@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, Union, cast
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -12,8 +12,8 @@ from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
 
 import error_messages
-from capture_method import get_capture_method_by_index
-from capture_windows import CaptureMethod, Region
+from capture_method import DISPLAY_CAPTURE_METHODS, DisplayCaptureMethod
+from capture_windows import Region
 from gen import design
 from hotkeys import set_hotkey
 
@@ -31,7 +31,7 @@ class UserProfileDict(TypedDict):
     pause_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    capture_method: CaptureMethod
+    capture_method: Union[str, DisplayCaptureMethod]
     default_comparison_method: int
     default_similarity_threshold: float
     default_delay_time: int
@@ -51,7 +51,7 @@ DEFAULT_PROFILE = UserProfileDict(
     pause_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    capture_method=get_capture_method_by_index(0),
+    capture_method=DISPLAY_CAPTURE_METHODS.get_method_by_index(0),
     default_comparison_method=0,
     default_similarity_threshold=0.95,
     default_delay_time=0,

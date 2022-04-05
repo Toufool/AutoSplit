@@ -18,9 +18,8 @@ import win32con
 import win32ui
 import pywintypes
 from win32 import win32gui
-from win32typing import PyCBitmap, PyCDC
 
-from capture_method import CaptureMethod
+from capture_method import DisplayCaptureMethod
 
 
 # This is an undocumented nFlag value for PrintWindow
@@ -41,14 +40,14 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
     # If the window closes while it's being manipulated, it could cause a crash
     try:
         window_dc: int = win32gui.GetWindowDC(hwnd)
-        dc_object: PyCDC = win32ui.CreateDCFromHandle(window_dc)
+        dc_object = win32ui.CreateDCFromHandle(window_dc)
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
         if render_full_content:
             ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
         compatible_dc = dc_object.CreateCompatibleDC()
-        bitmap: PyCBitmap = win32ui.CreateBitmap()
+        bitmap = win32ui.CreateBitmap()
         bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
         compatible_dc.SelectObject(bitmap)
         compatible_dc.BitBlt(
@@ -100,6 +99,17 @@ def __d3d_capture(hwnd: int, selection: Region):
 #     picker.pick_single_item_async()
 
 
+def __camera_capture(camera: Optional[cv2.VideoCapture], selection: Region):
+    if not camera:
+        return None
+    result, image = camera.read()
+    if not result:
+        return None
+    image = image[selection["x"]:selection["width"] + selection["x"],
+                  selection["y"]:selection["width"] + selection["y"]]
+    return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+
+
 def capture_region(autosplit: AutoSplit):
     """
     Captures an image of the region for a window matching the given
@@ -113,13 +123,16 @@ def capture_region(autosplit: AutoSplit):
     selection = autosplit.settings_dict["capture_region"]
     capture_method = autosplit.settings_dict["capture_method"]
 
-    # if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+    if capture_method not in DisplayCaptureMethod:
+        return __camera_capture(autosplit.camera, selection)
+
+    # if capture_method == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
     #     return __windows_graphics_capture(hwnd, selection, autosplit.effectiveWinId().__int__())
 
-    if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
+    if capture_method == DisplayCaptureMethod.DESKTOP_DUPLICATION:
         return __d3d_capture(hwnd, selection)
 
-    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
+    return __bit_blt_capture(hwnd, selection, capture_method == DisplayCaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):

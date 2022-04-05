@@ -125,7 +125,7 @@ def __get_window_from_point(x: int, y: int):
 
 def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
-    if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    if not check_selected_region_exists(autosplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -231,11 +231,15 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    elif not check_selected_region_exists(autosplit):
         error = error_messages.region
     if error and show_error:
         error()
     return not error
+
+
+def check_selected_region_exists(autosplit: AutoSplit):
+    return autosplit.camera or (autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):
