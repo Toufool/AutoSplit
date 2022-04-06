@@ -167,14 +167,14 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     autosplit.settings_dict["force_print_window"] = settings[20]
 
     if autosplit.settings_dict["captured_window_title"]:
-        # https://github.com/kaluluosi/pywin32-stubs/issues/7
-        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])  # type: ignore
+        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
         if hwnd:
             autosplit.hwnd = hwnd
         else:
-            autosplit.live_image.setText("Reload settings after opening"
-                                         + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
-                                         + "\nto automatically load Capture Region")
+            autosplit.live_image.setText(
+                "Reload settings after opening"
+                + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+                + "\nto automatically load Capture Region")
     return True
 
 
