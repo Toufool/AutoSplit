@@ -26,15 +26,15 @@ reportUnusedCallResult="none"
 ignore = [
   # Auto generated
   "src/gen/",
-  # We expect stub files to be incomplete or contain useless statements as they're external
+  # We expect stub files to be incomplete or contain useless statements
   "typings/",
 ]
 # Type stubs may not be completable
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# PyQt .connect
-reportFunctionMemberAccess = "information"
+# False positives with PyQt .connect. pylint(no-member) works instead
+reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"
 # Flake8 does a better job
@@ -46,7 +46,7 @@ reportUnknownMemberType = "none"
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
 [tool.pylint.REPORTS]
 # Just like default but any error will make drop to 9 or less
-evaluation = "10.0 - error - ((float(warning * 10 + refactor + convention) / statement) * 10)"
+evaluation = "10.0 - error - ((float((warning + convention) * 10 + refactor ) / statement) * 10)"
 [tool.pylint.MASTER]
 fail-under = 9.0
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
@@ -77,8 +77,8 @@ load-plugins = [
 ignore-paths = [
   # Auto generated
   "^src/gen/.*$",
-  # We expect stub files to be incomplete or contain useless statements as they're external
-  "^typings/.*$",
+  # We expect stub files to be incomplete or contain useless statements
+  "^.*\\.pyi$",
 ]
 # No need to mention the fixmes
 disable = ["fixme"]

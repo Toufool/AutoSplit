@@ -9,7 +9,7 @@ ignore=
   E402, ; Allow imports at the bottom of file
   Y026, ; Not using typing_extensions
 per-file-ignores=
-    ; ???
+    ; allow ... on same line as def
     ; ???
     ; Docstrings in type stubs
     ; Function bodys contain other than just ... (eg: raise)

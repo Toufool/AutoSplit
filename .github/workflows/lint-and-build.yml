@@ -64,7 +64,7 @@ jobs:
           pip install -r "scripts/requirements.txt"
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ job.name }}
-        run: pylint --reports=y --output-format=colorized $(git ls-files '**/*.py*')
+        run: pylint --reports=y --output-format=colorized $(git ls-files '**/*.py')
   Flake8:
     runs-on: windows-latest
     strategy:

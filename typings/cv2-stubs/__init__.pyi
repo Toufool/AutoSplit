@@ -3,7 +3,6 @@
 # Module: cv2.cv2, version: 4.4.0
 # https://github.com/microsoft/python-type-stubs/pull/112
 import typing
-import builtins as _mod_builtins
 import cv2 as _mod_cv2
 import numpy
 
@@ -29,7 +28,15 @@ AKAZE_DESCRIPTOR_MLDB: int
 AKAZE_DESCRIPTOR_MLDB_UPRIGHT: int
 
 
-def AKAZE_create(descriptor_type=..., descriptor_size=..., descriptor_channels=..., threshold=..., nOctaves=..., nOctaveLayers=..., diffusivity=...) -> typing.Any:
+def AKAZE_create(
+        descriptor_type=...,
+        descriptor_size=...,
+        descriptor_channels=...,
+        threshold=...,
+        nOctaves=...,
+        nOctaveLayers=...,
+        diffusivity=...
+) -> typing.Any:
     'AKAZE_create([, descriptor_type[, descriptor_size[, descriptor_channels[, threshold[, nOctaves[, nOctaveLayers[, diffusivity]]]]]]]) -> retval\n.   @brief The AKAZE constructor\n.   \n.       @param descriptor_type Type of the extracted descriptor: DESCRIPTOR_KAZE,\n.       DESCRIPTOR_KAZE_UPRIGHT, DESCRIPTOR_MLDB or DESCRIPTOR_MLDB_UPRIGHT.\n.       @param descriptor_size Size of the descriptor in bits. 0 -\\> Full size\n.       @param descriptor_channels Number of channels in the descriptor (1, 2, 3)\n.       @param threshold Detector response threshold to accept point\n.       @param nOctaves Maximum octave evolution of the image\n.       @param nOctaveLayers Default number of sublevels per scale level\n.       @param diffusivity Diffusivity type. DIFF_PM_G1, DIFF_PM_G2, DIFF_WEICKERT or\n.       DIFF_CHARBONNIER'
     ...
 
@@ -1009,7 +1016,15 @@ FORMATTER_FMT_PYTHON: int
 FarnebackOpticalFlow = _mod_cv2.FarnebackOpticalFlow
 
 
-def FarnebackOpticalFlow_create(numLevels=..., pyrScale=..., fastPyramids=..., winSize=..., numIters=..., polyN=..., polySigma=..., flags: int = ...) -> typing.Any:
+def FarnebackOpticalFlow_create(
+        numLevels=...,
+        pyrScale=...,
+        fastPyramids=...,
+        winSize=...,
+        numIters=...,
+        polyN=...,
+        polySigma=...,
+        flags: int = ...) -> typing.Any:
     'FarnebackOpticalFlow_create([, numLevels[, pyrScale[, fastPyramids[, winSize[, numIters[, polyN[, polySigma[, flags]]]]]]]]) -> retval\n.'
     ...
 
@@ -1087,7 +1102,13 @@ GEMM_3_T: int
 GFTTDetector = _mod_cv2.GFTTDetector
 
 
-def GFTTDetector_create(maxCorners=..., qualityLevel=..., minDistance=..., blockSize=..., useHarrisDetector=..., k=...) -> typing.Any:
+def GFTTDetector_create(
+        maxCorners=...,
+        qualityLevel=...,
+        minDistance=...,
+        blockSize=...,
+        useHarrisDetector=...,
+        k=...) -> typing.Any:
     'GFTTDetector_create([, maxCorners[, qualityLevel[, minDistance[, blockSize[, useHarrisDetector[, k]]]]]]) -> retval\n.   \n\n\n\nGFTTDetector_create(maxCorners, qualityLevel, minDistance, blockSize, gradiantSize[, useHarrisDetector[, k]]) -> retval\n.'
     ...
 
@@ -1135,12 +1156,30 @@ HOUGH_PROBABILISTIC: int
 HOUGH_STANDARD: int
 
 
-def HoughCircles(image: ndarray, method: int, dp, minDist, circles=..., param1=..., param2=..., minRadius=..., maxRadius=...) -> typing.Any:
+def HoughCircles(
+        image: ndarray,
+        method: int,
+        dp,
+        minDist,
+        circles=...,
+        param1=...,
+        param2=...,
+        minRadius=...,
+        maxRadius=...) -> typing.Any:
     'HoughCircles(image, method, dp, minDist[, circles[, param1[, param2[, minRadius[, maxRadius]]]]]) -> circles\n.   @brief Finds circles in a grayscale image using the Hough transform.\n.   \n.   The function finds circles in a grayscale image using a modification of the Hough transform.\n.   \n.   Example: :\n.   @include snippets/imgproc_HoughLinesCircles.cpp\n.   \n.   @note Usually the function detects the centers of circles well. However, it may fail to find correct\n.   radii. You can assist to the function by specifying the radius range ( minRadius and maxRadius ) if\n.   you know it. Or, in the case of #HOUGH_GRADIENT method you may set maxRadius to a negative number\n.   to return centers only without radius search, and find the correct radius using an additional procedure.\n.   \n.   It also helps to smooth image a bit unless it\'s already soft. For example,\n.   GaussianBlur() with 7x7 kernel and 1.5x1.5 sigma or similar blurring may help.\n.   \n.   @param image 8-bit, single-channel, grayscale input image.\n.   @param circles Output vector of found circles. Each vector is encoded as  3 or 4 element\n.   floating-point vector \\f$(x, y, radius)\\f$ or \\f$(x, y, radius, votes)\\f$ .\n.   @param method Detection method, see #HoughModes. The available methods are #HOUGH_GRADIENT and #HOUGH_GRADIENT_ALT.\n.   @param dp Inverse ratio of the accumulator resolution to the image resolution. For example, if\n.   dp=1 , the accumulator has the same resolution as the input image. If dp=2 , the accumulator has\n.   half as big width and height. For #HOUGH_GRADIENT_ALT the recommended value is dp=1.5,\n.   unless some small very circles need to be detected.\n.   @param minDist Minimum distance between the centers of the detected circles. If the parameter is\n.   too small, multiple neighbor circles may be falsely detected in addition to a true one. If it is\n.   too large, some circles may be missed.\n.   @param param1 First method-specific parameter. In case of #HOUGH_GRADIENT and #HOUGH_GRADIENT_ALT,\n.   it is the higher threshold of the two passed to the Canny edge detector (the lower one is twice smaller).\n.   Note that #HOUGH_GRADIENT_ALT uses #Scharr algorithm to compute image derivatives, so the threshold value\n.   shough normally be higher, such as 300 or normally exposed and contrasty images.\n.   @param param2 Second method-specific parameter. In case of #HOUGH_GRADIENT, it is the\n.   accumulator threshold for the circle centers at the detection stage. The smaller it is, the more\n.   false circles may be detected. Circles, corresponding to the larger accumulator values, will be\n.   returned first. In the case of #HOUGH_GRADIENT_ALT algorithm, this is the circle "perfectness" measure.\n.   The closer it to 1, the better shaped circles algorithm selects. In most cases 0.9 should be fine.\n.   If you want get better detection of small circles, you may decrease it to 0.85, 0.8 or even less.\n.   But then also try to limit the search range [minRadius, maxRadius] to avoid many false circles.\n.   @param minRadius Minimum circle radius.\n.   @param maxRadius Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, #HOUGH_GRADIENT returns\n.   centers without finding the radius. #HOUGH_GRADIENT_ALT always computes circle radiuses.\n.   \n.   @sa fitEllipse, minEnclosingCircle'
     ...
 
 
-def HoughLines(image: ndarray, rho, theta, threshold, lines=..., srn=..., stn=..., min_theta=..., max_theta=...) -> typing.Any:
+def HoughLines(
+        image: ndarray,
+        rho,
+        theta,
+        threshold,
+        lines=...,
+        srn=...,
+        stn=...,
+        min_theta=...,
+        max_theta=...) -> typing.Any:
     'HoughLines(image, rho, theta, threshold[, lines[, srn[, stn[, min_theta[, max_theta]]]]]) -> lines\n.   @brief Finds lines in a binary image using the standard Hough transform.\n.   \n.   The function implements the standard or standard multi-scale Hough transform algorithm for line\n.   detection. See <http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm> for a good explanation of Hough\n.   transform.\n.   \n.   @param image 8-bit, single-channel binary source image. The image may be modified by the function.\n.   @param lines Output vector of lines. Each line is represented by a 2 or 3 element vector\n.   \\f$(\\rho, \\theta)\\f$ or \\f$(\\rho, \\theta, \\textrm{votes})\\f$ . \\f$\\rho\\f$ is the distance from the coordinate origin \\f$(0,0)\\f$ (top-left corner of\n.   the image). \\f$\\theta\\f$ is the line rotation angle in radians (\n.   \\f$0 \\sim \\textrm{vertical line}, \\pi/2 \\sim \\textrm{horizontal line}\\f$ ).\n.   \\f$\\textrm{votes}\\f$ is the value of accumulator.\n.   @param rho Distance resolution of the accumulator in pixels.\n.   @param theta Angle resolution of the accumulator in radians.\n.   @param threshold Accumulator threshold parameter. Only those lines are returned that get enough\n.   votes ( \\f$>\\texttt{threshold}\\f$ ).\n.   @param srn For the multi-scale Hough transform, it is a divisor for the distance resolution rho .\n.   The coarse accumulator distance resolution is rho and the accurate accumulator resolution is\n.   rho/srn . If both srn=0 and stn=0 , the classical Hough transform is used. Otherwise, both these\n.   parameters should be positive.\n.   @param stn For the multi-scale Hough transform, it is a divisor for the distance resolution theta.\n.   @param min_theta For standard and multi-scale Hough transform, minimum angle to check for lines.\n.   Must fall between 0 and max_theta.\n.   @param max_theta For standard and multi-scale Hough transform, maximum angle to check for lines.\n.   Must fall between min_theta and CV_PI.'
     ...
 
@@ -1150,7 +1189,17 @@ def HoughLinesP(image: ndarray, rho, theta, threshold, lines=..., minLineLength=
     ...
 
 
-def HoughLinesPointSet(_point, lines_max, threshold, min_rho, max_rho, rho_step, min_theta, max_theta, theta_step, _lines=...) -> typing.Any:
+def HoughLinesPointSet(
+        _point,
+        lines_max,
+        threshold,
+        min_rho,
+        max_rho,
+        rho_step,
+        min_theta,
+        max_theta,
+        theta_step,
+        _lines=...) -> typing.Any:
     "HoughLinesPointSet(_point, lines_max, threshold, min_rho, max_rho, rho_step, min_theta, max_theta, theta_step[, _lines]) -> _lines\n.   @brief Finds lines in a set of points using the standard Hough transform.\n.   \n.   The function finds lines in a set of points using a modification of the Hough transform.\n.   @include snippets/imgproc_HoughLinesPointSet.cpp\n.   @param _point Input vector of points. Each vector must be encoded as a Point vector \\f$(x,y)\\f$. Type must be CV_32FC2 or CV_32SC2.\n.   @param _lines Output vector of found lines. Each vector is encoded as a vector<Vec3d> \\f$(votes, rho, theta)\\f$.\n.   The larger the value of 'votes', the higher the reliability of the Hough line.\n.   @param lines_max Max count of hough lines.\n.   @param threshold Accumulator threshold parameter. Only those lines are returned that get enough\n.   votes ( \\f$>\\texttt{threshold}\\f$ )\n.   @param min_rho Minimum Distance value of the accumulator in pixels.\n.   @param max_rho Maximum Distance value of the accumulator in pixels.\n.   @param rho_step Distance resolution of the accumulator in pixels.\n.   @param min_theta Minimum angle value of the accumulator in radians.\n.   @param max_theta Maximum angle value of the accumulator in radians.\n.   @param theta_step Angle resolution of the accumulator in radians."
     ...
 
@@ -1227,7 +1276,13 @@ KAZE_DIFF_PM_G2: int
 KAZE_DIFF_WEICKERT: int
 
 
-def KAZE_create(extended=..., upright=..., threshold=..., nOctaves=..., nOctaveLayers=..., diffusivity=...) -> typing.Any:
+def KAZE_create(
+        extended=...,
+        upright=...,
+        threshold=...,
+        nOctaves=...,
+        nOctaveLayers=...,
+        diffusivity=...) -> typing.Any:
     'KAZE_create([, extended[, upright[, threshold[, nOctaves[, nOctaveLayers[, diffusivity]]]]]]) -> retval\n.   @brief The KAZE constructor\n.   \n.       @param extended Set to enable extraction of extended (128-byte) descriptor.\n.       @param upright Set to enable use of upright descriptors (non rotation-invariant).\n.       @param threshold Detector response threshold to accept point\n.       @param nOctaves Maximum octave evolution of the image\n.       @param nOctaveLayers Default number of sublevels per scale level\n.       @param diffusivity Diffusivity type. DIFF_PM_G1, DIFF_PM_G2, DIFF_WEICKERT or\n.       DIFF_CHARBONNIER'
     ...
 
@@ -1304,7 +1359,16 @@ MOTION_TRANSLATION: int
 MSER = _mod_cv2.MSER
 
 
-def MSER_create(_delta=..., _min_area=..., _max_area=..., _max_variation=..., _min_diversity=..., _max_evolution=..., _area_threshold=..., _min_margin=..., _edge_blur_size=...) -> typing.Any:
+def MSER_create(
+        _delta=...,
+        _min_area=...,
+        _max_area=...,
+        _max_variation=...,
+        _min_diversity=...,
+        _max_evolution=...,
+        _area_threshold=...,
+        _min_margin=...,
+        _edge_blur_size=...) -> typing.Any:
     'MSER_create([, _delta[, _min_area[, _max_area[, _max_variation[, _min_diversity[, _max_evolution[, _area_threshold[, _min_margin[, _edge_blur_size]]]]]]]]]) -> retval\n.   @brief Full constructor for %MSER detector\n.   \n.       @param _delta it compares \\f$(size_{i}-size_{i-delta})/size_{i-delta}\\f$\n.       @param _min_area prune the area which smaller than minArea\n.       @param _max_area prune the area which bigger than maxArea\n.       @param _max_variation prune the area have similar size to its children\n.       @param _min_diversity for color image, trace back to cut off mser with diversity less than min_diversity\n.       @param _max_evolution  for color image, the evolution steps\n.       @param _area_threshold for color image, the area threshold to cause re-initialize\n.       @param _min_margin for color image, ignore too small margin\n.       @param _edge_blur_size for color image, the aperture size for edge blur'
     ...
 
@@ -1344,7 +1408,16 @@ ORB_FAST_SCORE: int
 ORB_HARRIS_SCORE: int
 
 
-def ORB_create(nfeatures=..., scaleFactor=..., nlevels=..., edgeThreshold=..., firstLevel=..., WTA_K=..., scoreType=..., patchSize=..., fastThreshold=...) -> typing.Any:
+def ORB_create(
+        nfeatures=...,
+        scaleFactor=...,
+        nlevels=...,
+        edgeThreshold=...,
+        firstLevel=...,
+        WTA_K=...,
+        scoreType=...,
+        patchSize=...,
+        fastThreshold=...) -> typing.Any:
     'ORB_create([, nfeatures[, scaleFactor[, nlevels[, edgeThreshold[, firstLevel[, WTA_K[, scoreType[, patchSize[, fastThreshold]]]]]]]]]) -> retval\n.   @brief The ORB constructor\n.   \n.       @param nfeatures The maximum number of features to retain.\n.       @param scaleFactor Pyramid decimation ratio, greater than 1. scaleFactor==2 means the classical\n.       pyramid, where each next level has 4x less pixels than the previous, but such a big scale factor\n.       will degrade feature matching scores dramatically. On the other hand, too close to 1 scale factor\n.       will mean that to cover certain scale range you will need more pyramid levels and so the speed\n.       will suffer.\n.       @param nlevels The number of pyramid levels. The smallest level will have linear size equal to\n.       input_image_linear_size/pow(scaleFactor, nlevels - firstLevel).\n.       @param edgeThreshold This is size of the border where the features are not detected. It should\n.       roughly match the patchSize parameter.\n.       @param firstLevel The level of pyramid to put source image to. Previous layers are filled\n.       with upscaled source image.\n.       @param WTA_K The number of points that produce each element of the oriented BRIEF descriptor. The\n.       default value 2 means the BRIEF where we take a random point pair and compare their brightnesses,\n.       so we get 0/1 response. Other possible values are 3 and 4. For example, 3 means that we take 3\n.       random points (of course, those point coordinates are random, but they are generated from the\n.       pre-defined seed, so each element of BRIEF descriptor is computed deterministically from the pixel\n.       rectangle), find point of maximum brightness and output index of the winner (0, 1 or 2). Such\n.       output will occupy 2 bits, and therefore it will need a special variant of Hamming distance,\n.       denoted as NORM_HAMMING2 (2 bits per bin). When WTA_K=4, we take 4 random points to compute each\n.       bin (that will also occupy 2 bits with possible values 0, 1, 2 or 3).\n.       @param scoreType The default HARRIS_SCORE means that Harris algorithm is used to rank features\n.       (the score is written to KeyPoint::score and is used to retain best nfeatures features);\n.       FAST_SCORE is alternative value of the parameter that produces slightly less stable keypoints,\n.       but it is a little faster to compute.\n.       @param patchSize size of the patch used by the oriented BRIEF descriptor. Of course, on smaller\n.       pyramid layers the perceived image area covered by a feature will be larger.\n.       @param fastThreshold the fast threshold'
     ...
 
@@ -1537,7 +1610,16 @@ def SimpleBlobDetector_create(parameters=...) -> typing.Any:
     ...
 
 
-def Sobel(src: ndarray, ddepth, dx, dy, dts: ndarray = ..., ksize=..., scale=..., delta=..., borderType=...) -> typing.Any:
+def Sobel(
+        src: ndarray,
+        ddepth,
+        dx,
+        dy,
+        dts: ndarray = ...,
+        ksize=...,
+        scale=...,
+        delta=...,
+        borderType=...) -> typing.Any:
     'Sobel(src, ddepth, dx, dy[, dst[, ksize[, scale[, delta[, borderType]]]]]) -> dst\n.   @brief Calculates the first, second, third, or mixed image derivatives using an extended Sobel operator.\n.   \n.   In all cases except one, the \\f$\\texttt{ksize} \\times \\texttt{ksize}\\f$ separable kernel is used to\n.   calculate the derivative. When \\f$\\texttt{ksize = 1}\\f$, the \\f$3 \\times 1\\f$ or \\f$1 \\times 3\\f$\n.   kernel is used (that is, no Gaussian smoothing is done). `ksize = 1` can only be used for the first\n.   or the second x- or y- derivatives.\n.   \n.   There is also the special value `ksize = #FILTER_SCHARR (-1)` that corresponds to the \\f$3\\times3\\f$ Scharr\n.   filter that may give more accurate results than the \\f$3\\times3\\f$ Sobel. The Scharr aperture is\n.   \n.   \\f[\\vecthreethree{-3}{0}{3}{-10}{0}{10}{-3}{0}{3}\\f]\n.   \n.   for the x-derivative, or transposed for the y-derivative.\n.   \n.   The function calculates an image derivative by convolving the image with the appropriate kernel:\n.   \n.   \\f[\\texttt{dst} =  \\frac{\\partial^{xorder+yorder} \\texttt{src}}{\\partial x^{xorder} \\partial y^{yorder}}\\f]\n.   \n.   The Sobel operators combine Gaussian smoothing and differentiation, so the result is more or less\n.   resistant to the noise. Most often, the function is called with ( xorder = 1, yorder = 0, ksize = 3)\n.   or ( xorder = 0, yorder = 1, ksize = 3) to calculate the first x- or y- image derivative. The first\n.   case corresponds to a kernel of:\n.   \n.   \\f[\\vecthreethree{-1}{0}{1}{-2}{0}{2}{-1}{0}{1}\\f]\n.   \n.   The second case corresponds to a kernel of:\n.   \n.   \\f[\\vecthreethree{-1}{-2}{-1}{0}{0}{0}{1}{2}{1}\\f]\n.   \n.   @param src input image.\n.   @param dst output image of the same size and the same number of channels as src .\n.   @param ddepth output image depth, see @ref filter_depths "combinations"; in the case of\n.       8-bit input images it will result in truncated derivatives.\n.   @param dx order of the derivative x.\n.   @param dy order of the derivative y.\n.   @param ksize size of the extended Sobel kernel; it must be 1, 3, 5, or 7.\n.   @param scale optional scale factor for the computed derivative values; by default, no scaling is\n.   applied (see #getDerivKernels for details).\n.   @param delta optional delta value that is added to the results prior to storing them in dst.\n.   @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @sa  Scharr, Laplacian, sepFilter2D, filter2D, GaussianBlur, cartToPolar'
     ...
 
@@ -1550,7 +1632,12 @@ SparseOpticalFlow = _mod_cv2.SparseOpticalFlow
 SparsePyrLKOpticalFlow = _mod_cv2.SparsePyrLKOpticalFlow
 
 
-def SparsePyrLKOpticalFlow_create(winSize=..., maxLevel=..., crit=..., flags: int = ..., minEigThreshold=...) -> typing.Any:
+def SparsePyrLKOpticalFlow_create(
+        winSize=...,
+        maxLevel=...,
+        crit=...,
+        flags: int = ...,
+        minEigThreshold=...) -> typing.Any:
     'SparsePyrLKOpticalFlow_create([, winSize[, maxLevel[, crit[, flags[, minEigThreshold]]]]]) -> retval\n.'
     ...
 
@@ -1575,7 +1662,18 @@ StereoSGBM_MODE_SGBM: int
 StereoSGBM_MODE_SGBM_3WAY: int
 
 
-def StereoSGBM_create(minDisparity=..., numDisparities=..., blockSize=..., P1=..., P2=..., disp12MaxDiff=..., preFilterCap=..., uniquenessRatio=..., speckleWindowSize=..., speckleRange=..., mode=...) -> typing.Any:
+def StereoSGBM_create(
+        minDisparity=...,
+        numDisparities=...,
+        blockSize=...,
+        P1=...,
+        P2=...,
+        disp12MaxDiff=...,
+        preFilterCap=...,
+        uniquenessRatio=...,
+        speckleWindowSize=...,
+        speckleRange=...,
+        mode=...) -> typing.Any:
     'StereoSGBM_create([, minDisparity[, numDisparities[, blockSize[, P1[, P2[, disp12MaxDiff[, preFilterCap[, uniquenessRatio[, speckleWindowSize[, speckleRange[, mode]]]]]]]]]]]) -> retval\n.   @brief Creates StereoSGBM object\n.   \n.       @param minDisparity Minimum possible disparity value. Normally, it is zero but sometimes\n.       rectification algorithms can shift images, so this parameter needs to be adjusted accordingly.\n.       @param numDisparities Maximum disparity minus minimum disparity. The value is always greater than\n.       zero. In the current implementation, this parameter must be divisible by 16.\n.       @param blockSize Matched block size. It must be an odd number \\>=1 . Normally, it should be\n.       somewhere in the 3..11 range.\n.       @param P1 The first parameter controlling the disparity smoothness. See below.\n.       @param P2 The second parameter controlling the disparity smoothness. The larger the values are,\n.       the smoother the disparity is. P1 is the penalty on the disparity change by plus or minus 1\n.       between neighbor pixels. P2 is the penalty on the disparity change by more than 1 between neighbor\n.       pixels. The algorithm requires P2 \\> P1 . See stereo_match.cpp sample where some reasonably good\n.       P1 and P2 values are shown (like 8\\*number_of_image_channels\\*blockSize\\*blockSize and\n.       32\\*number_of_image_channels\\*blockSize\\*blockSize , respectively).\n.       @param disp12MaxDiff Maximum allowed difference (in integer pixel units) in the left-right\n.       disparity check. Set it to a non-positive value to disable the check.\n.       @param preFilterCap Truncation value for the prefiltered image pixels. The algorithm first\n.       computes x-derivative at each pixel and clips its value by [-preFilterCap, preFilterCap] interval.\n.       The result values are passed to the Birchfield-Tomasi pixel cost function.\n.       @param uniquenessRatio Margin in percentage by which the best (minimum) computed cost function\n.       value should "win" the second best value to consider the found match correct. Normally, a value\n.       within the 5-15 range is good enough.\n.       @param speckleWindowSize Maximum size of smooth disparity regions to consider their noise speckles\n.       and invalidate. Set it to 0 to disable speckle filtering. Otherwise, set it somewhere in the\n.       50-200 range.\n.       @param speckleRange Maximum disparity variation within each connected component. If you do speckle\n.       filtering, set the parameter to a positive value, it will be implicitly multiplied by 16.\n.       Normally, 1 or 2 is good enough.\n.       @param mode Set it to StereoSGBM::MODE_HH to run the full-scale two-pass dynamic programming\n.       algorithm. It will consume O(W\\*H\\*numDisparities) bytes, which is large for 640x480 stereo and\n.       huge for HD-size pictures. By default, it is set to false .\n.   \n.       The first constructor initializes StereoSGBM with all the default parameters. So, you only have to\n.       set StereoSGBM::numDisparities at minimum. The second constructor enables you to set each parameter\n.       to a custom value.'
     ...
 
@@ -1817,7 +1915,14 @@ def accumulateWeighted(src: ndarray, dts: ndarray, alpha, mask: ndarray = ...) -
     ...
 
 
-def adaptiveThreshold(src: ndarray, maxValue, adaptiveMethod, thresholdType, blockSize, C, dts: ndarray = ...) -> typing.Any:
+def adaptiveThreshold(
+        src: ndarray,
+        maxValue,
+        adaptiveMethod,
+        thresholdType,
+        blockSize,
+        C,
+        dts: ndarray = ...) -> typing.Any:
     'adaptiveThreshold(src, maxValue, adaptiveMethod, thresholdType, blockSize, C[, dst]) -> dst\n.   @brief Applies an adaptive threshold to an array.\n.   \n.   The function transforms a grayscale image to a binary image according to the formulae:\n.   -   **THRESH_BINARY**\n.       \\f[dst(x,y) =  \\fork{\\texttt{maxValue}}{if \\(src(x,y) > T(x,y)\\)}{0}{otherwise}\\f]\n.   -   **THRESH_BINARY_INV**\n.       \\f[dst(x,y) =  \\fork{0}{if \\(src(x,y) > T(x,y)\\)}{\\texttt{maxValue}}{otherwise}\\f]\n.   where \\f$T(x,y)\\f$ is a threshold calculated individually for each pixel (see adaptiveMethod parameter).\n.   \n.   The function can process the image in-place.\n.   \n.   @param src Source 8-bit single-channel image.\n.   @param dst Destination image of the same size and the same type as src.\n.   @param maxValue Non-zero value assigned to the pixels for which the condition is satisfied\n.   @param adaptiveMethod Adaptive thresholding algorithm to use, see #AdaptiveThresholdTypes.\n.   The #BORDER_REPLICATE | #BORDER_ISOLATED is used to process boundaries.\n.   @param thresholdType Thresholding type that must be either #THRESH_BINARY or #THRESH_BINARY_INV,\n.   see #ThresholdTypes.\n.   @param blockSize Size of a pixel neighborhood that is used to calculate a threshold value for the\n.   pixel: 3, 5, 7, and so on.\n.   @param C Constant subtracted from the mean or weighted mean (see the details below). Normally, it\n.   is positive but may be zero or negative as well.\n.   \n.   @sa  threshold, blur, GaussianBlur'
     ...
 
@@ -1827,7 +1932,16 @@ def add(src1: ndarray, src2: ndarray, dts: ndarray = ..., mask: ndarray = ..., d
     ...
 
 
-def addText(img: ndarray, text, org, nameFont, pointSize=..., color=..., weight=..., style=..., spacing=...) -> typing.Any:
+def addText(
+        img: ndarray,
+        text,
+        org,
+        nameFont,
+        pointSize=...,
+        color=...,
+        weight=...,
+        style=...,
+        spacing=...) -> typing.Any:
     'addText(img, text, org, nameFont[, pointSize[, color[, weight[, style[, spacing]]]]]) -> None\n.   @brief Draws a text on the image.\n.   \n.   @param img 8-bit 3-channel image where the text should be drawn.\n.   @param text Text to write on an image.\n.   @param org Point(x,y) where the text should start on an image.\n.   @param nameFont Name of the font. The name should match the name of a system font (such as\n.   *Times*). If the font is not found, a default one is used.\n.   @param pointSize Size of the font. If not specified, equal zero or negative, the point size of the\n.   font is set to a system-dependent default value. Generally, this is 12 points.\n.   @param color Color of the font in BGRA where A = 255 is fully transparent.\n.   @param weight Font weight. Available operation flags are : cv::QtFontWeights You can also specify a positive integer for better control.\n.   @param style Font style. Available operation flags are : cv::QtFontStyles\n.   @param spacing Spacing between characters. It can be negative or positive.'
     ...
 
@@ -1857,7 +1971,17 @@ def arrowedLine(img: ndarray, pt1, pt2, color, thickness=..., line_type=..., shi
     ...
 
 
-def batchDistance(src1: ndarray, src2: ndarray, dtype, dist=..., nidx=..., normType: int = ..., K=..., mask: ndarray = ..., update=..., crosscheck=...) -> typing.Any:
+def batchDistance(
+        src1: ndarray,
+        src2: ndarray,
+        dtype,
+        dist=...,
+        nidx=...,
+        normType: int = ...,
+        K=...,
+        mask: ndarray = ...,
+        update=...,
+        crosscheck=...) -> typing.Any:
     'batchDistance(src1, src2, dtype[, dist[, nidx[, normType[, K[, mask[, update[, crosscheck]]]]]]]) -> dist, nidx\n.   @brief naive nearest neighbor finder\n.   \n.   see http://en.wikipedia.org/wiki/Nearest_neighbor_search\n.   @todo document'
     ...
 
@@ -1912,12 +2036,26 @@ def boxPoints(box, points=...) -> typing.Any:
     ...
 
 
-def buildOpticalFlowPyramid(img: ndarray, winSize, maxLevel, pyramid=..., withDerivatives=..., pyrBorder=..., derivBorder=..., tryReuseInputImage=...) -> typing.Any:
+def buildOpticalFlowPyramid(
+        img: ndarray,
+        winSize,
+        maxLevel,
+        pyramid=...,
+        withDerivatives=...,
+        pyrBorder=...,
+        derivBorder=...,
+        tryReuseInputImage=...) -> typing.Any:
     'buildOpticalFlowPyramid(img, winSize, maxLevel[, pyramid[, withDerivatives[, pyrBorder[, derivBorder[, tryReuseInputImage]]]]]) -> retval, pyramid\n.   @brief Constructs the image pyramid which can be passed to calcOpticalFlowPyrLK.\n.   \n.   @param img 8-bit input image.\n.   @param pyramid output pyramid.\n.   @param winSize window size of optical flow algorithm. Must be not less than winSize argument of\n.   calcOpticalFlowPyrLK. It is needed to calculate required padding for pyramid levels.\n.   @param maxLevel 0-based maximal pyramid level number.\n.   @param withDerivatives set to precompute gradients for the every pyramid level. If pyramid is\n.   constructed without the gradients then calcOpticalFlowPyrLK will calculate them internally.\n.   @param pyrBorder the border mode for pyramid layers.\n.   @param derivBorder the border mode for gradients.\n.   @param tryReuseInputImage put ROI of input image into the pyramid if possible. You can pass false\n.   to force data copying.\n.   @return number of levels in constructed pyramid. Can be less than maxLevel.'
     ...
 
 
-def calcBackProject(images: typing.List[ndarray], channels: typing.List[int], hist, ranges: typing.List[int], scale, dts: ndarray = ...) -> typing.Any:
+def calcBackProject(
+        images: typing.List[ndarray],
+        channels: typing.List[int],
+        hist,
+        ranges: typing.List[int],
+        scale,
+        dts: ndarray = ...) -> typing.Any:
     'calcBackProject(images, channels, hist, ranges, scale[, dst]) -> dst\n.   @overload'
     ...
 
@@ -1927,42 +2065,124 @@ def calcCovarMatrix(samples, mean, flags: int, covar=..., ctype=...) -> typing.A
     ...
 
 
-def calcHist(images: typing.List[ndarray], channels: typing.List[int], mask: typing.Optional[ndarray], histSize: typing.List[int], ranges: typing.List[int], hist=..., accumulate=...) -> ndarray:
+def calcHist(
+        images: typing.List[ndarray],
+        channels: typing.List[int],
+        mask: typing.Optional[ndarray],
+        histSize: typing.List[int],
+        ranges: typing.List[int],
+        hist=...,
+        accumulate=...) -> ndarray:
     'calcHist(images, channels, mask, histSize, ranges[, hist[, accumulate]]) -> hist\n.   @overload'
     ...
 
 
-def calcOpticalFlowFarneback(prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags: int) -> typing.Any:
+def calcOpticalFlowFarneback(
+        prev,
+        next,
+        flow,
+        pyr_scale,
+        levels,
+        winsize,
+        iterations,
+        poly_n,
+        poly_sigma,
+        flags: int) -> typing.Any:
     "calcOpticalFlowFarneback(prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags) -> flow\n.   @brief Computes a dense optical flow using the Gunnar Farneback's algorithm.\n.   \n.   @param prev first 8-bit single-channel input image.\n.   @param next second input image of the same size and the same type as prev.\n.   @param flow computed flow image that has the same size as prev and type CV_32FC2.\n.   @param pyr_scale parameter, specifying the image scale (\\<1) to build pyramids for each image;\n.   pyr_scale=0.5 means a classical pyramid, where each next layer is twice smaller than the previous\n.   one.\n.   @param levels number of pyramid layers including the initial image; levels=1 means that no extra\n.   layers are created and only the original images are used.\n.   @param winsize averaging window size; larger values increase the algorithm robustness to image\n.   noise and give more chances for fast motion detection, but yield more blurred motion field.\n.   @param iterations number of iterations the algorithm does at each pyramid level.\n.   @param poly_n size of the pixel neighborhood used to find polynomial expansion in each pixel;\n.   larger values mean that the image will be approximated with smoother surfaces, yielding more\n.   robust algorithm and more blurred motion field, typically poly_n =5 or 7.\n.   @param poly_sigma standard deviation of the Gaussian that is used to smooth derivatives used as a\n.   basis for the polynomial expansion; for poly_n=5, you can set poly_sigma=1.1, for poly_n=7, a\n.   good value would be poly_sigma=1.5.\n.   @param flags operation flags that can be a combination of the following:\n.    -   **OPTFLOW_USE_INITIAL_FLOW** uses the input flow as an initial flow approximation.\n.    -   **OPTFLOW_FARNEBACK_GAUSSIAN** uses the Gaussian \\f$\\texttt{winsize}\\times\\texttt{winsize}\\f$\n.        filter instead of a box filter of the same size for optical flow estimation; usually, this\n.        option gives z more accurate flow than with a box filter, at the cost of lower speed;\n.        normally, winsize for a Gaussian window should be set to a larger value to achieve the same\n.        level of robustness.\n.   \n.   The function finds an optical flow for each prev pixel using the @cite Farneback2003 algorithm so that\n.   \n.   \\f[\\texttt{prev} (y,x)  \\sim \\texttt{next} ( y + \\texttt{flow} (y,x)[1],  x + \\texttt{flow} (y,x)[0])\\f]\n.   \n.   @note\n.   \n.   -   An example using the optical flow algorithm described by Gunnar Farneback can be found at\n.       opencv_source_code/samples/cpp/fback.cpp\n.   -   (Python) An example using the optical flow algorithm described by Gunnar Farneback can be\n.       found at opencv_source_code/samples/python/opt_flow.py"
     ...
 
 
-def calcOpticalFlowPyrLK(prevImg, nextImg, prevPts, nextPts, status=..., err=..., winSize=..., maxLevel=..., criteria=..., flags: int = ..., minEigThreshold=...) -> typing.Any:
+def calcOpticalFlowPyrLK(
+        prevImg,
+        nextImg,
+        prevPts,
+        nextPts,
+        status=...,
+        err=...,
+        winSize=...,
+        maxLevel=...,
+        criteria=...,
+        flags: int = ...,
+        minEigThreshold=...) -> typing.Any:
     "calcOpticalFlowPyrLK(prevImg, nextImg, prevPts, nextPts[, status[, err[, winSize[, maxLevel[, criteria[, flags[, minEigThreshold]]]]]]]) -> nextPts, status, err\n.   @brief Calculates an optical flow for a sparse feature set using the iterative Lucas-Kanade method with\n.   pyramids.\n.   \n.   @param prevImg first 8-bit input image or pyramid constructed by buildOpticalFlowPyramid.\n.   @param nextImg second input image or pyramid of the same size and the same type as prevImg.\n.   @param prevPts vector of 2D points for which the flow needs to be found; point coordinates must be\n.   single-precision floating-point numbers.\n.   @param nextPts output vector of 2D points (with single-precision floating-point coordinates)\n.   containing the calculated new positions of input features in the second image; when\n.   OPTFLOW_USE_INITIAL_FLOW flag is passed, the vector must have the same size as in the input.\n.   @param status output status vector (of unsigned chars); each element of the vector is set to 1 if\n.   the flow for the corresponding features has been found, otherwise, it is set to 0.\n.   @param err output vector of errors; each element of the vector is set to an error for the\n.   corresponding feature, type of the error measure can be set in flags parameter; if the flow wasn't\n.   found then the error is not defined (use the status parameter to find such cases).\n.   @param winSize size of the search window at each pyramid level.\n.   @param maxLevel 0-based maximal pyramid level number; if set to 0, pyramids are not used (single\n.   level), if set to 1, two levels are used, and so on; if pyramids are passed to input then\n.   algorithm will use as many levels as pyramids have but no more than maxLevel.\n.   @param criteria parameter, specifying the termination criteria of the iterative search algorithm\n.   (after the specified maximum number of iterations criteria.maxCount or when the search window\n.   moves by less than criteria.epsilon.\n.   @param flags operation flags:\n.    -   **OPTFLOW_USE_INITIAL_FLOW** uses initial estimations, stored in nextPts; if the flag is\n.        not set, then prevPts is copied to nextPts and is considered the initial estimate.\n.    -   **OPTFLOW_LK_GET_MIN_EIGENVALS** use minimum eigen values as an error measure (see\n.        minEigThreshold description); if the flag is not set, then L1 distance between patches\n.        around the original and a moved point, divided by number of pixels in a window, is used as a\n.        error measure.\n.   @param minEigThreshold the algorithm calculates the minimum eigen value of a 2x2 normal matrix of\n.   optical flow equations (this matrix is called a spatial gradient matrix in @cite Bouguet00), divided\n.   by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding\n.   feature is filtered out and its flow is not processed, so it allows to remove bad points and get a\n.   performance boost.\n.   \n.   The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See\n.   @cite Bouguet00 . The function is parallelized with the TBB library.\n.   \n.   @note\n.   \n.   -   An example using the Lucas-Kanade optical flow algorithm can be found at\n.       opencv_source_code/samples/cpp/lkdemo.cpp\n.   -   (Python) An example using the Lucas-Kanade optical flow algorithm can be found at\n.       opencv_source_code/samples/python/lk_track.py\n.   -   (Python) An example using the Lucas-Kanade tracker for homography matching can be found at\n.       opencv_source_code/samples/python/lk_homography.py"
     ...
 
 
-def calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs=..., tvecs=..., flags: int = ..., criteria=...) -> typing.Any:
+def calibrateCamera(
+        objectPoints,
+        imagePoints,
+        imageSize,
+        cameraMatrix,
+        distCoeffs,
+        rvecs=...,
+        tvecs=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     'calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs[, rvecs[, tvecs[, flags[, criteria]]]]) -> retval, cameraMatrix, distCoeffs, rvecs, tvecs\n.   @overload'
     ...
 
 
-def calibrateCameraExtended(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs=..., tvecs=..., stdDeviationsIntrinsics=..., stdDeviationsExtrinsics=..., perViewErrors=..., flags: int = ..., criteria=...) -> typing.Any:
+def calibrateCameraExtended(
+        objectPoints,
+        imagePoints,
+        imageSize,
+        cameraMatrix,
+        distCoeffs,
+        rvecs=...,
+        tvecs=...,
+        stdDeviationsIntrinsics=...,
+        stdDeviationsExtrinsics=...,
+        perViewErrors=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     "calibrateCameraExtended(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs[, rvecs[, tvecs[, stdDeviationsIntrinsics[, stdDeviationsExtrinsics[, perViewErrors[, flags[, criteria]]]]]]]) -> retval, cameraMatrix, distCoeffs, rvecs, tvecs, stdDeviationsIntrinsics, stdDeviationsExtrinsics, perViewErrors\n.   @brief Finds the camera intrinsic and extrinsic parameters from several views of a calibration\n.   pattern.\n.   \n.   @param objectPoints In the new interface it is a vector of vectors of calibration pattern points in\n.   the calibration pattern coordinate space (e.g. std::vector<std::vector<cv::Vec3f>>). The outer\n.   vector contains as many elements as the number of pattern views. If the same calibration pattern\n.   is shown in each view and it is fully visible, all the vectors will be the same. Although, it is\n.   possible to use partially occluded patterns or even different patterns in different views. Then,\n.   the vectors will be different. Although the points are 3D, they all lie in the calibration pattern's\n.   XY coordinate plane (thus 0 in the Z-coordinate), if the used calibration pattern is a planar rig.\n.   In the old interface all the vectors of object points from different views are concatenated\n.   together.\n.   @param imagePoints In the new interface it is a vector of vectors of the projections of calibration\n.   pattern points (e.g. std::vector<std::vector<cv::Vec2f>>). imagePoints.size() and\n.   objectPoints.size(), and imagePoints[i].size() and objectPoints[i].size() for each i, must be equal,\n.   respectively. In the old interface all the vectors of object points from different views are\n.   concatenated together.\n.   @param imageSize Size of the image used only to initialize the intrinsic camera matrix.\n.   @param cameraMatrix Input/output 3x3 floating-point camera matrix\n.   \\f$A = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ . If CV\\_CALIB\\_USE\\_INTRINSIC\\_GUESS\n.   and/or CALIB_FIX_ASPECT_RATIO are specified, some or all of fx, fy, cx, cy must be\n.   initialized before calling the function.\n.   @param distCoeffs Input/output vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements.\n.   @param rvecs Output vector of rotation vectors (@ref Rodrigues ) estimated for each pattern view\n.   (e.g. std::vector<cv::Mat>>). That is, each i-th rotation vector together with the corresponding\n.   i-th translation vector (see the next output parameter description) brings the calibration pattern\n.   from the object coordinate space (in which object points are specified) to the camera coordinate\n.   space. In more technical terms, the tuple of the i-th rotation and translation vector performs\n.   a change of basis from object coordinate space to camera coordinate space. Due to its duality, this\n.   tuple is equivalent to the position of the calibration pattern with respect to the camera coordinate\n.   space.\n.   @param tvecs Output vector of translation vectors estimated for each pattern view, see parameter\n.   describtion above.\n.   @param stdDeviationsIntrinsics Output vector of standard deviations estimated for intrinsic\n.   parameters. Order of deviations values:\n.   \\f$(f_x, f_y, c_x, c_y, k_1, k_2, p_1, p_2, k_3, k_4, k_5, k_6 , s_1, s_2, s_3,\n.    s_4, \\tau_x, \\tau_y)\\f$ If one of parameters is not estimated, it's deviation is equals to zero.\n.   @param stdDeviationsExtrinsics Output vector of standard deviations estimated for extrinsic\n.   parameters. Order of deviations values: \\f$(R_0, T_0, \\dotsc , R_{M - 1}, T_{M - 1})\\f$ where M is\n.   the number of pattern views. \\f$R_i, T_i\\f$ are concatenated 1x3 vectors.\n.    @param perViewErrors Output vector of the RMS re-projection error estimated for each pattern view.\n.   @param flags Different flags that may be zero or a combination of the following values:\n.   -   **CALIB_USE_INTRINSIC_GUESS** cameraMatrix contains valid initial values of\n.   fx, fy, cx, cy that are optimized further. Otherwise, (cx, cy) is initially set to the image\n.   center ( imageSize is used), and focal distances are computed in a least-squares fashion.\n.   Note, that if intrinsic parameters are known, there is no need to use this function just to\n.   estimate extrinsic parameters. Use solvePnP instead.\n.   -   **CALIB_FIX_PRINCIPAL_POINT** The principal point is not changed during the global\n.   optimization. It stays at the center or at a different location specified when\n.   CALIB_USE_INTRINSIC_GUESS is set too.\n.   -   **CALIB_FIX_ASPECT_RATIO** The functions consider only fy as a free parameter. The\n.   ratio fx/fy stays the same as in the input cameraMatrix . When\n.   CALIB_USE_INTRINSIC_GUESS is not set, the actual input values of fx and fy are\n.   ignored, only their ratio is computed and used further.\n.   -   **CALIB_ZERO_TANGENT_DIST** Tangential distortion coefficients \\f$(p_1, p_2)\\f$ are set\n.   to zeros and stay zero.\n.   -   **CALIB_FIX_K1,...,CALIB_FIX_K6** The corresponding radial distortion\n.   coefficient is not changed during the optimization. If CALIB_USE_INTRINSIC_GUESS is\n.   set, the coefficient from the supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   -   **CALIB_RATIONAL_MODEL** Coefficients k4, k5, and k6 are enabled. To provide the\n.   backward compatibility, this extra flag should be explicitly specified to make the\n.   calibration function use the rational model and return 8 coefficients. If the flag is not\n.   set, the function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_THIN_PRISM_MODEL** Coefficients s1, s2, s3 and s4 are enabled. To provide the\n.   backward compatibility, this extra flag should be explicitly specified to make the\n.   calibration function use the thin prism model and return 12 coefficients. If the flag is not\n.   set, the function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_FIX_S1_S2_S3_S4** The thin prism distortion coefficients are not changed during\n.   the optimization. If CALIB_USE_INTRINSIC_GUESS is set, the coefficient from the\n.   supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   -   **CALIB_TILTED_MODEL** Coefficients tauX and tauY are enabled. To provide the\n.   backward compatibility, this extra flag should be explicitly specified to make the\n.   calibration function use the tilted sensor model and return 14 coefficients. If the flag is not\n.   set, the function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_FIX_TAUX_TAUY** The coefficients of the tilted sensor model are not changed during\n.   the optimization. If CALIB_USE_INTRINSIC_GUESS is set, the coefficient from the\n.   supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   @param criteria Termination criteria for the iterative optimization algorithm.\n.   \n.   @return the overall RMS re-projection error.\n.   \n.   The function estimates the intrinsic camera parameters and extrinsic parameters for each of the\n.   views. The algorithm is based on @cite Zhang2000 and @cite BouguetMCT . The coordinates of 3D object\n.   points and their corresponding 2D projections in each view must be specified. That may be achieved\n.   by using an object with known geometry and easily detectable feature points. Such an object is\n.   called a calibration rig or calibration pattern, and OpenCV has built-in support for a chessboard as\n.   a calibration rig (see @ref findChessboardCorners). Currently, initialization of intrinsic\n.   parameters (when CALIB_USE_INTRINSIC_GUESS is not set) is only implemented for planar calibration\n.   patterns (where Z-coordinates of the object points must be all zeros). 3D calibration rigs can also\n.   be used as long as initial cameraMatrix is provided.\n.   \n.   The algorithm performs the following steps:\n.   \n.   -   Compute the initial intrinsic parameters (the option only available for planar calibration\n.       patterns) or read them from the input parameters. The distortion coefficients are all set to\n.       zeros initially unless some of CALIB_FIX_K? are specified.\n.   \n.   -   Estimate the initial camera pose as if the intrinsic parameters have been already known. This is\n.       done using solvePnP .\n.   \n.   -   Run the global Levenberg-Marquardt optimization algorithm to minimize the reprojection error,\n.       that is, the total sum of squared distances between the observed feature points imagePoints and\n.       the projected (using the current estimates for camera parameters and the poses) object points\n.       objectPoints. See projectPoints for details.\n.   \n.   @note\n.       If you use a non-square (i.e. non-N-by-N) grid and @ref findChessboardCorners for calibration,\n.       and @ref calibrateCamera returns bad values (zero distortion coefficients, \\f$c_x\\f$ and\n.       \\f$c_y\\f$ very far from the image center, and/or large differences between \\f$f_x\\f$ and\n.       \\f$f_y\\f$ (ratios of 10:1 or more)), then you are probably using patternSize=cvSize(rows,cols)\n.       instead of using patternSize=cvSize(cols,rows) in @ref findChessboardCorners.\n.   \n.   @sa\n.      calibrateCameraRO, findChessboardCorners, solvePnP, initCameraMatrix2D, stereoCalibrate,\n.      undistort"
     ...
 
 
-def calibrateCameraRO(objectPoints, imagePoints, imageSize, iFixedPoint, cameraMatrix, distCoeffs, rvecs=..., tvecs=..., newObjPoints=..., flags: int = ..., criteria=...) -> typing.Any:
+def calibrateCameraRO(
+        objectPoints,
+        imagePoints,
+        imageSize,
+        iFixedPoint,
+        cameraMatrix,
+        distCoeffs,
+        rvecs=...,
+        tvecs=...,
+        newObjPoints=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     'calibrateCameraRO(objectPoints, imagePoints, imageSize, iFixedPoint, cameraMatrix, distCoeffs[, rvecs[, tvecs[, newObjPoints[, flags[, criteria]]]]]) -> retval, cameraMatrix, distCoeffs, rvecs, tvecs, newObjPoints\n.   @overload'
     ...
 
 
-def calibrateCameraROExtended(objectPoints, imagePoints, imageSize, iFixedPoint, cameraMatrix, distCoeffs, rvecs=..., tvecs=..., newObjPoints=..., stdDeviationsIntrinsics=..., stdDeviationsExtrinsics=..., stdDeviationsObjPoints=..., perViewErrors=..., flags: int = ..., criteria=...) -> typing.Any:
+def calibrateCameraROExtended(
+        objectPoints,
+        imagePoints,
+        imageSize,
+        iFixedPoint,
+        cameraMatrix,
+        distCoeffs,
+        rvecs=...,
+        tvecs=...,
+        newObjPoints=...,
+        stdDeviationsIntrinsics=...,
+        stdDeviationsExtrinsics=...,
+        stdDeviationsObjPoints=...,
+        perViewErrors=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     'calibrateCameraROExtended(objectPoints, imagePoints, imageSize, iFixedPoint, cameraMatrix, distCoeffs[, rvecs[, tvecs[, newObjPoints[, stdDeviationsIntrinsics[, stdDeviationsExtrinsics[, stdDeviationsObjPoints[, perViewErrors[, flags[, criteria]]]]]]]]]) -> retval, cameraMatrix, distCoeffs, rvecs, tvecs, newObjPoints, stdDeviationsIntrinsics, stdDeviationsExtrinsics, stdDeviationsObjPoints, perViewErrors\n.   @brief Finds the camera intrinsic and extrinsic parameters from several views of a calibration pattern.\n.   \n.   This function is an extension of calibrateCamera() with the method of releasing object which was\n.   proposed in @cite strobl2011iccv. In many common cases with inaccurate, unmeasured, roughly planar\n.   targets (calibration plates), this method can dramatically improve the precision of the estimated\n.   camera parameters. Both the object-releasing method and standard method are supported by this\n.   function. Use the parameter **iFixedPoint** for method selection. In the internal implementation,\n.   calibrateCamera() is a wrapper for this function.\n.   \n.   @param objectPoints Vector of vectors of calibration pattern points in the calibration pattern\n.   coordinate space. See calibrateCamera() for details. If the method of releasing object to be used,\n.   the identical calibration board must be used in each view and it must be fully visible, and all\n.   objectPoints[i] must be the same and all points should be roughly close to a plane. **The calibration\n.   target has to be rigid, or at least static if the camera (rather than the calibration target) is\n.   shifted for grabbing images.**\n.   @param imagePoints Vector of vectors of the projections of calibration pattern points. See\n.   calibrateCamera() for details.\n.   @param imageSize Size of the image used only to initialize the intrinsic camera matrix.\n.   @param iFixedPoint The index of the 3D object point in objectPoints[0] to be fixed. It also acts as\n.   a switch for calibration method selection. If object-releasing method to be used, pass in the\n.   parameter in the range of [1, objectPoints[0].size()-2], otherwise a value out of this range will\n.   make standard calibration method selected. Usually the top-right corner point of the calibration\n.   board grid is recommended to be fixed when object-releasing method being utilized. According to\n.   \\cite strobl2011iccv, two other points are also fixed. In this implementation, objectPoints[0].front\n.   and objectPoints[0].back.z are used. With object-releasing method, accurate rvecs, tvecs and\n.   newObjPoints are only possible if coordinates of these three fixed points are accurate enough.\n.   @param cameraMatrix Output 3x3 floating-point camera matrix. See calibrateCamera() for details.\n.   @param distCoeffs Output vector of distortion coefficients. See calibrateCamera() for details.\n.   @param rvecs Output vector of rotation vectors estimated for each pattern view. See calibrateCamera()\n.   for details.\n.   @param tvecs Output vector of translation vectors estimated for each pattern view.\n.   @param newObjPoints The updated output vector of calibration pattern points. The coordinates might\n.   be scaled based on three fixed points. The returned coordinates are accurate only if the above\n.   mentioned three fixed points are accurate. If not needed, noArray() can be passed in. This parameter\n.   is ignored with standard calibration method.\n.   @param stdDeviationsIntrinsics Output vector of standard deviations estimated for intrinsic parameters.\n.   See calibrateCamera() for details.\n.   @param stdDeviationsExtrinsics Output vector of standard deviations estimated for extrinsic parameters.\n.   See calibrateCamera() for details.\n.   @param stdDeviationsObjPoints Output vector of standard deviations estimated for refined coordinates\n.   of calibration pattern points. It has the same size and order as objectPoints[0] vector. This\n.   parameter is ignored with standard calibration method.\n.    @param perViewErrors Output vector of the RMS re-projection error estimated for each pattern view.\n.   @param flags Different flags that may be zero or a combination of some predefined values. See\n.   calibrateCamera() for details. If the method of releasing object is used, the calibration time may\n.   be much longer. CALIB_USE_QR or CALIB_USE_LU could be used for faster calibration with potentially\n.   less precise and less stable in some rare cases.\n.   @param criteria Termination criteria for the iterative optimization algorithm.\n.   \n.   @return the overall RMS re-projection error.\n.   \n.   The function estimates the intrinsic camera parameters and extrinsic parameters for each of the\n.   views. The algorithm is based on @cite Zhang2000, @cite BouguetMCT and @cite strobl2011iccv. See\n.   calibrateCamera() for other detailed explanations.\n.   @sa\n.      calibrateCamera, findChessboardCorners, solvePnP, initCameraMatrix2D, stereoCalibrate, undistort'
     ...
 
 
-def calibrateHandEye(R_gripper2base, t_gripper2base, R_target2cam, t_target2cam, R_cam2gripper=..., t_cam2gripper=..., method: int = ...) -> typing.Any:
+def calibrateHandEye(
+        R_gripper2base,
+        t_gripper2base,
+        R_target2cam,
+        t_target2cam,
+        R_cam2gripper=...,
+        t_cam2gripper=...,
+        method: int = ...) -> typing.Any:
     'calibrateHandEye(R_gripper2base, t_gripper2base, R_target2cam, t_target2cam[, R_cam2gripper[, t_cam2gripper[, method]]]) -> R_cam2gripper, t_cam2gripper\n.   @brief Computes Hand-Eye calibration: \\f$_{}^{g}\\textrm{T}_c\\f$\n.   \n.   @param[in] R_gripper2base Rotation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the gripper frame to the robot base frame (\\f$_{}^{b}\\textrm{T}_g\\f$).\n.   This is a vector (`vector<Mat>`) that contains the rotation matrices for all the transformations\n.   from gripper frame to robot base frame.\n.   @param[in] t_gripper2base Translation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the gripper frame to the robot base frame (\\f$_{}^{b}\\textrm{T}_g\\f$).\n.   This is a vector (`vector<Mat>`) that contains the translation vectors for all the transformations\n.   from gripper frame to robot base frame.\n.   @param[in] R_target2cam Rotation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the target frame to the camera frame (\\f$_{}^{c}\\textrm{T}_t\\f$).\n.   This is a vector (`vector<Mat>`) that contains the rotation matrices for all the transformations\n.   from calibration target frame to camera frame.\n.   @param[in] t_target2cam Rotation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the target frame to the camera frame (\\f$_{}^{c}\\textrm{T}_t\\f$).\n.   This is a vector (`vector<Mat>`) that contains the translation vectors for all the transformations\n.   from calibration target frame to camera frame.\n.   @param[out] R_cam2gripper Estimated rotation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the camera frame to the gripper frame (\\f$_{}^{g}\\textrm{T}_c\\f$).\n.   @param[out] t_cam2gripper Estimated translation part extracted from the homogeneous matrix that transforms a point\n.   expressed in the camera frame to the gripper frame (\\f$_{}^{g}\\textrm{T}_c\\f$).\n.   @param[in] method One of the implemented Hand-Eye calibration method, see cv::HandEyeCalibrationMethod\n.   \n.   The function performs the Hand-Eye calibration using various methods. One approach consists in estimating the\n.   rotation then the translation (separable solutions) and the following methods are implemented:\n.     - R. Tsai, R. Lenz A New Technique for Fully Autonomous and Efficient 3D Robotics Hand/EyeCalibration \\cite Tsai89\n.     - F. Park, B. Martin Robot Sensor Calibration: Solving AX = XB on the Euclidean Group \\cite Park94\n.     - R. Horaud, F. Dornaika Hand-Eye Calibration \\cite Horaud95\n.   \n.   Another approach consists in estimating simultaneously the rotation and the translation (simultaneous solutions),\n.   with the following implemented method:\n.     - N. Andreff, R. Horaud, B. Espiau On-line Hand-Eye Calibration \\cite Andreff99\n.     - K. Daniilidis Hand-Eye Calibration Using Dual Quaternions \\cite Daniilidis98\n.   \n.   The following picture describes the Hand-Eye calibration problem where the transformation between a camera ("eye")\n.   mounted on a robot gripper ("hand") has to be estimated.\n.   \n.   ![](pics/hand-eye_figure.png)\n.   \n.   The calibration procedure is the following:\n.     - a static calibration pattern is used to estimate the transformation between the target frame\n.     and the camera frame\n.     - the robot gripper is moved in order to acquire several poses\n.     - for each pose, the homogeneous transformation between the gripper frame and the robot base frame is recorded using for\n.     instance the robot kinematics\n.   \\f[\n.       \\begin{bmatrix}\n.       X_b\\\\\n.       Y_b\\\\\n.       Z_b\\\\\n.       1\n.       \\end{bmatrix}\n.       =\n.       \\begin{bmatrix}\n.       _{}^{b}\\textrm{R}_g & _{}^{b}\\textrm{t}_g \\\\\n.       0_{1 \\times 3} & 1\n.       \\end{bmatrix}\n.       \\begin{bmatrix}\n.       X_g\\\\\n.       Y_g\\\\\n.       Z_g\\\\\n.       1\n.       \\end{bmatrix}\n.   \\f]\n.     - for each pose, the homogeneous transformation between the calibration target frame and the camera frame is recorded using\n.     for instance a pose estimation method (PnP) from 2D-3D point correspondences\n.   \\f[\n.       \\begin{bmatrix}\n.       X_c\\\\\n.       Y_c\\\\\n.       Z_c\\\\\n.       1\n.       \\end{bmatrix}\n.       =\n.       \\begin{bmatrix}\n.       _{}^{c}\\textrm{R}_t & _{}^{c}\\textrm{t}_t \\\\\n.       0_{1 \\times 3} & 1\n.       \\end{bmatrix}\n.       \\begin{bmatrix}\n.       X_t\\\\\n.       Y_t\\\\\n.       Z_t\\\\\n.       1\n.       \\end{bmatrix}\n.   \\f]\n.   \n.   The Hand-Eye calibration procedure returns the following homogeneous transformation\n.   \\f[\n.       \\begin{bmatrix}\n.       X_g\\\\\n.       Y_g\\\\\n.       Z_g\\\\\n.       1\n.       \\end{bmatrix}\n.       =\n.       \\begin{bmatrix}\n.       _{}^{g}\\textrm{R}_c & _{}^{g}\\textrm{t}_c \\\\\n.       0_{1 \\times 3} & 1\n.       \\end{bmatrix}\n.       \\begin{bmatrix}\n.       X_c\\\\\n.       Y_c\\\\\n.       Z_c\\\\\n.       1\n.       \\end{bmatrix}\n.   \\f]\n.   \n.   This problem is also known as solving the \\f$\\mathbf{A}\\mathbf{X}=\\mathbf{X}\\mathbf{B}\\f$ equation:\n.   \\f[\n.       \\begin{align*}\n.       ^{b}{\\textrm{T}_g}^{(1)} \\hspace{0.2em} ^{g}\\textrm{T}_c \\hspace{0.2em} ^{c}{\\textrm{T}_t}^{(1)} &=\n.       \\hspace{0.1em} ^{b}{\\textrm{T}_g}^{(2)} \\hspace{0.2em} ^{g}\\textrm{T}_c \\hspace{0.2em} ^{c}{\\textrm{T}_t}^{(2)} \\\\\n.   \n.       (^{b}{\\textrm{T}_g}^{(2)})^{-1} \\hspace{0.2em} ^{b}{\\textrm{T}_g}^{(1)} \\hspace{0.2em} ^{g}\\textrm{T}_c &=\n.       \\hspace{0.1em} ^{g}\\textrm{T}_c \\hspace{0.2em} ^{c}{\\textrm{T}_t}^{(2)} (^{c}{\\textrm{T}_t}^{(1)})^{-1} \\\\\n.   \n.       \\textrm{A}_i \\textrm{X} &= \\textrm{X} \\textrm{B}_i \\\\\n.       \\end{align*}\n.   \\f]\n.   \n.   \\note\n.   Additional information can be found on this [website](http://campar.in.tum.de/Chair/HandEyeCalibration).\n.   \\note\n.   A minimum of 2 motions with non parallel rotation axes are necessary to determine the hand-eye transformation.\n.   So at least 3 different poses are required, but it is strongly recommended to use many more poses.'
     ...
 
@@ -2002,7 +2222,13 @@ def clipLine(imgRect, pt1, pt2) -> typing.Any:
     ...
 
 
-def colorChange(src: ndarray, mask: ndarray, dts: ndarray = ..., red_mul=..., green_mul=..., blue_mul=...) -> typing.Any:
+def colorChange(
+        src: ndarray,
+        mask: ndarray,
+        dts: ndarray = ...,
+        red_mul=...,
+        green_mul=...,
+        blue_mul=...) -> typing.Any:
     'colorChange(src, mask[, dst[, red_mul[, green_mul[, blue_mul]]]]) -> dst\n.   @brief Given an original color image, two differently colored versions of this image can be mixed\n.   seamlessly.\n.   \n.   @param src Input 8-bit 3-channel image.\n.   @param mask Input 8-bit 1 or 3-channel image.\n.   @param dst Output image with the same size and type as src .\n.   @param red_mul R-channel multiply factor.\n.   @param green_mul G-channel multiply factor.\n.   @param blue_mul B-channel multiply factor.\n.   \n.   Multiplication factor is between .5 to 2.5.'
     ...
 
@@ -2022,7 +2248,21 @@ def completeSymm(m, lowerToUpper=...) -> typing.Any:
     ...
 
 
-def composeRT(rvec1, tvec1, rvec2, tvec2, rvec3=..., tvec3=..., dr3dr1=..., dr3dt1=..., dr3dr2=..., dr3dt2=..., dt3dr1=..., dt3dt1=..., dt3dr2=..., dt3dt2=...) -> typing.Any:
+def composeRT(
+        rvec1,
+        tvec1,
+        rvec2,
+        tvec2,
+        rvec3=...,
+        tvec3=...,
+        dr3dr1=...,
+        dr3dt1=...,
+        dr3dr2=...,
+        dr3dt2=...,
+        dt3dr1=...,
+        dt3dt1=...,
+        dt3dr2=...,
+        dt3dt2=...) -> typing.Any:
     'composeRT(rvec1, tvec1, rvec2, tvec2[, rvec3[, tvec3[, dr3dr1[, dr3dt1[, dr3dr2[, dr3dt2[, dt3dr1[, dt3dt1[, dt3dr2[, dt3dt2]]]]]]]]]]) -> rvec3, tvec3, dr3dr1, dr3dt1, dr3dr2, dr3dt2, dt3dr1, dt3dt1, dt3dr2, dt3dt2\n.   @brief Combines two rotation-and-shift transformations.\n.   \n.   @param rvec1 First rotation vector.\n.   @param tvec1 First translation vector.\n.   @param rvec2 Second rotation vector.\n.   @param tvec2 Second translation vector.\n.   @param rvec3 Output rotation vector of the superposition.\n.   @param tvec3 Output translation vector of the superposition.\n.   @param dr3dr1 Optional output derivative of rvec3 with regard to rvec1\n.   @param dr3dt1 Optional output derivative of rvec3 with regard to tvec1\n.   @param dr3dr2 Optional output derivative of rvec3 with regard to rvec2\n.   @param dr3dt2 Optional output derivative of rvec3 with regard to tvec2\n.   @param dt3dr1 Optional output derivative of tvec3 with regard to rvec1\n.   @param dt3dt1 Optional output derivative of tvec3 with regard to tvec1\n.   @param dt3dr2 Optional output derivative of tvec3 with regard to rvec2\n.   @param dt3dt2 Optional output derivative of tvec3 with regard to tvec2\n.   \n.   The functions compute:\n.   \n.   \\f[\\begin{array}{l} \\texttt{rvec3} =  \\mathrm{rodrigues} ^{-1} \\left ( \\mathrm{rodrigues} ( \\texttt{rvec2} )  \\cdot \\mathrm{rodrigues} ( \\texttt{rvec1} ) \\right )  \\\\ \\texttt{tvec3} =  \\mathrm{rodrigues} ( \\texttt{rvec2} )  \\cdot \\texttt{tvec1} +  \\texttt{tvec2} \\end{array} ,\\f]\n.   \n.   where \\f$\\mathrm{rodrigues}\\f$ denotes a rotation vector to a rotation matrix transformation, and\n.   \\f$\\mathrm{rodrigues}^{-1}\\f$ denotes the inverse transformation. See Rodrigues for details.\n.   \n.   Also, the functions can compute the derivatives of the output vectors with regards to the input\n.   vectors (see matMulDeriv ). The functions are used inside stereoCalibrate but can also be used in\n.   your own code where Levenberg-Marquardt or another gradient-based solver is used to optimize a\n.   function that contains a matrix multiplication.'
     ...
 
@@ -2047,12 +2287,25 @@ def connectedComponentsWithAlgorithm(image: ndarray, connectivity, ltype, ccltyp
     ...
 
 
-def connectedComponentsWithStats(image: ndarray, labels=..., stats=..., centroids=..., connectivity=..., ltype=...) -> typing.Any:
+def connectedComponentsWithStats(
+        image: ndarray,
+        labels=...,
+        stats=...,
+        centroids=...,
+        connectivity=...,
+        ltype=...) -> typing.Any:
     'connectedComponentsWithStats(image[, labels[, stats[, centroids[, connectivity[, ltype]]]]]) -> retval, labels, stats, centroids\n.   @overload\n.   @param image the 8-bit single-channel image to be labeled\n.   @param labels destination labeled image\n.   @param stats statistics output for each label, including the background label.\n.   Statistics are accessed via stats(label, COLUMN) where COLUMN is one of\n.   #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.\n.   @param centroids centroid output for each label, including the background label. Centroids are\n.   accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.\n.   @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively\n.   @param ltype output image label type. Currently CV_32S and CV_16U are supported.'
     ...
 
 
-def connectedComponentsWithStatsWithAlgorithm(image: ndarray, connectivity, ltype, ccltype, labels=..., stats=..., centroids=...) -> typing.Any:
+def connectedComponentsWithStatsWithAlgorithm(
+        image: ndarray,
+        connectivity,
+        ltype,
+        ccltype,
+        labels=...,
+        stats=...,
+        centroids=...) -> typing.Any:
     "connectedComponentsWithStatsWithAlgorithm(image, connectivity, ltype, ccltype[, labels[, stats[, centroids]]]) -> retval, labels, stats, centroids\n.   @brief computes the connected components labeled image of boolean image and also produces a statistics output for each label\n.   \n.   image with 4 or 8 way connectivity - returns N, the total number of labels [0, N-1] where 0\n.   represents the background label. ltype specifies the output label image type, an important\n.   consideration based on the total number of labels or alternatively the total number of pixels in\n.   the source image. ccltype specifies the connected components labeling algorithm to use, currently\n.   Grana's (BBDT) and Wu's (SAUF) algorithms are supported, see the #ConnectedComponentsAlgorithmsTypes\n.   for details. Note that SAUF algorithm forces a row major ordering of labels while BBDT does not.\n.   This function uses parallel version of both Grana and Wu's algorithms (statistics included) if at least one allowed\n.   parallel framework is enabled and if the rows of the image are at least twice the number returned by #getNumberOfCPUs.\n.   \n.   @param image the 8-bit single-channel image to be labeled\n.   @param labels destination labeled image\n.   @param stats statistics output for each label, including the background label.\n.   Statistics are accessed via stats(label, COLUMN) where COLUMN is one of\n.   #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.\n.   @param centroids centroid output for each label, including the background label. Centroids are\n.   accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.\n.   @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively\n.   @param ltype output image label type. Currently CV_32S and CV_16U are supported.\n.   @param ccltype connected components algorithm type (see #ConnectedComponentsAlgorithmsTypes)."
     ...
 
@@ -2187,7 +2440,15 @@ def createHanningWindow(winSize, type, dts: ndarray = ...) -> typing.Any:
     ...
 
 
-def createLineSegmentDetector(_refine=..., _scale=..., _sigma_scale=..., _quant=..., _ang_th=..., _log_eps=..., _density_th=..., _n_bins=...) -> typing.Any:
+def createLineSegmentDetector(
+        _refine=...,
+        _scale=...,
+        _sigma_scale=...,
+        _quant=...,
+        _ang_th=...,
+        _log_eps=...,
+        _density_th=...,
+        _n_bins=...) -> typing.Any:
     'createLineSegmentDetector([, _refine[, _scale[, _sigma_scale[, _quant[, _ang_th[, _log_eps[, _density_th[, _n_bins]]]]]]]]) -> retval\n.   @brief Creates a smart pointer to a LineSegmentDetector object and initializes it.\n.   \n.   The LineSegmentDetector algorithm is defined using the standard values. Only advanced users may want\n.   to edit those, as to tailor it for their own application.\n.   \n.   @param _refine The way found lines will be refined, see #LineSegmentDetectorModes\n.   @param _scale The scale of the image that will be used to find the lines. Range (0..1].\n.   @param _sigma_scale Sigma for Gaussian filter. It is computed as sigma = _sigma_scale/_scale.\n.   @param _quant Bound to the quantization error on the gradient norm.\n.   @param _ang_th Gradient angle tolerance in degrees.\n.   @param _log_eps Detection threshold: -log10(NFA) \\> log_eps. Used only when advance refinement\n.   is chosen.\n.   @param _density_th Minimal density of aligned region points in the enclosing rectangle.\n.   @param _n_bins Number of bins in pseudo-ordering of gradient modulus.\n.   \n.   @note Implementation has been removed due original code license conflict'
     ...
 
@@ -2277,7 +2538,15 @@ def decomposeHomographyMat(H, K, rotations=..., translations=..., normals=...) -
     ...
 
 
-def decomposeProjectionMatrix(projMatrix, cameraMatrix=..., rotMatrix=..., transVect=..., rotMatrixX=..., rotMatrixY=..., rotMatrixZ=..., eulerAngles=...) -> typing.Any:
+def decomposeProjectionMatrix(
+        projMatrix,
+        cameraMatrix=...,
+        rotMatrix=...,
+        transVect=...,
+        rotMatrixX=...,
+        rotMatrixY=...,
+        rotMatrixZ=...,
+        eulerAngles=...) -> typing.Any:
     'decomposeProjectionMatrix(projMatrix[, cameraMatrix[, rotMatrix[, transVect[, rotMatrixX[, rotMatrixY[, rotMatrixZ[, eulerAngles]]]]]]]) -> cameraMatrix, rotMatrix, transVect, rotMatrixX, rotMatrixY, rotMatrixZ, eulerAngles\n.   @brief Decomposes a projection matrix into a rotation matrix and a camera matrix.\n.   \n.   @param projMatrix 3x4 input projection matrix P.\n.   @param cameraMatrix Output 3x3 camera matrix K.\n.   @param rotMatrix Output 3x3 external rotation matrix R.\n.   @param transVect Output 4x1 translation vector T.\n.   @param rotMatrixX Optional 3x3 rotation matrix around x-axis.\n.   @param rotMatrixY Optional 3x3 rotation matrix around y-axis.\n.   @param rotMatrixZ Optional 3x3 rotation matrix around z-axis.\n.   @param eulerAngles Optional three-element vector containing three Euler angles of rotation in\n.   degrees.\n.   \n.   The function computes a decomposition of a projection matrix into a calibration and a rotation\n.   matrix and the position of a camera.\n.   \n.   It optionally returns three rotation matrices, one for each axis, and three Euler angles that could\n.   be used in OpenGL. Note, there is always more than one sequence of rotations about the three\n.   principal axes that results in the same orientation of an object, e.g. see @cite Slabaugh . Returned\n.   tree rotation matrices and corresponding three Euler angles are only one of the possible solutions.\n.   \n.   The function is based on RQDecomp3x3 .'
     ...
 
@@ -2355,7 +2624,14 @@ def dft(src: ndarray, dts: ndarray = ..., flags: int = ..., nonzeroRows=...) -> 
     ...
 
 
-def dilate(src: ndarray, kernel, dts: ndarray = ..., anchor=..., iterations=..., borderType=..., borderValue=...) -> typing.Any:
+def dilate(
+        src: ndarray,
+        kernel,
+        dts: ndarray = ...,
+        anchor=...,
+        iterations=...,
+        borderType=...,
+        borderValue=...) -> typing.Any:
     "dilate(src, kernel[, dst[, anchor[, iterations[, borderType[, borderValue]]]]]) -> dst\n.   @brief Dilates an image by using a specific structuring element.\n.   \n.   The function dilates the source image using the specified structuring element that determines the\n.   shape of a pixel neighborhood over which the maximum is taken:\n.   \\f[\\texttt{dst} (x,y) =  \\max _{(x',y'):  \\, \\texttt{element} (x',y') \\ne0 } \\texttt{src} (x+x',y+y')\\f]\n.   \n.   The function supports the in-place mode. Dilation can be applied several ( iterations ) times. In\n.   case of multi-channel images, each channel is processed independently.\n.   \n.   @param src input image; the number of channels can be arbitrary, but the depth should be one of\n.   CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.\n.   @param dst output image of the same size and type as src.\n.   @param kernel structuring element used for dilation; if elemenat=Mat(), a 3 x 3 rectangular\n.   structuring element is used. Kernel can be created using #getStructuringElement\n.   @param anchor position of the anchor within the element; default value (-1, -1) means that the\n.   anchor is at the element center.\n.   @param iterations number of times dilation is applied.\n.   @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not suported.\n.   @param borderValue border value in case of a constant border\n.   @sa  erode, morphologyEx, getStructuringElement"
     ...
 
@@ -2375,7 +2651,13 @@ def distanceTransform(src: ndarray, distanceType, maskSize, dts: ndarray = ..., 
     ...
 
 
-def distanceTransformWithLabels(src: ndarray, distanceType, maskSize, dts: ndarray = ..., labels=..., labelType=...) -> typing.Any:
+def distanceTransformWithLabels(
+        src: ndarray,
+        distanceType,
+        maskSize,
+        dts: ndarray = ...,
+        labels=...,
+        labelType=...) -> typing.Any:
     "distanceTransformWithLabels(src, distanceType, maskSize[, dst[, labels[, labelType]]]) -> dst, labels\n.   @brief Calculates the distance to the closest zero pixel for each pixel of the source image.\n.   \n.   The function cv::distanceTransform calculates the approximate or precise distance from every binary\n.   image pixel to the nearest zero pixel. For zero image pixels, the distance will obviously be zero.\n.   \n.   When maskSize == #DIST_MASK_PRECISE and distanceType == #DIST_L2 , the function runs the\n.   algorithm described in @cite Felzenszwalb04 . This algorithm is parallelized with the TBB library.\n.   \n.   In other cases, the algorithm @cite Borgefors86 is used. This means that for a pixel the function\n.   finds the shortest path to the nearest zero pixel consisting of basic shifts: horizontal, vertical,\n.   diagonal, or knight's move (the latest is available for a \\f$5\\times 5\\f$ mask). The overall\n.   distance is calculated as a sum of these basic distances. Since the distance function should be\n.   symmetric, all of the horizontal and vertical shifts must have the same cost (denoted as a ), all\n.   the diagonal shifts must have the same cost (denoted as `b`), and all knight's moves must have the\n.   same cost (denoted as `c`). For the #DIST_C and #DIST_L1 types, the distance is calculated\n.   precisely, whereas for #DIST_L2 (Euclidean distance) the distance can be calculated only with a\n.   relative error (a \\f$5\\times 5\\f$ mask gives more accurate results). For `a`,`b`, and `c`, OpenCV\n.   uses the values suggested in the original paper:\n.   - DIST_L1: `a = 1, b = 2`\n.   - DIST_L2:\n.       - `3 x 3`: `a=0.955, b=1.3693`\n.       - `5 x 5`: `a=1, b=1.4, c=2.1969`\n.   - DIST_C: `a = 1, b = 1`\n.   \n.   Typically, for a fast, coarse distance estimation #DIST_L2, a \\f$3\\times 3\\f$ mask is used. For a\n.   more accurate distance estimation #DIST_L2, a \\f$5\\times 5\\f$ mask or the precise algorithm is used.\n.   Note that both the precise and the approximate algorithms are linear on the number of pixels.\n.   \n.   This variant of the function does not only compute the minimum distance for each pixel \\f$(x, y)\\f$\n.   but also identifies the nearest connected component consisting of zero pixels\n.   (labelType==#DIST_LABEL_CCOMP) or the nearest zero pixel (labelType==#DIST_LABEL_PIXEL). Index of the\n.   component/pixel is stored in `labels(x, y)`. When labelType==#DIST_LABEL_CCOMP, the function\n.   automatically finds connected components of zero pixels in the input image and marks them with\n.   distinct labels. When labelType==#DIST_LABEL_CCOMP, the function scans through the input image and\n.   marks all the zero pixels with distinct labels.\n.   \n.   In this mode, the complexity is still linear. That is, the function provides a very fast way to\n.   compute the Voronoi diagram for a binary image. Currently, the second variant can use only the\n.   approximate distance transform algorithm, i.e. maskSize=#DIST_MASK_PRECISE is not supported\n.   yet.\n.   \n.   @param src 8-bit, single-channel (binary) source image.\n.   @param dst Output image with calculated distances. It is a 8-bit or 32-bit floating-point,\n.   single-channel image of the same size as src.\n.   @param labels Output 2D array of labels (the discrete Voronoi diagram). It has the type\n.   CV_32SC1 and the same size as src.\n.   @param distanceType Type of distance, see #DistanceTypes\n.   @param maskSize Size of the distance transform mask, see #DistanceTransformMasks.\n.   #DIST_MASK_PRECISE is not supported by this variant. In case of the #DIST_L1 or #DIST_C distance type,\n.   the parameter is forced to 3 because a \\f$3\\times 3\\f$ mask gives the same result as \\f$5\\times\n.   5\\f$ or any larger aperture.\n.   @param labelType Type of the label array to build, see #DistanceTransformLabelTypes."
     ...
 
@@ -2410,7 +2692,16 @@ def drawChessboardCorners(image: ndarray, patternSize, corners, patternWasFound)
     ...
 
 
-def drawContours(image: ndarray, contours, contourIdx, color, thickness=..., lineType=..., hierarchy=..., maxLevel=..., offset=...) -> typing.Any:
+def drawContours(
+        image: ndarray,
+        contours,
+        contourIdx,
+        color,
+        thickness=...,
+        lineType=...,
+        hierarchy=...,
+        maxLevel=...,
+        offset=...) -> typing.Any:
     'drawContours(image, contours, contourIdx, color[, thickness[, lineType[, hierarchy[, maxLevel[, offset]]]]]) -> image\n.   @brief Draws contours outlines or filled contours.\n.   \n.   The function draws contour outlines in the image if \\f$\\texttt{thickness} \\ge 0\\f$ or fills the area\n.   bounded by the contours if \\f$\\texttt{thickness}<0\\f$ . The example below shows how to retrieve\n.   connected components from the binary image and label them: :\n.   @include snippets/imgproc_drawContours.cpp\n.   \n.   @param image Destination image.\n.   @param contours All the input contours. Each contour is stored as a point vector.\n.   @param contourIdx Parameter indicating a contour to draw. If it is negative, all the contours are drawn.\n.   @param color Color of the contours.\n.   @param thickness Thickness of lines the contours are drawn with. If it is negative (for example,\n.   thickness=#FILLED ), the contour interiors are drawn.\n.   @param lineType Line connectivity. See #LineTypes\n.   @param hierarchy Optional information about hierarchy. It is only needed if you want to draw only\n.   some of the contours (see maxLevel ).\n.   @param maxLevel Maximal level for drawn contours. If it is 0, only the specified contour is drawn.\n.   If it is 1, the function draws the contour(s) and all the nested contours. If it is 2, the function\n.   draws the contours, all the nested contours, all the nested-to-nested contours, and so on. This\n.   parameter is only taken into account when there is hierarchy available.\n.   @param offset Optional contour shift parameter. Shift all the drawn contours by the specified\n.   \\f$\\texttt{offset}=(dx,dy)\\f$ .\n.   @note When thickness=#FILLED, the function is designed to handle connected components with holes correctly\n.   even when no hierarchy date is provided. This is done by analyzing all the outlines together\n.   using even-odd rule. This may give incorrect results if you have a joint collection of separately retrieved\n.   contours. In order to solve this problem, you need to call #drawContours separately for each sub-group\n.   of contours, or iterate over the collection using contourIdx parameter.'
     ...
 
@@ -2425,17 +2716,44 @@ def drawKeypoints(image: ndarray, keypoints, outImage, color=..., flags: int = .
     ...
 
 
-def drawMarker(img: ndarray, position, color, markerType=..., markerSize=..., thickness=..., line_type=...) -> typing.Any:
+def drawMarker(
+        img: ndarray,
+        position,
+        color,
+        markerType=...,
+        markerSize=...,
+        thickness=...,
+        line_type=...) -> typing.Any:
     'drawMarker(img, position, color[, markerType[, markerSize[, thickness[, line_type]]]]) -> img\n.   @brief Draws a marker on a predefined position in an image.\n.   \n.   The function cv::drawMarker draws a marker on a given position in the image. For the moment several\n.   marker types are supported, see #MarkerTypes for more information.\n.   \n.   @param img Image.\n.   @param position The point where the crosshair is positioned.\n.   @param color Line color.\n.   @param markerType The specific type of marker you want to use, see #MarkerTypes\n.   @param thickness Line thickness.\n.   @param line_type Type of the line, See #LineTypes\n.   @param markerSize The length of the marker axis [default = 20 pixels]'
     ...
 
 
-def drawMatches(img1, keypoints1, img2, keypoints2, matches1to2, outImg, matchColor=..., singlePointColor=..., matchesMask=..., flags: int = ...) -> typing.Any:
+def drawMatches(
+        img1,
+        keypoints1,
+        img2,
+        keypoints2,
+        matches1to2,
+        outImg,
+        matchColor=...,
+        singlePointColor=...,
+        matchesMask=...,
+        flags: int = ...) -> typing.Any:
     'drawMatches(img1, keypoints1, img2, keypoints2, matches1to2, outImg[, matchColor[, singlePointColor[, matchesMask[, flags]]]]) -> outImg\n.   @brief Draws the found matches of keypoints from two images.\n.   \n.   @param img1 First source image.\n.   @param keypoints1 Keypoints from the first source image.\n.   @param img2 Second source image.\n.   @param keypoints2 Keypoints from the second source image.\n.   @param matches1to2 Matches from the first image to the second one, which means that keypoints1[i]\n.   has a corresponding point in keypoints2[matches[i]] .\n.   @param outImg Output image. Its content depends on the flags value defining what is drawn in the\n.   output image. See possible flags bit values below.\n.   @param matchColor Color of matches (lines and connected keypoints). If matchColor==Scalar::all(-1)\n.   , the color is generated randomly.\n.   @param singlePointColor Color of single keypoints (circles), which means that keypoints do not\n.   have the matches. If singlePointColor==Scalar::all(-1) , the color is generated randomly.\n.   @param matchesMask Mask determining which matches are drawn. If the mask is empty, all matches are\n.   drawn.\n.   @param flags Flags setting drawing features. Possible flags bit values are defined by\n.   DrawMatchesFlags.\n.   \n.   This function draws matches of keypoints from two images in the output image. Match is a line\n.   connecting two keypoints (circles). See cv::DrawMatchesFlags.'
     ...
 
 
-def drawMatchesKnn(img1, keypoints1, img2, keypoints2, matches1to2, outImg, matchColor=..., singlePointColor=..., matchesMask=..., flags: int = ...) -> typing.Any:
+def drawMatchesKnn(
+        img1,
+        keypoints1,
+        img2,
+        keypoints2,
+        matches1to2,
+        outImg,
+        matchColor=...,
+        singlePointColor=...,
+        matchesMask=...,
+        flags: int = ...) -> typing.Any:
     'drawMatchesKnn(img1, keypoints1, img2, keypoints2, matches1to2, outImg[, matchColor[, singlePointColor[, matchesMask[, flags]]]]) -> outImg\n.   @overload'
     ...
 
@@ -2455,7 +2773,17 @@ def eigenNonSymmetric(src: ndarray, eigenvalues=..., eigenvectors=...) -> typing
     ...
 
 
-def ellipse(img: ndarray, center, axes, angle, startAngle, endAngle, color, thickness=..., lineType=..., shift=...) -> typing.Any:
+def ellipse(
+        img: ndarray,
+        center,
+        axes,
+        angle,
+        startAngle,
+        endAngle,
+        color,
+        thickness=...,
+        lineType=...,
+        shift=...) -> typing.Any:
     'ellipse(img, center, axes, angle, startAngle, endAngle, color[, thickness[, lineType[, shift]]]) -> img\n.   @brief Draws a simple or thick elliptic arc or fills an ellipse sector.\n.   \n.   The function cv::ellipse with more parameters draws an ellipse outline, a filled ellipse, an elliptic\n.   arc, or a filled ellipse sector. The drawing code uses general parametric form.\n.   A piecewise-linear curve is used to approximate the elliptic arc\n.   boundary. If you need more control of the ellipse rendering, you can retrieve the curve using\n.   #ellipse2Poly and then render it with #polylines or fill it with #fillPoly. If you use the first\n.   variant of the function and want to draw the whole ellipse, not an arc, pass `startAngle=0` and\n.   `endAngle=360`. If `startAngle` is greater than `endAngle`, they are swapped. The figure below explains\n.   the meaning of the parameters to draw the blue arc.\n.   \n.   ![Parameters of Elliptic Arc](pics/ellipse.svg)\n.   \n.   @param img Image.\n.   @param center Center of the ellipse.\n.   @param axes Half of the size of the ellipse main axes.\n.   @param angle Ellipse rotation angle in degrees.\n.   @param startAngle Starting angle of the elliptic arc in degrees.\n.   @param endAngle Ending angle of the elliptic arc in degrees.\n.   @param color Ellipse color.\n.   @param thickness Thickness of the ellipse arc outline, if positive. Otherwise, this indicates that\n.   a filled ellipse sector is to be drawn.\n.   @param lineType Type of the ellipse boundary. See #LineTypes\n.   @param shift Number of fractional bits in the coordinates of the center and values of axes.\n\n\n\nellipse(img, box, color[, thickness[, lineType]]) -> img\n.   @overload\n.   @param img Image.\n.   @param box Alternative ellipse representation via RotatedRect. This means that the function draws\n.   an ellipse inscribed in the rotated rectangle.\n.   @param color Ellipse color.\n.   @param thickness Thickness of the ellipse arc outline, if positive. Otherwise, this indicates that\n.   a filled ellipse sector is to be drawn.\n.   @param lineType Type of the ellipse boundary. See #LineTypes'
     ...
 
@@ -2470,7 +2798,14 @@ def equalizeHist(src: ndarray, dts: ndarray = ...) -> typing.Any:
     ...
 
 
-def erode(src: ndarray, kernel, dts: ndarray = ..., anchor=..., iterations=..., borderType=..., borderValue=...) -> typing.Any:
+def erode(
+        src: ndarray,
+        kernel,
+        dts: ndarray = ...,
+        anchor=...,
+        iterations=...,
+        borderType=...,
+        borderValue=...) -> typing.Any:
     "erode(src, kernel[, dst[, anchor[, iterations[, borderType[, borderValue]]]]]) -> dst\n.   @brief Erodes an image by using a specific structuring element.\n.   \n.   The function erodes the source image using the specified structuring element that determines the\n.   shape of a pixel neighborhood over which the minimum is taken:\n.   \n.   \\f[\\texttt{dst} (x,y) =  \\min _{(x',y'):  \\, \\texttt{element} (x',y') \\ne0 } \\texttt{src} (x+x',y+y')\\f]\n.   \n.   The function supports the in-place mode. Erosion can be applied several ( iterations ) times. In\n.   case of multi-channel images, each channel is processed independently.\n.   \n.   @param src input image; the number of channels can be arbitrary, but the depth should be one of\n.   CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.\n.   @param dst output image of the same size and type as src.\n.   @param kernel structuring element used for erosion; if `element=Mat()`, a `3 x 3` rectangular\n.   structuring element is used. Kernel can be created using #getStructuringElement.\n.   @param anchor position of the anchor within the element; default value (-1, -1) means that the\n.   anchor is at the element center.\n.   @param iterations number of times erosion is applied.\n.   @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @param borderValue border value in case of a constant border\n.   @sa  dilate, morphologyEx, getStructuringElement"
     ...
 
@@ -2478,27 +2813,61 @@ def erode(src: ndarray, kernel, dts: ndarray = ..., anchor=..., iterations=..., 
 error = _mod_cv2.error
 
 
-def estimateAffine2D(from_, to, inliers=..., method: int = ..., ransacReprojThreshold=..., maxIters=..., confidence=..., refineIters=...) -> typing.Any:
+def estimateAffine2D(
+        from_,
+        to,
+        inliers=...,
+        method: int = ...,
+        ransacReprojThreshold=...,
+        maxIters=...,
+        confidence=...,
+        refineIters=...) -> typing.Any:
     'estimateAffine2D(from, to[, inliers[, method[, ransacReprojThreshold[, maxIters[, confidence[, refineIters]]]]]]) -> retval, inliers\n.   @brief Computes an optimal affine transformation between two 2D point sets.\n.   \n.   It computes\n.   \\f[\n.   \\begin{bmatrix}\n.   x\\\\\n.   y\\\\\n.   \\end{bmatrix}\n.   =\n.   \\begin{bmatrix}\n.   a_{11} & a_{12}\\\\\n.   a_{21} & a_{22}\\\\\n.   \\end{bmatrix}\n.   \\begin{bmatrix}\n.   X\\\\\n.   Y\\\\\n.   \\end{bmatrix}\n.   +\n.   \\begin{bmatrix}\n.   b_1\\\\\n.   b_2\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   \n.   @param from First input 2D point set containing \\f$(X,Y)\\f$.\n.   @param to Second input 2D point set containing \\f$(x,y)\\f$.\n.   @param inliers Output vector indicating which points are inliers (1-inlier, 0-outlier).\n.   @param method Robust method used to compute transformation. The following methods are possible:\n.   -   cv::RANSAC - RANSAC-based robust method\n.   -   cv::LMEDS - Least-Median robust method\n.   RANSAC is the default method.\n.   @param ransacReprojThreshold Maximum reprojection error in the RANSAC algorithm to consider\n.   a point as an inlier. Applies only to RANSAC.\n.   @param maxIters The maximum number of robust method iterations.\n.   @param confidence Confidence level, between 0 and 1, for the estimated transformation. Anything\n.   between 0.95 and 0.99 is usually good enough. Values too close to 1 can slow down the estimation\n.   significantly. Values lower than 0.8-0.9 can result in an incorrectly estimated transformation.\n.   @param refineIters Maximum number of iterations of refining algorithm (Levenberg-Marquardt).\n.   Passing 0 will disable refining, so the output matrix will be output of robust method.\n.   \n.   @return Output 2D affine transformation matrix \\f$2 \\times 3\\f$ or empty matrix if transformation\n.   could not be estimated. The returned matrix has the following form:\n.   \\f[\n.   \\begin{bmatrix}\n.   a_{11} & a_{12} & b_1\\\\\n.   a_{21} & a_{22} & b_2\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   \n.   The function estimates an optimal 2D affine transformation between two 2D point sets using the\n.   selected robust algorithm.\n.   \n.   The computed transformation is then refined further (using only inliers) with the\n.   Levenberg-Marquardt method to reduce the re-projection error even more.\n.   \n.   @note\n.   The RANSAC method can handle practically any ratio of outliers but needs a threshold to\n.   distinguish inliers from outliers. The method LMeDS does not need any threshold but it works\n.   correctly only when there are more than 50% of inliers.\n.   \n.   @sa estimateAffinePartial2D, getAffineTransform'
     ...
 
 
-def estimateAffine3D(src: ndarray, dts: ndarray, out=..., inliers=..., ransacThreshold=..., confidence=...) -> typing.Any:
+def estimateAffine3D(
+        src: ndarray,
+        dts: ndarray,
+        out=...,
+        inliers=...,
+        ransacThreshold=...,
+        confidence=...) -> typing.Any:
     'estimateAffine3D(src, dst[, out[, inliers[, ransacThreshold[, confidence]]]]) -> retval, out, inliers\n.   @brief Computes an optimal affine transformation between two 3D point sets.\n.   \n.   It computes\n.   \\f[\n.   \\begin{bmatrix}\n.   x\\\\\n.   y\\\\\n.   z\\\\\n.   \\end{bmatrix}\n.   =\n.   \\begin{bmatrix}\n.   a_{11} & a_{12} & a_{13}\\\\\n.   a_{21} & a_{22} & a_{23}\\\\\n.   a_{31} & a_{32} & a_{33}\\\\\n.   \\end{bmatrix}\n.   \\begin{bmatrix}\n.   X\\\\\n.   Y\\\\\n.   Z\\\\\n.   \\end{bmatrix}\n.   +\n.   \\begin{bmatrix}\n.   b_1\\\\\n.   b_2\\\\\n.   b_3\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   \n.   @param src First input 3D point set containing \\f$(X,Y,Z)\\f$.\n.   @param dst Second input 3D point set containing \\f$(x,y,z)\\f$.\n.   @param out Output 3D affine transformation matrix \\f$3 \\times 4\\f$ of the form\n.   \\f[\n.   \\begin{bmatrix}\n.   a_{11} & a_{12} & a_{13} & b_1\\\\\n.   a_{21} & a_{22} & a_{23} & b_2\\\\\n.   a_{31} & a_{32} & a_{33} & b_3\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   @param inliers Output vector indicating which points are inliers (1-inlier, 0-outlier).\n.   @param ransacThreshold Maximum reprojection error in the RANSAC algorithm to consider a point as\n.   an inlier.\n.   @param confidence Confidence level, between 0 and 1, for the estimated transformation. Anything\n.   between 0.95 and 0.99 is usually good enough. Values too close to 1 can slow down the estimation\n.   significantly. Values lower than 0.8-0.9 can result in an incorrectly estimated transformation.\n.   \n.   The function estimates an optimal 3D affine transformation between two 3D point sets using the\n.   RANSAC algorithm.'
     ...
 
 
-def estimateAffinePartial2D(from_, to, inliers=..., method: int = ..., ransacReprojThreshold=..., maxIters=..., confidence=..., refineIters=...) -> typing.Any:
+def estimateAffinePartial2D(
+        from_,
+        to,
+        inliers=...,
+        method: int = ...,
+        ransacReprojThreshold=...,
+        maxIters=...,
+        confidence=...,
+        refineIters=...) -> typing.Any:
     'estimateAffinePartial2D(from, to[, inliers[, method[, ransacReprojThreshold[, maxIters[, confidence[, refineIters]]]]]]) -> retval, inliers\n.   @brief Computes an optimal limited affine transformation with 4 degrees of freedom between\n.   two 2D point sets.\n.   \n.   @param from First input 2D point set.\n.   @param to Second input 2D point set.\n.   @param inliers Output vector indicating which points are inliers.\n.   @param method Robust method used to compute transformation. The following methods are possible:\n.   -   cv::RANSAC - RANSAC-based robust method\n.   -   cv::LMEDS - Least-Median robust method\n.   RANSAC is the default method.\n.   @param ransacReprojThreshold Maximum reprojection error in the RANSAC algorithm to consider\n.   a point as an inlier. Applies only to RANSAC.\n.   @param maxIters The maximum number of robust method iterations.\n.   @param confidence Confidence level, between 0 and 1, for the estimated transformation. Anything\n.   between 0.95 and 0.99 is usually good enough. Values too close to 1 can slow down the estimation\n.   significantly. Values lower than 0.8-0.9 can result in an incorrectly estimated transformation.\n.   @param refineIters Maximum number of iterations of refining algorithm (Levenberg-Marquardt).\n.   Passing 0 will disable refining, so the output matrix will be output of robust method.\n.   \n.   @return Output 2D affine transformation (4 degrees of freedom) matrix \\f$2 \\times 3\\f$ or\n.   empty matrix if transformation could not be estimated.\n.   \n.   The function estimates an optimal 2D affine transformation with 4 degrees of freedom limited to\n.   combinations of translation, rotation, and uniform scaling. Uses the selected algorithm for robust\n.   estimation.\n.   \n.   The computed transformation is then refined further (using only inliers) with the\n.   Levenberg-Marquardt method to reduce the re-projection error even more.\n.   \n.   Estimated transformation matrix is:\n.   \\f[ \\begin{bmatrix} \\cos(\\theta) \\cdot s & -\\sin(\\theta) \\cdot s & t_x \\\\\n.                   \\sin(\\theta) \\cdot s & \\cos(\\theta) \\cdot s & t_y\n.   \\end{bmatrix} \\f]\n.   Where \\f$ \\theta \\f$ is the rotation angle, \\f$ s \\f$ the scaling factor and \\f$ t_x, t_y \\f$ are\n.   translations in \\f$ x, y \\f$ axes respectively.\n.   \n.   @note\n.   The RANSAC method can handle practically any ratio of outliers but need a threshold to\n.   distinguish inliers from outliers. The method LMeDS does not need any threshold but it works\n.   correctly only when there are more than 50% of inliers.\n.   \n.   @sa estimateAffine2D, getAffineTransform'
     ...
 
 
-def estimateChessboardSharpness(image: ndarray, patternSize, corners, rise_distance=..., vertical=..., sharpness=...) -> typing.Any:
+def estimateChessboardSharpness(
+        image: ndarray,
+        patternSize,
+        corners,
+        rise_distance=...,
+        vertical=...,
+        sharpness=...) -> typing.Any:
     'estimateChessboardSharpness(image, patternSize, corners[, rise_distance[, vertical[, sharpness]]]) -> retval, sharpness\n.   @brief Estimates the sharpness of a detected chessboard.\n.   \n.   Image sharpness, as well as brightness, are a critical parameter for accuracte\n.   camera calibration. For accessing these parameters for filtering out\n.   problematic calibraiton images, this method calculates edge profiles by traveling from\n.   black to white chessboard cell centers. Based on this, the number of pixels is\n.   calculated required to transit from black to white. This width of the\n.   transition area is a good indication of how sharp the chessboard is imaged\n.   and should be below ~3.0 pixels.\n.   \n.   @param image Gray image used to find chessboard corners\n.   @param patternSize Size of a found chessboard pattern\n.   @param corners Corners found by findChessboardCorners(SB)\n.   @param rise_distance Rise distance 0.8 means 10% ... 90% of the final signal strength\n.   @param vertical By default edge responses for horizontal lines are calculated\n.   @param sharpness Optional output array with a sharpness value for calculated edge responses (see description)\n.   \n.   The optional sharpness array is of type CV_32FC1 and has for each calculated\n.   profile one row with the following five entries:\n.   * 0 = x coordinate of the underlying edge in the image\n.   * 1 = y coordinate of the underlying edge in the image\n.   * 2 = width of the transition area (sharpness)\n.   * 3 = signal strength in the black cell (min brightness)\n.   * 4 = signal strength in the white cell (max brightness)\n.   \n.   @return Scalar(average sharpness, average min brightness, average max brightness,0)'
     ...
 
 
-def estimateTranslation3D(src: ndarray, dts: ndarray, out=..., inliers=..., ransacThreshold=..., confidence=...) -> typing.Any:
+def estimateTranslation3D(
+        src: ndarray,
+        dts: ndarray,
+        out=...,
+        inliers=...,
+        ransacThreshold=...,
+        confidence=...) -> typing.Any:
     'estimateTranslation3D(src, dst[, out[, inliers[, ransacThreshold[, confidence]]]]) -> retval, out, inliers\n.   @brief Computes an optimal translation between two 3D point sets.\n.    *\n.    * It computes\n.    * \\f[\n.    * \\begin{bmatrix}\n.    * x\\\\\n.    * y\\\\\n.    * z\\\\\n.    * \\end{bmatrix}\n.    * =\n.    * \\begin{bmatrix}\n.    * X\\\\\n.    * Y\\\\\n.    * Z\\\\\n.    * \\end{bmatrix}\n.    * +\n.    * \\begin{bmatrix}\n.    * b_1\\\\\n.    * b_2\\\\\n.    * b_3\\\\\n.    * \\end{bmatrix}\n.    * \\f]\n.    *\n.    * @param src First input 3D point set containing \\f$(X,Y,Z)\\f$.\n.    * @param dst Second input 3D point set containing \\f$(x,y,z)\\f$.\n.    * @param out Output 3D translation vector \\f$3 \\times 1\\f$ of the form\n.    * \\f[\n.    * \\begin{bmatrix}\n.    * b_1 \\\\\n.    * b_2 \\\\\n.    * b_3 \\\\\n.    * \\end{bmatrix}\n.    * \\f]\n.    * @param inliers Output vector indicating which points are inliers (1-inlier, 0-outlier).\n.    * @param ransacThreshold Maximum reprojection error in the RANSAC algorithm to consider a point as\n.    * an inlier.\n.    * @param confidence Confidence level, between 0 and 1, for the estimated transformation. Anything\n.    * between 0.95 and 0.99 is usually good enough. Values too close to 1 can slow down the estimation\n.    * significantly. Values lower than 0.8-0.9 can result in an incorrectly estimated transformation.\n.    *\n.    * The function estimates an optimal 3D translation between two 3D point sets using the\n.    * RANSAC algorithm.\n.   *'
     ...
 
@@ -2518,22 +2887,48 @@ def fastAtan2(y, x) -> typing.Any:
     ...
 
 
-def fastNlMeansDenoising(src: ndarray, dts: ndarray = ..., h=..., templateWindowSize=..., searchWindowSize=...) -> typing.Any:
+def fastNlMeansDenoising(
+        src: ndarray,
+        dts: ndarray = ...,
+        h=...,
+        templateWindowSize=...,
+        searchWindowSize=...) -> typing.Any:
     'fastNlMeansDenoising(src[, dst[, h[, templateWindowSize[, searchWindowSize]]]]) -> dst\n.   @brief Perform image denoising using Non-local Means Denoising algorithm\n.   <http://www.ipol.im/pub/algo/bcm_non_local_means_denoising/> with several computational\n.   optimizations. Noise expected to be a gaussian white noise\n.   \n.   @param src Input 8-bit 1-channel, 2-channel, 3-channel or 4-channel image.\n.   @param dst Output image with the same size and type as src .\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Parameter regulating filter strength. Big h value perfectly removes noise but also\n.   removes image details, smaller h value preserves details but also preserves some noise\n.   \n.   This function expected to be applied to grayscale images. For colored images look at\n.   fastNlMeansDenoisingColored. Advanced usage of this functions can be manual denoising of colored\n.   image in different colorspaces. Such approach is used in fastNlMeansDenoisingColored by converting\n.   image to CIELAB colorspace and then separately denoise L and AB components with different h\n.   parameter.\n\n\n\nfastNlMeansDenoising(src, h[, dst[, templateWindowSize[, searchWindowSize[, normType]]]]) -> dst\n.   @brief Perform image denoising using Non-local Means Denoising algorithm\n.   <http://www.ipol.im/pub/algo/bcm_non_local_means_denoising/> with several computational\n.   optimizations. Noise expected to be a gaussian white noise\n.   \n.   @param src Input 8-bit or 16-bit (only with NORM_L1) 1-channel,\n.   2-channel, 3-channel or 4-channel image.\n.   @param dst Output image with the same size and type as src .\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Array of parameters regulating filter strength, either one\n.   parameter applied to all channels or one per channel in dst. Big h value\n.   perfectly removes noise but also removes image details, smaller h\n.   value preserves details but also preserves some noise\n.   @param normType Type of norm used for weight calculation. Can be either NORM_L2 or NORM_L1\n.   \n.   This function expected to be applied to grayscale images. For colored images look at\n.   fastNlMeansDenoisingColored. Advanced usage of this functions can be manual denoising of colored\n.   image in different colorspaces. Such approach is used in fastNlMeansDenoisingColored by converting\n.   image to CIELAB colorspace and then separately denoise L and AB components with different h\n.   parameter.'
     ...
 
 
-def fastNlMeansDenoisingColored(src: ndarray, dts: ndarray = ..., h=..., hColor=..., templateWindowSize=..., searchWindowSize=...) -> typing.Any:
+def fastNlMeansDenoisingColored(
+        src: ndarray,
+        dts: ndarray = ...,
+        h=...,
+        hColor=...,
+        templateWindowSize=...,
+        searchWindowSize=...) -> typing.Any:
     'fastNlMeansDenoisingColored(src[, dst[, h[, hColor[, templateWindowSize[, searchWindowSize]]]]]) -> dst\n.   @brief Modification of fastNlMeansDenoising function for colored images\n.   \n.   @param src Input 8-bit 3-channel image.\n.   @param dst Output image with the same size and type as src .\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Parameter regulating filter strength for luminance component. Bigger h value perfectly\n.   removes noise but also removes image details, smaller h value preserves details but also preserves\n.   some noise\n.   @param hColor The same as h but for color components. For most images value equals 10\n.   will be enough to remove colored noise and do not distort colors\n.   \n.   The function converts image to CIELAB colorspace and then separately denoise L and AB components\n.   with given h parameters using fastNlMeansDenoising function.'
     ...
 
 
-def fastNlMeansDenoisingColoredMulti(srcImgs, imgToDenoiseIndex, temporalWindowSize, dts: ndarray = ..., h=..., hColor=..., templateWindowSize=..., searchWindowSize=...) -> typing.Any:
+def fastNlMeansDenoisingColoredMulti(
+        srcImgs,
+        imgToDenoiseIndex,
+        temporalWindowSize,
+        dts: ndarray = ...,
+        h=...,
+        hColor=...,
+        templateWindowSize=...,
+        searchWindowSize=...) -> typing.Any:
     'fastNlMeansDenoisingColoredMulti(srcImgs, imgToDenoiseIndex, temporalWindowSize[, dst[, h[, hColor[, templateWindowSize[, searchWindowSize]]]]]) -> dst\n.   @brief Modification of fastNlMeansDenoisingMulti function for colored images sequences\n.   \n.   @param srcImgs Input 8-bit 3-channel images sequence. All images should have the same type and\n.   size.\n.   @param imgToDenoiseIndex Target image to denoise index in srcImgs sequence\n.   @param temporalWindowSize Number of surrounding images to use for target image denoising. Should\n.   be odd. Images from imgToDenoiseIndex - temporalWindowSize / 2 to\n.   imgToDenoiseIndex - temporalWindowSize / 2 from srcImgs will be used to denoise\n.   srcImgs[imgToDenoiseIndex] image.\n.   @param dst Output image with the same size and type as srcImgs images.\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Parameter regulating filter strength for luminance component. Bigger h value perfectly\n.   removes noise but also removes image details, smaller h value preserves details but also preserves\n.   some noise.\n.   @param hColor The same as h but for color components.\n.   \n.   The function converts images to CIELAB colorspace and then separately denoise L and AB components\n.   with given h parameters using fastNlMeansDenoisingMulti function.'
     ...
 
 
-def fastNlMeansDenoisingMulti(srcImgs, imgToDenoiseIndex, temporalWindowSize, dts: ndarray = ..., h=..., templateWindowSize=..., searchWindowSize=...) -> typing.Any:
+def fastNlMeansDenoisingMulti(
+        srcImgs,
+        imgToDenoiseIndex,
+        temporalWindowSize,
+        dts: ndarray = ...,
+        h=...,
+        templateWindowSize=...,
+        searchWindowSize=...) -> typing.Any:
     'fastNlMeansDenoisingMulti(srcImgs, imgToDenoiseIndex, temporalWindowSize[, dst[, h[, templateWindowSize[, searchWindowSize]]]]) -> dst\n.   @brief Modification of fastNlMeansDenoising function for images sequence where consecutive images have been\n.   captured in small period of time. For example video. This version of the function is for grayscale\n.   images or for manual manipulation with colorspaces. For more details see\n.   <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394>\n.   \n.   @param srcImgs Input 8-bit 1-channel, 2-channel, 3-channel or\n.   4-channel images sequence. All images should have the same type and\n.   size.\n.   @param imgToDenoiseIndex Target image to denoise index in srcImgs sequence\n.   @param temporalWindowSize Number of surrounding images to use for target image denoising. Should\n.   be odd. Images from imgToDenoiseIndex - temporalWindowSize / 2 to\n.   imgToDenoiseIndex - temporalWindowSize / 2 from srcImgs will be used to denoise\n.   srcImgs[imgToDenoiseIndex] image.\n.   @param dst Output image with the same size and type as srcImgs images.\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Parameter regulating filter strength. Bigger h value\n.   perfectly removes noise but also removes image details, smaller h\n.   value preserves details but also preserves some noise\n\n\n\nfastNlMeansDenoisingMulti(srcImgs, imgToDenoiseIndex, temporalWindowSize, h[, dst[, templateWindowSize[, searchWindowSize[, normType]]]]) -> dst\n.   @brief Modification of fastNlMeansDenoising function for images sequence where consecutive images have been\n.   captured in small period of time. For example video. This version of the function is for grayscale\n.   images or for manual manipulation with colorspaces. For more details see\n.   <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394>\n.   \n.   @param srcImgs Input 8-bit or 16-bit (only with NORM_L1) 1-channel,\n.   2-channel, 3-channel or 4-channel images sequence. All images should\n.   have the same type and size.\n.   @param imgToDenoiseIndex Target image to denoise index in srcImgs sequence\n.   @param temporalWindowSize Number of surrounding images to use for target image denoising. Should\n.   be odd. Images from imgToDenoiseIndex - temporalWindowSize / 2 to\n.   imgToDenoiseIndex - temporalWindowSize / 2 from srcImgs will be used to denoise\n.   srcImgs[imgToDenoiseIndex] image.\n.   @param dst Output image with the same size and type as srcImgs images.\n.   @param templateWindowSize Size in pixels of the template patch that is used to compute weights.\n.   Should be odd. Recommended value 7 pixels\n.   @param searchWindowSize Size in pixels of the window that is used to compute weighted average for\n.   given pixel. Should be odd. Affect performance linearly: greater searchWindowsSize - greater\n.   denoising time. Recommended value 21 pixels\n.   @param h Array of parameters regulating filter strength, either one\n.   parameter applied to all channels or one per channel in dst. Big h value\n.   perfectly removes noise but also removes image details, smaller h\n.   value preserves details but also preserves some noise\n.   @param normType Type of norm used for weight calculation. Can be either NORM_L2 or NORM_L1'
     ...
 
@@ -2553,7 +2948,13 @@ def filter2D(src: ndarray, ddepth, kernel, dts: ndarray = ..., anchor=..., delta
     ...
 
 
-def filterHomographyDecompByVisibleRefpoints(rotations, normals, beforePoints, afterPoints, possibleSolutions=..., pointsMask=...) -> typing.Any:
+def filterHomographyDecompByVisibleRefpoints(
+        rotations,
+        normals,
+        beforePoints,
+        afterPoints,
+        possibleSolutions=...,
+        pointsMask=...) -> typing.Any:
     'filterHomographyDecompByVisibleRefpoints(rotations, normals, beforePoints, afterPoints[, possibleSolutions[, pointsMask]]) -> possibleSolutions\n.   @brief Filters homography decompositions based on additional information.\n.   \n.   @param rotations Vector of rotation matrices.\n.   @param normals Vector of plane normal matrices.\n.   @param beforePoints Vector of (rectified) visible reference points before the homography is applied\n.   @param afterPoints Vector of (rectified) visible reference points after the homography is applied\n.   @param possibleSolutions Vector of int indices representing the viable solution set after filtering\n.   @param pointsMask optional Mat/Vector of 8u type representing the mask for the inliers as given by the findHomography function\n.   \n.   This function is intended to filter the output of the decomposeHomographyMat based on additional\n.   information as described in @cite Malis . The summary of the method: the decomposeHomographyMat function\n.   returns 2 unique solutions and their "opposites" for a total of 4 solutions. If we have access to the\n.   sets of points visible in the camera frame before and after the homography transformation is applied,\n.   we can determine which are the true potential solutions and which are the opposites by verifying which\n.   homographies are consistent with all visible reference points being in front of the camera. The inputs\n.   are left unchanged; the filtered solution set is returned as indices into the existing one.'
     ...
 
@@ -2593,17 +2994,38 @@ def findContours(image: ndarray, mode, method: int, contours=..., hierarchy=...,
     ...
 
 
-def findEssentialMat(points1, points2, cameraMatrix, method: int = ..., prob=..., threshold=..., mask: ndarray = ...) -> typing.Any:
+def findEssentialMat(
+        points1,
+        points2,
+        cameraMatrix,
+        method: int = ...,
+        prob=...,
+        threshold=...,
+        mask: ndarray = ...) -> typing.Any:
     'findEssentialMat(points1, points2, cameraMatrix[, method[, prob[, threshold[, mask]]]]) -> retval, mask\n.   @brief Calculates an essential matrix from the corresponding points in two images.\n.   \n.   @param points1 Array of N (N \\>= 5) 2D points from the first image. The point coordinates should\n.   be floating-point (single or double precision).\n.   @param points2 Array of the second image points of the same size and format as points1 .\n.   @param cameraMatrix Camera matrix \\f$K = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ .\n.   Note that this function assumes that points1 and points2 are feature points from cameras with the\n.   same camera matrix. If this assumption does not hold for your use case, use\n.   `undistortPoints()` with `P = cv::NoArray()` for both cameras to transform image points\n.   to normalized image coordinates, which are valid for the identity camera matrix. When\n.   passing these coordinates, pass the identity matrix for this parameter.\n.   @param method Method for computing an essential matrix.\n.   -   **RANSAC** for the RANSAC algorithm.\n.   -   **LMEDS** for the LMedS algorithm.\n.   @param prob Parameter used for the RANSAC or LMedS methods only. It specifies a desirable level of\n.   confidence (probability) that the estimated matrix is correct.\n.   @param threshold Parameter used for RANSAC. It is the maximum distance from a point to an epipolar\n.   line in pixels, beyond which the point is considered an outlier and is not used for computing the\n.   final fundamental matrix. It can be set to something like 1-3, depending on the accuracy of the\n.   point localization, image resolution, and the image noise.\n.   @param mask Output array of N elements, every element of which is set to 0 for outliers and to 1\n.   for the other points. The array is computed only in the RANSAC and LMedS methods.\n.   \n.   This function estimates essential matrix based on the five-point algorithm solver in @cite Nister03 .\n.   @cite SteweniusCFS is also a related. The epipolar geometry is described by the following equation:\n.   \n.   \\f[[p_2; 1]^T K^{-T} E K^{-1} [p_1; 1] = 0\\f]\n.   \n.   where \\f$E\\f$ is an essential matrix, \\f$p_1\\f$ and \\f$p_2\\f$ are corresponding points in the first and the\n.   second images, respectively. The result of this function may be passed further to\n.   decomposeEssentialMat or recoverPose to recover the relative pose between cameras.\n\n\n\nfindEssentialMat(points1, points2[, focal[, pp[, method[, prob[, threshold[, mask]]]]]]) -> retval, mask\n.   @overload\n.   @param points1 Array of N (N \\>= 5) 2D points from the first image. The point coordinates should\n.   be floating-point (single or double precision).\n.   @param points2 Array of the second image points of the same size and format as points1 .\n.   @param focal focal length of the camera. Note that this function assumes that points1 and points2\n.   are feature points from cameras with same focal length and principal point.\n.   @param pp principal point of the camera.\n.   @param method Method for computing a fundamental matrix.\n.   -   **RANSAC** for the RANSAC algorithm.\n.   -   **LMEDS** for the LMedS algorithm.\n.   @param threshold Parameter used for RANSAC. It is the maximum distance from a point to an epipolar\n.   line in pixels, beyond which the point is considered an outlier and is not used for computing the\n.   final fundamental matrix. It can be set to something like 1-3, depending on the accuracy of the\n.   point localization, image resolution, and the image noise.\n.   @param prob Parameter used for the RANSAC or LMedS methods only. It specifies a desirable level of\n.   confidence (probability) that the estimated matrix is correct.\n.   @param mask Output array of N elements, every element of which is set to 0 for outliers and to 1\n.   for the other points. The array is computed only in the RANSAC and LMedS methods.\n.   \n.   This function differs from the one above that it computes camera matrix from focal length and\n.   principal point:\n.   \n.   \\f[K =\n.   \\begin{bmatrix}\n.   f & 0 & x_{pp}  \\\\\n.   0 & f & y_{pp}  \\\\\n.   0 & 0 & 1\n.   \\end{bmatrix}\\f]'
     ...
 
 
-def findFundamentalMat(points1, points2, method: int, ransacReprojThreshold, confidence, maxIters, mask: ndarray = ...) -> typing.Any:
+def findFundamentalMat(
+        points1,
+        points2,
+        method: int,
+        ransacReprojThreshold,
+        confidence,
+        maxIters,
+        mask: ndarray = ...) -> typing.Any:
     'findFundamentalMat(points1, points2, method, ransacReprojThreshold, confidence, maxIters[, mask]) -> retval, mask\n.   @brief Calculates a fundamental matrix from the corresponding points in two images.\n.   \n.   @param points1 Array of N points from the first image. The point coordinates should be\n.   floating-point (single or double precision).\n.   @param points2 Array of the second image points of the same size and format as points1 .\n.   @param method Method for computing a fundamental matrix.\n.   -   **CV_FM_7POINT** for a 7-point algorithm. \\f$N = 7\\f$\n.   -   **CV_FM_8POINT** for an 8-point algorithm. \\f$N \\ge 8\\f$\n.   -   **CV_FM_RANSAC** for the RANSAC algorithm. \\f$N \\ge 8\\f$\n.   -   **CV_FM_LMEDS** for the LMedS algorithm. \\f$N \\ge 8\\f$\n.   @param ransacReprojThreshold Parameter used only for RANSAC. It is the maximum distance from a point to an epipolar\n.   line in pixels, beyond which the point is considered an outlier and is not used for computing the\n.   final fundamental matrix. It can be set to something like 1-3, depending on the accuracy of the\n.   point localization, image resolution, and the image noise.\n.   @param confidence Parameter used for the RANSAC and LMedS methods only. It specifies a desirable level\n.   of confidence (probability) that the estimated matrix is correct.\n.   @param mask\n.   @param maxIters The maximum number of robust method iterations.\n.   \n.   The epipolar geometry is described by the following equation:\n.   \n.   \\f[[p_2; 1]^T F [p_1; 1] = 0\\f]\n.   \n.   where \\f$F\\f$ is a fundamental matrix, \\f$p_1\\f$ and \\f$p_2\\f$ are corresponding points in the first and the\n.   second images, respectively.\n.   \n.   The function calculates the fundamental matrix using one of four methods listed above and returns\n.   the found fundamental matrix. Normally just one matrix is found. But in case of the 7-point\n.   algorithm, the function may return up to 3 solutions ( \\f$9 \\times 3\\f$ matrix that stores all 3\n.   matrices sequentially).\n.   \n.   The calculated fundamental matrix may be passed further to computeCorrespondEpilines that finds the\n.   epipolar lines corresponding to the specified points. It can also be passed to\n.   stereoRectifyUncalibrated to compute the rectification transformation. :\n.   @code\n.       // Example. Estimation of fundamental matrix using the RANSAC algorithm\n.       int point_count = 100;\n.       vector<Point2f> points1(point_count);\n.       vector<Point2f> points2(point_count);\n.   \n.       // initialize the points here ...\n.       for( int i = 0; i < point_count; i++ )\n.       {\n.           points1[i] = ...;\n.           points2[i] = ...;\n.       }\n.   \n.       Mat fundamental_matrix =\n.        findFundamentalMat(points1, points2, FM_RANSAC, 3, 0.99);\n.   @endcode\n\n\n\nfindFundamentalMat(points1, points2[, method[, ransacReprojThreshold[, confidence[, mask]]]]) -> retval, mask\n.   @overload'
     ...
 
 
-def findHomography(srcPoints, dstPoints, method: int = ..., ransacReprojThreshold=..., mask: ndarray = ..., maxIters=..., confidence=...) -> typing.Any:
+def findHomography(
+        srcPoints,
+        dstPoints,
+        method: int = ...,
+        ransacReprojThreshold=...,
+        mask: ndarray = ...,
+        maxIters=...,
+        confidence=...) -> typing.Any:
     "findHomography(srcPoints, dstPoints[, method[, ransacReprojThreshold[, mask[, maxIters[, confidence]]]]]) -> retval, mask\n.   @brief Finds a perspective transformation between two planes.\n.   \n.   @param srcPoints Coordinates of the points in the original plane, a matrix of the type CV_32FC2\n.   or vector\\<Point2f\\> .\n.   @param dstPoints Coordinates of the points in the target plane, a matrix of the type CV_32FC2 or\n.   a vector\\<Point2f\\> .\n.   @param method Method used to compute a homography matrix. The following methods are possible:\n.   -   **0** - a regular method using all the points, i.e., the least squares method\n.   -   **RANSAC** - RANSAC-based robust method\n.   -   **LMEDS** - Least-Median robust method\n.   -   **RHO** - PROSAC-based robust method\n.   @param ransacReprojThreshold Maximum allowed reprojection error to treat a point pair as an inlier\n.   (used in the RANSAC and RHO methods only). That is, if\n.   \\f[\\| \\texttt{dstPoints} _i -  \\texttt{convertPointsHomogeneous} ( \\texttt{H} * \\texttt{srcPoints} _i) \\|_2  >  \\texttt{ransacReprojThreshold}\\f]\n.   then the point \\f$i\\f$ is considered as an outlier. If srcPoints and dstPoints are measured in pixels,\n.   it usually makes sense to set this parameter somewhere in the range of 1 to 10.\n.   @param mask Optional output mask set by a robust method ( RANSAC or LMEDS ). Note that the input\n.   mask values are ignored.\n.   @param maxIters The maximum number of RANSAC iterations.\n.   @param confidence Confidence level, between 0 and 1.\n.   \n.   The function finds and returns the perspective transformation \\f$H\\f$ between the source and the\n.   destination planes:\n.   \n.   \\f[s_i  \\vecthree{x'_i}{y'_i}{1} \\sim H  \\vecthree{x_i}{y_i}{1}\\f]\n.   \n.   so that the back-projection error\n.   \n.   \\f[\\sum _i \\left ( x'_i- \\frac{h_{11} x_i + h_{12} y_i + h_{13}}{h_{31} x_i + h_{32} y_i + h_{33}} \\right )^2+ \\left ( y'_i- \\frac{h_{21} x_i + h_{22} y_i + h_{23}}{h_{31} x_i + h_{32} y_i + h_{33}} \\right )^2\\f]\n.   \n.   is minimized. If the parameter method is set to the default value 0, the function uses all the point\n.   pairs to compute an initial homography estimate with a simple least-squares scheme.\n.   \n.   However, if not all of the point pairs ( \\f$srcPoints_i\\f$, \\f$dstPoints_i\\f$ ) fit the rigid perspective\n.   transformation (that is, there are some outliers), this initial estimate will be poor. In this case,\n.   you can use one of the three robust methods. The methods RANSAC, LMeDS and RHO try many different\n.   random subsets of the corresponding point pairs (of four pairs each, collinear pairs are discarded), estimate the homography matrix\n.   using this subset and a simple least-squares algorithm, and then compute the quality/goodness of the\n.   computed homography (which is the number of inliers for RANSAC or the least median re-projection error for\n.   LMeDS). The best subset is then used to produce the initial estimate of the homography matrix and\n.   the mask of inliers/outliers.\n.   \n.   Regardless of the method, robust or not, the computed homography matrix is refined further (using\n.   inliers only in case of a robust method) with the Levenberg-Marquardt method to reduce the\n.   re-projection error even more.\n.   \n.   The methods RANSAC and RHO can handle practically any ratio of outliers but need a threshold to\n.   distinguish inliers from outliers. The method LMeDS does not need any threshold but it works\n.   correctly only when there are more than 50% of inliers. Finally, if there are no outliers and the\n.   noise is rather small, use the default method (method=0).\n.   \n.   The function is used to find initial intrinsic and extrinsic matrices. Homography matrix is\n.   determined up to a scale. Thus, it is normalized so that \\f$h_{33}=1\\f$. Note that whenever an \\f$H\\f$ matrix\n.   cannot be estimated, an empty one will be returned.\n.   \n.   @sa\n.   getAffineTransform, estimateAffine2D, estimateAffinePartial2D, getPerspectiveTransform, warpPerspective,\n.   perspectiveTransform"
     ...
 
@@ -2613,7 +3035,14 @@ def findNonZero(src: ndarray, idx=...) -> typing.Any:
     ...
 
 
-def findTransformECC(templateImage, inputImage, warpMatrix, motionType, criteria, inputMask, gaussFiltSize) -> typing.Any:
+def findTransformECC(
+        templateImage,
+        inputImage,
+        warpMatrix,
+        motionType,
+        criteria,
+        inputMask,
+        gaussFiltSize) -> typing.Any:
     "findTransformECC(templateImage, inputImage, warpMatrix, motionType, criteria, inputMask, gaussFiltSize) -> retval, warpMatrix\n.   @brief Finds the geometric transform (warp) between two images in terms of the ECC criterion @cite EP08 .\n.   \n.   @param templateImage single-channel template image; CV_8U or CV_32F array.\n.   @param inputImage single-channel input image which should be warped with the final warpMatrix in\n.   order to provide an image similar to templateImage, same type as templateImage.\n.   @param warpMatrix floating-point \\f$2\\times 3\\f$ or \\f$3\\times 3\\f$ mapping matrix (warp).\n.   @param motionType parameter, specifying the type of motion:\n.    -   **MOTION_TRANSLATION** sets a translational motion model; warpMatrix is \\f$2\\times 3\\f$ with\n.        the first \\f$2\\times 2\\f$ part being the unity matrix and the rest two parameters being\n.        estimated.\n.    -   **MOTION_EUCLIDEAN** sets a Euclidean (rigid) transformation as motion model; three\n.        parameters are estimated; warpMatrix is \\f$2\\times 3\\f$.\n.    -   **MOTION_AFFINE** sets an affine motion model (DEFAULT); six parameters are estimated;\n.        warpMatrix is \\f$2\\times 3\\f$.\n.    -   **MOTION_HOMOGRAPHY** sets a homography as a motion model; eight parameters are\n.        estimated;\\`warpMatrix\\` is \\f$3\\times 3\\f$.\n.   @param criteria parameter, specifying the termination criteria of the ECC algorithm;\n.   criteria.epsilon defines the threshold of the increment in the correlation coefficient between two\n.   iterations (a negative criteria.epsilon makes criteria.maxcount the only termination criterion).\n.   Default values are shown in the declaration above.\n.   @param inputMask An optional mask to indicate valid values of inputImage.\n.   @param gaussFiltSize An optional value indicating size of gaussian blur filter; (DEFAULT: 5)\n.   \n.   The function estimates the optimum transformation (warpMatrix) with respect to ECC criterion\n.   (@cite EP08), that is\n.   \n.   \\f[\\texttt{warpMatrix} = \\arg\\max_{W} \\texttt{ECC}(\\texttt{templateImage}(x,y),\\texttt{inputImage}(x',y'))\\f]\n.   \n.   where\n.   \n.   \\f[\\begin{bmatrix} x' \\\\ y' \\end{bmatrix} = W \\cdot \\begin{bmatrix} x \\\\ y \\\\ 1 \\end{bmatrix}\\f]\n.   \n.   (the equation holds with homogeneous coordinates for homography). It returns the final enhanced\n.   correlation coefficient, that is the correlation coefficient between the template image and the\n.   final warped input image. When a \\f$3\\times 3\\f$ matrix is given with motionType =0, 1 or 2, the third\n.   row is ignored.\n.   \n.   Unlike findHomography and estimateRigidTransform, the function findTransformECC implements an\n.   area-based alignment that builds on intensity similarities. In essence, the function updates the\n.   initial transformation that roughly aligns the images. If this information is missing, the identity\n.   warp (unity matrix) is used as an initialization. Note that if images undergo strong\n.   displacements/rotations, an initial transformation that roughly aligns the images is necessary\n.   (e.g., a simple euclidean/similarity transform that allows for the images showing the same image\n.   content approximately). Use inverse warping in the second image to take an image close to the first\n.   one, i.e. use the flag WARP_INVERSE_MAP with warpAffine or warpPerspective. See also the OpenCV\n.   sample image_alignment.cpp that demonstrates the use of the function. Note that the function throws\n.   an exception if algorithm does not converges.\n.   \n.   @sa\n.   computeECC, estimateAffine2D, estimateAffinePartial2D, findHomography"
     ...
 
@@ -2646,7 +3075,14 @@ def flip(src: ndarray, flipCode, dts: ndarray = ...) -> typing.Any:
     ...
 
 
-def floodFill(image: ndarray, mask: typing.Optional[ndarray], seedPoint, newVal, loDiff=..., upDiff=..., flags: int = ...) -> typing.Any:
+def floodFill(
+        image: ndarray,
+        mask: typing.Optional[ndarray],
+        seedPoint,
+        newVal,
+        loDiff=...,
+        upDiff=...,
+        flags: int = ...) -> typing.Any:
     "floodFill(image, mask, seedPoint, newVal[, loDiff[, upDiff[, flags]]]) -> retval, image, mask, rect\n.   @brief Fills a connected component with the given color.\n.   \n.   The function cv::floodFill fills a connected component starting from the seed point with the specified\n.   color. The connectivity is determined by the color/brightness closeness of the neighbor pixels. The\n.   pixel at \\f$(x,y)\\f$ is considered to belong to the repainted domain if:\n.   \n.   - in case of a grayscale image and floating range\n.   \\f[\\texttt{src} (x',y')- \\texttt{loDiff} \\leq \\texttt{src} (x,y)  \\leq \\texttt{src} (x',y')+ \\texttt{upDiff}\\f]\n.   \n.   \n.   - in case of a grayscale image and fixed range\n.   \\f[\\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)- \\texttt{loDiff} \\leq \\texttt{src} (x,y)  \\leq \\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)+ \\texttt{upDiff}\\f]\n.   \n.   \n.   - in case of a color image and floating range\n.   \\f[\\texttt{src} (x',y')_r- \\texttt{loDiff} _r \\leq \\texttt{src} (x,y)_r \\leq \\texttt{src} (x',y')_r+ \\texttt{upDiff} _r,\\f]\n.   \\f[\\texttt{src} (x',y')_g- \\texttt{loDiff} _g \\leq \\texttt{src} (x,y)_g \\leq \\texttt{src} (x',y')_g+ \\texttt{upDiff} _g\\f]\n.   and\n.   \\f[\\texttt{src} (x',y')_b- \\texttt{loDiff} _b \\leq \\texttt{src} (x,y)_b \\leq \\texttt{src} (x',y')_b+ \\texttt{upDiff} _b\\f]\n.   \n.   \n.   - in case of a color image and fixed range\n.   \\f[\\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_r- \\texttt{loDiff} _r \\leq \\texttt{src} (x,y)_r \\leq \\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_r+ \\texttt{upDiff} _r,\\f]\n.   \\f[\\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_g- \\texttt{loDiff} _g \\leq \\texttt{src} (x,y)_g \\leq \\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_g+ \\texttt{upDiff} _g\\f]\n.   and\n.   \\f[\\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_b- \\texttt{loDiff} _b \\leq \\texttt{src} (x,y)_b \\leq \\texttt{src} ( \\texttt{seedPoint} .x, \\texttt{seedPoint} .y)_b+ \\texttt{upDiff} _b\\f]\n.   \n.   \n.   where \\f$src(x',y')\\f$ is the value of one of pixel neighbors that is already known to belong to the\n.   component. That is, to be added to the connected component, a color/brightness of the pixel should\n.   be close enough to:\n.   - Color/brightness of one of its neighbors that already belong to the connected component in case\n.   of a floating range.\n.   - Color/brightness of the seed point in case of a fixed range.\n.   \n.   Use these functions to either mark a connected component with the specified color in-place, or build\n.   a mask and then extract the contour, or copy the region to another image, and so on.\n.   \n.   @param image Input/output 1- or 3-channel, 8-bit, or floating-point image. It is modified by the\n.   function unless the #FLOODFILL_MASK_ONLY flag is set in the second variant of the function. See\n.   the details below.\n.   @param mask Operation mask that should be a single-channel 8-bit image, 2 pixels wider and 2 pixels\n.   taller than image. Since this is both an input and output parameter, you must take responsibility\n.   of initializing it. Flood-filling cannot go across non-zero pixels in the input mask. For example,\n.   an edge detector output can be used as a mask to stop filling at edges. On output, pixels in the\n.   mask corresponding to filled pixels in the image are set to 1 or to the a value specified in flags\n.   as described below. Additionally, the function fills the border of the mask with ones to simplify\n.   internal processing. It is therefore possible to use the same mask in multiple calls to the function\n.   to make sure the filled areas do not overlap.\n.   @param seedPoint Starting point.\n.   @param newVal New value of the repainted domain pixels.\n.   @param loDiff Maximal lower brightness/color difference between the currently observed pixel and\n.   one of its neighbors belonging to the component, or a seed pixel being added to the component.\n.   @param upDiff Maximal upper brightness/color difference between the currently observed pixel and\n.   one of its neighbors belonging to the component, or a seed pixel being added to the component.\n.   @param rect Optional output parameter set by the function to the minimum bounding rectangle of the\n.   repainted domain.\n.   @param flags Operation flags. The first 8 bits contain a connectivity value. The default value of\n.   4 means that only the four nearest neighbor pixels (those that share an edge) are considered. A\n.   connectivity value of 8 means that the eight nearest neighbor pixels (those that share a corner)\n.   will be considered. The next 8 bits (8-16) contain a value between 1 and 255 with which to fill\n.   the mask (the default value is 1). For example, 4 | ( 255 \\<\\< 8 ) will consider 4 nearest\n.   neighbours and fill the mask with a value of 255. The following additional options occupy higher\n.   bits and therefore may be further combined with the connectivity and mask fill values using\n.   bit-wise or (|), see #FloodFillFlags.\n.   \n.   @note Since the mask is larger than the filled image, a pixel \\f$(x, y)\\f$ in image corresponds to the\n.   pixel \\f$(x+1, y+1)\\f$ in the mask .\n.   \n.   @sa findContours"
     ...
 
@@ -2721,7 +3157,13 @@ def getOptimalDFTSize(vecsize) -> typing.Any:
     ...
 
 
-def getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, alpha, newImgSize=..., centerPrincipalPoint=...) -> typing.Any:
+def getOptimalNewCameraMatrix(
+        cameraMatrix,
+        distCoeffs,
+        imageSize,
+        alpha,
+        newImgSize=...,
+        centerPrincipalPoint=...) -> typing.Any:
     'getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, alpha[, newImgSize[, centerPrincipalPoint]]) -> retval, validPixROI\n.   @brief Returns the new camera matrix based on the free scaling parameter.\n.   \n.   @param cameraMatrix Input camera matrix.\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are\n.   assumed.\n.   @param imageSize Original image size.\n.   @param alpha Free scaling parameter between 0 (when all the pixels in the undistorted image are\n.   valid) and 1 (when all the source image pixels are retained in the undistorted image). See\n.   stereoRectify for details.\n.   @param newImgSize Image size after rectification. By default, it is set to imageSize .\n.   @param validPixROI Optional output rectangle that outlines all-good-pixels region in the\n.   undistorted image. See roi1, roi2 description in stereoRectify .\n.   @param centerPrincipalPoint Optional flag that indicates whether in the new camera matrix the\n.   principal point should be at the image center or not. By default, the principal point is chosen to\n.   best fit a subset of the source image (determined by alpha) to the corrected image.\n.   @return new_camera_matrix Output new camera matrix.\n.   \n.   The function computes and returns the optimal new camera matrix based on the free scaling parameter.\n.   By varying this parameter, you may retrieve only sensible pixels alpha=0 , keep all the original\n.   image pixels if there is valuable information in the corners alpha=1 , or get something in between.\n.   When alpha\\>0 , the undistorted result is likely to have some black pixels corresponding to\n.   "virtual" pixels outside of the captured distorted image. The original camera matrix, distortion\n.   coefficients, the computed new camera matrix, and newImageSize should be passed to\n.   initUndistortRectifyMap to produce the maps for remap .'
     ...
 
@@ -2806,7 +3248,16 @@ def getWindowProperty(winname, prop_id) -> typing.Any:
     ...
 
 
-def goodFeaturesToTrack(image: ndarray, maxCorners, qualityLevel, minDistance, corners=..., mask: ndarray = ..., blockSize=..., useHarrisDetector=..., k=...) -> typing.Any:
+def goodFeaturesToTrack(
+        image: ndarray,
+        maxCorners,
+        qualityLevel,
+        minDistance,
+        corners=...,
+        mask: ndarray = ...,
+        blockSize=...,
+        useHarrisDetector=...,
+        k=...) -> typing.Any:
     'goodFeaturesToTrack(image, maxCorners, qualityLevel, minDistance[, corners[, mask[, blockSize[, useHarrisDetector[, k]]]]]) -> corners\n.   @brief Determines strong corners on an image.\n.   \n.   The function finds the most prominent corners in the image or in the specified image region, as\n.   described in @cite Shi94\n.   \n.   -   Function calculates the corner quality measure at every source image pixel using the\n.       #cornerMinEigenVal or #cornerHarris .\n.   -   Function performs a non-maximum suppression (the local maximums in *3 x 3* neighborhood are\n.       retained).\n.   -   The corners with the minimal eigenvalue less than\n.       \\f$\\texttt{qualityLevel} \\cdot \\max_{x,y} qualityMeasureMap(x,y)\\f$ are rejected.\n.   -   The remaining corners are sorted by the quality measure in the descending order.\n.   -   Function throws away each corner for which there is a stronger corner at a distance less than\n.       maxDistance.\n.   \n.   The function can be used to initialize a point-based tracker of an object.\n.   \n.   @note If the function is called with different values A and B of the parameter qualityLevel , and\n.   A \\> B, the vector of returned corners with qualityLevel=A will be the prefix of the output vector\n.   with qualityLevel=B .\n.   \n.   @param image Input 8-bit or floating-point 32-bit, single-channel image.\n.   @param corners Output vector of detected corners.\n.   @param maxCorners Maximum number of corners to return. If there are more corners than are found,\n.   the strongest of them is returned. `maxCorners <= 0` implies that no limit on the maximum is set\n.   and all detected corners are returned.\n.   @param qualityLevel Parameter characterizing the minimal accepted quality of image corners. The\n.   parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue\n.   (see #cornerMinEigenVal ) or the Harris function response (see #cornerHarris ). The corners with the\n.   quality measure less than the product are rejected. For example, if the best corner has the\n.   quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure\n.   less than 15 are rejected.\n.   @param minDistance Minimum possible Euclidean distance between the returned corners.\n.   @param mask Optional region of interest. If the image is not empty (it needs to have the type\n.   CV_8UC1 and the same size as image ), it specifies the region in which the corners are detected.\n.   @param blockSize Size of an average block for computing a derivative covariation matrix over each\n.   pixel neighborhood. See cornerEigenValsAndVecs .\n.   @param useHarrisDetector Parameter indicating whether to use a Harris detector (see #cornerHarris)\n.   or #cornerMinEigenVal.\n.   @param k Free parameter of the Harris detector.\n.   \n.   @sa  cornerMinEigenVal, cornerHarris, calcOpticalFlowPyrLK, estimateRigidTransform,\n\n\n\ngoodFeaturesToTrack(image, maxCorners, qualityLevel, minDistance, mask, blockSize, gradientSize[, corners[, useHarrisDetector[, k]]]) -> corners\n.'
     ...
 
@@ -2896,7 +3347,15 @@ def initCameraMatrix2D(objectPoints, imagePoints, imageSize, aspectRatio=...) ->
     ...
 
 
-def initUndistortRectifyMap(cameraMatrix, distCoeffs, R, newCameraMatrix, size, m1type, map1=..., map2=...) -> typing.Any:
+def initUndistortRectifyMap(
+        cameraMatrix,
+        distCoeffs,
+        R,
+        newCameraMatrix,
+        size,
+        m1type,
+        map1=...,
+        map2=...) -> typing.Any:
     "initUndistortRectifyMap(cameraMatrix, distCoeffs, R, newCameraMatrix, size, m1type[, map1[, map2]]) -> map1, map2\n.   @brief Computes the undistortion and rectification transformation map.\n.   \n.   The function computes the joint undistortion and rectification transformation and represents the\n.   result in the form of maps for remap. The undistorted image looks like original, as if it is\n.   captured with a camera using the camera matrix =newCameraMatrix and zero distortion. In case of a\n.   monocular camera, newCameraMatrix is usually equal to cameraMatrix, or it can be computed by\n.   #getOptimalNewCameraMatrix for a better control over scaling. In case of a stereo camera,\n.   newCameraMatrix is normally set to P1 or P2 computed by #stereoRectify .\n.   \n.   Also, this new camera is oriented differently in the coordinate space, according to R. That, for\n.   example, helps to align two heads of a stereo camera so that the epipolar lines on both images\n.   become horizontal and have the same y- coordinate (in case of a horizontally aligned stereo camera).\n.   \n.   The function actually builds the maps for the inverse mapping algorithm that is used by remap. That\n.   is, for each pixel \\f$(u, v)\\f$ in the destination (corrected and rectified) image, the function\n.   computes the corresponding coordinates in the source image (that is, in the original image from\n.   camera). The following process is applied:\n.   \\f[\n.   \\begin{array}{l}\n.   x  \\leftarrow (u - {c'}_x)/{f'}_x  \\\\\n.   y  \\leftarrow (v - {c'}_y)/{f'}_y  \\\\\n.   {[X\\,Y\\,W]} ^T  \\leftarrow R^{-1}*[x \\, y \\, 1]^T  \\\\\n.   x'  \\leftarrow X/W  \\\\\n.   y'  \\leftarrow Y/W  \\\\\n.   r^2  \\leftarrow x'^2 + y'^2 \\\\\n.   x''  \\leftarrow x' \\frac{1 + k_1 r^2 + k_2 r^4 + k_3 r^6}{1 + k_4 r^2 + k_5 r^4 + k_6 r^6}\n.   + 2p_1 x' y' + p_2(r^2 + 2 x'^2)  + s_1 r^2 + s_2 r^4\\\\\n.   y''  \\leftarrow y' \\frac{1 + k_1 r^2 + k_2 r^4 + k_3 r^6}{1 + k_4 r^2 + k_5 r^4 + k_6 r^6}\n.   + p_1 (r^2 + 2 y'^2) + 2 p_2 x' y' + s_3 r^2 + s_4 r^4 \\\\\n.   s\\vecthree{x'''}{y'''}{1} =\n.   \\vecthreethree{R_{33}(\\tau_x, \\tau_y)}{0}{-R_{13}((\\tau_x, \\tau_y)}\n.   {0}{R_{33}(\\tau_x, \\tau_y)}{-R_{23}(\\tau_x, \\tau_y)}\n.   {0}{0}{1} R(\\tau_x, \\tau_y) \\vecthree{x''}{y''}{1}\\\\\n.   map_x(u,v)  \\leftarrow x''' f_x + c_x  \\\\\n.   map_y(u,v)  \\leftarrow y''' f_y + c_y\n.   \\end{array}\n.   \\f]\n.   where \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6[, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$\n.   are the distortion coefficients.\n.   \n.   In case of a stereo camera, this function is called twice: once for each camera head, after\n.   stereoRectify, which in its turn is called after #stereoCalibrate. But if the stereo camera\n.   was not calibrated, it is still possible to compute the rectification transformations directly from\n.   the fundamental matrix using #stereoRectifyUncalibrated. For each camera, the function computes\n.   homography H as the rectification transformation in a pixel domain, not a rotation matrix R in 3D\n.   space. R can be computed from H as\n.   \\f[\\texttt{R} = \\texttt{cameraMatrix} ^{-1} \\cdot \\texttt{H} \\cdot \\texttt{cameraMatrix}\\f]\n.   where cameraMatrix can be chosen arbitrarily.\n.   \n.   @param cameraMatrix Input camera matrix \\f$A=\\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6[, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$\n.   of 4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.\n.   @param R Optional rectification transformation in the object space (3x3 matrix). R1 or R2 ,\n.   computed by #stereoRectify can be passed here. If the matrix is empty, the identity transformation\n.   is assumed. In cvInitUndistortMap R assumed to be an identity matrix.\n.   @param newCameraMatrix New camera matrix \\f$A'=\\vecthreethree{f_x'}{0}{c_x'}{0}{f_y'}{c_y'}{0}{0}{1}\\f$.\n.   @param size Undistorted image size.\n.   @param m1type Type of the first output map that can be CV_32FC1, CV_32FC2 or CV_16SC2, see #convertMaps\n.   @param map1 The first output map.\n.   @param map2 The second output map."
     ...
 
@@ -2986,7 +3445,12 @@ def matchShapes(contour1, contour2, method: int, parameter) -> typing.Any:
     ...
 
 
-def matchTemplate(image: ndarray, templ: ndarray, method: int, result: ndarray = ..., mask: typing.Optional[ndarray] = ...) -> ndarray:
+def matchTemplate(
+        image: ndarray,
+        templ: ndarray,
+        method: int,
+        result: ndarray = ...,
+        mask: typing.Optional[ndarray] = ...) -> ndarray:
     "matchTemplate(image, templ, method[, result[, mask]]) -> result\n.   @brief Compares a template against overlapped image regions.\n.   \n.   The function slides through image , compares the overlapped patches of size \\f$w \\times h\\f$ against\n.   templ using the specified method and stores the comparison results in result . #TemplateMatchModes\n.   describes the formulae for the available comparison methods ( \\f$I\\f$ denotes image, \\f$T\\f$\n.   template, \\f$R\\f$ result, \\f$M\\f$ the optional mask ). The summation is done over template and/or\n.   the image patch: \\f$x' = 0...w-1, y' = 0...h-1\\f$\n.   \n.   After the function finishes the comparison, the best matches can be found as global minimums (when\n.   #TM_SQDIFF was used) or maximums (when #TM_CCORR or #TM_CCOEFF was used) using the\n.   #minMaxLoc function. In case of a color image, template summation in the numerator and each sum in\n.   the denominator is done over all of the channels and separate mean values are used for each channel.\n.   That is, the function can take a color template and a color image. The result will still be a\n.   single-channel image, which is easier to analyze.\n.   \n.   @param image Image where the search is running. It must be 8-bit or 32-bit floating-point.\n.   @param templ Searched template. It must be not greater than the source image and have the same\n.   data type.\n.   @param result Map of comparison results. It must be single-channel 32-bit floating-point. If image\n.   is \\f$W \\times H\\f$ and templ is \\f$w \\times h\\f$ , then result is \\f$(W-w+1) \\times (H-h+1)\\f$ .\n.   @param method Parameter specifying the comparison method, see #TemplateMatchModes\n.   @param mask Optional mask. It must have the same size as templ. It must either have the same number\n.               of channels as template or only one channel, which is then used for all template and\n.               image channels. If the data type is #CV_8U, the mask is interpreted as a binary mask,\n.               meaning only elements where mask is nonzero are used and are kept unchanged independent\n.               of the actual mask value (weight equals 1). For data tpye #CV_32F, the mask values are\n.               used as weights. The exact formulas are documented in #TemplateMatchModes."
     ...
 
@@ -3041,7 +3505,8 @@ def minEnclosingTriangle(points, triangle=...) -> typing.Any:
     ...
 
 
-def minMaxLoc(src: ndarray, mask: ndarray = ...) -> typing.Tuple[float, float, typing.Tuple[int, int], typing.Tuple[int, int]]:
+def minMaxLoc(src: ndarray, mask: ndarray = ...) -> typing.Tuple[float,
+                                                                 float, typing.Tuple[int, int], typing.Tuple[int, int]]:
     'minMaxLoc(src[, mask]) -> minVal, maxVal, minLoc, maxLoc\n.   @brief Finds the global minimum and maximum in an array.\n.   \n.   The function cv::minMaxLoc finds the minimum and maximum element values and their positions. The\n.   extremums are searched across the whole array or, if mask is not an empty array, in the specified\n.   array region.\n.   \n.   The function do not work with multi-channel arrays. If you need to find minimum or maximum\n.   elements across all the channels, use Mat::reshape first to reinterpret the array as\n.   single-channel. Or you may extract the particular channel using either extractImageCOI , or\n.   mixChannels , or split .\n.   @param src input single-channel array.\n.   @param minVal pointer to the returned minimum value; NULL is used if not required.\n.   @param maxVal pointer to the returned maximum value; NULL is used if not required.\n.   @param minLoc pointer to the returned minimum location (in 2D case); NULL is used if not required.\n.   @param maxLoc pointer to the returned maximum location (in 2D case); NULL is used if not required.\n.   @param mask optional mask used to select a sub-array.\n.   @sa max, min, compare, inRange, extractImageCOI, mixChannels, split, Mat::reshape'
     ...
 
@@ -3071,7 +3536,15 @@ def moments(array, binaryImage=...) -> typing.Any:
     ...
 
 
-def morphologyEx(src: ndarray, op, kernel, dts: ndarray = ..., anchor=..., iterations=..., borderType=..., borderValue=...) -> typing.Any:
+def morphologyEx(
+        src: ndarray,
+        op,
+        kernel,
+        dts: ndarray = ...,
+        anchor=...,
+        iterations=...,
+        borderType=...,
+        borderValue=...) -> typing.Any:
     'morphologyEx(src, op, kernel[, dst[, anchor[, iterations[, borderType[, borderValue]]]]]) -> dst\n.   @brief Performs advanced morphological transformations.\n.   \n.   The function cv::morphologyEx can perform advanced morphological transformations using an erosion and dilation as\n.   basic operations.\n.   \n.   Any of the operations can be done in-place. In case of multi-channel images, each channel is\n.   processed independently.\n.   \n.   @param src Source image. The number of channels can be arbitrary. The depth should be one of\n.   CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.\n.   @param dst Destination image of the same size and type as source image.\n.   @param op Type of a morphological operation, see #MorphTypes\n.   @param kernel Structuring element. It can be created using #getStructuringElement.\n.   @param anchor Anchor position with the kernel. Negative values mean that the anchor is at the\n.   kernel center.\n.   @param iterations Number of times erosion and dilation are applied.\n.   @param borderType Pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @param borderValue Border value in case of a constant border. The default value has a special\n.   meaning.\n.   @sa  dilate, erode, getStructuringElement\n.   @note The number of iterations is the number of times erosion or dilatation operation will be applied.\n.   For instance, an opening operation (#MORPH_OPEN) with two iterations is equivalent to apply\n.   successively: erode -> erode -> dilate -> dilate (and not erode -> dilate -> erode -> dilate).'
     ...
 
@@ -3106,7 +3579,14 @@ def norm(src1: ndarray, src2: ndarray, normType: int = ..., mask: ndarray = ...)
     ...
 
 
-def normalize(src: ndarray, dts: ndarray, alpha=..., beta=..., normType: int = ..., dtype=..., mask: ndarray = ...) -> ndarray:
+def normalize(
+        src: ndarray,
+        dts: ndarray,
+        alpha=...,
+        beta=...,
+        normType: int = ...,
+        dtype=...,
+        mask: ndarray = ...) -> ndarray:
     'normalize(src, dst[, alpha[, beta[, normType[, dtype[, mask]]]]]) -> dst\n.   @brief Normalizes the norm or value range of an array.\n.   \n.   The function cv::normalize normalizes scale and shift the input array elements so that\n.   \\f[\\| \\texttt{dst} \\| _{L_p}= \\texttt{alpha}\\f]\n.   (where p=Inf, 1 or 2) when normType=NORM_INF, NORM_L1, or NORM_L2, respectively; or so that\n.   \\f[\\min _I  \\texttt{dst} (I)= \\texttt{alpha} , \\, \\, \\max _I  \\texttt{dst} (I)= \\texttt{beta}\\f]\n.   \n.   when normType=NORM_MINMAX (for dense arrays only). The optional mask specifies a sub-array to be\n.   normalized. This means that the norm or min-n-max are calculated over the sub-array, and then this\n.   sub-array is modified to be normalized. If you want to only use the mask to calculate the norm or\n.   min-max but modify the whole array, you can use norm and Mat::convertTo.\n.   \n.   In case of sparse matrices, only the non-zero values are analyzed and transformed. Because of this,\n.   the range transformation for sparse matrices is not allowed since it can shift the zero level.\n.   \n.   Possible usage with some positive example data:\n.   @code{.cpp}\n.       vector<double> positiveData = { 2.0, 8.0, 10.0 };\n.       vector<double> normalizedData_l1, normalizedData_l2, normalizedData_inf, normalizedData_minmax;\n.   \n.       // Norm to probability (total count)\n.       // sum(numbers) = 20.0\n.       // 2.0      0.1     (2.0/20.0)\n.       // 8.0      0.4     (8.0/20.0)\n.       // 10.0     0.5     (10.0/20.0)\n.       normalize(positiveData, normalizedData_l1, 1.0, 0.0, NORM_L1);\n.   \n.       // Norm to unit vector: ||positiveData|| = 1.0\n.       // 2.0      0.15\n.       // 8.0      0.62\n.       // 10.0     0.77\n.       normalize(positiveData, normalizedData_l2, 1.0, 0.0, NORM_L2);\n.   \n.       // Norm to max element\n.       // 2.0      0.2     (2.0/10.0)\n.       // 8.0      0.8     (8.0/10.0)\n.       // 10.0     1.0     (10.0/10.0)\n.       normalize(positiveData, normalizedData_inf, 1.0, 0.0, NORM_INF);\n.   \n.       // Norm to range [0.0;1.0]\n.       // 2.0      0.0     (shift to left border)\n.       // 8.0      0.75    (6.0/8.0)\n.       // 10.0     1.0     (shift to right border)\n.       normalize(positiveData, normalizedData_minmax, 1.0, 0.0, NORM_MINMAX);\n.   @endcode\n.   \n.   @param src input array.\n.   @param dst output array of the same size as src .\n.   @param alpha norm value to normalize to or the lower range boundary in case of the range\n.   normalization.\n.   @param beta upper range boundary in case of the range normalization; it is not used for the norm\n.   normalization.\n.   @param normType normalization type (see cv::NormTypes).\n.   @param dtype when negative, the output array has the same type as src; otherwise, it has the same\n.   number of channels as src and the depth =CV_MAT_DEPTH(dtype).\n.   @param mask optional operation mask.\n.   @sa norm, Mat::convertTo, SparseMat::convertTo'
     ...
 
@@ -3119,7 +3599,13 @@ def patchNaNs(a, val=...) -> typing.Any:
     ...
 
 
-def pencilSketch(src: ndarray, dts1: ndarray = ..., dts2: ndarray = ..., sigma_s=..., sigma_r=..., shade_factor=...) -> typing.Any:
+def pencilSketch(
+        src: ndarray,
+        dts1: ndarray = ...,
+        dts2: ndarray = ...,
+        sigma_s=...,
+        sigma_r=...,
+        shade_factor=...) -> typing.Any:
     'pencilSketch(src[, dst1[, dst2[, sigma_s[, sigma_r[, shade_factor]]]]]) -> dst1, dst2\n.   @brief Pencil-like non-photorealistic line drawing\n.   \n.   @param src Input 8-bit 3-channel image.\n.   @param dst1 Output 8-bit 1-channel image.\n.   @param dst2 Output image with the same size and type as src.\n.   @param sigma_s %Range between 0 to 200.\n.   @param sigma_r %Range between 0 to 1.\n.   @param shade_factor %Range between 0 to 0.1.'
     ...
 
@@ -3164,12 +3650,29 @@ def preCornerDetect(src: ndarray, ksize, dts: ndarray = ..., borderType=...) -> 
     ...
 
 
-def projectPoints(objectPoints, rvec, tvec, cameraMatrix, distCoeffs, imagePoints=..., jacobian=..., aspectRatio=...) -> typing.Any:
+def projectPoints(
+        objectPoints,
+        rvec,
+        tvec,
+        cameraMatrix,
+        distCoeffs,
+        imagePoints=...,
+        jacobian=...,
+        aspectRatio=...) -> typing.Any:
     'projectPoints(objectPoints, rvec, tvec, cameraMatrix, distCoeffs[, imagePoints[, jacobian[, aspectRatio]]]) -> imagePoints, jacobian\n.   @brief Projects 3D points to an image plane.\n.   \n.   @param objectPoints Array of object points expressed wrt. the world coordinate frame. A 3xN/Nx3\n.   1-channel or 1xN/Nx1 3-channel (or vector\\<Point3f\\> ), where N is the number of points in the view.\n.   @param rvec The rotation vector (@ref Rodrigues) that, together with tvec, performs a change of\n.   basis from world to camera coordinate system, see @ref calibrateCamera for details.\n.   @param tvec The translation vector, see parameter description above.\n.   @param cameraMatrix Camera matrix \\f$A = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{_1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is empty, the zero distortion coefficients are assumed.\n.   @param imagePoints Output array of image points, 1xN/Nx1 2-channel, or\n.   vector\\<Point2f\\> .\n.   @param jacobian Optional output 2Nx(10+\\<numDistCoeffs\\>) jacobian matrix of derivatives of image\n.   points with respect to components of the rotation vector, translation vector, focal lengths,\n.   coordinates of the principal point and the distortion coefficients. In the old interface different\n.   components of the jacobian are returned via different output parameters.\n.   @param aspectRatio Optional "fixed aspect ratio" parameter. If the parameter is not 0, the\n.   function assumes that the aspect ratio (\\f$f_x / f_y\\f$) is fixed and correspondingly adjusts the\n.   jacobian matrix.\n.   \n.   The function computes the 2D projections of 3D points to the image plane, given intrinsic and\n.   extrinsic camera parameters. Optionally, the function computes Jacobians -matrices of partial\n.   derivatives of image points coordinates (as functions of all the input parameters) with respect to\n.   the particular parameters, intrinsic and/or extrinsic. The Jacobians are used during the global\n.   optimization in @ref calibrateCamera, @ref solvePnP, and @ref stereoCalibrate. The function itself\n.   can also be used to compute a re-projection error, given the current intrinsic and extrinsic\n.   parameters.\n.   \n.   @note By setting rvec = tvec = \\f$[0, 0, 0]\\f$, or by setting cameraMatrix to a 3x3 identity matrix,\n.   or by passing zero distortion coefficients, one can get various useful partial cases of the\n.   function. This means, one can compute the distorted coordinates for a sparse set of points or apply\n.   a perspective transformation (and also compute the derivatives) in the ideal zero-distortion setup.'
     ...
 
 
-def putText(img: ndarray, text, org, fontFace, fontScale, color, thickness=..., lineType=..., bottomLeftOrigin=...) -> typing.Any:
+def putText(
+        img: ndarray,
+        text,
+        org,
+        fontFace,
+        fontScale,
+        color,
+        thickness=...,
+        lineType=...,
+        bottomLeftOrigin=...) -> typing.Any:
     'putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]]) -> img\n.   @brief Draws a text string.\n.   \n.   The function cv::putText renders the specified text string in the image. Symbols that cannot be rendered\n.   using the specified font are replaced by question marks. See #getTextSize for a text rendering code\n.   example.\n.   \n.   @param img Image.\n.   @param text Text string to be drawn.\n.   @param org Bottom-left corner of the text string in the image.\n.   @param fontFace Font type, see #HersheyFonts.\n.   @param fontScale Font scale factor that is multiplied by the font-specific base size.\n.   @param color Text color.\n.   @param thickness Thickness of the lines used to draw a text.\n.   @param lineType Line type. See #LineTypes\n.   @param bottomLeftOrigin When true, the image data origin is at the bottom-left corner. Otherwise,\n.   it is at the top-left corner.'
     ...
 
@@ -3219,7 +3722,30 @@ def rectangle(img: ndarray, pt1, pt2, color, thickness=..., lineType=..., shift=
     ...
 
 
-def rectify3Collinear(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, cameraMatrix3, distCoeffs3, imgpt1, imgpt3, imageSize, R12, T12, R13, T13, alpha, newImgSize, flags: int, R1=..., R2=..., R3=..., P1=..., P2=..., P3=..., Q=...) -> typing.Any:
+def rectify3Collinear(
+        cameraMatrix1,
+        distCoeffs1,
+        cameraMatrix2,
+        distCoeffs2,
+        cameraMatrix3,
+        distCoeffs3,
+        imgpt1,
+        imgpt3,
+        imageSize,
+        R12,
+        T12,
+        R13,
+        T13,
+        alpha,
+        newImgSize,
+        flags: int,
+        R1=...,
+        R2=...,
+        R3=...,
+        P1=...,
+        P2=...,
+        P3=...,
+        Q=...) -> typing.Any:
     'rectify3Collinear(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, cameraMatrix3, distCoeffs3, imgpt1, imgpt3, imageSize, R12, T12, R13, T13, alpha, newImgSize, flags[, R1[, R2[, R3[, P1[, P2[, P3[, Q]]]]]]]) -> retval, R1, R2, R3, P1, P2, P3, Q, roi1, roi2\n.'
     ...
 
@@ -3234,7 +3760,14 @@ def reduce(src: ndarray, dim, rtype, dts: ndarray = ..., dtype=...) -> typing.An
     ...
 
 
-def remap(src: ndarray, map1, map2, interpolation: int, dts: ndarray = ..., borderMode=..., borderValue=...) -> typing.Any:
+def remap(
+        src: ndarray,
+        map1,
+        map2,
+        interpolation: int,
+        dts: ndarray = ...,
+        borderMode=...,
+        borderValue=...) -> typing.Any:
     'remap(src, map1, map2, interpolation[, dst[, borderMode[, borderValue]]]) -> dst\n.   @brief Applies a generic geometrical transformation to an image.\n.   \n.   The function remap transforms the source image using the specified map:\n.   \n.   \\f[\\texttt{dst} (x,y) =  \\texttt{src} (map_x(x,y),map_y(x,y))\\f]\n.   \n.   where values of pixels with non-integer coordinates are computed using one of available\n.   interpolation methods. \\f$map_x\\f$ and \\f$map_y\\f$ can be encoded as separate floating-point maps\n.   in \\f$map_1\\f$ and \\f$map_2\\f$ respectively, or interleaved floating-point maps of \\f$(x,y)\\f$ in\n.   \\f$map_1\\f$, or fixed-point maps created by using convertMaps. The reason you might want to\n.   convert from floating to fixed-point representations of a map is that they can yield much faster\n.   (\\~2x) remapping operations. In the converted case, \\f$map_1\\f$ contains pairs (cvFloor(x),\n.   cvFloor(y)) and \\f$map_2\\f$ contains indices in a table of interpolation coefficients.\n.   \n.   This function cannot operate in-place.\n.   \n.   @param src Source image.\n.   @param dst Destination image. It has the same size as map1 and the same type as src .\n.   @param map1 The first map of either (x,y) points or just x values having the type CV_16SC2 ,\n.   CV_32FC1, or CV_32FC2. See convertMaps for details on converting a floating point\n.   representation to fixed-point for speed.\n.   @param map2 The second map of y values having the type CV_16UC1, CV_32FC1, or none (empty map\n.   if map1 is (x,y) points), respectively.\n.   @param interpolation Interpolation method (see #InterpolationFlags). The method #INTER_AREA is\n.   not supported by this function.\n.   @param borderMode Pixel extrapolation method (see #BorderTypes). When\n.   borderMode=#BORDER_TRANSPARENT, it means that the pixels in the destination image that\n.   corresponds to the "outliers" in the source image are not modified by the function.\n.   @param borderValue Value used in case of a constant border. By default, it is 0.\n.   @note\n.   Due to current implementation limitations the size of an input and output images should be less than 32767x32767.'
     ...
 
@@ -3249,7 +3782,8 @@ def reprojectImageTo3D(disparity, Q, _3dImage=..., handleMissingValues=..., ddep
     ...
 
 
-def resize(src: ndarray, dsize: typing.Tuple[int, int], dts: ndarray = ..., fx: int = ..., fy: int = ..., interpolation: int = ...) -> ndarray:
+def resize(src: ndarray, dsize: typing.Tuple[int, int], dts: ndarray = ...,
+           fx: int = ..., fy: int = ..., interpolation: int = ...) -> ndarray:
     'resize(src, dsize[, dst[, fx[, fy[, interpolation]]]]) -> dst\n.   @brief Resizes an image.\n.   \n.   The function resize resizes the image src down to or up to the specified size. Note that the\n.   initial dst type or size are not taken into account. Instead, the size and type are derived from\n.   the `src`,`dsize`,`fx`, and `fy`. If you want to resize src so that it fits the pre-created dst,\n.   you may call the function as follows:\n.   @code\n.       // explicitly specify dsize=dst.size(); fx and fy will be computed from that.\n.       resize(src, dst, dst.size(), 0, 0, interpolation);\n.   @endcode\n.   If you want to decimate the image by factor of 2 in each direction, you can call the function this\n.   way:\n.   @code\n.       // specify fx and fy and let the function compute the destination image size.\n.       resize(src, dst, Size(), 0.5, 0.5, interpolation);\n.   @endcode\n.   To shrink an image, it will generally look best with #INTER_AREA interpolation, whereas to\n.   enlarge an image, it will generally look best with c#INTER_CUBIC (slow) or #INTER_LINEAR\n.   (faster but still looks OK).\n.   \n.   @param src input image.\n.   @param dst output image; it has the size dsize (when it is non-zero) or the size computed from\n.   src.size(), fx, and fy; the type of dst is the same as of src.\n.   @param dsize output image size; if it equals zero, it is computed as:\n.    \\f[\\texttt{dsize = Size(round(fx*src.cols), round(fy*src.rows))}\\f]\n.    Either dsize or both fx and fy must be non-zero.\n.   @param fx scale factor along the horizontal axis; when it equals 0, it is computed as\n.   \\f[\\texttt{(double)dsize.width/src.cols}\\f]\n.   @param fy scale factor along the vertical axis; when it equals 0, it is computed as\n.   \\f[\\texttt{(double)dsize.height/src.rows}\\f]\n.   @param interpolation interpolation method, see #InterpolationFlags\n.   \n.   @sa  warpAffine, warpPerspective, remap'
     ...
 
@@ -3294,7 +3828,15 @@ def selectROIs(windowName, img: ndarray, showCrosshair=..., fromCenter=...) -> t
     ...
 
 
-def sepFilter2D(src: ndarray, ddepth, kernelX, kernelY, dts: ndarray = ..., anchor=..., delta=..., borderType=...) -> typing.Any:
+def sepFilter2D(
+        src: ndarray,
+        ddepth,
+        kernelX,
+        kernelY,
+        dts: ndarray = ...,
+        anchor=...,
+        delta=...,
+        borderType=...) -> typing.Any:
     'sepFilter2D(src, ddepth, kernelX, kernelY[, dst[, anchor[, delta[, borderType]]]]) -> dst\n.   @brief Applies a separable linear filter to an image.\n.   \n.   The function applies a separable linear filter to the image. That is, first, every row of src is\n.   filtered with the 1D kernel kernelX. Then, every column of the result is filtered with the 1D\n.   kernel kernelY. The final result shifted by delta is stored in dst .\n.   \n.   @param src Source image.\n.   @param dst Destination image of the same size and the same number of channels as src .\n.   @param ddepth Destination image depth, see @ref filter_depths "combinations"\n.   @param kernelX Coefficients for filtering each row.\n.   @param kernelY Coefficients for filtering each column.\n.   @param anchor Anchor position within the kernel. The default value \\f$(-1,-1)\\f$ means that the anchor\n.   is at the kernel center.\n.   @param delta Value added to the filtered results before storing them.\n.   @param borderType Pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @sa  filter2D, Sobel, GaussianBlur, boxFilter, blur'
     ...
 
@@ -3374,17 +3916,48 @@ def solveP3P(objectPoints, imagePoints, cameraMatrix, distCoeffs, flags: int, rv
     ...
 
 
-def solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec=..., tvec=..., useExtrinsicGuess=..., flags: int = ...) -> typing.Any:
+def solvePnP(
+        objectPoints,
+        imagePoints,
+        cameraMatrix,
+        distCoeffs,
+        rvec=...,
+        tvec=...,
+        useExtrinsicGuess=...,
+        flags: int = ...) -> typing.Any:
     'solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs[, rvec[, tvec[, useExtrinsicGuess[, flags]]]]) -> retval, rvec, tvec\n.   @brief Finds an object pose from 3D-2D point correspondences.\n.   This function returns the rotation and the translation vectors that transform a 3D point expressed in the object\n.   coordinate frame to the camera coordinate frame, using different methods:\n.   - P3P methods (@ref SOLVEPNP_P3P, @ref SOLVEPNP_AP3P): need 4 input points to return a unique solution.\n.   - @ref SOLVEPNP_IPPE Input points must be >= 4 and object points must be coplanar.\n.   - @ref SOLVEPNP_IPPE_SQUARE Special case suitable for marker pose estimation.\n.   Number of input points must be 4. Object points must be defined in the following order:\n.     - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.     - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.     - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.     - point 3: [-squareLength / 2, -squareLength / 2, 0]\n.   - for all the other flags, number of input points must be >= 4 and object points can be in any configuration.\n.   \n.   @param objectPoints Array of object points in the object coordinate space, Nx3 1-channel or\n.   1xN/Nx1 3-channel, where N is the number of points. vector\\<Point3d\\> can be also passed here.\n.   @param imagePoints Array of corresponding image points, Nx2 1-channel or 1xN/Nx1 2-channel,\n.   where N is the number of points. vector\\<Point2d\\> can be also passed here.\n.   @param cameraMatrix Input camera matrix \\f$A = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are\n.   assumed.\n.   @param rvec Output rotation vector (see @ref Rodrigues ) that, together with tvec, brings points from\n.   the model coordinate system to the camera coordinate system.\n.   @param tvec Output translation vector.\n.   @param useExtrinsicGuess Parameter used for #SOLVEPNP_ITERATIVE. If true (1), the function uses\n.   the provided rvec and tvec values as initial approximations of the rotation and translation\n.   vectors, respectively, and further optimizes them.\n.   @param flags Method for solving a PnP problem:\n.   -   **SOLVEPNP_ITERATIVE** Iterative method is based on a Levenberg-Marquardt optimization. In\n.   this case the function finds such a pose that minimizes reprojection error, that is the sum\n.   of squared distances between the observed projections imagePoints and the projected (using\n.   projectPoints ) objectPoints .\n.   -   **SOLVEPNP_P3P** Method is based on the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang\n.   "Complete Solution Classification for the Perspective-Three-Point Problem" (@cite gao2003complete).\n.   In this case the function requires exactly four object and image points.\n.   -   **SOLVEPNP_AP3P** Method is based on the paper of T. Ke, S. Roumeliotis\n.   "An Efficient Algebraic Solution to the Perspective-Three-Point Problem" (@cite Ke17).\n.   In this case the function requires exactly four object and image points.\n.   -   **SOLVEPNP_EPNP** Method has been introduced by F. Moreno-Noguer, V. Lepetit and P. Fua in the\n.   paper "EPnP: Efficient Perspective-n-Point Camera Pose Estimation" (@cite lepetit2009epnp).\n.   -   **SOLVEPNP_DLS** Method is based on the paper of J. Hesch and S. Roumeliotis.\n.   "A Direct Least-Squares (DLS) Method for PnP" (@cite hesch2011direct).\n.   -   **SOLVEPNP_UPNP** Method is based on the paper of A. Penate-Sanchez, J. Andrade-Cetto,\n.   F. Moreno-Noguer. "Exhaustive Linearization for Robust Camera Pose and Focal Length\n.   Estimation" (@cite penate2013exhaustive). In this case the function also estimates the parameters \\f$f_x\\f$ and \\f$f_y\\f$\n.   assuming that both have the same value. Then the cameraMatrix is updated with the estimated\n.   focal length.\n.   -   **SOLVEPNP_IPPE** Method is based on the paper of T. Collins and A. Bartoli.\n.   "Infinitesimal Plane-Based Pose Estimation" (@cite Collins14). This method requires coplanar object points.\n.   -   **SOLVEPNP_IPPE_SQUARE** Method is based on the paper of Toby Collins and Adrien Bartoli.\n.   "Infinitesimal Plane-Based Pose Estimation" (@cite Collins14). This method is suitable for marker pose estimation.\n.   It requires 4 coplanar object points defined in the following order:\n.     - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.     - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.     - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.     - point 3: [-squareLength / 2, -squareLength / 2, 0]\n.   \n.   The function estimates the object pose given a set of object points, their corresponding image\n.   projections, as well as the camera matrix and the distortion coefficients, see the figure below\n.   (more precisely, the X-axis of the camera frame is pointing to the right, the Y-axis downward\n.   and the Z-axis forward).\n.   \n.   ![](pnp.jpg)\n.   \n.   Points expressed in the world frame \\f$ \\bf{X}_w \\f$ are projected into the image plane \\f$ \\left[ u, v \\right] \\f$\n.   using the perspective projection model \\f$ \\Pi \\f$ and the camera intrinsic parameters matrix \\f$ \\bf{A} \\f$:\n.   \n.   \\f[\n.     \\begin{align*}\n.     \\begin{bmatrix}\n.     u \\\\\n.     v \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\bf{A} \\hspace{0.1em} \\Pi \\hspace{0.2em} ^{c}\\bf{T}_w\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix} \\\\\n.     \\begin{bmatrix}\n.     u \\\\\n.     v \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\begin{bmatrix}\n.     f_x & 0 & c_x \\\\\n.     0 & f_y & c_y \\\\\n.     0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     1 & 0 & 0 & 0 \\\\\n.     0 & 1 & 0 & 0 \\\\\n.     0 & 0 & 1 & 0\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     r_{11} & r_{12} & r_{13} & t_x \\\\\n.     r_{21} & r_{22} & r_{23} & t_y \\\\\n.     r_{31} & r_{32} & r_{33} & t_z \\\\\n.     0 & 0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix}\n.     \\end{align*}\n.   \\f]\n.   \n.   The estimated pose is thus the rotation (`rvec`) and the translation (`tvec`) vectors that allow transforming\n.   a 3D point expressed in the world frame into the camera frame:\n.   \n.   \\f[\n.     \\begin{align*}\n.     \\begin{bmatrix}\n.     X_c \\\\\n.     Y_c \\\\\n.     Z_c \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\hspace{0.2em} ^{c}\\bf{T}_w\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix} \\\\\n.     \\begin{bmatrix}\n.     X_c \\\\\n.     Y_c \\\\\n.     Z_c \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\begin{bmatrix}\n.     r_{11} & r_{12} & r_{13} & t_x \\\\\n.     r_{21} & r_{22} & r_{23} & t_y \\\\\n.     r_{31} & r_{32} & r_{33} & t_z \\\\\n.     0 & 0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix}\n.     \\end{align*}\n.   \\f]\n.   \n.   @note\n.      -   An example of how to use solvePnP for planar augmented reality can be found at\n.           opencv_source_code/samples/python/plane_ar.py\n.      -   If you are using Python:\n.           - Numpy array slices won\'t work as input because solvePnP requires contiguous\n.           arrays (enforced by the assertion using cv::Mat::checkVector() around line 55 of\n.           modules/calib3d/src/solvepnp.cpp version 2.4.9)\n.           - The P3P algorithm requires image points to be in an array of shape (N,1,2) due\n.           to its calling of cv::undistortPoints (around line 75 of modules/calib3d/src/solvepnp.cpp version 2.4.9)\n.           which requires 2-channel information.\n.           - Thus, given some data D = np.array(...) where D.shape = (N,M), in order to use a subset of\n.           it as, e.g., imagePoints, one must effectively copy it into a new array: imagePoints =\n.           np.ascontiguousarray(D[:,:2]).reshape((N,1,2))\n.      -   The methods **SOLVEPNP_DLS** and **SOLVEPNP_UPNP** cannot be used as the current implementations are\n.          unstable and sometimes give completely wrong results. If you pass one of these two\n.          flags, **SOLVEPNP_EPNP** method will be used instead.\n.      -   The minimum number of points is 4 in the general case. In the case of **SOLVEPNP_P3P** and **SOLVEPNP_AP3P**\n.          methods, it is required to use exactly 4 points (the first 3 points are used to estimate all the solutions\n.          of the P3P problem, the last one is used to retain the best solution that minimizes the reprojection error).\n.      -   With **SOLVEPNP_ITERATIVE** method and `useExtrinsicGuess=true`, the minimum number of points is 3 (3 points\n.          are sufficient to compute a pose but there are up to 4 solutions). The initial solution should be close to the\n.          global solution to converge.\n.      -   With **SOLVEPNP_IPPE** input points must be >= 4 and object points must be coplanar.\n.      -   With **SOLVEPNP_IPPE_SQUARE** this is a special case suitable for marker pose estimation.\n.          Number of input points must be 4. Object points must be defined in the following order:\n.            - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.            - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.            - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.            - point 3: [-squareLength / 2, -squareLength / 2, 0]'
     ...
 
 
-def solvePnPGeneric(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvecs=..., tvecs=..., useExtrinsicGuess=..., flags: int = ..., rvec=..., tvec=..., reprojectionError=...) -> typing.Any:
+def solvePnPGeneric(
+        objectPoints,
+        imagePoints,
+        cameraMatrix,
+        distCoeffs,
+        rvecs=...,
+        tvecs=...,
+        useExtrinsicGuess=...,
+        flags: int = ...,
+        rvec=...,
+        tvec=...,
+        reprojectionError=...) -> typing.Any:
     'solvePnPGeneric(objectPoints, imagePoints, cameraMatrix, distCoeffs[, rvecs[, tvecs[, useExtrinsicGuess[, flags[, rvec[, tvec[, reprojectionError]]]]]]]) -> retval, rvecs, tvecs, reprojectionError\n.   @brief Finds an object pose from 3D-2D point correspondences.\n.   This function returns a list of all the possible solutions (a solution is a <rotation vector, translation vector>\n.   couple), depending on the number of input points and the chosen method:\n.   - P3P methods (@ref SOLVEPNP_P3P, @ref SOLVEPNP_AP3P): 3 or 4 input points. Number of returned solutions can be between 0 and 4 with 3 input points.\n.   - @ref SOLVEPNP_IPPE Input points must be >= 4 and object points must be coplanar. Returns 2 solutions.\n.   - @ref SOLVEPNP_IPPE_SQUARE Special case suitable for marker pose estimation.\n.   Number of input points must be 4 and 2 solutions are returned. Object points must be defined in the following order:\n.     - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.     - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.     - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.     - point 3: [-squareLength / 2, -squareLength / 2, 0]\n.   - for all the other flags, number of input points must be >= 4 and object points can be in any configuration.\n.   Only 1 solution is returned.\n.   \n.   @param objectPoints Array of object points in the object coordinate space, Nx3 1-channel or\n.   1xN/Nx1 3-channel, where N is the number of points. vector\\<Point3d\\> can be also passed here.\n.   @param imagePoints Array of corresponding image points, Nx2 1-channel or 1xN/Nx1 2-channel,\n.   where N is the number of points. vector\\<Point2d\\> can be also passed here.\n.   @param cameraMatrix Input camera matrix \\f$A = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are\n.   assumed.\n.   @param rvecs Vector of output rotation vectors (see @ref Rodrigues ) that, together with tvecs, brings points from\n.   the model coordinate system to the camera coordinate system.\n.   @param tvecs Vector of output translation vectors.\n.   @param useExtrinsicGuess Parameter used for #SOLVEPNP_ITERATIVE. If true (1), the function uses\n.   the provided rvec and tvec values as initial approximations of the rotation and translation\n.   vectors, respectively, and further optimizes them.\n.   @param flags Method for solving a PnP problem:\n.   -   **SOLVEPNP_ITERATIVE** Iterative method is based on a Levenberg-Marquardt optimization. In\n.   this case the function finds such a pose that minimizes reprojection error, that is the sum\n.   of squared distances between the observed projections imagePoints and the projected (using\n.   projectPoints ) objectPoints .\n.   -   **SOLVEPNP_P3P** Method is based on the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang\n.   "Complete Solution Classification for the Perspective-Three-Point Problem" (@cite gao2003complete).\n.   In this case the function requires exactly four object and image points.\n.   -   **SOLVEPNP_AP3P** Method is based on the paper of T. Ke, S. Roumeliotis\n.   "An Efficient Algebraic Solution to the Perspective-Three-Point Problem" (@cite Ke17).\n.   In this case the function requires exactly four object and image points.\n.   -   **SOLVEPNP_EPNP** Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the\n.   paper "EPnP: Efficient Perspective-n-Point Camera Pose Estimation" (@cite lepetit2009epnp).\n.   -   **SOLVEPNP_DLS** Method is based on the paper of Joel A. Hesch and Stergios I. Roumeliotis.\n.   "A Direct Least-Squares (DLS) Method for PnP" (@cite hesch2011direct).\n.   -   **SOLVEPNP_UPNP** Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,\n.   F.Moreno-Noguer. "Exhaustive Linearization for Robust Camera Pose and Focal Length\n.   Estimation" (@cite penate2013exhaustive). In this case the function also estimates the parameters \\f$f_x\\f$ and \\f$f_y\\f$\n.   assuming that both have the same value. Then the cameraMatrix is updated with the estimated\n.   focal length.\n.   -   **SOLVEPNP_IPPE** Method is based on the paper of T. Collins and A. Bartoli.\n.   "Infinitesimal Plane-Based Pose Estimation" (@cite Collins14). This method requires coplanar object points.\n.   -   **SOLVEPNP_IPPE_SQUARE** Method is based on the paper of Toby Collins and Adrien Bartoli.\n.   "Infinitesimal Plane-Based Pose Estimation" (@cite Collins14). This method is suitable for marker pose estimation.\n.   It requires 4 coplanar object points defined in the following order:\n.     - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.     - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.     - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.     - point 3: [-squareLength / 2, -squareLength / 2, 0]\n.   @param rvec Rotation vector used to initialize an iterative PnP refinement algorithm, when flag is SOLVEPNP_ITERATIVE\n.   and useExtrinsicGuess is set to true.\n.   @param tvec Translation vector used to initialize an iterative PnP refinement algorithm, when flag is SOLVEPNP_ITERATIVE\n.   and useExtrinsicGuess is set to true.\n.   @param reprojectionError Optional vector of reprojection error, that is the RMS error\n.   (\\f$ \\text{RMSE} = \\sqrt{\\frac{\\sum_{i}^{N} \\left ( \\hat{y_i} - y_i \\right )^2}{N}} \\f$) between the input image points\n.   and the 3D object points projected with the estimated pose.\n.   \n.   The function estimates the object pose given a set of object points, their corresponding image\n.   projections, as well as the camera matrix and the distortion coefficients, see the figure below\n.   (more precisely, the X-axis of the camera frame is pointing to the right, the Y-axis downward\n.   and the Z-axis forward).\n.   \n.   ![](pnp.jpg)\n.   \n.   Points expressed in the world frame \\f$ \\bf{X}_w \\f$ are projected into the image plane \\f$ \\left[ u, v \\right] \\f$\n.   using the perspective projection model \\f$ \\Pi \\f$ and the camera intrinsic parameters matrix \\f$ \\bf{A} \\f$:\n.   \n.   \\f[\n.     \\begin{align*}\n.     \\begin{bmatrix}\n.     u \\\\\n.     v \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\bf{A} \\hspace{0.1em} \\Pi \\hspace{0.2em} ^{c}\\bf{T}_w\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix} \\\\\n.     \\begin{bmatrix}\n.     u \\\\\n.     v \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\begin{bmatrix}\n.     f_x & 0 & c_x \\\\\n.     0 & f_y & c_y \\\\\n.     0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     1 & 0 & 0 & 0 \\\\\n.     0 & 1 & 0 & 0 \\\\\n.     0 & 0 & 1 & 0\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     r_{11} & r_{12} & r_{13} & t_x \\\\\n.     r_{21} & r_{22} & r_{23} & t_y \\\\\n.     r_{31} & r_{32} & r_{33} & t_z \\\\\n.     0 & 0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix}\n.     \\end{align*}\n.   \\f]\n.   \n.   The estimated pose is thus the rotation (`rvec`) and the translation (`tvec`) vectors that allow transforming\n.   a 3D point expressed in the world frame into the camera frame:\n.   \n.   \\f[\n.     \\begin{align*}\n.     \\begin{bmatrix}\n.     X_c \\\\\n.     Y_c \\\\\n.     Z_c \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\hspace{0.2em} ^{c}\\bf{T}_w\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix} \\\\\n.     \\begin{bmatrix}\n.     X_c \\\\\n.     Y_c \\\\\n.     Z_c \\\\\n.     1\n.     \\end{bmatrix} &=\n.     \\begin{bmatrix}\n.     r_{11} & r_{12} & r_{13} & t_x \\\\\n.     r_{21} & r_{22} & r_{23} & t_y \\\\\n.     r_{31} & r_{32} & r_{33} & t_z \\\\\n.     0 & 0 & 0 & 1\n.     \\end{bmatrix}\n.     \\begin{bmatrix}\n.     X_{w} \\\\\n.     Y_{w} \\\\\n.     Z_{w} \\\\\n.     1\n.     \\end{bmatrix}\n.     \\end{align*}\n.   \\f]\n.   \n.   @note\n.      -   An example of how to use solvePnP for planar augmented reality can be found at\n.           opencv_source_code/samples/python/plane_ar.py\n.      -   If you are using Python:\n.           - Numpy array slices won\'t work as input because solvePnP requires contiguous\n.           arrays (enforced by the assertion using cv::Mat::checkVector() around line 55 of\n.           modules/calib3d/src/solvepnp.cpp version 2.4.9)\n.           - The P3P algorithm requires image points to be in an array of shape (N,1,2) due\n.           to its calling of cv::undistortPoints (around line 75 of modules/calib3d/src/solvepnp.cpp version 2.4.9)\n.           which requires 2-channel information.\n.           - Thus, given some data D = np.array(...) where D.shape = (N,M), in order to use a subset of\n.           it as, e.g., imagePoints, one must effectively copy it into a new array: imagePoints =\n.           np.ascontiguousarray(D[:,:2]).reshape((N,1,2))\n.      -   The methods **SOLVEPNP_DLS** and **SOLVEPNP_UPNP** cannot be used as the current implementations are\n.          unstable and sometimes give completely wrong results. If you pass one of these two\n.          flags, **SOLVEPNP_EPNP** method will be used instead.\n.      -   The minimum number of points is 4 in the general case. In the case of **SOLVEPNP_P3P** and **SOLVEPNP_AP3P**\n.          methods, it is required to use exactly 4 points (the first 3 points are used to estimate all the solutions\n.          of the P3P problem, the last one is used to retain the best solution that minimizes the reprojection error).\n.      -   With **SOLVEPNP_ITERATIVE** method and `useExtrinsicGuess=true`, the minimum number of points is 3 (3 points\n.          are sufficient to compute a pose but there are up to 4 solutions). The initial solution should be close to the\n.          global solution to converge.\n.      -   With **SOLVEPNP_IPPE** input points must be >= 4 and object points must be coplanar.\n.      -   With **SOLVEPNP_IPPE_SQUARE** this is a special case suitable for marker pose estimation.\n.          Number of input points must be 4. Object points must be defined in the following order:\n.            - point 0: [-squareLength / 2,  squareLength / 2, 0]\n.            - point 1: [ squareLength / 2,  squareLength / 2, 0]\n.            - point 2: [ squareLength / 2, -squareLength / 2, 0]\n.            - point 3: [-squareLength / 2, -squareLength / 2, 0]'
     ...
 
 
-def solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec=..., tvec=..., useExtrinsicGuess=..., iterationsCount=..., reprojectionError=..., confidence=..., inliers=..., flags: int = ...) -> typing.Any:
+def solvePnPRansac(
+        objectPoints,
+        imagePoints,
+        cameraMatrix,
+        distCoeffs,
+        rvec=...,
+        tvec=...,
+        useExtrinsicGuess=...,
+        iterationsCount=...,
+        reprojectionError=...,
+        confidence=...,
+        inliers=...,
+        flags: int = ...) -> typing.Any:
     'solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs[, rvec[, tvec[, useExtrinsicGuess[, iterationsCount[, reprojectionError[, confidence[, inliers[, flags]]]]]]]]) -> retval, rvec, tvec, inliers\n.   @brief Finds an object pose from 3D-2D point correspondences using the RANSAC scheme.\n.   \n.   @param objectPoints Array of object points in the object coordinate space, Nx3 1-channel or\n.   1xN/Nx1 3-channel, where N is the number of points. vector\\<Point3d\\> can be also passed here.\n.   @param imagePoints Array of corresponding image points, Nx2 1-channel or 1xN/Nx1 2-channel,\n.   where N is the number of points. vector\\<Point2d\\> can be also passed here.\n.   @param cameraMatrix Input camera matrix \\f$A = \\vecthreethree{fx}{0}{cx}{0}{fy}{cy}{0}{0}{1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are\n.   assumed.\n.   @param rvec Output rotation vector (see @ref Rodrigues ) that, together with tvec, brings points from\n.   the model coordinate system to the camera coordinate system.\n.   @param tvec Output translation vector.\n.   @param useExtrinsicGuess Parameter used for @ref SOLVEPNP_ITERATIVE. If true (1), the function uses\n.   the provided rvec and tvec values as initial approximations of the rotation and translation\n.   vectors, respectively, and further optimizes them.\n.   @param iterationsCount Number of iterations.\n.   @param reprojectionError Inlier threshold value used by the RANSAC procedure. The parameter value\n.   is the maximum allowed distance between the observed and computed point projections to consider it\n.   an inlier.\n.   @param confidence The probability that the algorithm produces a useful result.\n.   @param inliers Output vector that contains indices of inliers in objectPoints and imagePoints .\n.   @param flags Method for solving a PnP problem (see @ref solvePnP ).\n.   \n.   The function estimates an object pose given a set of object points, their corresponding image\n.   projections, as well as the camera matrix and the distortion coefficients. This function finds such\n.   a pose that minimizes reprojection error, that is, the sum of squared distances between the observed\n.   projections imagePoints and the projected (using @ref projectPoints ) objectPoints. The use of RANSAC\n.   makes the function resistant to outliers.\n.   \n.   @note\n.      -   An example of how to use solvePNPRansac for object detection can be found at\n.           opencv_source_code/samples/cpp/tutorial_code/calib3d/real_time_pose_estimation/\n.      -   The default method used to estimate the camera pose for the Minimal Sample Sets step\n.          is #SOLVEPNP_EPNP. Exceptions are:\n.            - if you choose #SOLVEPNP_P3P or #SOLVEPNP_AP3P, these methods will be used.\n.            - if the number of input points is equal to 4, #SOLVEPNP_P3P is used.\n.      -   The method used to estimate the camera pose using all the inliers is defined by the\n.          flags parameters unless it is equal to #SOLVEPNP_P3P or #SOLVEPNP_AP3P. In this case,\n.          the method #SOLVEPNP_EPNP will be used instead.'
     ...
 
@@ -3394,7 +3967,15 @@ def solvePnPRefineLM(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, 
     ...
 
 
-def solvePnPRefineVVS(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, criteria=..., VVSlambda=...) -> typing.Any:
+def solvePnPRefineVVS(
+        objectPoints,
+        imagePoints,
+        cameraMatrix,
+        distCoeffs,
+        rvec,
+        tvec,
+        criteria=...,
+        VVSlambda=...) -> typing.Any:
     'solvePnPRefineVVS(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec[, criteria[, VVSlambda]]) -> rvec, tvec\n.   @brief Refine a pose (the translation and the rotation that transform a 3D point expressed in the object coordinate frame\n.   to the camera coordinate frame) from a 3D-2D point correspondences and starting from an initial solution.\n.   \n.   @param objectPoints Array of object points in the object coordinate space, Nx3 1-channel or 1xN/Nx1 3-channel,\n.   where N is the number of points. vector\\<Point3d\\> can also be passed here.\n.   @param imagePoints Array of corresponding image points, Nx2 1-channel or 1xN/Nx1 2-channel,\n.   where N is the number of points. vector\\<Point2d\\> can also be passed here.\n.   @param cameraMatrix Input camera matrix \\f$A = \\vecthreethree{f_x}{0}{c_x}{0}{f_y}{c_y}{0}{0}{1}\\f$ .\n.   @param distCoeffs Input vector of distortion coefficients\n.   \\f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \\tau_x, \\tau_y]]]])\\f$ of\n.   4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are\n.   assumed.\n.   @param rvec Input/Output rotation vector (see @ref Rodrigues ) that, together with tvec, brings points from\n.   the model coordinate system to the camera coordinate system. Input values are used as an initial solution.\n.   @param tvec Input/Output translation vector. Input values are used as an initial solution.\n.   @param criteria Criteria when to stop the Levenberg-Marquard iterative algorithm.\n.   @param VVSlambda Gain for the virtual visual servoing control law, equivalent to the \\f$\\alpha\\f$\n.   gain in the Damped Gauss-Newton formulation.\n.   \n.   The function refines the object pose given at least 3 object points, their corresponding image\n.   projections, an initial solution for the rotation and translation vector,\n.   as well as the camera matrix and the distortion coefficients.\n.   The function minimizes the projection error with respect to the rotation and the translation vectors, using a\n.   virtual visual servoing (VVS) @cite Chaumette06 @cite Marchand16 scheme.'
     ...
 
@@ -3424,7 +4005,14 @@ def split(m, mv=...) -> typing.Any:
     ...
 
 
-def sqrBoxFilter(src: ndarray, ddepth, ksize, dts: ndarray = ..., anchor=..., normalize=..., borderType=...) -> typing.Any:
+def sqrBoxFilter(
+        src: ndarray,
+        ddepth,
+        ksize,
+        dts: ndarray = ...,
+        anchor=...,
+        normalize=...,
+        borderType=...) -> typing.Any:
     "sqrBoxFilter(src, ddepth, ksize[, dst[, anchor[, normalize[, borderType]]]]) -> dst\n.   @brief Calculates the normalized sum of squares of the pixel values overlapping the filter.\n.   \n.   For every pixel \\f$ (x, y) \\f$ in the source image, the function calculates the sum of squares of those neighboring\n.   pixel values which overlap the filter placed over the pixel \\f$ (x, y) \\f$.\n.   \n.   The unnormalized square box filter can be useful in computing local image statistics such as the the local\n.   variance and standard deviation around the neighborhood of a pixel.\n.   \n.   @param src input image\n.   @param dst output image of the same size and type as _src\n.   @param ddepth the output image depth (-1 to use src.depth())\n.   @param ksize kernel size\n.   @param anchor kernel anchor point. The default value of Point(-1, -1) denotes that the anchor is at the kernel\n.   center.\n.   @param normalize flag, specifying whether the kernel is to be normalized by it's area or not.\n.   @param borderType border mode used to extrapolate pixels outside of the image, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @sa boxFilter"
     ...
 
@@ -3439,17 +4027,61 @@ def startWindowThread() -> typing.Any:
     ...
 
 
-def stereoCalibrate(objectPoints, imagePoints1, imagePoints2, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize, R=..., T=..., E=..., F=..., flags: int = ..., criteria=...) -> typing.Any:
+def stereoCalibrate(
+        objectPoints,
+        imagePoints1,
+        imagePoints2,
+        cameraMatrix1,
+        distCoeffs1,
+        cameraMatrix2,
+        distCoeffs2,
+        imageSize,
+        R=...,
+        T=...,
+        E=...,
+        F=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     'stereoCalibrate(objectPoints, imagePoints1, imagePoints2, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize[, R[, T[, E[, F[, flags[, criteria]]]]]]) -> retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F\n.'
     ...
 
 
-def stereoCalibrateExtended(objectPoints, imagePoints1, imagePoints2, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize, R, T, E=..., F=..., perViewErrors=..., flags: int = ..., criteria=...) -> typing.Any:
+def stereoCalibrateExtended(
+        objectPoints,
+        imagePoints1,
+        imagePoints2,
+        cameraMatrix1,
+        distCoeffs1,
+        cameraMatrix2,
+        distCoeffs2,
+        imageSize,
+        R,
+        T,
+        E=...,
+        F=...,
+        perViewErrors=...,
+        flags: int = ...,
+        criteria=...) -> typing.Any:
     "stereoCalibrateExtended(objectPoints, imagePoints1, imagePoints2, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize, R, T[, E[, F[, perViewErrors[, flags[, criteria]]]]]) -> retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F, perViewErrors\n.   @brief Calibrates a stereo camera set up. This function finds the intrinsic parameters\n.   for each of the two cameras and the extrinsic parameters between the two cameras.\n.   \n.   @param objectPoints Vector of vectors of the calibration pattern points. The same structure as\n.   in @ref calibrateCamera. For each pattern view, both cameras need to see the same object\n.   points. Therefore, objectPoints.size(), imagePoints1.size(), and imagePoints2.size() need to be\n.   equal as well as objectPoints[i].size(), imagePoints1[i].size(), and imagePoints2[i].size() need to\n.   be equal for each i.\n.   @param imagePoints1 Vector of vectors of the projections of the calibration pattern points,\n.   observed by the first camera. The same structure as in @ref calibrateCamera.\n.   @param imagePoints2 Vector of vectors of the projections of the calibration pattern points,\n.   observed by the second camera. The same structure as in @ref calibrateCamera.\n.   @param cameraMatrix1 Input/output camera matrix for the first camera, the same as in\n.   @ref calibrateCamera. Furthermore, for the stereo case, additional flags may be used, see below.\n.   @param distCoeffs1 Input/output vector of distortion coefficients, the same as in\n.   @ref calibrateCamera.\n.   @param cameraMatrix2 Input/output second camera matrix for the second camera. See description for\n.   cameraMatrix1.\n.   @param distCoeffs2 Input/output lens distortion coefficients for the second camera. See\n.   description for distCoeffs1.\n.   @param imageSize Size of the image used only to initialize the intrinsic camera matrices.\n.   @param R Output rotation matrix. Together with the translation vector T, this matrix brings\n.   points given in the first camera's coordinate system to points in the second camera's\n.   coordinate system. In more technical terms, the tuple of R and T performs a change of basis\n.   from the first camera's coordinate system to the second camera's coordinate system. Due to its\n.   duality, this tuple is equivalent to the position of the first camera with respect to the\n.   second camera coordinate system.\n.   @param T Output translation vector, see description above.\n.   @param E Output essential matrix.\n.   @param F Output fundamental matrix.\n.   @param perViewErrors Output vector of the RMS re-projection error estimated for each pattern view.\n.   @param flags Different flags that may be zero or a combination of the following values:\n.   -   **CALIB_FIX_INTRINSIC** Fix cameraMatrix? and distCoeffs? so that only R, T, E, and F\n.   matrices are estimated.\n.   -   **CALIB_USE_INTRINSIC_GUESS** Optimize some or all of the intrinsic parameters\n.   according to the specified flags. Initial values are provided by the user.\n.   -   **CALIB_USE_EXTRINSIC_GUESS** R and T contain valid initial values that are optimized further.\n.   Otherwise R and T are initialized to the median value of the pattern views (each dimension separately).\n.   -   **CALIB_FIX_PRINCIPAL_POINT** Fix the principal points during the optimization.\n.   -   **CALIB_FIX_FOCAL_LENGTH** Fix \\f$f^{(j)}_x\\f$ and \\f$f^{(j)}_y\\f$ .\n.   -   **CALIB_FIX_ASPECT_RATIO** Optimize \\f$f^{(j)}_y\\f$ . Fix the ratio \\f$f^{(j)}_x/f^{(j)}_y\\f$\n.   .\n.   -   **CALIB_SAME_FOCAL_LENGTH** Enforce \\f$f^{(0)}_x=f^{(1)}_x\\f$ and \\f$f^{(0)}_y=f^{(1)}_y\\f$ .\n.   -   **CALIB_ZERO_TANGENT_DIST** Set tangential distortion coefficients for each camera to\n.   zeros and fix there.\n.   -   **CALIB_FIX_K1,...,CALIB_FIX_K6** Do not change the corresponding radial\n.   distortion coefficient during the optimization. If CALIB_USE_INTRINSIC_GUESS is set,\n.   the coefficient from the supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   -   **CALIB_RATIONAL_MODEL** Enable coefficients k4, k5, and k6. To provide the backward\n.   compatibility, this extra flag should be explicitly specified to make the calibration\n.   function use the rational model and return 8 coefficients. If the flag is not set, the\n.   function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_THIN_PRISM_MODEL** Coefficients s1, s2, s3 and s4 are enabled. To provide the\n.   backward compatibility, this extra flag should be explicitly specified to make the\n.   calibration function use the thin prism model and return 12 coefficients. If the flag is not\n.   set, the function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_FIX_S1_S2_S3_S4** The thin prism distortion coefficients are not changed during\n.   the optimization. If CALIB_USE_INTRINSIC_GUESS is set, the coefficient from the\n.   supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   -   **CALIB_TILTED_MODEL** Coefficients tauX and tauY are enabled. To provide the\n.   backward compatibility, this extra flag should be explicitly specified to make the\n.   calibration function use the tilted sensor model and return 14 coefficients. If the flag is not\n.   set, the function computes and returns only 5 distortion coefficients.\n.   -   **CALIB_FIX_TAUX_TAUY** The coefficients of the tilted sensor model are not changed during\n.   the optimization. If CALIB_USE_INTRINSIC_GUESS is set, the coefficient from the\n.   supplied distCoeffs matrix is used. Otherwise, it is set to 0.\n.   @param criteria Termination criteria for the iterative optimization algorithm.\n.   \n.   The function estimates the transformation between two cameras making a stereo pair. If one computes\n.   the poses of an object relative to the first camera and to the second camera,\n.   ( \\f$R_1\\f$,\\f$T_1\\f$ ) and (\\f$R_2\\f$,\\f$T_2\\f$), respectively, for a stereo camera where the\n.   relative position and orientation between the two cameras are fixed, then those poses definitely\n.   relate to each other. This means, if the relative position and orientation (\\f$R\\f$,\\f$T\\f$) of the\n.   two cameras is known, it is possible to compute (\\f$R_2\\f$,\\f$T_2\\f$) when (\\f$R_1\\f$,\\f$T_1\\f$) is\n.   given. This is what the described function does. It computes (\\f$R\\f$,\\f$T\\f$) such that:\n.   \n.   \\f[R_2=R R_1\\f]\n.   \\f[T_2=R T_1 + T.\\f]\n.   \n.   Therefore, one can compute the coordinate representation of a 3D point for the second camera's\n.   coordinate system when given the point's coordinate representation in the first camera's coordinate\n.   system:\n.   \n.   \\f[\\begin{bmatrix}\n.   X_2 \\\\\n.   Y_2 \\\\\n.   Z_2 \\\\\n.   1\n.   \\end{bmatrix} = \\begin{bmatrix}\n.   R & T \\\\\n.   0 & 1\n.   \\end{bmatrix} \\begin{bmatrix}\n.   X_1 \\\\\n.   Y_1 \\\\\n.   Z_1 \\\\\n.   1\n.   \\end{bmatrix}.\\f]\n.   \n.   \n.   Optionally, it computes the essential matrix E:\n.   \n.   \\f[E= \\vecthreethree{0}{-T_2}{T_1}{T_2}{0}{-T_0}{-T_1}{T_0}{0} R\\f]\n.   \n.   where \\f$T_i\\f$ are components of the translation vector \\f$T\\f$ : \\f$T=[T_0, T_1, T_2]^T\\f$ .\n.   And the function can also compute the fundamental matrix F:\n.   \n.   \\f[F = cameraMatrix2^{-T}\\cdot E \\cdot cameraMatrix1^{-1}\\f]\n.   \n.   Besides the stereo-related information, the function can also perform a full calibration of each of\n.   the two cameras. However, due to the high dimensionality of the parameter space and noise in the\n.   input data, the function can diverge from the correct solution. If the intrinsic parameters can be\n.   estimated with high accuracy for each of the cameras individually (for example, using\n.   calibrateCamera ), you are recommended to do so and then pass CALIB_FIX_INTRINSIC flag to the\n.   function along with the computed intrinsic parameters. Otherwise, if all the parameters are\n.   estimated at once, it makes sense to restrict some parameters, for example, pass\n.   CALIB_SAME_FOCAL_LENGTH and CALIB_ZERO_TANGENT_DIST flags, which is usually a\n.   reasonable assumption.\n.   \n.   Similarly to calibrateCamera, the function minimizes the total re-projection error for all the\n.   points in all the available views from both cameras. The function returns the final value of the\n.   re-projection error."
     ...
 
 
-def stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize, R, T, R1=..., R2=..., P1=..., P2=..., Q=..., flags: int = ..., alpha=..., newImageSize=...) -> typing.Any:
+def stereoRectify(
+        cameraMatrix1,
+        distCoeffs1,
+        cameraMatrix2,
+        distCoeffs2,
+        imageSize,
+        R,
+        T,
+        R1=...,
+        R2=...,
+        P1=...,
+        P2=...,
+        Q=...,
+        flags: int = ...,
+        alpha=...,
+        newImageSize=...) -> typing.Any:
     'stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, imageSize, R, T[, R1[, R2[, P1[, P2[, Q[, flags[, alpha[, newImageSize]]]]]]]]) -> R1, R2, P1, P2, Q, validPixROI1, validPixROI2\n.   @brief Computes rectification transforms for each head of a calibrated stereo camera.\n.   \n.   @param cameraMatrix1 First camera matrix.\n.   @param distCoeffs1 First camera distortion parameters.\n.   @param cameraMatrix2 Second camera matrix.\n.   @param distCoeffs2 Second camera distortion parameters.\n.   @param imageSize Size of the image used for stereo calibration.\n.   @param R Rotation matrix from the coordinate system of the first camera to the second camera,\n.   see @ref stereoCalibrate.\n.   @param T Translation vector from the coordinate system of the first camera to the second camera,\n.   see @ref stereoCalibrate.\n.   @param R1 Output 3x3 rectification transform (rotation matrix) for the first camera. This matrix\n.   brings points given in the unrectified first camera\'s coordinate system to points in the rectified\n.   first camera\'s coordinate system. In more technical terms, it performs a change of basis from the\n.   unrectified first camera\'s coordinate system to the rectified first camera\'s coordinate system.\n.   @param R2 Output 3x3 rectification transform (rotation matrix) for the second camera. This matrix\n.   brings points given in the unrectified second camera\'s coordinate system to points in the rectified\n.   second camera\'s coordinate system. In more technical terms, it performs a change of basis from the\n.   unrectified second camera\'s coordinate system to the rectified second camera\'s coordinate system.\n.   @param P1 Output 3x4 projection matrix in the new (rectified) coordinate systems for the first\n.   camera, i.e. it projects points given in the rectified first camera coordinate system into the\n.   rectified first camera\'s image.\n.   @param P2 Output 3x4 projection matrix in the new (rectified) coordinate systems for the second\n.   camera, i.e. it projects points given in the rectified first camera coordinate system into the\n.   rectified second camera\'s image.\n.   @param Q Output \\f$4 \\times 4\\f$ disparity-to-depth mapping matrix (see @ref reprojectImageTo3D).\n.   @param flags Operation flags that may be zero or CALIB_ZERO_DISPARITY . If the flag is set,\n.   the function makes the principal points of each camera have the same pixel coordinates in the\n.   rectified views. And if the flag is not set, the function may still shift the images in the\n.   horizontal or vertical direction (depending on the orientation of epipolar lines) to maximize the\n.   useful image area.\n.   @param alpha Free scaling parameter. If it is -1 or absent, the function performs the default\n.   scaling. Otherwise, the parameter should be between 0 and 1. alpha=0 means that the rectified\n.   images are zoomed and shifted so that only valid pixels are visible (no black areas after\n.   rectification). alpha=1 means that the rectified image is decimated and shifted so that all the\n.   pixels from the original images from the cameras are retained in the rectified images (no source\n.   image pixels are lost). Any intermediate value yields an intermediate result between\n.   those two extreme cases.\n.   @param newImageSize New image resolution after rectification. The same size should be passed to\n.   initUndistortRectifyMap (see the stereo_calib.cpp sample in OpenCV samples directory). When (0,0)\n.   is passed (default), it is set to the original imageSize . Setting it to a larger value can help you\n.   preserve details in the original image, especially when there is a big radial distortion.\n.   @param validPixROI1 Optional output rectangles inside the rectified images where all the pixels\n.   are valid. If alpha=0 , the ROIs cover the whole images. Otherwise, they are likely to be smaller\n.   (see the picture below).\n.   @param validPixROI2 Optional output rectangles inside the rectified images where all the pixels\n.   are valid. If alpha=0 , the ROIs cover the whole images. Otherwise, they are likely to be smaller\n.   (see the picture below).\n.   \n.   The function computes the rotation matrices for each camera that (virtually) make both camera image\n.   planes the same plane. Consequently, this makes all the epipolar lines parallel and thus simplifies\n.   the dense stereo correspondence problem. The function takes the matrices computed by stereoCalibrate\n.   as input. As output, it provides two rotation matrices and also two projection matrices in the new\n.   coordinates. The function distinguishes the following two cases:\n.   \n.   -   **Horizontal stereo**: the first and the second camera views are shifted relative to each other\n.       mainly along the x-axis (with possible small vertical shift). In the rectified images, the\n.       corresponding epipolar lines in the left and right cameras are horizontal and have the same\n.       y-coordinate. P1 and P2 look like:\n.   \n.       \\f[\\texttt{P1} = \\begin{bmatrix}\n.                           f & 0 & cx_1 & 0 \\\\\n.                           0 & f & cy & 0 \\\\\n.                           0 & 0 & 1 & 0\n.                        \\end{bmatrix}\\f]\n.   \n.       \\f[\\texttt{P2} = \\begin{bmatrix}\n.                           f & 0 & cx_2 & T_x*f \\\\\n.                           0 & f & cy & 0 \\\\\n.                           0 & 0 & 1 & 0\n.                        \\end{bmatrix} ,\\f]\n.   \n.       where \\f$T_x\\f$ is a horizontal shift between the cameras and \\f$cx_1=cx_2\\f$ if\n.       CALIB_ZERO_DISPARITY is set.\n.   \n.   -   **Vertical stereo**: the first and the second camera views are shifted relative to each other\n.       mainly in the vertical direction (and probably a bit in the horizontal direction too). The epipolar\n.       lines in the rectified images are vertical and have the same x-coordinate. P1 and P2 look like:\n.   \n.       \\f[\\texttt{P1} = \\begin{bmatrix}\n.                           f & 0 & cx & 0 \\\\\n.                           0 & f & cy_1 & 0 \\\\\n.                           0 & 0 & 1 & 0\n.                        \\end{bmatrix}\\f]\n.   \n.       \\f[\\texttt{P2} = \\begin{bmatrix}\n.                           f & 0 & cx & 0 \\\\\n.                           0 & f & cy_2 & T_y*f \\\\\n.                           0 & 0 & 1 & 0\n.                        \\end{bmatrix},\\f]\n.   \n.       where \\f$T_y\\f$ is a vertical shift between the cameras and \\f$cy_1=cy_2\\f$ if\n.       CALIB_ZERO_DISPARITY is set.\n.   \n.   As you can see, the first three columns of P1 and P2 will effectively be the new "rectified" camera\n.   matrices. The matrices, together with R1 and R2 , can then be passed to initUndistortRectifyMap to\n.   initialize the rectification map for each camera.\n.   \n.   See below the screenshot from the stereo_calib.cpp sample. Some red horizontal lines pass through\n.   the corresponding image regions. This means that the images are well rectified, which is what most\n.   stereo correspondence algorithms rely on. The green rectangles are roi1 and roi2 . You see that\n.   their interiors are all valid pixels.\n.   \n.   ![image](pics/stereo_undistort.jpg)'
     ...
 
@@ -3474,7 +4106,13 @@ def sumElems(src) -> typing.Any:
     ...
 
 
-def textureFlattening(src: ndarray, mask: ndarray, dts: ndarray = ..., low_threshold=..., high_threshold=..., kernel_size=...) -> typing.Any:
+def textureFlattening(
+        src: ndarray,
+        mask: ndarray,
+        dts: ndarray = ...,
+        low_threshold=...,
+        high_threshold=...,
+        kernel_size=...) -> typing.Any:
     "textureFlattening(src, mask[, dst[, low_threshold[, high_threshold[, kernel_size]]]]) -> dst\n.   @brief By retaining only the gradients at edge locations, before integrating with the Poisson solver, one\n.   washes out the texture of the selected region, giving its contents a flat aspect. Here Canny Edge %Detector is used.\n.   \n.   @param src Input 8-bit 3-channel image.\n.   @param mask Input 8-bit 1 or 3-channel image.\n.   @param dst Output image with the same size and type as src.\n.   @param low_threshold %Range from 0 to 100.\n.   @param high_threshold Value \\> 100.\n.   @param kernel_size The size of the Sobel kernel to be used.\n.   \n.   @note\n.   The algorithm assumes that the color of the source image is close to that of the destination. This\n.   assumption means that when the colors don't match, the source image color gets tinted toward the\n.   color of the destination image."
     ...
 
@@ -3549,17 +4187,32 @@ def waitKeyEx(delay=...) -> typing.Any:
     ...
 
 
-def warpAffine(src: ndarray, M, dsize: typing.Tuple[int, int], dts: ndarray = ..., flags: int = ..., borderMode=..., borderValue=...) -> typing.Any:
+def warpAffine(src: ndarray,
+               M,
+               dsize: typing.Tuple[int,
+                                   int],
+               dts: ndarray = ...,
+               flags: int = ...,
+               borderMode=...,
+               borderValue=...) -> typing.Any:
     'warpAffine(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst\n.   @brief Applies an affine transformation to an image.\n.   \n.   The function warpAffine transforms the source image using the specified matrix:\n.   \n.   \\f[\\texttt{dst} (x,y) =  \\texttt{src} ( \\texttt{M} _{11} x +  \\texttt{M} _{12} y +  \\texttt{M} _{13}, \\texttt{M} _{21} x +  \\texttt{M} _{22} y +  \\texttt{M} _{23})\\f]\n.   \n.   when the flag #WARP_INVERSE_MAP is set. Otherwise, the transformation is first inverted\n.   with #invertAffineTransform and then put in the formula above instead of M. The function cannot\n.   operate in-place.\n.   \n.   @param src input image.\n.   @param dst output image that has the size dsize and the same type as src .\n.   @param M \\f$2\\times 3\\f$ transformation matrix.\n.   @param dsize size of the output image.\n.   @param flags combination of interpolation methods (see #InterpolationFlags) and the optional\n.   flag #WARP_INVERSE_MAP that means that M is the inverse transformation (\n.   \\f$\\texttt{dst}\\rightarrow\\texttt{src}\\f$ ).\n.   @param borderMode pixel extrapolation method (see #BorderTypes); when\n.   borderMode=#BORDER_TRANSPARENT, it means that the pixels in the destination image corresponding to\n.   the "outliers" in the source image are not modified by the function.\n.   @param borderValue value used in case of a constant border; by default, it is 0.\n.   \n.   @sa  warpPerspective, resize, remap, getRectSubPix, transform'
     ...
 
 
-def warpPerspective(src: ndarray, M, dsize: typing.Tuple[int, int], dts: ndarray = ..., flags: int = ..., borderMode=..., borderValue=...) -> typing.Any:
+def warpPerspective(src: ndarray,
+                    M,
+                    dsize: typing.Tuple[int,
+                                        int],
+                    dts: ndarray = ...,
+                    flags: int = ...,
+                    borderMode=...,
+                    borderValue=...) -> typing.Any:
     'warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst\n.   @brief Applies a perspective transformation to an image.\n.   \n.   The function warpPerspective transforms the source image using the specified matrix:\n.   \n.   \\f[\\texttt{dst} (x,y) =  \\texttt{src} \\left ( \\frac{M_{11} x + M_{12} y + M_{13}}{M_{31} x + M_{32} y + M_{33}} ,\n.        \\frac{M_{21} x + M_{22} y + M_{23}}{M_{31} x + M_{32} y + M_{33}} \\right )\\f]\n.   \n.   when the flag #WARP_INVERSE_MAP is set. Otherwise, the transformation is first inverted with invert\n.   and then put in the formula above instead of M. The function cannot operate in-place.\n.   \n.   @param src input image.\n.   @param dst output image that has the size dsize and the same type as src .\n.   @param M \\f$3\\times 3\\f$ transformation matrix.\n.   @param dsize size of the output image.\n.   @param flags combination of interpolation methods (#INTER_LINEAR or #INTER_NEAREST) and the\n.   optional flag #WARP_INVERSE_MAP, that sets M as the inverse transformation (\n.   \\f$\\texttt{dst}\\rightarrow\\texttt{src}\\f$ ).\n.   @param borderMode pixel extrapolation method (#BORDER_CONSTANT or #BORDER_REPLICATE).\n.   @param borderValue value used in case of a constant border; by default, it equals 0.\n.   \n.   @sa  warpAffine, resize, remap, getRectSubPix, perspectiveTransform'
     ...
 
 
-def warpPolar(src: ndarray, dsize: typing.Tuple[int, int], center, maxRadius, flags: int, dts: ndarray = ...) -> typing.Any:
+def warpPolar(src: ndarray, dsize: typing.Tuple[int, int], center,
+              maxRadius, flags: int, dts: ndarray = ...) -> typing.Any:
     'warpPolar(src, dsize: typing.Tuple[int, int], center, maxRadius, flags[, dst]) -> dst\n.   \\brief Remaps an image to polar or semilog-polar coordinates space\n.   \n.   @anchor polar_remaps_reference_image\n.   ![Polar remaps reference](pics/polar_remap_doc.png)\n.   \n.   Transform the source image using the following transformation:\n.   \\f[\n.   dst(\\rho , \\phi ) = src(x,y)\n.   \\f]\n.   \n.   where\n.   \\f[\n.   \\begin{array}{l}\n.   \\vec{I} = (x - center.x, \\;y - center.y) \\\\\n.   \\phi = Kangle \\cdot \\texttt{angle} (\\vec{I}) \\\\\n.   \\rho = \\left\\{\\begin{matrix}\n.   Klin \\cdot \\texttt{magnitude} (\\vec{I}) & default \\\\\n.   Klog \\cdot log_e(\\texttt{magnitude} (\\vec{I})) & if \\; semilog \\\\\n.   \\end{matrix}\\right.\n.   \\end{array}\n.   \\f]\n.   \n.   and\n.   \\f[\n.   \\begin{array}{l}\n.   Kangle = dsize.height / 2\\Pi \\\\\n.   Klin = dsize.width / maxRadius \\\\\n.   Klog = dsize.width / log_e(maxRadius) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   \n.   \\par Linear vs semilog mapping\n.   \n.   Polar mapping can be linear or semi-log. Add one of #WarpPolarMode to `flags` to specify the polar mapping mode.\n.   \n.   Linear is the default mode.\n.   \n.   The semilog mapping emulates the human "foveal" vision that permit very high acuity on the line of sight (central vision)\n.   in contrast to peripheral vision where acuity is minor.\n.   \n.   \\par Option on `dsize`:\n.   \n.   - if both values in `dsize <=0 ` (default),\n.   the destination image will have (almost) same area of source bounding circle:\n.   \\f[\\begin{array}{l}\n.   dsize.area  \\leftarrow (maxRadius^2 \\cdot \\Pi) \\\\\n.   dsize.width = \\texttt{cvRound}(maxRadius) \\\\\n.   dsize.height = \\texttt{cvRound}(maxRadius \\cdot \\Pi) \\\\\n.   \\end{array}\\f]\n.   \n.   \n.   - if only `dsize.height <= 0`,\n.   the destination image area will be proportional to the bounding circle area but scaled by `Kx * Kx`:\n.   \\f[\\begin{array}{l}\n.   dsize.height = \\texttt{cvRound}(dsize.width \\cdot \\Pi) \\\\\n.   \\end{array}\n.   \\f]\n.   \n.   - if both values in `dsize > 0 `,\n.   the destination image will have the given size therefore the area of the bounding circle will be scaled to `dsize`.\n.   \n.   \n.   \\par Reverse mapping\n.   \n.   You can get reverse mapping adding #WARP_INVERSE_MAP to `flags`\n.   \\snippet polar_transforms.cpp InverseMap\n.   \n.   In addiction, to calculate the original coordinate from a polar mapped coordinate \\f$(rho, phi)->(x, y)\\f$:\n.   \\snippet polar_transforms.cpp InverseCoordinate\n.   \n.   @param src Source image.\n.   @param dst Destination image. It will have same type as src.\n.   @param dsize The destination image size (see description for valid options).\n.   @param center The transformation center.\n.   @param maxRadius The radius of the bounding circle to transform. It determines the inverse magnitude scale parameter too.\n.   @param flags A combination of interpolation methods, #InterpolationFlags + #WarpPolarMode.\n.               - Add #WARP_POLAR_LINEAR to select linear polar mapping (default)\n.               - Add #WARP_POLAR_LOG to select semilog polar mapping\n.               - Add #WARP_INVERSE_MAP for reverse mapping.\n.   @note\n.   -  The function can not operate in-place.\n.   -  To calculate magnitude and angle in degrees #cartToPolar is used internally thus angles are measured from 0 to 360 with accuracy about 0.3 degrees.\n.   -  This function uses #remap. Due to current implementation limitations the size of an input and output images should be less than 32767x32767.\n.   \n.   @sa cv::remap'
     ...
 

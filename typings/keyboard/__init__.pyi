@@ -10,6 +10,15 @@ from keyboard._generic import GenericListener as _GenericListener
 from keyboard._canonical_names import all_modifiers, normalize_name, sided_modifiers
 __all__ = ["all_modifiers", "normalize_name", "sided_modifiers", "KEY_DOWN", "KEY_UP", "KeyboardEvent"]
 
+__all__ = [
+    "KEY_DOWN",
+    "KEY_UP",
+    "KeyboardEvent",
+    "_GenericListener",
+    "all_modifiers",
+    "normalize_name",
+    "sided_modifiers"]
+
 try:
     # Python2
     # threading.Event is a function in Python2 wrappin _Event (?!).
@@ -98,8 +107,7 @@ class _KeyboardListener(_GenericListener):
 _listener: _KeyboardListener
 
 
-def key_to_scan_codes(key: Union[int, str, list[Union[int, str]]],
-                      error_if_missing: bool = ...) -> list[int]:
+def key_to_scan_codes(key: Union[int, str, list[Union[int, str]]], error_if_missing: bool = ...) -> list[int]:
     ...
 
 
@@ -149,8 +157,11 @@ def on_release(callback: Callback, suppress=...) -> Callable[[], None]:
     ...
 
 
-def hook_key(key: Union[int, str, list[Union[int, str]]],
-             callback: Callback, suppress: bool = ...) -> Callable[[], None]:
+def hook_key(
+    key: Union[int, str, list[Union[int, str]]],
+    callback: Callback,
+    suppress: bool = ...
+) -> Callable[[], None]:
     ...
 
 
@@ -194,8 +205,14 @@ def parse_hotkey_combinations(hotkey) -> tuple[tuple[tuple[Unknown, ...], ...], 
 _hotkeys: dict
 
 
-def add_hotkey(hotkey, callback: Callback, args=..., suppress=..., timeout=...,
-               trigger_on_release=...) -> Callable[[], None]:
+def add_hotkey(
+    hotkey,
+    callback: Callable,
+    args=...,
+    suppress=...,
+    timeout=...,
+    trigger_on_release=...
+) -> Callable[[], None]:
     ...
 
 
@@ -290,11 +307,12 @@ _word_listeners: dict
 
 
 def add_word_listener(
-        word,
-        callback: Callback,
-        triggers=...,
-        match_suffix=...,
-        timeout=...) -> Callable[[], None]:
+    word,
+    callback: Callback,
+    triggers=...,
+    match_suffix=...,
+    timeout=...
+) -> Callable[[], None]:
     ...
 
 
@@ -302,7 +320,12 @@ def remove_word_listener(word_or_handler) -> None:
     ...
 
 
-def add_abbreviation(source_text, replacement_text, match_suffix=..., timeout=...) -> Callable[[], None]:
+def add_abbreviation(
+    source_text,
+    replacement_text,
+    match_suffix=...,
+    timeout=...
+) -> Callable[[], None]:
     ...
 
 

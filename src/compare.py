@@ -80,7 +80,7 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[c
 
 def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
-    Compares the pHash of the two given images and returns the similarity between the two.
+    Compares the Perceptual Hash of the two given images and returns the similarity between the two.
 
     @param source: Image of any given shape as a numpy array
     @param capture: Image of any given shape as a numpy array
