@@ -20,6 +20,8 @@ class AutoControlledWorker(QtCore.QObject):
             except RuntimeError:
                 self.autosplit.show_error_signal.emit(error_messages.stdin_lost)
                 break
+            except EOFError:
+                continue
             # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
             # For now this can only used in a Development environment
             if line == "kill":

@@ -116,7 +116,6 @@ This program can be used to automatically start, split, and reset your preferred
   - {d} dummy split image. When matched, it moves to the next image without hitting your split hotkey.
   - {b} split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
   - {p} pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
-  - A pause flag and a dummy flag `{pd}` cannot be used together
 - Filename examples:
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
@@ -156,9 +155,9 @@ Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
 In this situation you would have only 3 splits in LiveSplit/wsplit (even though there are 6 split images, only 3 are "real" splits). This basically results in 3 groups of splits: 1st split is images 1 and 2. 2nd split is images 3, 4 and 5. 3rd split is image 6.
 
 - If you are in the 1st or 2nd image and press the skip key, it will end up on the 3rd image
-- If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 1st image
+- If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 2nd image
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
-- If you are in the 6th image and press the undo key, it will end up on the 3rd image
+- If you are in the 6th image and press the undo key, it will end up on the 5th image
 
 ### Loop Split Images
 
