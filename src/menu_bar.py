@@ -14,7 +14,7 @@ from requests.exceptions import RequestException
 
 import error_messages
 import user_profile
-from capture_method import CAPTURE_METHODS, get_capture_method_by_index, get_capture_method_index
+from capture_method import CAPTURE_METHODS, CaptureMethod, get_capture_method_by_index, get_capture_method_index
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -112,6 +112,12 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
+    def __capture_method_changed(self):
+        selected_capture_method = get_capture_method_by_index(self.capture_method_combobox.currentIndex())
+        self.autosplit.select_region_button.setDisabled(
+            selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+        return selected_capture_method
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
@@ -172,7 +178,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.live_capture_region_checkbox.isChecked()))
         self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
             "capture_method",
-            get_capture_method_by_index(self.capture_method_combobox.currentIndex())))
+            self.__capture_method_changed()))
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(

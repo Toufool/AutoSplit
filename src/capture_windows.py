@@ -6,8 +6,6 @@ if TYPE_CHECKING:
 import ctypes
 import ctypes.wintypes
 import d3dshot
-# from winsdk.windows.graphics.capture import GraphicsCapturePicker
-# from winsdk._winrt import initialize_with_window
 
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
@@ -19,6 +17,8 @@ import win32ui
 import pywintypes
 from win32 import win32gui
 from win32typing import PyCBitmap, PyCDC
+from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureItem
+from winsdk.windows.graphics.directx import DirectXPixelFormat
 
 from capture_method import CaptureMethod
 
@@ -94,10 +94,16 @@ def __d3d_capture(hwnd: int, selection: Region):
     return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
 
 
-# def __windows_graphics_capture(hwnd: int, selection: Region, autosplit_hwnd: int):
-#     picker = GraphicsCapturePicker()
-#     initialize_with_window(picker, autosplit_hwnd)
-#     picker.pick_single_item_async()
+def __windows_graphics_capture(capture_item: GraphicsCaptureItem, selection: Region):
+    device = ctypes.windll.d3d11.D3D11CreateDevice()
+    # sharpDxD3dDevice = Direct3D11Helpers.CreateSharpDXDevice(device)
+    frame_pool = Direct3D11CaptureFramePool.CreateFreeThreaded(
+        device,
+        DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
+        1,
+        capture_item.Size)
+    session = frame_pool.CreateCaptureSession(capture_item)
+    session.StartCapture()
 
 
 def capture_region(autosplit: AutoSplit):
@@ -113,8 +119,8 @@ def capture_region(autosplit: AutoSplit):
     selection = autosplit.settings_dict["capture_region"]
     capture_method = autosplit.settings_dict["capture_method"]
 
-    # if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-    #     return __windows_graphics_capture(hwnd, selection, autosplit.effectiveWinId().__int__())
+    if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        return __windows_graphics_capture(autosplit.graphics_capture_item, selection)
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
         return __d3d_capture(hwnd, selection)

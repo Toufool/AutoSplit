@@ -1,20 +1,25 @@
 from __future__ import annotations
 from typing import cast, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
+import asyncio
+
 import ctypes
 import ctypes.wintypes
 import cv2
-
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
+from winsdk.windows.graphics.capture import GraphicsCapturePicker, GraphicsCaptureItem
+from winsdk._winrt import initialize_with_window
 
 import capture_windows
 import error_messages
+from capture_method import CaptureMethod
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -72,7 +77,21 @@ def select_region(autosplit: AutoSplit):
                         height=height)
 
 
+async def select_graphics_item(autosplit: AutoSplit):
+    async def do_async():
+        picker = GraphicsCapturePicker()
+        initialize_with_window(picker, autosplit.effectiveWinId().__int__())
+        async_operation = picker.pick_single_item_async()
+        graphics_capture_item: GraphicsCaptureItem = async_operation.get_results()
+        autosplit.graphics_capture_item = graphics_capture_item
+        print(graphics_capture_item)
+    asyncio.create_task(do_async())
+
+
 def select_window(autosplit: AutoSplit):
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        asyncio.run(select_graphics_item(autosplit))
+        return
     # Create a screen selector widget
     selector = SelectWindowWidget()
 

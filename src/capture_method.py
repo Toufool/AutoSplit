@@ -46,7 +46,7 @@ CAPTURE_METHODS = OrderedDict({
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description=f"Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
+        short_description=f"Windows 10.0.{WCG_MIN_BUILD} and up, most compatible if available",
         description=(
             "\nOnly available in recent Windows updates. Allows recording UWP apps "
             "\n(hardware accelerated and fullscreen exclusives? To be tested). "
@@ -91,5 +91,5 @@ def get_capture_method_by_index(index: int):
 
 
 # Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD or True:  # TODO: Not yet implemented
+if int(version().split(".")[2]) < WCG_MIN_BUILD:
     CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
