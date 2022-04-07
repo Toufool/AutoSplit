@@ -23,11 +23,13 @@ import cv2
 from PyQt6 import QtCore, QtGui, QtTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
-from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
+from winsdk.windows.graphics.capture import GraphicsCaptureItem
+from capture_method import CaptureMethod
 
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
+from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 from capture_windows import capture_region, set_ui_image
 from gen import about, design, settings, update_checker
 from hotkeys import send_command, after_setting_hotkey
@@ -99,6 +101,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Initialize a few attributes
     hwnd = 0
     """Window Handle used for Capture Region"""
+    graphics_capture_item: Optional[GraphicsCaptureItem] = None
     last_saved_settings = DEFAULT_PROFILE
     similarity = 0.0
     split_image_number = 0
@@ -246,7 +249,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.live_image.clear()
             return
         # Set live image in UI
-        if self.hwnd:
+        if self.hwnd or self.graphics_capture_item:
             capture = capture_region(self)
             set_ui_image(self.live_image, capture, False)
 
@@ -750,7 +753,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         capture = capture_region(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
-        if capture is None:
+        # We can't recover by name (yet) with WindowsGraphicsCapture
+        if capture is None and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
             hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])

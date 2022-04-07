@@ -94,16 +94,18 @@ def __d3d_capture(hwnd: int, selection: Region):
     return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
 
 
-def __windows_graphics_capture(capture_item: GraphicsCaptureItem, selection: Region):
-    device = ctypes.windll.d3d11.D3D11CreateDevice()
-    # sharpDxD3dDevice = Direct3D11Helpers.CreateSharpDXDevice(device)
-    frame_pool = Direct3D11CaptureFramePool.CreateFreeThreaded(
-        device,
-        DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
-        1,
-        capture_item.Size)
-    session = frame_pool.CreateCaptureSession(capture_item)
-    session.StartCapture()
+def __windows_graphics_capture(capture_item: Optional[GraphicsCaptureItem], selection: Region):
+    if not capture_item:
+        return None
+    # device = ctypes.windll.d3d11.D3D11CreateDevice()
+    # # sharpDxD3dDevice = Direct3D11Helpers.CreateSharpDXDevice(device)
+    # frame_pool = Direct3D11CaptureFramePool.CreateFreeThreaded(  # pyright: ignore
+    #     device,
+    #     DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
+    #     1,
+    #     capture_item.size)
+    # session = frame_pool.CreateCaptureSession(capture_item)  # pyright: ignore
+    # session.StartCapture()
 
 
 def capture_region(autosplit: AutoSplit):

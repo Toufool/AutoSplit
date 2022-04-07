@@ -5,7 +5,6 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
-import asyncio
 
 import ctypes
 import ctypes.wintypes
@@ -15,6 +14,7 @@ from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
 from winsdk.windows.graphics.capture import GraphicsCapturePicker, GraphicsCaptureItem
+from winsdk.windows.foundation import IAsyncOperation, AsyncStatus
 from winsdk._winrt import initialize_with_window
 
 import capture_windows
@@ -77,20 +77,26 @@ def select_region(autosplit: AutoSplit):
                         height=height)
 
 
-async def select_graphics_item(autosplit: AutoSplit):
-    async def do_async():
-        picker = GraphicsCapturePicker()
-        initialize_with_window(picker, autosplit.effectiveWinId().__int__())
-        async_operation = picker.pick_single_item_async()
-        graphics_capture_item: GraphicsCaptureItem = async_operation.get_results()
-        autosplit.graphics_capture_item = graphics_capture_item
-        print(graphics_capture_item)
-    asyncio.create_task(do_async())
+def select_graphics_item(autosplit: AutoSplit):
+    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+        if async_status != AsyncStatus.COMPLETED:
+            return
+        autosplit.graphics_capture_item = async_operation.get_results()
+        autosplit.settings_dict["captured_window_title"] = autosplit.graphics_capture_item.display_name
+        # __set_region_values(autosplit,
+        #                     left=0,
+        #                     top=0,
+        #                     width=cast(int, autosplit.graphics_capture_item.size.width),
+        #                     height=cast(int, autosplit.graphics_capture_item.size.height))
+
+    picker = GraphicsCapturePicker()
+    initialize_with_window(picker, autosplit.effectiveWinId().__int__())
+    picker.pick_single_item_async().completed = callback
 
 
 def select_window(autosplit: AutoSplit):
     if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        asyncio.run(select_graphics_item(autosplit))
+        select_graphics_item(autosplit)
         return
     # Create a screen selector widget
     selector = SelectWindowWidget()
@@ -144,7 +150,7 @@ def __get_window_from_point(x: int, y: int):
 
 def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
-    if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    if not check_selected_region_exists(autosplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -250,11 +256,15 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    elif not check_selected_region_exists(autosplit):
         error = error_messages.region
     if error and show_error:
         error()
     return not error
+
+
+def check_selected_region_exists(autosplit: AutoSplit):
+    return autosplit.graphics_capture_item or (autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):
