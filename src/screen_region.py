@@ -9,7 +9,8 @@ import ctypes.wintypes
 import cv2
 
 import numpy as np
-from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtTest import QTest
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
 
@@ -35,8 +36,7 @@ def select_region(autosplit: AutoSplit):
         y = selector.y()
         if width > 0 and height > 0:
             break
-        # Email sent to pyqt@riverbankcomputing.com
-        QtTest.QTest.qWait(1)  # type: ignore
+        QTest.qWait(1)
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
@@ -66,8 +66,7 @@ def select_window(autosplit: AutoSplit):
         y = selector.y()
         if x and y:
             break
-        # Email sent to pyqt@riverbankcomputing.com
-        QtTest.QTest.qWait(1)  # type: ignore
+        QTest.qWait(1)
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)

@@ -20,7 +20,8 @@ from typing import Optional
 
 import certifi
 import cv2
-from PyQt6 import QtCore, QtGui, QtTest
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
 
@@ -59,7 +60,7 @@ def make_excepthook(autosplit: AutoSplit):
     return excepthook
 
 
-class AutoSplit(QMainWindow, design.Ui_main_window):
+class AutoSplit(QMainWindow, design.Ui_MainWindow):
     myappid = f"Toufool.AutoSplit.v{VERSION}"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -220,7 +221,7 @@ class AutoSplit(QMainWindow, design.Ui_main_window):
 
         self.show()
 
-        # Needs to be after Ui_main_window.show() to be shown overtop
+        # Needs to be after Ui_MainWindow.show() to be shown overtop
         if self.action_check_for_updates_on_open.isChecked():
             check_for_updates(self, check_on_open=True)
 
@@ -344,13 +345,11 @@ class AutoSplit(QMainWindow, design.Ui_main_window):
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
                         f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
             self.start_image_status_value_label.setText("started")
             send_command(self, "start")
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(int(1 / self.settings_dict["fps_limit"]))  # type: ignore
+            QTest.qWait(int(1 / self.settings_dict["fps_limit"]))
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -647,8 +646,7 @@ class AutoSplit(QMainWindow, design.Ui_main_window):
                         break
                     if not self.split_below_threshold:
                         self.split_below_threshold = True
-                        # Email sent to pyqt@riverbankcomputing.com
-                        QtTest.QTest.qWait(wait_delta)  # type: ignore
+                        QTest.qWait(wait_delta)
                         continue
 
                 elif (  # pylint: disable=confusing-consecutive-elif
@@ -656,8 +654,7 @@ class AutoSplit(QMainWindow, design.Ui_main_window):
                     self.split_below_threshold = False
                     break
 
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(wait_delta)  # type: ignore
+            QTest.qWait(wait_delta)
 
     def __pause_loop(self, stop_time: float, message: str):
         """
@@ -688,8 +685,7 @@ class AutoSplit(QMainWindow, design.Ui_main_window):
 
             self.current_split_image.setText(f"{message} {seconds_remaining_text(stop_time - time_delta)}")
 
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(1)  # type: ignore
+            QTest.qWait(1)
         return False
 
     def gui_changes_on_start(self):

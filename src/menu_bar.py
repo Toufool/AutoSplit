@@ -38,7 +38,7 @@ def open_about(autosplit: AutoSplit):
 
 
 class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
-    def __init__(self, latest_version: str, design_window: design.Ui_main_window, check_on_open: bool = False):
+    def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, check_on_open: bool = False):
         super().__init__()
         self.setupUi(self)
         self.current_version_number_label.setText(VERSION)
