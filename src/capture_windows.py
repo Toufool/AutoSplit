@@ -17,13 +17,6 @@ from win32 import win32gui
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-# @dataclass
-# class Region():
-#     def __init__(self, x: int, y: int, width: int, height: int):
-#         self.x = x
-#         self.y = y
-#         self.width = width
-#         self.height = height
 class Region(TypedDict):
     x: int
     y: int

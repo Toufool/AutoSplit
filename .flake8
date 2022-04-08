@@ -5,14 +5,13 @@ max-line-length=120
 exclude=src/gen/, typings/cv2-stubs/__init__.pyi
 ignore=
   W503, ; Linebreak before binary operator
-  Y015, ; Allow default value other than "..."
   E402, ; Allow imports at the bottom of file
   Y026, ; Not using typing_extensions
 per-file-ignores=
     ; Docstrings in type stubs
     ; Function bodys contain other than just ... (eg: raise)
     ; Single quote docstrings
-    typings/cv2-stubs/__init__.pyi: Q000,N8, E704,E501, Y021,Y010,Q002
+    typings/cv2-stubs/__init__.pyi: Q000,E704,E501,N8, Y021,Y010,Q002
 
     ; Quotes
     ; Allow ... on same line as def

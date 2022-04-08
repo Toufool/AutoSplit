@@ -1,5 +1,5 @@
-# Error messages
 import traceback
+
 from PyQt6 import QtCore, QtWidgets
 
 
