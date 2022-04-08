@@ -20,7 +20,8 @@ from time import time
 
 import certifi
 import cv2
-from PyQt6 import QtCore, QtGui, QtTest
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
 from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
@@ -343,13 +344,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
                         f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
             self.start_image_status_value_label.setText("started")
             send_command(self, "start")
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(int(1 / self.settings_dict["fps_limit"]))  # type: ignore
+            QTest.qWait(int(1 / self.settings_dict["fps_limit"]))
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -605,8 +604,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
                 # limit the number of time the comparison runs to reduce cpu usage
                 frame_interval: float = 1 / self.settings_dict["fps_limit"]
-                # Email sent to pyqt@riverbankcomputing.com
-                QtTest.QTest.qWait(int(frame_interval - (time() - start) % frame_interval))  # type: ignore
+                QTest.qWait(int(frame_interval - (time() - start) % frame_interval))
                 QApplication.processEvents()
 
             # comes here when threshold gets met
@@ -636,8 +634,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         capture = self.__get_capture_for_comparison()
                         if self.__reset_if_should(capture):
                             continue
-                        # Email sent to pyqt@riverbankcomputing.com
-                        QtTest.QTest.qWait(1)  # type: ignore
+                        QTest.qWait(1)
 
                 self.waiting_for_split_delay = False
 
@@ -691,8 +688,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         send_command(self, "reset")
                         self.reset()
                         continue
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
         # loop breaks to here when the last image splits
         self.gui_changes_on_reset()
