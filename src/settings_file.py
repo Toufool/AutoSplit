@@ -1,21 +1,21 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, TypedDict
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import os
-import sys
 import pickle
+import sys
+from typing import TYPE_CHECKING, Any, TypedDict
 
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
-from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
+from win32 import win32gui
 
 import error_messages
 from capture_windows import Region
 from gen import design
 from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_split_hotkey, set_undo_split_hotkey
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
 FROZEN = hasattr(sys, "frozen")

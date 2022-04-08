@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-from enum import Enum
 import os
-from typing import Optional, Union, TYPE_CHECKING
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
+from enum import Enum
+from typing import TYPE_CHECKING, Optional, Union
 
 import cv2
 import numpy as np
 from win32con import MAXBYTE
+
 import error_messages
 from compare import check_if_image_has_transparency, compare_histograms, compare_l2_norm, compare_phash
+from split_parser import (delay_from_filename, flags_from_filename, loop_from_filename, pause_from_filename,
+                          threshold_from_filename)
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # Resize to these width and height so that FPS performance increases
 COMPARISON_RESIZE_WIDTH = 320
@@ -120,7 +123,3 @@ class AutoSplitImage():
         if comparison_method == 2:
             return compare_phash(self.bytes, capture, self.mask)
         return 0.0
-
-
-from split_parser import delay_from_filename, flags_from_filename, loop_from_filename, pause_from_filename, \
-    threshold_from_filename

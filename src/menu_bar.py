@@ -1,23 +1,23 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import webbrowser
+from typing import TYPE_CHECKING, Any
 
 import requests
-from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
+from simplejson.errors import JSONDecodeError
 
 import error_messages
 import settings_file as settings
 from capture_windows import Region
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
-from hotkeys import set_split_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_undo_split_hotkey, set_pause_hotkey
+from hotkeys import set_pause_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_split_hotkey, set_undo_split_hotkey
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # AutoSplit Version number
 VERSION = "1.6.1"

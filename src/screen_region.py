@@ -1,22 +1,22 @@
 from __future__ import annotations
-from typing import cast, TYPE_CHECKING
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
-import os
 import ctypes
 import ctypes.wintypes
-import cv2
+import os
+from typing import TYPE_CHECKING, cast
 
+import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtTest import QTest
 from win32 import win32gui
-from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
+from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 
 import capture_windows
 import error_messages
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 WINDOWS_SHADOW_SIZE = 8
 WINDOWS_TOPBAR_SIZE = 24

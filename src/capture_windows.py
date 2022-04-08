@@ -1,17 +1,17 @@
 from __future__ import annotations
-from typing import Optional, cast
 
 import ctypes
 import ctypes.wintypes
 from dataclasses import dataclass
-from PyQt6 import QtCore, QtGui
-from PyQt6.QtWidgets import QLabel
+from typing import Optional, cast
 
 import cv2
 import numpy as np
+import pywintypes
 import win32con
 import win32ui
-import pywintypes
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtWidgets import QLabel
 from win32 import win32gui
 
 # This is an undocumented nFlag value for PrintWindow
