@@ -1,20 +1,30 @@
 from __future__ import annotations
-from typing import cast, TYPE_CHECKING
+from dataclasses import dataclass
+from typing import Optional, cast, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
+
 import ctypes
 import ctypes.wintypes
 import cv2
-
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
+from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCapturePicker, GraphicsCaptureItem, \
+    GraphicsCaptureSession
+from winsdk.windows.foundation import IAsyncOperation, AsyncStatus
+from winsdk._winrt import initialize_with_window
+from winsdk.windows.media.capture import MediaCapture
+from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.graphics import SizeInt32
 
 import capture_windows
 import error_messages
+from capture_method import DisplayCaptureMethod
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -72,7 +82,46 @@ def select_region(autosplit: AutoSplit):
                         height=height)
 
 
+media_capture = MediaCapture()
+media_capture.initialize_async()
+
+
+@dataclass
+class WindowsGraphicsCapture:
+    size: SizeInt32
+    frame_pool: Direct3D11CaptureFramePool
+    # Prevent session from being garbage collected
+    session: GraphicsCaptureSession
+    last_captured_frame: Optional[cv2.ndarray]
+
+
+def select_graphics_item(autosplit: AutoSplit):
+    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+        if async_status != AsyncStatus.COMPLETED:
+            return
+        item = async_operation.get_results()
+        autosplit.settings_dict["captured_window_title"] = item.display_name
+        device = media_capture.media_capture_settings.direct3_d11_device
+        frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
+            device,
+            DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
+            1,
+            item.size)
+        session = frame_pool.create_capture_session(item)
+        session.is_cursor_capture_enabled = False
+        session.start_capture()
+        autosplit.windows_graphics_capture = WindowsGraphicsCapture(
+            item.size, frame_pool, session, None)  # pyright: ignore
+
+    picker = GraphicsCapturePicker()
+    initialize_with_window(picker, autosplit.effectiveWinId().__int__())
+    picker.pick_single_item_async().completed = callback
+
+
 def select_window(autosplit: AutoSplit):
+    if autosplit.settings_dict["capture_method"] == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        select_graphics_item(autosplit)
+        return
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -239,7 +288,11 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
 
 
 def check_selected_region_exists(autosplit: AutoSplit):
-    return autosplit.camera or (autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
+    if autosplit.settings_dict["capture_method"] == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        return autosplit.windows_graphics_capture
+    if autosplit.settings_dict["capture_method"] in DisplayCaptureMethod:
+        return autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd)
+    return autosplit.camera
 
 
 class BaseSelectWidget(QtWidgets.QWidget):

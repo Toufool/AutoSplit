@@ -1,9 +1,9 @@
-import cv2
 from dataclasses import dataclass
-
 from platform import version
 from collections import OrderedDict
 from enum import Enum, EnumMeta, unique
+
+import cv2
 
 
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
@@ -67,16 +67,20 @@ DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
     ),
     DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description=f"Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
+        short_description="fastest, most compatible but less features",
         description=(
-            "\nOnly available in recent Windows updates. Allows recording UWP apps "
-            "\n(hardware accelerated and fullscreen exclusives? To be tested). "
+            f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
+            "\nAllows recording UWP apps, hardware accelerated and fullscreen exclusive windows. "
             "\nAdds a yellow border around the recorded window. "
+            "\nDoes not support automatically recovering closed Windows, manual cropping only, "
+            "\nand you have to reselect the window everytime you open AutoSplit. "
+            "\nSee https://github.com/pywinrt/python-winsdk/issues/5 "
+            "\nfor more details about those restrictions."
         ),
     ),
     DisplayCaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
         name="Direct3D Desktop Duplication",
-        short_description="very slow, bound to display, supports OpenGL and DirectX 11/12 exclusive fullscreen",
+        short_description="very slow, bound to display",
         description=(
             "\nDuplicates the desktop using Direct3D. "
             "\nIt can record OpenGL and Hardware Accelerated windows. "
@@ -113,13 +117,13 @@ def get_all_cameras():
     index = 0
     video_captures: list[CameraInfo] = []
     while index < 8:
-        video_capture = cv2.VideoCapture(index)
+        video_capture = cv2.VideoCapture(index)  # pyright: ignore
         video_capture.setExceptionMode(True)
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-            print(video_capture.getBackendName())
+            print(video_capture.getBackendName())  # pyright: ignore
             video_capture.grab()
-        except cv2.error as error:
+        except cv2.error as error:  # pyright: ignore
             if error.code == cv2.Error.STS_ERROR:
                 video_captures.append(CameraInfo(index, f"Camera {index}", False))
         else:
@@ -128,3 +132,8 @@ def get_all_cameras():
         video_capture.release()
         index += 1
     return video_captures
+
+
+# Detect and remove unsupported capture methods
+if int(version().split(".")[2]) < WCG_MIN_BUILD:
+    DISPLAY_CAPTURE_METHODS.pop(DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE)

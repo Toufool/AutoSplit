@@ -1,22 +1,23 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Union, cast
 
-import cv2
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import webbrowser
 
+import cv2
 import requests
 from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets, QtCore
 from requests.exceptions import RequestException
+from win32 import win32gui
 
 import error_messages
 import user_profile
-from capture_method import DISPLAY_CAPTURE_METHODS, CameraInfo, DisplayCaptureMethod, get_all_cameras
+from capture_method import DISPLAY_CAPTURE_METHODS, DisplayCaptureMethod, CameraInfo, get_all_cameras
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -122,9 +123,9 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def get_capture_method_by_current_index(self):
         current_index = self.capture_method_combobox.currentIndex()
-        display_capture_methods_len = len(DISPLAY_CAPTURE_METHODS)
-        return self.__camera_capture_methods[current_index - display_capture_methods_len].name \
-            if current_index >= display_capture_methods_len \
+        display_DISPLAY_CAPTURE_METHODS_len = len(DISPLAY_CAPTURE_METHODS)
+        return self.__camera_capture_methods[current_index - display_DISPLAY_CAPTURE_METHODS_len].name \
+            if current_index >= display_DISPLAY_CAPTURE_METHODS_len \
             else DISPLAY_CAPTURE_METHODS.get_method_by_index(current_index)
 
     def get_capture_method_index(self, capture_method: Union[str, DisplayCaptureMethod]):
@@ -132,10 +133,10 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         Returns 0 if the capture_method is invalid or unsupported
         """
         item_count = self.capture_method_combobox.count()
-        display_capture_methods_len = len(DISPLAY_CAPTURE_METHODS)
+        display_DISPLAY_CAPTURE_METHODS_len = len(DISPLAY_CAPTURE_METHODS)
         try:
             return [camera.name for camera in self.__camera_capture_methods].index(cast(str, capture_method)) \
-                if item_count >= display_capture_methods_len \
+                if item_count >= display_DISPLAY_CAPTURE_METHODS_len \
                 else list(DISPLAY_CAPTURE_METHODS.keys()).index(cast(DisplayCaptureMethod, capture_method))
         except ValueError:
             return 0
@@ -150,6 +151,15 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             camera_id = self.__camera_capture_methods[camera_index].id
             self.autosplit.settings_dict["captured_window_title"] = cast(str, capture_method)
             self.autosplit.camera = cv2.VideoCapture(camera_id)
+        elif capture_method == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+            self.autosplit.select_region_button.setDisabled(True)
+        else:
+            self.autosplit.select_region_button.setDisabled(False)
+            self.autosplit.windows_graphics_capture = None
+            # Recover window from name
+            hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
+            if hwnd:
+                self.autosplit.hwnd = hwnd
         return capture_method
 
     def __init__(self, autosplit: AutoSplit):
@@ -158,24 +168,24 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.autosplit = autosplit
 
 # region Build the Capture method combobox
-        display_capture_methods = DISPLAY_CAPTURE_METHODS.values()
+        display_DISPLAY_CAPTURE_METHODS = DISPLAY_CAPTURE_METHODS.values()
         self.__camera_capture_methods = get_all_cameras()
         capture_list_items = [
             f"- {method.name} ({method.short_description})"
-            for method in display_capture_methods
+            for method in display_DISPLAY_CAPTURE_METHODS
         ] + [f"* {camera.name}{'' if camera.occupied else ' (occupied)'}" for camera in self.__camera_capture_methods]
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
         # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        lines = (2 * len(display_capture_methods)) + 1 + len(self.__camera_capture_methods)
-        list_view.setMinimumHeight((17 * lines) - 1)
+        list_view.setMinimumHeight(17 * (2 * len(display_DISPLAY_CAPTURE_METHODS)
+                                   + len(self.__camera_capture_methods)))
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_list_items)
         self.capture_method_combobox.setToolTip("\n\n".join([
             f"{method.name} :\n{method.description}"
-            for method in display_capture_methods]))
+            for method in display_DISPLAY_CAPTURE_METHODS]))
 # endregion
 
 # region Set initial values

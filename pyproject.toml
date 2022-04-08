@@ -23,7 +23,7 @@ reportPropertyTypeMismatch="error"
 reportUninitializedInstanceVariable="error"
 reportUnnecessaryTypeIgnoreComment="error"
 reportUnusedCallResult="none"
-ignore = [
+exclude = [
   # Auto generated
   "src/gen/",
   # We expect stub files to be incomplete or contain useless statements
@@ -107,7 +107,7 @@ good-names = [
   # PyQt methods
   "closeEvent", "paintEvent", "keyPressEvent", "mousePressEvent", "mouseMoveEvent", "mouseReleaseEvent",
   # https://github.com/PyCQA/pylint/issues/2018
-  "x", "y", "a0", "i", "t0", "t1"]
+  "id", "x", "y", "a0", "i", "t0", "t1"]
 disable = [
   "missing-docstring",
   # We group imports
