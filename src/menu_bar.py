@@ -11,6 +11,7 @@ from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets, QtCore
 from requests.exceptions import RequestException
+from win32 import win32gui
 
 import error_messages
 import user_profile
@@ -114,8 +115,15 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def __capture_method_changed(self):
         selected_capture_method = get_capture_method_by_index(self.capture_method_combobox.currentIndex())
-        self.autosplit.select_region_button.setDisabled(
-            selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+        if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+            self.autosplit.select_region_button.setDisabled(True)
+        else:
+            self.autosplit.select_region_button.setDisabled(False)
+            self.autosplit.windows_graphics_capture = None
+            # Recover window from name
+            hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
+            if hwnd:
+                self.autosplit.hwnd = hwnd
         return selected_capture_method
 
     def __init__(self, autosplit: AutoSplit):
@@ -123,22 +131,22 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.setupUi(self)
         self.autosplit = autosplit
 
-        # Build the Capture method combobox
+# region Build the Capture method combobox
         capture_methods = [
             f"- {method['name']} ({method['short_description']})"
             for method in CAPTURE_METHODS.values()]
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
-        # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        lines = (2 * len(capture_methods)) + 1
-        list_view.setMinimumHeight((17 * lines) - 1)
+        # Assuming all options take 2 lines. And all lines (with separator) takes 17 pixels
+        list_view.setMinimumHeight(17 * 2 * len(capture_methods))
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_methods)
         self.capture_method_combobox.setToolTip("\n\n".join([
             f"{method['name']} :\n{method['description']}"
             for method in CAPTURE_METHODS.values()]))
+# endregion
 
 # region Set initial values
         # Hotkeys
