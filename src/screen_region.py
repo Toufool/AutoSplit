@@ -1,20 +1,30 @@
 from __future__ import annotations
-from typing import cast, TYPE_CHECKING
+from dataclasses import dataclass
+from typing import Optional, cast, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 import os
+
 import ctypes
 import ctypes.wintypes
 import cv2
-
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
+from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCapturePicker, GraphicsCaptureItem, \
+    GraphicsCaptureSession
+from winsdk.windows.foundation import IAsyncOperation, AsyncStatus
+from winsdk._winrt import initialize_with_window
+from winsdk.windows.media.capture import MediaCapture
+from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.graphics import SizeInt32
 
 import capture_windows
 import error_messages
+from capture_method import CaptureMethod
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -72,7 +82,46 @@ def select_region(autosplit: AutoSplit):
                         height=height)
 
 
+media_capture = MediaCapture()
+media_capture.initialize_async()
+
+
+@dataclass
+class WindowsGraphicsCapture:
+    size: SizeInt32
+    frame_pool: Direct3D11CaptureFramePool
+    # Prevent session from being garbage collected
+    session: GraphicsCaptureSession
+    last_captured_frame: Optional[cv2.ndarray]
+
+
+def select_graphics_item(autosplit: AutoSplit):
+    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+        if async_status != AsyncStatus.COMPLETED:
+            return
+        item = async_operation.get_results()
+        autosplit.settings_dict["captured_window_title"] = item.display_name
+        device = media_capture.media_capture_settings.direct3_d11_device
+        frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
+            device,
+            DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
+            1,
+            item.size)
+        session = frame_pool.create_capture_session(item)
+        session.is_cursor_capture_enabled = False
+        session.start_capture()
+        autosplit.windows_graphics_capture = WindowsGraphicsCapture(
+            item.size, frame_pool, session, None)  # pyright: ignore
+
+    picker = GraphicsCapturePicker()
+    initialize_with_window(picker, autosplit.effectiveWinId().__int__())
+    picker.pick_single_item_async().completed = callback
+
+
 def select_window(autosplit: AutoSplit):
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        select_graphics_item(autosplit)
+        return
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -125,7 +174,7 @@ def __get_window_from_point(x: int, y: int):
 
 def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
-    if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    if not check_selected_region_exists(autosplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -231,11 +280,18 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    elif not check_selected_region_exists(autosplit):
         error = error_messages.region
     if error and show_error:
         error()
     return not error
+
+
+def check_selected_region_exists(autosplit: AutoSplit):
+    return (
+        autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
+        and autosplit.windows_graphics_capture) \
+        or (autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):

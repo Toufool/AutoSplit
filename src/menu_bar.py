@@ -11,10 +11,11 @@ from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets, QtCore
 from requests.exceptions import RequestException
+from win32 import win32gui
 
 import error_messages
 import user_profile
-from capture_method import CAPTURE_METHODS, get_capture_method_by_index, get_capture_method_index
+from capture_method import CAPTURE_METHODS, CaptureMethod, get_capture_method_by_index, get_capture_method_index
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
@@ -112,27 +113,40 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
+    def __capture_method_changed(self):
+        selected_capture_method = get_capture_method_by_index(self.capture_method_combobox.currentIndex())
+        if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+            self.autosplit.select_region_button.setDisabled(True)
+        else:
+            self.autosplit.select_region_button.setDisabled(False)
+            self.autosplit.windows_graphics_capture = None
+            # Recover window from name
+            hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
+            if hwnd:
+                self.autosplit.hwnd = hwnd
+        return selected_capture_method
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
 
-        # Build the Capture method combobox
+# region Build the Capture method combobox
         capture_methods = [
             f"- {method['name']} ({method['short_description']})"
             for method in CAPTURE_METHODS.values()]
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
-        # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        lines = (2 * len(capture_methods)) + 1
-        list_view.setMinimumHeight((17 * lines) - 1)
+        # Assuming all options take 2 lines. And all lines (with separator) takes 17 pixels
+        list_view.setMinimumHeight(17 * 2 * len(capture_methods))
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_methods)
         self.capture_method_combobox.setToolTip("\n\n".join([
             f"{method['name']} :\n{method['description']}"
             for method in CAPTURE_METHODS.values()]))
+# endregion
 
 # region Set initial values
         # Hotkeys
@@ -172,7 +186,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.live_capture_region_checkbox.isChecked()))
         self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
             "capture_method",
-            get_capture_method_by_index(self.capture_method_combobox.currentIndex())))
+            self.__capture_method_changed()))
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(

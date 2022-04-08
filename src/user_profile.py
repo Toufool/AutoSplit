@@ -128,6 +128,8 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
+    autosplit.select_region_button.setDisabled(
+        autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
     autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
@@ -142,7 +144,11 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         if autosplit.settings_dict["pause_hotkey"]:
             set_hotkey(autosplit, "pause", autosplit.settings_dict["pause_hotkey"])
 
-    if autosplit.settings_dict["captured_window_title"]:
+    if (
+        autosplit.settings_dict["captured_window_title"]
+        # We can't recover by name (yet) with WindowsGraphicsCapture
+        and autosplit.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
+    ):
         hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
         if hwnd:
             autosplit.hwnd = hwnd

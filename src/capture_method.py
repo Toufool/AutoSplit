@@ -46,16 +46,20 @@ CAPTURE_METHODS = OrderedDict({
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description=f"Windows 10 {WCG_MIN_BUILD} and up, most compatible if available",
+        short_description="fastest, most compatible but less features",
         description=(
-            "\nOnly available in recent Windows updates. Allows recording UWP apps "
-            "\n(hardware accelerated and fullscreen exclusives? To be tested). "
+            f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
+            "\nAllows recording UWP apps, hardware accelerated and fullscreen exclusive windows. "
             "\nAdds a yellow border around the recorded window. "
+            "\nDoes not support automatically recovering closed Windows, manual cropping only, "
+            "\nand you have to reselect the window everytime you open AutoSplit. "
+            "\nSee https://github.com/pywinrt/python-winsdk/issues/5 "
+            "\nfor more details about those restrictions."
         ),
     ),
     CaptureMethod.DESKTOP_DUPLICATION: CaptureMethodInfo(
         name="Direct3D Desktop Duplication",
-        short_description="very slow, bound to display, supports OpenGL and DirectX 11/12 exclusive fullscreen",
+        short_description="very slow, bound to display",
         description=(
             "\nDuplicates the desktop using Direct3D. "
             "\nIt can record OpenGL and Hardware Accelerated windows. "
@@ -91,5 +95,5 @@ def get_capture_method_by_index(index: int):
 
 
 # Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD or True:  # TODO: Not yet implemented
+if int(version().split(".")[2]) < WCG_MIN_BUILD:
     CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
