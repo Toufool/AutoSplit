@@ -1,26 +1,26 @@
 from __future__ import annotations
-from typing import Optional, TypedDict, cast, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import asyncio
-
 import ctypes
 import ctypes.wintypes
-import d3dshot
+from typing import TYPE_CHECKING, Optional, TypedDict, cast
+
 import cv2
+import d3dshot
 import numpy as np
+import pywintypes
 import win32con
 import win32ui
-import pywintypes
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QLabel
 from win32 import win32gui
-from winsdk.windows.graphics.imaging import SoftwareBitmap, BitmapBufferAccessMode
+from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
-from capture_method import DisplayCaptureMethod
+from capture_method import CaptureMethod
 from screen_region import WindowsGraphicsCapture
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
@@ -140,16 +140,16 @@ def capture_region(autosplit: AutoSplit):
     selection = autosplit.settings_dict["capture_region"]
     capture_method = autosplit.settings_dict["capture_method"]
 
-    if capture_method not in DisplayCaptureMethod:
-        return __camera_capture(autosplit.camera, selection)
+    if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+        return __camera_capture(autosplit.capture_device, selection)
 
-    if capture_method == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+    if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
         return __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
 
-    if capture_method == DisplayCaptureMethod.DESKTOP_DUPLICATION:
+    if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
         return __d3d_capture(hwnd, selection)
 
-    return __bit_blt_capture(hwnd, selection, capture_method == DisplayCaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
+    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):

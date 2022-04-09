@@ -1,13 +1,12 @@
-from dataclasses import dataclass
-from platform import version
 from collections import OrderedDict
+from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
+from platform import version
 
 import cv2
 
-
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
-WCG_MIN_BUILD = 999999  # TODO: Change to 17134 once implemented
+WCG_MIN_BUILD = 17134
 
 
 @dataclass
@@ -17,7 +16,7 @@ class DisplayCaptureMethodInfo():
     description: str
 
 
-class DisplayCaptureMethodMeta(EnumMeta):
+class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
     def __contains__(cls, other: str):  # noqa:N805
         try:
@@ -30,7 +29,7 @@ class DisplayCaptureMethodMeta(EnumMeta):
 
 
 @unique
-class DisplayCaptureMethod(Enum, metaclass=DisplayCaptureMethodMeta):
+class CaptureMethod(Enum, metaclass=CaptureMethodMeta):
     # Allow TOML to save as a simple string
     def __repr__(self):
         return self.value
@@ -48,15 +47,16 @@ class DisplayCaptureMethod(Enum, metaclass=DisplayCaptureMethodMeta):
     WINDOWS_GRAPHICS_CAPTURE = "WINDOWS_GRAPHICS_CAPTURE"
     PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
     DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
+    VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
 
 
-class DisplayCaptureMethodDict(OrderedDict[DisplayCaptureMethod, DisplayCaptureMethodInfo]):
+class DisplayCaptureMethodDict(OrderedDict[CaptureMethod, DisplayCaptureMethodInfo]):
     def get_method_by_index(self, index: int):
         return list(self.keys())[index]
 
 
-DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
-    DisplayCaptureMethod.BITBLT: DisplayCaptureMethodInfo(
+CAPTURE_METHODS = DisplayCaptureMethodDict({
+    CaptureMethod.BITBLT: DisplayCaptureMethodInfo(
         name="BitBlt",
         short_description="fast, issues with Hardware Acceleration and OpenGL",
         description=(
@@ -65,7 +65,7 @@ DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nbut it cannot properly record OpenGL or Hardware Accelerated Windows. "
         ),
     ),
-    DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
+    CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
         name="Windows Graphics Capture",
         short_description="fastest, most compatible but less features",
         description=(
@@ -78,7 +78,7 @@ DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nfor more details about those restrictions."
         ),
     ),
-    DisplayCaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
+    CaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
         name="Direct3D Desktop Duplication",
         short_description="very slow, bound to display",
         description=(
@@ -88,7 +88,7 @@ DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\noverlapping windows will show up and can't record across displays. "
         ),
     ),
-    DisplayCaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: DisplayCaptureMethodInfo(
+    CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: DisplayCaptureMethodInfo(
         name="Force Full Content Rendering",
         short_description="very slow, can affect rendering pipeline",
         description=(
@@ -98,22 +98,31 @@ DISPLAY_CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nand can mess up some applications' rendering pipelines. "
         ),
     ),
+    CaptureMethod.VIDEO_CAPTURE_DEVICE: DisplayCaptureMethodInfo(
+        name="Video Capture Device",
+        short_description="select below",
+        description=(
+            "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+            "\nYou can select one below. "
+            "\nIt is not yet possible for us to display the device name"
+        ),
+    ),
 })
 
 
 # Detect and remove unsupported capture methods
 if int(version().split(".")[2]) < WCG_MIN_BUILD:
-    DISPLAY_CAPTURE_METHODS.pop(DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+    CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
 
 
 @dataclass
 class CameraInfo():
     id: int
     name: str
-    occupied: str
+    occupied: bool
 
 
-def get_all_cameras():
+def get_all_video_capture_devices():
     index = 0
     video_captures: list[CameraInfo] = []
     while index < 8:
@@ -132,8 +141,3 @@ def get_all_cameras():
         video_capture.release()
         index += 1
     return video_captures
-
-
-# Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD:
-    DISPLAY_CAPTURE_METHODS.pop(DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE)

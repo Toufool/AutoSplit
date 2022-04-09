@@ -14,6 +14,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.fixAll.markdownlint": true,
+    "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,
   "trailing-spaces.includeEmptyLines": true,

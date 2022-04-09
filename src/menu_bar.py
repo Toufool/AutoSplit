@@ -1,28 +1,28 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Union, cast
 
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
-
+import threading
 import webbrowser
+from typing import TYPE_CHECKING, Any, Optional, Union, cast
 
 import cv2
 import requests
-from simplejson.errors import JSONDecodeError
 from packaging import version
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
+from simplejson.errors import JSONDecodeError
 from win32 import win32gui
 
 import error_messages
 import user_profile
-from capture_method import DISPLAY_CAPTURE_METHODS, DisplayCaptureMethod, CameraInfo, get_all_cameras
+from capture_method import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_video_capture_devices
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 # AutoSplit Version number
-VERSION = "1.6.1"
+AUTOSPLIT_VERSION = "2.0.0-alpha"
 
 # About Window
 
@@ -33,7 +33,7 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
         self.setupUi(self)
         self.created_by_label.setOpenExternalLinks(True)
         self.donate_button_label.setOpenExternalLinks(True)
-        self.version_label.setText(f"Version: {VERSION}")
+        self.version_label.setText(f"Version: {AUTOSPLIT_VERSION}")
         self.show()
 
 
@@ -45,12 +45,12 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, check_on_open: bool = False):
         super().__init__()
         self.setupUi(self)
-        self.current_version_number_label.setText(VERSION)
+        self.current_version_number_label.setText(AUTOSPLIT_VERSION)
         self.latest_version_number_label.setText(latest_version)
         self.left_button.clicked.connect(self.open_update)
         self.do_not_ask_again_checkbox.stateChanged.connect(self.do_not_ask_me_again_state_changed)
         self.design_window = design_window
-        if version.parse(latest_version) > version.parse(VERSION):
+        if version.parse(latest_version) > version.parse(AUTOSPLIT_VERSION):
             self.do_not_ask_again_checkbox.setVisible(check_on_open)
             self.show()
         elif not check_on_open:
@@ -101,10 +101,10 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
-    __camera_capture_methods: list[CameraInfo]
+    __video_capture_devices: list[CameraInfo]
     """
     Used to temporarily store the existing cameras,
-    we don't want to call `get_all_cameras` agains and possibly have a different result
+    we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
     """
 
     def __update_default_threshold(self, value: Any):
@@ -121,40 +121,36 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
-    def get_capture_method_by_current_index(self):
-        current_index = self.capture_method_combobox.currentIndex()
-        display_DISPLAY_CAPTURE_METHODS_len = len(DISPLAY_CAPTURE_METHODS)
-        return self.__camera_capture_methods[current_index - display_DISPLAY_CAPTURE_METHODS_len].name \
-            if current_index >= display_DISPLAY_CAPTURE_METHODS_len \
-            else DISPLAY_CAPTURE_METHODS.get_method_by_index(current_index)
-
-    def get_capture_method_index(self, capture_method: Union[str, DisplayCaptureMethod]):
+    def get_capture_method_index(self, capture_method: Union[str, CaptureMethod]):
         """
         Returns 0 if the capture_method is invalid or unsupported
         """
-        item_count = self.capture_method_combobox.count()
-        display_DISPLAY_CAPTURE_METHODS_len = len(DISPLAY_CAPTURE_METHODS)
         try:
-            return [camera.name for camera in self.__camera_capture_methods].index(cast(str, capture_method)) \
-                if item_count >= display_DISPLAY_CAPTURE_METHODS_len \
-                else list(DISPLAY_CAPTURE_METHODS.keys()).index(cast(DisplayCaptureMethod, capture_method))
+            return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethod, capture_method))
+        except ValueError:
+            return 0
+
+    def get_capture_device_index(self, capture_device_id: int):
+        """
+        Returns 0 if the capture_device_id is invalid
+        """
+        try:
+            return [device.id for device in self.__video_capture_devices].index(capture_device_id)
         except ValueError:
             return 0
 
     def __capture_method_changed(self):
-        capture_method = self.get_capture_method_by_current_index()
-        if self.autosplit.camera:
-            self.autosplit.camera.release()
-            self.autosplit.camera = None
-        if capture_method not in DisplayCaptureMethod:
-            camera_index = self.capture_method_combobox.currentIndex() - len(DISPLAY_CAPTURE_METHODS)
-            camera_id = self.__camera_capture_methods[camera_index].id
-            self.autosplit.settings_dict["captured_window_title"] = cast(str, capture_method)
-            self.autosplit.camera = cv2.VideoCapture(camera_id)
-        elif capture_method == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
+        # Release or start video capture device
+        self.__capture_device_changed(capture_method)
+        if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+            self.autosplit.select_region_button.setDisabled(True)
+            self.autosplit.select_window_button.setDisabled(True)
+        elif capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             self.autosplit.select_region_button.setDisabled(True)
         else:
             self.autosplit.select_region_button.setDisabled(False)
+            self.autosplit.select_window_button.setDisabled(False)
             self.autosplit.windows_graphics_capture = None
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
@@ -162,30 +158,56 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
                 self.autosplit.hwnd = hwnd
         return capture_method
 
+    def __capture_device_changed(self, current_capture_method: Optional[Union[CaptureMethod, str]] = None):
+        current_capture_method = current_capture_method or self.autosplit.settings_dict["capture_method"]
+        # Always release the previous capture device
+        if self.autosplit.capture_device:
+            self.autosplit.capture_device.release()
+            self.autosplit.capture_device = None
+        device_index = self.capture_device_combobox.currentIndex()
+        capture_device = self.__video_capture_devices[device_index]
+        if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+            self.autosplit.settings_dict["captured_window_title"] = capture_device.name
+            self.autosplit.capture_device = cv2.VideoCapture(capture_device.id)
+        return capture_device.id
+
+    def __set_all_capture_devices_async(self):
+        self.__video_capture_devices = get_all_video_capture_devices()
+        if len(self.__video_capture_devices) > 0:
+            for i in range(self.capture_device_combobox.count()):
+                self.capture_device_combobox.removeItem(i)
+            self.capture_device_combobox.addItems([
+                f"* {device.name}{'' if device.occupied else ' (occupied)'}"
+                for device in self.__video_capture_devices])
+            self.capture_device_combobox.setEnabled(True)
+            self.capture_device_combobox.setCurrentIndex(
+                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]))
+        else:
+            self.capture_device_combobox.setPlaceholderText("No device found.")
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
 
 # region Build the Capture method combobox
-        display_DISPLAY_CAPTURE_METHODS = DISPLAY_CAPTURE_METHODS.values()
-        self.__camera_capture_methods = get_all_cameras()
+        capture_method_values = CAPTURE_METHODS.values()
+        threading.Thread(target=self.__set_all_capture_devices_async).start()
         capture_list_items = [
             f"- {method.name} ({method.short_description})"
-            for method in display_DISPLAY_CAPTURE_METHODS
-        ] + [f"* {camera.name}{'' if camera.occupied else ' (occupied)'}" for camera in self.__camera_capture_methods]
+            for method in capture_method_values
+        ]
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
         # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        list_view.setMinimumHeight(17 * (2 * len(display_DISPLAY_CAPTURE_METHODS)
-                                   + len(self.__camera_capture_methods)))
+        list_view.setMinimumHeight(17 * (2 * len(capture_method_values)))
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_list_items)
         self.capture_method_combobox.setToolTip("\n\n".join([
             f"{method.name} :\n{method.description}"
-            for method in display_DISPLAY_CAPTURE_METHODS]))
+            for method in capture_method_values]))
 # endregion
 
 # region Set initial values
@@ -227,6 +249,9 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
             "capture_method",
             self.__capture_method_changed()))
+        self.capture_device_combobox.currentIndexChanged.connect(lambda: self.__set_value(
+            "capture_device_id",
+            self.__capture_device_changed()))
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
@@ -264,8 +289,9 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "pause_hotkey": default_settings_dialog.pause_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "capture_method": DISPLAY_CAPTURE_METHODS.get_method_by_index(
+        "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex()),
+        "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),

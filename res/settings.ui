@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>572</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>289</width>
-    <height>572</height>
+    <height>621</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>289</width>
-    <height>572</height>
+    <height>621</height>
    </size>
   </property>
   <property name="cursor">
@@ -46,7 +46,7 @@
      <x>10</x>
      <y>180</y>
      <width>271</width>
-     <height>131</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="title">
@@ -138,12 +138,41 @@
      <string>Capture method:</string>
     </property>
    </widget>
+   <widget class="QLabel" name="capture_device_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>126</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture device:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="capture_device_combobox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>148</y>
+      <width>251</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Scanning for existing devices...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="image_settings_groupbox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>320</y>
+     <y>370</y>
      <width>271</width>
      <height>241</height>
     </rect>

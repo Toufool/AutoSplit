@@ -1,30 +1,30 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Optional, cast, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
-
-import os
 
 import ctypes
 import ctypes.wintypes
+import os
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Optional, cast
+
 import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
 from win32 import win32gui
-from win32con import GA_ROOT, MAXBYTE, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN
-from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCapturePicker, GraphicsCaptureItem, \
-    GraphicsCaptureSession
-from winsdk.windows.foundation import IAsyncOperation, AsyncStatus
+from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
-from winsdk.windows.media.capture import MediaCapture
-from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics import SizeInt32
+from winsdk.windows.graphics.capture import (Direct3D11CaptureFramePool, GraphicsCaptureItem, GraphicsCapturePicker,
+                                             GraphicsCaptureSession)
+from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.media.capture import MediaCapture
 
 import capture_windows
 import error_messages
-from capture_method import DisplayCaptureMethod
+from capture_method import CaptureMethod
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -119,7 +119,7 @@ def select_graphics_item(autosplit: AutoSplit):
 
 
 def select_window(autosplit: AutoSplit):
-    if autosplit.settings_dict["capture_method"] == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
         select_graphics_item(autosplit)
         return
     # Create a screen selector widget
@@ -288,11 +288,11 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
 
 
 def check_selected_region_exists(autosplit: AutoSplit):
-    if autosplit.settings_dict["capture_method"] == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        return autosplit.windows_graphics_capture
-    if autosplit.settings_dict["capture_method"] in DisplayCaptureMethod:
-        return autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd)
-    return autosplit.camera
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        return bool(autosplit.windows_graphics_capture)
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+        return bool(autosplit.capture_device)
+    return bool(autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):

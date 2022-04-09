@@ -1,21 +1,22 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, TypedDict, Union, cast
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import os
 import sys
+from typing import TYPE_CHECKING, TypedDict, Union, cast
 
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
 import toml
-from win32 import win32gui
 from PyQt6 import QtCore, QtWidgets
+from win32 import win32gui
 
 import error_messages
-from capture_method import DISPLAY_CAPTURE_METHODS, DisplayCaptureMethod
+from capture_method import CAPTURE_METHODS, CaptureMethod
 from capture_windows import Region
 from gen import design
 from hotkeys import set_hotkey
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
 FROZEN = hasattr(sys, "frozen")
@@ -31,7 +32,8 @@ class UserProfileDict(TypedDict):
     pause_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    capture_method: Union[str, DisplayCaptureMethod]
+    capture_method: Union[str, CaptureMethod]
+    capture_device_id: int
     default_comparison_method: int
     default_similarity_threshold: float
     default_delay_time: int
@@ -51,7 +53,8 @@ DEFAULT_PROFILE = UserProfileDict(
     pause_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    capture_method=DISPLAY_CAPTURE_METHODS.get_method_by_index(0),
+    capture_method=CAPTURE_METHODS.get_method_by_index(0),
+    capture_device_id=0,
     default_comparison_method=0,
     default_similarity_threshold=0.95,
     default_delay_time=0,
@@ -129,7 +132,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         return False
 
     autosplit.select_region_button.setDisabled(
-        autosplit.settings_dict["capture_method"] == DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+        autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
     autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
@@ -147,7 +150,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     if (
         autosplit.settings_dict["captured_window_title"]
         # We can't recover by name (yet) with WindowsGraphicsCapture
-        and autosplit.settings_dict["capture_method"] != DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE
+        and autosplit.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
     ):
         hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
         if hwnd:

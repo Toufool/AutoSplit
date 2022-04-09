@@ -7,36 +7,36 @@
 # - Externals
 # - Internals
 from __future__ import annotations
+
+import ctypes
+import os
+import signal
+import sys
+import traceback
 from collections.abc import Callable
+from time import time
 from types import FunctionType, TracebackType
 from typing import Optional
-
-import sys
-import os
-import ctypes
-import signal
-import traceback
-from time import time
 
 import certifi
 import cv2
 from PyQt6 import QtCore, QtGui, QtTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
-from capture_method import DisplayCaptureMethod
 
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
+from capture_method import CaptureMethod
 from capture_windows import capture_region, set_ui_image
 from gen import about, design, settings, update_checker
-from hotkeys import send_command, after_setting_hotkey
-from menu_bar import get_default_settings_from_ui, open_about, VERSION, open_settings, view_help, check_for_updates, \
-    open_update_checker
-from screen_region import WindowsGraphicsCapture, select_region, select_window, align_region, validate_before_parsing
-from user_profile import DEFAULT_PROFILE, FROZEN
+from hotkeys import after_setting_hotkey, send_command
+from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
+                      open_update_checker, view_help)
+from screen_region import WindowsGraphicsCapture, align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
+from user_profile import DEFAULT_PROFILE, FROZEN
 
 CREATE_NEW_ISSUE_MESSAGE = (
     "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
@@ -61,7 +61,7 @@ def make_excepthook(autosplit: AutoSplit):
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
-    myappid = f"Toufool.AutoSplit.v{VERSION}"
+    myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     # Parse command line args
@@ -125,7 +125,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
     split_image: AutoSplitImage
-    camera: Optional[cv2.VideoCapture] = None
+    capture_device: Optional[cv2.VideoCapture] = None
 
     def __init__(self, parent: Optional[QWidget] = None):  # pylint: disable=too-many-statements
         super().__init__(parent)
@@ -161,7 +161,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             # Send version and process ID to stdout
             # THIS HAS TO BE THE FIRST TWO LINES SENT
-            print(f"{VERSION}\n{os.getpid()}", flush=True)
+            print(f"{AUTOSPLIT_VERSION}\n{os.getpid()}", flush=True)
 
             # Use and Start the thread that checks for updates from LiveSplit
             self.update_auto_control = QtCore.QThread()
@@ -754,7 +754,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         # We can't recover by name (yet) with WindowsGraphicsCapture
-        if capture is None and self.settings_dict["capture_method"] != DisplayCaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        if capture is None and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
             hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
