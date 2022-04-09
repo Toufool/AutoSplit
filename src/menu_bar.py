@@ -200,8 +200,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
-        # Assuming all options take 2 lines (except D3D which has 3). And all lines (with separator) takes 17 pixels
-        list_view.setMinimumHeight(17 * (2 * len(capture_method_values)))
+        # Assuming all options take 2 lines (except camera which has 1). And all lines (with separator) takes 17 pixels
+        list_view.setMinimumHeight(17 * (2 * len(capture_method_values) - 1) + 1)
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_list_items)

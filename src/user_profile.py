@@ -4,6 +4,7 @@ import os
 import sys
 from typing import TYPE_CHECKING, TypedDict, Union, cast
 
+import cv2
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
 import toml
 from PyQt6 import QtCore, QtWidgets
@@ -131,8 +132,13 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    autosplit.select_region_button.setDisabled(
-        autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        autosplit.select_region_button.setDisabled(True)
+    elif autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+        autosplit.select_region_button.setDisabled(True)
+        autosplit.select_window_button.setDisabled(True)
+        autosplit.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
+
     autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:

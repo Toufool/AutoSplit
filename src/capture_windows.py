@@ -122,8 +122,10 @@ def __camera_capture(camera: Optional[cv2.VideoCapture], selection: Region):
     result, image = camera.read()
     if not result:
         return None
-    image = image[selection["x"]:selection["width"] + selection["x"],
-                  selection["y"]:selection["width"] + selection["y"]]
+    image = image[
+        selection["y"]:selection["height"] + selection["y"],
+        selection["x"]:selection["width"] + selection["x"],
+    ]
     return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
 

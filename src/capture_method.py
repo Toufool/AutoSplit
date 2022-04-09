@@ -92,9 +92,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         name="Force Full Content Rendering",
         short_description="very slow, can affect rendering pipeline",
         description=(
-            "\nUses BitBlt behind the scene, but passes a special flag "
-            "\nto PrintWindow to force rendering the entire desktop window. "
-            "\nAbout 10-15x slower than BitBlt based on window size "
+            "\nUses BitBlt behind the scene, but passes a special flag to PrintWindow "
+            "\nto force rendering the entire desktop area. "
+            "\nAbout 10-15x slower than BitBlt based on captured window size "
             "\nand can mess up some applications' rendering pipelines. "
         ),
     ),
@@ -104,7 +104,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         description=(
             "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
             "\nYou can select one below. "
-            "\nIt is not yet possible for us to display the device name"
+            "\nIt is not yet possible for us to display the device name. "
+            "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
+            "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/"
         ),
     ),
 })
