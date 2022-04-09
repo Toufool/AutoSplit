@@ -249,7 +249,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
         # Set live image in UI
         if self.hwnd or self.windows_graphics_capture:
-            capture = capture_region(self)
+            capture, _ = capture_region(self)
             set_ui_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
@@ -303,7 +303,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture = self.__get_capture_for_comparison()
+        capture, _ = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
         self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
@@ -383,7 +383,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture = capture_region(self)
+        capture, _ = capture_region(self)
         if capture is None:
             error_messages.region()
             return
@@ -408,9 +408,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         for image in images:
             count = 0
             while count < CHECK_FPS_ITERATIONS:
-                capture = self.__get_capture_for_comparison()
+                capture, is_old_image = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
-                count += 1
+                if not is_old_image:
+                    count += 1
 
         # calculate FPS
         t1 = time()
@@ -604,7 +605,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         start = time()
         while True:
-            capture = self.__get_capture_for_comparison()
+            capture, _ = self.__get_capture_for_comparison()
 
             if self.__reset_if_should(capture):
                 return True
@@ -672,7 +673,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for reset image
-            if self.__reset_if_should(self.__get_capture_for_comparison()):
+            if self.__reset_if_should(self.__get_capture_for_comparison()[0]):
                 return True
 
             time_delta = time() - start_time
@@ -749,7 +750,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         Grab capture region and resize for comparison
         """
-        capture = capture_region(self)
+        capture, is_old_image = capture_region(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         # We can't recover by name (yet) with WindowsGraphicsCapture
@@ -760,8 +761,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd
-                capture = capture_region(self)
-        return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+                capture, _ = capture_region(self)
+        return None if capture is None else cv2.resize(
+            capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):
         """

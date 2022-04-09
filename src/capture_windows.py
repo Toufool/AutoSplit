@@ -91,16 +91,16 @@ def __d3d_capture(hwnd: int, selection: Region):
         selection["y"] + offset_y,
         selection["width"] + selection["x"] + offset_x,
         selection["height"] + selection["y"] + offset_y))
-    return cv2.cvtColor(screenshot, cv2.COLOR_)
+    return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA)
 
 
 def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphicsCapture], selection: Region):
     if not windows_graphics_capture or not windows_graphics_capture.frame_pool:
-        return None
+        return None, False
 
     frame = windows_graphics_capture.frame_pool.try_get_next_frame()
     if not frame:
-        return windows_graphics_capture.last_captured_frame
+        return windows_graphics_capture.last_captured_frame, True
 
     async def coroutine():
         return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
@@ -114,10 +114,10 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
         selection["x"]:selection["x"] + selection["width"],
     ]
     windows_graphics_capture.last_captured_frame = image
-    return image
+    return image, False
 
 
-def capture_region(autosplit: AutoSplit):
+def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.ndarray], bool]:
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -134,9 +134,9 @@ def capture_region(autosplit: AutoSplit):
         return __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
-        return __d3d_capture(hwnd, selection)
+        return __d3d_capture(hwnd, selection), False
 
-    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
+    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT), False
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):

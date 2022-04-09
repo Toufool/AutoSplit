@@ -37,20 +37,21 @@ class CaptureMethod(Enum):
 CAPTURE_METHODS = OrderedDict({
     CaptureMethod.BITBLT: CaptureMethodInfo(
         name="BitBlt",
-        short_description="fast, issues with Hardware Acceleration and OpenGL",
+        short_description="fastest, least compatible",
         description=(
-            "\nA good default fast option. Allows recording background windows "
-            "\n(as long as they still decide to render in the background), "
+            "\nA good default fast option. Also allows recording background windows "
+            "\n(as long as they still actually render when in the background), "
             "\nbut it cannot properly record OpenGL or Hardware Accelerated Windows. "
+            "\nThe smaller the window, the more efficient it is. "
         ),
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description="fastest, most compatible but less features",
+        short_description="fast, most compatible but less features",
         description=(
             f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
             "\nAllows recording UWP apps, hardware accelerated and fullscreen exclusive windows. "
-            "\nAdds a yellow border around the recorded window. "
+            "\nCaps at around 60 FPS and adds a yellow border around the recorded window. "
             "\nDoes not support automatically recovering closed Windows, manual cropping only, "
             "\nand you have to reselect the window everytime you open AutoSplit. "
             "\nSee https://github.com/pywinrt/python-winsdk/issues/5 "
@@ -59,11 +60,11 @@ CAPTURE_METHODS = OrderedDict({
     ),
     CaptureMethod.DESKTOP_DUPLICATION: CaptureMethodInfo(
         name="Direct3D Desktop Duplication",
-        short_description="very slow, bound to display",
+        short_description="slower, bound to display",
         description=(
             "\nDuplicates the desktop using Direct3D. "
             "\nIt can record OpenGL and Hardware Accelerated windows. "
-            "\nBut it's about 10-15x slower than BitBlt, "
+            "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
             "\noverlapping windows will show up and can't record across displays. "
         ),
     ),
@@ -73,7 +74,7 @@ CAPTURE_METHODS = OrderedDict({
         description=(
             "\nUses BitBlt behind the scene, but passes a special flag "
             "\nto PrintWindow to force rendering the entire desktop window. "
-            "\nAbout 10-15x slower than BitBlt based on window size "
+            "\nAbout 10-15x slower than BitBlt based on original window size "
             "\nand can mess up some applications' rendering pipelines. "
         ),
     ),
