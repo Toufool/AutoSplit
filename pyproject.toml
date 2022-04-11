@@ -23,7 +23,7 @@ reportPropertyTypeMismatch="error"
 reportUninitializedInstanceVariable="error"
 reportUnnecessaryTypeIgnoreComment="error"
 reportUnusedCallResult="none"
-ignore = [
+exclude = [
   # Auto generated
   "src/gen/",
   # We expect stub files to be incomplete or contain useless statements
