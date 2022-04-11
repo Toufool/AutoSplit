@@ -80,8 +80,6 @@ ignore-paths = [
   # We expect stub files to be incomplete or contain useless statements
   "^.*\\.pyi$",
 ]
-# No need to mention the fixmes
-disable = ["fixme"]
 extension-pkg-allow-list = ["PyQt6", "win32ui"]
 
 [tool.pylint.FORMAT]
@@ -91,8 +89,8 @@ max-line-length = 120
 # Same as SonarLint
 max-args = 7
 # Arbitrary to 2 bytes
-max-attributes = 16
-max-locals = 16
+max-attributes = 15
+max-locals = 15
 
 [tool.pylint.'MESSAGES CONTROL']
 # Same as SonarLint
@@ -107,8 +105,10 @@ good-names = [
   # PyQt methods
   "closeEvent", "paintEvent", "keyPressEvent", "mousePressEvent", "mouseMoveEvent", "mouseReleaseEvent",
   # https://github.com/PyCQA/pylint/issues/2018
-  "x", "y", "a0", "i", "t0", "t1"]
+  "id", "x", "y", "a0", "i", "t0", "t1"]
 disable = [
+  # No need to mention the fixmes
+  "fixme",
   "missing-docstring",
   # We group imports
   "wrong-import-position",
@@ -116,6 +116,8 @@ disable = [
   "unused-argument",
   # Already taken care of by Flake8
   "unused-import",
+  # Similar lines in 2 files, doesn't really work
+  "R0801",
 ]
 
 [tool.pylint.TYPECHECK]
