@@ -4,8 +4,8 @@ import threading
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
-import keyboard  # https://github.com/boppreh/keyboard/issues/505
-import pyautogui  # https://github.com/asweigart/pyautogui/issues/645
+import keyboard
+import pyautogui
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit

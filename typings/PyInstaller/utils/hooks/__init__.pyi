@@ -84,11 +84,7 @@ def is_module_or_submodule(name, mod_or_submod):
     ...
 
 
-<< << << < HEAD
-PY_DYLIB_PATTERNS = ...
-== == == =
 PY_DYLIB_PATTERNS: str
->>>>>> > 8885768 (Massively sped up Flake tests)
 
 
 def collect_dynamic_libs(package: str, destdir: Optional[str] = ...) -> list[tuple[str, str]]:
