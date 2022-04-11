@@ -20,7 +20,8 @@ from typing import Optional
 
 import certifi
 import cv2
-from PyQt6 import QtCore, QtGui, QtTest
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
 
@@ -250,7 +251,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
         # Set live image in UI
         # if self.hwnd or self.windows_graphics_capture:
-        capture = capture_region(self)
+        capture, _ = capture_region(self)
         set_ui_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
@@ -304,7 +305,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture = self.__get_capture_for_comparison()
+        capture, _ = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
         self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
@@ -345,13 +346,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
                         f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
             self.start_image_status_value_label.setText("started")
             send_command(self, "start")
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(int(1 / self.settings_dict["fps_limit"]))  # type: ignore
+            QTest.qWait(int(1 / self.settings_dict["fps_limit"]))
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -384,7 +383,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture = capture_region(self)
+        capture, _ = capture_region(self)
         if capture is None:
             error_messages.region()
             return
@@ -409,9 +408,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         for image in images:
             count = 0
             while count < CHECK_FPS_ITERATIONS:
-                capture = self.__get_capture_for_comparison()
+                capture, is_old_image = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
-                count += 1
+                if not is_old_image:
+                    count += 1
 
         # calculate FPS
         t1 = time()
@@ -605,7 +605,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         start = time()
         while True:
-            capture = self.__get_capture_for_comparison()
+            capture, _ = self.__get_capture_for_comparison()
 
             if self.__reset_if_should(capture):
                 return True
@@ -646,8 +646,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         break
                     if not self.split_below_threshold:
                         self.split_below_threshold = True
-                        # Email sent to pyqt@riverbankcomputing.com
-                        QtTest.QTest.qWait(wait_delta)  # type: ignore
+                        QTest.qWait(wait_delta)
                         continue
 
                 elif (  # pylint: disable=confusing-consecutive-elif
@@ -655,8 +654,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     self.split_below_threshold = False
                     break
 
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(wait_delta)  # type: ignore
+            QTest.qWait(wait_delta)
 
     def __pause_loop(self, stop_time: float, message: str):
         """
@@ -673,7 +671,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for reset image
-            if self.__reset_if_should(self.__get_capture_for_comparison()):
+            if self.__reset_if_should(self.__get_capture_for_comparison()[0]):
                 return True
 
             time_delta = time() - start_time
@@ -687,8 +685,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             self.current_split_image.setText(f"{message} {seconds_remaining_text(stop_time - time_delta)}")
 
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(1)  # type: ignore
+            QTest.qWait(1)
         return False
 
     def gui_changes_on_start(self):
@@ -750,7 +747,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         Grab capture region and resize for comparison
         """
-        capture = capture_region(self)
+        capture, is_old_image = capture_region(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         # We can't recover by name (yet) with WindowsGraphicsCapture
@@ -761,8 +758,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd
-                capture = capture_region(self)
-        return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+                capture, _ = capture_region(self)
+        return None if capture is None else cv2.resize(
+            capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):
         """

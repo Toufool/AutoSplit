@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING, Optional, cast
 
 import cv2
 import numpy as np
-from PyQt6 import QtCore, QtGui, QtTest, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtTest import QTest
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
@@ -44,6 +45,7 @@ IMREAD_EXT_FILTER = "All Files (" \
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
     + ");;"\
     + ";;".join([f"{format} ({extensions})" for format, extensions in SUPPORTED_IMREAD_FORMATS])
+
 WINDOWS_SHADOW_SIZE = 8
 WINDOWS_TOPBAR_SIZE = 24
 user32 = ctypes.windll.user32
@@ -62,8 +64,7 @@ def select_region(autosplit: AutoSplit):
         y = selector.y()
         if width > 0 and height > 0:
             break
-        # Email sent to pyqt@riverbankcomputing.com
-        QtTest.QTest.qWait(1)  # type: ignore
+        QTest.qWait(1)
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
@@ -100,14 +101,22 @@ def select_graphics_item(autosplit: AutoSplit):
         if async_status != AsyncStatus.COMPLETED:
             return
         item = async_operation.get_results()
+        if not item:
+            return
         autosplit.settings_dict["captured_window_title"] = item.display_name
+        if not media_capture.media_capture_settings:
+            raise OSError("Unable to initialize a Direct3D Device.")
         device = media_capture.media_capture_settings.direct3_d11_device
         frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
             device,
             DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
             1,
             item.size)
+        if not frame_pool:
+            raise OSError("Unable to create a frame pool for a capture session.")
         session = frame_pool.create_capture_session(item)
+        if not session:
+            raise OSError("Unable to create a capture session.")
         session.is_cursor_capture_enabled = False
         session.start_capture()
         autosplit.windows_graphics_capture = WindowsGraphicsCapture(
@@ -115,7 +124,10 @@ def select_graphics_item(autosplit: AutoSplit):
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, autosplit.effectiveWinId().__int__())
-    picker.pick_single_item_async().completed = callback
+    async_operation = picker.pick_single_item_async()  # pyright: ignore
+    # None if the selection is canceled
+    if async_operation:
+        async_operation.completed = callback
 
 
 def select_window(autosplit: AutoSplit):
@@ -132,8 +144,7 @@ def select_window(autosplit: AutoSplit):
         y = selector.y()
         if x and y:
             break
-        # Email sent to pyqt@riverbankcomputing.com
-        QtTest.QTest.qWait(1)  # type: ignore
+        QTest.qWait(1)
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
@@ -198,7 +209,7 @@ def align_region(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture = capture_windows.capture_region(autosplit)
+    capture, _ = capture_windows.capture_region(autosplit)
 
     if capture is None:
         error_messages.region()

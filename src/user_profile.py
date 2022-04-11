@@ -5,7 +5,7 @@ import sys
 from typing import TYPE_CHECKING, TypedDict, Union, cast
 
 import cv2
-import keyboard  # https://github.com/boppreh/keyboard/issues/505
+import keyboard
 import toml
 from PyQt6 import QtCore, QtWidgets
 from win32 import win32gui
@@ -18,7 +18,6 @@ from hotkeys import set_hotkey
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-
 # Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
 FROZEN = hasattr(sys, "frozen")
 # Get the directory of either AutoSplit.exe or AutoSplit.py

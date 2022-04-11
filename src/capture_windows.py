@@ -39,7 +39,7 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
     image: Optional[cv2.ndarray] = None
     # If the window closes while it's being manipulated, it could cause a crash
     try:
-        window_dc: int = win32gui.GetWindowDC(hwnd)
+        window_dc = win32gui.GetWindowDC(hwnd)
         dc_object = win32ui.CreateDCFromHandle(window_dc)
 
         # Causes a 10-15x performance drop. But allows recording hardware accelerated windows
@@ -90,22 +90,28 @@ def __d3d_capture(hwnd: int, selection: Region):
         selection["y"] + offset_y,
         selection["width"] + selection["x"] + offset_x,
         selection["height"] + selection["y"] + offset_y))
-    return cv2.cvtColor(screenshot, cv2.COLOR_)
+    return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA)
 
 
 def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphicsCapture], selection: Region):
     if not windows_graphics_capture or not windows_graphics_capture.frame_pool:
-        return None
+        return None, False
 
     frame = windows_graphics_capture.frame_pool.try_get_next_frame()
     if not frame:
-        return windows_graphics_capture.last_captured_frame
+        return windows_graphics_capture.last_captured_frame, True
 
     async def coroutine():
-        return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
+        async_operation = SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
+        return await async_operation if async_operation else None
 
     software_bitmap = asyncio.run(coroutine())
-    reference = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE).create_reference()
+    if not software_bitmap:
+        raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
+    bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
+    if not bitmap_buffer:
+        raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
+    reference = bitmap_buffer.create_reference()
     image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
     image.shape = (windows_graphics_capture.size.height, windows_graphics_capture.size.width, 4)
     image = image[
@@ -113,13 +119,13 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
         selection["x"]:selection["x"] + selection["width"],
     ]
     windows_graphics_capture.last_captured_frame = image
-    return image
+    return image, False
 
 
-def __camera_capture(camera: Optional[cv2.VideoCapture], selection: Region):
-    if not camera:
+def __camera_capture(capture_device: Optional[cv2.VideoCapture], selection: Region):
+    if not capture_device:
         return None
-    result, image = camera.read()
+    result, image = capture_device.read()
     if not result:
         return None
     image = image[
@@ -129,7 +135,7 @@ def __camera_capture(camera: Optional[cv2.VideoCapture], selection: Region):
     return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
 
-def capture_region(autosplit: AutoSplit):
+def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.ndarray], bool]:
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -143,15 +149,15 @@ def capture_region(autosplit: AutoSplit):
     capture_method = autosplit.settings_dict["capture_method"]
 
     if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-        return __camera_capture(autosplit.capture_device, selection)
+        return __camera_capture(autosplit.capture_device, selection), False
 
     if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
         return __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
-        return __d3d_capture(hwnd, selection)
+        return __d3d_capture(hwnd, selection), False
 
-    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT)
+    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT), False
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):

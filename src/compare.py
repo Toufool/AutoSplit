@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 from typing import Optional
-from PIL import Image
-from win32con import MAXBYTE
+
 import cv2
 import imagehash  # https://github.com/JohannesBuchner/imagehash/issues/151
 import numpy as np
+from PIL import Image
+from win32con import MAXBYTE
 
 MAXRANGE = MAXBYTE + 1
 channels = [0, 1, 2]
