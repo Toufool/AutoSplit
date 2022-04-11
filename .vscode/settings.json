@@ -13,8 +13,6 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.markdownlint": true,
-    "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,
   "trailing-spaces.includeEmptyLines": true,
@@ -58,6 +56,7 @@
   "python.linting.pylintCategorySeverity.convention": "Warning",
   "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
+  // pycodestyles
   "python.linting.flake8CategorySeverity.E": "Warning",
   // Pyflakes
   "python.linting.flake8CategorySeverity.F": "Warning",
@@ -74,16 +73,4 @@
   // Just another wrapper, use Flake8 OR this
   "python.linting.pylamaEnabled": false,
   "python.linting.banditEnabled": true,
-  // Copy those over to your user settings
-  "sonarlint.rules": {
-    "python:S1192": {
-      "level": "off"
-    },
-    "python:S3776": {
-      "level": "off"
-    },
-    "python:S107": {
-      "level": "off"
-    },
-  },
 }
