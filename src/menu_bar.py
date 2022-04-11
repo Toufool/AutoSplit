@@ -1,16 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import webbrowser
+from typing import TYPE_CHECKING, Any
 
 import requests
-from simplejson.errors import JSONDecodeError
 from packaging import version
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
+from simplejson.errors import JSONDecodeError
 from win32 import win32gui
 
 import error_messages
@@ -18,6 +15,9 @@ import user_profile
 from capture_method import CAPTURE_METHODS, CaptureMethod, get_capture_method_by_index, get_capture_method_index
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # AutoSplit Version number
 VERSION = "1.6.1"
