@@ -102,10 +102,16 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
         return windows_graphics_capture.last_captured_frame, True
 
     async def coroutine():
-        return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
+        async_operation = SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
+        return await async_operation if async_operation else None
 
     software_bitmap = asyncio.run(coroutine())
-    reference = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE).create_reference()
+    if not software_bitmap:
+        raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
+    bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
+    if not bitmap_buffer:
+        raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
+    reference = bitmap_buffer.create_reference()
     image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
     image.shape = (windows_graphics_capture.size.height, windows_graphics_capture.size.width, 4)
     image = image[

@@ -1,8 +1,8 @@
-from typing import TypedDict
-
-from platform import version
 from collections import OrderedDict
 from enum import Enum, unique
+from platform import version
+from typing import TypedDict
+
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
 WCG_MIN_BUILD = 17134
 
