@@ -115,10 +115,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def __capture_method_changed(self):
         selected_capture_method = get_capture_method_by_index(self.capture_method_combobox.currentIndex())
-        if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-            self.autosplit.select_region_button.setDisabled(True)
-        else:
-            self.autosplit.select_region_button.setDisabled(False)
+        if selected_capture_method != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             self.autosplit.windows_graphics_capture = None
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])

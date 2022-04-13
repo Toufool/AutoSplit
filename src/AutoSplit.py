@@ -39,26 +39,11 @@ from screen_region import WindowsGraphicsCapture, align_region, select_region, s
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE, FROZEN
 
-CREATE_NEW_ISSUE_MESSAGE = (
-    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
-    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below")
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 CHECK_FPS_ITERATIONS = 10
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
-
-
-def make_excepthook(autosplit: AutoSplit):
-    def excepthook(exception_type: type[BaseException], exception: BaseException, _traceback: Optional[TracebackType]):
-        # Catch Keyboard Interrupts for a clean close
-        if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
-            sys.exit(0)
-        autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(
-            "AutoSplit encountered an unhandled exception and will try to recover, "
-            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
-            exception))
-    return excepthook
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -132,8 +117,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Setup global error handling
         self.show_error_signal.connect(lambda errorMessageBox: errorMessageBox())
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
-        sys.excepthook = make_excepthook(self)
+        sys.excepthook = error_messages.make_excepthook(self)
 
         self.setupUi(self)
 
@@ -383,7 +367,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Grab screenshot of capture region
         capture, _ = capture_region(self)
-        if capture is None:
+        if capture is None or not capture.size:
             error_messages.region()
             return
 
@@ -750,7 +734,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         # We can't recover by name (yet) with WindowsGraphicsCapture
-        if capture is None and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        if (
+                capture is None or not capture.size) and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
             hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
@@ -758,7 +743,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if hwnd:
                 self.hwnd = hwnd
                 capture, _ = capture_region(self)
-        return None if capture is None else cv2.resize(
+        return None if capture is None or not capture.size else cv2.resize(
             capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
 
     def __reset_if_should(self, capture: Optional[cv2.ndarray]):
@@ -795,7 +780,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if self.split_image.bytes is not None:
+        if self.split_image.bytes is not None and self.split_image.bytes.size:
             set_ui_image(self.current_split_image, self.split_image.bytes, True)
 
         self.current_image_file_label.setText(self.split_image.filename)
@@ -878,13 +863,7 @@ def main():
 
         exit_code = app.exec()
     except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
-        message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
-        # Print error to console if not running in executable
-        if FROZEN:
-            error_messages.exception_traceback(message, exception)
-        else:
-            traceback.print_exception(type(exception), exception, exception.__traceback__)
-        sys.exit(1)
+        error_messages.handle_top_level_exceptions(exception)
 
     # Catch Keyboard Interrupts for a clean close
     signal.signal(signal.SIGINT, lambda code, _: sys.exit(code))

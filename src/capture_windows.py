@@ -104,9 +104,17 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
     async def coroutine():
         async_operation = SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
         return await async_operation if async_operation else None
+    try:
+        software_bitmap = asyncio.run(coroutine())
+    except SystemError as exception:
+        # HACK: can happen when closing the GraphicsCapturePicker
+        if str(exception).endswith("returned a result with an error set"):
+            return windows_graphics_capture.last_captured_frame, True
+        raise
 
-    software_bitmap = asyncio.run(coroutine())
     if not software_bitmap:
+        # HACK: Can happen when starting the region selector
+        return windows_graphics_capture.last_captured_frame, True
         raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
     bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
     if not bitmap_buffer:
@@ -145,7 +153,7 @@ def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.ndarray], bool]:
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):
-    if image is None:
+    if image is None or not image.size:
         # Clear current pixmap if image is None. But don't clear text
         if not qlabel.text():
             qlabel.clear()

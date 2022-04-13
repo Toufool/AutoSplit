@@ -187,7 +187,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     # according to all of the settings selected by the user.
     for image in autosplit.split_images:
         # Test for image without transparency
-        if image.bytes is None:
+        if image.bytes is None or not image.bytes.size:
             autosplit.gui_changes_on_reset()
             return False
 

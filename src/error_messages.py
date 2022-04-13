@@ -3,8 +3,13 @@ import os
 import signal
 import sys
 import traceback
+from types import TracebackType
+from typing import Optional
 
 from PyQt6 import QtCore, QtWidgets
+
+from AutoSplit import AutoSplit
+from user_profile import FROZEN
 
 
 def __exit_program():
@@ -117,3 +122,37 @@ def exception_traceback(message: str, exception: BaseException):
     set_text_message(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))
+
+
+CREATE_NEW_ISSUE_MESSAGE = (
+    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
+    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below")
+
+
+def make_excepthook(autosplit: AutoSplit):
+    def excepthook(exception_type: type[BaseException], exception: BaseException, _traceback: Optional[TracebackType]):
+        # Catch Keyboard Interrupts for a clean close
+        if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
+            sys.exit(0)
+        # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture
+        if (
+            exception_type is SystemError
+            and str(exception) == "<class 'PyQt6.QtGui.QPaintEvent'> returned a result with an error set"
+        ):
+            return
+        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        autosplit.show_error_signal.emit(lambda: exception_traceback(
+            "AutoSplit encountered an unhandled exception and will try to recover, "
+            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
+            exception))
+    return excepthook
+
+
+def handle_top_level_exceptions(exception: Exception):
+    message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
+    # Print error to console if not running in executable
+    if FROZEN:
+        exception_traceback(message, exception)
+    else:
+        traceback.print_exception(type(exception), exception, exception.__traceback__)
+    sys.exit(1)

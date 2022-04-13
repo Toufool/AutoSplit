@@ -48,7 +48,7 @@ def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv
 
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * MAXBYTE \
-        if mask is None \
+        if mask is None or not mask.size\
         else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
 
     if not max_error:
@@ -74,7 +74,7 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[c
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = source.size * MAXBYTE * MAXBYTE \
-        if mask is None \
+        if mask is None or not mask.size \
         else np.count_nonzero(mask)
 
     return 1 - (min_val / max_error)
@@ -95,7 +95,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     # each of the images. As a result of this, this function is not going to be very
     # helpful for large masks as the images when shrinked down to 8x8 will mostly be
     # the same
-    if mask is not None:
+    if mask is not None and mask.size:
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 
