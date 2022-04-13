@@ -102,7 +102,7 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
         return windows_graphics_capture.last_captured_frame, True
 
     async def coroutine():
-        async_operation = SoftwareBitmap.create_copy_from_surface_async(frame.surface)  # pyright: ignore
+        async_operation = SoftwareBitmap.create_copy_from_surface_async(frame.surface)
         return await async_operation if async_operation else None
     try:
         software_bitmap = asyncio.run(coroutine())

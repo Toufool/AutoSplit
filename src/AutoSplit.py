@@ -12,10 +12,9 @@ import ctypes
 import os
 import signal
 import sys
-import traceback
 from collections.abc import Callable
 from time import time
-from types import FunctionType, TracebackType
+from types import FunctionType
 from typing import Optional
 
 import certifi
@@ -735,7 +734,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
         # We can't recover by name (yet) with WindowsGraphicsCapture
         if (
-                capture is None or not capture.size) and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+            (capture is None or not capture.size)
+            and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
+        ):
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
             hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
