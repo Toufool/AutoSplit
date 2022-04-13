@@ -4,6 +4,7 @@ import ctypes
 import ctypes.wintypes
 import os
 from dataclasses import dataclass
+from math import ceil
 from typing import TYPE_CHECKING, Optional, cast
 
 import cv2
@@ -46,8 +47,7 @@ IMREAD_EXT_FILTER = "All Files (" \
     + ");;"\
     + ";;".join([f"{format} ({extensions})" for format, extensions in SUPPORTED_IMREAD_FORMATS])
 
-WINDOWS_SHADOW_SIZE = 8
-WINDOWS_TOPBAR_SIZE = 24
+DWMWA_EXTENDED_FRAME_BOUNDS = 9
 user32 = ctypes.windll.user32
 
 
@@ -72,10 +72,11 @@ def select_region(autosplit: AutoSplit):
     if not hwnd or not window_text:
         error_messages.region()
         return
-    autosplit.hwnd = hwnd
-    autosplit.settings_dict["captured_window_title"] = window_text
+    if autosplit.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        autosplit.hwnd = hwnd
+        autosplit.settings_dict["captured_window_title"] = window_text
 
-    offset_x, offset_y, *_ = win32gui.GetWindowRect(autosplit.hwnd)
+    offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
     __set_region_values(autosplit,
                         left=x - offset_x,
                         top=y - offset_y,
@@ -98,17 +99,22 @@ class WindowsGraphicsCapture:
 
 def select_graphics_item(autosplit: AutoSplit):
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
-        if async_status != AsyncStatus.COMPLETED:
-            return
+        try:
+            if async_status != AsyncStatus.COMPLETED:
+                return
+        except SystemError as exception:
+            # HACK: can happen when closing the GraphicsCapturePicker
+            if str(exception).endswith("returned a result with an error set"):
+                return
+            raise
         item = async_operation.get_results()
         if not item:
             return
         autosplit.settings_dict["captured_window_title"] = item.display_name
         if not media_capture.media_capture_settings:
             raise OSError("Unable to initialize a Direct3D Device.")
-        device = media_capture.media_capture_settings.direct3_d11_device
         frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
-            device,
+            media_capture.media_capture_settings.direct3_d11_device,
             DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
             1,
             item.size)
@@ -118,13 +124,13 @@ def select_graphics_item(autosplit: AutoSplit):
         if not session:
             raise OSError("Unable to create a capture session.")
         session.is_cursor_capture_enabled = False
+        # TODO: Consider GraphicsCaptureSession.IsBorderRequired = False
         session.start_capture()
-        autosplit.windows_graphics_capture = WindowsGraphicsCapture(
-            item.size, frame_pool, session, None)  # pyright: ignore
+        autosplit.windows_graphics_capture = WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, autosplit.effectiveWinId().__int__())
-    async_operation = picker.pick_single_item_async()  # pyright: ignore
+    async_operation = picker.pick_single_item_async()
     # None if the selection is canceled
     if async_operation:
         async_operation.completed = callback
@@ -156,16 +162,30 @@ def select_window(autosplit: AutoSplit):
     autosplit.settings_dict["captured_window_title"] = window_text
 
     # Getting window bounds
-    # On Windows there is a shadow around the windows that we need to account for
-    # The top bar with the window name is also not accounted for
-    # HACK: This isn't an ideal solution because it assumes every window will have a top bar and shadows of default size
-    # FIXME: Which results in cutting *into* windows which don't have shadows or have a smaller top bar
-    _, __, width, height = win32gui.GetClientRect(autosplit.hwnd)
+    # On Windows there is a shadow around the windows that we need to account for.
+    # We also account for the borders and titlebar to only get the client area.
+    extended_frame_bounds = ctypes.wintypes.RECT()
+    ctypes.windll.dwmapi.DwmGetWindowAttribute(
+        hwnd,
+        DWMWA_EXTENDED_FRAME_BOUNDS,
+        ctypes.byref(extended_frame_bounds),
+        ctypes.sizeof(extended_frame_bounds))
+
+    window_rect = win32gui.GetWindowRect(hwnd)
+    _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
+
+    window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
+    window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
+    border_width = ceil((window_width - client_width) / 2)
+    titlebar_height = window_height - client_height - border_width * 2
+    client_left = cast(int, extended_frame_bounds.left) - window_rect[0] + border_width
+    client_top = cast(int, extended_frame_bounds.top) - window_rect[1] + titlebar_height
+
     __set_region_values(autosplit,
-                        left=WINDOWS_SHADOW_SIZE,
-                        top=WINDOWS_SHADOW_SIZE + WINDOWS_TOPBAR_SIZE,
-                        width=width,
-                        height=height - WINDOWS_TOPBAR_SIZE)
+                        left=client_left,
+                        top=client_top,
+                        width=client_width,
+                        height=client_height)
 
 
 def __get_window_from_point(x: int, y: int):
@@ -203,7 +223,7 @@ def align_region(autosplit: AutoSplit):
     template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
 
     # Validate template is a valid image file
-    if template is None:
+    if template is None or not template.size:
         error_messages.align_region_image_type()
         return
 
@@ -211,7 +231,7 @@ def align_region(autosplit: AutoSplit):
     # subregion being searched for to align the image.
     capture, _ = capture_windows.capture_region(autosplit)
 
-    if capture is None:
+    if capture is None or not capture.size:
         error_messages.region()
         return
 

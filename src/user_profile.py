@@ -127,30 +127,21 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
             autosplit.y_spinbox.setValue(autosplit.settings_dict["capture_region"]["y"])
             autosplit.width_spinbox.setValue(autosplit.settings_dict["capture_region"]["width"])
             autosplit.height_spinbox.setValue(autosplit.settings_dict["capture_region"]["height"])
+            autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     except (FileNotFoundError, MemoryError, TypeError, toml.TomlDecodeError):
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        autosplit.select_region_button.setDisabled(True)
-    elif autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
         autosplit.select_region_button.setDisabled(True)
         autosplit.select_window_button.setDisabled(True)
         autosplit.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
 
-    autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
-        if autosplit.settings_dict["split_hotkey"]:
-            set_hotkey(autosplit, "split", autosplit.settings_dict["split_hotkey"])
-        if autosplit.settings_dict["reset_hotkey"]:
-            set_hotkey(autosplit, "reset", autosplit.settings_dict["reset_hotkey"])
-        if autosplit.settings_dict["skip_split_hotkey"]:
-            set_hotkey(autosplit, "skip_split", autosplit.settings_dict["skip_split_hotkey"])
-        if autosplit.settings_dict["undo_split_hotkey"]:
-            set_hotkey(autosplit, "undo_split", autosplit.settings_dict["undo_split_hotkey"])
-        if autosplit.settings_dict["pause_hotkey"]:
-            set_hotkey(autosplit, "pause", autosplit.settings_dict["pause_hotkey"])
+        for hotkey in ["split_hotkey", "reset_hotkey", "skip_split_hotkey", "undo_split_hotkey", "pause_hotkey"]:
+            if autosplit.settings_dict[hotkey]:
+                set_hotkey(autosplit, "split", cast(str, autosplit.settings_dict[hotkey]))
 
     if (
         autosplit.settings_dict["captured_window_title"]
@@ -189,7 +180,7 @@ def load_settings_on_open(autosplit: AutoSplit):
         in os.listdir(auto_split_directory)
         if file.endswith(".toml")]
 
-    # find all .tomls in AutoSplit folder, error if there is none or more than 1
+    # Find all .tomls in AutoSplit folder, error if there is not exactly 1
     if len(settings_files) < 1:
         error_messages.no_settings_file_on_open()
         return

@@ -146,9 +146,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.select_region_button.setDisabled(True)
             self.autosplit.select_window_button.setDisabled(True)
-        elif capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-            self.autosplit.select_region_button.setDisabled(True)
-        else:
+            self.autosplit.windows_graphics_capture = None
+        elif capture_method != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
             self.autosplit.select_region_button.setDisabled(False)
             self.autosplit.select_window_button.setDisabled(False)
             self.autosplit.windows_graphics_capture = None

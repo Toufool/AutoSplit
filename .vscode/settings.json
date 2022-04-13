@@ -40,9 +40,9 @@
     "**/__pycache__": true,
   },
   "search.exclude": {
-    "**/node_modules": true,
     "**/bower_components": true,
     "**/*.code-search": true,
+    "*.lock": true,
     "typings": true,
   },
   "[python]": {
