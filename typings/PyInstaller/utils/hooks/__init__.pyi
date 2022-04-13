@@ -91,7 +91,8 @@ def collect_dynamic_libs(package: str, destdir: Optional[str] = ...) -> list[tup
     ...
 
 
-def collect_data_files(package, include_py_files=..., subdir=..., excludes=..., includes=...) -> list[tuple[str, str]]:
+def collect_data_files(package: str, include_py_files: bool = ..., subdir: str = ...,
+                       excludes: list[str] = ..., includes: list[str] = ...) -> list[tuple[str, str]]:
     ...
 
 

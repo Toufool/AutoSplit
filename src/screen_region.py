@@ -126,12 +126,11 @@ def select_graphics_item(autosplit: AutoSplit):
         session.is_cursor_capture_enabled = False
         # TODO: Consider GraphicsCaptureSession.IsBorderRequired = False
         session.start_capture()
-        autosplit.windows_graphics_capture = WindowsGraphicsCapture(
-            item.size, frame_pool, session, None)  # pyright: ignore
+        autosplit.windows_graphics_capture = WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, autosplit.effectiveWinId().__int__())
-    async_operation = picker.pick_single_item_async()  # pyright: ignore
+    async_operation = picker.pick_single_item_async()
     # None if the selection is canceled
     if async_operation:
         async_operation.completed = callback
