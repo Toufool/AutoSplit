@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import ctypes
 import ctypes.wintypes
 import os
@@ -18,6 +19,7 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import (Direct3D11CaptureFramePool, GraphicsCaptureItem, GraphicsCapturePicker,
                                              GraphicsCaptureSession)
+from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.media.capture import MediaCapture
 
@@ -72,9 +74,11 @@ def select_region(autosplit: AutoSplit):
     if not hwnd or not window_text:
         error_messages.region()
         return
-    if autosplit.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        autosplit.hwnd = hwnd
-        autosplit.settings_dict["captured_window_title"] = window_text
+
+    autosplit.hwnd = hwnd
+    autosplit.settings_dict["captured_window_title"] = window_text
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
 
     offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
     __set_region_values(autosplit,
@@ -82,10 +86,6 @@ def select_region(autosplit: AutoSplit):
                         top=y - offset_y,
                         width=width,
                         height=height)
-
-
-media_capture = MediaCapture()
-media_capture.initialize_async()
 
 
 @dataclass
@@ -97,7 +97,39 @@ class WindowsGraphicsCapture:
     last_captured_frame: Optional[cv2.ndarray]
 
 
-def select_graphics_item(autosplit: AutoSplit):
+def create_windows_graphics_capture(item: GraphicsCaptureItem):
+    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
+    # OSError: The application called an interface that was marshalled for a different thread
+    media_capture = MediaCapture()
+
+    async def coroutine():
+        async_action = media_capture.initialize_async()
+        if async_action:
+            await async_action
+    asyncio.run(coroutine())
+
+    if not media_capture.media_capture_settings:
+        raise OSError("Unable to initialize a Direct3D Device.")
+    frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
+        media_capture.media_capture_settings.direct3_d11_device,
+        DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
+        1,
+        item.size)
+    if not frame_pool:
+        raise OSError("Unable to create a frame pool for a capture session.")
+    session = frame_pool.create_capture_session(item)
+    if not session:
+        raise OSError("Unable to create a capture session.")
+    session.is_cursor_capture_enabled = False
+    # TODO: Consider session.is_border_required = False
+    session.start_capture()
+    return WindowsGraphicsCapture(item.size, frame_pool, session, None)
+
+
+def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore # For later as a different picker option
+    """
+    Uses the built-in GraphicsCapturePicker to select the Window
+    """
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
             if async_status != AsyncStatus.COMPLETED:
@@ -111,22 +143,7 @@ def select_graphics_item(autosplit: AutoSplit):
         if not item:
             return
         autosplit.settings_dict["captured_window_title"] = item.display_name
-        if not media_capture.media_capture_settings:
-            raise OSError("Unable to initialize a Direct3D Device.")
-        frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
-            media_capture.media_capture_settings.direct3_d11_device,
-            DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
-            1,
-            item.size)
-        if not frame_pool:
-            raise OSError("Unable to create a frame pool for a capture session.")
-        session = frame_pool.create_capture_session(item)
-        if not session:
-            raise OSError("Unable to create a capture session.")
-        session.is_cursor_capture_enabled = False
-        # TODO: Consider GraphicsCaptureSession.IsBorderRequired = False
-        session.start_capture()
-        autosplit.windows_graphics_capture = WindowsGraphicsCapture(item.size, frame_pool, session, None)
+        autosplit.windows_graphics_capture = create_windows_graphics_capture(item)
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, autosplit.effectiveWinId().__int__())
@@ -137,9 +154,6 @@ def select_graphics_item(autosplit: AutoSplit):
 
 
 def select_window(autosplit: AutoSplit):
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        select_graphics_item(autosplit)
-        return
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -158,8 +172,11 @@ def select_window(autosplit: AutoSplit):
     if not hwnd or not window_text:
         error_messages.region()
         return
+
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
 
     # Getting window bounds
     # On Windows there is a shadow around the windows that we need to account for.
@@ -263,13 +280,15 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):
-    # Obtain the best matching point for the template within the
-    # capture. This assumes that the template is actually smaller
-    # than the dimensions of the capture. Since we are using SQDIFF
-    # the best match will be the min_val which is located at min_loc.
-    # The best match found in the image, set everything to 0 by default
-    # so that way the first match will overwrite these values
+def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):  # pylint: disable=too-many-locals
+    """
+    Obtain the best matching point for the template within the
+    capture. This assumes that the template is actually smaller
+    than the dimensions of the capture. Since we are using SQDIFF
+    the best match will be the min_val which is located at min_loc.
+    The best match found in the image, set everything to 0 by default
+    so that way the first match will overwrite these values
+    """
     best_match = 0.0
     best_height = 0
     best_width = 0
@@ -354,17 +373,22 @@ class BaseSelectWidget(QtWidgets.QWidget):
             self.close()
 
 
-# Widget to select a window and obtain its bounds
 class SelectWindowWidget(BaseSelectWidget):
+    """
+    Widget to select a window and obtain its bounds
+    """
+
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         self._x = int(a0.position().x()) + self.geometry().x()
         self._y = int(a0.position().y()) + self.geometry().y()
         self.close()
 
 
-# Widget for dragging screen region
-# https://github.com/harupy/snipping-tool
 class SelectRegionWidget(BaseSelectWidget):
+    """
+    Widget for dragging screen region
+    https://github.com/harupy/snipping-tool
+    """
     _right: int = 0
     _bottom: int = 0
     __begin = QtCore.QPoint()

@@ -118,6 +118,8 @@ disable = [
   "unused-import",
   # Similar lines in 2 files, doesn't really work
   "R0801",
+  # False positives with PyQt .connect
+  "no-value-for-parameter",
 ]
 
 [tool.pylint.TYPECHECK]
