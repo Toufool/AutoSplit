@@ -23,6 +23,7 @@ from PyQt6 import QtCore, QtGui
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
+from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 import user_profile
@@ -34,7 +35,8 @@ from gen import about, design, settings, update_checker
 from hotkeys import after_setting_hotkey, send_command
 from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
                       open_update_checker, view_help)
-from screen_region import WindowsGraphicsCapture, align_region, select_region, select_window, validate_before_parsing
+from screen_region import (WindowsGraphicsCapture, align_region, create_windows_graphics_capture, select_region,
+                           select_window, validate_before_parsing)
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE, FROZEN
 
@@ -733,17 +735,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         capture, is_old_image = capture_region(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
-        # We can't recover by name (yet) with WindowsGraphicsCapture
-        if (
-            (capture is None or not capture.size)
-            and self.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
-        ):
+        if capture is None or not capture.size:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
             hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd
+                if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                    self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
                 capture, _ = capture_region(self)
         return None if capture is None or not capture.size else cv2.resize(
             capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
@@ -810,7 +810,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self.is_auto_controlled:
                 self.update_auto_control.terminate()
                 # stop main thread (which is probably blocked reading input) via an interrupt signal
-                # only available for windows in version 3.2 or higher
                 os.kill(os.getpid(), signal.SIGINT)
             sys.exit()
 

@@ -9,12 +9,14 @@ import keyboard
 import toml
 from PyQt6 import QtCore, QtWidgets
 from win32 import win32gui
+from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethod
 from capture_windows import Region
 from gen import design
 from hotkeys import set_hotkey
+from screen_region import create_windows_graphics_capture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -143,14 +145,13 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
             if autosplit.settings_dict[hotkey]:
                 set_hotkey(autosplit, "split", cast(str, autosplit.settings_dict[hotkey]))
 
-    if (
-        autosplit.settings_dict["captured_window_title"]
-        # We can't recover by name (yet) with WindowsGraphicsCapture
-        and autosplit.settings_dict["capture_method"] != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE
-    ):
+    if autosplit.settings_dict["captured_window_title"]:
         hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
+        # Don't fallback to desktop
         if hwnd:
             autosplit.hwnd = hwnd
+            if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
         else:
             autosplit.live_image.setText("Reload settings after opening"
                                          + f'\n"{autosplit.settings_dict["captured_window_title"]}"'

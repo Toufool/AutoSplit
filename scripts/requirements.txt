@@ -23,7 +23,7 @@ pywin32
 requests
 certifi
 toml
-winsdk
+winsdk>=v1.0.0b4
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
 #
 # Linting, formatters and Types
@@ -39,9 +39,9 @@ simplejson
 types-simplejson>=3.17.2
 types-requests
 #
-# Not compatible with python 3.10 yet, used to design the UI. Can be downloaded externally
-# Uncomment this if you want to run `designer.bat` to quickly open the bundled PyQt Designer
-# PyQt6-tools
+# You can comment this out if you don't want to run `designer.bat` to quickly open the bundled PyQt Designer.
+# Can also be downloaded externally as a non-python package
+qt6-applications
 #
-# Comment this out if you don't want to build AutoSplit.exe:
+# You can comment this out if you don't want to build AutoSplit.exe:
 PyInstaller

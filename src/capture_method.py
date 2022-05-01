@@ -61,9 +61,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         short_description="fastest, least compatible",
         description=(
             "\nA good default fast option. Also allows recording background windows "
-            "\n(as long as they still actually render when in the background), "
-            "\nbut it cannot properly record OpenGL or Hardware Accelerated Windows. "
-            "\nThe smaller the window, the more efficient it is. "
+            "\n(as long as they still actually render when in the background), but it "
+            "\ncannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
+            "\nThe smaller the region, the more efficient it is. "
         ),
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
@@ -71,12 +71,8 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         short_description="fast, most compatible but less features",
         description=(
             f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
-            "\nAllows recording UWP apps, hardware accelerated and fullscreen exclusive windows. "
-            "\nCaps at around 60 FPS and adds a yellow border around the recorded window. "
-            "\nDoes not support automatically recovering closed Windows, manual cropping only, "
-            "\nand you have to reselect the window everytime you open AutoSplit. "
-            "\nSee https://github.com/pywinrt/python-winsdk/issues/5 "
-            "\nfor more details about those restrictions."
+            "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
+            "\nCaps at around 60 FPS. "
         ),
     ),
     CaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
@@ -94,7 +90,7 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         short_description="very slow, can affect rendering pipeline",
         description=(
             "\nUses BitBlt behind the scene, but passes a special flag "
-            "\nto PrintWindow to force rendering the entire desktop area. "
+            "\nto PrintWindow to force rendering the entire desktop. "
             "\nAbout 10-15x slower than BitBlt based on original window size "
             "\nand can mess up some applications' rendering pipelines. "
         ),

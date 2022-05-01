@@ -160,7 +160,10 @@ def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.ndarray], bool]:
         return __camera_capture(autosplit.capture_device, selection), False
 
     if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        return __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
+        image, is_old_image = __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
+        return (None, False) \
+            if is_old_image and not win32gui.IsWindow(hwnd) \
+            else (image, is_old_image)
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
         return __d3d_capture(hwnd, selection), False

@@ -1,4 +1,6 @@
 """Error messages"""
+from __future__ import annotations
+
 import os
 import signal
 import sys
@@ -14,7 +16,6 @@ from user_profile import FROZEN
 
 def __exit_program():
     # stop main thread (which is probably blocked reading input) via an interrupt signal
-    # only available for windows in version 3.2 or higher
     os.kill(os.getpid(), signal.SIGINT)
     sys.exit(1)
 

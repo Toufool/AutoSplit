@@ -11,12 +11,14 @@ from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
 from simplejson.errors import JSONDecodeError
 from win32 import win32gui
+from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 import user_profile
 from capture_method import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_video_capture_devices
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
+from screen_region import create_windows_graphics_capture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -153,8 +155,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.autosplit.windows_graphics_capture = None
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
+            # Don't fallback to desktop
             if hwnd:
                 self.autosplit.hwnd = hwnd
+                if self.autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                    self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
         return capture_method
 
     def __capture_device_changed(self, current_capture_method: Optional[Union[CaptureMethod, str]] = None):
