@@ -9,7 +9,7 @@ import sys
 from collections.abc import Callable, Sequence
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Literal, Union
+from typing import Literal
 
 __version__: str
 
@@ -199,7 +199,7 @@ def typewrite(message, interval=..., logScreenshot=..., _pause=...) -> None:
 write = ...
 
 
-def hotkey(*args: str, **kwargs: Union[int, bool, None]) -> None:
+def hotkey(*args: str, **kwargs: int | bool | None) -> None:
     ...
 
 
