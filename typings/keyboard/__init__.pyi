@@ -7,7 +7,7 @@ from __future__ import print_function as _print_function
 import queue as _queue
 from collections.abc import Callable
 from threading import Lock as _Lock
-from typing import Any, Optional, Union
+from typing import Any
 
 from keyboard._canonical_names import all_modifiers, normalize_name, sided_modifiers
 from keyboard._generic import GenericListener as _GenericListener
@@ -108,19 +108,19 @@ class _KeyboardListener(_GenericListener):
 _listener: _KeyboardListener
 
 
-def key_to_scan_codes(key: Union[int, str, list[Union[int, str]]], error_if_missing: bool = ...) -> list[int]:
+def key_to_scan_codes(key: int | str | list[int | str], error_if_missing: bool = ...) -> list[int]:
     ...
 
 
-def parse_hotkey(hotkey) -> tuple[Union[
-    tuple[Union[tuple[int], int, tuple[()], tuple[int, ...]]],
-    tuple[tuple[Union[tuple[int], int, tuple[()], tuple[int, ...]], ...]],
-    tuple[int, ...]
-]]:
+def parse_hotkey(hotkey) -> tuple[
+    tuple[tuple[int] | int | tuple[()] | tuple[int, ...]]
+    | tuple[tuple[tuple[int] | int | tuple[()] | tuple[int, ...], ...]]
+    | tuple[int, ...]
+]:
     ...
 
 
-def send(hotkey: Union[str, int], do_press: bool = ..., do_release: bool = ...) -> None:
+def send(hotkey: str | int, do_press: bool = ..., do_release: bool = ...) -> None:
     ...
 
 
@@ -159,7 +159,7 @@ def on_release(callback: Callback, suppress=...) -> Callable[[], None]:
 
 
 def hook_key(
-    key: Union[int, str, list[Union[int, str]]],
+    key: int | str | list[int | str],
     callback: Callback,
     suppress: bool = ...
 ) -> Callable[[], None]:
@@ -284,7 +284,7 @@ def get_typed_strings(events, allow_backspace=...):
     ...
 
 
-_recording: Optional[tuple[_queue.Queue, Callable[[], None]]]
+_recording: tuple[_queue.Queue, Callable[[], None]] | None
 
 
 def start_recording(recorded_events_queue=...) -> tuple[_queue.Queue, Callable[[], None]]:
