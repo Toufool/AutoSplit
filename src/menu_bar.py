@@ -9,12 +9,14 @@ from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
 from simplejson.errors import JSONDecodeError
 from win32 import win32gui
+from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 import user_profile
 from capture_method import CAPTURE_METHODS, CaptureMethod, get_capture_method_by_index, get_capture_method_index
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
+from screen_region import create_windows_graphics_capture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -115,12 +117,14 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def __capture_method_changed(self):
         selected_capture_method = get_capture_method_by_index(self.capture_method_combobox.currentIndex())
-        if selected_capture_method != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-            self.autosplit.windows_graphics_capture = None
-            # Recover window from name
-            hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
-            if hwnd:
-                self.autosplit.hwnd = hwnd
+        self.autosplit.windows_graphics_capture = None
+        # Recover window from name
+        hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
+        # Don't fallback to desktop
+        if hwnd:
+            self.autosplit.hwnd = hwnd
+            if self.autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
         return selected_capture_method
 
     def __init__(self, autosplit: AutoSplit):
