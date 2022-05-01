@@ -181,7 +181,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
             self.capture_device_combobox.addItems([
-                f"* {device.name}{'' if device.occupied else ' (occupied)'}"
+                f"* {device.name} [{device.backend}]{'' if device.occupied else ' (occupied)'}"
                 for device in self.__video_capture_devices])
             self.capture_device_combobox.setEnabled(True)
             self.capture_device_combobox.setCurrentIndex(

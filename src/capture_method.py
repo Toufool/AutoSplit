@@ -119,6 +119,7 @@ class CameraInfo():
     id: int
     name: str
     occupied: bool
+    backend: str
 
 
 def get_all_video_capture_devices():
@@ -127,15 +128,16 @@ def get_all_video_capture_devices():
     while index < 8:
         video_capture = cv2.VideoCapture(index)  # pyright: ignore
         video_capture.setExceptionMode(True)
+        backend = None
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-            print(video_capture.getBackendName())  # pyright: ignore
+            backend: str = video_capture.getBackendName()
             video_capture.grab()
         except cv2.error as error:  # pyright: ignore
             if error.code == cv2.Error.STS_ERROR:
-                video_captures.append(CameraInfo(index, f"Camera {index}", False))
+                video_captures.append(CameraInfo(index, f"Camera {index}", False, backend))
         else:
-            video_captures.append(CameraInfo(index, f"Camera {index}", True))
+            video_captures.append(CameraInfo(index, f"Camera {index}", True, backend))
 
         video_capture.release()
         index += 1
