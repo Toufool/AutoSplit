@@ -111,7 +111,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     start_image: Optional[AutoSplitImage] = None
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
-    split_image: AutoSplitImage
+    split_image: Optional[AutoSplitImage] = None
 
     def __init__(self, parent: Optional[QWidget] = None):  # pylint: disable=too-many-statements
         super().__init__(parent)
@@ -527,7 +527,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
         self.run_start_time = time()
 
-        # First while loop: stays in this loop until all of the split images have been split
+        # First loop: stays in this loop until all of the split images have been split
         while self.split_image_number < number_of_split_images:
 
             # Check if we are not waiting for the split delay to send the key press
@@ -539,7 +539,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             self.__update_split_image()
 
-            # Second while loop: stays in this loop until similarity threshold is met
+            # Type checking
+            if not self.split_image:
+                return
+
+            # Second loop: stays in this loop until similarity threshold is met
             if self.__similarity_threshold_loop(number_of_split_images, dummy_splits_array):
                 return
 
@@ -587,6 +591,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         Returns True if the loop was interrupted by a reset.
         """
+        # Type checking
+        if not self.split_image:
+            return False
+
         start = time()
         while True:
             capture, _ = self.__get_capture_for_comparison()
