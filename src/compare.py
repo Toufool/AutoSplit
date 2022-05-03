@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from math import sqrt
 from typing import Optional
 
 import cv2
@@ -9,9 +10,10 @@ from PIL import Image
 from win32con import MAXBYTE
 
 MAXRANGE = MAXBYTE + 1
-channels = [0, 1, 2]
-histogram_size = [8, 8, 8]
-ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+CHANNELS = [0, 1, 2]
+HISTOGRAM_SIZE = [8, 8, 8]
+RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+MASK_SIZE_MULTIPLIER = 3 * MAXBYTE * MAXBYTE
 
 
 def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
@@ -25,8 +27,8 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
     @return: The similarity between the histograms as a number 0 to 1.
     """
 
-    source_hist = cv2.calcHist([source], channels, mask, histogram_size, ranges)
-    capture_hist = cv2.calcHist([capture], channels, mask, histogram_size, ranges)
+    source_hist = cv2.calcHist([source], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
+    capture_hist = cv2.calcHist([capture], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
 
     cv2.normalize(source_hist, source_hist)
     cv2.normalize(capture_hist, capture_hist)
@@ -47,9 +49,9 @@ def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)  # type: ignore
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = (source.size ** 0.5) * MAXBYTE \
+    max_error = sqrt(source.size) * MAXBYTE \
         if mask is None or not mask.size\
-        else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
+        else sqrt(np.count_nonzero(mask) * MASK_SIZE_MULTIPLIER)
 
     if not max_error:
         return 0.0
