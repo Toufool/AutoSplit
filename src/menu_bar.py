@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import threading
 import webbrowser
 from typing import TYPE_CHECKING, Any, Optional, Union, cast
@@ -102,8 +103,18 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
+def get_capture_method_index(capture_method: Union[str, CaptureMethod]):
+    """
+    Returns 0 if the capture_method is invalid or unsupported
+    """
+    try:
+        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethod, capture_method))
+    except ValueError:
+        return 0
+
+
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
-    __video_capture_devices: list[CameraInfo]
+    __video_capture_devices: list[CameraInfo] = []
     """
     Used to temporarily store the existing cameras,
     we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
@@ -123,21 +134,12 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
-    def get_capture_method_index(self, capture_method: Union[str, CaptureMethod]):
-        """
-        Returns 0 if the capture_method is invalid or unsupported
-        """
-        try:
-            return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethod, capture_method))
-        except ValueError:
-            return 0
-
     def get_capture_device_index(self, capture_device_id: int):
         """
         Returns 0 if the capture_device_id is invalid
         """
         try:
-            return [device.id for device in self.__video_capture_devices].index(capture_device_id)
+            return [device.device_id for device in self.__video_capture_devices].index(capture_device_id)
         except ValueError:
             return 0
 
@@ -172,11 +174,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         capture_device = self.__video_capture_devices[device_index]
         if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.settings_dict["captured_window_title"] = capture_device.name
-            self.autosplit.capture_device = cv2.VideoCapture(capture_device.id)
-        return capture_device.id
+            self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)
+        return capture_device.device_id
 
-    def __set_all_capture_devices_async(self):
-        self.__video_capture_devices = get_all_video_capture_devices()
+    async def __set_all_capture_devices(self):
+        self.__video_capture_devices = await get_all_video_capture_devices()
         if len(self.__video_capture_devices) > 0:
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
@@ -196,7 +198,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
-        threading.Thread(target=self.__set_all_capture_devices_async).start()
+        threading.Thread(target=lambda: asyncio.run(self.__set_all_capture_devices())).start()
         capture_list_items = [
             f"- {method.name} ({method.short_description})"
             for method in capture_method_values
@@ -226,7 +228,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            self.get_capture_method_index(autosplit.settings_dict["capture_method"]))
+            get_capture_method_index(autosplit.settings_dict["capture_method"]))
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])

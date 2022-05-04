@@ -1,9 +1,11 @@
+import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from platform import version
 
 import cv2
+from PyQt6.QtMultimedia import QMediaDevices
 
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
 WCG_MIN_BUILD = 17134
@@ -116,29 +118,36 @@ if int(version().split(".")[2]) < WCG_MIN_BUILD:
 
 @dataclass
 class CameraInfo():
-    id: int
+    device_id: int
     name: str
     occupied: bool
     backend: str
 
 
-def get_all_video_capture_devices():
-    index = 0
-    video_captures: list[CameraInfo] = []
-    while index < 8:
+async def get_all_video_capture_devices():
+    named_video_inputs = [x.description() for x in QMediaDevices.videoInputs()]
+
+    async def get_camera_info(index: int):
         video_capture = cv2.VideoCapture(index)  # pyright: ignore
         video_capture.setExceptionMode(True)
         backend = None
+        device_name = named_video_inputs[index] if index < len(named_video_inputs) else f"Camera {index}"
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
             backend: str = video_capture.getBackendName()
             video_capture.grab()
         except cv2.error as error:  # pyright: ignore
-            if error.code == cv2.Error.STS_ERROR:
-                video_captures.append(CameraInfo(index, f"Camera {index}", False, backend))
-        else:
-            video_captures.append(CameraInfo(index, f"Camera {index}", True, backend))
-
-        video_capture.release()
-        index += 1
-    return video_captures
+            if error.code != cv2.Error.STS_ERROR:
+                return None
+        finally:
+            video_capture.release()
+        return CameraInfo(index, device_name, True, backend)
+    # Enough to ensure we catch "OBS-Camera" (Virtualcam plugin) and ""
+    results: list[CameraInfo] = [
+        camera_info for camera_info
+        in await asyncio.gather(*[
+            get_camera_info(index) for index
+            in range(len(named_video_inputs) + 5)
+        ])
+        if camera_info is not None]
+    return results
