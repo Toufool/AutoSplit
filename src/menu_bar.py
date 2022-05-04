@@ -169,7 +169,10 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         if self.autosplit.capture_device:
             self.autosplit.capture_device.release()
             self.autosplit.capture_device = None
-        capture_device = self.__video_capture_devices[self.capture_device_combobox.currentIndex()]
+        device_index = self.capture_device_combobox.currentIndex()
+        if device_index == -1:
+            return None
+        capture_device = self.__video_capture_devices[device_index]
         if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.settings_dict["captured_window_title"] = capture_device.name
             self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)

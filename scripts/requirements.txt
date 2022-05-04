@@ -1,6 +1,6 @@
 # Requirements file for AutoSplit
 #
-# Python: CPython 3.8+
+# Python: CPython 3.9+
 #
 # Usage: .\scripts\install.bat
 #
