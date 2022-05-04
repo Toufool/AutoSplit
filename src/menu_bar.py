@@ -144,25 +144,24 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             return 0
 
     def __capture_method_changed(self):
-        capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
+        selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
         # Release or start video capture device
-        self.__capture_device_changed(capture_method)
-        if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+        self.__capture_device_changed(selected_capture_method)
+        self.autosplit.windows_graphics_capture = None
+        if selected_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.select_region_button.setDisabled(True)
             self.autosplit.select_window_button.setDisabled(True)
-            self.autosplit.windows_graphics_capture = None
-        elif capture_method != CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        else:
             self.autosplit.select_region_button.setDisabled(False)
             self.autosplit.select_window_button.setDisabled(False)
-            self.autosplit.windows_graphics_capture = None
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
             # Don't fallback to desktop
             if hwnd:
                 self.autosplit.hwnd = hwnd
-                if self.autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                     self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
-        return capture_method
+        return selected_capture_method
 
     def __capture_device_changed(self, current_capture_method: Optional[Union[CaptureMethod, str]] = None):
         current_capture_method = current_capture_method or self.autosplit.settings_dict["capture_method"]
@@ -170,8 +169,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         if self.autosplit.capture_device:
             self.autosplit.capture_device.release()
             self.autosplit.capture_device = None
-        device_index = self.capture_device_combobox.currentIndex()
-        capture_device = self.__video_capture_devices[device_index]
+        capture_device = self.__video_capture_devices[self.capture_device_combobox.currentIndex()]
         if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.settings_dict["captured_window_title"] = capture_device.name
             self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)
@@ -206,8 +204,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         list_view = QtWidgets.QListView()
         list_view.setWordWrap(True)
         # HACK: The first time the dropdown is rendered, it does not have the right height
-        # Assuming all options take 2 lines (except camera which has 1). And all lines (with separator) takes 17 pixels
-        list_view.setMinimumHeight(17 * (2 * len(capture_method_values) - 1) + 1)
+        # Assuming all options take 2 lines (except camera and BitBlt which have 1).
+        # And all lines take 16 pixels
+        # And all separators take 2 pixels
+        doubled_len = 2 * len(capture_method_values)
+        list_view.setMinimumHeight((doubled_len - 2) * 16 + doubled_len)
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_list_items)
