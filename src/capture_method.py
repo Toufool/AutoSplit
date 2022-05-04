@@ -128,7 +128,7 @@ async def get_all_video_capture_devices():
     named_video_inputs = [x.description() for x in QMediaDevices.videoInputs()]
 
     async def get_camera_info(index: int):
-        video_capture = cv2.VideoCapture(index)  # pyright: ignore
+        video_capture = cv2.VideoCapture(index)  # pyright: reportUnknownVariableType=false
         video_capture.setExceptionMode(True)
         backend = None
         device_name = named_video_inputs[index] if index < len(named_video_inputs) else f"Camera {index}"
@@ -136,7 +136,7 @@ async def get_all_video_capture_devices():
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
             backend: str = video_capture.getBackendName()
             video_capture.grab()
-        except cv2.error as error:  # pyright: ignore
+        except cv2.error as error:  # pyright: reportGeneralTypeIssues=false
             if error.code != cv2.Error.STS_ERROR:
                 return None
         finally:

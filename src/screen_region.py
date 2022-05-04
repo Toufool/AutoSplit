@@ -126,7 +126,8 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     return WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
 
-def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore # For later as a different picker option
+def __select_graphics_item(autosplit: AutoSplit):  # pyright: reportUnusedFunction=false
+    # TODO: For later as a different picker option
     """
     Uses the built-in GraphicsCapturePicker to select the Window
     """

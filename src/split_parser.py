@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
-from AutoSplitImage import AutoSplitImage, ImageType
+from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -207,12 +207,12 @@ def parse_and_validate_images(autosplit: AutoSplit):
                 error_messages.reset_hotkey()
                 return False
             autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images("reset")
+            error_messages.multiple_keyword_images(RESET_KEYWORD)
             return False
 
         # Check that there's only one start image
         if image.image_type == ImageType.START:
             autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images("start_auto_splitter")
+            error_messages.multiple_keyword_images(START_KEYWORD)
             return False
     return True

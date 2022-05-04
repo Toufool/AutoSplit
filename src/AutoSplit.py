@@ -28,7 +28,7 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
-from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
+from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethod
 from capture_windows import capture_region, set_ui_image
 from gen import about, design, settings, update_checker
@@ -261,7 +261,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         if self.start_image is None:
             if started_by_button:
-                error_messages.no_keyword_image("start_auto_splitter")
+                error_messages.no_keyword_image(START_KEYWORD)
             QApplication.processEvents()
             return
 

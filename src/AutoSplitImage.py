@@ -20,6 +20,8 @@ COMPARISON_RESIZE_HEIGHT = 240
 COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
 LOWER_BOUND = np.array([0, 0, 0, 1], dtype="uint8")
 UPPER_BOUND = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
+START_KEYWORD = "start_auto_splitter"
+RESET_KEYWORD = "RESET"
 
 
 class ImageType(Enum):
@@ -91,9 +93,9 @@ class AutoSplitImage():
         self.__similarity_threshold = threshold_from_filename(self.filename)
         self.__read_image_bytes(path)
 
-        if "start_auto_splitter" in self.filename:
+        if START_KEYWORD in self.filename:
             self.image_type = ImageType.START
-        elif "reset" in self.filename:
+        elif RESET_KEYWORD in self.filename:
             self.image_type = ImageType.RESET
         else:
             self.image_type = ImageType.SPLIT
