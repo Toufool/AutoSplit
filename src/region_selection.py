@@ -23,9 +23,9 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.media.capture import MediaCapture
 
-import capture_windows
+import region_capture
 import error_messages
-from capture_method import CaptureMethod
+from CaptureMethod import CaptureMethod
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -247,7 +247,7 @@ def align_region(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture, _ = capture_windows.capture_region(autosplit)
+    capture, _ = region_capture.capture_region(autosplit)
 
     if capture is None or not capture.size:
         error_messages.region()

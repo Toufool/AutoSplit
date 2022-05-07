@@ -12,11 +12,11 @@ from win32 import win32gui
 from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
-from capture_method import CAPTURE_METHODS, CaptureMethod
-from capture_windows import Region
+from CaptureMethod import CAPTURE_METHODS, CaptureMethod
 from gen import design
 from hotkeys import set_hotkey
-from screen_region import create_windows_graphics_capture
+from region_capture import Region
+from region_selection import create_windows_graphics_capture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit

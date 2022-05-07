@@ -16,8 +16,8 @@ from PyQt6.QtWidgets import QLabel
 from win32 import win32gui
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
-from capture_method import CaptureMethod
-from screen_region import WindowsGraphicsCapture
+from CaptureMethod import CaptureMethod
+from region_selection import WindowsGraphicsCapture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit

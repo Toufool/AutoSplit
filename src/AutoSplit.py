@@ -29,14 +29,14 @@ import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
-from capture_method import CaptureMethod
-from capture_windows import capture_region, set_ui_image
+from CaptureMethod import CaptureMethod
+from region_capture import capture_region, set_ui_image
 from gen import about, design, settings, update_checker
 from hotkeys import after_setting_hotkey, send_command
 from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
                       open_update_checker, view_help)
-from screen_region import (WindowsGraphicsCapture, align_region, create_windows_graphics_capture, select_region,
-                           select_window, validate_before_parsing)
+from region_selection import (WindowsGraphicsCapture, align_region, create_windows_graphics_capture, select_region,
+                              select_window, validate_before_parsing)
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE, FROZEN
 
