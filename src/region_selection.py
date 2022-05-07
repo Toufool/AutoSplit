@@ -23,8 +23,8 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.media.capture import MediaCapture
 
-import region_capture
 import error_messages
+import region_capture
 from CaptureMethod import CaptureMethod
 
 if TYPE_CHECKING:
@@ -103,9 +103,7 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     media_capture = MediaCapture()
 
     async def coroutine():
-        async_action = media_capture.initialize_async()
-        if async_action:
-            await async_action
+        await (media_capture.initialize_async() or asyncio.sleep(0))
     asyncio.run(coroutine())
 
     if not media_capture.media_capture_settings:

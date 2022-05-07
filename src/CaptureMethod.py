@@ -6,9 +6,19 @@ from platform import version
 
 import cv2
 from PyQt6.QtMultimedia import QMediaDevices
+from winsdk.windows.media.capture import MediaCapture
 
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
 WCG_MIN_BUILD = 17134
+
+
+def test_for_media_capture():
+    async def coroutine():
+        return await (MediaCapture().initialize_async() or asyncio.sleep(0))
+    try:
+        return bool(asyncio.run(coroutine()))
+    except OSError:
+        return False
 
 
 @dataclass
@@ -112,11 +122,15 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
 
 
 # Detect and remove unsupported capture methods
-if int(version().split(".")[2]) < WCG_MIN_BUILD:
+if (  # Windows Graphics Capture requires a minimum Windows Build
+    int(version().split(".")[2]) < WCG_MIN_BUILD
+    # Our current implementation of Windows Graphics Capture requires at least one CaptureDevice
+    or not test_for_media_capture()
+):
     CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
 
 
-@dataclass
+@ dataclass
 class CameraInfo():
     device_id: int
     name: str
