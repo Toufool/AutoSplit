@@ -16,7 +16,8 @@ def test_for_media_capture():
     async def coroutine():
         return await (MediaCapture().initialize_async() or asyncio.sleep(0))
     try:
-        return bool(asyncio.run(coroutine()))
+        asyncio.run(coroutine())
+        return True
     except OSError:
         return False
 
@@ -83,6 +84,8 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         short_description="fast, most compatible but less features",
         description=(
             f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
+            "\nDue to current technical limitations, it requires having at least one "
+            "\naudio or video Capture Device connected and enabled. Even if it won't be used. "
             "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
             "\nCaps at around 60 FPS. "
         ),
@@ -109,13 +112,13 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
     ),
     CaptureMethod.VIDEO_CAPTURE_DEVICE: DisplayCaptureMethodInfo(
         name="Video Capture Device",
-        short_description="select below",
+        short_description="see below",
         description=(
             "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
             "\nYou can select one below. "
             "\nIt is not yet possible for us to display the device name. "
             "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
-            "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/"
+            "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/."
         ),
     ),
 })
