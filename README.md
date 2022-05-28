@@ -203,7 +203,7 @@ Still need help?
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 - [Harutaka Kawamura](https://github.com/harupy/) for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
-- [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
+- [Zanaa_G](https://www.twitch.tv/zana_g) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
 - [KaDiWa](https://github.com/KaDiWa4) for the LiveSplit integration.
 - [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing.
