@@ -36,6 +36,7 @@ class UserProfileDict(TypedDict):
     live_capture_region: bool
     capture_method: Union[str, CaptureMethod]
     capture_device_id: int
+    capture_device_name: str
     default_comparison_method: int
     default_similarity_threshold: float
     default_delay_time: int
@@ -57,6 +58,7 @@ DEFAULT_PROFILE = UserProfileDict(
     live_capture_region=True,
     capture_method=CAPTURE_METHODS.get_method_by_index(0),
     capture_device_id=0,
+    capture_device_name="",
     default_comparison_method=0,
     default_similarity_threshold=0.95,
     default_delay_time=0,

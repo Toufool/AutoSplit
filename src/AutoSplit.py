@@ -104,10 +104,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     reset_highest_similarity = 0.0
 
     # Define all other attributes
-    start_image_split_below_threshold: bool
-    waiting_for_split_delay: bool
-    split_below_threshold: bool
-    run_start_time: float
+    start_image_split_below_threshold = False
+    waiting_for_split_delay = False
+    split_below_threshold = False
+    run_start_time = 0.0
     start_image: Optional[AutoSplitImage] = None
     reset_image: Optional[AutoSplitImage] = None
     split_images: list[AutoSplitImage] = []
@@ -122,6 +122,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         sys.excepthook = error_messages.make_excepthook(self)
 
         self.setupUi(self)
+        self.setWindowTitle(f"AutoSplit v{AUTOSPLIT_VERSION}")
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
@@ -230,8 +231,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.load_start_image_signal.emit()
 
     def __live_image_function(self):
-        self.capture_region_window_label.setText(self.settings_dict["captured_window_title"])
-        if not (self.settings_dict["live_capture_region"] and self.settings_dict["captured_window_title"]):
+        capture_region_window_label = self.settings_dict["capture_device_name"] \
+            if self.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE \
+            else self.settings_dict["captured_window_title"]
+        self.capture_region_window_label.setText(capture_region_window_label)
+        if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
             self.live_image.clear()
             return
         # Set live image in UI
@@ -742,17 +746,21 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         capture, is_old_image = capture_region(self)
 
-        # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
+        # This most likely means we lost capture
+        # (ie the captured window was closed, crashed, lost capture device, etc.)
         if capture is None or not capture.size:
             # Try to recover by using the window name
-            self.live_image.setText("Trying to recover window...")
-            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
-            # Don't fallback to desktop
-            if hwnd:
-                self.hwnd = hwnd
-                if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-                    self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
-                capture, _ = capture_region(self)
+            if self.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
+                self.live_image.setText("Waiting for capture device...")
+            else:
+                self.live_image.setText("Trying to recover window...")
+                hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
+                # Don't fallback to desktop
+                if hwnd:
+                    self.hwnd = hwnd
+                    if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                        self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+                    capture, _ = capture_region(self)
         return None if capture is None or not capture.size else cv2.resize(
             capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
 

@@ -135,9 +135,12 @@ def __camera_capture(capture_device: Optional[cv2.VideoCapture], selection: Regi
     result, image = capture_device.read()
     if not result:
         return None
+    # Ensure we can't go OOB of the image
+    y = min(selection["y"], image.shape[0] - 1)
+    x = min(selection["x"], image.shape[1] - 1)
     image = image[
-        selection["y"]:selection["height"] + selection["y"],
-        selection["x"]:selection["width"] + selection["x"],
+        y:selection["height"] + y,
+        x:selection["width"] + x,
     ]
     return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 

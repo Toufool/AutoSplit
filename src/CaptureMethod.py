@@ -143,6 +143,8 @@ class CameraInfo():
 
 async def get_all_video_capture_devices():
     named_video_inputs = [x.description() for x in QMediaDevices.videoInputs()]
+    # Enough to ensure we catch "OBS-Camera" 1-4 (Virtualcam plugin) and "OBS Virtual Camera"
+    device_range_to_test = range(len(named_video_inputs) + 5)
 
     async def get_camera_info(index: int):
         video_capture = cv2.VideoCapture(index)  # pyright: reportUnknownVariableType=false
@@ -154,17 +156,19 @@ async def get_all_video_capture_devices():
             backend: str = video_capture.getBackendName()
             video_capture.grab()
         except cv2.error as error:  # pyright: reportGeneralTypeIssues=false
-            if error.code != cv2.Error.STS_ERROR:
-                return None
+            return CameraInfo(index, device_name, True, backend) \
+                if error.code == cv2.Error.STS_ERROR \
+                else None
         finally:
             video_capture.release()
-        return CameraInfo(index, device_name, True, backend)
-    # Enough to ensure we catch "OBS-Camera" (Virtualcam plugin) and ""
-    results: list[CameraInfo] = [
+        return CameraInfo(index, device_name, False, backend)
+
+    future = asyncio.gather(*[
+        get_camera_info(index) for index
+        in device_range_to_test
+    ])
+
+    return [
         camera_info for camera_info
-        in await asyncio.gather(*[
-            get_camera_info(index) for index
-            in range(len(named_video_inputs) + 5)
-        ])
+        in await future
         if camera_info is not None]
-    return results

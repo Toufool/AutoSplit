@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # AutoSplit Version number
-AUTOSPLIT_VERSION = "2.0.0-alpha"
+AUTOSPLIT_VERSION = "2.0.0-alpha2"
 
 # About Window
 
@@ -174,7 +174,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             return None
         capture_device = self.__video_capture_devices[device_index]
         if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-            self.autosplit.settings_dict["captured_window_title"] = capture_device.name
+            self.autosplit.settings_dict["capture_device_name"] = capture_device.name
             self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)
         return capture_device.device_id
 
@@ -184,7 +184,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
             self.capture_device_combobox.addItems([
-                f"* {device.name} [{device.backend}]{'' if device.occupied else ' (occupied)'}"
+                f"* {device.name} [{device.backend}]{' (occupied)' if device.occupied else ''}"
                 for device in self.__video_capture_devices])
             self.capture_device_combobox.setEnabled(True)
             self.capture_device_combobox.setCurrentIndex(
@@ -302,6 +302,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex()),
         "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
+        "capture_device_name": "",
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
