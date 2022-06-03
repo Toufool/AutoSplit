@@ -112,10 +112,11 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
     ),
     CaptureMethod.VIDEO_CAPTURE_DEVICE: DisplayCaptureMethodInfo(
         name="Video Capture Device",
-        short_description="see below",
+        short_description="very slow, see below",
         description=(
             "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
             "\nYou can select one below. "
+            "\nThere are currently performance issues, but it might be more convenient. "
             "\nIt is not yet possible for us to display the device name. "
             "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
             "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/."

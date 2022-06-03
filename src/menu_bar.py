@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # AutoSplit Version number
-AUTOSPLIT_VERSION = "2.0.0-alpha2"
+AUTOSPLIT_VERSION = "2.0.0-alpha.2"
 
 # About Window
 
