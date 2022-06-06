@@ -297,16 +297,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         capture, _ = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
-        self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
-
-        # Show live similarity if the checkbox is checked
-        self.table_current_image_live_label.setText(f"{start_image_similarity:.2f}")
 
         # If the similarity becomes higher than highest similarity, set it as such.
         if start_image_similarity > self.highest_similarity:
             self.highest_similarity = start_image_similarity
 
-        # Show live highest similarity if the checkbox is checked
+        self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
+        self.table_current_image_live_label.setText(f"{start_image_similarity:.2f}")
         self.table_current_image_highest_label.setText(f"{self.highest_similarity:.2f}")
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
@@ -314,7 +311,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         below_flag = self.start_image.check_flag(BELOW_FLAG)
 
         # Negative means belove threshold, positive means above
-        similarity_diff = start_image_threshold - start_image_similarity
+        similarity_diff = start_image_similarity - start_image_threshold
         if below_flag \
                 and not self.start_image_split_below_threshold \
                 and similarity_diff >= 0:
