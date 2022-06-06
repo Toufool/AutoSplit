@@ -94,7 +94,7 @@ class WindowsGraphicsCapture:
     frame_pool: Direct3D11CaptureFramePool
     # Prevent session from being garbage collected
     session: GraphicsCaptureSession
-    last_captured_frame: Optional[cv2.ndarray]
+    last_captured_frame: Optional[cv2.Mat]
 
 
 def create_windows_graphics_capture(item: GraphicsCaptureItem):
@@ -124,7 +124,7 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     return WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
 
-def __select_graphics_item(autosplit: AutoSplit):  # pyright: reportUnusedFunction=false
+def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
     # TODO: For later as a different picker option
     """
     Uses the built-in GraphicsCapturePicker to select the Window
@@ -145,7 +145,7 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: reportUnusedFuncti
         autosplit.windows_graphics_capture = create_windows_graphics_capture(item)
 
     picker = GraphicsCapturePicker()
-    initialize_with_window(picker, autosplit.effectiveWinId().__int__())
+    initialize_with_window(picker, int(autosplit.effectiveWinId()))
     async_operation = picker.pick_single_item_async()
     # None if the selection is canceled
     if async_operation:
@@ -279,7 +279,7 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):  # pylint: disable=too-many-locals
+def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=too-many-locals
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller

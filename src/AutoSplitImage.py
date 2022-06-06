@@ -36,10 +36,10 @@ class AutoSplitImage():
     flags: int
     loops: int
     image_type: ImageType
-    bytes: Optional[cv2.ndarray] = None
-    mask: Optional[cv2.ndarray] = None
+    bytes: Optional[cv2.Mat] = None
+    mask: Optional[cv2.Mat] = None
     # This value is internal, check for mask instead
-    _has_transparency: bool
+    _has_transparency = False
     # These values should be overriden by Defaults if None. Use getters instead
     __delay_time: Optional[float] = None
     __comparison_method: Optional[int] = None
@@ -125,7 +125,7 @@ class AutoSplitImage():
     def compare_with_capture(
         self,
         default: Union[AutoSplit, int],
-        capture: Optional[cv2.ndarray]
+        capture: Optional[cv2.Mat]
     ):
         """
         Compare image with capture using image's comparison method. Falls back to combobox

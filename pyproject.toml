@@ -45,8 +45,8 @@ reportUnknownMemberType = "none"
 # https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
 [tool.pylint.REPORTS]
-# Just like default but any error will make drop to 9 or less. warning and conventions are worth more
-evaluation = "10.0 - error - ((float((warning + convention) * 10 + refactor ) / statement) * 10)"
+# Just like default but any error, warning or convention will make drop to 9 or less. refactor are worth more
+evaluation = "10.0 - error - warning - convention - ((10 * refactor) / statement) * 10"
 [tool.pylint.MASTER]
 fail-under = 9.0
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
@@ -97,6 +97,9 @@ max-locals = 15
 max-complexity = 15
 # At least same as max-complexity
 max-branches = 15
+# https://github.com/PyCQA/pep8-naming/issues/164
+# OR doesn't fit CaptureMethodMeta
+valid-classmethod-first-arg = "self"
 # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
 module-naming-style = "any"
 # Can't make private class with PascalCase
@@ -120,6 +123,8 @@ disable = [
   "R0801",
   # False positives with PyQt .connect
   "no-value-for-parameter",
+  # Not as long as we support Python 3.9
+  "consider-alternative-union-syntax",
 ]
 
 [tool.pylint.TYPECHECK]

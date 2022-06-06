@@ -31,10 +31,9 @@ class DisplayCaptureMethodInfo():
 
 class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
-    def __contains__(cls, other: str):  # noqa:N805
+    def __contains__(self, other: str):
         try:
-            # pyright: reportGeneralTypeIssues=false
-            cls(other)  # pylint: disable=no-value-for-parameter
+            self(other)  # pyright: ignore [reportGeneralTypeIssues]
         except ValueError:
             return False
         else:
@@ -148,15 +147,15 @@ async def get_all_video_capture_devices():
     device_range_to_test = range(len(named_video_inputs) + 5)
 
     async def get_camera_info(index: int):
-        video_capture = cv2.VideoCapture(index)  # pyright: reportUnknownVariableType=false
+        video_capture = cv2.VideoCapture(index)  # pyright: ignore [reportUnknownVariableType]
         video_capture.setExceptionMode(True)
-        backend = None
+        backend = ""
         device_name = named_video_inputs[index] if index < len(named_video_inputs) else f"Camera {index}"
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
             backend: str = video_capture.getBackendName()
             video_capture.grab()
-        except cv2.error as error:  # pyright: reportGeneralTypeIssues=false
+        except cv2.error as error:  # pyright: ignore [reportUnknownVariableType]
             return CameraInfo(index, device_name, True, backend) \
                 if error.code == cv2.Error.STS_ERROR \
                 else None

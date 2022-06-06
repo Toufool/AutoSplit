@@ -199,7 +199,7 @@ def remap_key(src, dst) -> Callable[[], None]:
 unremap_key = ...
 
 
-def parse_hotkey_combinations(hotkey) -> tuple[tuple[tuple[..., ...], ...], ...]:
+def parse_hotkey_combinations(hotkey) -> tuple[tuple[tuple[str, ...], ...], ...]:
     ...
 
 
@@ -208,7 +208,7 @@ _hotkeys: dict
 
 def add_hotkey(
     hotkey,
-    callback: Callback,
+    callback: Callable[[], None],
     args=...,
     suppress=...,
     timeout=...,

@@ -60,7 +60,7 @@ class D3DShot(metaclass=Singleton):
     def get_frame_stack(self, frame_indices, stack_dimension=...) -> NDArray:
         ...
 
-    def screenshot(self, region: tuple[int, int, int, int] = ...) -> cv2.ndarray:
+    def screenshot(self, region: tuple[int, int, int, int] = ...) -> cv2.Mat:
         ...
 
     def screenshot_to_disk(self, directory=..., file_name=..., region: tuple[int, int, int, int] = ...) -> str:

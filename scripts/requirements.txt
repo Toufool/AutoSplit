@@ -34,7 +34,7 @@ flake8-pyi
 flake8-quotes
 flake8-isort
 pylint>=2.13
-git+https://github.com/Avasam/pywin32-stubs.git#egg=pywin32-stubs # https://github.com/kaluluosi/pywin32-stubs/pull/4
+pywin32-stubs>=0.1.6
 simplejson
 types-simplejson>=3.17.2
 types-requests

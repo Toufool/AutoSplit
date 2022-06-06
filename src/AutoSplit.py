@@ -761,7 +761,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return None if capture is None or not capture.size else cv2.resize(
             capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
 
-    def __reset_if_should(self, capture: Optional[cv2.ndarray]):
+    def __reset_if_should(self, capture: Optional[cv2.Mat]):
         """
         Check if we should reset, resets if it's the case, and returns the result
         """
