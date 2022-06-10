@@ -756,6 +756,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if hwnd:
                     self.hwnd = hwnd
                     if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                        if self.windows_graphics_capture:
+                            self.windows_graphics_capture.close()
                         self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
                     capture, _ = capture_region(self)
         return None if capture is None or not capture.size else cv2.resize(
@@ -763,7 +765,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __reset_if_should(self, capture: Optional[cv2.Mat]):
         """
-        Check if we should reset, resets if it's the case, and returns the result
+        Checks if we should reset, resets if it's the case, and returns the result
         """
         if self.reset_image:
             similarity = self.reset_image.compare_with_capture(self, capture)

@@ -96,7 +96,11 @@ def __windows_graphics_capture(windows_graphics_capture: Optional[WindowsGraphic
     if not windows_graphics_capture or not windows_graphics_capture.frame_pool:
         return None, False
 
-    frame = windows_graphics_capture.frame_pool.try_get_next_frame()
+    try:
+        frame = windows_graphics_capture.frame_pool.try_get_next_frame()
+    # Frame pool is closed
+    except OSError:
+        return None, False
     if not frame:
         return windows_graphics_capture.last_captured_frame, True
 

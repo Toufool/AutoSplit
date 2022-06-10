@@ -78,6 +78,8 @@ def select_region(autosplit: AutoSplit):
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
     if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        if autosplit.windows_graphics_capture:
+            autosplit.windows_graphics_capture.close()
         autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
 
     offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
@@ -95,6 +97,16 @@ class WindowsGraphicsCapture:
     # Prevent session from being garbage collected
     session: GraphicsCaptureSession
     last_captured_frame: Optional[cv2.Mat]
+
+    def close(self):
+        self.frame_pool.close()
+        try:
+            self.session.close()
+        except OSError:
+            # OSError: The application called an interface that was marshalled for a different thread
+            # This still seems to close the session and prevent the following hard crash in LiveSplit
+            # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"
+            pass
 
 
 def create_windows_graphics_capture(item: GraphicsCaptureItem):
@@ -142,6 +154,8 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         if not item:
             return
         autosplit.settings_dict["captured_window_title"] = item.display_name
+        if autosplit.windows_graphics_capture:
+            autosplit.windows_graphics_capture.close()
         autosplit.windows_graphics_capture = create_windows_graphics_capture(item)
 
     picker = GraphicsCapturePicker()
@@ -175,6 +189,8 @@ def select_window(autosplit: AutoSplit):
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
     if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        if autosplit.windows_graphics_capture:
+            autosplit.windows_graphics_capture.close()
         autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
 
     # Getting window bounds

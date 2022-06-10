@@ -147,6 +147,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
         # Release or start video capture device
         self.__capture_device_changed(selected_capture_method)
+        if self.autosplit.windows_graphics_capture:
+            self.autosplit.windows_graphics_capture.close()
         self.autosplit.windows_graphics_capture = None
         if selected_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.select_region_button.setDisabled(True)

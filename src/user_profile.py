@@ -153,6 +153,8 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         if hwnd:
             autosplit.hwnd = hwnd
             if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+                if autosplit.windows_graphics_capture:
+                    autosplit.windows_graphics_capture.close()
                 autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
         else:
             autosplit.live_image.setText("Reload settings after opening"
