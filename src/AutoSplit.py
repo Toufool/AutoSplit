@@ -771,15 +771,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             similarity = self.reset_image.compare_with_capture(self, capture)
             threshold = self.reset_image.get_similarity_threshold(self)
 
-            if similarity > self.reset_highest_similarity:
-                self.reset_highest_similarity = similarity
+            paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
+            if paused:
+                should_reset = False
+                self.table_reset_image_live_label.setText("paused")
+            else:
+                should_reset = similarity >= threshold
+                if similarity > self.reset_highest_similarity:
+                    self.reset_highest_similarity = similarity
+                self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
+                self.table_reset_image_live_label.setText(f"{similarity:.2f}")
 
-            self.table_reset_image_live_label.setText(f"{similarity:.2f}")
-            self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
             self.table_reset_image_threshold_label.setText(f"{threshold:.2f}")
-
-            should_reset = similarity >= threshold \
-                and time() - self.run_start_time > self.reset_image.get_pause_time(self)
 
             if should_reset:
                 send_command(self, "reset")

@@ -21,7 +21,7 @@ COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
 LOWER_BOUND = np.array([0, 0, 0, 1], dtype="uint8")
 UPPER_BOUND = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
 START_KEYWORD = "start_auto_splitter"
-RESET_KEYWORD = "RESET"
+RESET_KEYWORD = "reset"
 
 
 class ImageType(Enum):
