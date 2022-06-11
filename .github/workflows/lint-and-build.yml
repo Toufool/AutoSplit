@@ -42,6 +42,7 @@ jobs:
           pip install wheel
           pip install -r "scripts/requirements.txt"
           npm install -g pyright
+          npm list -g pyright
       - run: scripts/compile_resources.bat
       - name: Analysing the code with ${{ github.job }}
         run: pyright --warnings

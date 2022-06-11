@@ -139,8 +139,8 @@ def __camera_capture(capture_device: Optional[cv2.VideoCapture], selection: Regi
     if not result:
         return None
     # Ensure we can't go OOB of the image
-    y = min(selection["y"], image.shape[0] - 1)  # pyright: ignore [reportUnusedVariable]
-    x = min(selection["x"], image.shape[1] - 1)  # pyright: ignore [reportUnusedVariable]
+    y = min(selection["y"], image.shape[0] - 1)
+    x = min(selection["x"], image.shape[1] - 1)
     image = image[
         y:selection["height"] + y,
         x:selection["width"] + x,

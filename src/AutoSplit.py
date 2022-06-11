@@ -758,10 +758,19 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                         if self.windows_graphics_capture:
                             self.windows_graphics_capture.close()
-                        self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+                        try:
+                            self.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+                        # Unrecordable hwnd found as the game is crashing
+                        except OSError as exception:
+                            if str(exception).endswith("The parameter is incorrect"):
+                                return None, is_old_image
+                            raise
                     capture, _ = capture_region(self)
-        return None if capture is None or not capture.size else cv2.resize(
-            capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST), is_old_image
+
+        return (None
+                if capture is None or not capture.size
+                else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
+                is_old_image)
 
     def __reset_if_should(self, capture: Optional[cv2.Mat]):
         """

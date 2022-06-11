@@ -1,5 +1,7 @@
 cd "%~dp0.."
-md .\src\gen
+@ if not exist .\src\gen (
+  md .\src\gen
+)
 pyuic6 ".\res\about.ui" -o ".\src\gen\about.py"
 pyuic6 ".\res\design.ui" -o ".\src\gen\design.py"
 pyuic6 ".\res\settings.ui" -o ".\src\gen\settings.py"
