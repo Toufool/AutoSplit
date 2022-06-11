@@ -11,7 +11,7 @@
 #
 # Dependencies:
 numpy>=1.22.0rc1
-opencv-python>=4.5.4
+opencv-python-headless>=4.5.4,<4.6
 PyQt6>=6.2.1
 PySide6
 ImageHash
