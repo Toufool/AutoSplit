@@ -5,7 +5,7 @@ from enum import Enum, EnumMeta, unique
 from platform import version
 
 import cv2
-from PyQt6.QtMultimedia import QMediaDevices
+from pygrabber.dshow_graph import FilterGraph
 from winsdk.windows.media.capture import MediaCapture
 
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
@@ -142,15 +142,12 @@ class CameraInfo():
 
 
 async def get_all_video_capture_devices():
-    named_video_inputs = [x.description() for x in QMediaDevices.videoInputs()]
-    # Enough to ensure we catch "OBS-Camera" 1-4 (Virtualcam plugin) and "OBS Virtual Camera"
-    device_range_to_test = range(len(named_video_inputs) + 5)
+    named_video_inputs = FilterGraph().get_input_devices()
 
-    async def get_camera_info(index: int):
+    async def get_camera_info(index: int, device_name: str):
         video_capture = cv2.VideoCapture(index)
         video_capture.setExceptionMode(True)
         backend = ""
-        device_name = named_video_inputs[index] if index < len(named_video_inputs) else f"Camera {index}"
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
             backend = video_capture.getBackendName()
@@ -164,8 +161,8 @@ async def get_all_video_capture_devices():
         return CameraInfo(index, device_name, False, backend)
 
     future = asyncio.gather(*[
-        get_camera_info(index) for index
-        in device_range_to_test
+        get_camera_info(index, name) for index, name
+        in enumerate(named_video_inputs)
     ])
 
     return [
