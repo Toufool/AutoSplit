@@ -157,23 +157,26 @@ def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.Mat], bool]:
     @param selection: The coordinates of the region
     @return: The image of the region in the window in BGRA format
     """
-    hwnd = autosplit.hwnd
-    selection = autosplit.settings_dict["capture_region"]
     capture_method = autosplit.settings_dict["capture_method"]
+    selection = autosplit.settings_dict["capture_region"]
 
     if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
         return __camera_capture(autosplit.capture_device, selection), False
 
+    if not autosplit.hwnd:
+        return None, False
+
     if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
         image, is_old_image = __windows_graphics_capture(autosplit.windows_graphics_capture, selection)
         return (None, False) \
-            if is_old_image and not win32gui.IsWindow(hwnd) \
+            if is_old_image and not win32gui.IsWindow(autosplit.hwnd) \
             else (image, is_old_image)
 
     if capture_method == CaptureMethod.DESKTOP_DUPLICATION:
-        return __d3d_capture(hwnd, selection), False
+        return __d3d_capture(autosplit.hwnd, selection), False
 
-    return __bit_blt_capture(hwnd, selection, capture_method == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT), False
+    return __bit_blt_capture(autosplit.hwnd, selection, capture_method
+                             == CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT), False
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.Mat], transparency: bool):
