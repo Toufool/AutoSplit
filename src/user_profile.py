@@ -12,6 +12,7 @@ from win32 import win32gui
 from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
+from AutoSplitImage import COMPARISON_RESIZE_HEIGHT, COMPARISON_RESIZE_WIDTH
 from CaptureMethod import CAPTURE_METHODS, CaptureMethod
 from gen import design
 from hotkeys import set_hotkey
@@ -140,6 +141,8 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.select_region_button.setDisabled(True)
         autosplit.select_window_button.setDisabled(True)
         autosplit.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
+        autosplit.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, COMPARISON_RESIZE_WIDTH)
+        autosplit.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, COMPARISON_RESIZE_HEIGHT)
 
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
