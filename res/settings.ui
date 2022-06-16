@@ -64,6 +64,9 @@
     <property name="cursor">
      <cursorShape>ArrowCursor</cursorShape>
     </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+    </property>
     <property name="minimum">
      <number>20</number>
     </property>
@@ -261,6 +264,9 @@
     <property name="toolTip">
      <string>The amount of time in seconds that comparison will be paused before moving to the next image.</string>
     </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+    </property>
     <property name="decimals">
      <number>2</number>
     </property>
@@ -304,6 +310,9 @@
     </property>
     <property name="toolTip">
      <string>Threshold that the live similarity will need to go above to consider the image a match.</string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <double>1.000000000000000</double>
@@ -392,6 +401,9 @@
     </property>
     <property name="toolTip">
      <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <number>999999999</number>

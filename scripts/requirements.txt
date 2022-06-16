@@ -5,13 +5,13 @@
 # Usage: .\scripts\install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip uninstall -r .\scripts\requirements-dev.txt
+# pip uninstall -y -r .\scripts\requirements-dev.txt
 #
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
 # Dependencies:
-numpy>=1.22.0rc1,<1.23
-opencv-python-headless>=4.5.4,<4.6
+numpy>=1.22.0rc1,<1.23 # Type issue
+opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
 PyQt6>=6.2.1
 PySide6
 ImageHash
@@ -19,7 +19,7 @@ keyboard
 packaging
 Pillow
 pyautogui
-pywin32
+pywin32>=301
 requests
 certifi
 toml
@@ -27,5 +27,5 @@ winsdk>=v1.0.0b4
 pygrabber
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
 #
-# You can comment this out if you don't want to build AutoSplit.exe:
+# Build
 PyInstaller

@@ -13,6 +13,7 @@ import os
 import signal
 import sys
 from collections.abc import Callable
+from platform import version
 from time import time
 from types import FunctionType
 from typing import Optional
@@ -42,6 +43,7 @@ from user_profile import DEFAULT_PROFILE, FROZEN
 
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 CHECK_FPS_ITERATIONS = 10
+FIRST_WIN_11_BUILD = 22000
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
@@ -103,7 +105,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     highest_similarity = 0.0
     reset_highest_similarity = 0.0
 
-    # Define all other attributes
+    # Ensure all other attributes are defined
     start_image_split_below_threshold = False
     waiting_for_split_delay = False
     split_below_threshold = False
@@ -113,6 +115,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_images: list[AutoSplitImage] = []
     split_image: Optional[AutoSplitImage] = None
     capture_device: Optional[cv2.VideoCapture] = None
+    update_auto_control: Optional[QtCore.QThread] = None
 
     def __init__(self, parent: Optional[QWidget] = None):  # pylint: disable=too-many-statements
         super().__init__(parent)
@@ -123,6 +126,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle(f"AutoSplit v{AUTOSPLIT_VERSION}")
+        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
+        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
+        # Arrow buttons tend to move a lot as well
+        if int(version().split(".")[2]) >= FIRST_WIN_11_BUILD:
+            self.x_spinbox.setFrame(False)
+            self.y_spinbox.setFrame(False)
+            self.width_spinbox.setFrame(False)
+            self.height_spinbox.setFrame(False)
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
@@ -837,10 +848,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
 
         def exit_program():
+            if self.update_auto_control:
+                self.update_auto_control.terminate()
             if a0 is not None:
                 a0.accept()
             if self.is_auto_controlled:
-                self.update_auto_control.terminate()
                 # stop main thread (which is probably blocked reading input) via an interrupt signal
                 os.kill(os.getpid(), signal.SIGINT)
             sys.exit()
