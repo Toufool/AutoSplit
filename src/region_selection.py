@@ -136,7 +136,7 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     if not session:
         raise OSError("Unable to create a capture session.")
     session.is_cursor_capture_enabled = False
-    if int(version().split(".")[2]) < WGC_NO_BORDER_MIN_BUILD:
+    if int(version().split(".")[2]) >= WGC_NO_BORDER_MIN_BUILD:
         session.is_border_required = False
     session.start_capture()
     return WindowsGraphicsCapture(item.size, frame_pool, session, None)

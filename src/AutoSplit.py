@@ -216,17 +216,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__start_image_function)
 
-        if not self.is_auto_controlled:
-            user_profile.load_settings_on_open(self)
+        self.show()
 
         try:
             import pyi_splash  # type: ignore # pylint: disable=import-outside-toplevel
             pyi_splash.close()
         except ModuleNotFoundError:
             pass
-        self.show()
 
-        # Needs to be after Ui_MainWindow.show() to be shown overtop
+        # Needs to be after Ui_MainWindow.show() to be shown on top
+        if not self.is_auto_controlled:
+            # Must also be done later to help load the saved capture window
+            user_profile.load_settings_on_open(self)
         if self.action_check_for_updates_on_open.isChecked():
             check_for_updates(self, check_on_open=True)
 
@@ -768,8 +769,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             else:
                 self.live_image.setText("Trying to recover window...")
                 hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
-                # Don't fallback to desktop
-                if hwnd:
+                # Don't fallback to desktop or whatever window obtained with ""
+                if hwnd and self.settings_dict["captured_window_title"]:
                     self.hwnd = hwnd
                     if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                         if self.windows_graphics_capture:

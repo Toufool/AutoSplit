@@ -152,8 +152,8 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
     if autosplit.settings_dict["captured_window_title"]:
         hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
-        # Don't fallback to desktop
-        if hwnd:
+        # Don't fallback to desktop or whatever window obtained with ""
+        if hwnd and autosplit.settings_dict["captured_window_title"]:
             autosplit.hwnd = hwnd
             if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                 if autosplit.windows_graphics_capture:

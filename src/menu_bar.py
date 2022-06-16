@@ -159,8 +159,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.autosplit.select_window_button.setDisabled(False)
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
-            # Don't fallback to desktop
-            if hwnd:
+            # Don't fallback to desktop or whatever window obtained with ""
+            if hwnd and self.autosplit.settings_dict["captured_window_title"]:
                 self.autosplit.hwnd = hwnd
                 if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                     self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
