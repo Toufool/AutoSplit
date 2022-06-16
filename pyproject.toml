@@ -78,9 +78,9 @@ ignore-paths = [
   # Auto generated
   "^src/gen/.*$",
   # We expect stub files to be incomplete or contain useless statements
-  "^.*\\.pyi$",
+  "^.*.pyi$",
 ]
-extension-pkg-allow-list = ["PyQt6", "win32ui"]
+extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui"]
 
 [tool.pylint.FORMAT]
 max-line-length = 120

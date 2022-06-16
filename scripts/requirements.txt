@@ -5,7 +5,7 @@
 # Usage: .\scripts\install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip uninstall -r .\scripts\requirements.txt
+# pip uninstall -r .\scripts\requirements-dev.txt
 #
 # Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
@@ -26,23 +26,6 @@ toml
 winsdk>=v1.0.0b4
 pygrabber
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
-#
-# Linting, formatters and Types
-bandit
-isort
-flake8
-flake8-pyi
-flake8-quotes
-flake8-isort
-pylint>=2.13
-pywin32-stubs>=0.1.6
-simplejson
-types-simplejson>=3.17.2
-types-requests
-#
-# You can comment this out if you don't want to run `designer.bat` to quickly open the bundled PyQt Designer.
-# Can also be downloaded externally as a non-python package
-qt6-applications
 #
 # You can comment this out if you don't want to build AutoSplit.exe:
 PyInstaller
