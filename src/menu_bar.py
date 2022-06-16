@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # AutoSplit Version number
-AUTOSPLIT_VERSION = "2.0.0-alpha.2"
+AUTOSPLIT_VERSION = "2.0.0-alpha.3"
 
 # About Window
 
@@ -97,6 +97,8 @@ class __CheckForUpdatesThread(QtCore.QThread):
         except (RequestException, KeyError, JSONDecodeError):
             if not self.check_on_open:
                 self.autosplit.show_error_signal.emit(error_messages.check_for_updates)
+        finally:
+            self.terminate()
 
 
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):

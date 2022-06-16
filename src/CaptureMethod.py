@@ -9,7 +9,7 @@ from pygrabber.dshow_graph import FilterGraph
 from winsdk.windows.media.capture import MediaCapture
 
 # https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to
-WCG_MIN_BUILD = 17134
+WGC_MIN_BUILD = 17134
 
 
 def test_for_media_capture():
@@ -82,7 +82,7 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         name="Windows Graphics Capture",
         short_description="fast, most compatible but less features",
         description=(
-            f"\nOnly available in Windows 10.0.{WCG_MIN_BUILD} and up. "
+            f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
             "\nDue to current technical limitations, it requires having at least one "
             "\naudio or video Capture Device connected and enabled. Even if it won't be used. "
             "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
@@ -126,7 +126,7 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
 
 # Detect and remove unsupported capture methods
 if (  # Windows Graphics Capture requires a minimum Windows Build
-    int(version().split(".")[2]) < WCG_MIN_BUILD
+    int(version().split(".")[2]) < WGC_MIN_BUILD
     # Our current implementation of Windows Graphics Capture requires at least one CaptureDevice
     or not test_for_media_capture()
 ):

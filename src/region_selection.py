@@ -6,6 +6,7 @@ import ctypes.wintypes
 import os
 from dataclasses import dataclass
 from math import ceil
+from platform import version
 from typing import TYPE_CHECKING, Optional, cast
 
 import cv2
@@ -29,6 +30,9 @@ from CaptureMethod import CaptureMethod
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
+WGC_NO_BORDER_MIN_BUILD = 20348
+
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -132,7 +136,8 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     if not session:
         raise OSError("Unable to create a capture session.")
     session.is_cursor_capture_enabled = False
-    # TODO: Consider session.is_border_required = False
+    if int(version().split(".")[2]) < WGC_NO_BORDER_MIN_BUILD:
+        session.is_border_required = False
     session.start_capture()
     return WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
