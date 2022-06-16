@@ -208,6 +208,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if not self.is_auto_controlled:
             user_profile.load_settings_on_open(self)
 
+        try:
+            import pyi_splash  # type: ignore # pylint: disable=import-outside-toplevel
+            pyi_splash.close()
+        except ModuleNotFoundError:
+            pass
         self.show()
 
         # Needs to be after Ui_MainWindow.show() to be shown overtop
