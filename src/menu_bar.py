@@ -11,7 +11,6 @@ import requests
 from packaging.version import parse as version_parse
 from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
-from simplejson.errors import JSONDecodeError
 from win32 import win32gui
 from winsdk.windows.graphics.capture.interop import create_for_window
 
@@ -97,7 +96,7 @@ class __CheckForUpdatesThread(QtCore.QThread):
             response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
             latest_version = str(response.json()["name"]).split("v")[1]
             self.autosplit.update_checker_widget_signal.emit(latest_version, self.check_on_open)
-        except (RequestException, KeyError, JSONDecodeError):
+        except (RequestException, KeyError):
             if not self.check_on_open:
                 self.autosplit.show_error_signal.emit(error_messages.check_for_updates)
 
