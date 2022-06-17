@@ -3,11 +3,12 @@ from __future__ import annotations
 import asyncio
 import threading
 import webbrowser
+from platform import version
 from typing import TYPE_CHECKING, Any, Optional, Union, cast
 
 import cv2
 import requests
-from packaging import version
+from packaging.version import parse as version_parse
 from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
 from simplejson.errors import JSONDecodeError
@@ -25,13 +26,15 @@ from region_selection import create_windows_graphics_capture
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
+FIRST_WIN_11_BUILD = 22000
+
 # AutoSplit Version number
 AUTOSPLIT_VERSION = "2.0.0-alpha.3"
 
-# About Window
-
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
+    """About Window"""
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -54,7 +57,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         self.left_button.clicked.connect(self.open_update)
         self.do_not_ask_again_checkbox.stateChanged.connect(self.do_not_ask_me_again_state_changed)
         self.design_window = design_window
-        if version.parse(latest_version) > version.parse(AUTOSPLIT_VERSION):
+        if version_parse(latest_version) > version_parse(AUTOSPLIT_VERSION):
             self.do_not_ask_again_checkbox.setVisible(check_on_open)
             self.show()
         elif not check_on_open:
@@ -200,6 +203,14 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
+        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
+        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
+        # Arrow buttons tend to move a lot as well
+        if int(version().split(".")[2]) >= FIRST_WIN_11_BUILD:
+            self.fps_limit_spinbox.setFrame(False)
+            self.default_similarity_threshold_spinbox.setFrame(False)
+            self.default_delay_time_spinbox.setFrame(False)
+            self.default_pause_time_spinbox.setFrame(False)
         self.autosplit = autosplit
 
 # region Build the Capture method combobox

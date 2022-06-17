@@ -64,6 +64,8 @@ class CaptureMethod(Enum, metaclass=CaptureMethodMeta):
 
 class DisplayCaptureMethodDict(OrderedDict[CaptureMethod, DisplayCaptureMethodInfo]):
     def get_method_by_index(self, index: int):
+        if index < 0:
+            return next(iter(self))
         return list(self.keys())[index]
 
 
