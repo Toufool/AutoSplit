@@ -78,9 +78,9 @@ This program can be used to automatically start, split, and reset your preferred
 #### Capture Method & Capture Device
 
 - **BitBlt** (fastest, least compatible)  
-    A good default fast option. Also allows recording background windows (as long as they still actually render when in the background), but it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
+    A good default fast option. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
     The smaller the region, the more efficient it is.  
-- **Windows Graphics Capture** (fast, most compatible but less features)  
+- **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
     Due to current technical limitations, it requires having at least one audio or video Capture Device connected and enabled. Even if it won't be used.  
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  

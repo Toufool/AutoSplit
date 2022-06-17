@@ -74,15 +74,14 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
         name="BitBlt",
         short_description="fastest, least compatible",
         description=(
-            "\nA good default fast option. Also allows recording background windows "
-            "\n(as long as they still actually render when in the background), but it "
-            "\ncannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-            "\nThe smaller the region, the more efficient it is. "
+            "\nA good default fast option. But it cannot properly record "
+            "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
+            "\nThe smaller the selected region, the more efficient it is. "
         ),
     ),
     CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
         name="Windows Graphics Capture",
-        short_description="fast, most compatible but less features",
+        short_description="fast, most compatible, capped at 60fps",
         description=(
             f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
             "\nDue to current technical limitations, it requires having at least one "
@@ -98,7 +97,7 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nDuplicates the desktop using Direct3D. "
             "\nIt can record OpenGL and Hardware Accelerated windows. "
             "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
-            "\noverlapping windows will show up and can't record across displays. "
+            "\nOverlapping windows will show up and can't record across displays. "
         ),
     ),
     CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: DisplayCaptureMethodInfo(
@@ -118,7 +117,6 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
             "\nYou can select one below. "
             "\nThere are currently performance issues, but it might be more convenient. "
-            "\nIt is not yet possible for us to display the device name. "
             "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
             "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/."
         ),

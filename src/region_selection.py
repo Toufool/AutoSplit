@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import asyncio
 import ctypes
 import ctypes.wintypes
 import os
-from dataclasses import dataclass
 from math import ceil
-from platform import version
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import numpy as np
@@ -17,21 +14,16 @@ from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-from winsdk.windows.graphics import SizeInt32
-from winsdk.windows.graphics.capture import (Direct3D11CaptureFramePool, GraphicsCaptureItem, GraphicsCapturePicker,
-                                             GraphicsCaptureSession)
+from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 from winsdk.windows.graphics.capture.interop import create_for_window
-from winsdk.windows.graphics.directx import DirectXPixelFormat
-from winsdk.windows.media.capture import MediaCapture
 
 import error_messages
-import region_capture
 from CaptureMethod import CaptureMethod
+from region_capture import capture_region, get_window_bounds
+from WindowsGraphicsCapture import create_windows_graphics_capture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-
-WGC_NO_BORDER_MIN_BUILD = 20348
 
 
 SUPPORTED_IMREAD_FORMATS = [
@@ -53,93 +45,7 @@ IMREAD_EXT_FILTER = "All Files (" \
     + ");;"\
     + ";;".join([f"{format} ({extensions})" for format, extensions in SUPPORTED_IMREAD_FORMATS])
 
-DWMWA_EXTENDED_FRAME_BOUNDS = 9
 user32 = ctypes.windll.user32
-
-
-def select_region(autosplit: AutoSplit):
-    # Create a screen selector widget
-    selector = SelectRegionWidget()
-
-    # Need to wait until the user has selected a region using the widget before moving on with
-    # selecting the window settings
-    while True:
-        width = selector.width()
-        height = selector.height()
-        x = selector.x()
-        y = selector.y()
-        if width > 0 and height > 0:
-            break
-        QTest.qWait(1)
-    del selector
-
-    hwnd, window_text = __get_window_from_point(x, y)
-    # Don't select desktop
-    if not hwnd or not window_text:
-        error_messages.region()
-        return
-
-    autosplit.hwnd = hwnd
-    autosplit.settings_dict["captured_window_title"] = window_text
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        if autosplit.windows_graphics_capture:
-            autosplit.windows_graphics_capture.close()
-        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
-
-    offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
-    __set_region_values(autosplit,
-                        left=x - offset_x,
-                        top=y - offset_y,
-                        width=width,
-                        height=height)
-
-
-@dataclass
-class WindowsGraphicsCapture:
-    size: SizeInt32
-    frame_pool: Direct3D11CaptureFramePool
-    # Prevent session from being garbage collected
-    session: GraphicsCaptureSession
-    last_captured_frame: Optional[cv2.Mat]
-
-    def close(self):
-        self.frame_pool.close()
-        try:
-            self.session.close()
-        except OSError:
-            # OSError: The application called an interface that was marshalled for a different thread
-            # This still seems to close the session and prevent the following hard crash in LiveSplit
-            # pylint: disable=line-too-long
-            # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"  # noqa: E501
-            pass
-
-
-def create_windows_graphics_capture(item: GraphicsCaptureItem):
-    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
-    # OSError: The application called an interface that was marshalled for a different thread
-    media_capture = MediaCapture()
-
-    async def coroutine():
-        await (media_capture.initialize_async() or asyncio.sleep(0))
-    asyncio.run(coroutine())
-
-    if not media_capture.media_capture_settings:
-        raise OSError("Unable to initialize a Direct3D Device.")
-    frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
-        media_capture.media_capture_settings.direct3_d11_device,
-        DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
-        1,
-        item.size)
-    if not frame_pool:
-        raise OSError("Unable to create a frame pool for a capture session.")
-    session = frame_pool.create_capture_session(item)
-    if not session:
-        raise OSError("Unable to create a capture session.")
-    session.is_cursor_capture_enabled = False
-    if int(version().split(".")[2]) >= WGC_NO_BORDER_MIN_BUILD:
-        session.is_border_required = False
-    session.start_capture()
-    return WindowsGraphicsCapture(item.size, frame_pool, session, None)
 
 
 def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
@@ -172,6 +78,44 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         async_operation.completed = callback
 
 
+def select_region(autosplit: AutoSplit):
+    # Create a screen selector widget
+    selector = SelectRegionWidget()
+
+    # Need to wait until the user has selected a region using the widget
+    # before moving on with selecting the window settings
+    while True:
+        width = selector.width()
+        height = selector.height()
+        x = selector.x()
+        y = selector.y()
+        if width > 0 and height > 0:
+            break
+        QTest.qWait(1)
+    del selector
+
+    hwnd, window_text = __get_window_from_point(x, y)
+    # Don't select desktop
+    if not hwnd or not window_text:
+        error_messages.region()
+        return
+
+    autosplit.hwnd = hwnd
+    autosplit.settings_dict["captured_window_title"] = window_text
+    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
+        if autosplit.windows_graphics_capture:
+            autosplit.windows_graphics_capture.close()
+        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+
+    left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
+    window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
+    __set_region_values(autosplit,
+                        left=x - window_x - left_bounds,
+                        top=y - window_y - top_bounds,
+                        width=width,
+                        height=height)
+
+
 def select_window(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectWindowWidget()
@@ -199,31 +143,17 @@ def select_window(autosplit: AutoSplit):
             autosplit.windows_graphics_capture.close()
         autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
 
-    # Getting window bounds
-    # On Windows there is a shadow around the windows that we need to account for.
-    # We also account for the borders and titlebar to only get the client area.
-    extended_frame_bounds = ctypes.wintypes.RECT()
-    ctypes.windll.dwmapi.DwmGetWindowAttribute(
-        hwnd,
-        DWMWA_EXTENDED_FRAME_BOUNDS,
-        ctypes.byref(extended_frame_bounds),
-        ctypes.sizeof(extended_frame_bounds))
-
-    window_rect = win32gui.GetWindowRect(hwnd)
+    # Exlude the borders and titlebar from the window selection. To only get the client area.
+    _, __, window_width, window_height = get_window_bounds(hwnd)
     _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
-
-    window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
-    window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
     border_width = ceil((window_width - client_width) / 2)
-    titlebar_height = window_height - client_height - border_width * 2
-    client_left = cast(int, extended_frame_bounds.left) - window_rect[0] + border_width
-    client_top = cast(int, extended_frame_bounds.top) - window_rect[1] + titlebar_height
+    titlebar_with_border_height = window_height - client_height - border_width
 
     __set_region_values(autosplit,
-                        left=client_left,
-                        top=client_top,
+                        left=border_width,
+                        top=titlebar_with_border_height,
                         width=client_width,
-                        height=client_height)
+                        height=client_height - border_width * 2)
 
 
 def __get_window_from_point(x: int, y: int):
@@ -267,7 +197,7 @@ def align_region(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture, _ = region_capture.capture_region(autosplit)
+    capture, _ = capture_region(autosplit)
 
     if capture is None or not capture.size:
         error_messages.region()

@@ -17,13 +17,15 @@ from win32 import win32gui
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from CaptureMethod import CaptureMethod
-from region_selection import WindowsGraphicsCapture
+from WindowsGraphicsCapture import WindowsGraphicsCapture
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
+DWMWA_EXTENDED_FRAME_BOUNDS = 9
+
 
 desktop_duplication = d3dshot.create(capture_output="numpy")
 
@@ -33,6 +35,22 @@ class Region(TypedDict):
     y: int
     width: int
     height: int
+
+
+def get_window_bounds(hwnd: int):
+    extended_frame_bounds = ctypes.wintypes.RECT()
+    ctypes.windll.dwmapi.DwmGetWindowAttribute(
+        hwnd,
+        DWMWA_EXTENDED_FRAME_BOUNDS,
+        ctypes.byref(extended_frame_bounds),
+        ctypes.sizeof(extended_frame_bounds))
+
+    window_rect = win32gui.GetWindowRect(hwnd)
+    window_left_bounds = cast(int, extended_frame_bounds.left) - window_rect[0]
+    window_top_bounds = cast(int, extended_frame_bounds.top) - window_rect[1]
+    window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
+    window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
+    return window_left_bounds, window_top_bounds, window_width, window_height
 
 
 def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = False):
@@ -46,6 +64,9 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
         if render_full_content:
             ctypes.windll.user32.PrintWindow(hwnd, dc_object.GetSafeHdc(), PW_RENDERFULLCONTENT)
 
+        # On Windows there is a shadow around the windows that we need to account for.
+        left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
+
         compatible_dc = dc_object.CreateCompatibleDC()
         bitmap = win32ui.CreateBitmap()
         bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
@@ -54,7 +75,7 @@ def __bit_blt_capture(hwnd: int, selection: Region, render_full_content: bool = 
             (0, 0),
             (selection["width"], selection["height"]),
             dc_object,
-            (selection["x"], selection["y"]),
+            (selection["x"] + left_bounds, selection["y"] + top_bounds),
             win32con.SRCCOPY)
         image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
         image.shape = (selection["height"], selection["width"], 4)
@@ -77,6 +98,8 @@ def __d3d_capture(hwnd: int, selection: Region):
     hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
     if not hmonitor:
         return None
+
+    left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     desktop_duplication.display = [
         display for display
         in desktop_duplication.displays
@@ -84,11 +107,11 @@ def __d3d_capture(hwnd: int, selection: Region):
     offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
     offset_x -= desktop_duplication.display.position["left"]
     offset_y -= desktop_duplication.display.position["top"]
-    screenshot = desktop_duplication.screenshot((
-        selection["x"] + offset_x,
-        selection["y"] + offset_y,
-        selection["width"] + selection["x"] + offset_x,
-        selection["height"] + selection["y"] + offset_y))
+    left = selection["x"] + offset_x + left_bounds
+    top = selection["y"] + offset_y + top_bounds
+    right = selection["width"] + left
+    bottom = selection["height"] + top
+    screenshot = desktop_duplication.screenshot((left, top, right, bottom))
     return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA)
 
 

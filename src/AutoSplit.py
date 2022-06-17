@@ -36,10 +36,11 @@ from hotkeys import after_setting_hotkey, send_command
 from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
                       open_update_checker, view_help)
 from region_capture import capture_region, set_ui_image
-from region_selection import (WindowsGraphicsCapture, align_region, create_windows_graphics_capture, select_region,
-                              select_window, validate_before_parsing)
+from region_selection import (align_region, create_windows_graphics_capture, select_region, select_window,
+                              validate_before_parsing)
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE, FROZEN
+from WindowsGraphicsCapture import WindowsGraphicsCapture
 
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 CHECK_FPS_ITERATIONS = 10
@@ -396,8 +397,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         os.startfile(screenshot_path)  # nosec
 
     def __check_fps(self):
-        self.fps_value_label.clear()
+        self.fps_value_label.setText("...")
+        QApplication.processEvents()
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
+            self.fps_value_label.clear()
             return
 
         images = self.split_images
