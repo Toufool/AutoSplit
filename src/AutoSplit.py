@@ -269,19 +269,19 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
 
-        if not self.is_auto_controlled \
-            and (not self.settings_dict["split_hotkey"]
-                 or not self.settings_dict["reset_hotkey"]
-                 or not self.settings_dict["pause_hotkey"]):
-            error_messages.load_start_image()
-            QApplication.processEvents()
-            return
-
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
             QApplication.processEvents()
             return
 
-        if self.start_image is None:
+        if self.start_image:
+            if not self.is_auto_controlled \
+                and (not self.settings_dict["split_hotkey"]
+                     or not self.settings_dict["reset_hotkey"]
+                     or not self.settings_dict["pause_hotkey"]):
+                error_messages.load_start_image()
+                QApplication.processEvents()
+                return
+        else:
             if started_by_button:
                 error_messages.no_keyword_image(START_KEYWORD)
             QApplication.processEvents()
