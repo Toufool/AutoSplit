@@ -18,27 +18,25 @@ This program can be used to automatically start, split, and reset your preferred
 
 ## DOWNLOAD AND OPEN
 
+- Download the [latest version](/../../releases/latest)
+
 ### Compatibility
 
-- Windows 7, 10, and 11.
-
-### Opening the program
-
-- Download the [latest version](/../../releases/latest)
-- Extract the file and open AutoSplit.exe.
+- Windows 10 and 11.
 
 ### Building
 
 (This is not required for normal use)
 
-- Python 3.8 - 3.10
-- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- Python 3.9 - 3.10.
+- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 - Node is optional, but required for complete linting (using Pyright).
-- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code
-  - Run `.\scripts\install.bat` to install all dependencies
-  - Run the app directly with `.\scripts\start.bat [--auto-controlled]`
-  - Run `.\scripts\build.bat` to build an executable
-- Recompile resources after modifications by running `.\scripts\compile_resources.bat`
+- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
+  - Run `.\scripts\install.bat` to install all dependencies.
+  - Run the app directly with `.\scripts\start.bat [--auto-controlled]`.
+  - Run `.\scripts\build.bat` to build an executable.
+- Recompile resources after modifications by running `.\scripts\compile_resources.bat`.
+- All configured for VSCode, including Run (F5) and Build (Ctrl+Shift+B) commands.
 
 ## OPTIONS
 
@@ -54,10 +52,10 @@ This program can be used to automatically start, split, and reset your preferred
 #### Capture Region
 
 - This is the region that your split images are compared to. Usually, this is going to be the full game screen.
-- Click "Select Region"
+- Click "Select Region".
 - Click and drag to form a rectangle over the region you want to capture.
 - Adjust the x, y, width, and height of the capture region manually to make adjustments as needed.
-- If you want to align your capture region by using a reference image, click "Align Region"
+- If you want to align your capture region by using a reference image, click "Align Region".
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change.
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
 - You can save a screenshot of the capture region to your split image folder using the Take Screenshot button.
@@ -71,7 +69,7 @@ This program can be used to automatically start, split, and reset your preferred
 #### Comparison Method
 
 - There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (or pHash).
-  - L2 Norm: This method should be fine to use for most cases. it finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
+  - L2 Norm: This method should be fine to use for most cases. it finds the difference between each pixel, squares it, sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
 
@@ -79,11 +77,12 @@ This program can be used to automatically start, split, and reset your preferred
 
 - **BitBlt** (fastest, least compatible)  
     A good default fast option. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
-    The smaller the region, the more efficient it is.  
+    The smaller the selected region, the more efficient it is.  
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
     Due to current technical limitations, it requires having at least one audio or video Capture Device connected and enabled. Even if it won't be used.  
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
+    Adds a yellow border on Windows 10. Not present on Windows 11.
     Caps at around 60 FPS.  
 - **Direct3D Desktop Duplication** (slower, bound to display)  
     Duplicates the desktop using Direct3D.  
@@ -96,7 +95,6 @@ This program can be used to automatically start, split, and reset your preferred
 - **Video Capture Device** (very slow, see below)  
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
     There are currently performance issues, but it might be more convenient.  
-    It is not yet possible for us to display the device name.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://obsproject.com/forum/resources/obs-virtualcam.949/) instead.  
 
 #### Show Live Similarity

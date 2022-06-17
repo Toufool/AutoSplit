@@ -86,6 +86,7 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
             "\nDue to current technical limitations, it requires having at least one "
             "\naudio or video Capture Device connected and enabled. Even if it won't be used. "
+            "\nAdds a yellow border on Windows 10. Not present on Windows 11. "
             "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
             "\nCaps at around 60 FPS. "
         ),

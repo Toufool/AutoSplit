@@ -219,7 +219,7 @@
     </item>
     <item>
      <property name="text">
-      <string>Perceptual Hash</string>
+      <string>pHash</string>
      </property>
     </item>
    </widget>
