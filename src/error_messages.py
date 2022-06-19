@@ -11,7 +11,7 @@ from typing import Optional
 from PyQt6 import QtCore, QtWidgets
 
 from AutoSplit import AutoSplit
-from user_profile import FROZEN
+from utils import FROZEN
 
 
 def __exit_program():

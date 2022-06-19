@@ -1,6 +1,5 @@
 import asyncio
 from dataclasses import dataclass
-from platform import version
 from typing import Optional
 
 import cv2
@@ -8,6 +7,8 @@ from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureItem, GraphicsCaptureSession
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.media.capture import MediaCapture
+
+from utils import WINDOWS_BUILD_NUMBER
 
 WGC_NO_BORDER_MIN_BUILD = 20348
 
@@ -54,7 +55,7 @@ def create_windows_graphics_capture(item: GraphicsCaptureItem):
     if not session:
         raise OSError("Unable to create a capture session.")
     session.is_cursor_capture_enabled = False
-    if int(version().split(".")[2]) >= WGC_NO_BORDER_MIN_BUILD:
+    if WINDOWS_BUILD_NUMBER >= WGC_NO_BORDER_MIN_BUILD:
         session.is_border_required = False
     session.start_capture()
     return WindowsGraphicsCapture(item.size, frame_pool, session, None)

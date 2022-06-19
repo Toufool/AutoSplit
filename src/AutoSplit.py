@@ -7,7 +7,6 @@ import os
 import signal
 import sys
 from collections.abc import Callable
-from platform import version
 from time import time
 from types import FunctionType
 from typing import Optional
@@ -27,19 +26,18 @@ from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, Ima
 from CaptureMethod import CaptureMethod
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
-from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
-                      open_update_checker, view_help)
+from menu_bar import (check_for_updates, get_default_settings_from_ui, open_about, open_settings, open_update_checker,
+                      view_help)
 from region_capture import capture_region, set_ui_image
 from region_selection import (align_region, create_windows_graphics_capture, select_region, select_window,
                               validate_before_parsing)
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
-from user_profile import DEFAULT_PROFILE, FROZEN
-from utils import decimal
+from user_profile import DEFAULT_PROFILE
+from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER,
+                   auto_split_directory, decimal)
 from WindowsGraphicsCapture import WindowsGraphicsCapture
 
-START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 CHECK_FPS_ITERATIONS = 10
-FIRST_WIN_11_BUILD = 22000
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
@@ -125,7 +123,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
         # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
         # Arrow buttons tend to move a lot as well
-        if int(version().split(".")[2]) >= FIRST_WIN_11_BUILD:
+        if WINDOWS_BUILD_NUMBER >= FIRST_WIN_11_BUILD:
             self.x_spinbox.setFrame(False)
             self.y_spinbox.setFrame(False)
             self.width_spinbox.setFrame(False)
@@ -234,7 +232,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         new_split_image_directory = QFileDialog.getExistingDirectory(
             self,
             "Select Split Image Directory",
-            os.path.join(self.settings_dict["split_image_directory"] or user_profile.auto_split_directory, ".."))
+            os.path.join(self.settings_dict["split_image_directory"] or auto_split_directory, ".."))
 
         # If the user doesn't select a folder, it defaults to "".
         if new_split_image_directory:
@@ -733,7 +731,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.setEnabled(False)
         self.next_image_button.setEnabled(False)
 
-        if self.SettingsWidget:
+        if self.SettingsWidget and not self.is_auto_controlled:
             for hotkey in HOTKEYS:
                 getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 

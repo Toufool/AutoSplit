@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import sys
 from typing import TYPE_CHECKING, TypedDict, Union, cast
 
 import cv2
@@ -18,13 +17,10 @@ from gen import design
 from hotkeys import HOTKEYS, set_hotkey
 from region_capture import Region
 from region_selection import create_windows_graphics_capture
+from utils import auto_split_directory
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-# Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
-FROZEN = hasattr(sys, "frozen")
-# Get the directory of either AutoSplit.exe or AutoSplit.py
-auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 
 
 class UserProfileDict(TypedDict):

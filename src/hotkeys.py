@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 import keyboard
 import pyautogui
 
+from utils import START_AUTO_SPLITTER_TEXT, is_digit
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -15,7 +17,7 @@ pyautogui.FAILSAFE = False
 
 SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
-START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
+
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkeys = Literal["split", "reset", "skip_split", "undo_split", "pause"]
@@ -43,18 +45,6 @@ def after_setting_hotkey(autosplit: AutoSplit):
         for hotkey in HOTKEYS:
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(SET_HOTKEY_TEXT)
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
-
-
-def is_digit(key: Optional[str]):
-    """
-    Checks if `key` is a single-digit string from 0-9
-    """
-    if key is None:
-        return False
-    try:
-        return 0 <= int(key) <= 9
-    except ValueError:
-        return False
 
 
 def send_command(autosplit: AutoSplit, command: Commands):
