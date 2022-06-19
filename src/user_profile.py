@@ -15,7 +15,7 @@ import error_messages
 from AutoSplitImage import COMPARISON_RESIZE_HEIGHT, COMPARISON_RESIZE_WIDTH
 from CaptureMethod import CAPTURE_METHODS, CaptureMethod
 from gen import design
-from hotkeys import set_hotkey
+from hotkeys import HOTKEYS, set_hotkey
 from region_capture import Region
 from region_selection import create_windows_graphics_capture
 
@@ -146,9 +146,9 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
-        for hotkey in ["split_hotkey", "reset_hotkey", "skip_split_hotkey", "undo_split_hotkey", "pause_hotkey"]:
-            if autosplit.settings_dict[hotkey]:
-                set_hotkey(autosplit, "split", cast(str, autosplit.settings_dict[hotkey]))
+        for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
+            if autosplit.settings_dict[hotkey_name]:
+                set_hotkey(autosplit, hotkey, cast(str, autosplit.settings_dict[hotkey_name]))
 
     if autosplit.settings_dict["captured_window_title"]:
         hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
@@ -166,10 +166,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     return True
 
 
-def load_settings(
-    autosplit: AutoSplit,
-    from_path: str = ""
-):
+def load_settings(autosplit: AutoSplit, from_path: str = ""):
     load_settings_file_path = from_path or QtWidgets.QFileDialog.getOpenFileName(
         autosplit,
         "Load Profile",

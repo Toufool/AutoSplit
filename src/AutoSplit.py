@@ -26,7 +26,7 @@ from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
 from CaptureMethod import CaptureMethod
 from gen import about, design, settings, update_checker
-from hotkeys import after_setting_hotkey, send_command
+from hotkeys import HOTKEYS, after_setting_hotkey, send_command
 from menu_bar import (AUTOSPLIT_VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
                       open_update_checker, view_help)
 from region_capture import capture_region, set_ui_image
@@ -706,11 +706,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.next_image_button.setEnabled(True)
 
         if self.SettingsWidget:
-            self.SettingsWidget.set_split_hotkey_button.setEnabled(False)
-            self.SettingsWidget.set_reset_hotkey_button.setEnabled(False)
-            self.SettingsWidget.set_skip_split_hotkey_button.setEnabled(False)
-            self.SettingsWidget.set_undo_split_hotkey_button.setEnabled(False)
-            self.SettingsWidget.set_pause_hotkey_button.setEnabled(False)
+            for hotkey in HOTKEYS:
+                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
@@ -737,11 +734,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.next_image_button.setEnabled(False)
 
         if self.SettingsWidget:
-            self.SettingsWidget.set_split_hotkey_button.setEnabled(True)
-            self.SettingsWidget.set_reset_hotkey_button.setEnabled(True)
-            self.SettingsWidget.set_skip_split_hotkey_button.setEnabled(True)
-            self.SettingsWidget.set_undo_split_hotkey_button.setEnabled(True)
-            self.SettingsWidget.set_pause_hotkey_button.setEnabled(True)
+            for hotkey in HOTKEYS:
+                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
+
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(True)
             self.reset_button.setEnabled(False)

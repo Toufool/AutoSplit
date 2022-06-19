@@ -195,8 +195,14 @@ def __read_hotkey():
     return __get_hotkey_name(names)
 
 
-def __is_key_already_set(autosplit: AutoSplit, key_name: str):
-    return key_name in [autosplit.settings_dict[f"{hotkey}_hotkey"] for hotkey in HOTKEYS]
+def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
+    for hotkey in HOTKEYS:
+        settings_key = f"{hotkey}_hotkey"
+        if autosplit.settings_dict[settings_key] == key_name:
+            _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+            autosplit.settings_dict[settings_key] = ""
+            if autosplit.SettingsWidget:
+                getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
@@ -214,11 +220,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
     def callback():
         hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
-        # If the key the user presses is equal to itself or another hotkey already set,
-        # this causes issues. so here, it catches that, and will make no changes to the hotkey.
-        if __is_key_already_set(autosplit, hotkey_name):
-            autosplit.after_setting_hotkey_signal.emit()
-            return
+        __remove_key_already_set(autosplit, hotkey_name)
 
         # We need to inspect the event to know if it comes from numpad because of _canonial_names.
         # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
