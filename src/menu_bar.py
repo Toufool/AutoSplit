@@ -19,7 +19,7 @@ import user_profile
 from AutoSplitImage import COMPARISON_RESIZE_HEIGHT, COMPARISON_RESIZE_WIDTH
 from CaptureMethod import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_video_capture_devices
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
-from hotkeys import set_hotkey
+from hotkeys import HOTKEYS, set_hotkey
 from region_selection import create_windows_graphics_capture
 from utils import decimal
 
@@ -203,6 +203,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
+        # Make it very clear that hotkeys are not used when auto-controlled
+        if autosplit.is_auto_controlled:
+            for hotkey in HOTKEYS:
+                getattr(self, f"set_{hotkey}_hotkey_button").setEnabled(False)
+                getattr(self, f"{hotkey}_input").setEnabled(False)
         # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
         # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
         # Arrow buttons tend to move a lot as well
