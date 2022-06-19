@@ -21,6 +21,7 @@ from CaptureMethod import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_vi
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
 from region_selection import create_windows_graphics_capture
+from utils import decimal
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -126,11 +127,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
-            f"{self.autosplit.split_image.get_similarity_threshold(self.autosplit):.2f}"
+            decimal(self.autosplit.split_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.split_image
             else "-")
         self.autosplit.table_reset_image_threshold_label.setText(
-            f"{self.autosplit.reset_image.get_similarity_threshold(self.autosplit):.2f}"
+            decimal(self.autosplit.reset_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.reset_image
             else "-")
 

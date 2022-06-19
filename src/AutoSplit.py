@@ -1,11 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-
-# Imports grouping:
-# - Typings
-# - Standards
-# - Externals
-# - Internals
 from __future__ import annotations
 
 import ctypes
@@ -40,6 +34,7 @@ from region_selection import (align_region, create_windows_graphics_capture, sel
                               validate_before_parsing)
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE, FROZEN
+from utils import decimal
 from WindowsGraphicsCapture import WindowsGraphicsCapture
 
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
@@ -320,9 +315,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if start_image_similarity > self.highest_similarity:
             self.highest_similarity = start_image_similarity
 
-        self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
-        self.table_current_image_live_label.setText(f"{start_image_similarity:.2f}")
-        self.table_current_image_highest_label.setText(f"{self.highest_similarity:.2f}")
+        self.table_current_image_threshold_label.setText(decimal(start_image_threshold))
+        self.table_current_image_live_label.setText(decimal(start_image_similarity))
+        self.table_current_image_highest_label.setText(decimal(self.highest_similarity))
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
@@ -627,14 +622,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             similarity = self.split_image.compare_with_capture(self, capture)
 
             # Show live similarity
-            self.table_current_image_live_label.setText(f"{similarity:.2f}")
+            self.table_current_image_live_label.setText(decimal(similarity))
 
             # if the similarity becomes higher than highest similarity, set it as such.
             if similarity > self.highest_similarity:
                 self.highest_similarity = similarity
 
             # show live highest similarity if the checkbox is checked
-            self.table_current_image_highest_label.setText(f"{self.highest_similarity:.2f}")
+            self.table_current_image_highest_label.setText(decimal(self.highest_similarity))
 
             # If its the last split image and last loop number, disable the next image button
             # If its the first split image, disable the undo split and previous image buttons
@@ -808,10 +803,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 should_reset = similarity >= threshold
                 if similarity > self.reset_highest_similarity:
                     self.reset_highest_similarity = similarity
-                self.table_reset_image_highest_label.setText(f"{self.reset_highest_similarity:.2f}")
-                self.table_reset_image_live_label.setText(f"{similarity:.2f}")
+                self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
+                self.table_reset_image_live_label.setText(decimal(similarity))
 
-            self.table_reset_image_threshold_label.setText(f"{threshold:.2f}")
+            self.table_reset_image_threshold_label.setText(decimal(threshold))
 
             if should_reset:
                 send_command(self, "reset")
@@ -833,7 +828,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             set_ui_image(self.current_split_image, self.split_image.bytes, True)
 
         self.current_image_file_label.setText(self.split_image.filename)
-        self.table_current_image_threshold_label.setText(f"{self.split_image.get_similarity_threshold(self):.2f}")
+        self.table_current_image_threshold_label.setText(decimal(self.split_image.get_similarity_threshold(self)))
 
         # Set Image Loop #
         if specific_image and specific_image.image_type == ImageType.START:

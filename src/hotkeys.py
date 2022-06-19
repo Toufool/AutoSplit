@@ -15,6 +15,7 @@ pyautogui.FAILSAFE = False
 
 SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
+START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkeys = Literal["split", "reset", "skip_split", "undo_split", "pause"]
@@ -36,7 +37,8 @@ def after_setting_hotkey(autosplit: AutoSplit):
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread
     """
-    autosplit.start_auto_splitter_button.setEnabled(True)
+    if autosplit.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
+        autosplit.start_auto_splitter_button.setEnabled(True)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(SET_HOTKEY_TEXT)
