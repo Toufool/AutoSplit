@@ -204,6 +204,16 @@ def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
+
+def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkeys):
+    if hotkey == "split":
+        return autosplit.start_auto_splitter
+    if hotkey == "skip_split":
+        return lambda: autosplit.skip_split(True)
+    if hotkey == "undo_split":
+        return lambda: autosplit.undo_split(True)
+    return getattr(autosplit, f"{hotkey}_signal").emit
+
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
@@ -222,11 +232,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
         __remove_key_already_set(autosplit, hotkey_name)
 
-        # We need to inspect the event to know if it comes from numpad because of _canonial_names.
-        # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
-        # The best way to achieve this is make our own hotkey handling on top of hook
-        # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
-        action = autosplit.start_auto_splitter if hotkey == "split" else getattr(autosplit, f"{hotkey}_signal").emit
+        action = __get_hotkey_action(autosplit, hotkey)
         setattr(
             autosplit,
             f"{hotkey}_hotkey",
@@ -236,6 +242,10 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
             # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
             keyboard.add_hotkey(hotkey_name, action)
             if "+" in hotkey_name
+            # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+            # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
+            # The best way to achieve this is make our own hotkey handling on top of hook
+            # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
             else keyboard.hook_key(
                 hotkey_name,
                 lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action))

@@ -174,10 +174,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_auto_splitter_button.clicked.connect(self.__auto_splitter)
         self.check_fps_button.clicked.connect(self.__check_fps)
         self.reset_button.clicked.connect(self.reset)
-        self.skip_split_button.clicked.connect(self.__skip_split)
-        self.undo_split_button.clicked.connect(self.__undo_split)
-        self.next_image_button.clicked.connect(lambda: self.__skip_split(True))
-        self.previous_image_button.clicked.connect(lambda: self.__undo_split(True))
+        self.skip_split_button.clicked.connect(self.skip_split)
+        self.undo_split_button.clicked.connect(self.undo_split)
+        self.next_image_button.clicked.connect(lambda: self.skip_split(True))
+        self.previous_image_button.clicked.connect(lambda: self.undo_split(True))
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
         self.reload_start_image_button.clicked.connect(lambda: self.__load_start_image(True, True))
@@ -201,8 +201,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.load_start_image_signal[bool].connect(self.__load_start_image)
         self.load_start_image_signal[bool, bool].connect(self.__load_start_image)
         self.reset_signal.connect(self.reset)
-        self.skip_split_signal.connect(self.__skip_split)
-        self.undo_split_signal.connect(self.__undo_split)
+        self.skip_split_signal.connect(self.skip_split)
+        self.undo_split_signal.connect(self.undo_split)
         self.pause_signal.connect(self.pause)
 
         # live image checkbox
@@ -423,9 +423,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return self.split_image_number < 0 \
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
 
-    def __undo_split(self, navigate_image_only: bool = False):
+    def undo_split(self, navigate_image_only: bool = False):
         """
-        "Undo Split" and "Prev. Img." buttons and hotkey connect to here
+        "Undo Split" and "Prev. Img." buttons connect to here
         """
         # Can't undo until timer is started
         # or Undoing past the first image
@@ -447,9 +447,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if not navigate_image_only:
             send_command(self, "undo")
 
-    def __skip_split(self, navigate_image_only: bool = False):
+    def skip_split(self, navigate_image_only: bool = False):
         """
-        "Skip Split" and "Next Img." buttons and hotkey connect to here
+        "Skip Split" and "Next Img." buttons connect to here
         """
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
