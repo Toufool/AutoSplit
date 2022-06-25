@@ -17,6 +17,7 @@ from win32 import win32gui
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from CaptureMethod import CaptureMethod
+from utils import is_valid_image
 from WindowsGraphicsCapture import WindowsGraphicsCapture
 
 if TYPE_CHECKING:
@@ -186,7 +187,7 @@ def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.Mat], bool]:
     if capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
         return __camera_capture(autosplit.capture_device, selection), False
 
-    if not autosplit.hwnd:
+    if not win32gui.IsWindow(autosplit.hwnd):
         return None, False
 
     if capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
@@ -203,8 +204,8 @@ def capture_region(autosplit: AutoSplit) -> tuple[Optional[cv2.Mat], bool]:
 
 
 def set_ui_image(qlabel: QLabel, image: Optional[cv2.Mat], transparency: bool):
-    if image is None or not image.size:
-        # Clear current pixmap if image is None. But don't clear text
+    if not is_valid_image(image):
+        # Clear current pixmap if no image. But don't clear text
         if not qlabel.text():
             qlabel.clear()
     else:

@@ -20,6 +20,7 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 import error_messages
 from CaptureMethod import CaptureMethod
 from region_capture import capture_region, get_window_bounds
+from utils import is_valid_image
 from WindowsGraphicsCapture import create_windows_graphics_capture
 
 if TYPE_CHECKING:
@@ -96,7 +97,7 @@ def select_region(autosplit: AutoSplit):
 
     hwnd, window_text = __get_window_from_point(x, y)
     # Don't select desktop
-    if not hwnd or not window_text:
+    if not win32gui.IsWindow(hwnd) or not window_text:
         error_messages.region()
         return
 
@@ -132,7 +133,7 @@ def select_window(autosplit: AutoSplit):
 
     hwnd, window_text = __get_window_from_point(x, y)
     # Don't select desktop
-    if not hwnd or not window_text:
+    if not win32gui.IsWindow(hwnd) or not window_text:
         error_messages.region()
         return
 
@@ -191,7 +192,7 @@ def align_region(autosplit: AutoSplit):
     template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
 
     # Validate template is a valid image file
-    if template is None or not template.size:
+    if not is_valid_image(template):
         error_messages.align_region_image_type()
         return
 
@@ -199,7 +200,7 @@ def align_region(autosplit: AutoSplit):
     # subregion being searched for to align the image.
     capture, _ = capture_region(autosplit)
 
-    if capture is None or not capture.size:
+    if not is_valid_image(capture):
         error_messages.region()
         return
 
@@ -293,7 +294,7 @@ def check_selected_region_exists(autosplit: AutoSplit):
         return bool(autosplit.windows_graphics_capture)
     if autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
         return bool(autosplit.capture_device)
-    return bool(autosplit.hwnd > 0 and win32gui.GetWindowText(autosplit.hwnd))
+    return bool(win32gui.IsWindow(autosplit.hwnd) and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
+from utils import is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -187,7 +188,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     # according to all of the settings selected by the user.
     for image in autosplit.split_images:
         # Test for image without transparency
-        if image.bytes is None or not image.bytes.size:
+        if not is_valid_image(image.bytes):
             autosplit.gui_changes_on_reset()
             return False
 

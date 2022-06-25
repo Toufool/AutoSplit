@@ -5,12 +5,15 @@ from collections.abc import Callable
 from platform import version
 from typing import Any, Optional, Union
 
+import cv2
+from typing_extensions import TypeGuard
+
 
 def decimal(value: Union[int, float]):
     return f"{int(value * 100) / 100:.2f}"
 
 
-def is_digit(value: Optional[str]):
+def is_digit(value: Optional[Union[str, int]]):
     """
     Checks if `value` is a single-digit string from 0-9
     """
@@ -18,8 +21,12 @@ def is_digit(value: Optional[str]):
         return False
     try:
         return 0 <= int(value) <= 9
-    except ValueError:
+    except (ValueError, TypeError):
         return False
+
+
+def is_valid_image(image: Optional[cv2.Mat]) -> TypeGuard[cv2.Mat]:
+    return image is not None and bool(image.size)
 
 
 def fire_and_forget(func: Callable[..., None]):

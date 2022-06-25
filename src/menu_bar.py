@@ -15,7 +15,6 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 import user_profile
-from AutoSplitImage import COMPARISON_RESIZE_HEIGHT, COMPARISON_RESIZE_WIDTH
 from CaptureMethod import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_video_capture_devices
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import HOTKEYS, Hotkeys, set_hotkey
@@ -157,7 +156,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             # Recover window from name
             hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
             # Don't fallback to desktop or whatever window obtained with ""
-            if hwnd and self.autosplit.settings_dict["captured_window_title"]:
+            if win32gui.IsWindow(hwnd) and self.autosplit.settings_dict["captured_window_title"]:
                 self.autosplit.hwnd = hwnd
                 if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                     self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
@@ -176,8 +175,6 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
             self.autosplit.settings_dict["capture_device_name"] = capture_device.name
             self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)
-            self.autosplit.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, COMPARISON_RESIZE_WIDTH)
-            self.autosplit.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, COMPARISON_RESIZE_HEIGHT)
         return capture_device.device_id
 
     async def __set_all_capture_devices(self):

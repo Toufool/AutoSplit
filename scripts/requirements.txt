@@ -26,6 +26,7 @@ toml
 winsdk>=v1.0.0b4
 pygrabber
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
+typing-extensions
 #
 # Build
 PyInstaller

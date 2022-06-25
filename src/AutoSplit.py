@@ -34,7 +34,7 @@ from region_selection import (align_region, create_windows_graphics_capture, sel
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
 from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER,
-                   auto_split_directory, decimal)
+                   auto_split_directory, decimal, is_valid_image)
 from WindowsGraphicsCapture import WindowsGraphicsCapture
 
 CHECK_FPS_ITERATIONS = 10
@@ -250,7 +250,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.live_image.clear()
             return
         # Set live image in UI
-        # if self.hwnd or self.windows_graphics_capture:
         capture, _ = capture_region(self)
         set_ui_image(self.live_image, capture, False)
 
@@ -381,7 +380,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Grab screenshot of capture region
         capture, _ = capture_region(self)
-        if capture is None or not capture.size:
+        if not is_valid_image(capture):
             error_messages.region()
             return
 
@@ -753,7 +752,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # This most likely means we lost capture
         # (ie the captured window was closed, crashed, lost capture device, etc.)
-        if capture is None or not capture.size:
+        if not is_valid_image(capture):
             # Try to recover by using the window name
             if self.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
                 self.live_image.setText("Waiting for capture device...")
@@ -761,7 +760,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.live_image.setText("Trying to recover window...")
                 hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
                 # Don't fallback to desktop or whatever window obtained with ""
-                if hwnd and self.settings_dict["captured_window_title"]:
+                if win32gui.IsWindow(hwnd) and self.settings_dict["captured_window_title"]:
                     self.hwnd = hwnd
                     if self.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
                         if self.windows_graphics_capture:
@@ -776,7 +775,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     capture, _ = capture_region(self)
 
         return (None
-                if capture is None or not capture.size
+                if not is_valid_image(capture)
                 else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
                 is_old_image)
 
@@ -817,7 +816,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if self.split_image.bytes is not None and self.split_image.bytes.size:
+        if is_valid_image(self.split_image.bytes):
             set_ui_image(self.current_split_image, self.split_image.bytes, True)
 
         self.current_image_file_label.setText(self.split_image.filename)
@@ -859,7 +858,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Give a different warning if there was never a settings file that was loaded successfully,
             # and "save as" instead of "save".
             settings_file_name = "Untitled" \
-                if self.last_successfully_loaded_settings_file_path is None \
+                if not self.last_successfully_loaded_settings_file_path \
                 else os.path.basename(self.last_successfully_loaded_settings_file_path)
 
             warning = QMessageBox.warning(

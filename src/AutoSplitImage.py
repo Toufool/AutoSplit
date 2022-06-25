@@ -10,6 +10,7 @@ from win32con import MAXBYTE
 
 import error_messages
 from compare import check_if_image_has_transparency, compare_histograms, compare_l2_norm, compare_phash
+from utils import is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -102,7 +103,7 @@ class AutoSplitImage():
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-        if image is None or not image.size:
+        if not is_valid_image(image):
             self.bytes = None
             error_messages.image_type(path)
             return
@@ -131,7 +132,7 @@ class AutoSplitImage():
         Compare image with capture using image's comparison method. Falls back to combobox
         """
 
-        if self.bytes is None or not self.bytes.size or capture is None or not self.bytes.size:
+        if not is_valid_image(self.bytes) or not is_valid_image(capture):
             return 0.0
         comparison_method = self.__get_comparison_method(default)
         if comparison_method == 0:
