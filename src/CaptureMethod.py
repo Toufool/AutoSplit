@@ -135,7 +135,7 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
     CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
 
 
-@ dataclass
+@dataclass
 class CameraInfo():
     device_id: int
     name: str
