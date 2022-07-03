@@ -82,7 +82,7 @@ This program can be used to automatically start, split, and reset your preferred
     Only available in Windows 10.0.17134 and up.  
     Due to current technical limitations, it requires having at least one audio or video Capture Device connected and enabled. Even if it won't be used.  
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
-    Adds a yellow border on Windows 10. Not present on Windows 11.
+    Adds a yellow border on Windows 10 (not on Windows 11).
     Caps at around 60 FPS.  
 - **Direct3D Desktop Duplication** (slower, bound to display)  
     Duplicates the desktop using Direct3D.  
