@@ -13,7 +13,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.markdownlint": true,
+    "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,
   "trailing-spaces.includeEmptyLines": true,
@@ -22,6 +22,9 @@
     "markdown"
   ],
   "files.associations": {
+    "*.json": "json",
+    "extensions.json": "jsonc",
+    "settings.json": "jsonc",
     "*.qrc": "xml",
     "*.ui": "xml"
   },
@@ -37,9 +40,9 @@
     "**/__pycache__": true,
   },
   "search.exclude": {
-    "**/node_modules": true,
     "**/bower_components": true,
     "**/*.code-search": true,
+    "*.lock": true,
     "typings": true,
   },
   "[python]": {
@@ -57,7 +60,14 @@
   "python.linting.pylintCategorySeverity.convention": "Warning",
   "python.linting.pylintCategorySeverity.refactor": "Warning",
   "python.linting.flake8Enabled": true,
+  // pycodestyles
   "python.linting.flake8CategorySeverity.E": "Warning",
+  // Pyflakes
+  "python.linting.flake8CategorySeverity.F": "Warning",
+  // PEP8 Naming convention
+  "python.linting.flake8CategorySeverity.N": "Warning",
+  // PYI
+  "python.linting.flake8CategorySeverity.Y": "Warning",
   // PyRight obsoletes mypy
   "python.linting.mypyEnabled": false,
   // Is already wrapped by Flake8, prospector and pylama
@@ -67,16 +77,4 @@
   // Just another wrapper, use Flake8 OR this
   "python.linting.pylamaEnabled": false,
   "python.linting.banditEnabled": true,
-  // Copy those over to your user settings
-  "sonarlint.rules": {
-    "python:S1192": {
-      "level": "off"
-    },
-    "python:S3776": {
-      "level": "off"
-    },
-    "python:S107": {
-      "level": "off"
-    },
-  },
 }

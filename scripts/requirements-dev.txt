@@ -1,0 +1,17 @@
+# Dependencies
+-r requirements.txt
+#
+# Linting, formatters and Types
+bandit
+isort
+flake8
+flake8-pyi
+flake8-quotes
+flake8-isort
+pylint>=2.13.9
+pywin32-stubs>=0.1.6
+types-requests
+#
+# You can comment this out if you don't want to run `designer.bat` to quickly open the bundled PyQt Designer.
+# Can also be downloaded externally as a non-python package
+qt6-applications

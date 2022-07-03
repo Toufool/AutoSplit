@@ -1,18 +1,24 @@
 from __future__ import annotations
+
+from math import sqrt
 from typing import Optional
-from PIL import Image
-from win32con import MAXBYTE
+
 import cv2
 import imagehash  # https://github.com/JohannesBuchner/imagehash/issues/151
 import numpy as np
+from PIL import Image
+from win32con import MAXBYTE
+
+from utils import is_valid_image
 
 MAXRANGE = MAXBYTE + 1
-channels = [0, 1, 2]
-histogram_size = [8, 8, 8]
-ranges = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+CHANNELS = [0, 1, 2]
+HISTOGRAM_SIZE = [8, 8, 8]
+RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+MASK_SIZE_MULTIPLIER = 3 * MAXBYTE * MAXBYTE
 
 
-def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
+def compare_histograms(source: cv2.Mat, capture: cv2.Mat, mask: Optional[cv2.Mat] = None):
     """
     Compares two images by calculating their histograms, normalizing
     them, and then comparing them using Bhattacharyya distance.
@@ -23,8 +29,8 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
     @return: The similarity between the histograms as a number 0 to 1.
     """
 
-    source_hist = cv2.calcHist([source], channels, mask, histogram_size, ranges)
-    capture_hist = cv2.calcHist([capture], channels, mask, histogram_size, ranges)
+    source_hist = cv2.calcHist([source], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
+    capture_hist = cv2.calcHist([capture], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
 
     cv2.normalize(source_hist, source_hist)
     cv2.normalize(capture_hist, capture_hist)
@@ -32,7 +38,7 @@ def compare_histograms(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
 
-def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
+def compare_l2_norm(source: cv2.Mat, capture: cv2.Mat, mask: Optional[cv2.Mat] = None):
     """
     Compares two images by calculating the L2 Error (square-root of sum of squared error)
     @param source: Image of any given shape
@@ -41,20 +47,19 @@ def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv
     @return: The similarity between the images as a number 0 to 1.
     """
 
-    # https://github.com/microsoft/pylance-release/issues/2089
-    error = cv2.norm(source, capture, cv2.NORM_L2, mask)  # type: ignore
+    error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = (source.size ** 0.5) * MAXBYTE \
-        if mask is None \
-        else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
+    max_error = sqrt(source.size) * MAXBYTE \
+        if not is_valid_image(mask)\
+        else sqrt(np.count_nonzero(mask) * MASK_SIZE_MULTIPLIER)
 
     if not max_error:
         return 0.0
     return 1 - (error / max_error)
 
 
-def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
+def compare_template(source: cv2.Mat, capture: cv2.Mat, mask: Optional[cv2.Mat] = None):
     """
     Checks if the source is located within the capture by using the sum of square differences.
     The mask is used to search for non-rectangular images within the capture
@@ -72,15 +77,15 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[c
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = source.size * MAXBYTE * MAXBYTE \
-        if mask is None \
+        if not is_valid_image(mask) \
         else np.count_nonzero(mask)
 
     return 1 - (min_val / max_error)
 
 
-def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
+def compare_phash(source: cv2.Mat, capture: cv2.Mat, mask: Optional[cv2.Mat] = None):
     """
-    Compares the pHash of the two given images and returns the similarity between the two.
+    Compares the Perceptual Hash of the two given images and returns the similarity between the two.
 
     @param source: Image of any given shape as a numpy array
     @param capture: Image of any given shape as a numpy array
@@ -93,7 +98,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     # each of the images. As a result of this, this function is not going to be very
     # helpful for large masks as the images when shrinked down to 8x8 will mostly be
     # the same
-    if mask is not None:
+    if is_valid_image(mask):
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 
@@ -105,7 +110,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.
     return 1 - (hash_diff / 64.0)
 
 
-def check_if_image_has_transparency(image: cv2.ndarray):
+def check_if_image_has_transparency(image: cv2.Mat):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False

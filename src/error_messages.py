@@ -1,6 +1,23 @@
-# Error messages
+"""Error messages"""
+from __future__ import annotations
+
+import os
+import signal
+import sys
 import traceback
+from types import TracebackType
+from typing import Optional
+
 from PyQt6 import QtCore, QtWidgets
+
+from AutoSplit import AutoSplit
+from utils import FROZEN
+
+
+def __exit_program():
+    # stop main thread (which is probably blocked reading input) via an interrupt signal
+    os.kill(os.getpid(), signal.SIGINT)
+    sys.exit(1)
 
 
 def set_text_message(message: str, details: str = ""):
@@ -9,7 +26,10 @@ def set_text_message(message: str, details: str = ""):
     message_box.setTextFormat(QtCore.Qt.TextFormat.RichText)
     message_box.setText(message)
     if details:
+        force_quit_button = message_box.addButton("Close AutoSplit", QtWidgets.QMessageBox.ButtonRole.ResetRole)
+        force_quit_button.clicked.connect(__exit_program)
         message_box.setDetailedText(details)
+        # Preopen the details
         for button in message_box.buttons():
             if message_box.buttonRole(button) == QtWidgets.QMessageBox.ButtonRole.ActionRole:
                 button.click()
@@ -69,7 +89,8 @@ def reset_hotkey():
 
 
 def old_version_settings_file():
-    set_text_message("Old version settings file detected. This version allows settings files from v1.3 and above.")
+    set_text_message(
+        "Old version settings file detected. This version allows settings files in .toml format. Starting from v2.0.")
 
 
 def invalid_settings():
@@ -102,3 +123,38 @@ def exception_traceback(message: str, exception: BaseException):
     set_text_message(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))
+
+
+CREATE_NEW_ISSUE_MESSAGE = (
+    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
+    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, "
+    + "and copy & paste the entire error message below")
+
+
+def make_excepthook(autosplit: AutoSplit):
+    def excepthook(exception_type: type[BaseException], exception: BaseException, _traceback: Optional[TracebackType]):
+        # Catch Keyboard Interrupts for a clean close
+        if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
+            sys.exit(0)
+        # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture
+        if (
+            exception_type is SystemError
+            and str(exception) == "<class 'PyQt6.QtGui.QPaintEvent'> returned a result with an error set"
+        ):
+            return
+        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        autosplit.show_error_signal.emit(lambda: exception_traceback(
+            "AutoSplit encountered an unhandled exception and will try to recover, "
+            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
+            exception))
+    return excepthook
+
+
+def handle_top_level_exceptions(exception: Exception):
+    message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
+    # Print error to console if not running in executable
+    if FROZEN:
+        exception_traceback(message, exception)
+    else:
+        traceback.print_exception(type(exception), exception, exception.__traceback__)
+    sys.exit(1)

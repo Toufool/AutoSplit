@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>540</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>289</width>
-    <height>540</height>
+    <height>621</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>289</width>
-    <height>540</height>
+    <height>621</height>
    </size>
   </property>
   <property name="cursor">
@@ -46,40 +46,12 @@
      <x>10</x>
      <y>180</y>
      <width>271</width>
-     <height>101</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="title">
     <string>Capture Settings</string>
    </property>
-   <widget class="QCheckBox" name="force_print_window_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>6</x>
-      <y>73</y>
-      <width>204</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Force a full render of the capture window, which is required for some applications to be captured</string>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Force Full Render (slower Max FPS)</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
@@ -91,6 +63,9 @@
     </property>
     <property name="cursor">
      <cursorShape>ArrowCursor</cursorShape>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>20</number>
@@ -143,12 +118,64 @@
      <bool>false</bool>
     </property>
    </widget>
+   <widget class="QComboBox" name="capture_method_combobox">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>97</y>
+      <width>251</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="capture_method_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>75</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture method:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="capture_device_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>126</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Capture device:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="capture_device_combobox">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>148</y>
+      <width>251</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Scanning for existing devices...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="image_settings_groupbox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>290</y>
+     <y>370</y>
      <width>271</width>
      <height>241</height>
     </rect>
@@ -237,6 +264,9 @@
     <property name="toolTip">
      <string>The amount of time in seconds that comparison will be paused before moving to the next image.</string>
     </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+    </property>
     <property name="decimals">
      <number>2</number>
     </property>
@@ -280,6 +310,9 @@
     </property>
     <property name="toolTip">
      <string>Threshold that the live similarity will need to go above to consider the image a match.</string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <double>1.000000000000000</double>
@@ -368,6 +401,9 @@
     </property>
     <property name="toolTip">
      <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <number>999999999</number>
@@ -646,7 +682,6 @@
   <tabstop>loop_splits_checkbox</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
-  <tabstop>force_print_window_checkbox</tabstop>
  </tabstops>
  <resources/>
  <connections/>
