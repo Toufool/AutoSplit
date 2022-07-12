@@ -1,6 +1,5 @@
 $originalDirectory = $pwd
-cd "$PSScriptRoot\.."
-Write-Host $Script:MyInvocation.MyCommand.Path
+Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
 
 Write-Host "`nRunning Pyright..."
@@ -8,7 +7,8 @@ pyright --warnings
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Pyright failed ($LastExitCode)" -ForegroundColor Red
-} else {
+}
+else {
   Write-Host "`Pyright passed" -ForegroundColor Green
 }
 
@@ -17,7 +17,8 @@ pylint --output-format=colorized src/
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Pylint failed ($LastExitCode)" -ForegroundColor Red
-} else {
+}
+else {
   Write-Host "`Pylint passed" -ForegroundColor Green
 }
 
@@ -26,7 +27,8 @@ flake8
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Flake8 failed ($LastExitCode)" -ForegroundColor Red
-} else {
+}
+else {
   Write-Host "`Flake8 passed" -ForegroundColor Green
 }
 
@@ -35,15 +37,17 @@ bandit -f custom --silent --recursive src
 # $exitCodes += $LastExitCode # Returns 1 on low
 if ($LastExitCode -gt 0) {
   Write-Host "`Bandit warning ($LastExitCode)" -ForegroundColor Yellow
-} else {
+}
+else {
   Write-Host "`Bandit passed" -ForegroundColor Green
 }
 
 
 if ($exitCodes -gt 0) {
   Write-Host "`nLinting failed ($exitCodes)" -ForegroundColor Red
-} else {
+}
+else {
   Write-Host "`nLinting passed" -ForegroundColor Green
 }
 
-cd $originalDirectory
+Set-Location $originalDirectory

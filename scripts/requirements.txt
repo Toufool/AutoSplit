@@ -2,12 +2,12 @@
 #
 # Python: CPython 3.9+
 #
-# Usage: .\scripts\install.bat
+# Usage: ./scripts/install.ps1
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip uninstall -y -r .\scripts\requirements-dev.txt
+# pip uninstall -y -r ./scripts/requirements-dev.txt
 #
-# Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
+# Creating AutoSplit.exe with PyInstaller: ./scripts/build.ps1
 #
 # Dependencies:
 numpy>=1.22.0rc1,<1.23 # Type issue
@@ -19,14 +19,15 @@ keyboard
 packaging
 Pillow
 pyautogui
-pywin32>=301
 requests
 certifi
 toml
-winsdk>=v1.0.0b4
 pygrabber
-git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
 typing-extensions
+# Windows-only
+pywin32>=301
+winsdk>=v1.0.0b4
+git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
 #
 # Build
 PyInstaller
