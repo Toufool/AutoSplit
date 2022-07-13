@@ -38,6 +38,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements-dev.txt'
+      - run: pip install wheel --upgrade
       - name: Install dependencies
         run: |
           pip install -r "scripts/requirements-dev.txt"
@@ -61,6 +62,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements-dev.txt'
+      - run: pip install wheel --upgrade
       - name: Install dependencies
         run: pip install -r "scripts/requirements-dev.txt"
       - run: scripts/compile_resources.ps1
@@ -81,6 +83,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements-dev.txt'
+      - run: pip install wheel --upgrade
       - name: Install dependencies
         run: pip install -r "scripts/requirements-dev.txt"
       - run: scripts/compile_resources.ps1
@@ -101,6 +104,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'scripts/requirements-dev.txt'
+      - run: pip install wheel --upgrade
       - name: Install dependencies
         run: pip install -r "scripts/requirements-dev.txt"
       - run: scripts/compile_resources.ps1
@@ -120,6 +124,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+      - run: pip install wheel --upgrade
       - name: Install dependencies
         run: pip install -r "scripts/requirements.txt"
       - run: scripts/build.ps1
