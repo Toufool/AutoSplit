@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-import threading
 import webbrowser
+from threading import Thread
 from typing import TYPE_CHECKING, Any, Union, cast
 
 import requests
@@ -183,7 +183,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
-        threading.Thread(target=lambda: asyncio.run(self.__set_all_capture_devices())).start()
+        Thread(target=lambda: asyncio.run(self.__set_all_capture_devices())).start()
         capture_list_items = [
             f"- {method.name} ({method.short_description})"
             for method in capture_method_values

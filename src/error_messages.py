@@ -6,12 +6,14 @@ import signal
 import sys
 import traceback
 from types import TracebackType
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from PyQt6 import QtCore, QtWidgets
 
-from AutoSplit import AutoSplit
 from utils import FROZEN
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 
 def __exit_program():

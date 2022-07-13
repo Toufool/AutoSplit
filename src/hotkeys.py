@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import threading
 from collections.abc import Callable
+from threading import Thread
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import keyboard
@@ -248,4 +248,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # Try to remove the previously set hotkey if there is one.
     _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-    threading.Thread(target=callback).start()
+    Thread(target=callback).start()
