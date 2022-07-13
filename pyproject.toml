@@ -121,6 +121,8 @@ disable = [
   "unused-import",
   # Similar lines in 2 files, doesn't really work
   "R0801",
+  # Doesn't work with local imports
+  "import-error",
   # False positives with PyQt .connect
   "no-value-for-parameter",
   # Not as long as we support Python 3.9

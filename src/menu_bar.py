@@ -3,22 +3,19 @@ from __future__ import annotations
 import asyncio
 import threading
 import webbrowser
-from typing import TYPE_CHECKING, Any, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Union, cast
 
-import cv2
 import requests
 from packaging.version import parse as version_parse
 from PyQt6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
-from win32 import win32gui
-from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
 import user_profile
-from CaptureMethod import CAPTURE_METHODS, CameraInfo, CaptureMethod, get_all_video_capture_devices
+from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
+                            get_all_video_capture_devices)
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import HOTKEYS, Hotkeys, set_hotkey
-from region_selection import create_windows_graphics_capture
 from utils import AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, WINDOWS_BUILD_NUMBER, decimal
 
 if TYPE_CHECKING:
@@ -100,12 +97,12 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
-def get_capture_method_index(capture_method: Union[str, CaptureMethod]):
+def get_capture_method_index(capture_method: Union[str, CaptureMethodEnum]):
     """
     Returns 0 if the capture_method is invalid or unsupported
     """
     try:
-        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethod, capture_method))
+        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethodEnum, capture_method))
     except ValueError:
         return 0
 
@@ -142,40 +139,18 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def __capture_method_changed(self):
         selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
-        # Release or start video capture device
-        self.__capture_device_changed(selected_capture_method)
-        if self.autosplit.windows_graphics_capture:
-            self.autosplit.windows_graphics_capture.close()
-        self.autosplit.windows_graphics_capture = None
-        if selected_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-            self.autosplit.select_region_button.setDisabled(True)
-            self.autosplit.select_window_button.setDisabled(True)
-        else:
-            self.autosplit.select_region_button.setDisabled(False)
-            self.autosplit.select_window_button.setDisabled(False)
-            # Recover window from name
-            hwnd = win32gui.FindWindow(None, self.autosplit.settings_dict["captured_window_title"])
-            # Don't fallback to desktop or whatever window obtained with ""
-            if win32gui.IsWindow(hwnd) and self.autosplit.settings_dict["captured_window_title"]:
-                self.autosplit.hwnd = hwnd
-                if selected_capture_method == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-                    self.autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+        change_capture_method(selected_capture_method, self.autosplit)
         return selected_capture_method
 
-    def __capture_device_changed(self, current_capture_method: Optional[Union[CaptureMethod, str]] = None):
-        current_capture_method = current_capture_method or self.autosplit.settings_dict["capture_method"]
-        # Always release the previous capture device
-        if self.autosplit.capture_device:
-            self.autosplit.capture_device.release()
-            self.autosplit.capture_device = None
+    def __capture_device_changed(self):
         device_index = self.capture_device_combobox.currentIndex()
         if device_index == -1:
-            return None
+            return
         capture_device = self.__video_capture_devices[device_index]
-        if current_capture_method == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-            self.autosplit.settings_dict["capture_device_name"] = capture_device.name
-            self.autosplit.capture_device = cv2.VideoCapture(capture_device.device_id)
-        return capture_device.device_id
+        self.autosplit.settings_dict["capture_device_name"] = capture_device.name
+        self.autosplit.settings_dict["capture_device_id"] = capture_device.device_id
+        if self.autosplit.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+            change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE, self.autosplit)
 
     async def __set_all_capture_devices(self):
         self.__video_capture_devices = await get_all_video_capture_devices()
@@ -183,7 +158,9 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
             self.capture_device_combobox.addItems([
-                f"* {device.name} [{device.backend}]{' (occupied)' if device.occupied else ''}"
+                f"* {device.name}"
+                + (f" [{device.backend}]" if device.backend else "")
+                + (" (occupied)" if device.occupied else "")
                 for device in self.__video_capture_devices])
             self.capture_device_combobox.setEnabled(True)
             self.capture_device_combobox.setCurrentIndex(
@@ -266,9 +243,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
             "capture_method",
             self.__capture_method_changed()))
-        self.capture_device_combobox.currentIndexChanged.connect(lambda: self.__set_value(
-            "capture_device_id",
-            self.__capture_device_changed()))
+        self.capture_device_combobox.currentIndexChanged.connect(self.__capture_device_changed)
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(

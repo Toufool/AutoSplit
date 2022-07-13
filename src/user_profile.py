@@ -3,19 +3,14 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, TypedDict, Union, cast
 
-import cv2
 import keyboard
 import toml
 from PyQt6 import QtCore, QtWidgets
-from win32 import win32gui
-from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
-from CaptureMethod import CAPTURE_METHODS, CaptureMethod
+from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
 from hotkeys import HOTKEYS, set_hotkey
-from region_capture import Region
-from region_selection import create_windows_graphics_capture
 from utils import auto_split_directory
 
 if TYPE_CHECKING:
@@ -30,7 +25,7 @@ class UserProfileDict(TypedDict):
     pause_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    capture_method: Union[str, CaptureMethod]
+    capture_method: Union[str, CaptureMethodEnum]
     capture_device_id: int
     capture_device_name: str
     default_comparison_method: int
@@ -132,30 +127,21 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-        autosplit.select_region_button.setDisabled(True)
-        autosplit.select_window_button.setDisabled(True)
-        autosplit.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
-
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
         for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
             if autosplit.settings_dict[hotkey_name]:
                 set_hotkey(autosplit, hotkey, cast(str, autosplit.settings_dict[hotkey_name]))
 
-    if autosplit.settings_dict["captured_window_title"]:
-        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
-        # Don't fallback to desktop or whatever window obtained with ""
-        if win32gui.IsWindow(hwnd) and autosplit.settings_dict["captured_window_title"]:
-            autosplit.hwnd = hwnd
-            if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-                if autosplit.windows_graphics_capture:
-                    autosplit.windows_graphics_capture.close()
-                autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
-        else:
-            autosplit.live_image.setText("Reload settings after opening"
-                                         + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
-                                         + "\nto automatically load Capture Region")
+    change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
+    if (
+        not autosplit.capture_method.check_selected_region_exists(autosplit)
+        and autosplit.settings_dict["captured_window_title"]
+    ):
+        autosplit.live_image.setText("Reload settings after opening"
+                                     + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+                                     + "\nto automatically load Capture Region")
+
     return True
 
 

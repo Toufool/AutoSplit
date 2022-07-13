@@ -1,8 +1,9 @@
 # Python: 3.8.0 (tags/v3.8.0:fa919fd, Oct 14 2019, 19:37:50) [MSC v.1916 64 bit (AMD64)]
 # Library: cv2, version: 4.4.0
 # Module: cv2.cv2, version: 4.4.0
-import typing
 import builtins as _mod_builtins
+import typing
+
 import cv2 as _mod_cv2
 import numpy as np
 
@@ -1586,6 +1587,7 @@ class VideoCapture():
     def release(self): ...
     def setExceptionMode(self, error: bool): ...
     def getBackendName(self) -> str: ...
+    def isOpened(self) -> bool: ...
 
 VideoWriter = _mod_cv2.VideoWriter
 def VideoWriter_fourcc(c1, c2, c3, c4) -> typing.Any:

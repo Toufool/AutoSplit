@@ -15,13 +15,9 @@ from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, S
 from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
-from winsdk.windows.graphics.capture.interop import create_for_window
 
 import error_messages
-from CaptureMethod import CaptureMethod
-from region_capture import capture_region, get_window_bounds
-from utils import is_valid_image
-from WindowsGraphicsCapture import create_windows_graphics_capture
+from utils import get_window_bounds, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -67,9 +63,7 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         if not item:
             return
         autosplit.settings_dict["captured_window_title"] = item.display_name
-        if autosplit.windows_graphics_capture:
-            autosplit.windows_graphics_capture.close()
-        autosplit.windows_graphics_capture = create_windows_graphics_capture(item)
+        autosplit.capture_method.reinitialize(autosplit)
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, int(autosplit.effectiveWinId()))
@@ -103,10 +97,7 @@ def select_region(autosplit: AutoSplit):
 
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        if autosplit.windows_graphics_capture:
-            autosplit.windows_graphics_capture.close()
-        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+    autosplit.capture_method.reinitialize(autosplit)
 
     left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
@@ -139,10 +130,7 @@ def select_window(autosplit: AutoSplit):
 
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        if autosplit.windows_graphics_capture:
-            autosplit.windows_graphics_capture.close()
-        autosplit.windows_graphics_capture = create_windows_graphics_capture(create_for_window(hwnd))
+    autosplit.capture_method.reinitialize(autosplit)
 
     # Exlude the borders and titlebar from the window selection. To only get the client area.
     _, __, window_width, window_height = get_window_bounds(hwnd)
@@ -174,7 +162,7 @@ def __get_window_from_point(x: int, y: int):
 
 def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
-    if not check_selected_region_exists(autosplit):
+    if not autosplit.capture_method.check_selected_region_exists(autosplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -198,7 +186,7 @@ def align_region(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture, _ = capture_region(autosplit)
+    capture, _ = autosplit.capture_method.get_frame(autosplit)
 
     if not is_valid_image(capture):
         error_messages.region()
@@ -282,19 +270,11 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif not check_selected_region_exists(autosplit):
+    elif not autosplit.capture_method.check_selected_region_exists(autosplit):
         error = error_messages.region
     if error and show_error:
         error()
     return not error
-
-
-def check_selected_region_exists(autosplit: AutoSplit):
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.WINDOWS_GRAPHICS_CAPTURE:
-        return bool(autosplit.windows_graphics_capture)
-    if autosplit.settings_dict["capture_method"] == CaptureMethod.VIDEO_CAPTURE_DEVICE:
-        return bool(autosplit.capture_device)
-    return bool(win32gui.IsWindow(autosplit.hwnd) and win32gui.GetWindowText(autosplit.hwnd))
 
 
 class BaseSelectWidget(QtWidgets.QWidget):

@@ -1,33 +1,43 @@
+from __future__ import annotations
+
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
+from typing import TYPE_CHECKING, TypedDict
 
 import cv2
 from pygrabber.dshow_graph import FilterGraph
 from winsdk.windows.media.capture import MediaCapture
 
+from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
+from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
+from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
+from capture_method.interface import CaptureMethodInterface
+from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
+from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 from utils import WINDOWS_BUILD_NUMBER
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 WGC_MIN_BUILD = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
 
 
-def test_for_media_capture():
-    async def coroutine():
-        return await (MediaCapture().initialize_async() or asyncio.sleep(0))
-    try:
-        asyncio.run(coroutine())
-        return True
-    except OSError:
-        return False
+class Region(TypedDict):
+    x: int
+    y: int
+    width: int
+    height: int
 
 
 @dataclass
-class DisplayCaptureMethodInfo():
+class CaptureMethodInfo():
     name: str
     short_description: str
     description: str
+    implementation: type[CaptureMethodInterface]
 
 
 class CaptureMethodMeta(EnumMeta):
@@ -42,7 +52,7 @@ class CaptureMethodMeta(EnumMeta):
 
 
 @unique
-class CaptureMethod(Enum, metaclass=CaptureMethodMeta):
+class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # Allow TOML to save as a simple string
     def __repr__(self):
         return self.value
@@ -63,15 +73,15 @@ class CaptureMethod(Enum, metaclass=CaptureMethodMeta):
     VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
 
 
-class DisplayCaptureMethodDict(OrderedDict[CaptureMethod, DisplayCaptureMethodInfo]):
+class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
     def get_method_by_index(self, index: int):
         if index < 0:
             return next(iter(self))
         return list(self.keys())[index]
 
 
-CAPTURE_METHODS = DisplayCaptureMethodDict({
-    CaptureMethod.BITBLT: DisplayCaptureMethodInfo(
+CAPTURE_METHODS = CaptureMethodDict({
+    CaptureMethodEnum.BITBLT: CaptureMethodInfo(
         name="BitBlt",
         short_description="fastest, least compatible",
         description=(
@@ -79,8 +89,10 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
             "\nThe smaller the selected region, the more efficient it is. "
         ),
+
+        implementation=BitBltCaptureMethod,
     ),
-    CaptureMethod.WINDOWS_GRAPHICS_CAPTURE: DisplayCaptureMethodInfo(
+    CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE: CaptureMethodInfo(
         name="Windows Graphics Capture",
         short_description="fast, most compatible, capped at 60fps",
         description=(
@@ -91,8 +103,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nAdds a yellow border on Windows 10 (not on Windows 11)."
             "\nCaps at around 60 FPS. "
         ),
+        implementation=WindowsGraphicsCaptureMethod,
     ),
-    CaptureMethod.DESKTOP_DUPLICATION: DisplayCaptureMethodInfo(
+    CaptureMethodEnum.DESKTOP_DUPLICATION: CaptureMethodInfo(
         name="Direct3D Desktop Duplication",
         short_description="slower, bound to display",
         description=(
@@ -101,8 +114,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
             "\nOverlapping windows will show up and can't record across displays. "
         ),
+        implementation=DesktopDuplicationCaptureMethod,
     ),
-    CaptureMethod.PRINTWINDOW_RENDERFULLCONTENT: DisplayCaptureMethodInfo(
+    CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT: CaptureMethodInfo(
         name="Force Full Content Rendering",
         short_description="very slow, can affect rendering pipeline",
         description=(
@@ -111,8 +125,9 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nAbout 10-15x slower than BitBlt based on original window size "
             "\nand can mess up some applications' rendering pipelines. "
         ),
+        implementation=ForceFullContentRenderingCaptureMethod,
     ),
-    CaptureMethod.VIDEO_CAPTURE_DEVICE: DisplayCaptureMethodInfo(
+    CaptureMethodEnum.VIDEO_CAPTURE_DEVICE: CaptureMethodInfo(
         name="Video Capture Device",
         short_description="very slow, see below",
         description=(
@@ -122,8 +137,19 @@ CAPTURE_METHODS = DisplayCaptureMethodDict({
             "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
             "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/."
         ),
+        implementation=VideoCaptureDeviceCaptureMethod,
     ),
 })
+
+
+def test_for_media_capture():
+    async def coroutine():
+        return await (MediaCapture().initialize_async() or asyncio.sleep(0))
+    try:
+        asyncio.run(coroutine())
+        return True
+    except OSError:
+        return False
 
 
 # Detect and remove unsupported capture methods
@@ -132,7 +158,18 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
     # Our current implementation of Windows Graphics Capture requires at least one CaptureDevice
     or not test_for_media_capture()
 ):
-    CAPTURE_METHODS.pop(CaptureMethod.WINDOWS_GRAPHICS_CAPTURE)
+    CAPTURE_METHODS.pop(CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE)
+
+
+def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit):
+    autosplit.capture_method.close(autosplit)
+    autosplit.capture_method = CAPTURE_METHODS[selected_capture_method].implementation(autosplit)
+    if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+        autosplit.select_region_button.setDisabled(True)
+        autosplit.select_window_button.setDisabled(True)
+    else:
+        autosplit.select_region_button.setDisabled(False)
+        autosplit.select_window_button.setDisabled(False)
 
 
 @dataclass
@@ -156,7 +193,7 @@ async def get_all_video_capture_devices():
             video_capture.grab()
         except cv2.error as error:  # pyright: ignore [reportUnknownVariableType]
             return CameraInfo(index, device_name, True, backend) \
-                if error.code == cv2.Error.STS_ERROR \
+                if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
                 else None
         finally:
             video_capture.release()
