@@ -11,6 +11,8 @@ import cv2
 from typing_extensions import TypeGuard
 from win32 import win32gui
 
+from gen.build_number import AUTOSPLIT_BUILD_NUMBER
+
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 
 
@@ -67,5 +69,8 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 """The directory of either AutoSplit.exe or AutoSplit.py"""
 
 # Shared strings
-AUTOSPLIT_VERSION = "2.0.0-alpha.4"
+# DIRTY_VERSION_EXTENSION = ""
+DIRTY_VERSION_EXTENSION = "-" + AUTOSPLIT_BUILD_NUMBER
+"""Set DIRTY_VERSION_EXTENSION to an empty string to generate a clean version number"""
+AUTOSPLIT_VERSION = "2.0.0-alpha.4" + DIRTY_VERSION_EXTENSION
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
