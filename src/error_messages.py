@@ -22,14 +22,18 @@ def __exit_program():
     sys.exit(1)
 
 
-def set_text_message(message: str, details: str = ""):
+def set_text_message(message: str, details: str = "", kill_button: str = "", accept_button: str = ""):
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
     message_box.setTextFormat(QtCore.Qt.TextFormat.RichText)
     message_box.setText(message)
-    if details:
-        force_quit_button = message_box.addButton("Close AutoSplit", QtWidgets.QMessageBox.ButtonRole.ResetRole)
+    # Button order is important for default focus
+    if accept_button:
+        message_box.addButton(accept_button, QtWidgets.QMessageBox.ButtonRole.AcceptRole)
+    if kill_button:
+        force_quit_button = message_box.addButton(kill_button, QtWidgets.QMessageBox.ButtonRole.ResetRole)
         force_quit_button.clicked.connect(__exit_program)
+    if details:
         message_box.setDetailedText(details)
         # Preopen the details
         for button in message_box.buttons():
@@ -121,10 +125,19 @@ def stdin_lost():
     set_text_message("stdin not supported or lost, external control like LiveSplit integration will not work.")
 
 
+def already_running():
+    set_text_message(
+        "An instance of AutoSplit is already running.<br/>Are you sure you want to open a another one?",
+        "",
+        "Don't open",
+        "Ignore")
+
+
 def exception_traceback(message: str, exception: BaseException):
     set_text_message(
         message,
-        "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))
+        "\n".join(traceback.format_exception(None, exception, exception.__traceback__)),
+        "Close AutoSplit")
 
 
 CREATE_NEW_ISSUE_MESSAGE = (

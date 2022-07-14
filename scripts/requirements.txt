@@ -22,6 +22,7 @@ pyautogui
 requests
 certifi
 toml
+psutil
 pygrabber
 typing-extensions
 # Windows-only

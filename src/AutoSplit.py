@@ -13,6 +13,7 @@ from typing import Optional
 
 import certifi
 import cv2
+from psutil import process_iter
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
@@ -888,11 +889,28 @@ def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
+def is_already_running():
+    # When running directly in Python, any AutoSplit process means it's already open
+    # When bundled, we must ignore itself and the splash screen
+    max_processes = 3 if FROZEN else 1
+    process_count = 0
+    for process in process_iter():
+        if process.name() == "AutoSplit.exe":
+            process_count += 1
+        if process_count >= max_processes:
+            return True
+    return False
+
+
 def main():
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
+
+        if is_already_running():
+            error_messages.already_running()
+
         AutoSplit()
 
         if not FROZEN:
