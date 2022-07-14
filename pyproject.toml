@@ -130,7 +130,12 @@ disable = [
 ]
 
 [tool.pylint.TYPECHECK]
-generated-members = "cv2"
+generated-members = [
+  # https://github.com/PyCQA/pylint/issues/4987
+  "cv2",
+  # https://github.com/mhammond/pywin32/issues/1913
+  "pywintypes.error",
+]
 
 [tool.isort]
 line_length = 120

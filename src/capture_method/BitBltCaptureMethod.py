@@ -55,17 +55,16 @@ class BitBltCaptureMethod(CaptureMethodInterface):
                 win32con.SRCCOPY)
             image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
             image.shape = (selection["height"], selection["width"], 4)
-        # https://github.com/kaluluosi/pywin32-stubs/issues/5
-        except (win32ui.error, pywintypes.error):  # pyright: ignore [reportGeneralTypeIssues] pylint: disable=no-member
+        except (win32ui.error, pywintypes.error):
             return None, False
         # We already obtained the image, so we can ignore errors during cleanup
         try:
             dc_object.DeleteDC()
+            dc_object.DeleteDC()
             compatible_dc.DeleteDC()
             win32gui.ReleaseDC(hwnd, window_dc)
-            win32gui.DeleteObject(bitmap.GetHandle())  # pyright: ignore [reportGeneralTypeIssues]
-        # https://github.com/kaluluosi/pywin32-stubs/issues/5
-        except win32ui.error:  # pyright: ignore [reportGeneralTypeIssues]
+            win32gui.DeleteObject(bitmap.GetHandle())
+        except win32ui.error:
             pass
         return image, False
 

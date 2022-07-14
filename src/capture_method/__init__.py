@@ -180,7 +180,7 @@ class CameraInfo():
     backend: str
 
 
-async def get_all_video_capture_devices():
+async def get_all_video_capture_devices() -> list[CameraInfo]:
     named_video_inputs = FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
