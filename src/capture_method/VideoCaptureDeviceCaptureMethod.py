@@ -28,6 +28,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
                 self.is_old_image = False
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
             error = exception
+            self.capture_device.release()
             autosplit.show_error_signal.emit(lambda: exception_traceback(
                 "AutoSplit encountered an unhandled exception while trying to grab a frame and has stopped capture. "
                 + CREATE_NEW_ISSUE_MESSAGE,

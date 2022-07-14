@@ -129,7 +129,7 @@ CAPTURE_METHODS = CaptureMethodDict({
     ),
     CaptureMethodEnum.VIDEO_CAPTURE_DEVICE: CaptureMethodInfo(
         name="Video Capture Device",
-        short_description="very slow, see below",
+        short_description="see below",
         description=(
             "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
             "\nYou can select one below. "

@@ -28,11 +28,17 @@
     <height>621</height>
    </size>
   </property>
-  <property name="cursor">
-   <cursorShape>ArrowCursor</cursorShape>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -61,9 +67,6 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
-    </property>
     <property name="correctionMode">
      <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
@@ -88,9 +91,6 @@
     </property>
     <property name="toolTip">
      <string>This value will limit the amount of frames per second that AutoSplit will run comparisons</string>
-    </property>
-    <property name="whatsThis">
-     <string/>
     </property>
     <property name="text">
      <string>Comparison FPS Limit:</string>
@@ -202,10 +202,21 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string/>
-    </property>
-    <property name="whatsThis">
-     <string notr="true"/>
+     <string>L2 Norm:
+This method should be fine to use for most cases.
+It finds the difference between each pixel, squares it, sums it over the entire image and takes the square root.
+This is very fast but is a problem if your image is high frequency.
+Any translational movement or rotation can cause similarity to be very different.
+
+Histograms:
+An explanation on Histograms comparison can be found here
+https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
+This is a great method to use if you are using several masked images.
+
+Perceptual Hash:
+An explanation on pHash comparison can be found here
+http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.</string>
     </property>
     <item>
      <property name="text">
@@ -244,9 +255,6 @@
       <width>161</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="whatsThis">
-     <string/>
     </property>
     <property name="text">
      <string>Default Pause Time (sec):</string>
@@ -288,12 +296,6 @@
       <width>151</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="whatsThis">
-     <string/>
     </property>
     <property name="text">
      <string>Default Similarity Threshold:</string>
@@ -361,9 +363,6 @@
       <bold>true</bold>
      </font>
     </property>
-    <property name="whatsThis">
-     <string>teset</string>
-    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -377,12 +376,6 @@
       <height>16</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
     <property name="text">
      <string>Default Delay Time (ms):</string>
     </property>
@@ -395,9 +388,6 @@
       <width>87</width>
       <height>22</height>
      </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
     </property>
     <property name="toolTip">
      <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
@@ -475,9 +465,6 @@
       <height>20</height>
      </rect>
     </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
     <property name="text">
      <string/>
     </property>
@@ -506,9 +493,6 @@
       <width>94</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>IBeamCursor</cursorShape>
     </property>
     <property name="text">
      <string/>
@@ -599,9 +583,6 @@
       <width>94</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
     </property>
     <property name="text">
      <string/>
