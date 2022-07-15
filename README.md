@@ -6,7 +6,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
-[![SemVer](https://badgen.net/badge/SemVer/SemVer/grey?label)](https://semver.org/)
+[![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
@@ -157,11 +157,15 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
 - Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
+- A different comparison method can be specified with their 0-base index between angular brackets `<>`:
+  - `<0>`: L2 Norm
+  - `<1>`: Histogram
+  - `<2>`: Perceptual Hash
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
-  - {d} dummy split image. When matched, it moves to the next image without hitting your split hotkey.
-  - {b} split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
-  - {p} pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
+  - `{d}` dummy split image. When matched, it moves to the next image without hitting your split hotkey.
+  - `{b}` split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
+  - `{p}` pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
 - Filename examples:
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
