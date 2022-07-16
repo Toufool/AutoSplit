@@ -14,7 +14,7 @@ from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitm
 from winsdk.windows.media.capture import MediaCapture
 
 from capture_method.interface import CaptureMethodInterface
-from utils import WINDOWS_BUILD_NUMBER
+from utils import WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -121,8 +121,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
 
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
         hwnd = win32gui.FindWindow(None, captured_window_title)
-        # Don't fallback to desktop or whatever window obtained with ""
-        if not win32gui.IsWindow(hwnd) or not captured_window_title:
+        if not is_valid_hwnd(hwnd):
             return False
         autosplit.hwnd = hwnd
         self.close(autosplit)
@@ -134,6 +133,3 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
                 return False
             raise
         return self.check_selected_region_exists(autosplit)
-
-    def check_selected_region_exists(self, autosplit: AutoSplit):
-        return bool(win32gui.IsWindow(autosplit.hwnd) and win32gui.GetWindowText(autosplit.hwnd))

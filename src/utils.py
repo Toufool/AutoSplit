@@ -3,9 +3,9 @@ import ctypes
 import ctypes.wintypes
 import os
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from platform import version
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, TypeVar, Union, cast
 
 import cv2
 from typing_extensions import TypeGuard
@@ -36,7 +36,24 @@ def is_valid_image(image: Optional[cv2.Mat]) -> TypeGuard[cv2.Mat]:
     return image is not None and bool(image.size)
 
 
-def get_window_bounds(hwnd: int):
+def is_valid_hwnd(hwnd: int):
+    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `\"\"`"""
+    if not hwnd:
+        return False
+    if sys.platform == "win32" and not (win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd)):
+        return False
+    return True
+
+
+T = TypeVar("T")
+
+
+def first(iterable: Iterable[T]) -> T:
+    """@return: The first element of a collection. Dictionaries will return the first key"""
+    return next(iter(iterable))
+
+
+def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     extended_frame_bounds = ctypes.wintypes.RECT()
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
         hwnd,

@@ -17,7 +17,7 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import get_window_bounds, is_valid_image
+from utils import get_window_bounds, is_valid_hwnd, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -90,8 +90,7 @@ def select_region(autosplit: AutoSplit):
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
-    # Don't select desktop
-    if not win32gui.IsWindow(hwnd) or not window_text:
+    if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
 
@@ -123,8 +122,7 @@ def select_window(autosplit: AutoSplit):
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
-    # Don't select desktop
-    if not win32gui.IsWindow(hwnd) or not window_text:
+    if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
 

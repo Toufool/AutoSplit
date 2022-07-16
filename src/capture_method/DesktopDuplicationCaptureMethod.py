@@ -23,7 +23,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=t
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
         hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-        if not hmonitor or not win32gui.IsWindow(hwnd):
+        if not hmonitor or not self.check_selected_region_exists(autosplit):
             return None, False
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
