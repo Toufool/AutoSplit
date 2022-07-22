@@ -24,7 +24,7 @@ PW_RENDERFULLCONTENT = 0x00000002
 class BitBltCaptureMethod(CaptureMethodInterface):
     _render_full_content = False
 
-    def get_frame(self, autosplit: AutoSplit):
+    def get_frame(self, autosplit: AutoSplit) -> tuple[Optional[cv2.Mat], bool]:
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
         image: Optional[cv2.Mat] = None

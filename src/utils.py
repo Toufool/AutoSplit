@@ -40,8 +40,8 @@ def is_valid_hwnd(hwnd: int):
     """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `\"\"`"""
     if not hwnd:
         return False
-    if sys.platform == "win32" and not (win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd)):
-        return False
+    if sys.platform == "win32":
+        return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
 
 
