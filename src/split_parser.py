@@ -17,6 +17,9 @@ if TYPE_CHECKING:
 
 T = TypeVar("T", str, int, float)
 
+# Note, the following symbols cannot be used in a filename:
+# / \ : * ? " < > |
+
 
 def __value_from_filename(
     filename: str,
@@ -111,7 +114,7 @@ def comparison_method_from_filename(filename: str):
 
     # Check to make sure there is a valid delay time between brackets
     # of the filename
-    value = __value_from_filename(filename, "<>", -1)
+    value = __value_from_filename(filename, "^^", -1)
 
     # Comparison method should always be positive or zero
     return value if value >= 0 else None

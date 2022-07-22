@@ -157,10 +157,10 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
 - Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
-- A different comparison method can be specified with their 0-base index between angular brackets `<>`:
-  - `<0>`: L2 Norm
-  - `<1>`: Histogram
-  - `<2>`: Perceptual Hash
+- A different comparison method can be specified with their 0-base index between carets `^^`:
+  - `^0^`: L2 Norm
+  - `^1^`: Histogram
+  - `^2^`: Perceptual Hash
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
   - `{d}` dummy split image. When matched, it moves to the next image without hitting your split hotkey.
