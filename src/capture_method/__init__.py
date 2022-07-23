@@ -66,6 +66,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     def __hash__(self):
         return self.value.__hash__()
 
+    NONE = ""
     BITBLT = "BITBLT"
     WINDOWS_GRAPHICS_CAPTURE = "WINDOWS_GRAPHICS_CAPTURE"
     PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
@@ -74,11 +75,35 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
 
 
 class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
+
     def get_method_by_index(self, index: int):
+        if len(self) <= 0:
+            return CaptureMethodEnum.NONE
         if index < 0:
             return next(iter(self))
         return list(self.keys())[index]
 
+    def __getitem__(self, key: CaptureMethodEnum):
+        if key == CaptureMethodEnum.NONE:
+            return NONE_CAPTURE_METHOD
+        try:
+            return super().__getitem__(key)
+        # If requested method does not exists...
+        except KeyError:
+            try:
+                # ...fallback to the first one
+                return super().__getitem__(self.get_method_by_index(0))
+            except KeyError:
+                # ...fallback to an empty capture method to avoid crashes
+                return NONE_CAPTURE_METHOD
+
+
+NONE_CAPTURE_METHOD = CaptureMethodInfo(
+    name="None",
+    short_description="",
+    description="",
+    implementation=CaptureMethodInterface
+)
 
 CAPTURE_METHODS = CaptureMethodDict({
     CaptureMethodEnum.BITBLT: CaptureMethodInfo(

@@ -163,12 +163,16 @@ def load_settings_on_open(autosplit: AutoSplit):
         if file.endswith(".toml")]
 
     # Find all .tomls in AutoSplit folder, error if there is not exactly 1
+    error = None
     if len(settings_files) < 1:
-        error_messages.no_settings_file_on_open()
+        error = error_messages.no_settings_file_on_open
+    elif len(settings_files) > 1:
+        error = error_messages.too_many_settings_files_on_open
+    if error:
+        change_capture_method(CAPTURE_METHODS.get_method_by_index(0), autosplit)
+        error()
         return
-    if len(settings_files) > 1:
-        error_messages.too_many_settings_files_on_open()
-        return
+
     load_settings(autosplit, os.path.join(auto_split_directory, settings_files[0]))
 
 

@@ -194,7 +194,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         # Assuming all options take 2 lines (except camera and BitBlt which have 1).
         # And all lines take 16 pixels
         # And all separators take 2 pixels
-        doubled_len = 2 * len(capture_method_values)
+        doubled_len = 2 * len(capture_method_values) or 2
         list_view.setMinimumHeight((doubled_len - 2) * 16 + doubled_len)
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
