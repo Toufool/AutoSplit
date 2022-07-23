@@ -2,10 +2,13 @@
 # Library: cv2, version: 4.4.0
 # Module: cv2.cv2, version: 4.4.0
 import builtins as _mod_builtins
+from dataclasses import dataclass
 import typing
 
 import cv2 as _mod_cv2
 import numpy as np
+import cv2.Error as Error
+__all__ = ["Error"]
 
 Mat = np.ndarray[int, np.dtype[np.generic]]
 
@@ -2235,7 +2238,14 @@ def erode(src: Mat, kernel, dts: Mat = ..., anchor=..., iterations=..., borderTy
     "erode(src, kernel[, dst[, anchor[, iterations[, borderType[, borderValue]]]]]) -> dst\n.   @brief Erodes an image by using a specific structuring element.\n.   \n.   The function erodes the source image using the specified structuring element that determines the\n.   shape of a pixel neighborhood over which the minimum is taken:\n.   \n.   \\f[\\texttt{dst} (x,y) =  \\min _{(x',y'):  \\, \\texttt{element} (x',y') \\ne0 } \\texttt{src} (x+x',y+y')\\f]\n.   \n.   The function supports the in-place mode. Erosion can be applied several ( iterations ) times. In\n.   case of multi-channel images, each channel is processed independently.\n.   \n.   @param src input image; the number of channels can be arbitrary, but the depth should be one of\n.   CV_8U, CV_16U, CV_16S, CV_32F or CV_64F.\n.   @param dst output image of the same size and type as src.\n.   @param kernel structuring element used for erosion; if `element=Mat()`, a `3 x 3` rectangular\n.   structuring element is used. Kernel can be created using #getStructuringElement.\n.   @param anchor position of the anchor within the element; default value (-1, -1) means that the\n.   anchor is at the element center.\n.   @param iterations number of times erosion is applied.\n.   @param borderType pixel extrapolation method, see #BorderTypes. #BORDER_WRAP is not supported.\n.   @param borderValue border value in case of a constant border\n.   @sa  dilate, morphologyEx, getStructuringElement"
     ...
 
-error = _mod_cv2.error
+class error(Exception):
+  code: int
+  err: str
+  file: str
+  func: str
+  line: int
+  msg: str
+
 def estimateAffine2D(from_, to, inliers=..., method: int = ..., ransacReprojThreshold=..., maxIters=..., confidence=..., refineIters=...) -> typing.Any:
     'estimateAffine2D(from, to[, inliers[, method[, ransacReprojThreshold[, maxIters[, confidence[, refineIters]]]]]]) -> retval, inliers\n.   @brief Computes an optimal affine transformation between two 2D point sets.\n.   \n.   It computes\n.   \\f[\n.   \\begin{bmatrix}\n.   x\\\\\n.   y\\\\\n.   \\end{bmatrix}\n.   =\n.   \\begin{bmatrix}\n.   a_{11} & a_{12}\\\\\n.   a_{21} & a_{22}\\\\\n.   \\end{bmatrix}\n.   \\begin{bmatrix}\n.   X\\\\\n.   Y\\\\\n.   \\end{bmatrix}\n.   +\n.   \\begin{bmatrix}\n.   b_1\\\\\n.   b_2\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   \n.   @param from First input 2D point set containing \\f$(X,Y)\\f$.\n.   @param to Second input 2D point set containing \\f$(x,y)\\f$.\n.   @param inliers Output vector indicating which points are inliers (1-inlier, 0-outlier).\n.   @param method Robust method used to compute transformation. The following methods are possible:\n.   -   cv::RANSAC - RANSAC-based robust method\n.   -   cv::LMEDS - Least-Median robust method\n.   RANSAC is the default method.\n.   @param ransacReprojThreshold Maximum reprojection error in the RANSAC algorithm to consider\n.   a point as an inlier. Applies only to RANSAC.\n.   @param maxIters The maximum number of robust method iterations.\n.   @param confidence Confidence level, between 0 and 1, for the estimated transformation. Anything\n.   between 0.95 and 0.99 is usually good enough. Values too close to 1 can slow down the estimation\n.   significantly. Values lower than 0.8-0.9 can result in an incorrectly estimated transformation.\n.   @param refineIters Maximum number of iterations of refining algorithm (Levenberg-Marquardt).\n.   Passing 0 will disable refining, so the output matrix will be output of robust method.\n.   \n.   @return Output 2D affine transformation matrix \\f$2 \\times 3\\f$ or empty matrix if transformation\n.   could not be estimated. The returned matrix has the following form:\n.   \\f[\n.   \\begin{bmatrix}\n.   a_{11} & a_{12} & b_1\\\\\n.   a_{21} & a_{22} & b_2\\\\\n.   \\end{bmatrix}\n.   \\f]\n.   \n.   The function estimates an optimal 2D affine transformation between two 2D point sets using the\n.   selected robust algorithm.\n.   \n.   The computed transformation is then refined further (using only inliers) with the\n.   Levenberg-Marquardt method to reduce the re-projection error even more.\n.   \n.   @note\n.   The RANSAC method can handle practically any ratio of outliers but needs a threshold to\n.   distinguish inliers from outliers. The method LMeDS does not need any threshold but it works\n.   correctly only when there are more than 50% of inliers.\n.   \n.   @sa estimateAffinePartial2D, getAffineTransform'
     ...
