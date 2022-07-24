@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from threading import Thread
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import keyboard
 import pyautogui
 
-from utils import START_AUTO_SPLITTER_TEXT, is_digit
+from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -217,6 +216,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # New thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
+    @fire_and_forget
     def callback():
         hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
@@ -248,4 +248,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # Try to remove the previously set hotkey if there is one.
     _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-    Thread(target=callback).start()
+    callback()

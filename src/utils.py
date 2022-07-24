@@ -7,6 +7,7 @@ import os
 import sys
 from collections.abc import Callable, Iterable
 from platform import version
+from threading import Thread
 from typing import TYPE_CHECKING, Any, Optional, TypeVar, Union, cast
 
 import cv2
@@ -73,8 +74,19 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
-def fire_and_forget(func: Callable[..., None]):
+def fire_and_forget(func: Callable[..., Any]):
+    """
+    Runs synchronous function asynchronously without waiting for a response
+
+    Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
+
+    Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
+    """
     def wrapped(*args: Any, **kwargs: Any):
+        if sys.platform == "win32":
+            thread = Thread(target=func, args=args, kwargs=kwargs)
+            thread.start()
+            return thread
         return asyncio.get_event_loop().run_in_executor(None, func, *args, *kwargs)
 
     return wrapped
