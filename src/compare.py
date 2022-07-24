@@ -114,7 +114,7 @@ def check_if_image_has_transparency(image: cv2.Mat):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False
-    mean: float = np.mean(image[:, :, 3])
+    mean: float = np.mean(image[:, :, 3])  # pyright: ignore [reportGeneralTypeIssues]
     if mean == 0:
         # Non-transparent images code path is usually faster and simpler, so let's return that
         return False

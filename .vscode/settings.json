@@ -12,7 +12,8 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
+    // FIXME: fixAll remove "unused" imports. Let's try to figure out why
+    "source.fixAll": false,
     "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,

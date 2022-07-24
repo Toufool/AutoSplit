@@ -214,9 +214,9 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         backend = ""
         try:
             # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-            backend = video_capture.getBackendName()
-            video_capture.grab()
-        except cv2.error as error:  # pyright: ignore [reportUnknownVariableType]
+            backend = video_capture.getBackendName()  # STS_ASSERT
+            video_capture.grab()  # STS_ERROR
+        except cv2.error as error:
             return CameraInfo(index, device_name, True, backend) \
                 if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
                 else None

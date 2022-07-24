@@ -23,7 +23,14 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
     def __read_loop(self, autosplit: AutoSplit):
         try:
             while not self.stop_thread.is_set():
-                result, image = self.capture_device.read()
+                try:
+                    result, image = self.capture_device.read()
+                except cv2.error as error:
+                    if error.code != cv2.Error.STS_ERROR:
+                        raise
+                    # STS_ERROR most likely means the camera is occupied
+                    result = False
+                    image = None
                 self.last_captured_frame = image if result else None
                 self.is_old_image = False
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
