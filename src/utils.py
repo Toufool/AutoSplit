@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import ctypes
 import ctypes.wintypes
@@ -5,13 +7,15 @@ import os
 import sys
 from collections.abc import Callable, Iterable
 from platform import version
-from typing import Any, Optional, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, TypeVar, Union, cast
 
 import cv2
-from typing_extensions import TypeGuard
 from win32 import win32gui
 
 from gen.build_number import AUTOSPLIT_BUILD_NUMBER
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeGuard
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 

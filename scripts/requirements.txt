@@ -10,7 +10,7 @@
 # Creating AutoSplit.exe with PyInstaller: ./scripts/build.ps1
 #
 # Dependencies:
-numpy>=1.22.0rc1,<1.23 # Type issue
+numpy>=1.21.4 # Python 3.10 support
 opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
 PyQt6>=6.2.1
 PySide6
@@ -24,7 +24,6 @@ certifi
 toml
 psutil
 pygrabber
-typing-extensions
 # Windows-only
 pywin32>=301
 winsdk>=v1.0.0b4

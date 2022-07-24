@@ -12,8 +12,7 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    // FIXME: fixAll remove "unused" imports. Let's try to figure out why
-    "source.fixAll": false,
+    "source.fixAll": true,
     "source.organizeImports": true,
   },
   "files.insertFinalNewline": true,
@@ -54,7 +53,11 @@
       // 88, // Black default
       99, // PEP8-17 acceptable max
       120, // Our hard rule
-    ]
+    ],
+    "editor.codeActionsOnSave": {
+      // This removes "unused" imports. https://github.com/microsoft/pylance-release/issues/3091
+      "source.fixAll": false,
+    },
   },
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,

@@ -74,7 +74,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
                 # OSError: The application called an interface that was marshalled for a different thread
                 # This still seems to close the session and prevent the following hard crash in LiveSplit
                 # pylint: disable=line-too-long
-                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"  # noqa: E501
+                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"  # noqa E501
                 pass
             self.session = None
 

@@ -23,4 +23,4 @@ ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,
 ; McCabe max-complexity is also taken care of by Pylint and doesn't fail the build there
 ; So this is the hard limit
 max-complexity=32
-inline-quotes="
+inline-quotes=double
