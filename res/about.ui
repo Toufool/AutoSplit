@@ -128,6 +128,9 @@ consider donating. Thank you!</string>
     <bool>true</bool>
    </property>
   </widget>
+  <zorder>icon_label</zorder>
+  <zorder>version_label</zorder>
+  <zorder>created_by_label</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>

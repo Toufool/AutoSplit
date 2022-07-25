@@ -652,17 +652,20 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
   </widget>
  </widget>
  <tabstops>
-  <tabstop>split_input</tabstop>
-  <tabstop>reset_input</tabstop>
-  <tabstop>undo_split_input</tabstop>
-  <tabstop>skip_split_input</tabstop>
-  <tabstop>pause_input</tabstop>
-  <tabstop>default_comparison_method</tabstop>
-  <tabstop>default_similarity_threshold_spinbox</tabstop>
-  <tabstop>default_pause_time_spinbox</tabstop>
-  <tabstop>loop_splits_checkbox</tabstop>
+  <tabstop>set_split_hotkey_button</tabstop>
+  <tabstop>set_reset_hotkey_button</tabstop>
+  <tabstop>set_undo_split_hotkey_button</tabstop>
+  <tabstop>set_skip_split_hotkey_button</tabstop>
+  <tabstop>set_pause_hotkey_button</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
+  <tabstop>capture_method_combobox</tabstop>
+  <tabstop>capture_device_combobox</tabstop>
+  <tabstop>default_comparison_method</tabstop>
+  <tabstop>default_similarity_threshold_spinbox</tabstop>
+  <tabstop>default_delay_time_spinbox</tabstop>
+  <tabstop>default_pause_time_spinbox</tabstop>
+  <tabstop>loop_splits_checkbox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

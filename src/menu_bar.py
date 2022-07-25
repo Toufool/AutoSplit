@@ -48,6 +48,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         self.design_window = design_window
         if version_parse(latest_version) > version_parse(AUTOSPLIT_VERSION):
             self.do_not_ask_again_checkbox.setVisible(check_on_open)
+            self.left_button.setFocus()
             self.show()
         elif not check_on_open:
             self.update_status_label.setText("You are on the latest AutoSplit version.")
@@ -171,6 +172,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
+        self.autosplit = autosplit
         # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
         # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
         # Arrow buttons tend to move a lot as well
@@ -179,7 +181,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.default_similarity_threshold_spinbox.setFrame(False)
             self.default_delay_time_spinbox.setFrame(False)
             self.default_pause_time_spinbox.setFrame(False)
-        self.autosplit = autosplit
+        # Don't autofocus any particular field
+        self.setFocus()
 
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
