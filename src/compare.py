@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from math import sqrt
-from typing import Optional
+from typing import Any, Optional, cast
 
 import cv2
 import imagehash  # https://github.com/JohannesBuchner/imagehash/issues/151
@@ -114,7 +114,8 @@ def check_if_image_has_transparency(image: cv2.Mat):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[2] != 4:
         return False
-    mean: float = np.mean(image[:, :, 3])
+    # Needs casting for numpy>=1.23 https://github.com/numpy/numpy/issues/20099
+    mean: float = np.mean(cast(Any, image[:, :, 3]))
     if mean == 0:
         # Non-transparent images code path is usually faster and simpler, so let's return that
         return False
