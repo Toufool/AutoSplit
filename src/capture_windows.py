@@ -55,9 +55,7 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
                              dc_object,
                              (selection.x, selection.y),
                              win32con.SRCCOPY)
-    # https://github.com/kaluluosi/pywin32-stubs/issues/5
-    # pylint: disable=no-member
-    except (win32ui.error, pywintypes.error):  # type: ignore
+    except (win32ui.error, pywintypes.error):
         return None
 
     image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")

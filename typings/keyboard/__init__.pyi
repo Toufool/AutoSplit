@@ -11,8 +11,6 @@ from keyboard._canonical_names import all_modifiers, normalize_name, sided_modif
 from keyboard._generic import GenericListener as _GenericListener
 from keyboard._keyboard_event import KEY_DOWN, KEY_UP, KeyboardEvent
 
-__all__ = ["all_modifiers", "normalize_name", "sided_modifiers", "KEY_DOWN", "KEY_UP", "KeyboardEvent"]
-
 __all__ = [
     "KEY_DOWN",
     "KEY_UP",
