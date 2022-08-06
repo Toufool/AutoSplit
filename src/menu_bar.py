@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -7,11 +8,11 @@ if TYPE_CHECKING:
 import webbrowser
 
 import requests
-from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
+from simplejson.errors import JSONDecodeError
 
 import error_messages
 import settings_file as settings
