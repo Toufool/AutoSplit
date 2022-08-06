@@ -20,17 +20,15 @@ PW_RENDERFULLCONTENT = 0x00000002
 
 
 @dataclass
-class Rect(ctypes.wintypes.RECT):
-    """
-    Overrides `ctypes.wintypes.RECT` to replace c_long with int for math operators
-    """
-    left: int = -1  # type: ignore
-    top: int = -1  # type: ignore
-    right: int = -1  # type: ignore
-    bottom: int = -1  # type: ignore
+class Region():
+    def __init__(self, x: int, y: int, width: int, height: int):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
 
 
-def capture_region(hwnd: int, selection: Rect, print_window: bool):
+def capture_region(hwnd: int, selection: Region, print_window: bool):
     """
     Captures an image of the region for a window matching the given
     parameters of the bounding box
@@ -40,8 +38,6 @@ def capture_region(hwnd: int, selection: Rect, print_window: bool):
     @return: The image of the region in the window in BGRA format
     """
 
-    width: int = selection.right - selection.left
-    height: int = selection.bottom - selection.top
     # If the window closes while it's being manipulated, it could cause a crash
     try:
         window_dc: int = win32gui.GetWindowDC(hwnd)
@@ -54,16 +50,17 @@ def capture_region(hwnd: int, selection: Rect, print_window: bool):
 
         compatible_dc = cast(PyCDC, dc_object.CreateCompatibleDC())
         bitmap: PyCBitmap = win32ui.CreateBitmap()
-        bitmap.CreateCompatibleBitmap(dc_object, width, height)
+        bitmap.CreateCompatibleBitmap(dc_object, selection.width, selection.height)
         compatible_dc.SelectObject(bitmap)
-        compatible_dc.BitBlt((0, 0), (width, height), dc_object, (selection.left, selection.top), win32con.SRCCOPY)
+        compatible_dc.BitBlt((0, 0), (selection.width, selection.height), dc_object,
+                             (selection.x, selection.y), win32con.SRCCOPY)
     # https://github.com/kaluluosi/pywin32-stubs/issues/5
     # pylint: disable=no-member
     except (win32ui.error, pywintypes.error):  # type: ignore
         return None
 
     image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
-    image.shape = (height, width, 4)
+    image.shape = (selection.height, selection.width, 4)
 
     try:
         dc_object.DeleteDC()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>main_window</class>
- <widget class="QMainWindow" name="main_window">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -37,7 +37,7 @@
    <string>AutoSplit</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../Auto-Split/res/resources.qrc">
+   <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <property name="whatsThis">
@@ -93,6 +93,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="reset_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>650</x>
@@ -108,7 +111,10 @@
      <string>Reset</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="undo_button">
+   <widget class="QPushButton" name="undo_split_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>650</x>
@@ -124,7 +130,10 @@
      <string>Undo</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="skip_button">
+   <widget class="QPushButton" name="skip_split_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>712</x>
@@ -196,6 +205,9 @@
     <property name="text">
      <string/>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="current_split_image">
     <property name="geometry">
@@ -211,6 +223,9 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="current_image_label">
@@ -265,7 +280,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>9999</string>
+     <string/>
     </property>
    </widget>
    <widget class="QSpinBox" name="width_spinbox">
@@ -332,7 +347,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Image Filename</string>
+     <string>-</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -507,7 +522,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Window Name</string>
+     <string>-</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -516,8 +531,8 @@
    <widget class="QLabel" name="image_loop_label">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>309</y>
+      <x>451</x>
+      <y>313</y>
       <width>67</width>
       <height>20</height>
      </rect>
@@ -796,8 +811,8 @@
    <widget class="QLabel" name="start_image_status_label">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>345</y>
+      <x>449</x>
+      <y>344</y>
       <width>98</width>
       <height>16</height>
      </rect>
@@ -809,8 +824,8 @@
    <widget class="QLabel" name="start_image_status_value_label">
     <property name="geometry">
      <rect>
-      <x>551</x>
-      <y>345</y>
+      <x>550</x>
+      <y>344</y>
       <width>98</width>
       <height>16</height>
      </rect>
@@ -822,17 +837,20 @@
    <widget class="QLabel" name="image_loop_value_label">
     <property name="geometry">
      <rect>
-      <x>519</x>
-      <y>309</y>
+      <x>520</x>
+      <y>313</y>
       <width>131</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>x/x</string>
+     <string>N/A</string>
     </property>
    </widget>
    <widget class="QPushButton" name="previous_image_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>449</x>
@@ -852,6 +870,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="next_image_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>744</x>
@@ -874,8 +895,8 @@
    <zorder>select_region_button</zorder>
    <zorder>start_auto_splitter_button</zorder>
    <zorder>reset_button</zorder>
-   <zorder>undo_button</zorder>
-   <zorder>skip_button</zorder>
+   <zorder>undo_split_button</zorder>
+   <zorder>skip_split_button</zorder>
    <zorder>check_fps_button</zorder>
    <zorder>fps_label</zorder>
    <zorder>current_image_label</zorder>
@@ -1027,7 +1048,7 @@
   <tabstop>height_spinbox</tabstop>
  </tabstops>
  <resources>
-  <include location="../../Auto-Split/res/resources.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
@@ -14,7 +15,9 @@ from requests.exceptions import RequestException
 
 import error_messages
 import settings_file as settings
-from gen import about, design, resources_rc, update_checker  # noqa: F401
+from capture_windows import Region
+from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
+from hotkeys import set_split_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_undo_split_hotkey, set_pause_hotkey
 
 # AutoSplit Version number
 VERSION = "1.6.1"
@@ -82,7 +85,7 @@ class __CheckForUpdatesThread(QThread):
     def run(self):
         try:
             response = requests.get("https://api.github.com/repos/Toufool/Auto-Split/releases/latest")
-            latest_version = response.json()["name"].split("v")[1]
+            latest_version = str(response.json()["name"]).split("v")[1]
             self.autosplit.update_checker_widget_signal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError, JSONDecodeError):
             if not self.check_on_open:
@@ -92,3 +95,107 @@ class __CheckForUpdatesThread(QThread):
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread = __CheckForUpdatesThread(autosplit, check_on_open)
     autosplit.CheckForUpdatesThread.start()
+
+
+class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__()
+        self.setupUi(self)
+        self.autosplit = autosplit
+
+        def set_value(key: str, value: Any):
+            autosplit.settings_dict[key] = value
+
+# region Set initial values
+        # Hotkeys
+        self.split_input.setText(autosplit.settings_dict["split_hotkey"])
+        self.reset_input.setText(autosplit.settings_dict["reset_hotkey"])
+        self.undo_split_input.setText(autosplit.settings_dict["undo_split_hotkey"])
+        self.skip_split_input.setText(autosplit.settings_dict["skip_split_hotkey"])
+        self.pause_input.setText(autosplit.settings_dict["pause_hotkey"])
+
+        # Capture Settings
+        self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
+        self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
+        self.force_print_window_checkbox.setChecked(autosplit.settings_dict["force_print_window"])
+
+        # Image Settings
+        self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
+        self.default_similarity_threshold_spinbox.setValue(autosplit.settings_dict["default_similarity_threshold"])
+        self.default_delay_time_spinbox.setValue(autosplit.settings_dict["default_delay_time"])
+        self.default_pause_time_spinbox.setValue(autosplit.settings_dict["default_pause_time"])
+        self.loop_splits_checkbox.setChecked(autosplit.settings_dict["loop_splits"])
+# endregion
+# region Binding
+        # Hotkeys
+        self.set_split_hotkey_button.clicked.connect(lambda: set_split_hotkey(self.autosplit))
+        self.set_reset_hotkey_button.clicked.connect(lambda: set_reset_hotkey(self.autosplit))
+        self.set_skip_split_hotkey_button.clicked.connect(lambda: set_skip_split_hotkey(self.autosplit))
+        self.set_undo_split_hotkey_button.clicked.connect(lambda: set_undo_split_hotkey(self.autosplit))
+        self.set_pause_hotkey_button.clicked.connect(lambda: set_pause_hotkey(self.autosplit))
+
+        # Capture Settings
+        self.fps_limit_spinbox.valueChanged.connect(lambda: set_value(
+            "fps_limit",
+            self.fps_limit_spinbox.value()))
+        self.live_capture_region_checkbox.stateChanged.connect(lambda: set_value(
+            "live_capture_region",
+            self.live_capture_region_checkbox.isChecked()))
+        self.force_print_window_checkbox.stateChanged.connect(lambda: set_value(
+            "force_print_window",
+            self.force_print_window_checkbox.isChecked()))
+
+        # Image Settings
+        self.default_comparison_method.currentIndexChanged.connect(lambda: set_value(
+            "default_comparison_method",
+            self.default_comparison_method.currentIndex()))
+        self.default_similarity_threshold_spinbox.valueChanged.connect(lambda: set_value(
+            "default_similarity_threshold",
+            self.default_similarity_threshold_spinbox.value()))
+        self.default_delay_time_spinbox.valueChanged.connect(lambda: set_value(
+            "default_delay_time",
+            self.default_delay_time_spinbox.value()))
+        self.default_pause_time_spinbox.valueChanged.connect(lambda: set_value(
+            "default_pause_time",
+            self.default_pause_time_spinbox.value()))
+        self.loop_splits_checkbox.stateChanged.connect(lambda: set_value(
+            "loop_splits",
+            self.loop_splits_checkbox.isChecked()))
+# endregion
+
+        self.show()
+
+
+def open_settings(autosplit: AutoSplit):
+    autosplit.SettingsWidget = __SettingsWidget(autosplit)
+
+
+def get_default_settings_from_ui(autosplit: AutoSplit):
+    temp_dialog = QtWidgets.QDialog()
+    default_settings_dialog = settings_ui.Ui_DialogSettings()
+    default_settings_dialog.setupUi(temp_dialog)
+    default_settings: settings.SettingsDict = {
+        "split_hotkey": default_settings_dialog.split_input.text(),
+        "reset_hotkey": default_settings_dialog.reset_input.text(),
+        "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
+        "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
+        "pause_hotkey": default_settings_dialog.pause_input.text(),
+        "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
+        "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
+        "force_print_window": default_settings_dialog.force_print_window_checkbox.isChecked(),
+        "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
+        "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
+        "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
+        "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
+        "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
+
+        "split_image_directory": autosplit.split_image_folder_input.text(),
+        "captured_window_title": "",
+        "capture_region": Region(
+            autosplit.x_spinbox.value(),
+            autosplit.y_spinbox.value(),
+            autosplit.width_spinbox.value(),
+            autosplit.height_spinbox.value())
+    }
+    del temp_dialog
+    return default_settings
