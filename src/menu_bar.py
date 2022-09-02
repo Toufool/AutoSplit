@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -7,17 +8,17 @@ if TYPE_CHECKING:
 import webbrowser
 
 import requests
-from simplejson.errors import JSONDecodeError
 from packaging import version
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
+from simplejson.errors import JSONDecodeError
 
 import error_messages
 import settings_file as settings
 from capture_windows import Region
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
-from hotkeys import set_split_hotkey, set_reset_hotkey, set_skip_split_hotkey, set_undo_split_hotkey, set_pause_hotkey
+from hotkeys import set_hotkey
 
 # AutoSplit Version number
 VERSION = "1.6.1"
@@ -128,11 +129,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 # endregion
 # region Binding
         # Hotkeys
-        self.set_split_hotkey_button.clicked.connect(lambda: set_split_hotkey(self.autosplit))
-        self.set_reset_hotkey_button.clicked.connect(lambda: set_reset_hotkey(self.autosplit))
-        self.set_skip_split_hotkey_button.clicked.connect(lambda: set_skip_split_hotkey(self.autosplit))
-        self.set_undo_split_hotkey_button.clicked.connect(lambda: set_undo_split_hotkey(self.autosplit))
-        self.set_pause_hotkey_button.clicked.connect(lambda: set_pause_hotkey(self.autosplit))
+        self.set_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "split"))
+        self.set_reset_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "reset"))
+        self.set_skip_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "skip_split"))
+        self.set_undo_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "undo_split"))
+        self.set_pause_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "pause"))
 
         # Capture Settings
         self.fps_limit_spinbox.valueChanged.connect(lambda: set_value(
