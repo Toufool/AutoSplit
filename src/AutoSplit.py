@@ -335,10 +335,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.start_image_split_below_threshold = False
 
             # delay start image if needed
-            if self.start_image.delay > 0:
+            if self.start_image.get_delay_time(self) > 0:
                 self.start_image_status_value_label.setText("delaying start...")
                 delay_start_time = time()
-                start_delay = self.start_image.delay / 1000
+                start_delay = self.start_image.get_delay_time(self) / 1000
                 while time() - delay_start_time < start_delay:
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
@@ -391,7 +391,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # save and open image
         cv2.imwrite(screenshot_path, capture)
-        os.startfile(screenshot_path)
+        os.startfile(screenshot_path)  # nosec
 
     def __check_fps(self):
         self.fps_value_label.clear()
@@ -616,7 +616,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if not self.split_image.check_flag(DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
-                split_delay = self.split_image.delay / 1000
+                split_delay = self.split_image.get_delay_time(self) / 1000
                 if split_delay > 0 and not self.waiting_for_split_delay:
                     split_time = round(time() + split_delay * 1000)
                     self.waiting_for_split_delay = True
