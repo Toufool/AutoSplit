@@ -69,7 +69,8 @@ def reset_hotkey():
 
 
 def old_version_settings_file():
-    set_text_message("Old version settings file detected. This version allows settings files from v1.3 and above.")
+    set_text_message(
+        "Old version settings file detected. This version allows settings files in .toml format. Starting from v2.0.")
 
 
 def invalid_settings():

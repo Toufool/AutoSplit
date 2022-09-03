@@ -34,7 +34,7 @@ def __value_from_filename(
 def threshold_from_filename(filename: str):
     """
     Retrieve the threshold from the filename, if there is no threshold or the threshold
-    doesn't meet the requirements of being between 0.0 and 1.0, then None is returned.
+    doesn't meet the requirements of being [0, 1], then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid threshold, if not then None
@@ -45,13 +45,13 @@ def threshold_from_filename(filename: str):
     value = __value_from_filename(filename, "()", -1.0)
 
     # Check to make sure if it is a valid threshold
-    return value if 0.0 < value < 1.0 else None
+    return value if 0.0 <= value <= 1.0 else None
 
 
 def pause_from_filename(filename: str):
     """
     Retrieve the pause time from the filename, if there is no pause time or the pause time
-    isn't a valid number, then None is returned
+    isn't a valid positive number or 0, then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid pause time, if not then None
@@ -68,15 +68,15 @@ def pause_from_filename(filename: str):
 def delay_time_from_filename(filename: str):
     """
     Retrieve the delay time from the filename, if there is no delay time or the delay time
-    isn't a valid number, then 0 is returned
+    isn't a valid positive number or 0 number, then None is returned.
 
     @param filename: String containing the file's name
-    @return: A valid delay time, if not then 0
+    @return: A valid delay time, if not then none
     """
 
     # Check to make sure there is a valid delay time between brackets
     # of the filename
-    value = __value_from_filename(filename, "##", 0)
+    value = __value_from_filename(filename, "##", -1)
 
     # Delay times should always be positive or zero
     return value if value >= 0 else None
@@ -101,11 +101,11 @@ def loop_from_filename(filename: str):
 
 def comparison_method_from_filename(filename: str):
     """
-    Retrieve the number of loops from filename, if there is no loop number or the loop number isn't valid,
-    then 1 is returned.
+    Retrieve the comparison method index from filename, if there is no comparison method or the index isn't valid,
+    then None is returned.
 
     @param filename: String containing the file's name
-    @return: A valid loop number, if not then 1
+    @return: A valid comparison method index, if not then none
     """
 
     # Check to make sure there is a valid delay time between brackets
@@ -138,8 +138,8 @@ def flags_from_filename(filename: str):
 
     flags = 0x00
 
-    for character in flags_str:
-        character = character.upper()
+    for flag_str in flags_str:
+        character = flag_str.upper()
         if character == "D":
             flags |= DUMMY_FLAG
         elif character == "B":
@@ -187,7 +187,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     # according to all of the settings selected by the user.
     for image in autosplit.split_images:
         # Test for image without transparency
-        if image.bytes is None:
+        if image.byte_array is None:
             autosplit.gui_changes_on_reset()
             return False
 
