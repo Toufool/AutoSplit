@@ -1,24 +1,25 @@
 import sys
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Sequence
 from ctypes import c_long
+from typing import TypeVar
 
 from keyboard._generic import GenericListener as _GenericListener
 from keyboard._mouse_event import (DOUBLE as DOUBLE, DOWN as DOWN, LEFT as LEFT, MIDDLE as MIDDLE, RIGHT as RIGHT,
                                    UP as UP, X2 as X2, ButtonEvent as ButtonEvent, MoveEvent as MoveEvent,
-                                   WheelEvent as WheelEvent, X as X, _MouseButton, _MouseEvent, _MouseEventType)
+                                   WheelEvent as WheelEvent, X as X, _MouseButton, _MouseEvent)
 from typing_extensions import Literal, TypeAlias
 
 # Can't use ParamSpecArgs on `args`, only on `*args`
 # _P = ParamSpec("_P")
 _P: TypeAlias = tuple[object, ...]
-_Callback: TypeAlias = Callable[[_MouseEvent], bool | None]
+_Callback: TypeAlias = Callable[[ButtonEvent | WheelEvent | MoveEvent], bool | None]
 
 
 class _MouseListener(_GenericListener):
     def init(self) -> None: ...
 
     def pre_process_event(
-        self, event: _MouseEvent
+        self, event: ButtonEvent | MoveEvent | WheelEvent
     ) -> Literal[True]: ...
     def listen(self) -> None: ...
 
@@ -41,13 +42,13 @@ def on_button(
     callback: Callable[..., None],
     args: _P = ...,
     buttons: list[_MouseButton] | tuple[_MouseButton, ...] | _MouseButton = ...,
-    types: list[_MouseEventType] | tuple[_MouseEventType, ...] | _MouseEventType = ...,
+    types: list[_MouseEvent] | tuple[_MouseEvent, ...] | _MouseEvent = ...,
 ) -> _Callback: ...
 def on_click(callback: Callable[..., None], args: _P = ...) -> _Callback: ...
 def on_double_click(callback: Callable[..., None], args: _P = ...) -> _Callback: ...
 def on_right_click(callback: Callable[..., None], args: _P = ...) -> _Callback: ...
 def on_middle_click(callback: Callable[..., None], args: _P = ...) -> _Callback: ...
-def wait(button: _MouseButton = ..., target_types: tuple[_MouseEventType] = ...) -> None: ...
+def wait(button: _MouseButton = ..., target_types: tuple[_MouseEvent] = ...) -> None: ...
 
 
 if sys.platform == "win32":
@@ -60,11 +61,14 @@ else:
 def hook(callback: _Callback) -> _Callback: ...
 def unhook(callback: _Callback) -> None: ...
 def unhook_all() -> None: ...
-def record(button: _MouseButton = ..., target_types: tuple[_MouseEventType] = ...) -> _MouseEvent: ...
+
+
+def record(button: _MouseButton = ..., target_types: tuple[_MouseEvent]
+           = ...) -> ButtonEvent | WheelEvent | MoveEvent: ...
 
 
 def play(
-    events: Iterable[_MouseEvent],
+    events: Sequence[ButtonEvent | WheelEvent | MoveEvent],
     speed_factor: float = ...,
     include_clicks: bool = ...,
     include_moves: bool = ...,

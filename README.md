@@ -4,9 +4,9 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=Avasam_Auto-Split)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_Auto-Split&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_Auto-Split)
+[![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
@@ -18,28 +18,29 @@ This program can be used to automatically start, split, and reset your preferred
 
 ## DOWNLOAD AND OPEN
 
+- Download the [latest version](/../../releases/latest)
+
 ### Compatibility
 
-- Windows 7, 10, and 11.
-
-### Opening the program
-
-- Download the [latest version](/../../releases/latest)
-- Extract the file and open AutoSplit.exe.
+- Windows 10 and 11.
 
 ### Building
 
 (This is not required for normal use)
 
-- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- Python 3.9 - 3.10.
+- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 - Node is optional, but required for complete linting (using Pyright).
-- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code
-  - Run `.\scripts\install.bat` to install all dependencies
-  - Run the app directly with `.\scripts\start.bat [--auto-controlled]`
-  - Run `.\scripts\build.bat` to build an executable
-- Recompile resources after modifications by running `.\scripts\compile_resources.bat`
+- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
+  - Run `./scripts/install.ps1` to install all dependencies.
+  - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
+  - Run `./scripts/build.ps1` to build an executable.
+- Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
+- All configured for VSCode, including Run (F5) and Build (Ctrl+Shift+B) commands.
 
-## Split Image Folder
+## OPTIONS
+
+#### Split Image Folder
 
 - Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
 - Images can be any size.
@@ -48,31 +49,31 @@ This program can be used to automatically start, split, and reset your preferred
 - Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
 - To create split images, it is recommended to use AutoSplit's Take Screenshot button for accuracy. However, images can be created using any method including Print Screen and [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot).
 
-## Capture Region
+#### Capture Region
 
 - This is the region that your split images are compared to. Usually, this is going to be the full game screen.
-- Click "Select Region"
+- Click "Select Region".
 - Click and drag to form a rectangle over the region you want to capture.
 - Adjust the x, y, width, and height of the capture region manually to make adjustments as needed.
-- If you want to align your capture region by using a reference image, click "Align Region"
+- If you want to align your capture region by using a reference image, click "Align Region".
 - You can freely move the window that the program is capturing, but resizing the window will cause the capture region to change.
 - Once you are happy with your capture region, you may unselect Live Capture Region to decrease CPU usage if you wish.
 - You can save a screenshot of the capture region to your split image folder using the Take Screenshot button.
 
-## Avg. FPS
+#### Avg. FPS
 
 - Calculates the average comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
-## OPTIONS
+### Settings
 
-### Comparison Method
+#### Comparison Method
 
 - There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (or pHash).
-  - L2 Norm: This method should be fine to use for most cases. it finds the difference between each pixel, squares it, and sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
+  - L2 Norm: This method should be fine to use for most cases. It finds the difference between each pixel, squares it, sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
 
-### Capture Method
+#### Capture Method
 
 - **BitBlt** (fastest, least compatible)  
     A good default fast option. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
@@ -96,33 +97,58 @@ This program can be used to automatically start, split, and reset your preferred
     There are currently performance issues, but it might be more convenient.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://obsproject.com/forum/resources/obs-virtualcam.949/) instead.  
 
-### Show Live Similarity
+#### Show Live Similarity
 
 - Displays the live similarity between the capture region and the current split image. This number is between 0 and 1, with 1 being a perfect match.
 
-### Show Highest Similarity
+#### Show Highest Similarity
 
 - Shows the highest similarity between the capture region and current split image.
 
-### Current Similarity Threshold
+#### Current Similarity Threshold
 
 - When the live similarity goes above this value, the program hits your split hotkey and moves to the next split image.
 
-### Default Similarity Threshold
+#### Default Similarity Threshold
 
 - This value will be set as the threshold for an image if there is no custom threshold set for that image.
 
-### Pause Time
+#### Pause Time
 
 - Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
 
-### Default Pause Time
+#### Default Pause Time
 
 - This value will be set as the Pause Time for an image if there is no custom Pause Time set for that image.
 
-### Delay Time
+#### Delay Time
 
 - Time in milliseconds that the program waits before hitting the split hotkey for that specific split.
+
+#### Dummy splits when undoing / skipping
+
+AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it as in sync as possible with the real splits in LiveSplit/wsplit. If they are out of sync, you can always use "Previous Image" and "Next Image".
+
+Examples:
+Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
+
+In this situation you would have only 3 splits in LiveSplit/wsplit (even though there are 6 split images, only 3 are "real" splits). This basically results in 3 groups of splits: 1st split is images 1 and 2. 2nd split is images 3, 4 and 5. 3rd split is image 6.
+
+- If you are in the 1st or 2nd image and press the skip key, it will end up on the 3rd image
+- If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 2nd image
+- If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
+- If you are in the 6th image and press the undo key, it will end up on the 5th image
+
+#### Loop Split Images
+
+If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
+If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
+This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
+
+#### Auto Start On Reset
+
+If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
+If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
 
 ### Custom Split Image Settings
 
@@ -131,17 +157,23 @@ This program can be used to automatically start, split, and reset your preferred
 - Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
 - Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
+- A different comparison method can be specified with their 0-base index between carets `^^`:
+  - `^0^`: L2 Norm
+  - `^1^`: Histogram
+  - `^2^`: Perceptual Hash
 - Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
 - Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
-  - {d} dummy split image. When matched, it moves to the next image without hitting your split hotkey.
-  - {b} split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
-  - {p} pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
+  - `{d}` dummy split image. When matched, it moves to the next image without hitting your split hotkey.
+  - `{b}` split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
+  - `{p}` pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
 - Filename examples:
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
   - `003_SplitName_(0.85)_[20]_#3500#.png` is the third split image with a threshold of 0.85, pause time of 20 and has a delay split time of 3.5 seconds.
   - `004_SplitName_(0.9)_[10]_#3500#_@3@_{b}.png` is the fourth split image with a threshold of 0.9, pause time of 10 seconds, delay split time of 3.5 seconds, will loop 3 times, and will split when similarity is below the threshold rather than above.
   
+## Special images
+
 ### How to Create a Masked Image
 
 Masked images are very useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate.
@@ -158,38 +190,6 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 
 The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset. Delay times will be used to delay starting your timer after the threshold is met. If you need to pause comparison for any amount of time after the Start Image, the best option right now is to use a dummy split image `{d}` with a similarity threshold of `(0.00)` and a pause threshold `[]` of however long you need to pause comparison as your first split image. This will trigger the pause immediately after your timer is started.
 
-### Timer Global Hotkeys
-
-- Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. The Start / Split hotkey and Pause hotkey must be the same as the one used in your preferred timer program in order for the splitting/pausing to work properly.
-- Make sure that Global Hotkeys are enabled in your speedrun timer.
-- All of these actions can also be handled by their corresponding buttons.
-- Note that pressing your Pause Hotkey does not serve any function in AutoSplit itself and is strictly used for the Pause flag.
-
-### Dummy splits when undoing / skipping
-
-AutoSplit will group dummy splits together with a real split when undoing/skipping. This basically allows you to tie one or more dummy splits to a real split to keep it as in sync as possible with the real splits in LiveSplit/wsplit. If they are out of sync, you can always use "Previous Image" and "Next Image".
-
-Examples:
-Given these splits: 1 dummy, 2 normal, 3 dummy, 4 dummy, 5 normal, 6 normal.
-
-In this situation you would have only 3 splits in LiveSplit/wsplit (even though there are 6 split images, only 3 are "real" splits). This basically results in 3 groups of splits: 1st split is images 1 and 2. 2nd split is images 3, 4 and 5. 3rd split is image 6.
-
-- If you are in the 1st or 2nd image and press the skip key, it will end up on the 3rd image
-- If you are in the 3rd, 4th or 5th image and press the undo key, it will end up on the 2nd image
-- If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
-- If you are in the 6th image and press the undo key, it will end up on the 5th image
-
-### Loop Split Images
-
-If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
-If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
-This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
-
-### Auto Start On Reset
-
-If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
-If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
-
 ### Profiles
 
 - Profiles are saved under `%appdata%\AutoSplit\profiles` and use the extension `.toml`. Profiles can be saved and loaded by using File -> Save Profile As... and File -> Load Profile.
@@ -197,14 +197,23 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 - You can save multiple profiles, which is useful if you speedrun multiple games.
 - If you change your display setup (like using a new monitor, or upgrading to Windows 11), you may need to readjust or reselect your Capture Region.
 
-## LiveSplit Integration
+## Timer Integration
+
+### Timer Global Hotkeys
+
+- Click "Set Hotkey" on each hotkey to set the hotkeys to AutoSplit. The Start / Split hotkey and Pause hotkey must be the same as the one used in your preferred timer program in order for the splitting/pausing to work properly.
+- Make sure that Global Hotkeys are enabled in your speedrun timer.
+- All of these actions can also be handled by their corresponding buttons.
+- Note that pressing your Pause Hotkey does not serve any function in AutoSplit itself and is strictly used for the Pause flag.
+
+### LiveSplit Integration
 
 The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher. This integration will allow you to:
 
 - Use hotkeys directly from LiveSplit to control AutoSplit and LiveSplit together
 - Load AutoSplit and any AutoSplit profile automatically when opening a LiveSplit layout.
 
-### LiveSplit Integration Tutorial
+#### LiveSplit Integration Tutorial
 
 - Click [here](https://github.com/Toufool/LiveSplit.AutoSplitIntegration/raw/main/update/Components/LiveSplit.AutoSplitIntegration.dll) to download the latest component.
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.

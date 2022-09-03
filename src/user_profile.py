@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import sys
 from typing import TYPE_CHECKING, TypedDict, cast
 
 import keyboard
@@ -11,14 +10,11 @@ from PyQt6 import QtCore, QtWidgets
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
-from hotkeys import set_hotkey
+from hotkeys import HOTKEYS, set_hotkey
+from utils import auto_split_directory
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-# Keyword "frozen" is for setting basedir while in onefile mode in pyinstaller
-FROZEN = hasattr(sys, "frozen")
-# Get the directory of either AutoSplit.exe or AutoSplit.py
-auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 
 
 class UserProfileDict(TypedDict):
@@ -73,14 +69,9 @@ def save_settings(autosplit: AutoSplit):
     """
     @return: The save settings filepath. Or None if "Save Settings As" is cancelled
     """
-    if not autosplit.last_successfully_loaded_settings_file_path:
-        return save_settings_as(autosplit)
-
-    autosplit.last_saved_settings = autosplit.settings_dict
-    # Save settings to a .toml file
-    with open(autosplit.last_successfully_loaded_settings_file_path, "w", encoding="utf-8") as file:
-        toml.dump(autosplit.last_saved_settings, file)
-    return autosplit.last_successfully_loaded_settings_file_path
+    return __save_settings_to_file(autosplit, autosplit.last_successfully_loaded_settings_file_path) \
+        if autosplit.last_successfully_loaded_settings_file_path \
+        else save_settings_as(autosplit)
 
 
 def save_settings_as(autosplit: AutoSplit):
@@ -99,12 +90,14 @@ def save_settings_as(autosplit: AutoSplit):
     if not save_settings_file_path:
         return ""
 
-    autosplit.last_saved_settings = autosplit.settings_dict
+    return __save_settings_to_file(autosplit, save_settings_file_path)
 
+
+def __save_settings_to_file(autosplit: AutoSplit, save_settings_file_path: str):
+    autosplit.last_saved_settings = autosplit.settings_dict
     # Save settings to a .toml file
     with open(save_settings_file_path, "w", encoding="utf-8") as file:
         toml.dump(autosplit.last_saved_settings, file)
-
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
 
@@ -129,23 +122,16 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
             autosplit.y_spinbox.setValue(autosplit.settings_dict["capture_region"]["y"])
             autosplit.width_spinbox.setValue(autosplit.settings_dict["capture_region"]["width"])
             autosplit.height_spinbox.setValue(autosplit.settings_dict["capture_region"]["height"])
+            autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     except (FileNotFoundError, MemoryError, TypeError, toml.TomlDecodeError):
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
     keyboard.unhook_all()
     if not autosplit.is_auto_controlled:
-        if autosplit.settings_dict["split_hotkey"]:
-            set_hotkey(autosplit, "split", autosplit.settings_dict["split_hotkey"])
-        if autosplit.settings_dict["reset_hotkey"]:
-            set_hotkey(autosplit, "reset", autosplit.settings_dict["reset_hotkey"])
-        if autosplit.settings_dict["skip_split_hotkey"]:
-            set_hotkey(autosplit, "skip_split", autosplit.settings_dict["skip_split_hotkey"])
-        if autosplit.settings_dict["undo_split_hotkey"]:
-            set_hotkey(autosplit, "undo_split", autosplit.settings_dict["undo_split_hotkey"])
-        if autosplit.settings_dict["pause_hotkey"]:
-            set_hotkey(autosplit, "pause", autosplit.settings_dict["pause_hotkey"])
+        for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
+            if autosplit.settings_dict[hotkey_name]:
+                set_hotkey(autosplit, hotkey, cast(str, autosplit.settings_dict[hotkey_name]))
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
     autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"], autosplit)
@@ -157,10 +143,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     return True
 
 
-def load_settings(
-    autosplit: AutoSplit,
-    from_path: str = ""
-):
+def load_settings(autosplit: AutoSplit, from_path: str = ""):
     load_settings_file_path = from_path or QtWidgets.QFileDialog.getOpenFileName(
         autosplit,
         "Load Profile",
