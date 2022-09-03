@@ -7,8 +7,8 @@ import keyboard
 import pyautogui
 from PyQt6 import QtWidgets
 
-from error_messages import invalid_hotkey
-from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
+import error_messages
+from utils import START_AUTO_SPLITTER_TEXT, find_autosplit_main_window, fire_and_forget, is_digit
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -20,25 +20,31 @@ SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
-Hotkeys = Literal["split", "reset", "skip_split", "undo_split", "pause"]
-HOTKEYS: list[Hotkeys] = ["split", "reset", "skip_split", "undo_split", "pause"]
+Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
+HOTKEYS = ("split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image")
 
 
-def before_setting_hotkey(autosplit: AutoSplit):
+def remove_all_hotkeys():
+    keyboard.unhook_all()
+
+
+def before_setting_hotkey():
     """
     Do all of these after you click "Set Hotkey" but before you type the hotkey
     """
+    autosplit = find_autosplit_main_window()
     autosplit.start_auto_splitter_button.setEnabled(False)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
 
-def after_setting_hotkey(autosplit: AutoSplit):
+def after_setting_hotkey():
     """
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread
     """
+    autosplit = find_autosplit_main_window()
     if autosplit.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
         autosplit.start_auto_splitter_button.setEnabled(True)
     if autosplit.SettingsWidget:
@@ -47,7 +53,8 @@ def after_setting_hotkey(autosplit: AutoSplit):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
-def send_command(autosplit: AutoSplit, command: Commands):
+def send_command(command: Commands):
+    autosplit = find_autosplit_main_window()
     if autosplit.is_auto_controlled:
         print(command, flush=True)
     elif command in {"split", "start"}:
@@ -195,73 +202,85 @@ def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
 
-def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkeys):
+def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
         return lambda: autosplit.skip_split(True)
     if hotkey == "undo_split":
         return lambda: autosplit.undo_split(True)
+    if hotkey == "toggle_auto_reset_image":
+        def toggle_auto_reset_image():
+            new_value = not autosplit.settings_dict["enable_auto_reset"]
+            autosplit.settings_dict["enable_auto_reset"] = new_value
+            if autosplit.SettingsWidget:
+                autosplit.SettingsWidget.enable_auto_reset_checkbox.setChecked(new_value)
+        return toggle_auto_reset_image
     return getattr(autosplit, f"{hotkey}_signal").emit
-
-
-def is_valid_hotkey_name(hotkey_name: str):
-    return any(
-        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
-        for key
-        in hotkey_name.split("+"))
 
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
 
-def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: str = ""):
+def is_valid_hotkey_name(hotkey_name: str):
+    keys = hotkey_name.split("+")
+    return any(
+        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
+        for key
+        in keys)
+
+
+def set_hotkey(hotkey: Hotkey, preselected_hotkey_name: str = ""):
+    autosplit = find_autosplit_main_window()
     if autosplit.SettingsWidget:
         # Unfocus all fields
         cast(QtWidgets.QDialog, autosplit.SettingsWidget).setFocus()
         getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(PRESS_A_KEY_TEXT)
 
     # Disable some buttons
-    before_setting_hotkey(autosplit)
+    before_setting_hotkey()
 
-    # New thread points to callback. this thread is needed or GUI will freeze
-    # while the program waits for user input on the hotkey
+    # This needs to be run async or GUI will freeze while the program waits for user input
     @fire_and_forget
-    def callback():
-        hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
+    def read_and_set_hotkey():
+        try:
+            hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
-        if not is_valid_hotkey_name(hotkey_name):
-            autosplit.show_error_signal.emit(lambda: invalid_hotkey(hotkey_name))
-            return
+            if not is_valid_hotkey_name(hotkey_name):
+                autosplit.show_error_signal.emit(lambda: error_messages.invalid_hotkey(hotkey_name))
+                return
 
-        # Try to remove the previously set hotkey if there is one
-        _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-        # Remove any hotkey using the same key combination
+            # Try to remove the previously set hotkey if there is one
+            _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+            # Remove any hotkey using the same key combination
+            __remove_key_already_set(autosplit, hotkey_name)
 
-        __remove_key_already_set(autosplit, hotkey_name)
+            action = __get_hotkey_action(autosplit, hotkey)
+            setattr(
+                autosplit,
+                f"{hotkey}_hotkey",
+                # keyboard.add_hotkey doesn't give the last keyboard event, so we can't __validate_keypad.
+                # This means "ctrl + num 5" and "ctrl + 5" will both be registered.
+                # For that reason, we still prefer keyboard.hook_key for single keys.
+                # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
+                keyboard.add_hotkey(hotkey_name, action)
+                if "+" in hotkey_name
+                # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+                # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
+                # The best way to achieve this is make our own hotkey handling on top of hook
+                # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
+                else keyboard.hook_key(
+                    hotkey_name,
+                    lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action))
+            )
 
-        action = __get_hotkey_action(autosplit, hotkey)
-        setattr(
-            autosplit,
-            f"{hotkey}_hotkey",
-            # keyboard.add_hotkey doesn't give the last keyboard event, so we can't __validate_keypad.
-            # This means "ctrl + num 5" and "ctrl + 5" will both be registered.
-            # For that reason, we still prefer keyboard.hook_key for single keys.
-            # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
-            keyboard.add_hotkey(hotkey_name, action)
-            if "+" in hotkey_name
-            # We need to inspect the event to know if it comes from numpad because of _canonial_names.
-            # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
-            # The best way to achieve this is make our own hotkey handling on top of hook
-            # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
-            else keyboard.hook_key(
-                hotkey_name,
-                lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action))
-        )
+            if autosplit.SettingsWidget:
+                getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
+            autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
+        except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
+            error = exception
+            autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
+        finally:
+            autosplit.after_setting_hotkey_signal.emit()
 
-        if autosplit.SettingsWidget:
-            getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
-        autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
-        autosplit.after_setting_hotkey_signal.emit()
-
-    callback()
+    read_and_set_hotkey()

@@ -1,26 +1,22 @@
 from __future__ import annotations
 
 from threading import Event, Thread
-from typing import TYPE_CHECKING
 
 import cv2
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.interface import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import is_valid_image
 
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
-
-class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
+class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     last_captured_frame: cv2.Mat | None = None
     is_old_image = False
     stop_thread = Event()
 
-    def __read_loop(self, autosplit: AutoSplit):
+    def __read_loop(self):
         try:
             while not self.stop_thread.is_set():
                 try:
@@ -36,29 +32,29 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
             error = exception
             self.capture_device.release()
-            autosplit.show_error_signal.emit(lambda: exception_traceback(
+            self.autosplit.show_error_signal.emit(lambda: exception_traceback(
+                error,
                 "AutoSplit encountered an unhandled exception while trying to grab a frame and has stopped capture. "
-                + CREATE_NEW_ISSUE_MESSAGE,
-                error))
+                + CREATE_NEW_ISSUE_MESSAGE))
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self):
         super().__init__()
-        self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
+        self.capture_device = cv2.VideoCapture(self.autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
         self.stop_thread = Event()
-        self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
+        self.capture_thread = Thread(target=self.__read_loop)
         self.capture_thread.start()
 
-    def close(self, autosplit: AutoSplit):
+    def close(self):
         self.stop_thread.set()
         if self.capture_thread:
             self.capture_thread.join()
             self.capture_thread = None
         self.capture_device.release()
 
-    def get_frame(self, autosplit: AutoSplit):
-        selection = autosplit.settings_dict["capture_region"]
-        if not self.check_selected_region_exists(autosplit):
+    def get_frame(self):
+        selection = self.autosplit.settings_dict["capture_region"]
+        if not self.check_selected_region_exists():
             return None, False
 
         image = self.last_captured_frame
@@ -76,8 +72,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
+    def recover_window(self, captured_window_title: str) -> bool:
         raise NotImplementedError()
 
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self):
         return bool(self.capture_device.isOpened())

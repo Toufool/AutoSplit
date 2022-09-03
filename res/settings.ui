@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
-    <height>621</height>
+    <width>291</width>
+    <height>661</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>289</width>
-    <height>621</height>
+    <width>291</width>
+    <height>661</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>289</width>
-    <height>621</height>
+    <width>291</width>
+    <height>661</height>
    </size>
   </property>
   <property name="font">
@@ -50,7 +50,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>180</y>
+     <y>200</y>
      <width>271</width>
      <height>181</height>
     </rect>
@@ -175,9 +175,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>370</y>
+     <y>390</y>
      <width>271</width>
-     <height>241</height>
+     <height>261</height>
     </rect>
    </property>
    <property name="title">
@@ -196,7 +196,7 @@
     <property name="geometry">
      <rect>
       <x>167</x>
-      <y>26</y>
+      <y>25</y>
       <width>88</width>
       <height>22</height>
      </rect>
@@ -238,7 +238,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>29</y>
+      <y>28</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -251,7 +251,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>117</y>
+      <y>118</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -264,7 +264,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>167</x>
-      <y>114</y>
+      <y>115</y>
       <width>87</width>
       <height>22</height>
      </rect>
@@ -305,7 +305,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>167</x>
-      <y>56</y>
+      <y>55</y>
       <width>52</width>
       <height>22</height>
      </rect>
@@ -333,7 +333,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>144</y>
+      <y>143</y>
       <width>235</width>
       <height>20</height>
      </rect>
@@ -352,7 +352,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>173</y>
+      <y>193</y>
       <width>261</width>
       <height>61</height>
      </rect>
@@ -364,7 +364,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/{GITHUB_REPOSITORY}#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="default_delay_time_label">
@@ -399,6 +399,22 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
      <number>999999999</number>
     </property>
    </widget>
+   <widget class="QCheckBox" name="enable_auto_reset_checkbox">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>168</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enable auto reset image</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="hotkeys_groupbox">
    <property name="geometry">
@@ -406,7 +422,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
      <x>10</x>
      <y>10</y>
      <width>271</width>
-     <height>161</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="title">
@@ -550,7 +566,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>28</y>
+      <y>30</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -649,6 +665,52 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="set_toggle_auto_reset_image_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>155</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="toggle_auto_reset_image_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>154</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Toggle auto
+reset image</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="toggle_auto_reset_image_input">
+    <property name="geometry">
+     <rect>
+      <x>76</x>
+      <y>155</y>
+      <width>94</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <tabstops>
@@ -666,8 +728,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
   <tabstop>default_delay_time_spinbox</tabstop>
   <tabstop>default_pause_time_spinbox</tabstop>
   <tabstop>loop_splits_checkbox</tabstop>
-  <tabstop>fps_limit_spinbox</tabstop>
-  <tabstop>live_capture_region_checkbox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

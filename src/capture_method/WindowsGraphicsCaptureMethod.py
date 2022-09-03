@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import cv2
 import numpy as np
@@ -13,30 +13,26 @@ from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 from winsdk.windows.media.capture import MediaCapture
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.interface import CaptureMethodBase
 from utils import WINDOWS_BUILD_NUMBER, is_valid_hwnd
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
 
 
-class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
+class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     size: SizeInt32
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
     last_captured_frame: cv2.Mat | None = None
 
-    def __init__(self, autosplit: AutoSplit):
-        super().__init__(autosplit)
-        if not is_valid_hwnd(autosplit.hwnd):
+    def __init__(self):
+        if not is_valid_hwnd(self.autosplit.hwnd):
             return
         # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
         # OSError: The application called an interface that was marshalled for a different thread
         media_capture = MediaCapture()
-        item = create_for_window(autosplit.hwnd)
+        item = create_for_window(self.autosplit.hwnd)
 
         async def coroutine():
             await (media_capture.initialize_async() or asyncio.sleep(0))
@@ -63,7 +59,9 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
         self.size = item.size
         self.frame_pool = frame_pool
 
-    def close(self, autosplit: AutoSplit):
+        super().__init__()
+
+    def close(self):
         if self.frame_pool:
             self.frame_pool.close()
             self.frame_pool = None
@@ -78,10 +76,10 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
                 pass
             self.session = None
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
-        selection = autosplit.settings_dict["capture_region"]
+    def get_frame(self) -> tuple[cv2.Mat | None, bool]:
+        selection = self.autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
-        if not (self.check_selected_region_exists(autosplit)
+        if not (self.check_selected_region_exists()
                 # Only needed for the type-checker
                 and self.frame_pool):
             return None, False
@@ -123,23 +121,23 @@ class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
         self.last_captured_frame = image
         return image, False
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
+    def recover_window(self, captured_window_title: str):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False
-        autosplit.hwnd = hwnd
-        self.close(autosplit)
+        self.autosplit.hwnd = hwnd
+        self.close()
         try:
-            self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+            self.__init__()  # pylint: disable=unnecessary-dunder-call
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):
                 return False
             raise
-        return self.check_selected_region_exists(autosplit)
+        return self.check_selected_region_exists()
 
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self):
         return bool(
-            is_valid_hwnd(autosplit.hwnd)
+            is_valid_hwnd(self.autosplit.hwnd)
             and self.frame_pool
             and self.session)

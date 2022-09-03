@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import webbrowser
-from typing import TYPE_CHECKING, Any, cast
+from typing import Any, cast
 
 import requests
 from packaging.version import parse as version_parse
@@ -14,12 +14,9 @@ import user_profile
 from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
                             get_all_video_capture_devices)
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
-from hotkeys import HOTKEYS, Hotkeys, set_hotkey
+from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal,
-                   fire_and_forget)
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
+                   find_autosplit_main_window, fire_and_forget)
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
@@ -34,7 +31,8 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
         self.show()
 
 
-def open_about(autosplit: AutoSplit):
+def open_about():
+    autosplit = find_autosplit_main_window()
     if not autosplit.AboutWidget or cast(QtWidgets.QWidget, autosplit.AboutWidget).isHidden():
         autosplit.AboutWidget = __AboutWidget()
 
@@ -70,29 +68,14 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
             self.do_not_ask_again_checkbox.isChecked())
 
 
-def open_update_checker(autosplit: AutoSplit, latest_version: str, check_on_open: bool):
+def open_update_checker(latest_version: str, check_on_open: bool):
+    autosplit = find_autosplit_main_window()
     if not autosplit.UpdateCheckerWidget or cast(QtWidgets.QWidget, autosplit.UpdateCheckerWidget).isHidden():
         autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(latest_version, autosplit, check_on_open)
 
 
 def view_help():
     webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#tutorial")
-
-
-class __CheckForUpdatesThread(QtCore.QThread):
-    def __init__(self, autosplit: AutoSplit, check_on_open: bool):
-        super().__init__()
-        self.autosplit = autosplit
-        self.check_on_open = check_on_open
-
-    def run(self):
-        try:
-            response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest")
-            latest_version = str(response.json()["name"]).split("v")[1]
-            self.autosplit.update_checker_widget_signal.emit(latest_version, self.check_on_open)
-        except (RequestException, KeyError):
-            if not self.check_on_open:
-                self.autosplit.show_error_signal.emit(error_messages.check_for_updates)
 
 
 def about_qt():
@@ -103,19 +86,19 @@ def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
 
 
-def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
-    autosplit.CheckForUpdatesThread = __CheckForUpdatesThread(autosplit, check_on_open)
-    autosplit.CheckForUpdatesThread.start()
-
-
-def get_capture_method_index(capture_method: str | CaptureMethodEnum):
-    """
-    Returns 0 if the capture_method is invalid or unsupported
-    """
+@fire_and_forget
+def check_for_updates(check_on_open: bool = False):
+    autosplit = find_autosplit_main_window()
     try:
-        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethodEnum, capture_method))
-    except ValueError:
-        return 0
+        response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest")
+        latest_version = str(response.json()["name"]).split("v")[1]
+        autosplit.update_checker_widget_signal.emit(latest_version, check_on_open)
+    except (RequestException, KeyError):
+        if not check_on_open:
+            autosplit.show_error_signal.emit(error_messages.check_for_updates)
+    except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
+        error = exception
+        autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
 
 
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
@@ -128,11 +111,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
-            decimal(self.autosplit.split_image.get_similarity_threshold(self.autosplit))
+            decimal(self.autosplit.split_image.get_similarity_threshold())
             if self.autosplit.split_image
             else "-")
         self.autosplit.table_reset_image_threshold_label.setText(
-            decimal(self.autosplit.reset_image.get_similarity_threshold(self.autosplit))
+            decimal(self.autosplit.reset_image.get_similarity_threshold())
             if self.autosplit.reset_image
             else "-")
 
@@ -150,7 +133,7 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
     def __capture_method_changed(self):
         selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
-        change_capture_method(selected_capture_method, self.autosplit)
+        change_capture_method(selected_capture_method)
         return selected_capture_method
 
     def __capture_device_changed(self):
@@ -161,29 +144,33 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.autosplit.settings_dict["capture_device_name"] = capture_device.name
         self.autosplit.settings_dict["capture_device_id"] = capture_device.device_id
         if self.autosplit.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-            change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE, self.autosplit)
+            change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE)
 
     @fire_and_forget
     def __set_all_capture_devices(self):
-        self.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
-        if len(self.__video_capture_devices) > 0:
-            for i in range(self.capture_device_combobox.count()):
-                self.capture_device_combobox.removeItem(i)
-            self.capture_device_combobox.addItems([
-                f"* {device.name}"
-                + (f" [{device.backend}]" if device.backend else "")
-                + (" (occupied)" if device.occupied else "")
-                for device in self.__video_capture_devices])
-            self.capture_device_combobox.setEnabled(True)
-            self.capture_device_combobox.setCurrentIndex(
-                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]))
-        else:
-            self.capture_device_combobox.setPlaceholderText("No device found.")
+        try:
+            self.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
+            if len(self.__video_capture_devices) > 0:
+                for i in range(self.capture_device_combobox.count()):
+                    self.capture_device_combobox.removeItem(i)
+                self.capture_device_combobox.addItems([
+                    f"* {device.name}"
+                    + (f" [{device.backend}]" if device.backend else "")
+                    + (" (occupied)" if device.occupied else "")
+                    for device in self.__video_capture_devices])
+                self.capture_device_combobox.setEnabled(True)
+                self.capture_device_combobox.setCurrentIndex(
+                    self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]))
+            else:
+                self.capture_device_combobox.setPlaceholderText("No device found.")
+        except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
+            error = exception
+            self.autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self):
         super().__init__()
+        self.autosplit = find_autosplit_main_window()
         self.setupUi(self)
-        self.autosplit = autosplit
         # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
         # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
         # Arrow buttons tend to move a lot as well
@@ -224,35 +211,33 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 # endregion
 
         # Hotkeys initial values and bindings
-        def hotkey_connect(hotkey: Hotkeys):
-            return lambda: set_hotkey(self.autosplit, hotkey)
+        def hotkey_connect(hotkey: Hotkey):
+            return lambda: set_hotkey(hotkey)
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
-            hotkey_input.setText(cast(str, autosplit.settings_dict[f"{hotkey}_hotkey"]))
+            hotkey_input.setText(cast(str, self.autosplit.settings_dict[f"{hotkey}_hotkey"]))
 
             set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
-            if autosplit.is_auto_controlled:
+            if self.autosplit.is_auto_controlled and hotkey != "toggle_auto_reset_image":
                 set_hotkey_hotkey_button.setEnabled(False)
                 hotkey_input.setEnabled(False)
 
 # region Set initial values
         # Capture Settings
-        self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
-        self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
+        self.fps_limit_spinbox.setValue(self.autosplit.settings_dict["fps_limit"])
+        self.live_capture_region_checkbox.setChecked(self.autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            get_capture_method_index(autosplit.settings_dict["capture_method"]))
-        self.capture_device_combobox.currentIndexChanged.connect(lambda: self.__set_value(
-            "capture_device_id",
-            self.__capture_device_changed()))
+            CAPTURE_METHODS.get_index(self.autosplit.settings_dict["capture_method"]))
 
         # Image Settings
-        self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
-        self.default_similarity_threshold_spinbox.setValue(autosplit.settings_dict["default_similarity_threshold"])
-        self.default_delay_time_spinbox.setValue(autosplit.settings_dict["default_delay_time"])
-        self.default_pause_time_spinbox.setValue(autosplit.settings_dict["default_pause_time"])
-        self.loop_splits_checkbox.setChecked(autosplit.settings_dict["loop_splits"])
+        self.default_comparison_method.setCurrentIndex(self.autosplit.settings_dict["default_comparison_method"])
+        self.default_similarity_threshold_spinbox.setValue(self.autosplit.settings_dict["default_similarity_threshold"])
+        self.default_delay_time_spinbox.setValue(self.autosplit.settings_dict["default_delay_time"])
+        self.default_pause_time_spinbox.setValue(self.autosplit.settings_dict["default_pause_time"])
+        self.loop_splits_checkbox.setChecked(self.autosplit.settings_dict["loop_splits"])
+        self.enable_auto_reset_checkbox.setChecked(self.autosplit.settings_dict["enable_auto_reset"])
 # endregion
 # region Binding
         # Capture Settings
@@ -282,45 +267,15 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.loop_splits_checkbox.stateChanged.connect(lambda: self.__set_value(
             "loop_splits",
             self.loop_splits_checkbox.isChecked()))
+        self.enable_auto_reset_checkbox.stateChanged.connect(lambda: self.__set_value(
+            "enable_auto_reset",
+            self.enable_auto_reset_checkbox.isChecked()))
 # endregion
 
         self.show()
 
 
-def open_settings(autosplit: AutoSplit):
+def open_settings():
+    autosplit = find_autosplit_main_window()
     if not autosplit.SettingsWidget or cast(QtWidgets.QDialog, autosplit.SettingsWidget).isHidden():
-        autosplit.SettingsWidget = __SettingsWidget(autosplit)
-
-
-def get_default_settings_from_ui(autosplit: AutoSplit):
-    temp_dialog = QtWidgets.QDialog()
-    default_settings_dialog = settings_ui.Ui_DialogSettings()
-    default_settings_dialog.setupUi(temp_dialog)
-    default_settings: user_profile.UserProfileDict = {
-        "split_hotkey": default_settings_dialog.split_input.text(),
-        "reset_hotkey": default_settings_dialog.reset_input.text(),
-        "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
-        "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
-        "pause_hotkey": default_settings_dialog.pause_input.text(),
-        "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
-        "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "capture_method": CAPTURE_METHODS.get_method_by_index(
-            default_settings_dialog.capture_method_combobox.currentIndex()),
-        "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
-        "capture_device_name": "",
-        "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
-        "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
-        "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
-        "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
-        "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
-        "split_image_directory": autosplit.split_image_folder_input.text(),
-        "captured_window_title": "",
-        "capture_region": {
-            "x": autosplit.x_spinbox.value(),
-            "y": autosplit.y_spinbox.value(),
-            "width": autosplit.width_spinbox.value(),
-            "height": autosplit.height_spinbox.value(),
-        }
-    }
-    del temp_dialog
-    return default_settings
+        autosplit.SettingsWidget = __SettingsWidget()

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import cv2
 import numpy as np
@@ -11,24 +11,21 @@ import win32con
 import win32ui
 from win32 import win32gui
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.interface import CaptureMethodBase
 from utils import get_window_bounds, is_valid_hwnd
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-class BitBltCaptureMethod(CaptureMethodInterface):
+class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
-        selection = autosplit.settings_dict["capture_region"]
-        hwnd = autosplit.hwnd
+    def get_frame(self) -> tuple[cv2.Mat | None, bool]:
+        selection = self.autosplit.settings_dict["capture_region"]
+        hwnd = self.autosplit.hwnd
         image: cv2.Mat | None = None
-        if not self.check_selected_region_exists(autosplit):
+        if not self.check_selected_region_exists():
             return None, False
 
         # If the window closes while it's being manipulated, it could cause a crash
@@ -68,9 +65,9 @@ class BitBltCaptureMethod(CaptureMethodInterface):
             pass
         return image, False
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
+    def recover_window(self, captured_window_title: str):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False
-        autosplit.hwnd = hwnd
-        return self.check_selected_region_exists(autosplit)
+        self.autosplit.hwnd = hwnd
+        return self.check_selected_region_exists()

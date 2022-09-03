@@ -1,29 +1,25 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import cv2
 
-from utils import is_valid_hwnd
+from utils import find_autosplit_main_window, is_valid_hwnd
 
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 # pylint: disable=no-self-use,unnecessary-dunder-call
+class CaptureMethodBase():
 
+    def __init__(self):
+        self.autosplit = find_autosplit_main_window()
 
-class CaptureMethodInterface():
-    def __init__(self, autosplit: AutoSplit | None = None):
+    def close(self):
+        # Some capture methods don't need to cleanup and release any resource
         pass
 
-    def reinitialize(self, autosplit: AutoSplit):
-        self.close(autosplit)
-        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+    def reinitialize(self):
+        self.close()
+        self.__init__()
 
-    def close(self, autosplit: AutoSplit):
-        pass
-
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
+    def get_frame(self) -> tuple[cv2.Mat | None, bool]:
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box
@@ -32,9 +28,9 @@ class CaptureMethodInterface():
         """
         return None, False
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
+    def recover_window(self, captured_window_title: str) -> bool:
         return False
 
-    def check_selected_region_exists(self, autosplit: AutoSplit) -> bool:
-        return is_valid_hwnd(autosplit.hwnd)
+    def check_selected_region_exists(self) -> bool:
+        return is_valid_hwnd(self.autosplit.hwnd)
 # pylint: enable=no-self-use,unnecessary-dunder-call

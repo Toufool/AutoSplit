@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, TypeVar
+from typing import TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
-from utils import is_valid_image
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
+from utils import find_autosplit_main_window, is_valid_image
 
 [DUMMY_FLAG,
  BELOW_FLAG,
@@ -175,7 +172,9 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     return None
 
 
-def parse_and_validate_images(autosplit: AutoSplit):
+def parse_and_validate_images():
+    autosplit = find_autosplit_main_window()
+
     # Get split images
     all_images = [
         AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))

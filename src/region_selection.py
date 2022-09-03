@@ -17,10 +17,11 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import get_window_bounds, is_valid_hwnd, is_valid_image
+from utils import find_autosplit_main_window, get_window_bounds, is_valid_hwnd, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -39,7 +40,7 @@ SUPPORTED_IMREAD_FORMATS = [
 IMREAD_EXT_FILTER = "All Files (" \
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
     + ");;"\
-    + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
+    + ";;".join([f"{format_name} ({extensions})" for format_name, extensions in SUPPORTED_IMREAD_FORMATS])
 
 user32 = ctypes.windll.user32
 
@@ -62,7 +63,7 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         if not item:
             return
         autosplit.settings_dict["captured_window_title"] = item.display_name
-        autosplit.capture_method.reinitialize(autosplit)
+        autosplit.capture_method.reinitialize()
 
     picker = GraphicsCapturePicker()
     initialize_with_window(picker, int(autosplit.effectiveWinId()))
@@ -72,7 +73,8 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         async_operation.completed = callback
 
 
-def select_region(autosplit: AutoSplit):
+def select_region():
+    autosplit = find_autosplit_main_window()
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -95,7 +97,7 @@ def select_region(autosplit: AutoSplit):
 
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
-    autosplit.capture_method.reinitialize(autosplit)
+    autosplit.capture_method.reinitialize()
 
     left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
@@ -106,7 +108,8 @@ def select_region(autosplit: AutoSplit):
                         height=height)
 
 
-def select_window(autosplit: AutoSplit):
+def select_window():
+    autosplit = find_autosplit_main_window()
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -127,7 +130,7 @@ def select_window(autosplit: AutoSplit):
 
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
-    autosplit.capture_method.reinitialize(autosplit)
+    autosplit.capture_method.reinitialize()
 
     # Exlude the borders and titlebar from the window selection. To only get the client area.
     _, __, window_width, window_height = get_window_bounds(hwnd)
@@ -157,9 +160,10 @@ def __get_window_from_point(x: int, y: int):
     return hwnd, window_text
 
 
-def align_region(autosplit: AutoSplit):
+def align_region():
+    autosplit = find_autosplit_main_window()
     # Check to see if a region has been set
-    if not autosplit.capture_method.check_selected_region_exists(autosplit):
+    if not autosplit.capture_method.check_selected_region_exists():
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -183,7 +187,7 @@ def align_region(autosplit: AutoSplit):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture, _ = autosplit.capture_method.get_frame(autosplit)
+    capture, _ = autosplit.capture_method.get_frame()
 
     if not is_valid_image(capture):
         error_messages.region()
@@ -259,7 +263,8 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=to
     return best_match, best_height, best_width, best_loc
 
 
-def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
+def validate_before_parsing(show_error: bool = True, check_empty_directory: bool = True):
+    autosplit = find_autosplit_main_window()
     error = None
     if not autosplit.settings_dict["split_image_directory"]:
         error = error_messages.split_image_directory
@@ -267,7 +272,7 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif not autosplit.capture_method.check_selected_region_exists(autosplit):
+    elif not autosplit.capture_method.check_selected_region_exists():
         error = error_messages.region
     if error and show_error:
         error()
