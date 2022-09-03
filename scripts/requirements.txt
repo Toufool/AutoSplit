@@ -13,7 +13,7 @@
 numpy>=1.23 # Updated types
 opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
 PyQt6>=6.2.1 # Python 3.10 support
-git+https://github.com/JohannesBuchner/imagehash#egg=ImageHash  # Contains type information
+git+https://github.com/Avasam/imagehash.git@patch-2#egg=ImageHash  # Contains type information + setup as package not module
 keyboard
 packaging
 Pillow
