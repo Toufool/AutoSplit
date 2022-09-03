@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-import threading
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
+from PyQt6 import QtWidgets
+
+from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -36,23 +38,12 @@ def after_setting_hotkey(autosplit: AutoSplit):
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread
     """
-    autosplit.start_auto_splitter_button.setEnabled(True)
+    if autosplit.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
+        autosplit.start_auto_splitter_button.setEnabled(True)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(SET_HOTKEY_TEXT)
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
-
-
-def is_digit(key: str | int | None):
-    """
-    Checks if `key` is a single-digit string from 0-9
-    """
-    if key is None:
-        return False
-    try:
-        return 0 <= int(key) <= 9
-    except ValueError:
-        return False
 
 
 def send_command(autosplit: AutoSplit, command: Commands):
@@ -193,8 +184,24 @@ def __read_hotkey():
     return __get_hotkey_name(names)
 
 
-def __is_key_already_set(autosplit: AutoSplit, key_name: str):
-    return key_name in [autosplit.settings_dict[f"{hotkey}_hotkey"] for hotkey in HOTKEYS]
+def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
+    for hotkey in HOTKEYS:
+        settings_key = f"{hotkey}_hotkey"
+        if autosplit.settings_dict[settings_key] == key_name:
+            _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+            autosplit.settings_dict[settings_key] = ""
+            if autosplit.SettingsWidget:
+                getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
+
+
+def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkeys):
+    if hotkey == "split":
+        return autosplit.start_auto_splitter
+    if hotkey == "skip_split":
+        return lambda: autosplit.skip_split(True)
+    if hotkey == "undo_split":
+        return lambda: autosplit.undo_split(True)
+    return getattr(autosplit, f"{hotkey}_signal").emit
 
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
@@ -202,6 +209,8 @@ def __is_key_already_set(autosplit: AutoSplit, key_name: str):
 
 def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: str = ""):
     if autosplit.SettingsWidget:
+        # Unfocus all fields
+        cast(QtWidgets.QDialog, autosplit.SettingsWidget).setFocus()
         getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(PRESS_A_KEY_TEXT)
 
     # Disable some buttons
@@ -209,20 +218,13 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # New thread points to callback. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
+    @fire_and_forget
     def callback():
         hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
-        # If the key the user presses is equal to itself or another hotkey already set,
-        # this causes issues. so here, it catches that, and will make no changes to the hotkey.
-        if __is_key_already_set(autosplit, hotkey_name):
-            autosplit.after_setting_hotkey_signal.emit()
-            return
+        __remove_key_already_set(autosplit, hotkey_name)
 
-        # We need to inspect the event to know if it comes from numpad because of _canonial_names.
-        # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
-        # The best way to achieve this is make our own hotkey handling on top of hook
-        # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
-        action = autosplit.start_auto_splitter if hotkey == "split" else getattr(autosplit, f"{hotkey}_signal").emit
+        action = __get_hotkey_action(autosplit, hotkey)
         setattr(
             autosplit,
             f"{hotkey}_hotkey",
@@ -232,6 +234,10 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
             # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
             keyboard.add_hotkey(hotkey_name, action)
             if "+" in hotkey_name
+            # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+            # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
+            # The best way to achieve this is make our own hotkey handling on top of hook
+            # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
             else keyboard.hook_key(
                 hotkey_name,
                 lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action))
@@ -244,4 +250,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # Try to remove the previously set hotkey if there is one.
     _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-    threading.Thread(target=callback).start()
+    callback()

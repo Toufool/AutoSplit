@@ -19,6 +19,10 @@ if TYPE_CHECKING:
 COMPARISON_RESIZE_WIDTH = 320
 COMPARISON_RESIZE_HEIGHT = 240
 COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
+LOWER_BOUND = np.array([0, 0, 0, 1], dtype="uint8")
+UPPER_BOUND = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
+START_KEYWORD = "start_auto_splitter"
+RESET_KEYWORD = "reset"
 
 
 class ImageType(Enum):
@@ -33,11 +37,11 @@ class AutoSplitImage():
     flags: int
     loops: int
     image_type: ImageType
-    byte_array: cv2.ndarray | None = None
-    mask: cv2.ndarray | None = None
+    byte_array: cv2.Mat | None = None
+    mask: cv2.Mat | None = None
     # This value is internal, check for mask instead
     _has_transparency = False
-    # These values should be overriden by Defaults if None. Use getters instead
+    # These values should be overriden by some Defaults if None. Use getters instead
     __delay_time: float | None = None
     __comparison_method: int | None = None
     __pause_time: float | None = None
@@ -90,9 +94,9 @@ class AutoSplitImage():
         self.__similarity_threshold = threshold_from_filename(self.filename)
         self.__read_image_bytes(path)
 
-        if "start_auto_splitter" in self.filename:
+        if START_KEYWORD in self.filename:
             self.image_type = ImageType.START
-        elif "reset" in self.filename:
+        elif RESET_KEYWORD in self.filename:
             self.image_type = ImageType.RESET
         else:
             self.image_type = ImageType.SPLIT
@@ -109,9 +113,7 @@ class AutoSplitImage():
         # If image has transparency, create a mask
         if self._has_transparency:
             # Create mask based on resized, nearest neighbor interpolated split image
-            lower = np.array([0, 0, 0, 1], dtype="uint8")
-            upper = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
-            self.mask = cv2.inRange(image, lower, upper)
+            self.mask = cv2.inRange(image, LOWER_BOUND, UPPER_BOUND)
         # Add Alpha channel if missing
         elif image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
@@ -124,7 +126,7 @@ class AutoSplitImage():
     def compare_with_capture(
         self,
         default: AutoSplit | int,
-        capture: cv2.ndarray | None
+        capture: cv2.Mat | None
     ):
         """
         Compare image with capture using image's comparison method. Falls back to combobox

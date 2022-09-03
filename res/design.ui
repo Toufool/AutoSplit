@@ -40,12 +40,6 @@
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
-  <property name="whatsThis">
-   <string/>
-  </property>
-  <property name="layoutDirection">
-   <enum>Qt::LeftToRight</enum>
-  </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QLabel" name="x_label">
     <property name="geometry">
@@ -172,7 +166,7 @@
     <property name="geometry">
      <rect>
       <x>92</x>
-      <y>255</y>
+      <y>254</y>
       <width>20</width>
       <height>20</height>
      </rect>
@@ -184,8 +178,8 @@
    <widget class="QLabel" name="live_image">
     <property name="geometry">
      <rect>
-      <x>119</x>
-      <y>68</y>
+      <x>120</x>
+      <y>67</y>
       <width>320</width>
       <height>240</height>
      </rect>
@@ -212,8 +206,8 @@
    <widget class="QLabel" name="current_split_image">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>68</y>
+      <x>449</x>
+      <y>67</y>
       <width>320</width>
       <height>240</height>
      </rect>
@@ -231,7 +225,7 @@
    <widget class="QLabel" name="current_image_label">
     <property name="geometry">
      <rect>
-      <x>451</x>
+      <x>449</x>
       <y>31</y>
       <width>318</width>
       <height>20</height>
@@ -274,7 +268,7 @@
     <property name="geometry">
      <rect>
       <x>65</x>
-      <y>255</y>
+      <y>254</y>
       <width>26</width>
       <height>20</height>
      </rect>
@@ -289,8 +283,11 @@
       <x>11</x>
       <y>200</y>
       <width>44</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -308,8 +305,11 @@
       <x>66</x>
       <y>200</y>
       <width>44</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -324,9 +324,9 @@
    <widget class="QLabel" name="capture_region_label">
     <property name="geometry">
      <rect>
-      <x>119</x>
+      <x>120</x>
       <y>31</y>
-      <width>319</width>
+      <width>318</width>
       <height>20</height>
      </rect>
     </property>
@@ -340,7 +340,7 @@
    <widget class="QLabel" name="current_image_file_label">
     <property name="geometry">
      <rect>
-      <x>478</x>
+      <x>477</x>
       <y>49</y>
       <width>264</width>
       <height>20</height>
@@ -375,14 +375,14 @@
       <x>11</x>
       <y>160</y>
       <width>44</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
-    </property>
-    <property name="readOnly">
-     <bool>false</bool>
     </property>
     <property name="buttonSymbols">
      <enum>QAbstractSpinBox::UpDownArrows</enum>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>0</number>
@@ -403,14 +403,11 @@
       <x>66</x>
       <y>160</y>
       <width>44</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
     </property>
-    <property name="readOnly">
-     <bool>false</bool>
-    </property>
-    <property name="buttonSymbols">
-     <enum>QAbstractSpinBox::UpDownArrows</enum>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>0</number>
@@ -813,7 +810,7 @@
      <rect>
       <x>449</x>
       <y>344</y>
-      <width>98</width>
+      <width>101</width>
       <height>16</height>
      </rect>
     </property>
@@ -824,7 +821,7 @@
    <widget class="QLabel" name="start_image_status_value_label">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>560</x>
       <y>344</y>
       <width>98</width>
       <height>16</height>
@@ -853,7 +850,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>449</x>
+      <x>448</x>
       <y>49</y>
       <width>27</width>
       <height>18</height>
@@ -875,7 +872,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>744</x>
+      <x>743</x>
       <y>49</y>
       <width>27</width>
       <height>18</height>

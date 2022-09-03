@@ -5,9 +5,8 @@ import webbrowser
 from typing import TYPE_CHECKING, Any, cast
 
 import requests
-from packaging import version
+from packaging.version import parse as version_parse
 from PyQt6 import QtCore, QtWidgets
-from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
 
 import error_messages
@@ -15,24 +14,22 @@ import user_profile
 from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
                             get_all_video_capture_devices)
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
-from hotkeys import set_hotkey
-from utils import fire_and_forget
+from hotkeys import HOTKEYS, Hotkeys, set_hotkey
+from utils import AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, WINDOWS_BUILD_NUMBER, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-# AutoSplit Version number
-VERSION = "1.6.1"
 
-
-# About Window
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
+    """About Window"""
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.created_by_label.setOpenExternalLinks(True)
         self.donate_button_label.setOpenExternalLinks(True)
-        self.version_label.setText(f"Version: {VERSION}")
+        self.version_label.setText(f"Version: {AUTOSPLIT_VERSION}")
         self.show()
 
 
@@ -44,13 +41,14 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, check_on_open: bool = False):
         super().__init__()
         self.setupUi(self)
-        self.current_version_number_label.setText(VERSION)
+        self.current_version_number_label.setText(AUTOSPLIT_VERSION)
         self.latest_version_number_label.setText(latest_version)
         self.left_button.clicked.connect(self.open_update)
         self.do_not_ask_again_checkbox.stateChanged.connect(self.do_not_ask_me_again_state_changed)
         self.design_window = design_window
-        if version.parse(latest_version) > version.parse(VERSION):
+        if version_parse(latest_version) > version_parse(AUTOSPLIT_VERSION):
             self.do_not_ask_again_checkbox.setVisible(check_on_open)
+            self.left_button.setFocus()
             self.show()
         elif not check_on_open:
             self.update_status_label.setText("You are on the latest AutoSplit version.")
@@ -78,7 +76,7 @@ def view_help():
     webbrowser.open("https://github.com/Toufool/Auto-Split#tutorial")
 
 
-class __CheckForUpdatesThread(QThread):
+class __CheckForUpdatesThread(QtCore.QThread):
     def __init__(self, autosplit: AutoSplit, check_on_open: bool):
         super().__init__()
         self.autosplit = autosplit
@@ -119,11 +117,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
-            f"{self.autosplit.split_image.get_similarity_threshold(self.autosplit):.2f}"
+            decimal(self.autosplit.split_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.split_image
             else "-")
         self.autosplit.table_reset_image_threshold_label.setText(
-            f"{self.autosplit.reset_image.get_similarity_threshold(self.autosplit):.2f}"
+            decimal(self.autosplit.reset_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.reset_image
             else "-")
 
@@ -175,6 +173,16 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
+        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
+        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
+        # Arrow buttons tend to move a lot as well
+        if WINDOWS_BUILD_NUMBER >= FIRST_WIN_11_BUILD:
+            self.fps_limit_spinbox.setFrame(False)
+            self.default_similarity_threshold_spinbox.setFrame(False)
+            self.default_delay_time_spinbox.setFrame(False)
+            self.default_pause_time_spinbox.setFrame(False)
+        # Don't autofocus any particular field
+        self.setFocus()
 
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
@@ -199,14 +207,21 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             for method in capture_method_values]))
 # endregion
 
-# region Set initial values
-        # Hotkeys
-        self.split_input.setText(autosplit.settings_dict["split_hotkey"])
-        self.reset_input.setText(autosplit.settings_dict["reset_hotkey"])
-        self.undo_split_input.setText(autosplit.settings_dict["undo_split_hotkey"])
-        self.skip_split_input.setText(autosplit.settings_dict["skip_split_hotkey"])
-        self.pause_input.setText(autosplit.settings_dict["pause_hotkey"])
+        # Hotkeys initial values and bindings
+        def hotkey_connect(hotkey: Hotkeys):
+            return lambda: set_hotkey(self.autosplit, hotkey)
+        for hotkey in HOTKEYS:
+            hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
+            set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
+            hotkey_input.setText(cast(str, autosplit.settings_dict[f"{hotkey}_hotkey"]))
 
+            set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
+            # Make it very clear that hotkeys are not used when auto-controlled
+            if autosplit.is_auto_controlled:
+                set_hotkey_hotkey_button.setEnabled(False)
+                hotkey_input.setEnabled(False)
+
+# region Set initial values
         # Capture Settings
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
@@ -224,13 +239,6 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.loop_splits_checkbox.setChecked(autosplit.settings_dict["loop_splits"])
 # endregion
 # region Binding
-        # Hotkeys
-        self.set_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "split"))
-        self.set_reset_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "reset"))
-        self.set_skip_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "skip_split"))
-        self.set_undo_split_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "undo_split"))
-        self.set_pause_hotkey_button.clicked.connect(lambda: set_hotkey(self.autosplit, "pause"))
-
         # Capture Settings
         self.fps_limit_spinbox.valueChanged.connect(lambda: self.__set_value(
             "fps_limit",

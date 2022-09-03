@@ -28,11 +28,17 @@
     <height>621</height>
    </size>
   </property>
-  <property name="cursor">
-   <cursorShape>ArrowCursor</cursorShape>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -61,8 +67,8 @@
       <height>22</height>
      </rect>
     </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>20</number>
@@ -85,9 +91,6 @@
     </property>
     <property name="toolTip">
      <string>This value will limit the amount of frames per second that AutoSplit will run comparisons</string>
-    </property>
-    <property name="whatsThis">
-     <string/>
     </property>
     <property name="text">
      <string>Comparison FPS Limit:</string>
@@ -253,9 +256,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <height>16</height>
      </rect>
     </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
     <property name="text">
      <string>Default Pause Time (sec):</string>
     </property>
@@ -271,6 +271,9 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     </property>
     <property name="toolTip">
      <string>The amount of time in seconds that comparison will be paused before moving to the next image.</string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="decimals">
      <number>2</number>
@@ -294,12 +297,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <height>16</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
     <property name="text">
      <string>Default Similarity Threshold:</string>
     </property>
@@ -315,6 +312,9 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     </property>
     <property name="toolTip">
      <string>Threshold that the live similarity will need to go above to consider the image a match.</string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <double>1.000000000000000</double>
@@ -363,9 +363,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <bold>true</bold>
      </font>
     </property>
-    <property name="whatsThis">
-     <string>teset</string>
-    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -378,12 +375,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <width>161</width>
       <height>16</height>
      </rect>
-    </property>
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="whatsThis">
-     <string/>
     </property>
     <property name="text">
      <string>Default Delay Time (ms):</string>
@@ -398,11 +389,11 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <height>22</height>
      </rect>
     </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
-    </property>
     <property name="toolTip">
      <string>After an image is matched, this is the amount of time in millseconds that will be delayed before splitting. </string>
+    </property>
+    <property name="correctionMode">
+     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
     </property>
     <property name="maximum">
      <number>999999999</number>
@@ -474,9 +465,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <height>20</height>
      </rect>
     </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
     <property name="text">
      <string/>
     </property>
@@ -505,9 +493,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <width>94</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>IBeamCursor</cursorShape>
     </property>
     <property name="text">
      <string/>
@@ -599,9 +584,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
       <height>20</height>
      </rect>
     </property>
-    <property name="focusPolicy">
-     <enum>Qt::StrongFocus</enum>
-    </property>
     <property name="text">
      <string/>
     </property>
@@ -670,13 +652,18 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
   </widget>
  </widget>
  <tabstops>
-  <tabstop>split_input</tabstop>
-  <tabstop>reset_input</tabstop>
-  <tabstop>undo_split_input</tabstop>
-  <tabstop>skip_split_input</tabstop>
-  <tabstop>pause_input</tabstop>
+  <tabstop>set_split_hotkey_button</tabstop>
+  <tabstop>set_reset_hotkey_button</tabstop>
+  <tabstop>set_undo_split_hotkey_button</tabstop>
+  <tabstop>set_skip_split_hotkey_button</tabstop>
+  <tabstop>set_pause_hotkey_button</tabstop>
+  <tabstop>fps_limit_spinbox</tabstop>
+  <tabstop>live_capture_region_checkbox</tabstop>
+  <tabstop>capture_method_combobox</tabstop>
+  <tabstop>capture_device_combobox</tabstop>
   <tabstop>default_comparison_method</tabstop>
   <tabstop>default_similarity_threshold_spinbox</tabstop>
+  <tabstop>default_delay_time_spinbox</tabstop>
   <tabstop>default_pause_time_spinbox</tabstop>
   <tabstop>loop_splits_checkbox</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
