@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
+
 from PyQt6 import QtCore
 
 import error_messages
 import settings_file as settings
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 
 class AutoControlledWorker(QtCore.QObject):

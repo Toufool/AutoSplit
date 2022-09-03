@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
-
 import webbrowser
+from typing import TYPE_CHECKING, Any
 
 import requests
 from packaging import version
@@ -19,6 +15,9 @@ import settings_file as settings
 from capture_windows import Region
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import set_hotkey
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # AutoSplit Version number
 VERSION = "1.6.1"

@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, TypeVar
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
 
 import os
+from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import AutoSplitImage, ImageType
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 [DUMMY_FLAG,
  BELOW_FLAG,

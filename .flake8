@@ -1,15 +1,25 @@
 [flake8]
 color=always
 max-line-length=120
-; Auto generated
-exclude=src/gen/
-; Linebreak before binary operator
-; Allow default value other than "..."
-; Allow imports at the bottom of file
-ignore=W503,Y015,E402
+exclude=
+  src/gen/, ; Auto generated
+  typings/cv2-stubs/__init__.pyi, ; External existing stub
+ignore=
+  W503, ; Linebreak before binary operator
+  E402, ; Allow imports at the bottom of file
+  Y026, ; Not using typing_extensions
 per-file-ignores=
+    ; Docstrings in type stubs
+    ; Function bodys contain other than just ... (eg: raise)
+    ; Single quote docstrings
+    typings/cv2-stubs/__init__.pyi: Q000,N8,E704, Y021,Y010,Q002
+
     ; Quotes
-    __init__.pyi:Q000
+    ; Allow ... on same line as def
+    ; Line too long
+    ; Naming conventions can't be controlled for external libraries
+    typings/**:                     Q000,E704,E501,N8
+
 ; PyQt methods
 ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,mouseReleaseEvent
 ; McCabe max-complexity is also taken care of by Pylint and doesn't fail the build there

@@ -7,33 +7,34 @@
 # - Externals
 # - Internals
 from __future__ import annotations
+
+import ctypes
+import os
+import signal
+import sys
+import traceback
 from collections.abc import Callable
+from time import time
 from types import FunctionType, TracebackType
 from typing import Optional, Union
 
-import sys
-import os
-import ctypes
-import signal
-import traceback
-from time import time
-
 import certifi
 import cv2
-from PyQt6 import QtCore, QtGui, QtTest
+from PyQt6 import QtCore, QtGui
+from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
 from win32 import win32gui
-from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 
 import error_messages
 import settings_file as settings
 from AutoControlledWorker import AutoControlledWorker
+from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
 from capture_windows import capture_region, set_ui_image
 from gen import about, design, settings as settings_ui, update_checker
-from hotkeys import send_command, after_setting_hotkey
-from menu_bar import get_default_settings_from_ui, open_about, VERSION, open_settings, view_help, check_for_updates, \
-    open_update_checker
-from screen_region import select_region, select_window, align_region, validate_before_parsing
+from hotkeys import after_setting_hotkey, send_command
+from menu_bar import (VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
+                      open_update_checker, view_help)
+from screen_region import align_region, select_region, select_window, validate_before_parsing
 from settings_file import FROZEN
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 
@@ -343,13 +344,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
                         f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
             self.start_image_status_value_label.setText("started")
             send_command(self, "start")
-            # Email sent to pyqt@riverbankcomputing.com
-            QtTest.QTest.qWait(int(1 / self.settings_dict["fps_limit"]))  # type: ignore
+            QTest.qWait(int(1 / self.settings_dict["fps_limit"]))
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -605,8 +604,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
                 # limit the number of time the comparison runs to reduce cpu usage
                 frame_interval: float = 1 / self.settings_dict["fps_limit"]
-                # Email sent to pyqt@riverbankcomputing.com
-                QtTest.QTest.qWait(int(frame_interval - (time() - start) % frame_interval))  # type: ignore
+                QTest.qWait(int(frame_interval - (time() - start) % frame_interval))
                 QApplication.processEvents()
 
             # comes here when threshold gets met
@@ -636,8 +634,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         capture = self.__get_capture_for_comparison()
                         if self.__reset_if_should(capture):
                             continue
-                        # Email sent to pyqt@riverbankcomputing.com
-                        QtTest.QTest.qWait(1)  # type: ignore
+                        QTest.qWait(1)
 
                 self.waiting_for_split_delay = False
 
@@ -691,8 +688,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         send_command(self, "reset")
                         self.reset()
                         continue
-                    # Email sent to pyqt@riverbankcomputing.com
-                    QtTest.QTest.qWait(1)  # type: ignore
+                    QTest.qWait(1)
 
         # loop breaks to here when the last image splits
         self.gui_changes_on_reset()
@@ -760,8 +756,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if capture is None:
             # Try to recover by using the window name
             self.live_image.setText("Trying to recover window...")
-            # https://github.com/kaluluosi/pywin32-stubs/issues/7
-            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])  # type: ignore
+            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
             # Don't fallback to desktop
             if hwnd:
                 self.hwnd = hwnd

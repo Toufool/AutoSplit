@@ -1,15 +1,14 @@
 from __future__ import annotations
 
+import threading
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
-if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
-
-import threading
-
 import keyboard  # https://github.com/boppreh/keyboard/issues/505
 import pyautogui  # https://github.com/asweigart/pyautogui/issues/645
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
 # While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
 pyautogui.FAILSAFE = False

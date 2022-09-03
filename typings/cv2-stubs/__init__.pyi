@@ -3,7 +3,6 @@
 # Module: cv2.cv2, version: 4.4.0
 # https://github.com/microsoft/python-type-stubs/pull/112
 import typing
-import builtins as _mod_builtins
 import cv2 as _mod_cv2
 import numpy
 
@@ -29,7 +28,8 @@ AKAZE_DESCRIPTOR_MLDB: int
 AKAZE_DESCRIPTOR_MLDB_UPRIGHT: int
 
 
-def AKAZE_create(descriptor_type=..., descriptor_size=..., descriptor_channels=..., threshold=..., nOctaves=..., nOctaveLayers=..., diffusivity=...) -> typing.Any:
+def AKAZE_create(descriptor_type=..., descriptor_size=..., descriptor_channels=..., threshold=..., nOctaves=..., nOctaveLayers=..., diffusivity=...
+) -> typing.Any:
     'AKAZE_create([, descriptor_type[, descriptor_size[, descriptor_channels[, threshold[, nOctaves[, nOctaveLayers[, diffusivity]]]]]]]) -> retval\n.   @brief The AKAZE constructor\n.   \n.       @param descriptor_type Type of the extracted descriptor: DESCRIPTOR_KAZE,\n.       DESCRIPTOR_KAZE_UPRIGHT, DESCRIPTOR_MLDB or DESCRIPTOR_MLDB_UPRIGHT.\n.       @param descriptor_size Size of the descriptor in bits. 0 -\\> Full size\n.       @param descriptor_channels Number of channels in the descriptor (1, 2, 3)\n.       @param threshold Detector response threshold to accept point\n.       @param nOctaves Maximum octave evolution of the image\n.       @param nOctaveLayers Default number of sublevels per scale level\n.       @param diffusivity Diffusivity type. DIFF_PM_G1, DIFF_PM_G2, DIFF_WEICKERT or\n.       DIFF_CHARBONNIER'
     ...
 

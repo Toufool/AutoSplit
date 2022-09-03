@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 from typing import Optional
-from PIL import Image
-from win32con import MAXBYTE
+
 import cv2
 import imagehash  # https://github.com/JohannesBuchner/imagehash/issues/151
 import numpy as np
+from PIL import Image
+from win32con import MAXBYTE
 
 MAXRANGE = MAXBYTE + 1
 channels = [0, 1, 2]
@@ -80,7 +82,7 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[c
 
 def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: Optional[cv2.ndarray] = None):
     """
-    Compares the pHash of the two given images and returns the similarity between the two.
+    Compares the Perceptual Hash of the two given images and returns the similarity between the two.
 
     @param source: Image of any given shape as a numpy array
     @param capture: Image of any given shape as a numpy array
