@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtWidgets
 
-from utils import FROZEN
+from utils import FROZEN, GITHUB_REPOSITORY
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -141,8 +141,8 @@ def exception_traceback(message: str, exception: BaseException):
 
 
 CREATE_NEW_ISSUE_MESSAGE = (
-    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
-    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, "
+    f"Please create a New Issue at <a href='https://github.com/{GITHUB_REPOSITORY}/issues'>"
+    + f"github.com/{GITHUB_REPOSITORY}/issues</a>, describe what happened, "
     + "and copy & paste the entire error message below")
 
 
