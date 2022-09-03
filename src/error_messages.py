@@ -103,6 +103,10 @@ def invalid_settings():
     set_text_message("Invalid settings file.")
 
 
+def invalid_hotkey(hotkey_name: str):
+    set_text_message(f'Invalid hotkey "{hotkey_name}"')
+
+
 def no_settings_file_on_open():
     set_text_message("No settings file found. One can be loaded on open if placed in the same folder as AutoSplit.exe")
 

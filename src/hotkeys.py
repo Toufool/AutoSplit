@@ -7,6 +7,7 @@ import keyboard
 import pyautogui
 from PyQt6 import QtWidgets
 
+from error_messages import invalid_hotkey
 from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
 
 if TYPE_CHECKING:
@@ -203,6 +204,13 @@ def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkeys):
         return lambda: autosplit.undo_split(True)
     return getattr(autosplit, f"{hotkey}_signal").emit
 
+
+def is_valid_hotkey_name(hotkey_name: str):
+    return any(
+        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
+        for key
+        in hotkey_name.split("+"))
+
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
@@ -221,6 +229,14 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
     @fire_and_forget
     def callback():
         hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
+
+        if not is_valid_hotkey_name(hotkey_name):
+            autosplit.show_error_signal.emit(lambda: invalid_hotkey(hotkey_name))
+            return
+
+        # Try to remove the previously set hotkey if there is one
+        _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+        # Remove any hotkey using the same key combination
 
         __remove_key_already_set(autosplit, hotkey_name)
 
@@ -248,6 +264,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
         autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
         autosplit.after_setting_hotkey_signal.emit()
 
-    # Try to remove the previously set hotkey if there is one.
-    _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
     callback()
