@@ -8,6 +8,8 @@ import numpy as np
 from PIL import Image
 from win32con import MAXBYTE
 
+from utils import is_valid_image
+
 MAXRANGE = MAXBYTE + 1
 channels = [0, 1, 2]
 histogram_size = [8, 8, 8]
@@ -47,7 +49,7 @@ def compare_l2_norm(source: cv2.ndarray, capture: cv2.ndarray, mask: cv2.ndarray
 
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * MAXBYTE \
-        if mask is None \
+        if not is_valid_image(mask)\
         else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
 
     if not max_error:
@@ -73,7 +75,7 @@ def compare_template(source: cv2.ndarray, capture: cv2.ndarray, mask: cv2.ndarra
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = source.size * MAXBYTE * MAXBYTE \
-        if mask is None \
+        if not is_valid_image(mask) \
         else np.count_nonzero(mask)
 
     return 1 - (min_val / max_error)
@@ -94,7 +96,7 @@ def compare_phash(source: cv2.ndarray, capture: cv2.ndarray, mask: cv2.ndarray |
     # each of the images. As a result of this, this function is not going to be very
     # helpful for large masks as the images when shrinked down to 8x8 will mostly be
     # the same
-    if mask is not None:
+    if is_valid_image(mask):
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 

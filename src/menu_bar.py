@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+import asyncio
 import webbrowser
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import requests
 from packaging import version
-from PyQt6 import QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import QThread
 from requests.exceptions import RequestException
 
 import error_messages
 import user_profile
-from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
+from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
+                            get_all_video_capture_devices)
+from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
 from hotkeys import set_hotkey
+from utils import fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -95,7 +99,23 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
+def get_capture_method_index(capture_method: str | CaptureMethodEnum):
+    """
+    Returns 0 if the capture_method is invalid or unsupported
+    """
+    try:
+        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethodEnum, capture_method))
+    except ValueError:
+        return 0
+
+
 class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
+    __video_capture_devices: list[CameraInfo] = []
+    """
+    Used to temporarily store the existing cameras,
+    we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
+    """
+
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
@@ -110,10 +130,74 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
 
+    def get_capture_device_index(self, capture_device_id: int):
+        """
+        Returns 0 if the capture_device_id is invalid
+        """
+        try:
+            return [device.device_id for device in self.__video_capture_devices].index(capture_device_id)
+        except ValueError:
+            return 0
+
+    def __capture_method_changed(self):
+        selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
+        change_capture_method(selected_capture_method, self.autosplit)
+        return selected_capture_method
+
+    def __capture_device_changed(self):
+        device_index = self.capture_device_combobox.currentIndex()
+        if device_index == -1:
+            return
+        capture_device = self.__video_capture_devices[device_index]
+        self.autosplit.settings_dict["capture_device_name"] = capture_device.name
+        self.autosplit.settings_dict["capture_device_id"] = capture_device.device_id
+        if self.autosplit.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+            change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE, self.autosplit)
+
+    @fire_and_forget
+    def __set_all_capture_devices(self):
+        self.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
+        if len(self.__video_capture_devices) > 0:
+            for i in range(self.capture_device_combobox.count()):
+                self.capture_device_combobox.removeItem(i)
+            self.capture_device_combobox.addItems([
+                f"* {device.name}"
+                + (f" [{device.backend}]" if device.backend else "")
+                + (" (occupied)" if device.occupied else "")
+                for device in self.__video_capture_devices])
+            self.capture_device_combobox.setEnabled(True)
+            self.capture_device_combobox.setCurrentIndex(
+                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]))
+        else:
+            self.capture_device_combobox.setPlaceholderText("No device found.")
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
+
+# region Build the Capture method combobox
+        capture_method_values = CAPTURE_METHODS.values()
+        self.__set_all_capture_devices()
+        capture_list_items = [
+            f"- {method.name} ({method.short_description})"
+            for method in capture_method_values
+        ]
+        list_view = QtWidgets.QListView()
+        list_view.setWordWrap(True)
+        # HACK: The first time the dropdown is rendered, it does not have the right height
+        # Assuming all options take 2 lines (except camera and BitBlt which have 1).
+        # And all lines take 16 pixels
+        # And all separators take 2 pixels
+        doubled_len = 2 * len(capture_method_values) or 2
+        list_view.setMinimumHeight((doubled_len - 2) * 16 + doubled_len)
+        list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.capture_method_combobox.setView(list_view)
+        self.capture_method_combobox.addItems(capture_list_items)
+        self.capture_method_combobox.setToolTip("\n\n".join([
+            f"{method.name} :\n{method.description}"
+            for method in capture_method_values]))
+# endregion
 
 # region Set initial values
         # Hotkeys
@@ -126,7 +210,11 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         # Capture Settings
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
-        self.force_print_window_checkbox.setChecked(autosplit.settings_dict["force_print_window"])
+        self.capture_method_combobox.setCurrentIndex(
+            get_capture_method_index(autosplit.settings_dict["capture_method"]))
+        self.capture_device_combobox.currentIndexChanged.connect(lambda: self.__set_value(
+            "capture_device_id",
+            self.__capture_device_changed()))
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
@@ -150,9 +238,10 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
         self.live_capture_region_checkbox.stateChanged.connect(lambda: self.__set_value(
             "live_capture_region",
             self.live_capture_region_checkbox.isChecked()))
-        self.force_print_window_checkbox.stateChanged.connect(lambda: self.__set_value(
-            "force_print_window",
-            self.force_print_window_checkbox.isChecked()))
+        self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
+            "capture_method",
+            self.__capture_method_changed()))
+        self.capture_device_combobox.currentIndexChanged.connect(self.__capture_device_changed)
 
         # Image Settings
         self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
@@ -190,13 +279,15 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "pause_hotkey": default_settings_dialog.pause_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "force_print_window": default_settings_dialog.force_print_window_checkbox.isChecked(),
+        "capture_method": CAPTURE_METHODS.get_method_by_index(
+            default_settings_dialog.capture_method_combobox.currentIndex()),
+        "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
+        "capture_device_name": "",
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
-
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "captured_window_title": "",
         "capture_region": {
