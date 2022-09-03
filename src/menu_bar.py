@@ -35,7 +35,8 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
 
 
 def open_about(autosplit: AutoSplit):
-    autosplit.AboutWidget = __AboutWidget()
+    if not autosplit.AboutWidget or cast(QtWidgets.QWidget, autosplit.AboutWidget).isHidden():
+        autosplit.AboutWidget = __AboutWidget()
 
 
 class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
@@ -70,7 +71,8 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
 
 
 def open_update_checker(autosplit: AutoSplit, latest_version: str, check_on_open: bool):
-    autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(latest_version, autosplit, check_on_open)
+    if not autosplit.UpdateCheckerWidget or cast(QtWidgets.QWidget, autosplit.UpdateCheckerWidget).isHidden():
+        autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(latest_version, autosplit, check_on_open)
 
 
 def view_help():
@@ -91,6 +93,14 @@ class __CheckForUpdatesThread(QtCore.QThread):
         except (RequestException, KeyError):
             if not self.check_on_open:
                 self.autosplit.show_error_signal.emit(error_messages.check_for_updates)
+
+
+def about_qt():
+    webbrowser.open("https://wiki.qt.io/About_Qt")
+
+
+def about_qt_for_python():
+    webbrowser.open("https://wiki.qt.io/Qt_for_Python")
 
 
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
@@ -278,7 +288,8 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
 
 def open_settings(autosplit: AutoSplit):
-    autosplit.SettingsWidget = __SettingsWidget(autosplit)
+    if not autosplit.SettingsWidget or cast(QtWidgets.QDialog, autosplit.SettingsWidget).isHidden():
+        autosplit.SettingsWidget = __SettingsWidget(autosplit)
 
 
 def get_default_settings_from_ui(autosplit: AutoSplit):

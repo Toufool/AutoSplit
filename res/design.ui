@@ -941,7 +941,10 @@
     <addaction name="action_view_help"/>
     <addaction name="action_check_for_updates"/>
     <addaction name="action_check_for_updates_on_open"/>
+    <addaction name="separator"/>
     <addaction name="action_about"/>
+    <addaction name="action_about_qt"/>
+    <addaction name="action_about_qt_for_python"/>
    </widget>
    <widget class="QMenu" name="menu_file">
     <property name="title">
@@ -960,30 +963,40 @@
    <property name="text">
     <string>View Help</string>
    </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="action_about">
    <property name="text">
-    <string>About</string>
+    <string>About AutoSplit</string>
    </property>
-  </action>
-  <action name="actionSplit_Settings">
-   <property name="text">
-    <string>Split Image Settings</string>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="action_save_profile">
    <property name="text">
     <string>Save Profile</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="action_load_profile">
    <property name="text">
     <string>Load Profile</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="action_save_profile_as">
    <property name="text">
     <string>Save Profile As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="action_check_for_updates">
@@ -991,33 +1004,15 @@
     <string>Check For Updates</string>
    </property>
   </action>
-  <action name="actionCheck_for_Updates_on_Open">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Check for Updates on Open</string>
-   </property>
-  </action>
-  <action name="actionAuto_Start_On_Reset">
-   <property name="text">
-    <string>Check For Updates On Open</string>
-   </property>
-  </action>
-  <action name="actionGroup_dummy_splits_when_undoing_skipping">
-   <property name="text">
-    <string>Dummy Splits When Undoing/Skipping</string>
-   </property>
-  </action>
   <action name="action_settings">
    <property name="text">
     <string>Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="action_check_for_updates_on_open">
@@ -1029,6 +1024,22 @@
    </property>
    <property name="text">
     <string>Check For Updates On Open</string>
+   </property>
+  </action>
+  <action name="action_about_qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="action_about_qt_for_python">
+   <property name="text">
+    <string>About Qt for Python</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
  </widget>

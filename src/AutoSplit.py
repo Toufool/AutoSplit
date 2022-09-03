@@ -24,8 +24,8 @@ from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, Ima
 from capture_method import CaptureMethodEnum, CaptureMethodInterface
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
-from menu_bar import (check_for_updates, get_default_settings_from_ui, open_about, open_settings, open_update_checker,
-                      view_help)
+from menu_bar import (about_qt, about_qt_for_python, check_for_updates, get_default_settings_from_ui, open_about,
+                      open_settings, open_update_checker, view_help)
 from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
@@ -127,21 +127,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.settings_dict = get_default_settings_from_ui(self)
         user_profile.load_check_for_updates_on_open(self)
 
-        self.action_view_help.triggered.connect(view_help)
-        self.action_about.triggered.connect(lambda: open_about(self))
-        self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
-        self.action_settings.triggered.connect(lambda: open_settings(self))
-        self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
-        self.action_save_profile_as.triggered.connect(lambda: user_profile.save_settings_as(self))
-        self.action_load_profile.triggered.connect(lambda: user_profile.load_settings(self))
-
-        if self.SettingsWidget:
-            self.SettingsWidget.split_input.setEnabled(False)
-            self.SettingsWidget.reset_input.setEnabled(False)
-            self.SettingsWidget.skip_split_input.setEnabled(False)
-            self.SettingsWidget.undo_split_input.setEnabled(False)
-            self.SettingsWidget.pause_input.setEnabled(False)
-
         if self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
 
@@ -158,6 +143,25 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # split image folder line edit text
         self.split_image_folder_input.setText("No Folder Selected")
+
+        # Connecting menu actions
+        self.action_view_help.triggered.connect(view_help)
+        self.action_about.triggered.connect(lambda: open_about(self))
+        self.action_about_qt.triggered.connect(lambda: about_qt)
+        self.action_about_qt_for_python.triggered.connect(lambda: about_qt_for_python)
+        self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
+        self.action_settings.triggered.connect(lambda: open_settings(self))
+        self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
+        self.action_save_profile_as.triggered.connect(lambda: user_profile.save_settings_as(self))
+        self.action_load_profile.triggered.connect(lambda: user_profile.load_settings(self))
+
+        # Shortcut context can't be set through the designer because of a bug in pyuic6 that generates invalid code
+        # Email sent to pyqt@riverbankcomputing.com
+        self.action_view_help.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
+        self.action_settings.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
+        self.action_save_profile.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
+        self.action_save_profile_as.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
+        self.action_load_profile.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
 
         # Connecting button clicks to functions
         self.browse_button.clicked.connect(self.__browse)
@@ -696,6 +700,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.setEnabled(True)
         self.next_image_button.setEnabled(True)
 
+        # TODO: Do we actually need to disable setting new hotkeys once started?
+        # What does this achieve? (See below TODO)
         if self.SettingsWidget:
             for hotkey in HOTKEYS:
                 getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
@@ -724,6 +730,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.setEnabled(False)
         self.next_image_button.setEnabled(False)
 
+        # TODO: Do we actually need to disable setting new hotkeys once started?
+        # What does this achieve? (see above TODO)
         if self.SettingsWidget and not self.is_auto_controlled:
             for hotkey in HOTKEYS:
                 getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
