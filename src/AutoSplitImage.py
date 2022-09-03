@@ -10,8 +10,8 @@ from win32con import MAXBYTE
 
 import error_messages
 from compare import check_if_image_has_transparency, compare_histograms, compare_l2_norm, compare_phash
-from split_parser import (delay_from_filename, flags_from_filename, loop_from_filename, pause_from_filename,
-                          threshold_from_filename)
+from split_parser import (comparison_method_from_filename, delay_time_from_filename, flags_from_filename,
+                          loop_from_filename, pause_from_filename, threshold_from_filename)
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -33,21 +33,40 @@ class AutoSplitImage():
     filename: str
     flags: int
     loops: int
-    delay: float
     image_type: ImageType
     bytes: Optional[cv2.ndarray] = None
     mask: Optional[cv2.ndarray] = None
     # This value is internal, check for mask instead
     _has_transparency: bool
     # These values should be overriden by Defaults if None. Use getters instead
+    __delay_time: Optional[float] = None
+    __comparison_method: Optional[int] = None
     __pause_time: Optional[float] = None
     __similarity_threshold: Optional[float] = None
+
+    def get_delay_time(self, default: Union[AutoSplit, int]):
+        """
+        Get image's delay time or fallback to the default value from spinbox
+        """
+        default_value = default \
+            if isinstance(default, int) \
+            else default.settings_dict["default_delay_time"]
+        return default_value if self.__delay_time is None else self.__delay_time
+
+    def __get_comparison_method(self, default: Union[AutoSplit, int]):
+        """
+        Get image's comparison or fallback to the default value from combobox
+        """
+        default_value = default \
+            if isinstance(default, int) \
+            else default.settings_dict["default_comparison_method"]
+        return default_value if self.__comparison_method is None else self.__comparison_method
 
     def get_pause_time(self, default: Union[AutoSplit, float]):
         """
         Get image's pause time or fallback to the default value from spinbox
         """
-        default_value: float = default \
+        default_value = default \
             if isinstance(default, float) \
             else default.settings_dict["default_pause_time"]
         return default_value if self.__pause_time is None else self.__pause_time
@@ -56,7 +75,7 @@ class AutoSplitImage():
         """
         Get image's similarity threashold or fallback to the default value from spinbox
         """
-        default_value: float = default \
+        default_value = default \
             if isinstance(default, float) \
             else default.settings_dict["default_similarity_threshold"]
         return default_value if self.__similarity_threshold is None else self.__similarity_threshold
@@ -66,7 +85,8 @@ class AutoSplitImage():
         self.filename = os.path.split(path)[-1].lower()
         self.flags = flags_from_filename(self.filename)
         self.loops = loop_from_filename(self.filename)
-        self.delay = delay_from_filename(self.filename)
+        self.__delay_time = delay_time_from_filename(self.filename)
+        self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
         self.__read_image_bytes(path)
@@ -104,18 +124,16 @@ class AutoSplitImage():
 
     def compare_with_capture(
         self,
-        comparison: Union[AutoSplit, int],
+        default: Union[AutoSplit, int],
         capture: Optional[cv2.ndarray]
     ):
         """
-        Compare image with capture using comparison method from combobox
+        Compare image with capture using image's comparison method. Falls back to combobox
         """
-        comparison_method: int = comparison \
-            if isinstance(comparison, int) \
-            else comparison.settings_dict["default_comparison_method"]
 
         if self.bytes is None or capture is None:
             return 0.0
+        comparison_method = self.__get_comparison_method(default)
         if comparison_method == 0:
             return compare_l2_norm(self.bytes, capture, self.mask)
         if comparison_method == 1:
