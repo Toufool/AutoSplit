@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from PyQt6 import QtCore
 
 import error_messages
-import settings_file as settings
+import user_profile
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -25,8 +25,7 @@ class AutoControlledWorker(QtCore.QObject):
                 break
             except EOFError:
                 continue
-            # TODO: "AutoSplit Integration" needs to call this and wait instead of outright killing the app.
-            # For now this can only used in a Development environment
+            # This is for use in a Development environment
             if line == "kill":
                 self.autosplit.closeEvent()
                 break
@@ -40,7 +39,7 @@ class AutoControlledWorker(QtCore.QObject):
                 self.autosplit.reset_signal.emit()
             elif line.startswith("settings"):
                 # Allow for any split character between "settings" and the path
-                settings.load_settings(self.autosplit, line[9:])
+                user_profile.load_settings(self.autosplit, line[9:])
             # TODO: Not yet implemented in AutoSplit Integration
             # elif line == 'pause':
             #     self.pause_signal.emit()

@@ -170,19 +170,19 @@ This option does not loop single, specific images. See the Custom Split Image Se
 If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
 If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
 
-### Settings
+### Profiles
 
-- Settings files use the extension `.pkl`. Settings files can be saved and opened by using File -> Save Settings As... and File -> Load Settings. A settings file can be loaded upon opening AutoSplit if placed in the same directory as AutoSplit.exe.
-- The settings in the settings file include split image directory, capture region, capture region dimensions, fps limit, threshold and pause time settings, all hotkeys, "Group dummy splits when undoing/skipping" check box, "Loop Split Images" check box, and "Auto Start On Reset" check box.
-- You can save multiple settings files, which is useful if you speedrun multiple games.
-- If you are upgrading to Windows 11, it's possible that save files may not transfer perfectly. You may need to readjust or reselect your Capture Region, for example.
+- Profiles are saved under `%appdata%\AutoSplit\profiles` and use the extension `.toml`. Profiles can be saved and loaded by using File -> Save Profile As... and File -> Load Profile.
+- The profile contains all of your settings, including information about the capture region.
+- You can save multiple profiles, which is useful if you speedrun multiple games.
+- If you change your display setup (like using a new monitor, or upgrading to Windows 11), you may need to readjust or reselect your Capture Region.
 
 ## LiveSplit Integration
 
 The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit. LiveSplit integration is only supported in AutoSplit v1.6.0 or higher. This integration will allow you to:
 
 - Use hotkeys directly from LiveSplit to control AutoSplit and LiveSplit together
-- Load AutoSplit and any AutoSplit settings automatically when opening a LiveSplit layout.
+- Load AutoSplit and any AutoSplit profile automatically when opening a LiveSplit layout.
 
 ### LiveSplit Integration Tutorial
 
@@ -190,9 +190,9 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
 - Click Layout Settings -> AutoSplit Integration
-- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Settings Path (path to your AutoSplit `.pkl` settings file) respectively.
-  - If you have not yet set saved a settings file, you can do so using AutoSplit, and then go back and set your Settings Path.
-- Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and its settings will now open automatically when opening that LiveSplit Layout `.lsl` file.
+- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Profile Path (path to your AutoSplit `.toml` profile file) respectively.
+  - If you have not yet set saved a profile, you can do so using AutoSplit, and then go back and set your Settings Path.
+- Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and your selected profile will now open automatically when opening that LiveSplit Layout `.lsl` file.
 
 ## Known Limitations
 

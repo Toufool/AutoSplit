@@ -13,7 +13,6 @@ aggressive = 3
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
-pythonPlatform = "Windows"
 typeCheckingMode = "strict"
 # Extra strict
 reportImplicitStringConcatenation="error"
@@ -23,16 +22,21 @@ reportPropertyTypeMismatch="error"
 reportUninitializedInstanceVariable="error"
 reportUnnecessaryTypeIgnoreComment="error"
 reportUnusedCallResult="none"
-ignore = [
-  # Auto generated
+# Exclude from scanning when running pyright
+exclude = [
+  # Auto generated, produces unecessary `# type: ignore`
   "src/gen/",
-  # We expect stub files to be incomplete or contain useless statements
-  "typings/",
 ]
+# Ignore must be specified for Pylance to stop displaying errors
+ignore = [
+  # We expect stub files to be incomplete or contain useless statements
+  "**/*.pyi",
+]
+# Type stubs may not be completable
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# False positives with PyQt .connect . pylint(no-member) works instead
+# False positives with PyQt .connect. pylint(no-member) works instead
 reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"
@@ -44,21 +48,28 @@ reportUnknownMemberType = "none"
 # https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
 # https://pylint.pycqa.org/en/latest/technical_reference/features.html
 [tool.pylint.REPORTS]
-# Just like default but any error will make drop to 9 or less
-evaluation = "10.0 - error - ((float((warning + convention) * 10 + refactor ) / statement) * 10)"
+# Just like default but any error, warning or convention will make drop to 9 or less. refactor are worth more
+evaluation = "10.0 - error - warning - convention - ((10 * refactor) / statement) * 10"
 [tool.pylint.MASTER]
 fail-under = 9.0
+# https://pydocbrowser.github.io/pylint/latest/pylint.extensions.html
 # https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
 load-plugins = [
-  "pylint.extensions.emptystring",
+  "pylint.extensions.bad_builtin",
+  "pylint.extensions.check_elif",
+  "pylint.extensions.comparison_placement",
   "pylint.extensions.confusing_elif",
   "pylint.extensions.consider_ternary_expression",
-  "pylint.extensions.bad_builtin",
-  "pylint.extensions.mccabe",
-  "pylint.extensions.check_elif",
-  "pylint.extensions.redefined_variable_type",
-  "pylint.extensions.overlapping_exceptions",
   "pylint.extensions.empty_comment",
+  "pylint.extensions.emptystring",
+  "pylint.extensions.for_any_all",
+  "pylint.extensions.eq_without_hash",
+  "pylint.extensions.mccabe",
+  "pylint.extensions.no_self_use",
+  "pylint.extensions.overlapping_exceptions",
+  "pylint.extensions.private_import",
+  "pylint.extensions.redefined_loop_name",
+  "pylint.extensions.redefined_variable_type",
   "pylint.extensions.set_membership",
   "pylint.extensions.typing",
   # TODO: Maybe later
@@ -69,23 +80,14 @@ load-plugins = [
   # "pylint.extensions.comparetozero",
   # "pylint.extensions.docstyle",
   # "pylint.extensions.while_used",
-  # Didn't work
-  # "pylint.extensions.comparison_placement",
-  # "pylint.extensions.for_any_all",
 ]
-# Auto generated (doesn't work)
-ignore-paths = ["src/gen/.*"]
-  # We expect stub files to be incomplete or contain useless statements
-ignore-patterns = [
-  ".*\\.pyi",
+ignore-paths = [
   # Auto generated
-  "about.py",
-  "design.py",
-  "resources_rc.py",
-  "settings.py",
-  "update_checker.py",
+  "^src/gen/.*$",
+  # We expect stub files to be incomplete or contain useless statements
+  "^.*.pyi$",
 ]
-extension-pkg-allow-list = ["PyQt6", "win32ui"]
+extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui"]
 
 [tool.pylint.FORMAT]
 max-line-length = 120
@@ -102,6 +104,9 @@ max-locals = 15
 max-complexity = 15
 # At least same as max-complexity
 max-branches = 15
+# https://github.com/PyCQA/pep8-naming/issues/164
+# OR doesn't fit CaptureMethodMeta
+valid-classmethod-first-arg = "self"
 # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
 module-naming-style = "any"
 # Can't make private class with PascalCase
@@ -115,18 +120,28 @@ disable = [
   # No need to mention the fixmes
   "fixme",
   "missing-docstring",
-  # We group imports
+  # Already taken care of by Flake8 and isort
+  "ungrouped-imports",
+  "unused-import",
+  "wrong-import-order",
   "wrong-import-position",
   # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
   "unused-argument",
-  # Already taken care of by Flake8
-  "unused-import",
+  # Only reports a single instance. Pyright does a better job anyway
+  "cyclic-import",
+  # Doesn't work with local imports
+  "import-error",
   # Similar lines in 2 files, doesn't really work
   "R0801",
 ]
 
 [tool.pylint.TYPECHECK]
-generated-members = "cv2"
+generated-members = [
+  # https://github.com/PyCQA/pylint/issues/4987
+  "cv2",
+  # https://github.com/mhammond/pywin32/issues/1913
+  "pywintypes.error",
+]
 
 [tool.isort]
 line_length = 120

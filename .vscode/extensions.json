@@ -4,13 +4,18 @@
     "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
+    "ms-python.flake8",
     "ms-python.python",
     "ms-python.vscode-pylance",
+    "ms-vscode.powershell",
     "pkief.material-icon-theme",
+    "redhat.vscode-yaml",
     "shardulm94.trailing-spaces",
     "sonarsource.sonarlint-vscode"
   ],
   "unwantedRecommendations": [
+    // Must disable in this workspace //
+    //
     // VSCode has implemented an optimized version
     "coenraads.bracket-pair-colorizer",
     "coenraads.bracket-pair-colorizer-2",
@@ -21,7 +26,15 @@
     "ms-vscode.vscode-typescript-tslint-plugin",
     // Obsoleted by Pylance
     "ms-pyright.pyright",
-    // The ESLint plugin is sufficient in JS-only projects
+    // Not configurable per workspace, tends to conflict with other linters
+    // Use eslint-plugin-sonarjs for JS/TS projects
     "sonarsource.sonarlint-vscode",
+    //
+    // Don't recommend to autoinstall //
+    //
+    // This is a Git project
+    "johnstoncode.svn-scm",
+    // Prefer using VSCode itself as a text editor
+    "vscodevim.vim",
   ]
 }

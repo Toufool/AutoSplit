@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import threading
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Literal, Optional, Union
+from typing import TYPE_CHECKING, Literal
 
-import keyboard  # https://github.com/boppreh/keyboard/issues/505
-import pyautogui  # https://github.com/asweigart/pyautogui/issues/645
+import keyboard
+import pyautogui
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -43,7 +43,7 @@ def after_setting_hotkey(autosplit: AutoSplit):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
-def is_digit(key: Optional[str]):
+def is_digit(key: str | int | None):
     """
     Checks if `key` is a single-digit string from 0-9
     """
@@ -73,7 +73,7 @@ def send_command(autosplit: AutoSplit, command: Commands):
         raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
 
 
-def _unhook(hotkey_callback: Optional[Callable[[], None]]):
+def _unhook(hotkey_callback: Callable[[], None] | None):
     try:
         if hotkey_callback:
             keyboard.unhook_key(hotkey_callback)
@@ -81,7 +81,7 @@ def _unhook(hotkey_callback: Optional[Callable[[], None]]):
         pass
 
 
-def _send_hotkey(hotkey_or_scan_code: Union[int, str, None]):
+def _send_hotkey(hotkey_or_scan_code: int | str | None):
     """
     Supports sending the appropriate scan code for all the special cases
     """
@@ -183,7 +183,6 @@ def __read_hotkey():
         if keyboard_event.event_type == keyboard.KEY_UP:
             break
         key_name = __get_key_name(keyboard_event)
-        print(key_name)
         # Ignore long presses
         if names and names[-1] == key_name:
             continue
@@ -245,5 +244,4 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: s
 
     # Try to remove the previously set hotkey if there is one.
     _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-    thread = threading.Thread(target=callback)
-    thread.start()
+    threading.Thread(target=callback).start()

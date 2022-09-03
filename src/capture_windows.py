@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes
-from dataclasses import dataclass
-from typing import Optional, cast
+from typing import TypedDict, cast
 
 import cv2
 import numpy as np
@@ -18,13 +17,11 @@ from win32 import win32gui
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-@dataclass
-class Region():
-    def __init__(self, x: int, y: int, width: int, height: int):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+class Region(TypedDict):
+    x: int
+    y: int
+    width: int
+    height: int
 
 
 def capture_region(hwnd: int, selection: Region, print_window: bool):
@@ -48,32 +45,32 @@ def capture_region(hwnd: int, selection: Region, print_window: bool):
 
         compatible_dc = dc_object.CreateCompatibleDC()
         bitmap = win32ui.CreateBitmap()
-        bitmap.CreateCompatibleBitmap(dc_object, selection.width, selection.height)
+        bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
         compatible_dc.SelectObject(bitmap)
-        compatible_dc.BitBlt((0, 0),
-                             (selection.width, selection.height),
-                             dc_object,
-                             (selection.x, selection.y),
-                             win32con.SRCCOPY)
+        compatible_dc.BitBlt(
+            (0, 0),
+            (selection["width"], selection["height"]),
+            dc_object,
+            (selection["x"], selection["y"]),
+            win32con.SRCCOPY)
     except (win32ui.error, pywintypes.error):
         return None
 
     image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype="uint8")
-    image.shape = (selection.height, selection.width, 4)
+    image.shape = (selection["height"], selection["width"], 4)
 
     try:
         dc_object.DeleteDC()
         compatible_dc.DeleteDC()
         win32gui.ReleaseDC(hwnd, window_dc)
         win32gui.DeleteObject(bitmap.GetHandle())
-    # https://github.com/kaluluosi/pywin32-stubs/issues/5
-    except win32ui.error:  # type: ignore
+    except win32ui.error:
         pass
 
     return image
 
 
-def set_ui_image(qlabel: QLabel, image: Optional[cv2.ndarray], transparency: bool):
+def set_ui_image(qlabel: QLabel, image: cv2.ndarray | None, transparency: bool):
     if image is None:
         # Clear current pixmap if image is None. But don't clear text
         if not qlabel.text():

@@ -150,17 +150,17 @@ def align_region(autosplit: AutoSplit):
 
     # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
     __set_region_values(autosplit,
-                        left=autosplit.settings_dict["capture_region"].x + best_loc[0],
-                        top=autosplit.settings_dict["capture_region"].y + best_loc[1],
+                        left=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
+                        top=autosplit.settings_dict["capture_region"]["y"] + best_loc[1],
                         width=best_width,
                         height=best_height)
 
 
 def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
-    autosplit.settings_dict["capture_region"].x = left
-    autosplit.settings_dict["capture_region"].y = top
-    autosplit.settings_dict["capture_region"].width = width
-    autosplit.settings_dict["capture_region"].height = height
+    autosplit.settings_dict["capture_region"]["x"] = left
+    autosplit.settings_dict["capture_region"]["y"] = top
+    autosplit.settings_dict["capture_region"]["width"] = width
+    autosplit.settings_dict["capture_region"]["height"] = height
 
     autosplit.x_spinbox.setValue(left)
     autosplit.y_spinbox.setValue(top)

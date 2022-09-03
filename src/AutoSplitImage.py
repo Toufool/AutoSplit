@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -34,17 +34,17 @@ class AutoSplitImage():
     flags: int
     loops: int
     image_type: ImageType
-    bytes: Optional[cv2.ndarray] = None
-    mask: Optional[cv2.ndarray] = None
+    byte_array: cv2.ndarray | None = None
+    mask: cv2.ndarray | None = None
     # This value is internal, check for mask instead
-    _has_transparency: bool
+    _has_transparency = False
     # These values should be overriden by Defaults if None. Use getters instead
-    __delay_time: Optional[float] = None
-    __comparison_method: Optional[int] = None
-    __pause_time: Optional[float] = None
-    __similarity_threshold: Optional[float] = None
+    __delay_time: float | None = None
+    __comparison_method: int | None = None
+    __pause_time: float | None = None
+    __similarity_threshold: float | None = None
 
-    def get_delay_time(self, default: Union[AutoSplit, int]):
+    def get_delay_time(self, default: AutoSplit | int):
         """
         Get image's delay time or fallback to the default value from spinbox
         """
@@ -53,7 +53,7 @@ class AutoSplitImage():
             else default.settings_dict["default_delay_time"]
         return default_value if self.__delay_time is None else self.__delay_time
 
-    def __get_comparison_method(self, default: Union[AutoSplit, int]):
+    def __get_comparison_method(self, default: AutoSplit | int):
         """
         Get image's comparison or fallback to the default value from combobox
         """
@@ -62,7 +62,7 @@ class AutoSplitImage():
             else default.settings_dict["default_comparison_method"]
         return default_value if self.__comparison_method is None else self.__comparison_method
 
-    def get_pause_time(self, default: Union[AutoSplit, float]):
+    def get_pause_time(self, default: AutoSplit | float):
         """
         Get image's pause time or fallback to the default value from spinbox
         """
@@ -71,9 +71,9 @@ class AutoSplitImage():
             else default.settings_dict["default_pause_time"]
         return default_value if self.__pause_time is None else self.__pause_time
 
-    def get_similarity_threshold(self, default: Union[AutoSplit, float]):
+    def get_similarity_threshold(self, default: AutoSplit | float):
         """
-        Get image's similarity threashold or fallback to the default value from spinbox
+        Get image's similarity threshold or fallback to the default value from spinbox
         """
         default_value = default \
             if isinstance(default, float) \
@@ -101,7 +101,7 @@ class AutoSplitImage():
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         if image is None:
-            self.bytes = None
+            self.byte_array = None
             error_messages.image_type(path)
             return
 
@@ -117,27 +117,27 @@ class AutoSplitImage():
         elif image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
-        self.bytes = image
+        self.byte_array = image
 
     def check_flag(self, flag: int):
         return self.flags & flag == flag
 
     def compare_with_capture(
         self,
-        default: Union[AutoSplit, int],
-        capture: Optional[cv2.ndarray]
+        default: AutoSplit | int,
+        capture: cv2.ndarray | None
     ):
         """
         Compare image with capture using image's comparison method. Falls back to combobox
         """
 
-        if self.bytes is None or capture is None:
+        if self.byte_array is None or capture is None:
             return 0.0
         comparison_method = self.__get_comparison_method(default)
         if comparison_method == 0:
-            return compare_l2_norm(self.bytes, capture, self.mask)
+            return compare_l2_norm(self.byte_array, capture, self.mask)
         if comparison_method == 1:
-            return compare_histograms(self.bytes, capture, self.mask)
+            return compare_histograms(self.byte_array, capture, self.mask)
         if comparison_method == 2:
-            return compare_phash(self.bytes, capture, self.mask)
+            return compare_phash(self.byte_array, capture, self.mask)
         return 0.0
