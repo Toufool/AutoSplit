@@ -2,38 +2,32 @@
 #
 # Python: CPython 3.9+
 #
-# Usage: .\scripts\install.bat
+# Usage: ./scripts/install.ps1
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip3.9 uninstall -r .\scripts\requirements.txt
+# pip uninstall -y -r ./scripts/requirements-dev.txt
 #
-# Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
+# Creating anAutoSplit executable with PyInstaller: ./scripts/build.ps1
 #
 # Dependencies:
-ImageHash
+numpy>=1.23 # Updated types
+opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
+PyQt6>=6.2.1 # Python 3.10 support
+git+https://github.com/JohannesBuchner/imagehash#egg=ImageHash  # Contains type information
 keyboard
-numpy>=1.22.0rc1
-opencv-python
 packaging
 Pillow
-PyQt6
-PyQt6-tools
-PySide6
-pyautogui
-pywin32
+PyAutoGUI
 requests
-# Linting, formatters and Types
-bandit
-isort
-flake8
-flake8-pyi
-flake8-quotes
-flake8-isort
-pylint>=2.13
-git+https://github.com/Avasam/pywin32-stubs.git#egg=pywin32-stubs # https://github.com/kaluluosi/pywin32-stubs/pull/4
-simplejson
-types-simplejson>=3.17.2
-types-requests
+certifi
+toml
+psutil
+git+https://github.com/Avasam/python_grabber.git@complete-types#egg=pygrabber # https://github.com/andreaschiavinato/python_grabber/pull/18
+# Windows-only
+pywin32>=301
+winsdk>=v1.0.0b4
+git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
 #
-# Comment this out if you don't want to build AutoSplit.exe:
+# Build and compile resources
 PyInstaller
+PySide6

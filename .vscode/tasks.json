@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "windows": {
+    "options": {
+      "shell": {
+        "executable": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-Command"
+        ]
+      }
+    }
+  },
+  "tasks": [
+    {
+      "label": "Compile resources",
+      "type": "shell",
+      "command": "scripts/compile_resources.ps1"
+    },
+    {
+      "label": "Build AutoSplit",
+      "type": "shell",
+      "command": "scripts/build.ps1",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
