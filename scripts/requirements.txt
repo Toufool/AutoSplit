@@ -7,7 +7,7 @@
 # If you're having issues with the libraries, you might want to first run:
 # pip uninstall -y -r ./scripts/requirements-dev.txt
 #
-# Creating anAutoSplit executable with PyInstaller: ./scripts/build.ps1
+# Creating an AutoSplit executable with PyInstaller: ./scripts/build.ps1
 #
 # Dependencies:
 numpy>=1.23 # Updated types

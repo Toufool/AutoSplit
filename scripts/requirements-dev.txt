@@ -6,7 +6,7 @@
 # Dependencies
 -r requirements.txt
 #
-# Linting and formatters
+# Linters and formatters
 bandit
 flake8>=5 # flake8-pyi deprecation warnings
 flake8-builtins
