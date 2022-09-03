@@ -2,12 +2,11 @@ from collections.abc import Callable
 from queue import Queue
 from threading import Lock, Thread
 
+from keyboard._keyboard_event import KeyboardEvent
+from keyboard._mouse_event import ButtonEvent, MoveEvent, WheelEvent
 from typing_extensions import Literal, TypeAlias
 
-from ._keyboard_event import KeyboardEvent
-from ._mouse_event import _MouseEvent
-
-_Event: TypeAlias = KeyboardEvent | _MouseEvent
+_Event: TypeAlias = KeyboardEvent | ButtonEvent | WheelEvent | MoveEvent
 
 
 class GenericListener:
