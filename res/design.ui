@@ -1008,11 +1008,6 @@
     <string>Check for Updates on Open</string>
    </property>
   </action>
-  <action name="actionLoop_Last_Split_Image_To_First_Image">
-   <property name="text">
-    <string>Force Full Render</string>
-   </property>
-  </action>
   <action name="actionAuto_Start_On_Reset">
    <property name="text">
     <string>Check For Updates On Open</string>

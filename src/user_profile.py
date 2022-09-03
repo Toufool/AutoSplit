@@ -7,10 +7,9 @@ from typing import TYPE_CHECKING, TypedDict, cast
 import keyboard
 import toml
 from PyQt6 import QtCore, QtWidgets
-from win32 import win32gui
 
 import error_messages
-from capture_windows import Region
+from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
 from hotkeys import set_hotkey
 
@@ -30,7 +29,9 @@ class UserProfileDict(TypedDict):
     pause_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    force_print_window: bool
+    capture_method: str | CaptureMethodEnum
+    capture_device_id: int
+    capture_device_name: str
     default_comparison_method: int
     default_similarity_threshold: float
     default_delay_time: int
@@ -50,7 +51,9 @@ DEFAULT_PROFILE = UserProfileDict(
     pause_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    force_print_window=False,
+    capture_method=CAPTURE_METHODS.get_method_by_index(0),
+    capture_device_id=0,
+    capture_device_name="",
     default_comparison_method=0,
     default_similarity_threshold=0.95,
     default_delay_time=0,
@@ -144,14 +147,13 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         if autosplit.settings_dict["pause_hotkey"]:
             set_hotkey(autosplit, "pause", autosplit.settings_dict["pause_hotkey"])
 
-    if autosplit.settings_dict["captured_window_title"]:
-        hwnd = win32gui.FindWindow(None, autosplit.settings_dict["captured_window_title"])
-        if hwnd:
-            autosplit.hwnd = hwnd
-        else:
-            autosplit.live_image.setText("Reload settings after opening"
-                                         + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
-                                         + "\nto automatically load Capture Region")
+    change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
+    autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"], autosplit)
+    if not autosplit.capture_method.check_selected_region_exists(autosplit):
+        autosplit.live_image.setText("Reload settings after opening"
+                                     + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+                                     + "\nto automatically load Capture Region")
+
     return True
 
 
@@ -177,13 +179,17 @@ def load_settings_on_open(autosplit: AutoSplit):
         in os.listdir(auto_split_directory)
         if file.endswith(".toml")]
 
-    # find all .tomls in AutoSplit folder, error if there is none or more than 1
+    # Find all .tomls in AutoSplit folder, error if there is not exactly 1
+    error = None
     if len(settings_files) < 1:
-        error_messages.no_settings_file_on_open()
+        error = error_messages.no_settings_file_on_open
+    elif len(settings_files) > 1:
+        error = error_messages.too_many_settings_files_on_open
+    if error:
+        change_capture_method(CAPTURE_METHODS.get_method_by_index(0), autosplit)
+        error()
         return
-    if len(settings_files) > 1:
-        error_messages.too_many_settings_files_on_open()
-        return
+
     load_settings(autosplit, os.path.join(auto_split_directory, settings_files[0]))
 
 

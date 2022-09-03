@@ -103,3 +103,8 @@ def exception_traceback(message: str, exception: BaseException):
     set_text_message(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)))
+
+
+CREATE_NEW_ISSUE_MESSAGE = (
+    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
+    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below")

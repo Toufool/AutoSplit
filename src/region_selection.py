@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes
 import ctypes.wintypes
 import os
+from math import ceil
 from typing import TYPE_CHECKING, cast
 
 import cv2
@@ -11,24 +12,53 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtTest import QTest
 from win32 import win32gui
 from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+from winsdk._winrt import initialize_with_window
+from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
+from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
-import capture_windows
 import error_messages
+from utils import get_window_bounds, is_valid_hwnd, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-WINDOWS_SHADOW_SIZE = 8
-WINDOWS_TOPBAR_SIZE = 24
 user32 = ctypes.windll.user32
+
+
+def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
+    # TODO: For later as a different picker option
+    """
+    Uses the built-in GraphicsCapturePicker to select the Window
+    """
+    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+        try:
+            if async_status != AsyncStatus.COMPLETED:
+                return
+        except SystemError as exception:
+            # HACK: can happen when closing the GraphicsCapturePicker
+            if str(exception).endswith("returned a result with an error set"):
+                return
+            raise
+        item = async_operation.get_results()
+        if not item:
+            return
+        autosplit.settings_dict["captured_window_title"] = item.display_name
+        autosplit.capture_method.reinitialize(autosplit)
+
+    picker = GraphicsCapturePicker()
+    initialize_with_window(picker, int(autosplit.effectiveWinId()))
+    async_operation = picker.pick_single_item_async()
+    # None if the selection is canceled
+    if async_operation:
+        async_operation.completed = callback
 
 
 def select_region(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
-    # Need to wait until the user has selected a region using the widget before moving on with
-    # selecting the window settings
+    # Need to wait until the user has selected a region using the widget
+    # before moving on with selecting the window settings
     while True:
         width = selector.width()
         height = selector.height()
@@ -40,17 +70,19 @@ def select_region(autosplit: AutoSplit):
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
-    # Don't select desktop
-    if not hwnd or not window_text:
+    if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
+
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
+    autosplit.capture_method.reinitialize(autosplit)
 
-    offset_x, offset_y, *_ = win32gui.GetWindowRect(autosplit.hwnd)
+    left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
+    window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
     __set_region_values(autosplit,
-                        left=x - offset_x,
-                        top=y - offset_y,
+                        left=x - window_x - left_bounds,
+                        top=y - window_y - top_bounds,
                         width=width,
                         height=height)
 
@@ -70,24 +102,25 @@ def select_window(autosplit: AutoSplit):
     del selector
 
     hwnd, window_text = __get_window_from_point(x, y)
-    # Don't select desktop
-    if not hwnd or not window_text:
+    if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
+
     autosplit.hwnd = hwnd
     autosplit.settings_dict["captured_window_title"] = window_text
+    autosplit.capture_method.reinitialize(autosplit)
 
-    # Getting window bounds
-    # On Windows there is a shadow around the windows that we need to account for
-    # The top bar with the window name is also not accounted for
-    # HACK: This isn't an ideal solution because it assumes every window will have a top bar and shadows of default size
-    # FIXME: Which results in cutting *into* windows which don't have shadows or have a smaller top bars
-    _, __, width, height = win32gui.GetClientRect(autosplit.hwnd)
+    # Exlude the borders and titlebar from the window selection. To only get the client area.
+    _, __, window_width, window_height = get_window_bounds(hwnd)
+    _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
+    border_width = ceil((window_width - client_width) / 2)
+    titlebar_with_border_height = window_height - client_height - border_width
+
     __set_region_values(autosplit,
-                        left=WINDOWS_SHADOW_SIZE,
-                        top=WINDOWS_SHADOW_SIZE + WINDOWS_TOPBAR_SIZE,
-                        width=width,
-                        height=height - WINDOWS_TOPBAR_SIZE)
+                        left=border_width,
+                        top=titlebar_with_border_height,
+                        width=client_width,
+                        height=client_height - border_width * 2)
 
 
 def __get_window_from_point(x: int, y: int):
@@ -107,7 +140,7 @@ def __get_window_from_point(x: int, y: int):
 
 def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
-    if autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    if not autosplit.capture_method.check_selected_region_exists(autosplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
@@ -115,7 +148,7 @@ def align_region(autosplit: AutoSplit):
         autosplit,
         "Select Reference Image",
         "",
-        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)"
+        "Image Files (*.png *.jpg *.jpeg *.jpe *.jp2 *.bmp *.tiff *.tif *.dib *.webp *.pbm *.pgm *.ppm *.sr *.ras)",
     )[0]
 
     # Return if the user presses cancel
@@ -125,18 +158,15 @@ def align_region(autosplit: AutoSplit):
     template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
 
     # Validate template is a valid image file
-    if template is None:
+    if not is_valid_image(template):
         error_messages.align_region_image_type()
         return
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture = capture_windows.capture_region(
-        autosplit.hwnd,
-        autosplit.settings_dict["capture_region"],
-        autosplit.settings_dict["force_print_window"])
+    capture, _ = autosplit.capture_method.get_frame(autosplit)
 
-    if capture is None:
+    if not is_valid_image(capture):
         error_messages.region()
         return
 
@@ -168,13 +198,15 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.ndarray, template: cv2.ndarray):
-    # Obtain the best matching point for the template within the
-    # capture. This assumes that the template is actually smaller
-    # than the dimensions of the capture. Since we are using SQDIFF
-    # the best match will be the min_val which is located at min_loc.
-    # The best match found in the image, set everything to 0 by default
-    # so that way the first match will overwrite these values
+def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=too-many-locals
+    """
+    Obtain the best matching point for the template within the
+    capture. This assumes that the template is actually smaller
+    than the dimensions of the capture. Since we are using SQDIFF
+    the best match will be the min_val which is located at min_loc.
+    The best match found in the image, set everything to 0 by default
+    so that way the first match will overwrite these values
+    """
     best_match = 0.0
     best_height = 0
     best_width = 0
@@ -216,7 +248,7 @@ def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check
         error = error_messages.split_image_directory_not_found
     elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
         error = error_messages.split_image_directory_empty
-    elif autosplit.hwnd <= 0 or not win32gui.GetWindowText(autosplit.hwnd):
+    elif not autosplit.capture_method.check_selected_region_exists(autosplit):
         error = error_messages.region
     if error and show_error:
         error()
@@ -252,17 +284,22 @@ class BaseSelectWidget(QtWidgets.QWidget):
             self.close()
 
 
-# Widget to select a window and obtain its bounds
 class SelectWindowWidget(BaseSelectWidget):
+    """
+    Widget to select a window and obtain its bounds
+    """
+
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         self._x = int(a0.position().x()) + self.geometry().x()
         self._y = int(a0.position().y()) + self.geometry().y()
         self.close()
 
 
-# Widget for dragging screen region
-# https://github.com/harupy/snipping-tool
 class SelectRegionWidget(BaseSelectWidget):
+    """
+    Widget for dragging screen region
+    https://github.com/harupy/snipping-tool
+    """
     _right: int = 0
     _bottom: int = 0
     __begin = QtCore.QPoint()

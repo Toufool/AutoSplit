@@ -61,7 +61,7 @@ This program can be used to automatically start, split, and reset your preferred
 
 ## Avg. FPS
 
-- Calculates the average comparison rate of the capture region to split images. This value will likely be much higher than needed (unless you [Force Full-Content-Rendering](#Full-Content-Rendering)), so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
+- Calculates the average comparison rate of the capture region to split images. This value will likely be much higher than needed, so it is highly recommended to limit your FPS depending on the frame rate of the game you are capturing.
 
 ## OPTIONS
 
@@ -72,9 +72,29 @@ This program can be used to automatically start, split, and reset your preferred
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
 
-### Full Content Rendering
+### Capture Method
 
-- Certain windows (namely hardware accelerated ones) won't always render their content. To work around this, you can "Force Full Content Rendering". This option is not recommended unless you really need it. It will cause a 10-15x performance drop based on the size of the complete window that's being captured (not the selected region, but rather the actual window size). It can also mess with some applications' rendering pipeline.
+- **BitBlt** (fastest, least compatible)  
+    A good default fast option. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
+    The smaller the selected region, the more efficient it is.  
+- **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
+    Only available in Windows 10.0.17134 and up.  
+    Due to current technical limitations, it requires having at least one audio or video Capture Device connected and enabled. Even if it won't be used.  
+    Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
+    Adds a yellow border on Windows 10 (not on Windows 11).
+    Caps at around 60 FPS.  
+- **Direct3D Desktop Duplication** (slower, bound to display)  
+    Duplicates the desktop using Direct3D.  
+    It can record OpenGL and Hardware Accelerated windows.  
+    About 10-15x slower than BitBlt. Not affected by window size.  
+    overlapping windows will show up and can't record across displays.  
+- **Force Full Content Rendering** (very slow, can affect rendering pipeline)  
+    Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
+    About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
+- **Video Capture Device**
+    Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
+    There are currently performance issues, but it might be more convenient.  
+    If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://obsproject.com/forum/resources/obs-virtualcam.949/) instead.  
 
 ### Show Live Similarity
 

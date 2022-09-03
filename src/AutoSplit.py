@@ -21,26 +21,22 @@ import certifi
 import cv2
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QWidget
-from win32 import win32gui
+from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
 
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, AutoSplitImage, ImageType
-from capture_windows import capture_region, set_ui_image
+from capture_method import CaptureMethodEnum, CaptureMethodInterface
 from gen import about, design, settings, update_checker
 from hotkeys import after_setting_hotkey, send_command
 from menu_bar import (VERSION, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
                       open_update_checker, view_help)
-from screen_region import align_region, select_region, select_window, validate_before_parsing
+from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
-from user_profile import DEFAULT_PROFILE, FROZEN
+from user_profile import DEFAULT_PROFILE
+from utils import FROZEN, START_AUTO_SPLITTER_TEXT, is_valid_image
 
-CREATE_NEW_ISSUE_MESSAGE = (
-    "Please create a New Issue at <a href='https://github.com/Toufool/Auto-Split/issues'>"
-    + "github.com/Toufool/Auto-Split/issues</a>, describe what happened, and copy & paste the error message below")
-START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 CHECK_FPS_ITERATIONS = 10
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
@@ -54,10 +50,12 @@ def make_excepthook(autosplit: AutoSplit):
         # Catch Keyboard Interrupts for a clean close
         if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
             sys.exit(0)
-        autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(
-            "AutoSplit encountered an unhandled exception and will try to recover, "
-            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
-            exception))
+        autosplit.show_error_signal.emit(
+            lambda: error_messages.exception_traceback(
+                "AutoSplit encountered an unhandled exception and will try to recover, "
+                + "however, there is no guarantee it will keep working properly."
+                + error_messages.CREATE_NEW_ISSUE_MESSAGE,
+                exception))
     return excepthook
 
 
@@ -103,6 +101,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
+    capture_method = CaptureMethodInterface()
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
     last_loaded_settings = DEFAULT_PROFILE
@@ -240,16 +239,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.load_start_image_signal.emit()
 
     def __live_image_function(self):
-        self.capture_region_window_label.setText(self.settings_dict["captured_window_title"])
-        if not (self.settings_dict["live_capture_region"] and self.settings_dict["captured_window_title"]):
+        capture_region_window_label = self.settings_dict["capture_device_name"] \
+            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE \
+            else self.settings_dict["captured_window_title"]
+        self.capture_region_window_label.setText(capture_region_window_label)
+        if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
             self.live_image.clear()
             return
         # Set live image in UI
-        if self.hwnd:
-            capture = capture_region(self.hwnd,
-                                     self.settings_dict["capture_region"],
-                                     self.settings_dict["force_print_window"])
-            set_ui_image(self.live_image, capture, False)
+        capture, _ = self.capture_method.get_frame(self)
+        set_preview_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """
@@ -302,7 +301,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture = self.__get_capture_for_comparison()
+        capture, _ = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
         self.table_current_image_threshold_label.setText(f"{start_image_threshold:.2f}")
@@ -380,10 +379,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture = capture_region(self.hwnd,
-                                 self.settings_dict["capture_region"],
-                                 self.settings_dict["force_print_window"])
-        if capture is None:
+        capture, _ = self.capture_method.get_frame(self)
+        if not is_valid_image(capture):
             error_messages.region()
             return
 
@@ -407,9 +404,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         for image in images:
             count = 0
             while count < CHECK_FPS_ITERATIONS:
-                capture = self.__get_capture_for_comparison()
+                capture, is_old_image = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
-                count += 1
+                if not is_old_image:
+                    count += 1
 
         # calculate FPS
         t1 = time()
@@ -611,7 +609,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         start = time()
         while True:
-            capture = self.__get_capture_for_comparison()
+            capture, _ = self.__get_capture_for_comparison()
 
             if self.__reset_if_should(capture):
                 return True
@@ -677,7 +675,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for reset image
-            if self.__reset_if_should(self.__get_capture_for_comparison()):
+            if self.__reset_if_should(self.__get_capture_for_comparison()[0]):
                 return True
 
             time_delta = time() - start_time
@@ -752,22 +750,23 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         Grab capture region and resize for comparison
         """
-        capture = capture_region(self.hwnd,
-                                 self.settings_dict["capture_region"],
-                                 self.settings_dict["force_print_window"])
+        capture, is_old_image = self.capture_method.get_frame(self)
 
         # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
-        if capture is None:
+        if not is_valid_image(capture):
             # Try to recover by using the window name
-            self.live_image.setText("Trying to recover window...")
-            hwnd = win32gui.FindWindow(None, self.settings_dict["captured_window_title"])
-            # Don't fallback to desktop
-            if hwnd:
-                self.hwnd = hwnd
-                capture = capture_region(self.hwnd,
-                                         self.settings_dict["capture_region"],
-                                         self.settings_dict["force_print_window"])
-        return None if capture is None else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+                self.live_image.setText("Waiting for capture device...")
+            else:
+                self.live_image.setText("Trying to recover window...")
+                recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"], self)
+                if recovered:
+                    capture, _ = self.capture_method.get_frame(self)
+
+        return (None
+                if not is_valid_image(capture)
+                else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
+                is_old_image)
 
     def __reset_if_should(self, capture: cv2.ndarray | None):
         """
@@ -803,8 +802,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if self.split_image.byte_array is not None:
-            set_ui_image(self.current_split_image, self.split_image.byte_array, True)
+        if is_valid_image(self.split_image.byte_array):
+            set_preview_image(self.current_split_image, self.split_image.byte_array, True)
 
         self.current_image_file_label.setText(self.split_image.filename)
         self.table_current_image_threshold_label.setText(f"{self.split_image.get_similarity_threshold(self):.2f}")
@@ -867,6 +866,28 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             exit_program()
 
 
+def set_preview_image(qlabel: QLabel, image: cv2.Mat | None, transparency: bool):
+    if not is_valid_image(image):
+        # Clear current pixmap if no image. But don't clear text
+        if not qlabel.text():
+            qlabel.clear()
+    else:
+        if transparency:
+            color_code = cv2.COLOR_BGRA2RGBA
+            image_format = QtGui.QImage.Format.Format_RGBA8888
+        else:
+            color_code = cv2.COLOR_BGRA2BGR
+            image_format = QtGui.QImage.Format.Format_BGR888
+
+        capture = cv2.cvtColor(image, color_code)
+        height, width, channels = capture.shape
+        qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
+        qlabel.setPixmap(QtGui.QPixmap(qimage).scaled(
+            qlabel.size(),
+            QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
+            QtCore.Qt.TransformationMode.SmoothTransformation))
+
+
 def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
@@ -886,7 +907,8 @@ def main():
 
         exit_code = app.exec()
     except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
-        message = f"AutoSplit encountered an unrecoverable exception and will now close. {CREATE_NEW_ISSUE_MESSAGE}"
+        message = "AutoSplit encountered an unrecoverable exception and will now close." \
+            + error_messages.CREATE_NEW_ISSUE_MESSAGE
         # Print error to console if not running in executable
         if FROZEN:
             error_messages.exception_traceback(message, exception)
