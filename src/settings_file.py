@@ -1,35 +1,37 @@
-import keyboard
-import win32gui
-import pickle
-import glob
-from PyQt4 import QtGui
+from __future__ import annotations
+from typing import TYPE_CHECKING, List, Union
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
 
-def getSaveSettingsValues(self):
+from win32 import win32gui
+from PyQt6 import QtWidgets
+import os
+import sys
+import keyboard
+import pickle
+
+from hotkeys import _hotkey_action
+import error_messages
+
+# Get the directory of either AutoSplit.exe or AutoSplit.py
+auto_split_directory = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
+
+
+def getSaveSettingsValues(self: AutoSplit):
     # get values to be able to save settings
     self.x = self.xSpinBox.value()
     self.y = self.ySpinBox.value()
     self.width = self.widthSpinBox.value()
     self.height = self.heightSpinBox.value()
-    self.split_image_directory = str(self.splitimagefolderLineEdit.text())
     self.similarity_threshold = self.similaritythresholdDoubleSpinBox.value()
     self.comparison_index = self.comparisonmethodComboBox.currentIndex()
     self.pause = self.pauseDoubleSpinBox.value()
     self.fps_limit = self.fpslimitSpinBox.value()
-    self.split_key = str(self.splitLineEdit.text())
-    self.reset_key = str(self.resetLineEdit.text())
-    self.skip_split_key = str(self.skipsplitLineEdit.text())
-    self.undo_split_key = str(self.undosplitLineEdit.text())
-    self.pause_key = str(self.pausehotkeyLineEdit.text())
-
-    if self.custompausetimesCheckBox.isChecked():
-        self.custom_pause_times_setting = 1
-    else:
-        self.custom_pause_times_setting = 0
-
-    if self.customthresholdsCheckBox.isChecked():
-        self.custom_thresholds_setting = 1
-    else:
-        self.custom_thresholds_setting = 0
+    self.split_key = self.splitLineEdit.text()
+    self.reset_key = self.resetLineEdit.text()
+    self.skip_split_key = self.skipsplitLineEdit.text()
+    self.undo_split_key = self.undosplitLineEdit.text()
+    self.pause_key = self.pausehotkeyLineEdit.text()
 
     if self.groupDummySplitsCheckBox.isChecked():
         self.group_dummy_splits_undo_skip_setting = 1
@@ -46,55 +48,102 @@ def getSaveSettingsValues(self):
     else:
         self.auto_start_on_reset_setting = 0
 
-def haveSettingsChanged(self):
+
+def haveSettingsChanged(self: AutoSplit):
     self.getSaveSettingsValues()
-    self.current_save_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-             self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-             self.hwnd_title,
-             self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+    current_save_settings = [
+        self.split_image_directory,
+        self.similarity_threshold,
+        self.comparison_index,
+        self.pause,
+        self.fps_limit,
+        self.split_key,
+        self.reset_key,
+        self.skip_split_key,
+        self.undo_split_key,
+        self.pause_key,
+        self.x,
+        self.y,
+        self.width,
+        self.height,
+        self.hwnd_title,
+        0,
+        0,
+        self.group_dummy_splits_undo_skip_setting,
+        self.loop_setting,
+        self.auto_start_on_reset_setting]
 
-    #one small caveat in this: if you load a settings file from an old version, but dont change settings,
-    #the current save settings and last load settings will have different # of elements and it will ask
-    #the user to save changes upon closing even though there were none
-    if self.current_save_settings == self.last_loaded_settings or self.current_save_settings == self.last_saved_settings:
-        return False
-    else:
-        return True
+    # One small caveat in this: if you load a settings file from an old version, but dont change settings,
+    # the current save settings and last load settings will have different # of elements and it will ask
+    # the user to save changes upon closing even though there were none
+    return current_save_settings not in (self.last_loaded_settings, self.last_saved_settings)
 
-def saveSettings(self):
+
+def saveSettings(self: AutoSplit):
     if self.last_successfully_loaded_settings_file_path == None:
         self.saveSettingsAs()
     else:
         self.getSaveSettingsValues()
-        self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index,
-                                    self.pause,
-                                    self.fps_limit, self.split_key,
-                                    self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x,
-                                    self.y, self.width, self.height,
-                                    self.hwnd_title,
-                                    self.custom_pause_times_setting, self.custom_thresholds_setting,
-                                    self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+        self.last_saved_settings = [
+            self.split_image_directory,
+            self.similarity_threshold,
+            self.comparison_index,
+            self.pause,
+            self.fps_limit,
+            self.split_key,
+            self.reset_key,
+            self.skip_split_key,
+            self.undo_split_key,
+            self.pause_key,
+            self.x,
+            self.y,
+            self.width,
+            self.height,
+            self.hwnd_title,
+            0,
+            0,
+            self.group_dummy_splits_undo_skip_setting,
+            self.loop_setting,
+            self.auto_start_on_reset_setting]
         # save settings to a .pkl file
         with open(self.last_successfully_loaded_settings_file_path, 'wb') as f:
             pickle.dump(self.last_saved_settings, f)
 
-def saveSettingsAs(self):
-    # user picks save destination
-    self.save_settings_file_path = str(QtGui.QFileDialog.getSaveFileName(self, "Save Settings As", "", "PKL (*.pkl)"))
 
-    #if user cancels save destination window, don't save settings
-    if self.save_settings_file_path == '':
+def saveSettingsAs(self: AutoSplit):
+    # User picks save destination
+    self.save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
+        self,
+        "Save Settings As",
+        os.path.join(auto_split_directory, "settings.pkl"),
+        "PKL (*.pkl)")[0]
+
+    # If user cancels save destination window, don't save settings
+    if not self.save_settings_file_path:
         return
 
     self.getSaveSettingsValues()
-    self.last_saved_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-             self.fps_limit, self.split_key,
-             self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-             self.hwnd_title,
-             self.custom_pause_times_setting, self.custom_thresholds_setting,
-             self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting]
+    self.last_saved_settings = [
+        self.split_image_directory,
+        self.similarity_threshold,
+        self.comparison_index,
+        self.pause,
+        self.fps_limit,
+        self.split_key,
+        self.reset_key,
+        self.skip_split_key,
+        self.undo_split_key,
+        self.pause_key,
+        self.x,
+        self.y,
+        self.width,
+        self.height,
+        self.hwnd_title,
+        0,
+        0,
+        self.group_dummy_splits_undo_skip_setting,
+        self.loop_setting,
+        self.auto_start_on_reset_setting]
 
     # save settings to a .pkl file
     with open(self.save_settings_file_path, 'wb') as f:
@@ -105,162 +154,157 @@ def saveSettingsAs(self):
     self.last_successfully_loaded_settings_file_path = self.save_settings_file_path
 
 
-def loadSettings(self):
-    if self.load_settings_on_open == True:
-        self.settings_files = glob.glob("*.pkl")
-        if len(self.settings_files) < 1:
-            self.noSettingsFileOnOpenError()
+def loadSettings(self: AutoSplit, load_settings_on_open: bool = False, load_settings_from_livesplit: bool = False):
+    if load_settings_on_open:
+
+        settings_files = []
+        for file in os.listdir(auto_split_directory):
+            if file.endswith(".pkl"):
+                settings_files.append(file)
+
+        # find all .pkls in AutoSplit folder, error if there is none or more than 1
+        if len(settings_files) < 1:
+            error_messages.noSettingsFileOnOpenError()
             self.last_loaded_settings = None
             return
-        elif len(self.settings_files) > 1:
-            self.tooManySettingsFilesOnOpenError()
+        elif len(settings_files) > 1:
+            error_messages.tooManySettingsFilesOnOpenError()
             self.last_loaded_settings = None
             return
         else:
-            self.load_settings_file_path = self.settings_files[0]
+            self.load_settings_file_path = os.path.join(auto_split_directory, settings_files[0])
 
-    else:
-        self.load_settings_file_path = str(QtGui.QFileDialog.getOpenFileName(self, "Load Settings", "", "PKL (*.pkl)"))
+    elif not load_settings_on_open and not load_settings_from_livesplit:
 
-        #
+        self.load_settings_file_path = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            "Load Settings",
+            os.path.join(auto_split_directory, "settings.pkl"),
+            "PKL (*.pkl)")[0]
+
         if self.load_settings_file_path == '':
             return
 
     try:
         with open(self.load_settings_file_path, 'rb') as f:
-            self.settings_count = len(pickle.load(f))
-            #v1.5 settings
-            if self.settings_count == 20:
-                with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                     self.fps_limit, self.split_key,
-                     self.reset_key, self.skip_split_key, self.undo_split_key, self.pause_key, self.x, self.y, self.width, self.height,
-                     self.hwnd_title,
-                     self.custom_pause_times_setting, self.custom_thresholds_setting,
-                     self.group_dummy_splits_undo_skip_setting, self.loop_setting, self.auto_start_on_reset_setting] = pickle.load(f)
-            #v1.3-1.4 settings. add a blank pause key.
-            elif self.settings_count == 18:
-                with open(self.load_settings_file_path, 'rb') as f:
-                    self.last_loaded_settings = [self.split_image_directory, self.similarity_threshold, self.comparison_index, self.pause,
-                     self.fps_limit, self.split_key,
-                     self.reset_key, self.skip_split_key, self.undo_split_key, self.x, self.y, self.width, self.height,
-                     self.hwnd_title,
-                     self.custom_pause_times_setting, self.custom_thresholds_setting,
-                     self.group_dummy_splits_undo_skip_setting, self.loop_setting] = pickle.load(f)
-                self.pause_key = ''
-                self.auto_start_on_reset_setting = 0
-            elif self.settings_count < 18:
-                self.oldVersionSettingsFileError()
+            settings: List[Union[str, int]] = pickle.load(f)
+            settings_count = len(settings)
+            if settings_count < 18:
+                if not load_settings_from_livesplit:
+                    error_messages.oldVersionSettingsFileError()
                 return
+            # v1.3-1.4 settings. Add default pause_key and auto_start_on_reset_setting
+            if settings_count == 18:
+                settings.insert(9, '')
+                settings.insert(20, 0)
+            # v1.5 settings
+            elif settings_count != 20:
+                if not load_settings_from_livesplit:
+                    error_messages.invalidSettingsError()
+                return
+            self.last_loaded_settings = [
+                self.split_image_directory,
+                self.similarity_threshold,
+                self.comparison_index,
+                self.pause,
+                self.fps_limit,
+                self.split_key,
+                self.reset_key,
+                self.skip_split_key,
+                self.undo_split_key,
+                self.pause_key,
+                self.x,
+                self.y,
+                self.width,
+                self.height,
+                self.hwnd_title,
+                _,
+                _,
+                self.group_dummy_splits_undo_skip_setting,
+                self.loop_setting,
+                self.auto_start_on_reset_setting] = settings
+    except (FileNotFoundError, MemoryError, pickle.UnpicklingError):
+        # HACK / Workaround: Executing the error QMessageBox from the auto-controlled Worker Thread makes it hangs.
+        # I don't like this solution as we should probably ensure the Worker works nicely with PyQt instead,
+        # but in the mean time, this will do.
+        if not load_settings_from_livesplit:
+            error_messages.invalidSettingsError()
+        return
 
-        self.split_image_directory = str(self.split_image_directory)
-        self.splitimagefolderLineEdit.setText(self.split_image_directory)
-        self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
-        self.pauseDoubleSpinBox.setValue(self.pause)
-        self.fpslimitSpinBox.setValue(self.fps_limit)
-        self.xSpinBox.setValue(self.x)
-        self.ySpinBox.setValue(self.y)
-        self.widthSpinBox.setValue(self.width)
-        self.heightSpinBox.setValue(self.height)
-        self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
-        self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
+    self.splitimagefolderLineEdit.setText(self.split_image_directory)
+    self.similaritythresholdDoubleSpinBox.setValue(self.similarity_threshold)
+    self.pauseDoubleSpinBox.setValue(self.pause)
+    self.fpslimitSpinBox.setValue(self.fps_limit)
+    self.xSpinBox.setValue(self.x)
+    self.ySpinBox.setValue(self.y)
+    self.widthSpinBox.setValue(self.width)
+    self.heightSpinBox.setValue(self.height)
+    self.comparisonmethodComboBox.setCurrentIndex(self.comparison_index)
+    self.hwnd = win32gui.FindWindow(None, self.hwnd_title)
 
-        # set custom checkbox's accordingly
-        if self.custom_pause_times_setting == 1:
-            self.custompausetimesCheckBox.setChecked(True)
-        else:
-            self.custompausetimesCheckBox.setChecked(False)
+    # set custom checkbox's accordingly
+    self.groupDummySplitsCheckBox.setChecked(self.group_dummy_splits_undo_skip_setting == 1)
+    self.loopCheckBox.setChecked(self.loop_setting == 1)
+    self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
+    self.autostartonresetCheckBox.setChecked(self.auto_start_on_reset_setting == 1)
 
-        if self.custom_thresholds_setting == 1:
-            self.customthresholdsCheckBox.setChecked(True)
-        else:
-            self.customthresholdsCheckBox.setChecked(False)
-
-        if self.group_dummy_splits_undo_skip_setting == 1:
-            self.groupDummySplitsCheckBox.setChecked(True)
-        else:
-            self.groupDummySplitsCheckBox.setChecked(False)
-
-        if self.loop_setting == 1:
-            self.loopCheckBox.setChecked(True)
-        else:
-            self.loopCheckBox.setChecked(False)
-
-        if self.auto_start_on_reset_setting == 1:
-            self.autostartonresetCheckBox.setChecked(True)
-        else:
-            self.autostartonresetCheckBox.setChecked(False)
-
-        # try to set hotkeys from when user last closed the window
-        try:
-            try:
-                keyboard.remove_hotkey(self.split_hotkey)
-            except AttributeError:
-                pass
-            self.splitLineEdit.setText(str(self.split_key))
-            self.split_hotkey = keyboard.add_hotkey(str(self.split_key), self.startAutoSplitter)
-            self.old_split_key = self.split_key
-        # pass if the key is an empty string (hotkey was never set)
-        except ValueError:
-            pass
-        except KeyError:
-            pass
-
-        try:
-            try:
-                keyboard.remove_hotkey(self.reset_hotkey)
-            except AttributeError:
-                pass
-            self.resetLineEdit.setText(str(self.reset_key))
-            self.reset_hotkey = keyboard.add_hotkey(str(self.reset_key), self.startReset)
-            self.old_reset_key = self.reset_key
-        except ValueError:
-            pass
-        except KeyError:
-            pass
-
-        try:
-            try:
-                keyboard.remove_hotkey(self.skip_split_hotkey)
-            except AttributeError:
-                pass
-            self.skipsplitLineEdit.setText(str(self.skip_split_key))
-            self.skip_split_hotkey = keyboard.add_hotkey(str(self.skip_split_key), self.startSkipSplit)
-            self.old_skip_split_key = self.skip_split_key
-        except ValueError:
-            pass
-        except KeyError:
-            pass
-
-        try:
-            try:
-                keyboard.remove_hotkey(self.undo_split_hotkey)
-            except AttributeError:
-                pass
-            self.undosplitLineEdit.setText(str(self.undo_split_key))
-            self.undo_split_hotkey = keyboard.add_hotkey(str(self.undo_split_key), self.startUndoSplit)
-            self.old_undo_split_key = self.undo_split_key
-        except ValueError:
-            pass
-        except KeyError:
-            pass
-
-        try:
-            try:
-                keyboard.remove_hotkey(self.pause_hotkey)
-            except AttributeError:
-                pass
-            self.pausehotkeyLineEdit.setText(str(self.pause_key))
-            self.pause_hotkey = keyboard.add_hotkey(str(self.pause_key), self.startPause)
-            self.old_pause_key = self.pause_key
-        except ValueError:
-            pass
-        except KeyError:
-            pass
-
-        self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
-        self.checkLiveImage()
-
-    except Exception:
-        self.invalidSettingsError()
+    # TODO: Reuse code from hotkeys rather than duplicating here
+    # try to set hotkeys from when user last closed the window
+    try:
+        keyboard.unhook_key(self.split_hotkey)
+    # pass if the key is an empty string (hotkey was never set)
+    except (AttributeError, KeyError):
         pass
+    try:
+        self.splitLineEdit.setText(self.split_key)
+        if not self.is_auto_controlled:
+            self.split_hotkey = keyboard.hook_key(self.split_key, lambda e: _hotkey_action(e, self.split_key, self.startAutoSplitter))
+    except (ValueError, KeyError):
+        pass
+
+    try:
+        keyboard.unhook_key(self.reset_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.resetLineEdit.setText(self.reset_key)
+        if not self.is_auto_controlled:
+            self.reset_hotkey = keyboard.hook_key(self.reset_key, lambda e: _hotkey_action(e, self.reset_key, self.startReset))
+    except (ValueError, KeyError):
+        pass
+
+    try:
+        keyboard.unhook_key(self.skip_split_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.skipsplitLineEdit.setText(self.skip_split_key)
+        if not self.is_auto_controlled:
+            self.skip_split_hotkey = keyboard.hook_key(self.skip_split_key, lambda e: _hotkey_action(e, self.skip_split_key, self.startSkipSplit))
+    except (ValueError, KeyError):
+        pass
+
+    try:
+        keyboard.unhook_key(self.undo_split_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.undosplitLineEdit.setText(self.undo_split_key)
+        if not self.is_auto_controlled:
+            self.undo_split_hotkey = keyboard.hook_key(self.undo_split_key, lambda e: _hotkey_action(e, self.undo_split_key, self.startUndoSplit))
+    except (ValueError, KeyError):
+        pass
+
+    try:
+        keyboard.unhook_key(self.pause_hotkey)
+    except (AttributeError, KeyError):
+        pass
+    try:
+        self.pausehotkeyLineEdit.setText(self.pause_key)
+        if not self.is_auto_controlled:
+            self.pause_hotkey = keyboard.hook_key(self.pause_key, lambda e: _hotkey_action(e, self.pause_key, self.startPause))
+    except (ValueError, KeyError):
+        pass
+
+    self.last_successfully_loaded_settings_file_path = self.load_settings_file_path
+    self.checkLiveImage()

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
+    <width>632</width>
     <height>490</height>
    </rect>
   </property>
@@ -18,22 +18,27 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>619</width>
+    <width>632</width>
     <height>490</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>619</width>
+    <width>632</width>
     <height>490</height>
    </size>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>AutoSplit</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../VideoAutoSplitter/icon.ico</normaloff>../../../../VideoAutoSplitter/icon.ico</iconset>
+   <iconset resource="resources.qrc">
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <property name="whatsThis">
    <string/>
@@ -45,9 +50,9 @@
    <widget class="QLabel" name="splitimagefolderLabel">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>13</y>
-      <width>91</width>
+      <x>20</x>
+      <y>12</y>
+      <width>98</width>
       <height>16</height>
      </rect>
     </property>
@@ -58,10 +63,10 @@
    <widget class="QLineEdit" name="splitimagefolderLineEdit">
     <property name="geometry">
      <rect>
-      <x>187</x>
-      <y>11</y>
-      <width>247</width>
-      <height>20</height>
+      <x>130</x>
+      <y>10</y>
+      <width>412</width>
+      <height>22</height>
      </rect>
     </property>
     <property name="readOnly">
@@ -71,7 +76,7 @@
    <widget class="QPushButton" name="browseButton">
     <property name="geometry">
      <rect>
-      <x>443</x>
+      <x>540</x>
       <y>9</y>
       <width>75</width>
       <height>24</height>
@@ -81,14 +86,14 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Browse..</string>
+     <string>Browse...</string>
     </property>
    </widget>
    <widget class="QLabel" name="xLabel">
     <property name="geometry">
      <rect>
       <x>25</x>
-      <y>139</y>
+      <y>145</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -103,10 +108,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>125</x>
-      <y>253</y>
-      <width>121</width>
-      <height>17</height>
+      <x>120</x>
+      <y>252</y>
+      <width>129</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -123,7 +128,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>67</y>
+      <y>70</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -138,22 +143,22 @@
    <widget class="QLabel" name="similaritythresholdLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>378</y>
-      <width>91</width>
+      <x>7</x>
+      <y>410</y>
+      <width>151</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Similarity threshold</string>
+     <string>Default similarity threshold:</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="similaritythresholdDoubleSpinBox">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>383</y>
-      <width>64</width>
+      <x>155</x>
+      <y>408</y>
+      <width>61</width>
       <height>22</height>
      </rect>
     </property>
@@ -170,9 +175,9 @@
    <widget class="QPushButton" name="startautosplitterButton">
     <property name="geometry">
      <rect>
-      <x>505</x>
+      <x>500</x>
       <y>425</y>
-      <width>101</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -186,9 +191,9 @@
    <widget class="QPushButton" name="resetButton">
     <property name="geometry">
      <rect>
-      <x>505</x>
-      <y>385</y>
-      <width>101</width>
+      <x>500</x>
+      <y>390</y>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -202,10 +207,10 @@
    <widget class="QPushButton" name="undosplitButton">
     <property name="geometry">
      <rect>
-      <x>477</x>
+      <x>494</x>
       <y>250</y>
-      <width>61</width>
-      <height>21</height>
+      <width>64</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -218,10 +223,10 @@
    <widget class="QPushButton" name="skipsplitButton">
     <property name="geometry">
      <rect>
-      <x>541</x>
+      <x>560</x>
       <y>250</y>
       <width>61</width>
-      <height>21</height>
+      <height>24</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -234,14 +239,14 @@
    <widget class="QLabel" name="pauseLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>420</y>
-      <width>111</width>
+      <x>7</x>
+      <y>439</y>
+      <width>131</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Pause time (seconds)</string>
+     <string>Default pause time (sec):</string>
     </property>
    </widget>
    <widget class="QPushButton" name="checkfpsButton">
@@ -249,7 +254,7 @@
      <rect>
       <x>5</x>
       <y>225</y>
-      <width>51</width>
+      <width>53</width>
       <height>21</height>
      </rect>
     </property>
@@ -279,10 +284,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>330</y>
-      <width>111</width>
-      <height>17</height>
+      <x>7</x>
+      <y>323</y>
+      <width>124</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -301,10 +306,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>351</y>
-      <width>131</width>
-      <height>17</height>
+      <x>7</x>
+      <y>350</y>
+      <width>145</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -320,10 +325,10 @@
    <widget class="QLabel" name="livesimilarityLabel">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>332</y>
+      <x>171</x>
+      <y>326</y>
       <width>46</width>
-      <height>13</height>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -333,10 +338,10 @@
    <widget class="QLabel" name="highestsimilarityLabel">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>353</y>
+      <x>171</x>
+      <y>352</y>
       <width>46</width>
-      <height>13</height>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -346,9 +351,9 @@
    <widget class="QLabel" name="splitLabel">
     <property name="geometry">
      <rect>
-      <x>249</x>
+      <x>230</x>
       <y>317</y>
-      <width>61</width>
+      <width>58</width>
       <height>16</height>
      </rect>
     </property>
@@ -359,9 +364,9 @@
    <widget class="QLabel" name="resetLabel">
     <property name="geometry">
      <rect>
-      <x>249</x>
+      <x>230</x>
       <y>341</y>
-      <width>61</width>
+      <width>28</width>
       <height>16</height>
      </rect>
     </property>
@@ -372,9 +377,9 @@
    <widget class="QLabel" name="skiptsplitLabel">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>230</x>
       <y>367</y>
-      <width>50</width>
+      <width>48</width>
       <height>16</height>
      </rect>
     </property>
@@ -385,9 +390,9 @@
    <widget class="QLabel" name="undosplitLabel">
     <property name="geometry">
      <rect>
-      <x>249</x>
+      <x>230</x>
       <y>393</y>
-      <width>61</width>
+      <width>55</width>
       <height>16</height>
      </rect>
     </property>
@@ -398,7 +403,7 @@
    <widget class="QLineEdit" name="splitLineEdit">
     <property name="geometry">
      <rect>
-      <x>316</x>
+      <x>300</x>
       <y>314</y>
       <width>81</width>
       <height>20</height>
@@ -411,7 +416,7 @@
    <widget class="QLineEdit" name="undosplitLineEdit">
     <property name="geometry">
      <rect>
-      <x>316</x>
+      <x>300</x>
       <y>391</y>
       <width>81</width>
       <height>20</height>
@@ -427,7 +432,7 @@
    <widget class="QLineEdit" name="skipsplitLineEdit">
     <property name="geometry">
      <rect>
-      <x>316</x>
+      <x>300</x>
       <y>365</y>
       <width>81</width>
       <height>20</height>
@@ -440,7 +445,7 @@
    <widget class="QLineEdit" name="resetLineEdit">
     <property name="geometry">
      <rect>
-      <x>316</x>
+      <x>300</x>
       <y>339</y>
       <width>81</width>
       <height>20</height>
@@ -453,9 +458,9 @@
    <widget class="QPushButton" name="setsplithotkeyButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>390</x>
       <y>314</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -469,9 +474,9 @@
    <widget class="QPushButton" name="setresethotkeyButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>390</x>
       <y>339</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -485,9 +490,9 @@
    <widget class="QPushButton" name="setskipsplithotkeyButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>390</x>
       <y>365</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -501,9 +506,9 @@
    <widget class="QPushButton" name="setundosplithotkeyButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>390</x>
       <y>391</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -514,67 +519,10 @@
      <string>Set Hotkey</string>
     </property>
    </widget>
-   <widget class="Line" name="line_live_bottom">
-    <property name="geometry">
-     <rect>
-      <x>111</x>
-      <y>247</y>
-      <width>240</width>
-      <height>2</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_live_top">
-    <property name="geometry">
-     <rect>
-      <x>111</x>
-      <y>68</y>
-      <width>240</width>
-      <height>2</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_live_right">
-    <property name="geometry">
-     <rect>
-      <x>349</x>
-      <y>69</y>
-      <width>2</width>
-      <height>180</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
    <widget class="Line" name="line_left">
     <property name="geometry">
      <rect>
-      <x>234</x>
+      <x>220</x>
       <y>296</y>
       <width>2</width>
       <height>163</height>
@@ -590,118 +538,26 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="Line" name="line_live_left">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>69</y>
-      <width>2</width>
-      <height>180</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_split_left">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>69</y>
-      <width>2</width>
-      <height>180</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_split_right">
-    <property name="geometry">
-     <rect>
-      <x>599</x>
-      <y>69</y>
-      <width>2</width>
-      <height>180</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_split_top">
-    <property name="geometry">
-     <rect>
-      <x>361</x>
-      <y>68</y>
-      <width>240</width>
-      <height>2</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="Line" name="line_split_bottom">
-    <property name="geometry">
-     <rect>
-      <x>361</x>
-      <y>247</y>
-      <width>240</width>
-      <height>2</height>
-     </rect>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
    <widget class="QLabel" name="timerglobalhotkeysLabel">
     <property name="geometry">
      <rect>
-      <x>313</x>
-      <y>293</y>
-      <width>101</width>
+      <x>230</x>
+      <y>291</y>
+      <width>251</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Timer Global Hotkeys</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="Line" name="line_right">
     <property name="geometry">
      <rect>
-      <x>489</x>
+      <x>490</x>
       <y>296</y>
       <width>2</width>
       <height>163</height>
@@ -720,35 +576,47 @@
    <widget class="QLabel" name="liveImage">
     <property name="geometry">
      <rect>
-      <x>111</x>
-      <y>69</y>
+      <x>120</x>
+      <y>70</y>
       <width>240</width>
       <height>180</height>
      </rect>
     </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="currentSplitImage">
     <property name="geometry">
      <rect>
-      <x>361</x>
-      <y>69</y>
+      <x>380</x>
+      <y>70</y>
       <width>240</width>
       <height>180</height>
      </rect>
     </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="currentsplitimageLabel">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>450</x>
       <y>50</y>
-      <width>101</width>
+      <width>102</width>
       <height>16</height>
      </rect>
     </property>
@@ -759,9 +627,9 @@
    <widget class="QLabel" name="widthLabel">
     <property name="geometry">
      <rect>
-      <x>14</x>
-      <y>177</y>
-      <width>31</width>
+      <x>12</x>
+      <y>185</y>
+      <width>33</width>
       <height>16</height>
      </rect>
     </property>
@@ -772,9 +640,9 @@
    <widget class="QLabel" name="heightLabel">
     <property name="geometry">
      <rect>
-      <x>68</x>
-      <y>177</y>
-      <width>31</width>
+      <x>66</x>
+      <y>185</y>
+      <width>41</width>
       <height>16</height>
      </rect>
     </property>
@@ -799,7 +667,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>193</y>
+      <y>200</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -818,7 +686,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>193</y>
+      <y>200</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -836,9 +704,9 @@
    <widget class="QLabel" name="captureregionLabel">
     <property name="geometry">
      <rect>
-      <x>192</x>
+      <x>200</x>
       <y>50</y>
-      <width>81</width>
+      <width>82</width>
       <height>16</height>
      </rect>
     </property>
@@ -850,7 +718,7 @@
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>251</y>
+      <y>252</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -863,7 +731,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>248</y>
+      <y>250</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -890,9 +758,9 @@
    <widget class="QLabel" name="currentsplitimagefileLabel">
     <property name="geometry">
      <rect>
-      <x>362</x>
-      <y>271</y>
-      <width>237</width>
+      <x>380</x>
+      <y>270</y>
+      <width>241</width>
       <height>20</height>
      </rect>
     </property>
@@ -906,10 +774,10 @@
    <widget class="QPushButton" name="takescreenshotButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>251</y>
-      <width>91</width>
-      <height>21</height>
+      <x>260</x>
+      <y>250</y>
+      <width>101</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -923,7 +791,7 @@
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>154</y>
+      <y>160</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -951,7 +819,7 @@
     <property name="geometry">
      <rect>
       <x>62</x>
-      <y>154</y>
+      <y>160</y>
       <width>44</width>
       <height>22</height>
      </rect>
@@ -976,7 +844,7 @@
     <property name="geometry">
      <rect>
       <x>81</x>
-      <y>139</y>
+      <y>145</y>
       <width>7</width>
       <height>16</height>
      </rect>
@@ -988,9 +856,9 @@
    <widget class="QComboBox" name="comparisonmethodComboBox">
     <property name="geometry">
      <rect>
-      <x>143</x>
-      <y>299</y>
-      <width>81</width>
+      <x>125</x>
+      <y>296</y>
+      <width>91</width>
       <height>22</height>
      </rect>
     </property>
@@ -1013,9 +881,9 @@
    <widget class="QDoubleSpinBox" name="pauseDoubleSpinBox">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>425</y>
-      <width>64</width>
+      <x>155</x>
+      <y>437</y>
+      <width>61</width>
       <height>22</height>
      </rect>
     </property>
@@ -1029,62 +897,12 @@
      <double>10.000000000000000</double>
     </property>
    </widget>
-   <widget class="QCheckBox" name="custompausetimesCheckBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>435</y>
-      <width>121</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Custom pause times</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="customthresholdsCheckBox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>394</y>
-      <width>111</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string/>
-    </property>
-    <property name="text">
-     <string>Custom thresholds</string>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="comparisonmethodLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>300</y>
-      <width>101</width>
+      <x>7</x>
+      <y>298</y>
+      <width>110</width>
       <height>16</height>
      </rect>
     </property>
@@ -1096,7 +914,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>92</y>
+      <y>95</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -1111,10 +929,10 @@
    <widget class="QCheckBox" name="groupDummySplitsCheckBox">
     <property name="geometry">
      <rect>
-      <x>252</x>
-      <y>443</y>
-      <width>230</width>
-      <height>17</height>
+      <x>230</x>
+      <y>442</y>
+      <width>261</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -1128,7 +946,7 @@
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>117</y>
+      <y>120</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -1140,25 +958,25 @@
      <string>Select Window</string>
     </property>
    </widget>
-   <widget class="QLabel" name="currentsplitimageLabel_2">
+   <widget class="QLabel" name="imageloopLabel">
     <property name="geometry">
      <rect>
-      <x>362</x>
-      <y>251</y>
-      <width>108</width>
+      <x>379</x>
+      <y>252</y>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Image Loop #:</string>
+     <string>Image Loop:</string>
     </property>
    </widget>
    <widget class="QLabel" name="pausehotkeyLabel">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>230</x>
       <y>418</y>
-      <width>61</width>
+      <width>31</width>
       <height>16</height>
      </rect>
     </property>
@@ -1169,9 +987,9 @@
    <widget class="QLineEdit" name="pausehotkeyLineEdit">
     <property name="geometry">
      <rect>
-      <x>316</x>
+      <x>300</x>
       <y>416</y>
-      <width>82</width>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -1185,9 +1003,9 @@
    <widget class="QPushButton" name="setpausehotkeyButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>390</x>
       <y>416</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -1205,9 +1023,9 @@
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>314</y>
-      <width>121</width>
-      <height>17</height>
+      <y>340</y>
+      <width>117</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -1220,16 +1038,13 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QCheckBox" name="loopCheckBox_2">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QCheckBox" name="autostartonresetCheckBox">
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>344</y>
-      <width>121</width>
-      <height>17</height>
+      <y>360</y>
+      <width>126</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -1240,6 +1055,61 @@
     </property>
     <property name="tristate">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startImageReloadButton">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>302</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Reload Start Image</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="startImageLabel">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>270</y>
+      <width>241</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start image:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="currentsimilaritythresholdLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>380</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Current similarity threshold:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="currentsimilaritythresholdnumberLabel">
+    <property name="geometry">
+     <rect>
+      <x>171</x>
+      <y>380</y>
+      <width>46</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
    <zorder>splitimagefolderLabel</zorder>
@@ -1273,15 +1143,7 @@
    <zorder>setresethotkeyButton</zorder>
    <zorder>setskipsplithotkeyButton</zorder>
    <zorder>setundosplithotkeyButton</zorder>
-   <zorder>line_live_bottom</zorder>
-   <zorder>line_live_top</zorder>
-   <zorder>line_live_right</zorder>
    <zorder>line_left</zorder>
-   <zorder>line_live_left</zorder>
-   <zorder>line_split_left</zorder>
-   <zorder>line_split_right</zorder>
-   <zorder>line_split_top</zorder>
-   <zorder>line_split_bottom</zorder>
    <zorder>timerglobalhotkeysLabel</zorder>
    <zorder>line_right</zorder>
    <zorder>currentsplitimageLabel</zorder>
@@ -1302,26 +1164,28 @@
    <zorder>yLabel</zorder>
    <zorder>comparisonmethodComboBox</zorder>
    <zorder>pauseDoubleSpinBox</zorder>
-   <zorder>custompausetimesCheckBox</zorder>
-   <zorder>customthresholdsCheckBox</zorder>
    <zorder>comparisonmethodLabel</zorder>
    <zorder>alignregionButton</zorder>
    <zorder>groupDummySplitsCheckBox</zorder>
    <zorder>selectwindowButton</zorder>
-   <zorder>currentsplitimageLabel_2</zorder>
+   <zorder>imageloopLabel</zorder>
    <zorder>pausehotkeyLabel</zorder>
    <zorder>pausehotkeyLineEdit</zorder>
    <zorder>setpausehotkeyButton</zorder>
    <zorder>loopCheckBox</zorder>
-   <zorder>loopCheckBox_2</zorder>
+   <zorder>autostartonresetCheckBox</zorder>
+   <zorder>startImageReloadButton</zorder>
+   <zorder>startImageLabel</zorder>
+   <zorder>currentsimilaritythresholdLabel</zorder>
+   <zorder>currentsimilaritythresholdnumberLabel</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>619</width>
-     <height>21</height>
+     <width>632</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -1330,12 +1194,14 @@
     </property>
     <addaction name="actionView_Help"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionCheck_for_Updates"/>
+    <addaction name="actionCheck_for_Updates_on_Open"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSave_Settings_2"/>
+    <addaction name="actionSave_Settings"/>
     <addaction name="actionSave_Settings_As"/>
     <addaction name="actionLoad_Settings"/>
    </widget>
@@ -1362,11 +1228,6 @@
     <string>Save Settings</string>
    </property>
   </action>
-  <action name="actionSave_Settings_2">
-   <property name="text">
-    <string>Save Settings</string>
-   </property>
-  </action>
   <action name="actionLoad_Settings">
    <property name="text">
     <string>Load Settings</string>
@@ -1375,6 +1236,25 @@
   <action name="actionSave_Settings_As">
    <property name="text">
     <string>Save Settings As...</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_Updates">
+   <property name="text">
+    <string>Check for Updates...</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_Updates_on_Open">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Check for Updates on Open</string>
    </property>
   </action>
  </widget>
@@ -1389,9 +1269,7 @@
   <tabstop>comparisonmethodComboBox</tabstop>
   <tabstop>showlivesimilarityCheckBox</tabstop>
   <tabstop>showhighestsimilarityCheckBox</tabstop>
-  <tabstop>customthresholdsCheckBox</tabstop>
   <tabstop>similaritythresholdDoubleSpinBox</tabstop>
-  <tabstop>custompausetimesCheckBox</tabstop>
   <tabstop>pauseDoubleSpinBox</tabstop>
   <tabstop>splitLineEdit</tabstop>
   <tabstop>resetLineEdit</tabstop>
@@ -1399,6 +1277,8 @@
   <tabstop>undosplitLineEdit</tabstop>
   <tabstop>groupDummySplitsCheckBox</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

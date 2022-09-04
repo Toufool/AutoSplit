@@ -1,0 +1,30 @@
+# Requirements file for AutoSplit
+#
+# Python: CPython 3.9+
+#
+# Usage: .\scripts\install.bat
+#
+# If you're having issues with the libraries, you might want to first run:
+# pip3.9 uninstall -r requirements.txt
+#
+# Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
+#
+# Dependencies:
+PyQt6
+opencv-python<=4.5.3.56 # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
+Pillow
+ImageHash
+pywin32
+keyboard
+packaging
+pyautogui
+PySide6
+flake8
+mypy
+requests
+#
+# Comment this out if you don't want to build AutoSplit.exe:
+PyInstaller
+#
+# Comment this out if you don't want to install the PyQt designer
+PyQt6-tools
