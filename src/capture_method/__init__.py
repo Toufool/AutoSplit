@@ -209,19 +209,23 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
     named_video_inputs = dshow_graph.FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
-        video_capture = cv2.VideoCapture(index)
-        video_capture.setExceptionMode(True)
         backend = ""
-        try:
-            # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-            backend = video_capture.getBackendName()  # STS_ASSERT
-            video_capture.grab()  # STS_ERROR
-        except cv2.error as error:
-            return CameraInfo(index, device_name, True, backend) \
-                if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
-                else None
-        finally:
-            video_capture.release()
+        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use
+        # https://github.com/Toufool/Auto-Split/issues/169
+        # FIXME: Maybe offer the option to the user to obtain more info about their devies?
+        #        Off by default. With a tooltip to explain the risk.
+        # video_capture = cv2.VideoCapture(index)
+        # video_capture.setExceptionMode(True)
+        # try:
+        #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
+        #     backend = video_capture.getBackendName()  # STS_ASSERT
+        #     video_capture.grab()  # STS_ERROR
+        # except cv2.error as error:
+        #     return CameraInfo(index, device_name, True, backend) \
+        #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
+        #         else None
+        # finally:
+        #     video_capture.release()
         return CameraInfo(index, device_name, False, backend)
 
     future = asyncio.gather(*[
