@@ -20,8 +20,8 @@ SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
-Hotkeys = Literal["split", "reset", "skip_split", "undo_split", "pause"]
-HOTKEYS: list[Hotkeys] = ["split", "reset", "skip_split", "undo_split", "pause"]
+Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
+HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
 
 
 def before_setting_hotkey(autosplit: AutoSplit):
@@ -195,13 +195,20 @@ def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
 
-def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkeys):
+def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
         return lambda: autosplit.skip_split(True)
     if hotkey == "undo_split":
         return lambda: autosplit.undo_split(True)
+    if hotkey == "toggle_auto_reset_image":
+        def toggle_auto_reset_image():
+            new_value = not autosplit.settings_dict["enable_auto_reset"]
+            autosplit.settings_dict["enable_auto_reset"] = new_value
+            if autosplit.SettingsWidget:
+                autosplit.SettingsWidget.enable_auto_reset_image_checkbox.setChecked(new_value)
+        return toggle_auto_reset_image
     return getattr(autosplit, f"{hotkey}_signal").emit
 
 
@@ -215,7 +222,7 @@ def is_valid_hotkey_name(hotkey_name: str):
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
 
-def set_hotkey(autosplit: AutoSplit, hotkey: Hotkeys, preselected_hotkey_name: str = ""):
+def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: str = ""):
     if autosplit.SettingsWidget:
         # Unfocus all fields
         cast(QtWidgets.QDialog, autosplit.SettingsWidget).setFocus()

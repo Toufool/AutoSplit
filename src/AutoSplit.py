@@ -773,25 +773,28 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         Checks if we should reset, resets if it's the case, and returns the result
         """
         if self.reset_image:
-            similarity = self.reset_image.compare_with_capture(self, capture)
-            threshold = self.reset_image.get_similarity_threshold(self)
+            if self.settings_dict["enable_auto_reset"]:
+                similarity = self.reset_image.compare_with_capture(self, capture)
+                threshold = self.reset_image.get_similarity_threshold(self)
 
-            paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
-            if paused:
-                should_reset = False
-                self.table_reset_image_live_label.setText("paused")
+                paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
+                if paused:
+                    should_reset = False
+                    self.table_reset_image_live_label.setText("paused")
+                else:
+                    should_reset = similarity >= threshold
+                    if similarity > self.reset_highest_similarity:
+                        self.reset_highest_similarity = similarity
+                    self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
+                    self.table_reset_image_live_label.setText(decimal(similarity))
+
+                self.table_reset_image_threshold_label.setText(decimal(threshold))
+
+                if should_reset:
+                    send_command(self, "reset")
+                    self.reset()
             else:
-                should_reset = similarity >= threshold
-                if similarity > self.reset_highest_similarity:
-                    self.reset_highest_similarity = similarity
-                self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
-                self.table_reset_image_live_label.setText(decimal(similarity))
-
-            self.table_reset_image_threshold_label.setText(decimal(threshold))
-
-            if should_reset:
-                send_command(self, "reset")
-                self.reset()
+                self.table_reset_image_live_label.setText("disabled")
 
         return self.__check_for_reset_state_update_ui()
 
