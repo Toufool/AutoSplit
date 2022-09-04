@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import is_valid_image
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
+class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     last_captured_frame: cv2.Mat | None = None

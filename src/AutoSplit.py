@@ -21,7 +21,7 @@ import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
-from capture_method import CaptureMethodEnum, CaptureMethodInterface
+from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
 from menu_bar import (about_qt, about_qt_for_python, check_for_updates, get_default_settings_from_ui, open_about,
@@ -82,7 +82,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
-    capture_method = CaptureMethodInterface()
+    capture_method = CaptureMethodBase()
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
     last_loaded_settings = DEFAULT_PROFILE

@@ -11,9 +11,9 @@ from pygrabber import dshow_graph
 from winsdk.windows.media.capture import MediaCapture
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
-from capture_method.interface import CaptureMethodInterface
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 from utils import WINDOWS_BUILD_NUMBER
@@ -37,7 +37,7 @@ class CaptureMethodInfo():
     name: str
     short_description: str
     description: str
-    implementation: type[CaptureMethodInterface]
+    implementation: type[CaptureMethodBase]
 
 
 class CaptureMethodMeta(EnumMeta):
@@ -102,7 +102,7 @@ NONE_CAPTURE_METHOD = CaptureMethodInfo(
     name="None",
     short_description="",
     description="",
-    implementation=CaptureMethodInterface
+    implementation=CaptureMethodBase
 )
 
 CAPTURE_METHODS = CaptureMethodDict({

@@ -11,7 +11,7 @@ import win32con
 import win32ui
 from win32 import win32gui
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import get_window_bounds, is_valid_hwnd
 
 if TYPE_CHECKING:
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-class BitBltCaptureMethod(CaptureMethodInterface):
+class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
