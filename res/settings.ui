@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogSettings</class>
- <widget class="QDialog" name="DialogSettings">
+ <class>SettingsWidget</class>
+ <widget class="QWidget" name="SettingsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,12 +9,6 @@
     <width>289</width>
     <height>621</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -39,12 +33,6 @@
   <property name="windowIcon">
    <iconset>
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
-  </property>
-  <property name="sizeGripEnabled">
-   <bool>false</bool>
-  </property>
-  <property name="modal">
-   <bool>false</bool>
   </property>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">
@@ -352,7 +340,7 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>173</y>
+      <y>170</y>
       <width>261</width>
       <height>61</height>
      </rect>
@@ -364,7 +352,10 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom image settings and flags are set in the &lt;br&gt;&lt;/br&gt; image file name. These will override the default &lt;br&gt;&lt;/br&gt; values. View the &lt;a href=&quot;https://github.com/Toufool/Auto-Split#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all &lt;br&gt;&lt;/br&gt; available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Image settings and flags can be set per image through the image file name. These will override the default values. View the &lt;a href=&quot;https://github.com/{GITHUB_REPOSITORY}#readme&quot;&gt;&lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt;README&lt;/span&gt;&lt;/a&gt; for full details on all available custom image settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="default_delay_time_label">
@@ -397,6 +388,34 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
     </property>
     <property name="maximum">
      <number>999999999</number>
+    </property>
+   </widget>
+   <widget class="QCommandLinkButton" name="readme_link_button">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>190</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>README</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="description">
+     <string>This is a workaround because custom_image_settings_info_label simply will not open links with a left click no matter what we tried.</string>
     </property>
    </widget>
   </widget>
@@ -652,11 +671,11 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
   </widget>
  </widget>
  <tabstops>
-  <tabstop>set_split_hotkey_button</tabstop>
-  <tabstop>set_reset_hotkey_button</tabstop>
-  <tabstop>set_undo_split_hotkey_button</tabstop>
-  <tabstop>set_skip_split_hotkey_button</tabstop>
-  <tabstop>set_pause_hotkey_button</tabstop>
+  <tabstop>split_input</tabstop>
+  <tabstop>reset_input</tabstop>
+  <tabstop>undo_split_input</tabstop>
+  <tabstop>skip_split_input</tabstop>
+  <tabstop>pause_input</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
   <tabstop>capture_method_combobox</tabstop>
@@ -666,8 +685,6 @@ It is highly recommended to NOT use pHash if you use masked images. It is very i
   <tabstop>default_delay_time_spinbox</tabstop>
   <tabstop>default_pause_time_spinbox</tabstop>
   <tabstop>loop_splits_checkbox</tabstop>
-  <tabstop>fps_limit_spinbox</tabstop>
-  <tabstop>live_capture_region_checkbox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

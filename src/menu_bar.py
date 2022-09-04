@@ -118,7 +118,7 @@ def get_capture_method_index(capture_method: str | CaptureMethodEnum):
         return 0
 
 
-class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
+class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
     __video_capture_devices: list[CameraInfo] = []
     """
     Used to temporarily store the existing cameras,
@@ -199,6 +199,12 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
             self.custom_image_settings_info_label
                 .text()
                 .format(GITHUB_REPOSITORY=GITHUB_REPOSITORY))
+        # HACK: This is a workaround because custom_image_settings_info_label
+        # simply will not open links with a left click no matter what we tried.
+        self.readme_link_button.clicked.connect(
+            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"))
+        self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
+
 
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
@@ -288,13 +294,13 @@ class __SettingsWidget(QtWidgets.QDialog, settings_ui.Ui_DialogSettings):
 
 
 def open_settings(autosplit: AutoSplit):
-    if not autosplit.SettingsWidget or cast(QtWidgets.QDialog, autosplit.SettingsWidget).isHidden():
+    if not autosplit.SettingsWidget or cast(QtWidgets.QWidget, autosplit.SettingsWidget).isHidden():
         autosplit.SettingsWidget = __SettingsWidget(autosplit)
 
 
 def get_default_settings_from_ui(autosplit: AutoSplit):
-    temp_dialog = QtWidgets.QDialog()
-    default_settings_dialog = settings_ui.Ui_DialogSettings()
+    temp_dialog = QtWidgets.QWidget()
+    default_settings_dialog = settings_ui.Ui_SettingsWidget()
     default_settings_dialog.setupUi(temp_dialog)
     default_settings: user_profile.UserProfileDict = {
         "split_hotkey": default_settings_dialog.split_input.text(),

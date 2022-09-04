@@ -64,7 +64,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     AboutWidget: about.Ui_AboutAutoSplitWidget | None = None
     UpdateCheckerWidget: update_checker.Ui_UpdateChecker | None = None
     CheckForUpdatesThread: QtCore.QThread | None = None
-    SettingsWidget: settings.Ui_DialogSettings | None = None
+    SettingsWidget: settings.Ui_SettingsWidget | None = None
 
     # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
     # and for type safety in both hotkeys.py and settings_file.py
