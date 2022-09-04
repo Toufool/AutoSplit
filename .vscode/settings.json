@@ -106,4 +106,6 @@
   "powershell.codeFormatting.useCorrectCasing": true,
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
+  "xml.codeLens.enabled": true,
+  "xml.format.spaceBeforeEmptyCloseTag": false,
 }

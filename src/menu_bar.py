@@ -14,7 +14,7 @@ import user_profile
 from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
                             get_all_video_capture_devices)
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
-from hotkeys import HOTKEYS, Hotkeys, set_hotkey
+from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal,
                    fire_and_forget)
 
@@ -229,8 +229,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
             for method in capture_method_values]))
 # endregion
 
-        # Hotkeys initial values and bindings
-        def hotkey_connect(hotkey: Hotkeys):
+        # Hotkey initial values and bindings
+        def hotkey_connect(hotkey: Hotkey):
             return lambda: set_hotkey(self.autosplit, hotkey)
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
@@ -259,6 +259,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.default_delay_time_spinbox.setValue(autosplit.settings_dict["default_delay_time"])
         self.default_pause_time_spinbox.setValue(autosplit.settings_dict["default_pause_time"])
         self.loop_splits_checkbox.setChecked(autosplit.settings_dict["loop_splits"])
+        self.enable_auto_reset_image_checkbox.setChecked(autosplit.settings_dict["enable_auto_reset"])
 # endregion
 # region Binding
         # Capture Settings
@@ -288,6 +289,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.loop_splits_checkbox.stateChanged.connect(lambda: self.__set_value(
             "loop_splits",
             self.loop_splits_checkbox.isChecked()))
+        self.enable_auto_reset_image_checkbox.stateChanged.connect(lambda: self.__set_value(
+            "enable_auto_reset",
+            self.enable_auto_reset_image_checkbox.isChecked()))
 # endregion
 
         self.show()
@@ -308,8 +312,10 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
         "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
         "pause_hotkey": default_settings_dialog.pause_input.text(),
+        "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
+        "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex()),
         "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),

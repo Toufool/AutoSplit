@@ -23,8 +23,10 @@ class UserProfileDict(TypedDict):
     undo_split_hotkey: str
     skip_split_hotkey: str
     pause_hotkey: str
+    toggle_auto_reset_image_hotkey: str
     fps_limit: int
     live_capture_region: bool
+    enable_auto_reset: bool
     capture_method: str | CaptureMethodEnum
     capture_device_id: int
     capture_device_name: str
@@ -33,7 +35,6 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
-
     split_image_directory: str
     captured_window_title: str
     capture_region: Region
@@ -45,8 +46,10 @@ DEFAULT_PROFILE = UserProfileDict(
     undo_split_hotkey="",
     skip_split_hotkey="",
     pause_hotkey="",
+    toggle_auto_reset_image_hotkey="",
     fps_limit=60,
     live_capture_region=True,
+    enable_auto_reset=True,
     capture_method=CAPTURE_METHODS.get_method_by_index(0),
     capture_device_id=0,
     capture_device_name="",

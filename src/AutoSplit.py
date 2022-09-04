@@ -6,7 +6,6 @@ import ctypes
 import os
 import signal
 import sys
-from collections.abc import Callable
 from time import time
 from types import FunctionType
 
@@ -66,14 +65,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
 
-    # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
-    # and for type safety in both hotkeys.py and settings_file.py
-    split_hotkey: Callable[[], None] | None = None
-    reset_hotkey: Callable[[], None] | None = None
-    skip_split_hotkey: Callable[[], None] | None = None
-    undo_split_hotkey: Callable[[], None] | None = None
-    pause_hotkey: Callable[[], None] | None = None
-
     # Initialize a few attributes
     hwnd = 0
     """Window Handle used for Capture Region"""
@@ -122,6 +113,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.y_spinbox.setFrame(False)
             self.width_spinbox.setFrame(False)
             self.height_spinbox.setFrame(False)
+
+        # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
+        for hotkey in HOTKEYS:
+            setattr(self, f"{hotkey}_hotkey", None)
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
@@ -773,25 +768,32 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         Checks if we should reset, resets if it's the case, and returns the result
         """
         if self.reset_image:
-            similarity = self.reset_image.compare_with_capture(self, capture)
-            threshold = self.reset_image.get_similarity_threshold(self)
+            if self.settings_dict["enable_auto_reset"]:
+                similarity = self.reset_image.compare_with_capture(self, capture)
+                threshold = self.reset_image.get_similarity_threshold(self)
 
-            paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
-            if paused:
-                should_reset = False
-                self.table_reset_image_live_label.setText("paused")
+                paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
+                if paused:
+                    should_reset = False
+                    self.table_reset_image_live_label.setText("paused")
+                else:
+                    should_reset = similarity >= threshold
+                    if similarity > self.reset_highest_similarity:
+                        self.reset_highest_similarity = similarity
+                    self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
+                    self.table_reset_image_live_label.setText(decimal(similarity))
+
+                self.table_reset_image_threshold_label.setText(decimal(threshold))
+
+                if should_reset:
+                    send_command(self, "reset")
+                    self.reset()
             else:
-                should_reset = similarity >= threshold
-                if similarity > self.reset_highest_similarity:
-                    self.reset_highest_similarity = similarity
-                self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
-                self.table_reset_image_live_label.setText(decimal(similarity))
-
-            self.table_reset_image_threshold_label.setText(decimal(threshold))
-
-            if should_reset:
-                send_command(self, "reset")
-                self.reset()
+                self.table_reset_image_live_label.setText("disabled")
+        else:
+            self.table_reset_image_live_label.setText("N/A")
+            self.table_reset_image_threshold_label.setText("N/A")
+            self.table_reset_image_highest_label.setText("N/A")
 
         return self.__check_for_reset_state_update_ui()
 
