@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>aboutAutoSplitWidget</class>
- <widget class="QWidget" name="aboutAutoSplitWidget">
+ <class>AboutAutoSplitWidget</class>
+ <widget class="QWidget" name="AboutAutoSplitWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,7 +34,7 @@
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
-  <widget class="QPushButton" name="okButton">
+  <widget class="QPushButton" name="ok_button">
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -47,12 +47,12 @@
     <string>OK</string>
    </property>
   </widget>
-  <widget class="QLabel" name="createdbyLabel">
+  <widget class="QLabel" name="created_by_label">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>44</y>
-     <width>161</width>
+     <width>241</width>
      <height>32</height>
     </rect>
    </property>
@@ -60,12 +60,12 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://twitter.com/toufool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Maintained by &lt;a href=&quot;https://twitter.com/Avasam06&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Avasam&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLabel" name="versionLabel">
+  <widget class="QLabel" name="version_label">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>21</y>
-     <width>161</width>
+     <width>241</width>
      <height>16</height>
     </rect>
    </property>
@@ -73,24 +73,25 @@
     <string>Version: </string>
    </property>
   </widget>
-  <widget class="QLabel" name="donatetextLabel">
+  <widget class="QLabel" name="donate_text_label">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>95</y>
-     <width>204</width>
-     <height>32</height>
+     <x>10</x>
+     <y>90</y>
+     <width>241</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>If you enjoy using this program, please
-consider donating. Thank you!</string>
+    <string>If you enjoy using this program,
+please consider donating.
+Thank you!</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="donatebuttonLabel">
+  <widget class="QLabel" name="donate_button_label">
    <property name="geometry">
     <rect>
      <x>60</x>
@@ -100,34 +101,49 @@ consider donating. Thank you!</string>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;amp;business=BYRHQG69YRHBA&amp;amp;item_name=AutoSplit+development&amp;amp;currency_code=USD&amp;amp;source=url&quot;&gt;&lt;img src=&quot;:/resources/btn_donateCC_LG.png&quot;/&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/resources/btn_donateCC_LG.png</pixmap>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="iconLabel">
+  <widget class="QLabel" name="icon_label">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>181</x>
      <y>17</y>
-     <width>62</width>
-     <height>71</height>
+     <width>64</width>
+     <height>64</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/resources/icon.ico&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/resources/icon.ico</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
+  <zorder>ok_button</zorder>
+  <zorder>donate_text_label</zorder>
+  <zorder>donate_button_label</zorder>
+  <zorder>icon_label</zorder>
+  <zorder>version_label</zorder>
+  <zorder>created_by_label</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>okButton</sender>
+   <sender>ok_button</sender>
    <signal>clicked()</signal>
-   <receiver>aboutAutoSplitWidget</receiver>
+   <receiver>AboutAutoSplitWidget</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
