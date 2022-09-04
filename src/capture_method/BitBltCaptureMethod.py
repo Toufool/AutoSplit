@@ -57,15 +57,11 @@ class BitBltCaptureMethod(CaptureMethodInterface):
             image.shape = (selection["height"], selection["width"], 4)
         except (win32ui.error, pywintypes.error):
             return None, False
-        # We already obtained the image, so we can ignore errors during cleanup
-        try:
-            dc_object.DeleteDC()
-            dc_object.DeleteDC()
-            compatible_dc.DeleteDC()
-            win32gui.ReleaseDC(hwnd, window_dc)
-            win32gui.DeleteObject(bitmap.GetHandle())
-        except win32ui.error:
-            pass
+        # Cleanup DC and handle
+        dc_object.DeleteDC()
+        compatible_dc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, window_dc)
+        win32gui.DeleteObject(bitmap.GetHandle())
         return image, False
 
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
