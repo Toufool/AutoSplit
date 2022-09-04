@@ -1,8 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Caches
-.cache/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
@@ -10,10 +7,6 @@ __pycache__/
 env/
 build/
 dist/
-*.prof
-# Generated
-**/gen/*.py
-!**/gen/*.pyi
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -23,4 +16,3 @@ dist/
 
 # Dev settings
 *.pkl
-settings.toml

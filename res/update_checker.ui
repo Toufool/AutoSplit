@@ -42,16 +42,12 @@
   <property name="windowTitle">
    <string>Update Checker</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="resources.qrc">
-    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
-  </property>
-  <widget class="QLabel" name="update_status_label">
+  <widget class="QLabel" name="labelUpdateStatus">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>17</x>
      <y>10</y>
-     <width>218</width>
+     <width>281</width>
      <height>16</height>
     </rect>
    </property>
@@ -62,13 +58,13 @@
     </sizepolicy>
    </property>
    <property name="text">
-    <string>There is an update available for AutoSplit.</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="current_version_label">
+  <widget class="QLabel" name="labelCurrentVersion">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>17</x>
      <y>30</y>
      <width>91</width>
      <height>16</height>
@@ -78,10 +74,10 @@
     <string>Current Version:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="latest_version_label">
+  <widget class="QLabel" name="labelLatestVersion">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>17</x>
      <y>50</y>
      <width>81</width>
      <height>16</height>
@@ -91,20 +87,20 @@
     <string>Latest Version:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="go_to_download_label">
+  <widget class="QLabel" name="labelGoToDownload">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>80</y>
-     <width>119</width>
+     <x>17</x>
+     <y>76</y>
+     <width>241</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Open download page?</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="left_button">
+  <widget class="QPushButton" name="pushButtonLeft">
    <property name="geometry">
     <rect>
      <x>150</x>
@@ -117,10 +113,10 @@
     <enum>Qt::NoFocus</enum>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="right_button">
+  <widget class="QPushButton" name="pushButtonRight">
    <property name="geometry">
     <rect>
      <x>230</x>
@@ -130,10 +126,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>Later</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="current_version_number_label">
+  <widget class="QLabel" name="labelCurrentVersionNumber">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -146,7 +142,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="latest_version_number_label">
+  <widget class="QLabel" name="labelLatestVersionNumber">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -159,12 +155,12 @@
     <string/>
    </property>
   </widget>
-  <widget class="QCheckBox" name="do_not_ask_again_checkbox">
+  <widget class="QCheckBox" name="checkBoxDoNotAskMeAgain">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>102</y>
-     <width>131</width>
+     <x>17</x>
+     <y>100</y>
+     <width>141</width>
      <height>20</height>
     </rect>
    </property>
@@ -173,12 +169,10 @@
    </property>
   </widget>
  </widget>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
-   <sender>right_button</sender>
+   <sender>pushButtonRight</sender>
    <signal>clicked()</signal>
    <receiver>UpdateChecker</receiver>
    <slot>close()</slot>

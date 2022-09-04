@@ -2,32 +2,29 @@
 #
 # Python: CPython 3.9+
 #
-# Usage: ./scripts/install.ps1
+# Usage: .\scripts\install.bat
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip uninstall -y -r ./scripts/requirements-dev.txt
+# pip3.9 uninstall -r requirements.txt
 #
-# Creating an AutoSplit executable with PyInstaller: ./scripts/build.ps1
+# Creating AutoSplit.exe with PyInstaller: .\scripts\build.bat
 #
 # Dependencies:
-numpy>=1.23 # Updated types
-opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
-PyQt6>=6.2.1 # Python 3.10 support
-git+https://github.com/Avasam/imagehash.git@patch-2#egg=ImageHash  # Contains type information + setup as package not module
+PyQt6
+opencv-python<=4.5.3.56 # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/110
+Pillow
+ImageHash
+pywin32
 keyboard
 packaging
-Pillow
-PyAutoGUI
-requests
-certifi
-toml
-psutil
-git+https://github.com/Avasam/python_grabber.git@complete-types#egg=pygrabber # https://github.com/andreaschiavinato/python_grabber/pull/18
-# Windows-only
-pywin32>=301
-winsdk>=v1.0.0b4
-git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
-#
-# Build and compile resources
-PyInstaller
+pyautogui
 PySide6
+flake8
+mypy
+requests
+#
+# Comment this out if you don't want to build AutoSplit.exe:
+PyInstaller
+#
+# Comment this out if you don't want to install the PyQt designer
+PyQt6-tools
