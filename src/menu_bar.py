@@ -180,10 +180,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         else:
             self.capture_device_combobox.setPlaceholderText("No device found.")
 
-    def __init__(self, autosplit: AutoSplit):
-        super().__init__()
-        self.setupUi(self)
-        self.autosplit = autosplit
+    def __apply_os_specific_ui_fixes(self):
         # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
         # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
         # Arrow buttons tend to move a lot as well
@@ -192,9 +189,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
             self.default_similarity_threshold_spinbox.setFrame(False)
             self.default_delay_time_spinbox.setFrame(False)
             self.default_pause_time_spinbox.setFrame(False)
-        # Don't autofocus any particular field
-        self.setFocus()
 
+    def __set_readme_link(self):
         self.custom_image_settings_info_label.setText(
             self.custom_image_settings_info_label
                 .text()
@@ -204,6 +200,15 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.readme_link_button.clicked.connect(
             lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"))
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
+
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__()
+        self.setupUi(self)
+        self.autosplit = autosplit
+        self.__apply_os_specific_ui_fixes()
+        self.__set_readme_link()
+        # Don't autofocus any particular field
+        self.setFocus()
 
 
 # region Build the Capture method combobox

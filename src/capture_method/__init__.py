@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, TypedDict
 
-import cv2
 from pygrabber import dshow_graph
 from winsdk.windows.media.capture import MediaCapture
 
