@@ -450,7 +450,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # or Splitting/skipping when there are no images left
         if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
                 or "Delayed Split" in self.current_split_image.text() \
-                or (not self.skip_split_button.isEnabled() and not self.is_auto_controlled) \
+                or not (self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only) \
                 or self.__is_current_split_out_of_range():
             return
 
