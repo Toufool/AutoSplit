@@ -52,7 +52,7 @@
     <rect>
      <x>10</x>
      <y>44</y>
-     <width>171</width>
+     <width>241</width>
      <height>32</height>
     </rect>
    </property>
@@ -65,7 +65,7 @@
     <rect>
      <x>10</x>
      <y>21</y>
-     <width>161</width>
+     <width>241</width>
      <height>16</height>
     </rect>
    </property>
@@ -76,15 +76,16 @@
   <widget class="QLabel" name="donate_text_label">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>95</y>
-     <width>204</width>
-     <height>32</height>
+     <x>10</x>
+     <y>90</y>
+     <width>241</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">
-    <string>If you enjoy using this program, please
-consider donating. Thank you!</string>
+    <string>If you enjoy using this program,
+please consider donating.
+Thank you!</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -128,6 +129,9 @@ consider donating. Thank you!</string>
     <bool>true</bool>
    </property>
   </widget>
+  <zorder>ok_button</zorder>
+  <zorder>donate_text_label</zorder>
+  <zorder>donate_button_label</zorder>
   <zorder>icon_label</zorder>
   <zorder>version_label</zorder>
   <zorder>created_by_label</zorder>

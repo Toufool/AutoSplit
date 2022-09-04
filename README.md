@@ -22,6 +22,7 @@ This program can be used to automatically start, split, and reset your preferred
 
 ### Compatibility
 
+- Python 3.9+
 - Windows 10 and 11.
 
 ### Building
@@ -30,7 +31,7 @@ This program can be used to automatically start, split, and reset your preferred
 
 - Python 3.9 - 3.10.
 - Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-- Node is optional, but required for complete linting (using Pyright).
+
 - Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
   - Run `./scripts/install.ps1` to install all dependencies.
   - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
@@ -96,6 +97,10 @@ This program can be used to automatically start, split, and reset your preferred
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
     There are currently performance issues, but it might be more convenient.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://obsproject.com/forum/resources/obs-virtualcam.949/) instead.  
+
+#### Capture Device
+
+Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method. Will show `[occupied]` if a device is detected but can't be started.
 
 #### Show Live Similarity
 
@@ -240,7 +245,7 @@ Still need help?
 - Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
 - [Harutaka Kawamura](https://github.com/harupy/) for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
-- [ZanasoBayncuh](https://twitter.com/ZanasoBayncuh) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
+- [Zana_G](https://www.twitch.tv/zana_g) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
 - [Avasam](https://twitter.com/Avasam06) for their continued work on making an incredible amount of improvements and changes to AutoSplit while I have not had the time/motivation to do so.
 - [KaDiWa](https://github.com/KaDiWa4) for the LiveSplit integration.
 - [Tyron18](https://twitter.com/Tyron18_) for assisting with Windows 11 testing.
