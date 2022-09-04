@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 # pylint: disable=no-self-use,unnecessary-dunder-call
 
 
-class CaptureMethodInterface():
+class CaptureMethodBase():
     def __init__(self, autosplit: AutoSplit | None = None):
         pass
 
