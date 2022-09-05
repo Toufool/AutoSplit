@@ -13,7 +13,7 @@ from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 from winsdk.windows.media.capture import MediaCapture
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 WGC_NO_BORDER_MIN_BUILD = 20348
 
 
-class WindowsGraphicsCaptureMethod(CaptureMethodInterface):
+class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     size: SizeInt32
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None

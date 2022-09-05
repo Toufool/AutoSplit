@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: AutoSplit (debug non-user code)",
+      "type": "python",
+      "request": "launch",
+      "preLaunchTask": "Compile resources",
+      "program": "src/AutoSplit.py",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
       "name": "Python: AutoSplit",
       "type": "python",
       "request": "launch",

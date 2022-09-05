@@ -102,9 +102,8 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 """The directory of either AutoSplit.exe or AutoSplit.py"""
 
 # Shared strings
-# DIRTY_VERSION_EXTENSION = ""
-DIRTY_VERSION_EXTENSION = "-" + AUTOSPLIT_BUILD_NUMBER
-"""Set DIRTY_VERSION_EXTENSION to an empty string to generate a clean version number"""
-AUTOSPLIT_VERSION = "2.0.0-alpha.4" + DIRTY_VERSION_EXTENSION
+# Set AUTOSPLIT_BUILD_NUMBER to an empty string to generate a clean version number
+# AUTOSPLIT_BUILD_NUMBER = ""  # pyright: ignore[reportConstantRedefinition]  # noqa: F811
+AUTOSPLIT_VERSION = "2.0.0-alpha.5" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

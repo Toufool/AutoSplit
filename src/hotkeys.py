@@ -225,7 +225,7 @@ def is_valid_hotkey_name(hotkey_name: str):
 def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: str = ""):
     if autosplit.SettingsWidget:
         # Unfocus all fields
-        cast(QtWidgets.QDialog, autosplit.SettingsWidget).setFocus()
+        cast(QtWidgets.QWidget, autosplit.SettingsWidget).setFocus()
         getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(PRESS_A_KEY_TEXT)
 
     # Disable some buttons

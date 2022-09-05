@@ -19,7 +19,7 @@ flake8-pyi>=22.8.1 # flake8 5 support
 flake8-quotes
 flake8-simplify
 pep8-naming
-pylint>=2.13.9 # Respect ignore configuration options with --recursive=y
+pylint>=2.13.9,<3.0.0 # Respect ignore configuration options with --recursive=y  # 3.0 still in pre-release
 pyright
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.

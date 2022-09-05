@@ -9,9 +9,10 @@
     "ms-python.vscode-pylance",
     "ms-vscode.powershell",
     "pkief.material-icon-theme",
+    "redhat.vscode-xml",
     "redhat.vscode-yaml",
     "shardulm94.trailing-spaces",
-    "sonarsource.sonarlint-vscode"
+    "sonarsource.sonarlint-vscode",
   ],
   "unwantedRecommendations": [
     // Must disable in this workspace //
@@ -36,5 +37,5 @@
     "johnstoncode.svn-scm",
     // Prefer using VSCode itself as a text editor
     "vscodevim.vim",
-  ]
+  ],
 }
