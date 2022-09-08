@@ -4,7 +4,7 @@ $exitCodes = 0
 
 Write-Host "`nRunning autofixes..."
 isort src/ typings/
-autopep8 src/ typings/ --in-place
+autopep8 $(git ls-files '**.py*') --in-place
 
 Write-Host "`nRunning Pyright..."
 $Env:PYRIGHT_PYTHON_FORCE_VERSION = 'latest'

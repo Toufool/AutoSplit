@@ -27,4 +27,6 @@ pyright
 qt6-applications
 # Types
 pywin32-stubs>=1.0.7 # Added error types
+types-keyboard
+types-pyautogui
 typing-extensions

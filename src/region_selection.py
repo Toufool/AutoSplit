@@ -149,6 +149,7 @@ def __get_window_from_point(x: int, y: int):
     # Want to pull the parent window from the window handle
     # By using GetAncestor we are able to get the parent window instead
     # of the owner window.
+    # TODO: Fix stubs, IsChild should return a boolean
     while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
         hwnd = cast(int, user32.GetAncestor(hwnd, GA_ROOT))
 

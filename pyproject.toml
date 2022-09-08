@@ -21,7 +21,6 @@ reportMissingSuperCall="none" # False positives on base classes
 reportPropertyTypeMismatch="error"
 reportUninitializedInstanceVariable="error"
 reportUnnecessaryTypeIgnoreComment="error"
-reportUnusedCallResult="none"
 # Exclude from scanning when running pyright
 exclude = [
   # Auto generated, produces unecessary `# type: ignore`
@@ -32,6 +31,7 @@ ignore = [
   # We expect stub files to be incomplete or contain useless statements
   "**/*.pyi",
 ]
+reportUnusedCallResult="none"
 # Type stubs may not be completable
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING

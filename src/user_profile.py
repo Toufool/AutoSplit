@@ -137,7 +137,8 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
                 set_hotkey(autosplit, hotkey, cast(str, autosplit.settings_dict[hotkey_name]))
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
-    autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"], autosplit)
+    if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+        autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"], autosplit)
     if not autosplit.capture_method.check_selected_region_exists(autosplit):
         autosplit.live_image.setText("Reload settings after opening"
                                      + f'\n"{autosplit.settings_dict["captured_window_title"]}"'

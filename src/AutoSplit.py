@@ -206,7 +206,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.show()
 
         try:
-            import pyi_splash  # type: ignore # pylint: disable=import-outside-toplevel
+            import pyi_splash  # pyright: ignore[reportMissingModuleSource] # pylint: disable=import-outside-toplevel
             pyi_splash.close()
         except ModuleNotFoundError:
             pass

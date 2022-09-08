@@ -46,6 +46,7 @@ def is_valid_hwnd(hwnd: int):
     if not hwnd:
         return False
     if sys.platform == "win32":
+        # TODO: Fix stubs, IsWindow should return a boolean
         return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
 
@@ -104,6 +105,6 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 # Shared strings
 # Set AUTOSPLIT_BUILD_NUMBER to an empty string to generate a clean version number
 # AUTOSPLIT_BUILD_NUMBER = ""  # pyright: ignore[reportConstantRedefinition]  # noqa: F811
-AUTOSPLIT_VERSION = "2.0.0-alpha.5" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.0.0-alpha.6" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY
