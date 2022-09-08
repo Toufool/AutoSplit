@@ -45,7 +45,7 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - name: Analysing the code with Pyright
-        run: pyright --warnings
+        run: pyright src/ --warnings
   Pylint:
     runs-on: windows-latest
     strategy:
@@ -64,7 +64,7 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - name: Analysing the code with Pylint
-        run: pylint --reports=y --output-format=colorized src/
+        run: pylint src/ --reports=y --output-format=colorized
   Flake8:
     runs-on: windows-latest
     strategy:
@@ -83,7 +83,7 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - name: Analysing the code with Flake8
-        run: flake8
+        run: flake8 src/ typings/
   Bandit:
     runs-on: windows-latest
     steps:
@@ -98,7 +98,7 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - name: Analysing the code with Bandit
-        run: bandit -n 1 --severity-level medium --recursive src
+        run: bandit src/ -n 1 --severity-level medium --recursive
   Build:
     runs-on: windows-latest
     strategy:

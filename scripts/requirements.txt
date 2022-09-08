@@ -13,10 +13,10 @@
 numpy>=1.23 # Updated types
 opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
 PyQt6>=6.2.1 # Python 3.10 support
-git+https://github.com/Avasam/imagehash.git@patch-2#egg=ImageHash  # Contains type information + setup as package not module
+git+https://github.com/JohannesBuchner/imagehash.git#egg=ImageHash  # Contains type information + setup as package not module
 keyboard
 packaging
-Pillow
+Pillow>=7.2.0 # https://github.com/SerpentAI/D3DShot/issues/44
 PyAutoGUI
 requests
 certifi
@@ -26,7 +26,7 @@ git+https://github.com/Avasam/python_grabber.git@complete-types#egg=pygrabber # 
 # Windows-only
 pywin32>=301
 winsdk>=v1.0.0b4
-git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # https://github.com/SerpentAI/D3DShot/issues/44
+D3DShot
 #
 # Build and compile resources
 PyInstaller

@@ -80,6 +80,7 @@
     "E": "Warning",
     "E9": "Error", // Runtime
     "W": "Warning",
+    "W6": "Error", // Deprecation warning
     // Pyflakes
     "F": "Warning",
     // PEP8 Naming convention
@@ -106,4 +107,6 @@
   "powershell.codeFormatting.useCorrectCasing": true,
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
+  "xml.codeLens.enabled": true,
+  "xml.format.spaceBeforeEmptyCloseTag": false,
 }
