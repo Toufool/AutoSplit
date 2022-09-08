@@ -34,13 +34,12 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 self.last_captured_frame = image if result else None
                 self.is_old_image = False
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
-            #  mypy false positives
-            error = exception  # type: ignore[misc]
+            error = exception
             self.capture_device.release()
             autosplit.show_error_signal.emit(lambda: exception_traceback(
                 "AutoSplit encountered an unhandled exception while trying to grab a frame and has stopped capture. "
                 + CREATE_NEW_ISSUE_MESSAGE,
-                error))  # type: ignore[misc]
+                error))
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()

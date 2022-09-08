@@ -18,7 +18,7 @@ class CaptureMethodBase():
 
     def reinitialize(self, autosplit: AutoSplit):
         self.close(autosplit)
-        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call  # type: ignore[misc]
+        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
 
     def close(self, autosplit: AutoSplit):
         pass

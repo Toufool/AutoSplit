@@ -130,7 +130,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         autosplit.hwnd = hwnd
         self.close(autosplit)
         try:
-            self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call  # type: ignore[misc]
+            self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):

@@ -29,6 +29,4 @@ qt6-applications
 pywin32-stubs>=1.0.7 # Added error types
 types-keyboard
 types-pyautogui
-types-requests
-types-toml
 typing-extensions

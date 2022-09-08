@@ -47,7 +47,7 @@ def is_valid_hwnd(hwnd: int):
         return False
     if sys.platform == "win32":
         # TODO: Fix stubs, IsWindow should return a boolean
-        return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))  # type: ignore[func-returns-value]
+        return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
 
 
