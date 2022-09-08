@@ -12,13 +12,13 @@ if TYPE_CHECKING:
 # pylint: disable=no-self-use,unnecessary-dunder-call
 
 
-class CaptureMethodInterface():
+class CaptureMethodBase():
     def __init__(self, autosplit: AutoSplit | None = None):
         pass
 
     def reinitialize(self, autosplit: AutoSplit):
         self.close(autosplit)
-        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call  # type: ignore[misc]
 
     def close(self, autosplit: AutoSplit):
         pass

@@ -6,7 +6,6 @@ import ctypes
 import os
 import signal
 import sys
-from collections.abc import Callable
 from time import time
 from types import FunctionType
 
@@ -21,7 +20,7 @@ import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
 from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
-from capture_method import CaptureMethodEnum, CaptureMethodInterface
+from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
 from menu_bar import (about_qt, about_qt_for_python, check_for_updates, get_default_settings_from_ui, open_about,
@@ -64,15 +63,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     AboutWidget: about.Ui_AboutAutoSplitWidget | None = None
     UpdateCheckerWidget: update_checker.Ui_UpdateChecker | None = None
     CheckForUpdatesThread: QtCore.QThread | None = None
-    SettingsWidget: settings.Ui_DialogSettings | None = None
-
-    # hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
-    # and for type safety in both hotkeys.py and settings_file.py
-    split_hotkey: Callable[[], None] | None = None
-    reset_hotkey: Callable[[], None] | None = None
-    skip_split_hotkey: Callable[[], None] | None = None
-    undo_split_hotkey: Callable[[], None] | None = None
-    pause_hotkey: Callable[[], None] | None = None
+    SettingsWidget: settings.Ui_SettingsWidget | None = None
 
     # Initialize a few attributes
     hwnd = 0
@@ -82,7 +73,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
-    capture_method = CaptureMethodInterface()
+    capture_method = CaptureMethodBase()
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
     last_loaded_settings = DEFAULT_PROFILE
@@ -122,6 +113,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.y_spinbox.setFrame(False)
             self.width_spinbox.setFrame(False)
             self.height_spinbox.setFrame(False)
+
+        # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
+        for hotkey in HOTKEYS:
+            setattr(self, f"{hotkey}_hotkey", None)
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
@@ -211,7 +206,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.show()
 
         try:
-            import pyi_splash  # type: ignore # pylint: disable=import-outside-toplevel
+            import pyi_splash  # pyright: ignore[reportMissingModuleSource] # pylint: disable=import-outside-toplevel
             pyi_splash.close()
         except ModuleNotFoundError:
             pass
@@ -450,7 +445,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # or Splitting/skipping when there are no images left
         if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
                 or "Delayed Split" in self.current_split_image.text() \
-                or (not self.skip_split_button.isEnabled() and not self.is_auto_controlled) \
+                or not (self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only) \
                 or self.__is_current_split_out_of_range():
             return
 
@@ -795,6 +790,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     self.reset()
             else:
                 self.table_reset_image_live_label.setText("disabled")
+        else:
+            self.table_reset_image_live_label.setText("N/A")
+            self.table_reset_image_threshold_label.setText("N/A")
+            self.table_reset_image_highest_label.setText("N/A")
 
         return self.__check_for_reset_state_update_ui()
 

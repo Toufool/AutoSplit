@@ -11,7 +11,7 @@ import win32con
 import win32ui
 from win32 import win32gui
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import get_window_bounds, is_valid_hwnd
 
 if TYPE_CHECKING:
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 PW_RENDERFULLCONTENT = 0x00000002
 
 
-class BitBltCaptureMethod(CaptureMethodInterface):
+class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
@@ -57,15 +57,11 @@ class BitBltCaptureMethod(CaptureMethodInterface):
             image.shape = (selection["height"], selection["width"], 4)
         except (win32ui.error, pywintypes.error):
             return None, False
-        # We already obtained the image, so we can ignore errors during cleanup
-        try:
-            dc_object.DeleteDC()
-            dc_object.DeleteDC()
-            compatible_dc.DeleteDC()
-            win32gui.ReleaseDC(hwnd, window_dc)
-            win32gui.DeleteObject(bitmap.GetHandle())
-        except win32ui.error:
-            pass
+        # Cleanup DC and handle
+        dc_object.DeleteDC()
+        compatible_dc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, window_dc)
+        win32gui.DeleteObject(bitmap.GetHandle())
         return image, False
 
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):

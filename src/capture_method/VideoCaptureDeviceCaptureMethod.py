@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 
-from capture_method.interface import CaptureMethodInterface
+from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import is_valid_image
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
+class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     last_captured_frame: cv2.Mat | None = None
@@ -34,12 +34,13 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodInterface):
                 self.last_captured_frame = image if result else None
                 self.is_old_image = False
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
-            error = exception
+            #  mypy false positives
+            error = exception  # type: ignore[misc]
             self.capture_device.release()
             autosplit.show_error_signal.emit(lambda: exception_traceback(
                 "AutoSplit encountered an unhandled exception while trying to grab a frame and has stopped capture. "
                 + CREATE_NEW_ISSUE_MESSAGE,
-                error))
+                error))  # type: ignore[misc]
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
