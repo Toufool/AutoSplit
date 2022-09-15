@@ -65,7 +65,8 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
         hwnd,
         DWMWA_EXTENDED_FRAME_BOUNDS,
         ctypes.byref(extended_frame_bounds),
-        ctypes.sizeof(extended_frame_bounds))
+        ctypes.sizeof(extended_frame_bounds),
+    )
 
     window_rect = win32gui.GetWindowRect(hwnd)
     window_left_bounds = cast(int, extended_frame_bounds.left) - window_rect[0]

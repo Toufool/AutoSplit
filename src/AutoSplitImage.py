@@ -126,7 +126,7 @@ class AutoSplitImage():
     def compare_with_capture(
         self,
         default: AutoSplit | int,
-        capture: cv2.Mat | None
+        capture: cv2.Mat | None,
     ):
         """
         Compare image with capture using image's comparison method. Falls back to combobox
@@ -145,5 +145,7 @@ class AutoSplitImage():
 
 
 if True:  # pylint: disable=using-constant-test
-    from split_parser import (comparison_method_from_filename, delay_time_from_filename, flags_from_filename,
-                              loop_from_filename, pause_from_filename, threshold_from_filename)
+    from split_parser import (
+        comparison_method_from_filename, delay_time_from_filename, flags_from_filename, loop_from_filename,
+        pause_from_filename, threshold_from_filename,
+    )

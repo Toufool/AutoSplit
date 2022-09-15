@@ -99,11 +99,13 @@ def select_region(autosplit: AutoSplit):
 
     left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
-    __set_region_values(autosplit,
-                        left=x - window_x - left_bounds,
-                        top=y - window_y - top_bounds,
-                        width=width,
-                        height=height)
+    __set_region_values(
+        autosplit,
+        left=x - window_x - left_bounds,
+        top=y - window_y - top_bounds,
+        width=width,
+        height=height,
+    )
 
 
 def select_window(autosplit: AutoSplit):
@@ -135,11 +137,13 @@ def select_window(autosplit: AutoSplit):
     border_width = ceil((window_width - client_width) / 2)
     titlebar_with_border_height = window_height - client_height - border_width
 
-    __set_region_values(autosplit,
-                        left=border_width,
-                        top=titlebar_with_border_height,
-                        width=client_width,
-                        height=client_height - border_width * 2)
+    __set_region_values(
+        autosplit,
+        left=border_width,
+        top=titlebar_with_border_height,
+        width=client_width,
+        height=client_height - border_width * 2,
+    )
 
 
 def __get_window_from_point(x: int, y: int):
@@ -199,11 +203,13 @@ def align_region(autosplit: AutoSplit):
         return
 
     # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
-    __set_region_values(autosplit,
-                        left=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
-                        top=autosplit.settings_dict["capture_region"]["y"] + best_loc[1],
-                        width=best_width,
-                        height=best_height)
+    __set_region_values(
+        autosplit,
+        left=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
+        top=autosplit.settings_dict["capture_region"]["y"] + best_loc[1],
+        width=best_width,
+        height=best_height,
+    )
 
 
 def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
@@ -293,7 +299,8 @@ class BaseSelectWidget(QtWidgets.QWidget):
             user32.GetSystemMetrics(SM_XVIRTUALSCREEN),
             user32.GetSystemMetrics(SM_YVIRTUALSCREEN),
             user32.GetSystemMetrics(SM_CXVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_CYVIRTUALSCREEN))
+            user32.GetSystemMetrics(SM_CYVIRTUALSCREEN),
+        )
         self.setWindowTitle(" ")
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)

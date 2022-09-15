@@ -7,6 +7,7 @@
 -r requirements.txt
 #
 # Linters and formatters
+add-trailing-comma
 bandit
 flake8>=5 # flake8-pyi deprecation warnings
 flake8-builtins
@@ -21,12 +22,15 @@ flake8-simplify
 pep8-naming
 pylint>=2.13.9,<3.0.0 # Respect ignore configuration options with --recursive=y  # 3.0 still in pre-release
 pyright
+unify
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
 qt6-applications
 # Types
 pywin32-stubs>=1.0.7 # Added error types
+types-d3dshot
 types-keyboard
 types-pyautogui
+types-pyinstaller
 typing-extensions

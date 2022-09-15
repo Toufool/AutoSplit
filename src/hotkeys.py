@@ -91,10 +91,13 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
     # Deal with problematic keys. Even by sending specific scan code "keyboard" still sends the default (wrong) key
     # keyboard also has issues with capitalization modifier (shift+A)
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
-    pyautogui.hotkey(*[
-        "+" if key == "plus" else key
-        for key
-        in hotkey_or_scan_code.replace(" ", "").split("+")])
+    pyautogui.hotkey(
+        *[
+            "+" if key == "plus" else key
+            for key
+            in hotkey_or_scan_code.replace(" ", "").split("+")
+        ],
+    )
 
 
 def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent) -> bool:
@@ -115,9 +118,11 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     # Prevent "action keys" from triggering "keypad keys"
     if keyboard_event.name and is_digit(keyboard_event.name[-1]):
         # Prevent "regular numbers" and "keypad numbers" from activating each other
-        return bool(keyboard_event.is_keypad
-                    if expected_key.startswith("num ")
-                    else not keyboard_event.is_keypad)
+        return bool(
+            keyboard_event.is_keypad
+            if expected_key.startswith("num ")
+            else not keyboard_event.is_keypad,
+        )
 
     # Prevent "keypad action keys" from triggering "regular numbers" and "keypad numbers"
     # Still allow the same key that might be localized differently on keypad vs non-keypad
@@ -216,7 +221,8 @@ def is_valid_hotkey_name(hotkey_name: str):
     return any(
         key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
         for key
-        in hotkey_name.split("+"))
+        in hotkey_name.split("+")
+    )
 
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
@@ -263,7 +269,8 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
             # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
             else keyboard.hook_key(
                 hotkey_name,
-                lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action))
+                lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action),
+            ),
         )
 
         if autosplit.SettingsWidget:

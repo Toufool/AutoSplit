@@ -10,10 +10,12 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-[DUMMY_FLAG,
- BELOW_FLAG,
- PAUSE_FLAG,
- *_] = [1 << i for i in range(31)]  # 32 bits of flags
+[
+    DUMMY_FLAG,
+    BELOW_FLAG,
+    PAUSE_FLAG,
+    *_,
+] = [1 << i for i in range(31)]  # 32 bits of flags
 
 T = TypeVar("T", str, int, float)
 
@@ -24,7 +26,7 @@ T = TypeVar("T", str, int, float)
 def __value_from_filename(
     filename: str,
     delimiters: str,
-    default_value: T
+    default_value: T,
 ) -> T:
     if len(delimiters) != 2:
         raise ValueError("delimiters parameter must contain exactly 2 characters")
@@ -180,7 +182,8 @@ def parse_and_validate_images(autosplit: AutoSplit):
     all_images = [
         AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
         for image_name
-        in os.listdir(autosplit.settings_dict["split_image_directory"])]
+        in os.listdir(autosplit.settings_dict["split_image_directory"])
+    ]
 
     # Find non-split images and then remove them from the list
     autosplit.start_image = __pop_image_type(all_images, ImageType.START)
@@ -196,9 +199,11 @@ def parse_and_validate_images(autosplit: AutoSplit):
             return False
 
         # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (not autosplit.settings_dict["pause_hotkey"]
-                and image.check_flag(PAUSE_FLAG)
-                and not autosplit.is_auto_controlled):
+        if (
+            not autosplit.settings_dict["pause_hotkey"]
+            and image.check_flag(PAUSE_FLAG)
+            and not autosplit.is_auto_controlled
+        ):
             autosplit.gui_changes_on_reset()
             error_messages.pause_hotkey()
             return False
