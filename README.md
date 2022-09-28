@@ -96,7 +96,7 @@ This program can be used to automatically start, split, and reset your preferred
 - **Video Capture Device**
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
     There are currently performance issues, but it might be more convenient.  
-    If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://obsproject.com/forum/resources/obs-virtualcam.949/) instead.  
+    If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 #### Capture Device
 
