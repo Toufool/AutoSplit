@@ -9,8 +9,6 @@ from utils import is_valid_hwnd
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-# pylint: disable=no-self-use,unnecessary-dunder-call
-
 
 class CaptureMethodBase():
     def __init__(self, autosplit: AutoSplit | None = None):
@@ -37,4 +35,3 @@ class CaptureMethodBase():
 
     def check_selected_region_exists(self, autosplit: AutoSplit) -> bool:
         return is_valid_hwnd(autosplit.hwnd)
-# pylint: enable=no-self-use,unnecessary-dunder-call

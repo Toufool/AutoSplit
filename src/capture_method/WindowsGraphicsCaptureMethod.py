@@ -95,11 +95,10 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         except OSError:
             return None, False
 
-        # We were too fast and the next frame wasn't ready yet
-        if not frame:
-            return self.last_captured_frame, True
-
         async def coroutine():
+            # We were too fast and the next frame wasn't ready yet
+            if not frame:
+                return None
             return await (SoftwareBitmap.create_copy_from_surface_async(frame.surface) or asyncio.sleep(0, None))
         try:
             software_bitmap = asyncio.run(coroutine())

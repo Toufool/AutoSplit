@@ -26,8 +26,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 try:
                     result, image = self.capture_device.read()
                 except cv2.error as error:
-                    if not (error.code == cv2.Error.STS_ERROR and error.msg.endswith(
-                            "in function 'cv::VideoCapture::grab'\n")):
+                    if not (
+                        error.code == cv2.Error.STS_ERROR and error.msg.endswith(
+                            "in function 'cv::VideoCapture::grab'\n",
+                        )
+                    ):
                         raise
                     # STS_ERROR most likely means the camera is occupied
                     result = False
