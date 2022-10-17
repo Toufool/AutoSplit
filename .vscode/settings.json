@@ -58,11 +58,19 @@
   },
   "python.analysis.diagnosticMode": "workspace",
   "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.pylintCategorySeverity.convention": "Warning",
-  "python.linting.pylintCategorySeverity.refactor": "Warning",
+  // Use the new Pylint extension instead
+  "python.linting.pylintEnabled": false,
+  "pylint.severity": {
+    "convention": "Warning",
+    "error": "Error",
+    "fatal": "Error",
+    "refactor": "Warning",
+    "warning": "Warning",
+    "info": "Information"
+  },
   // Use the new Flake8 extension instead
   "python.linting.flake8Enabled": false,
+  // Partial codes don't work yet: https://github.com/microsoft/vscode-flake8/issues/7
   "flake8.severity": {
     "convention": "Warning",
     "error": "Error",

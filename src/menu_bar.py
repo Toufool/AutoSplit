@@ -11,12 +11,14 @@ from requests.exceptions import RequestException
 
 import error_messages
 import user_profile
-from capture_method import (CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method,
-                            get_all_video_capture_devices)
+from capture_method import (
+    CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method, get_all_video_capture_devices,
+)
 from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
-from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal,
-                   fire_and_forget)
+from utils import (
+    AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal, fire_and_forget,
+)
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -67,7 +69,8 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def do_not_ask_me_again_state_changed(self):
         user_profile.set_check_for_updates_on_open(
             self.design_window,
-            self.do_not_ask_again_checkbox.isChecked())
+            self.do_not_ask_again_checkbox.isChecked(),
+        )
 
 
 def open_update_checker(autosplit: AutoSplit, latest_version: str, check_on_open: bool):
@@ -87,7 +90,7 @@ class __CheckForUpdatesThread(QtCore.QThread):
 
     def run(self):
         try:
-            response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest")
+            response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30)
             latest_version = str(response.json()["name"]).split("v")[1]
             self.autosplit.update_checker_widget_signal.emit(latest_version, self.check_on_open)
         except (RequestException, KeyError):
@@ -101,6 +104,7 @@ def about_qt():
 
 def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
+    webbrowser.open("https://www.riverbankcomputing.com/software/pyqt")
 
 
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
@@ -130,11 +134,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.autosplit.table_current_image_threshold_label.setText(
             decimal(self.autosplit.split_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.split_image
-            else "-")
+            else "-",
+        )
         self.autosplit.table_reset_image_threshold_label.setText(
             decimal(self.autosplit.reset_image.get_similarity_threshold(self.autosplit))
             if self.autosplit.reset_image
-            else "-")
+            else "-",
+        )
 
     def __set_value(self, key: str, value: Any):
         self.autosplit.settings_dict[key] = value
@@ -173,10 +179,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
                 f"* {device.name}"
                 + (f" [{device.backend}]" if device.backend else "")
                 + (" (occupied)" if device.occupied else "")
-                for device in self.__video_capture_devices])
+                for device in self.__video_capture_devices
+            ])
             self.capture_device_combobox.setEnabled(True)
             self.capture_device_combobox.setCurrentIndex(
-                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]))
+                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]),
+            )
         else:
             self.capture_device_combobox.setPlaceholderText("No device found.")
 
@@ -194,11 +202,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.custom_image_settings_info_label.setText(
             self.custom_image_settings_info_label
                 .text()
-                .format(GITHUB_REPOSITORY=GITHUB_REPOSITORY))
+                .format(GITHUB_REPOSITORY=GITHUB_REPOSITORY),
+        )
         # HACK: This is a workaround because custom_image_settings_info_label
         # simply will not open links with a left click no matter what we tried.
         self.readme_link_button.clicked.connect(
-            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"))
+            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
+        )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 
     def __init__(self, autosplit: AutoSplit):
@@ -229,9 +239,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.capture_method_combobox.setView(list_view)
         self.capture_method_combobox.addItems(capture_list_items)
-        self.capture_method_combobox.setToolTip("\n\n".join([
-            f"{method.name} :\n{method.description}"
-            for method in capture_method_values]))
+        self.capture_method_combobox.setToolTip(
+            "\n\n".join([
+                f"{method.name} :\n{method.description}"
+                for method in capture_method_values
+            ]),
+        )
 # endregion
 
         # Hotkey initial values and bindings
@@ -253,10 +266,11 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            get_capture_method_index(autosplit.settings_dict["capture_method"]))
-        self.capture_device_combobox.currentIndexChanged.connect(lambda: self.__set_value(
-            "capture_device_id",
-            self.__capture_device_changed()))
+            get_capture_method_index(autosplit.settings_dict["capture_method"]),
+        )
+        self.capture_device_combobox.currentIndexChanged.connect(
+            lambda: self.__set_value("capture_device_id", self.__capture_device_changed()),
+        )
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
@@ -268,35 +282,36 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
 # endregion
 # region Binding
         # Capture Settings
-        self.fps_limit_spinbox.valueChanged.connect(lambda: self.__set_value(
-            "fps_limit",
-            self.fps_limit_spinbox.value()))
-        self.live_capture_region_checkbox.stateChanged.connect(lambda: self.__set_value(
-            "live_capture_region",
-            self.live_capture_region_checkbox.isChecked()))
-        self.capture_method_combobox.currentIndexChanged.connect(lambda: self.__set_value(
-            "capture_method",
-            self.__capture_method_changed()))
+        self.fps_limit_spinbox.valueChanged.connect(
+            lambda: self.__set_value("fps_limit", self.fps_limit_spinbox.value()),
+        )
+        self.live_capture_region_checkbox.stateChanged.connect(
+            lambda: self.__set_value("live_capture_region", self.live_capture_region_checkbox.isChecked()),
+        )
+        self.capture_method_combobox.currentIndexChanged.connect(
+            lambda: self.__set_value("capture_method", self.__capture_method_changed()),
+        )
         self.capture_device_combobox.currentIndexChanged.connect(self.__capture_device_changed)
 
         # Image Settings
-        self.default_comparison_method.currentIndexChanged.connect(lambda: self.__set_value(
-            "default_comparison_method",
-            self.default_comparison_method.currentIndex()))
-        self.default_similarity_threshold_spinbox.valueChanged.connect(lambda: self.__update_default_threshold(
-            self.default_similarity_threshold_spinbox.value()))
-        self.default_delay_time_spinbox.valueChanged.connect(lambda: self.__set_value(
-            "default_delay_time",
-            self.default_delay_time_spinbox.value()))
-        self.default_pause_time_spinbox.valueChanged.connect(lambda: self.__set_value(
-            "default_pause_time",
-            self.default_pause_time_spinbox.value()))
-        self.loop_splits_checkbox.stateChanged.connect(lambda: self.__set_value(
-            "loop_splits",
-            self.loop_splits_checkbox.isChecked()))
-        self.enable_auto_reset_image_checkbox.stateChanged.connect(lambda: self.__set_value(
-            "enable_auto_reset",
-            self.enable_auto_reset_image_checkbox.isChecked()))
+        self.default_comparison_method.currentIndexChanged.connect(
+            lambda: self.__set_value("default_comparison_method", self.default_comparison_method.currentIndex()),
+        )
+        self.default_similarity_threshold_spinbox.valueChanged.connect(
+            lambda: self.__update_default_threshold(self.default_similarity_threshold_spinbox.value()),
+        )
+        self.default_delay_time_spinbox.valueChanged.connect(
+            lambda: self.__set_value("default_delay_time", self.default_delay_time_spinbox.value()),
+        )
+        self.default_pause_time_spinbox.valueChanged.connect(
+            lambda: self.__set_value("default_pause_time", self.default_pause_time_spinbox.value()),
+        )
+        self.loop_splits_checkbox.stateChanged.connect(
+            lambda: self.__set_value("loop_splits", self.loop_splits_checkbox.isChecked()),
+        )
+        self.enable_auto_reset_image_checkbox.stateChanged.connect(
+            lambda: self.__set_value("enable_auto_reset", self.enable_auto_reset_image_checkbox.isChecked()),
+        )
 # endregion
 
         self.show()
@@ -322,7 +337,8 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
         "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(
-            default_settings_dialog.capture_method_combobox.currentIndex()),
+            default_settings_dialog.capture_method_combobox.currentIndex(),
+        ),
         "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
         "capture_device_name": "",
         "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
@@ -337,7 +353,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
             "y": autosplit.y_spinbox.value(),
             "width": autosplit.width_spinbox.value(),
             "height": autosplit.height_spinbox.value(),
-        }
+        },
     }
     del temp_dialog
     return default_settings

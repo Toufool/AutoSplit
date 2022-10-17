@@ -87,7 +87,8 @@ def save_settings_as(autosplit: AutoSplit):
         "Save Settings As",
         autosplit.last_successfully_loaded_settings_file_path
         or os.path.join(auto_split_directory, "settings.toml"),
-        "TOML (*.toml)")[0]
+        "TOML (*.toml)",
+    )[0]
 
     # If user cancels save destination window, don't save settings
     if not save_settings_file_path:
@@ -113,10 +114,12 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         with open(load_settings_file_path, "r", encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
-            loaded_settings = cast(UserProfileDict, {
-                **DEFAULT_PROFILE,
-                **toml.load(file),
-            })
+            loaded_settings = cast(
+                UserProfileDict, {
+                    **DEFAULT_PROFILE,
+                    **toml.load(file),
+                },
+            )
             # TODO: Data Validation / fallbacks ?
             autosplit.settings_dict = UserProfileDict(**loaded_settings)
             autosplit.last_loaded_settings = autosplit.settings_dict
@@ -140,9 +143,11 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
         autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"], autosplit)
     if not autosplit.capture_method.check_selected_region_exists(autosplit):
-        autosplit.live_image.setText("Reload settings after opening"
-                                     + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
-                                     + "\nto automatically load Capture Region")
+        autosplit.live_image.setText(
+            "Reload settings after opening"
+            + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+            + "\nto automatically load Capture Region",
+        )
 
     return True
 
@@ -152,7 +157,8 @@ def load_settings(autosplit: AutoSplit, from_path: str = ""):
         autosplit,
         "Load Profile",
         os.path.join(auto_split_directory, "settings.toml"),
-        "TOML (*.toml)")[0]
+        "TOML (*.toml)",
+    )[0]
     if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
         return
 
@@ -164,7 +170,8 @@ def load_settings_on_open(autosplit: AutoSplit):
     settings_files = [
         file for file
         in os.listdir(auto_split_directory)
-        if file.endswith(".toml")]
+        if file.endswith(".toml")
+    ]
 
     # Find all .tomls in AutoSplit folder, error if there is not exactly 1
     error = None

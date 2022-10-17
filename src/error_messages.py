@@ -56,13 +56,17 @@ def split_image_directory_empty():
 
 
 def image_type(image: str):
-    set_text_message(f'"{image}" is not a valid image file, does not exist, '
-                     + "or the full image file path contains a special character.")
+    set_text_message(
+        f'"{image}" is not a valid image file, does not exist, '
+        + "or the full image file path contains a special character.",
+    )
 
 
 def region():
-    set_text_message("No region is selected or the Capture Region window is not open. "
-                     + "Select a region or load settings while the Capture Region window is open.")
+    set_text_message(
+        "No region is selected or the Capture Region window is not open. "
+        + "Select a region or load settings while the Capture Region window is open.",
+    )
 
 
 def split_hotkey():
@@ -70,8 +74,10 @@ def split_hotkey():
 
 
 def pause_hotkey():
-    set_text_message("Your split image folder contains an image filename with a pause flag {p}, "
-                     + "but no pause hotkey is set.")
+    set_text_message(
+        "Your split image folder contains an image filename with a pause flag {p}, "
+        + "but no pause hotkey is set.",
+    )
 
 
 def align_region_image_type():
@@ -96,7 +102,8 @@ def reset_hotkey():
 
 def old_version_settings_file():
     set_text_message(
-        "Old version settings file detected. This version allows settings files in .toml format. Starting from v2.0.")
+        "Old version settings file detected. This version allows settings files in .toml format. Starting from v2.0.",
+    )
 
 
 def invalid_settings():
@@ -112,8 +119,10 @@ def no_settings_file_on_open():
 
 
 def too_many_settings_files_on_open():
-    set_text_message("Too many settings files found. "
-                     + "Only one can be loaded on open if placed in the same folder as AutoSplit.exe")
+    set_text_message(
+        "Too many settings files found. "
+        + "Only one can be loaded on open if placed in the same folder as AutoSplit.exe",
+    )
 
 
 def check_for_updates():
@@ -121,8 +130,10 @@ def check_for_updates():
 
 
 def load_start_image():
-    set_text_message("Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
-                     + "Please set these hotkeys, and then click the Reload Start Image button.")
+    set_text_message(
+        "Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
+        + "Please set these hotkeys, and then click the Reload Start Image button.",
+    )
 
 
 def stdin_lost():
@@ -134,20 +145,23 @@ def already_running():
         "An instance of AutoSplit is already running.<br/>Are you sure you want to open a another one?",
         "",
         "Don't open",
-        "Ignore")
+        "Ignore",
+    )
 
 
 def exception_traceback(message: str, exception: BaseException):
     set_text_message(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)),
-        "Close AutoSplit")
+        "Close AutoSplit",
+    )
 
 
 CREATE_NEW_ISSUE_MESSAGE = (
     f"Please create a New Issue at <a href='https://github.com/{GITHUB_REPOSITORY}/issues'>"
     + f"github.com/{GITHUB_REPOSITORY}/issues</a>, describe what happened, "
-    + "and copy & paste the entire error message below")
+    + "and copy & paste the entire error message below"
+)
 
 
 def make_excepthook(autosplit: AutoSplit):
@@ -162,10 +176,13 @@ def make_excepthook(autosplit: AutoSplit):
         ):
             return
         # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
-        autosplit.show_error_signal.emit(lambda: exception_traceback(
-            "AutoSplit encountered an unhandled exception and will try to recover, "
-            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
-            exception))
+        autosplit.show_error_signal.emit(
+            lambda: exception_traceback(
+                "AutoSplit encountered an unhandled exception and will try to recover, "
+                + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}",
+                exception,
+            ),
+        )
     return excepthook
 
 

@@ -7,26 +7,29 @@
 -r requirements.txt
 #
 # Linters and formatters
+add-trailing-comma
 bandit
-flake8>=5 # flake8-pyi deprecation warnings
+flake8>=5  # flake8-pyi deprecation warnings
 flake8-builtins
 flake8-bugbear
 flake8-class-attributes-order
 flake8-comprehensions>=3.8  # flake8 5 support
 flake8-datetimez
-flake8-isort>=4.2 # flake8 5 support
-flake8-pyi>=22.8.1 # flake8 5 support
+flake8-isort>=4.2  # flake8 5 support
+flake8-pyi>=22.10.0  # Fixes for negative numbers
 flake8-quotes
 flake8-simplify
 pep8-naming
-pylint>=2.13.9,<3.0.0 # Respect ignore configuration options with --recursive=y  # 3.0 still in pre-release
-pyright
+pylint>=2.14,<3.0.0  # New checks  # 3.0 still in pre-release
+pyright>=1.1.270  # Typeshed update
+unify
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
 qt6-applications
 # Types
-pywin32-stubs>=1.0.7 # Added error types
+types-d3dshot
 types-keyboard
-types-pyautogui
+types-pyinstaller
+types-pywin32
 typing-extensions

@@ -26,7 +26,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 try:
                     result, image = self.capture_device.read()
                 except cv2.error as error:
-                    if error.code != cv2.Error.STS_ERROR:
+                    if not (
+                        error.code == cv2.Error.STS_ERROR and error.msg.endswith(
+                            "in function 'cv::VideoCapture::grab'\n",
+                        )
+                    ):
                         raise
                     # STS_ERROR most likely means the camera is occupied
                     result = False
@@ -36,10 +40,14 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
             error = exception
             self.capture_device.release()
-            autosplit.show_error_signal.emit(lambda: exception_traceback(
-                "AutoSplit encountered an unhandled exception while trying to grab a frame and has stopped capture. "
-                + CREATE_NEW_ISSUE_MESSAGE,
-                error))
+            autosplit.show_error_signal.emit(
+                lambda: exception_traceback(
+                    "AutoSplit encountered an unhandled exception while "
+                    + "trying to grab a frame and has stopped capture. "
+                    + CREATE_NEW_ISSUE_MESSAGE,
+                    error,
+                ),
+            )
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()

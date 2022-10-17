@@ -52,7 +52,8 @@ class BitBltCaptureMethod(CaptureMethodBase):
                 (selection["width"], selection["height"]),
                 dc_object,
                 (selection["x"] + left_bounds, selection["y"] + top_bounds),
-                win32con.SRCCOPY)
+                win32con.SRCCOPY,
+            )
             image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
             image.shape = (selection["height"], selection["width"], 4)
         except (win32ui.error, pywintypes.error):

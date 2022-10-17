@@ -1,15 +1,11 @@
-# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
-[tool.black]
-line-length = 120
-# Auto generated
-force-exclude = "src/gen/.*\\.py$"
-
 # https://github.com/hhatto/autopep8#usage
 # https://github.com/hhatto/autopep8#more-advanced-usage
 [tool.autopep8]
 max_line_length = 120
 recursive = true
 aggressive = 3
+ignore = ["E70"] # Allow ... on same line as def
+
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
@@ -65,10 +61,9 @@ load-plugins = [
   "pylint.extensions.for_any_all",
   "pylint.extensions.eq_without_hash",
   "pylint.extensions.mccabe",
-  "pylint.extensions.no_self_use",
   "pylint.extensions.overlapping_exceptions",
   "pylint.extensions.private_import",
-  "pylint.extensions.redefined_loop_name",
+  # "pylint.extensions.redefined_loop_name", # 2.16
   "pylint.extensions.redefined_variable_type",
   "pylint.extensions.set_membership",
   "pylint.extensions.typing",
@@ -79,6 +74,7 @@ load-plugins = [
   # "pylint.extensions.code_style",
   # "pylint.extensions.comparetozero",
   # "pylint.extensions.docstyle",
+  # "pylint.extensions.no_self_use",
   # "pylint.extensions.while_used",
 ]
 ignore-paths = [
@@ -87,7 +83,7 @@ ignore-paths = [
   # We expect stub files to be incomplete or contain useless statements
   "^.*.pyi$",
 ]
-extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui"]
+extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui", "win32.win32gui"]
 
 [tool.pylint.FORMAT]
 max-line-length = 120
@@ -146,3 +142,5 @@ generated-members = [
 [tool.isort]
 line_length = 120
 combine_as_imports = true
+include_trailing_comma = true
+multi_line_output = 5

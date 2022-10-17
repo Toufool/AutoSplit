@@ -48,7 +48,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             media_capture.media_capture_settings.direct3_d11_device,
             DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
             1,
-            item.size)
+            item.size,
+        )
         if not frame_pool:
             raise OSError("Unable to create a frame pool for a capture session.")
         session = frame_pool.create_capture_session(item)
@@ -81,9 +82,11 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
-        if not (self.check_selected_region_exists(autosplit)
-                # Only needed for the type-checker
-                and self.frame_pool):
+        if not (
+            self.check_selected_region_exists(autosplit)
+            # Only needed for the type-checker
+            and self.frame_pool
+        ):
             return None, False
 
         try:
@@ -92,11 +95,10 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         except OSError:
             return None, False
 
-        # We were too fast and the next frame wasn't ready yet
-        if not frame:
-            return self.last_captured_frame, True
-
         async def coroutine():
+            # We were too fast and the next frame wasn't ready yet
+            if not frame:
+                return None
             return await (SoftwareBitmap.create_copy_from_surface_async(frame.surface) or asyncio.sleep(0, None))
         try:
             software_bitmap = asyncio.run(coroutine())
@@ -142,4 +144,5 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         return bool(
             is_valid_hwnd(autosplit.hwnd)
             and self.frame_pool
-            and self.session)
+            and self.session,
+        )

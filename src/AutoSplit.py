@@ -23,13 +23,17 @@ from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, Ima
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
-from menu_bar import (about_qt, about_qt_for_python, check_for_updates, get_default_settings_from_ui, open_about,
-                      open_settings, open_update_checker, view_help)
+from menu_bar import (
+    about_qt, about_qt_for_python, check_for_updates, get_default_settings_from_ui, open_about, open_settings,
+    open_update_checker, view_help,
+)
 from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
-from utils import (AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER,
-                   auto_split_directory, decimal, is_valid_image)
+from utils import (
+    AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER, auto_split_directory,
+    decimal, is_valid_image,
+)
 
 CHECK_FPS_ITERATIONS = 10
 
@@ -172,9 +176,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
         self.reload_start_image_button.clicked.connect(lambda: self.__load_start_image(True, True))
-        self.action_check_for_updates_on_open.changed.connect(lambda: user_profile.set_check_for_updates_on_open(
-            self,
-            self.action_check_for_updates_on_open.isChecked())
+        self.action_check_for_updates_on_open.changed.connect(
+            lambda: user_profile.set_check_for_updates_on_open(self, self.action_check_for_updates_on_open.isChecked()),
         )
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
@@ -186,8 +189,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # connect signals to functions
         self.after_setting_hotkey_signal.connect(lambda: after_setting_hotkey(self))
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
-        self.update_checker_widget_signal.connect(lambda latest_version, check_on_open:
-                                                  open_update_checker(self, latest_version, check_on_open))
+        self.update_checker_widget_signal.connect(
+            lambda latest_version, check_on_open: open_update_checker(self, latest_version, check_on_open),
+        )
         self.load_start_image_signal.connect(self.__load_start_image)
         self.load_start_image_signal[bool].connect(self.__load_start_image)
         self.load_start_image_signal[bool, bool].connect(self.__load_start_image)
@@ -225,7 +229,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         new_split_image_directory = QFileDialog.getExistingDirectory(
             self,
             "Select Split Image Directory",
-            os.path.join(self.settings_dict["split_image_directory"] or auto_split_directory, ".."))
+            os.path.join(self.settings_dict["split_image_directory"] or auto_split_directory, ".."),
+        )
 
         # If the user doesn't select a folder, it defaults to "".
         if new_split_image_directory:
@@ -260,9 +265,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         if self.start_image:
             if not self.is_auto_controlled \
-                and (not self.settings_dict["split_hotkey"]
-                     or not self.settings_dict["reset_hotkey"]
-                     or not self.settings_dict["pause_hotkey"]):
+                    and (
+                        not self.settings_dict["split_hotkey"]
+                        or not self.settings_dict["reset_hotkey"]
+                        or not self.settings_dict["pause_hotkey"]
+                    ):
                 error_messages.load_start_image()
                 QApplication.processEvents()
                 return
@@ -334,7 +341,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 while time() - delay_start_time < start_delay:
                     delay_time_left = start_delay - (time() - delay_start_time)
                     self.current_split_image.setText(
-                        f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}")
+                        f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
+                    )
                     QTest.qWait(1)
 
             self.start_image_status_value_label.setText("started")
@@ -366,7 +374,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         while True:
             screenshot_path = os.path.join(
                 self.settings_dict["split_image_directory"],
-                f"{screenshot_index:03}_SplitImage.png")
+                f"{screenshot_index:03}_SplitImage.png",
+            )
             if not os.path.exists(screenshot_path):
                 break
             screenshot_index += 1
@@ -426,7 +435,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
 
         if not navigate_image_only:
-            for i, group in enumerate(self.split_groups,):
+            for i, group in enumerate(self.split_groups):
                 if i > 0 and self.split_image_number in group:
                     self.split_image_number = self.split_groups[i - 1][-1]
                     break
@@ -508,10 +517,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Construct a list of images + loop count tuples.
         self.split_images_and_loop_number = [
             item for flattenlist
-            in [[(split_image, i + 1) for i in range(split_image.loops)]
+            in [
+                [(split_image, i + 1) for i in range(split_image.loops)]
                 for split_image
-                in self.split_images]
-            for item in flattenlist]
+                in self.split_images
+            ]
+            for item in flattenlist
+        ]
 
         # Construct groups of splits
         self.split_groups = []
@@ -649,7 +661,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         continue
 
                 elif (  # pylint: disable=confusing-consecutive-elif
-                        self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold):
+                        self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold
+                ):
                     self.split_below_threshold = False
                     break
 
@@ -758,10 +771,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if recovered:
                     capture, _ = self.capture_method.get_frame(self)
 
-        return (None
-                if not is_valid_image(capture)
-                else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
-                is_old_image)
+        return (
+            None
+            if not is_valid_image(capture)
+            else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
+            is_old_image,
+        )
 
     def __reset_if_should(self, capture: cv2.Mat | None):
         """
@@ -856,7 +871,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self,
                 "AutoSplit",
                 f"Do you want to save changes made to settings file {settings_file_name}?",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
+            )
 
             if warning is QMessageBox.StandardButton.Yes:
                 if user_profile.save_settings(self):
@@ -887,10 +903,13 @@ def set_preview_image(qlabel: QLabel, image: cv2.Mat | None, transparency: bool)
         capture = cv2.cvtColor(image, color_code)
         height, width, channels = capture.shape
         qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
-        qlabel.setPixmap(QtGui.QPixmap(qimage).scaled(
-            qlabel.size(),
-            QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
-            QtCore.Qt.TransformationMode.SmoothTransformation))
+        qlabel.setPixmap(
+            QtGui.QPixmap(qimage).scaled(
+                qlabel.size(),
+                QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
+                QtCore.Qt.TransformationMode.SmoothTransformation,
+            ),
+        )
 
 
 def seconds_remaining_text(seconds: float):

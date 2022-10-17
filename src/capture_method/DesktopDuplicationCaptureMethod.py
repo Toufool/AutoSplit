@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import d3dshot
@@ -30,7 +30,8 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=t
         desktop_duplication.display = [
             display for display
             in desktop_duplication.displays
-            if display.hmonitor == hmonitor][0]
+            if display.hmonitor == hmonitor
+        ][0]
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
         offset_x -= desktop_duplication.display.position["left"]
         offset_y -= desktop_duplication.display.position["top"]
@@ -41,4 +42,4 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=t
         screenshot = desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None, False
-        return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA), False
+        return cv2.cvtColor(cast(cv2.Mat, screenshot), cv2.COLOR_RGBA2BGRA), False

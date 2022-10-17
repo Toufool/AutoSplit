@@ -101,7 +101,7 @@ NONE_CAPTURE_METHOD = CaptureMethodInfo(
     name="None",
     short_description="",
     description="",
-    implementation=CaptureMethodBase
+    implementation=CaptureMethodBase,
 )
 
 CAPTURE_METHODS = CaptureMethodDict({
@@ -159,7 +159,7 @@ CAPTURE_METHODS = CaptureMethodDict({
             "\nYou can select one below. "
             "\nThere are currently performance issues, but it might be more convenient. "
             "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
-            "\nhttps://obsproject.com/forum/resources/obs-virtualcam.949/."
+            "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
         ),
         implementation=VideoCaptureDeviceCaptureMethod,
     ),
@@ -227,12 +227,15 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         #     video_capture.release()
         return CameraInfo(index, device_name, False, backend)
 
-    future = asyncio.gather(*[
-        get_camera_info(index, name) for index, name
-        in enumerate(named_video_inputs)
-    ])
+    future = asyncio.gather(
+        *[
+            get_camera_info(index, name) for index, name
+            in enumerate(named_video_inputs)
+        ],
+    )
 
     return [
         camera_info for camera_info
         in await future
-        if camera_info is not None]
+        if camera_info is not None
+    ]
