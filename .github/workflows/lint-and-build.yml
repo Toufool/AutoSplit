@@ -8,8 +8,9 @@ on:
       - master
     paths:
       - "**.py"
-      - "**.pyi"
       - "**.ui"
+      - ".github/workflows/lint-and-build.yml"
+      - "**/requirements.txt"
   pull_request:
     branches:
       - main
@@ -20,6 +21,8 @@ on:
       - "**.py"
       - "**.pyi"
       - "**.ui"
+      - ".github/workflows/lint-and-build.yml"
+      - "**/requirements*.txt"
 
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
