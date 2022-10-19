@@ -200,10 +200,12 @@ class CameraInfo():
     name: str
     occupied: bool
     backend: str
+    size: tuple[int, int]
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    named_video_inputs = dshow_graph.FilterGraph().get_input_devices()
+    filter_graph = dshow_graph.FilterGraph()
+    named_video_inputs = filter_graph.get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
@@ -223,7 +225,10 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         #         else None
         # finally:
         #     video_capture.release()
-        return CameraInfo(index, device_name, False, backend)
+        filter_graph.add_video_input_device(index)
+        size = filter_graph.get_input_device().get_current_format()
+        filter_graph.remove_filters()
+        return CameraInfo(index, device_name, False, backend, size)
 
     future = asyncio.gather(
         *[

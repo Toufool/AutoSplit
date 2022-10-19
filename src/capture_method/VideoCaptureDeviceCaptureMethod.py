@@ -4,6 +4,7 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING
 
 import cv2
+from pygrabber import dshow_graph
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
@@ -51,8 +52,20 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
+        filter_graph = dshow_graph.FilterGraph()
+        filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
+        width, height = filter_graph.get_input_device().get_current_format()
+        filter_graph.remove_filters()
+
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
+        # Ensure we're using the right camera size. And not OpenCV's default 640x480
+        try:
+            self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+            self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+        # Some cameras don't allow changing the resolution
+        except cv2.error:
+            pass
         self.stop_thread = Event()
         self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
         self.capture_thread.start()
