@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import cv2
 import imagehash
-import numpy as np
 from PIL import Image
 from win32con import MAXBYTE
 
@@ -49,7 +48,7 @@ def compare_l2_norm(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = No
     # The L2 Error is summed across all pixels, so this normalizes
     max_error = (source.size ** 0.5) * MAXBYTE \
         if not is_valid_image(mask)\
-        else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
+        else (3 * cv2.countNonZero(mask) * MAXBYTE * MAXBYTE) ** 0.5
 
     if not max_error:
         return 0.0
@@ -75,7 +74,7 @@ def compare_template(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = N
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = source.size * MAXBYTE * MAXBYTE \
         if not is_valid_image(mask) \
-        else np.count_nonzero(mask)
+        else cv2.countNonZero(mask)
 
     return 1 - (min_val / max_error)
 

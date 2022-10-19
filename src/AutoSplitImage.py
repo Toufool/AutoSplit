@@ -19,8 +19,9 @@ if TYPE_CHECKING:
 COMPARISON_RESIZE_WIDTH = 320
 COMPARISON_RESIZE_HEIGHT = 240
 COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
-LOWER_BOUND = np.array([0, 0, 0, 1], dtype="uint8")
-UPPER_BOUND = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
+COMPARISON_RESIZE_AREA = COMPARISON_RESIZE_WIDTH * COMPARISON_RESIZE_HEIGHT
+MASK_LOWER_BOUND = np.array([1], dtype="uint8")
+MASK_UPPER_BOUND = np.array([MAXBYTE], dtype="uint8")
 START_KEYWORD = "start_auto_splitter"
 RESET_KEYWORD = "reset"
 
@@ -108,15 +109,31 @@ class AutoSplitImage():
             error_messages.image_type(path)
             return
 
-        image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
         self._has_transparency = check_if_image_has_transparency(image)
         # If image has transparency, create a mask
         if self._has_transparency:
-            # Create mask based on resized, nearest neighbor interpolated split image
-            self.mask = cv2.inRange(image, LOWER_BOUND, UPPER_BOUND)
-        # Add Alpha channel if missing
-        elif image.shape[2] == 3:
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+            # Adaptively determine the target size according to
+            # the number of nonzero elements in the alpha channel of the split image.
+            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency.
+            # Which wouldn't incur any performance loss in methods where masked regions are ignored.
+            alpha_channel = image[:, :, 3]
+            scale = min(1, (COMPARISON_RESIZE_AREA / cv2.countNonZero(alpha_channel)) ** 0.5)
+
+            image = cv2.resize(
+                image,
+                dsize=None,
+                fx=scale,
+                fy=scale,
+                interpolation=cv2.INTER_NEAREST,
+            )
+
+            # Mask based on adaptively resized, nearest neighbor interpolated split image
+            self.mask = cv2.inRange(alpha_channel, MASK_LOWER_BOUND, MASK_UPPER_BOUND)
+        else:
+            image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
+            # Add Alpha channel if missing
+            if image.shape[2] == 3:
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
 
@@ -134,6 +151,7 @@ class AutoSplitImage():
 
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
+        capture = cv2.resize(capture, self.byte_array.shape[1::-1])
         comparison_method = self.__get_comparison_method(default)
         if comparison_method == 0:
             return compare_l2_norm(self.byte_array, capture, self.mask)
