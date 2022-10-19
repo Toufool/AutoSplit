@@ -21,15 +21,11 @@ flake8-quotes
 flake8-simplify
 pep8-naming
 pylint>=2.14,<3.0.0  # New checks  # 3.0 still in pre-release
-pyright>=1.1.270  # Typeshed update
+pyright>=1.1.276  # Typeshed update
 unify
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
 qt6-applications
 # Types
-types-d3dshot
-types-keyboard
-types-pyinstaller
-types-pywin32
 typing-extensions
