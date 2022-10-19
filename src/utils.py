@@ -12,6 +12,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import cv2
 from win32 import win32gui
+from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
+from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
@@ -74,6 +76,23 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
     window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
     return window_left_bounds, window_top_bounds, window_width, window_height
+
+
+def get_direct3d_device():
+    direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
+    if not direct_3d_device:
+        # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
+        # OSError: The application called an interface that was marshalled for a different thread
+        media_capture = MediaCapture()
+
+        async def coroutine():
+            await (media_capture.initialize_async() or asyncio.sleep(0))
+        asyncio.run(coroutine())
+        direct_3d_device = media_capture.media_capture_settings and \
+            media_capture.media_capture_settings.direct3_d11_device
+    if not direct_3d_device:
+        raise OSError("Unable to initialize a Direct3D Device.")
+    return direct_3d_device
 
 
 def fire_and_forget(func: Callable[..., Any]):

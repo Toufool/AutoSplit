@@ -7,7 +7,6 @@ from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, TypedDict
 
 from pygrabber import dshow_graph
-from winsdk.windows.media.capture import MediaCapture
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -15,13 +14,15 @@ from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCap
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
-from utils import WINDOWS_BUILD_NUMBER
+from utils import WINDOWS_BUILD_NUMBER, get_direct3d_device
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 WGC_MIN_BUILD = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
+LEARNING_MODE_DEVICE_BUILD = 17763
+"""https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 
 class Region(TypedDict):
@@ -121,8 +122,8 @@ CAPTURE_METHODS = CaptureMethodDict({
         short_description="fast, most compatible, capped at 60fps",
         description=(
             f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-            "\nDue to current technical limitations, it requires having at least one "
-            "\naudio or video Capture Device connected and enabled. Even if it won't be used. "
+            f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
+            "\nrequire having at least one audio or video Capture Device connected and enabled."
             "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
             "\nAdds a yellow border on Windows 10 (not on Windows 11)."
             "\nCaps at around 60 FPS. "
@@ -166,21 +167,18 @@ CAPTURE_METHODS = CaptureMethodDict({
 })
 
 
-def test_for_media_capture():
-    async def coroutine():
-        return await (MediaCapture().initialize_async() or asyncio.sleep(0))
+def try_get_direct3d_device():
     try:
-        asyncio.run(coroutine())
-        return True
+        return get_direct3d_device()
     except OSError:
-        return False
+        return None
 
 
 # Detect and remove unsupported capture methods
 if (  # Windows Graphics Capture requires a minimum Windows Build
     WINDOWS_BUILD_NUMBER < WGC_MIN_BUILD
-    # Our current implementation of Windows Graphics Capture requires at least one CaptureDevice
-    or not test_for_media_capture()
+    # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
+    or not try_get_direct3d_device()
 ):
     CAPTURE_METHODS.pop(CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE)
 
