@@ -408,6 +408,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             while count < CHECK_FPS_ITERATIONS:
                 capture, is_old_image = self.__get_capture_for_comparison()
                 _ = image.compare_with_capture(self, capture)
+                # TODO: If is_old_image=true is always returned, this becomes an infinite loop
                 if not is_old_image:
                     count += 1
 

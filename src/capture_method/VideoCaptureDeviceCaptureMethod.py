@@ -13,6 +13,19 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
+OBS_CAMERA_BLANK = [127, 129, 128]
+
+
+def is_blank(image: cv2.Mat):
+    # Running np.all on the entire array is extremely slow.
+    # Because it always converts the entire array to boolean first
+    # So instead we loop manually to stop early.
+    for row in image:
+        for pixel in row:
+            if all(pixel != OBS_CAMERA_BLANK):
+                return False
+    return True
+
 
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
@@ -36,7 +49,14 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     # STS_ERROR most likely means the camera is occupied
                     result = False
                     image = None
-                self.last_captured_frame = image if result else None
+                if not result:
+                    image = None
+
+                # Blank frame. Reuse the previous one.
+                if image is not None and is_blank(image):
+                    continue
+
+                self.last_captured_frame = image
                 self.is_old_image = False
         except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
             error = exception
