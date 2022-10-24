@@ -89,7 +89,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     reset_highest_similarity = 0.0
 
     # Ensure all other attributes are defined
-    start_image_split_below_threshold = False
     waiting_for_split_delay = False
     split_below_threshold = False
     run_start_time = 0.0
@@ -292,7 +291,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.highest_similarity = 0.0
         self.reset_highest_similarity = 0.0
-        self.start_image_split_below_threshold = False
+        self.split_below_threshold = False
         self.timer_start_image.start(int(1000 / self.settings_dict["fps_limit"]))
 
         QApplication.processEvents()
@@ -318,20 +317,19 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
+        # TODO: Abstract with similar check in split image
         below_flag = self.start_image.check_flag(BELOW_FLAG)
 
         # Negative means belove threshold, positive means above
         similarity_diff = start_image_similarity - start_image_threshold
-        if below_flag \
-                and not self.start_image_split_below_threshold \
-                and similarity_diff >= 0:
-            self.start_image_split_below_threshold = True
+        if below_flag and not self.split_below_threshold and similarity_diff >= 0:
+            self.split_below_threshold = True
             return
-        if (below_flag and self.start_image_split_below_threshold and similarity_diff < 0) \
-                or (not below_flag and similarity_diff >= 0):
+        if (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture)) \
+                or (not below_flag and similarity_diff >= 0):  # pylint: disable=too-many-boolean-expressions
 
             self.timer_start_image.stop()
-            self.start_image_split_below_threshold = False
+            self.split_below_threshold = False
 
             # delay start image if needed
             if self.start_image.get_delay_time(self) > 0:
@@ -648,12 +646,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             frame_interval: float = 1 / self.settings_dict["fps_limit"]
             wait_delta = int(frame_interval - (time() - start) % frame_interval)
 
+            below_flag = self.split_image.check_flag(BELOW_FLAG)
             # if the b flag is set, let similarity go above threshold first,
             # then split on similarity below threshold.
             # if no b flag, just split when similarity goes above threshold.
+            # TODO: Abstract with similar check in start image
             if not self.waiting_for_split_delay:
                 if similarity >= self.split_image.get_similarity_threshold(self):
-                    if not self.split_image.check_flag(BELOW_FLAG):
+                    if not below_flag:
                         break
                     if not self.split_below_threshold:
                         self.split_below_threshold = True
@@ -661,7 +661,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                         continue
 
                 elif (  # pylint: disable=confusing-consecutive-elif
-                        self.split_image.check_flag(BELOW_FLAG) and self.split_below_threshold
+                        below_flag and self.split_below_threshold and is_valid_image(capture)
                 ):
                     self.split_below_threshold = False
                     break
@@ -815,7 +815,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def __update_split_image(self, specific_image: AutoSplitImage | None = None):
         # Start image is expected to be out of range (index 0 of 0-length array)
         if not specific_image or specific_image.image_type != ImageType.START:
+            # need to reset highest_similarity and split_below_threshold each time an image updates.
             self.highest_similarity = 0.0
+            self.split_below_threshold = False
             # Splitting/skipping when there are no images left or Undoing past the first image
             if self.__is_current_split_out_of_range():
                 self.reset()
@@ -835,9 +837,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         else:
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
-
-        # need to set split below threshold to false each time an image updates.
-        self.split_below_threshold = False
 
     def closeEvent(self, a0: QtGui.QCloseEvent | None = None):
         """

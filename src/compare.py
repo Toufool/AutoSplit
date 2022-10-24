@@ -47,7 +47,7 @@ def compare_l2_norm(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = No
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = (source.size ** 0.5) * MAXBYTE \
+    max_error: float = (source.size ** 0.5) * MAXBYTE \
         if not is_valid_image(mask)\
         else (3 * np.count_nonzero(mask) * MAXBYTE * MAXBYTE) ** 0.5
 
