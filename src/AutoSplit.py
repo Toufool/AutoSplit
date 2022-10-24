@@ -312,9 +312,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if start_image_similarity > self.highest_similarity:
             self.highest_similarity = start_image_similarity
 
-        self.table_current_image_threshold_label.setText(decimal(start_image_threshold))
         self.table_current_image_live_label.setText(decimal(start_image_similarity))
         self.table_current_image_highest_label.setText(decimal(self.highest_similarity))
+        self.table_current_image_threshold_label.setText(decimal(start_image_threshold))
 
         # If the {b} flag is set, let similarity go above threshold first, then split on similarity below threshold
         # Otherwise just split when similarity goes above threshold
@@ -813,12 +813,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return self.__check_for_reset_state_update_ui()
 
     def __update_split_image(self, specific_image: AutoSplitImage | None = None):
-        # Splitting/skipping when there are no images left or Undoing past the first image
         # Start image is expected to be out of range (index 0 of 0-length array)
-        if (not specific_image or specific_image.image_type != ImageType.START) \
-                and self.__is_current_split_out_of_range():
-            self.reset()
-            return
+        if not specific_image or specific_image.image_type != ImageType.START:
+            self.highest_similarity = 0.0
+            # Splitting/skipping when there are no images left or Undoing past the first image
+            if self.__is_current_split_out_of_range():
+                self.reset()
+                return
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
@@ -835,7 +836,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
 
-        self.highest_similarity = 0.0
         # need to set split below threshold to false each time an image updates.
         self.split_below_threshold = False
 
