@@ -19,7 +19,7 @@ packaging
 Pillow>=7.2.0  # https://github.com/SerpentAI/D3DShot/issues/44
 psutil
 PyAutoGUI
-git+https://github.com/Avasam/python_grabber.git@complete-types#egg=pygrabber  # https://github.com/andreaschiavinato/python_grabber/pull/18
+git+https://github.com/andreaschiavinato/python_grabber.git#egg=pygrabber  # Completed types
 PyQt6>=6.2.1  # Python 3.10 support
 requests
 toml
