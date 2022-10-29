@@ -14,7 +14,7 @@ certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
 keyboard
 numpy>=1.23  # Updated types
-opencv-python-headless>=4.5.4,<4.6  # https://github.com/pyinstaller/pyinstaller/issues/6889
+opencv-python-headless>=4.6  # Breaking changes importing cv2.cv2
 packaging
 Pillow>=7.2.0  # https://github.com/SerpentAI/D3DShot/issues/44
 psutil
@@ -29,5 +29,6 @@ pywin32>=301
 winsdk>=v1.0.0b4
 #
 # Build and compile resources
-PyInstaller
+PyInstaller>=5.2  # opencv-python 4.6 support
+pyinstaller-hooks-contrib>=2022.9  # opencv-python 4.6 support. Changes for pywintypes and comtypes
 PySide6
