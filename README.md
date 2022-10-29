@@ -29,7 +29,7 @@ This program can be used to automatically start, split, and reset your preferred
 
 (This is not required for normal use)
 
-- Python 3.9 - 3.10.
+- Python 3.9 - 3.11.
 - Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
 - Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.

@@ -6,7 +6,6 @@ recursive = true
 aggressive = 3
 ignore = ["E70"] # Allow ... on same line as def
 
-
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
