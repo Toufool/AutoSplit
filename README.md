@@ -81,7 +81,7 @@ This program can be used to automatically start, split, and reset your preferred
     The smaller the selected region, the more efficient it is.  
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
-    Due to current technical limitations, it requires having at least one audio or video Capture Device connected and enabled. Even if it won't be used.  
+    Due to current technical limitations, Windows versions below 10.0.0.17763 require having at least one audio or video Capture Device connected and enabled.
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
     Adds a yellow border on Windows 10 (not on Windows 11).
     Caps at around 60 FPS.  

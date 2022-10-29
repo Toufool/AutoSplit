@@ -11,10 +11,9 @@ from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, Graphics
 from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
-from winsdk.windows.media.capture import MediaCapture
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import WINDOWS_BUILD_NUMBER, is_valid_hwnd
+from utils import WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -33,19 +32,10 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         super().__init__(autosplit)
         if not is_valid_hwnd(autosplit.hwnd):
             return
-        # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
-        # OSError: The application called an interface that was marshalled for a different thread
-        media_capture = MediaCapture()
+
         item = create_for_window(autosplit.hwnd)
-
-        async def coroutine():
-            await (media_capture.initialize_async() or asyncio.sleep(0))
-        asyncio.run(coroutine())
-
-        if not media_capture.media_capture_settings:
-            raise OSError("Unable to initialize a Direct3D Device.")
         frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
-            media_capture.media_capture_settings.direct3_d11_device,
+            get_direct3d_device(),
             DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
             1,
             item.size,
