@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMes
 import error_messages
 import user_profile
 from AutoControlledWorker import AutoControlledWorker
-from AutoSplitImage import COMPARISON_RESIZE, START_KEYWORD, AutoSplitImage, ImageType
+from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, after_setting_hotkey, send_command
@@ -772,12 +772,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if recovered:
                     capture, _ = self.capture_method.get_frame(self)
 
-        return (
-            None
-            if not is_valid_image(capture)
-            else cv2.resize(capture, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST),
-            is_old_image,
-        )
+        return capture, is_old_image
 
     def __reset_if_should(self, capture: cv2.Mat | None):
         """
