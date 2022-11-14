@@ -257,6 +257,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
+        set_preview_image(self.current_split_image, None, True)
 
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
             QApplication.processEvents()

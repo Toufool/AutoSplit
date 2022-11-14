@@ -166,7 +166,9 @@ def load_settings(autosplit: AutoSplit, from_path: str = ""):
         return
 
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
-    autosplit.load_start_image_signal.emit()
+    # TODO: Should this check be in `__load_start_image` ?
+    if not autosplit.is_running:
+        autosplit.load_start_image_signal.emit()
 
 
 def load_settings_on_open(autosplit: AutoSplit):
