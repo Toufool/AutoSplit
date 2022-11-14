@@ -31,8 +31,8 @@ from region_selection import align_region, select_region, select_window, validat
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
 from utils import (
-    AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER, auto_split_directory,
-    decimal, is_valid_image, open_file,
+    AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, WINDOWS_BUILD_NUMBER, auto_split_directory, decimal, is_valid_image,
+    open_file,
 )
 
 CHECK_FPS_ITERATIONS = 10
@@ -78,6 +78,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
     capture_method = CaptureMethodBase()
+    is_running = False
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
     last_loaded_settings = DEFAULT_PROFILE
@@ -426,7 +427,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         """
         # Can't undo until timer is started
         # or Undoing past the first image
-        if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
+        if not self.is_running \
                 or "Delayed Split" in self.current_split_image.text() \
                 or (not self.undo_split_button.isEnabled() and not self.is_auto_controlled) \
                 or self.__is_current_split_out_of_range():
@@ -450,7 +451,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         """
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
-        if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT \
+        if not self.is_running \
                 or "Delayed Split" in self.current_split_image.text() \
                 or not (self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only) \
                 or self.__is_current_split_out_of_range():
@@ -473,14 +474,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         pass
 
     def reset(self):
-        # When the reset button or hotkey is pressed, it will change this text,
-        # which will trigger in the __auto_splitter function, if running, to abort and change GUI.
-        self.start_auto_splitter_button.setText(START_AUTO_SPLITTER_TEXT)
+        """"
+        When the reset button or hotkey is pressed, it will set `is_running` to False,
+        which will trigger in the __auto_splitter function, if running, to abort and change GUI.
+        """
+        self.is_running = False
 
     # Functions for the hotkeys to return to the main thread from signals and start their corresponding functions
     def start_auto_splitter(self):
         # If the auto splitter is already running or the button is disabled, don't emit the signal to start it.
-        if self.start_auto_splitter_button.text() == "Running..." \
+        if self.is_running \
                 or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled):
             return
 
@@ -494,7 +497,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         """
         Check if AutoSplit is started, if not either restart (loop splits) or update the GUI
         """
-        if self.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
+        if not self.is_running:
             if self.settings_dict["loop_splits"]:
                 self.start_auto_splitter_signal.emit()
             else:
@@ -533,6 +536,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 current_group = []
                 self.split_groups.append(current_group)
 
+        self.is_running = True
         self.gui_changes_on_start()
 
         # Initialize a few attributes
@@ -725,7 +729,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         QApplication.processEvents()
 
     def gui_changes_on_reset(self, safe_to_reload_start_image: bool = False):
-        self.start_auto_splitter_button.setText(START_AUTO_SPLITTER_TEXT)
+        self.start_auto_splitter_button.setText("Start Auto Splitter")
         self.image_loop_value_label.setText("N/A")
         self.current_split_image.clear()
         self.current_image_file_label.clear()

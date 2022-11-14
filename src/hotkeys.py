@@ -8,7 +8,7 @@ import pyautogui
 from PyQt6 import QtWidgets
 
 import error_messages
-from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
+from utils import fire_and_forget, is_digit
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -43,7 +43,7 @@ def after_setting_hotkey(autosplit: AutoSplit):
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread
     """
-    if autosplit.start_auto_splitter_button.text() == START_AUTO_SPLITTER_TEXT:
+    if not autosplit.is_running:
         autosplit.start_auto_splitter_button.setEnabled(True)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
