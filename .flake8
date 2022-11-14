@@ -11,11 +11,8 @@ ignore=
   SIM105, ; contextlib.suppress is roughly 3x slower than try/except
   CCE001, ; False positives for attribute docstrings
 per-file-ignores=
-    ; Docstrings in type stubs
-    ; Function bodys contain other than just ... (eg: raise)
-    ; Single quote docstrings
-    typings/cv2-stubs/__init__.pyi: Q000,E704,E501,N8,A001,A002,A003,CCE002,F401, Y021,Y010,Q002
     ; Quotes
+    ; Allow ... on same line as class
     ; Allow ... on same line as def
     ; Line too long
     ; Naming conventions can't be controlled for external libraries
@@ -24,7 +21,8 @@ per-file-ignores=
     ; Attribute names can't be controlled for external libraries
     ; False positive Class level expression with elipsis
     ; Type re-exports
-    *.pyi:                          Q000,E704,E501,N8,A001,A002,A003,CCE002,F401
+    ; mypy 3.7 Union issue
+    *.pyi:                          Q000,E701,E704,E501,N8,A001,A002,A003,CCE002,F401,Y037
 ; PyQt methods
 ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,mouseReleaseEvent
 ; McCabe max-complexity is also taken care of by Pylint and doesn't fail the build there

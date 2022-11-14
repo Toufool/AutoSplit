@@ -26,11 +26,11 @@
   "emeraldwalk.runonsave": {
     "commands": [
       {
-        "match": "\\.py",
+        "match": "\\.pyi?",
         "cmd": "unify ${file} --in-place --quote=\"\\\"\""
       },
       {
-        "match": "\\.py",
+        "match": "\\.pyi?",
         "cmd": "add-trailing-comma ${file} --py36-plus"
       },
     ]
@@ -70,6 +70,7 @@
       120, // Our hard rule
     ],
   },
+  "python.formatting.provider": "autopep8",
   "python.analysis.diagnosticMode": "workspace",
   "python.linting.enabled": true,
   // Use the new Pylint extension instead

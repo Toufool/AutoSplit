@@ -2,7 +2,7 @@
 # https://github.com/hhatto/autopep8#more-advanced-usage
 [tool.autopep8]
 max_line_length = 120
-# recursive = true
+recursive = true
 aggressive = 3
 ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)

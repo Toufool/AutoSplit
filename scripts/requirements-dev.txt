@@ -6,8 +6,7 @@
 # Dependencies
 -r requirements.txt
 #
-# Linters and formatters
-add-trailing-comma>=2.3.0  # Added support for with statement
+# Linters
 bandit
 flake8>=5  # flake8-pyi deprecation warnings
 flake8-builtins
@@ -19,9 +18,12 @@ flake8-isort>=4.2,<=5.0  # flake8 5 support ; Breaking issue (https://github.com
 flake8-pyi>=22.10.0  # Fixes for negative numbers
 flake8-quotes
 flake8-simplify
-isort
 pep8-naming
 pylint>=2.14,<3.0.0  # New checks  # 3.0 still in pre-release
+# Formatters
+add-trailing-comma>=2.3.0  # Added support for with statement
+autopep8>=2.0.0 # New checks
+isort
 unify
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
