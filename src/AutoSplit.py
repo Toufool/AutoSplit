@@ -699,6 +699,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 time_delta >= stop_time
                 # Check for skip split / next image:
                 or self.split_image_number > pause_split_image_number
+                # Check for undo split / previous image:
+                or self.split_image_number < pause_split_image_number
             ):
                 break
 
@@ -919,7 +921,7 @@ def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
-def is_already_running():
+def is_already_open():
     # When running directly in Python, any AutoSplit process means it's already open
     # When bundled, we must ignore itself and the splash screen
     max_processes = 3 if FROZEN else 1
@@ -938,8 +940,8 @@ def main():
     try:
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
 
-        if is_already_running():
-            error_messages.already_running()
+        if is_already_open():
+            error_messages.already_open()
 
         AutoSplit()
 

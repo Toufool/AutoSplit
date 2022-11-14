@@ -142,7 +142,7 @@ def stdin_lost():
     set_text_message("stdin not supported or lost, external control like LiveSplit integration will not work.")
 
 
-def already_running():
+def already_open():
     set_text_message(
         "An instance of AutoSplit is already running.<br/>Are you sure you want to open a another one?",
         "",
