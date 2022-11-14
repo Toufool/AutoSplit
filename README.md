@@ -27,17 +27,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 ### Building
 
-(This is not required for normal use)
-
-- Python 3.9 - 3.10.
-- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-
-- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
-  - Run `./scripts/install.ps1` to install all dependencies.
-  - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
-  - Run `./scripts/build.ps1` to build an executable.
-- Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
-- All configured for VSCode, including Run (F5) and Build (Ctrl+Shift+B) commands.
+(This is not required for normal use)  
+Refer to the [build instructions](build%20instructions.md) if you'd like to build the application yourself or run it directly in Python.
 
 ## OPTIONS
 
@@ -225,7 +216,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
 - Click Layout Settings -> AutoSplit Integration
-- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Profile Path (path to your AutoSplit `.toml` profile file) respectively.
+- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit executable) and Profile Path (path to your AutoSplit `.toml` profile file) respectively.
   - If you have not yet set saved a profile, you can do so using AutoSplit, and then go back and set your Settings Path.
 - Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and your selected profile will now open automatically when opening that LiveSplit Layout `.lsl` file.
 

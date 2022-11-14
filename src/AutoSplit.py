@@ -32,7 +32,7 @@ from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_
 from user_profile import DEFAULT_PROFILE
 from utils import (
     AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, FROZEN, START_AUTO_SPLITTER_TEXT, WINDOWS_BUILD_NUMBER, auto_split_directory,
-    decimal, is_valid_image,
+    decimal, is_valid_image, open_file,
 )
 
 CHECK_FPS_ITERATIONS = 10
@@ -43,7 +43,7 @@ myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
-class AutoSplit(QMainWindow, design.Ui_MainWindow):
+class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-instance-attributes
     # Parse command line args
     is_auto_controlled = "--auto-controlled" in sys.argv
 
@@ -103,7 +103,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Setup global error handling
         self.show_error_signal.connect(lambda errorMessageBox: errorMessageBox())
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
         sys.excepthook = error_messages.make_excepthook(self)
 
         self.setupUi(self)
@@ -384,9 +383,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             error_messages.region()
             return
 
-        # save and open image
+        # Save and open image
         cv2.imwrite(screenshot_path, capture)
-        os.startfile(screenshot_path)  # nosec
+        open_file(screenshot_path)
 
     def __check_fps(self):
         self.fps_value_label.setText("...")
@@ -761,7 +760,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """
         capture, is_old_image = self.capture_method.get_frame(self)
 
-        # This most likely means we lost capture (ie the captured window was closed, crashed, etc.)
+        # This most likely means we lost capture
+        # (ie the captured window was closed, crashed, lost capture device, etc.)
         if not is_valid_image(capture):
             # Try to recover by using the window name
             if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
@@ -842,6 +842,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         def exit_program():
             if self.update_auto_control:
                 self.update_auto_control.terminate()
+            self.capture_method.close(self)
             if a0 is not None:
                 a0.accept()
             if self.is_auto_controlled:

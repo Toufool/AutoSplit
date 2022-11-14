@@ -47,12 +47,14 @@
     "*.lock": true,
   },
   "[python]": {
+    // Cannot use autotpep8 until https://github.com/microsoft/vscode-autopep8/issues/32 is fixed
+    "editor.defaultFormatter": "ms-python.python",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
       // 79, // PEP8-17 default max
       // 88, // Black default
-      99, // PEP8-17 acceptable max
+      // 99, // PEP8-17 acceptable max
       120, // Our hard rule
     ],
   },
@@ -115,6 +117,7 @@
   "powershell.codeFormatting.useCorrectCasing": true,
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
 }

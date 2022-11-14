@@ -32,7 +32,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+    <normaloff>:/resources/icon.ico</normaloff>
+    :/resources/icon.ico
+   </iconset>
   </property>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">

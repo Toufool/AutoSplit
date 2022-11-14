@@ -32,7 +32,9 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+    <normaloff>:/resources/icon.ico</normaloff>
+    :/resources/icon.ico
+   </iconset>
   </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QLabel" name="x_label">
@@ -46,6 +48,9 @@
     </property>
     <property name="text">
      <string>X</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="select_region_button">
@@ -244,6 +249,9 @@
     <property name="text">
      <string>Width</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="height_label">
     <property name="geometry">
@@ -256,6 +264,9 @@
     </property>
     <property name="text">
      <string>Height</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="fps_value_label">
@@ -424,6 +435,9 @@
     </property>
     <property name="text">
      <string>Y</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="align_region_button">

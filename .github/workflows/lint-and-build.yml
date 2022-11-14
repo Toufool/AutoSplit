@@ -47,6 +47,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       fail-fast: false
+      # Pyright is version and platform sensible
       matrix:
         python-version: ["3.9", "3.10"]
     steps:
@@ -68,6 +69,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       fail-fast: false
+      # Pylint is version and platform sensible
       matrix:
         python-version: ["3.9", "3.10"]
     steps:
@@ -87,6 +89,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       fail-fast: false
+      # Flake8 is tied to the version of Python on which it runs. Platform checks are ignored
       matrix:
         python-version: ["3.9", "3.10"]
     steps:
@@ -103,6 +106,7 @@ jobs:
       - name: Analysing the code with Flake8
         run: flake8 src/ typings/
   Bandit:
+    # Bandit only matters on the version deployed. Platform checks are ignored
     runs-on: windows-latest
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
@@ -121,6 +125,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       fail-fast: false
+      # Only the Python version we plan on shipping matters.
       matrix:
         python-version: ["3.10"]
     steps:

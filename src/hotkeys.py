@@ -7,7 +7,7 @@ import keyboard
 import pyautogui
 from PyQt6 import QtWidgets
 
-from error_messages import invalid_hotkey
+import error_messages
 from utils import START_AUTO_SPLITTER_TEXT, fire_and_forget, is_digit
 
 if TYPE_CHECKING:
@@ -22,6 +22,10 @@ PRESS_A_KEY_TEXT = "Press a key..."
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
 HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
+
+
+def remove_all_hotkeys():
+    keyboard.unhook_all()
 
 
 def before_setting_hotkey(autosplit: AutoSplit):
@@ -237,45 +241,51 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
     # Disable some buttons
     before_setting_hotkey(autosplit)
 
-    # New thread points to callback. this thread is needed or GUI will freeze
+    # New thread points to read_and_set_hotkey. this thread is needed or GUI will freeze
     # while the program waits for user input on the hotkey
     @fire_and_forget
-    def callback():
-        hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
+    def read_and_set_hotkey():
+        try:
+            hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
-        if not is_valid_hotkey_name(hotkey_name):
-            autosplit.show_error_signal.emit(lambda: invalid_hotkey(hotkey_name))
-            return
+            if not is_valid_hotkey_name(hotkey_name):
+                autosplit.show_error_signal.emit(lambda: error_messages.invalid_hotkey(hotkey_name))
+                return
 
-        # Try to remove the previously set hotkey if there is one
-        _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-        # Remove any hotkey using the same key combination
+            # Try to remove the previously set hotkey if there is one
+            _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+            # Remove any hotkey using the same key combination
 
-        __remove_key_already_set(autosplit, hotkey_name)
+            __remove_key_already_set(autosplit, hotkey_name)
 
-        action = __get_hotkey_action(autosplit, hotkey)
-        setattr(
-            autosplit,
-            f"{hotkey}_hotkey",
-            # keyboard.add_hotkey doesn't give the last keyboard event, so we can't __validate_keypad.
-            # This means "ctrl + num 5" and "ctrl + 5" will both be registered.
-            # For that reason, we still prefer keyboard.hook_key for single keys.
-            # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
-            keyboard.add_hotkey(hotkey_name, action)
-            if "+" in hotkey_name
-            # We need to inspect the event to know if it comes from numpad because of _canonial_names.
-            # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
-            # The best way to achieve this is make our own hotkey handling on top of hook
-            # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
-            else keyboard.hook_key(
-                hotkey_name,
-                lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action),
-            ),
-        )
+            action = __get_hotkey_action(autosplit, hotkey)
+            setattr(
+                autosplit,
+                f"{hotkey}_hotkey",
+                # keyboard.add_hotkey doesn't give the last keyboard event, so we can't __validate_keypad.
+                # This means "ctrl + num 5" and "ctrl + 5" will both be registered.
+                # For that reason, we still prefer keyboard.hook_key for single keys.
+                # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
+                keyboard.add_hotkey(hotkey_name, action)
+                if "+" in hotkey_name
+                # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+                # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
+                # The best way to achieve this is make our own hotkey handling on top of hook
+                # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553
+                else keyboard.hook_key(
+                    hotkey_name,
+                    lambda keyboard_event: _hotkey_action(keyboard_event, hotkey_name, action),
+                ),
+            )
 
-        if autosplit.SettingsWidget:
-            getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
-        autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
-        autosplit.after_setting_hotkey_signal.emit()
+            if autosplit.SettingsWidget:
+                getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
+            autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
+            autosplit.after_setting_hotkey_signal.emit()
+        except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
+            error = exception
+            autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
+        finally:
+            autosplit.after_setting_hotkey_signal.emit()
 
-    callback()
+    read_and_set_hotkey()

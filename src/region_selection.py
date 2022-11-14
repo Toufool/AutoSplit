@@ -4,23 +4,26 @@ import ctypes
 import ctypes.wintypes
 import os
 from math import ceil
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtTest import QTest
 from win32 import win32gui
-from win32con import GA_ROOT, MAXBYTE, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import get_window_bounds, is_valid_hwnd, is_valid_image
+from utils import MAXBYTE, get_window_bounds, getTopWindowAt, is_valid_hwnd, is_valid_image
+
+user32 = ctypes.windll.user32
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
 
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
@@ -40,8 +43,6 @@ IMREAD_EXT_FILTER = "All Files (" \
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
     + ");;"\
     + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
-
-user32 = ctypes.windll.user32
 
 
 def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
@@ -88,7 +89,12 @@ def select_region(autosplit: AutoSplit):
         QTest.qWait(1)
     del selector
 
-    hwnd, window_text = __get_window_from_point(x, y)
+    window = getTopWindowAt(x, y)
+    if not window:
+        error_messages.region()
+        return
+    hwnd = window.getHandle()
+    window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
@@ -99,10 +105,12 @@ def select_region(autosplit: AutoSplit):
 
     left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
+    offset_x = window_x - left_bounds
+    offset_y = window_y - top_bounds
     __set_region_values(
         autosplit,
-        left=x - window_x - left_bounds,
-        top=y - window_y - top_bounds,
+        left=x - offset_x,
+        top=y - offset_y,
         width=width,
         height=height,
     )
@@ -122,7 +130,12 @@ def select_window(autosplit: AutoSplit):
         QTest.qWait(1)
     del selector
 
-    hwnd, window_text = __get_window_from_point(x, y)
+    window = getTopWindowAt(x, y)
+    if not window:
+        error_messages.region()
+        return
+    hwnd = window.getHandle()
+    window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
         return
@@ -144,22 +157,6 @@ def select_window(autosplit: AutoSplit):
         width=client_width,
         height=client_height - border_width * 2,
     )
-
-
-def __get_window_from_point(x: int, y: int):
-    # Grab the window handle from the coordinates selected by the widget
-    hwnd = cast(int, win32gui.WindowFromPoint((x, y)))
-
-    # Want to pull the parent window from the window handle
-    # By using GetAncestor we are able to get the parent window instead
-    # of the owner window.
-    # TODO: Fix stubs, IsChild should return a boolean
-    while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
-        hwnd = cast(int, user32.GetAncestor(hwnd, GA_ROOT))
-
-    window_text = win32gui.GetWindowText(hwnd)
-
-    return hwnd, window_text
 
 
 def align_region(autosplit: AutoSplit):
