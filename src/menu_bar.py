@@ -243,7 +243,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
-            hotkey_input.setText(cast(str, autosplit.settings_dict[f"{hotkey}_hotkey"]))
+            hotkey_input.setText(
+                cast(
+                    str,
+                    autosplit.settings_dict[f"{hotkey}_hotkey"],  # pyright: ignore[reportGeneralTypeIssues]
+                ),
+            )
 
             set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled

@@ -7,4 +7,4 @@ $arguments = @(
   '--icon=res/icon.ico',
   '--splash=res/splash.png')
 
-pyinstaller $arguments "$PSScriptRoot/../src/AutoSplit.py"
+Start-Process pyinstaller -Wait -ArgumentList "$arguments `"$PSScriptRoot/../src/AutoSplit.py`""

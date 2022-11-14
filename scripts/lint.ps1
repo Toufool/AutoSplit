@@ -5,7 +5,7 @@ $exitCodes = 0
 Write-Host "`nRunning autofixes..."
 isort src/ typings/
 autopep8 $(git ls-files '**.py*') --in-place
-unify src/ --recursive --in-place --quote='"""'
+unify src/ --recursive --in-place --quote='"'
 add-trailing-comma $(git ls-files '**.py*') --py36-plus
 
 Write-Host "`nRunning Pyright..."

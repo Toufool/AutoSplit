@@ -197,9 +197,9 @@ def __read_hotkey():
 def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
     for hotkey in HOTKEYS:
         settings_key = f"{hotkey}_hotkey"
-        if autosplit.settings_dict[settings_key] == key_name:
+        if autosplit.settings_dict[settings_key] == key_name:  # pyright: ignore[reportGeneralTypeIssues]
             _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-            autosplit.settings_dict[settings_key] = ""
+            autosplit.settings_dict[settings_key] = ""  # pyright: ignore[reportGeneralTypeIssues]
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
@@ -280,8 +280,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
 
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
-            autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name
-            autosplit.after_setting_hotkey_signal.emit()
+            autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name  # pyright: ignore[reportGeneralTypeIssues]
         except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
             error = exception
             autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))

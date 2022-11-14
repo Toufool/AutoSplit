@@ -95,6 +95,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
         if index <= 0:
             return first(self)
         return list(self.keys())[index]
+
     if TYPE_CHECKING:  # noqa: CCE002
         __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues]  # Disallow unsafe get
 

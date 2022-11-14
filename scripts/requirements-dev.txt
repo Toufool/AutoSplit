@@ -15,17 +15,21 @@ flake8-bugbear
 flake8-class-attributes-order
 flake8-comprehensions>=3.8  # flake8 5 support
 flake8-datetimez
+flake8-isort>=4.2,<=5.0  # flake8 5 support ; Breaking issue (https://github.com/gforcada/flake8-isort/issues/128)
 flake8-pyi>=22.10.0  # Fixes for negative numbers
 flake8-quotes
 flake8-simplify
 isort
 pep8-naming
 pylint>=2.14,<3.0.0  # New checks  # 3.0 still in pre-release
-pyright>=1.1.276  # Typeshed update
 unify
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
 qt6-applications
 # Types
+types-d3dshot
+types-keyboard
+types-pyinstaller
+types-pywin32
 typing-extensions

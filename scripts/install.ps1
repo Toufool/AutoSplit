@@ -9,7 +9,10 @@ If ($IsWindows) {
 $dev = If ($env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
 # Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
 python3 -m pip install wheel pip setuptools --upgrade
-pip install -r "$PSScriptRoot/requirements$dev.txt"
+pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
+if (Get-Command 'npm' -ErrorAction SilentlyContinue) {
+  npm i --global pyright@latest
+}
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 If ($dev) {
