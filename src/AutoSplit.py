@@ -144,8 +144,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         # Connecting menu actions
         self.action_view_help.triggered.connect(view_help)
         self.action_about.triggered.connect(lambda: open_about(self))
-        self.action_about_qt.triggered.connect(lambda: about_qt)
-        self.action_about_qt_for_python.triggered.connect(lambda: about_qt_for_python)
+        self.action_about_qt.triggered.connect(about_qt)
+        self.action_about_qt_for_python.triggered.connect(about_qt_for_python)
         self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
         self.action_settings.triggered.connect(lambda: open_settings(self))
         self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
