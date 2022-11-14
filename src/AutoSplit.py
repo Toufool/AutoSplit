@@ -572,6 +572,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 if split_delay > 0 and not self.waiting_for_split_delay:
                     split_time = round(time() + split_delay * 1000)
                     self.waiting_for_split_delay = True
+                    self.next_image_button.setEnabled(False)
+                    self.previous_image_button.setEnabled(False)
                     self.undo_split_button.setEnabled(False)
                     self.skip_split_button.setEnabled(False)
                     self.current_image_file_label.clear()
@@ -679,7 +681,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             return False
         start_time = time()
         # Set a "pause" split image number.
-        # This is done so that it can detect if user hit split/undo split while paused.
+        # This is done so that it can detect if user hit split/undo split while paused/delayed.
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for reset image

@@ -105,8 +105,8 @@ def select_region(autosplit: AutoSplit):
 
     left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
     window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
-    offset_x = window_x - left_bounds
-    offset_y = window_y - top_bounds
+    offset_x = window_x + left_bounds
+    offset_y = window_y + top_bounds
     __set_region_values(
         autosplit,
         left=x - offset_x,
