@@ -32,7 +32,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+    <normaloff>:/resources/icon.ico</normaloff>
+    :/resources/icon.ico
+   </iconset>
   </property>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">
@@ -200,6 +202,8 @@ Histograms:
 An explanation on Histograms comparison can be found here
 https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
 This is a great method to use if you are using several masked images.
+> This algorithm is particular reliable when the colour is a strong predictor of the object identity.
+> The histogram intersection [...] is robust to occluding objects in the foreground.
 
 Perceptual Hash:
 An explanation on pHash comparison can be found here

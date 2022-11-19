@@ -63,10 +63,10 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             self.capture_device.release()
             autosplit.show_error_signal.emit(
                 lambda: exception_traceback(
+                    error,
                     "AutoSplit encountered an unhandled exception while "
                     + "trying to grab a frame and has stopped capture. "
                     + CREATE_NEW_ISSUE_MESSAGE,
-                    error,
                 ),
             )
 
@@ -98,7 +98,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_device.release()
 
     def get_frame(self, autosplit: AutoSplit):
-        selection = autosplit.settings_dict["capture_region"]
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
@@ -108,6 +107,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         if not is_valid_image(image):
             return None, is_old_image
 
+        selection = autosplit.settings_dict["capture_region"]
         # Ensure we can't go OOB of the image
         y = min(selection["y"], image.shape[0] - 1)
         x = min(selection["x"], image.shape[1] - 1)

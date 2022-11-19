@@ -12,24 +12,27 @@
 # Dependencies:
 certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
-git+https://github.com/boppreh/keyboard.git#egg=keyboard
+git+https://github.com/Avasam/keyboard.git@fix-563#egg=keyboard  # Fix install on linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.23.2  # Python 3.11 wheels
 opencv-python-headless>=4.6  # Breaking changes importing cv2.cv2
 packaging
-Pillow>=7.2.0  # https://github.com/SerpentAI/D3DShot/issues/44
+Pillow>=9.2 # gnome-screeshot checks
 psutil
 PyAutoGUI
-git+https://github.com/andreaschiavinato/python_grabber.git#egg=pygrabber  # Completed types
 --extra-index-url https://www.riverbankcomputing.com/pypi/simple/ --pre
 PyQt6>6.4.0  # Python 3.11 support
 requests
 toml
-# Windows-only
-git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot  # D3DShot from PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
-pywin32>=301
-winsdk>=v1.0.0b4
 #
 # Build and compile resources
 PyInstaller>=5.5  # Python 3.11 support
 pyinstaller-hooks-contrib>=2022.9  # opencv-python 4.6 support. Changes for pywintypes and comtypes
 PySide6>=6.4.0.1  # Python 3.11 support
+#
+# https://peps.python.org/pep-0508/#environment-markers
+#
+# Windows-only dependencies:
+git+https://github.com/andreaschiavinato/python_grabber.git#egg=pygrabber ; sys_platform == 'win32'  # Completed types
+pywin32>=301 ; sys_platform == 'win32'
+winsdk>=v1.0.0b7 ; sys_platform == 'win32'  # Python 3.11 support
+git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot ; sys_platform == 'win32'  # D3DShot from PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5

@@ -4,18 +4,21 @@
 max_line_length = 120
 recursive = true
 aggressive = 3
-ignore = ["E70"] # Allow ... on same line as def
+ignore = [
+  "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
+  "E70" # Allow ... on same line as def
+]
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
 # Extra strict
-reportImplicitStringConcatenation="error"
-reportCallInDefaultInitializer="error"
-reportMissingSuperCall="none" # False positives on base classes
-reportPropertyTypeMismatch="error"
-reportUninitializedInstanceVariable="error"
-reportUnnecessaryTypeIgnoreComment="error"
+reportImplicitStringConcatenation = "error"
+reportCallInDefaultInitializer = "error"
+reportMissingSuperCall = "none" # False positives on base classes
+reportPropertyTypeMismatch = "error"
+reportUninitializedInstanceVariable = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
 # Exclude from scanning when running pyright
 exclude = [
   # Auto generated, produces unecessary `# type: ignore`
@@ -26,7 +29,7 @@ ignore = [
   # We expect stub files to be incomplete or contain useless statements
   "**/*.pyi",
 ]
-reportUnusedCallResult="none"
+reportUnusedCallResult = "none"
 # Type stubs may not be completable
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
@@ -104,13 +107,6 @@ max-branches = 15
 valid-classmethod-first-arg = "self"
 # https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
 module-naming-style = "any"
-# Can't make private class with PascalCase
-class-rgx = "_?_?[a-zA-Z]+?$"
-good-names = [
-  # PyQt methods
-  "closeEvent", "paintEvent", "keyPressEvent", "mousePressEvent", "mouseMoveEvent", "mouseReleaseEvent",
-  # https://github.com/PyCQA/pylint/issues/2018
-  "id", "x", "y", "a0", "i", "t0", "t1"]
 disable = [
   # No need to mention the fixmes
   "fixme",
@@ -120,6 +116,8 @@ disable = [
   "unused-import",
   "wrong-import-order",
   "wrong-import-position",
+  # Already taken care of by Flake8-naming, which does a better job
+  "invalid-name",
   # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
   "unused-argument",
   # Only reports a single instance. Pyright does a better job anyway

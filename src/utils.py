@@ -18,7 +18,8 @@ from winsdk.windows.media.capture import MediaCapture
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeGuard
+    from typing_extensions import ParamSpec, TypeGuard
+    P = ParamSpec("P")
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 
@@ -80,21 +81,46 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
-def get_direct3d_device():
-    direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
-    if not direct_3d_device:
-        # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
-        # OSError: The application called an interface that was marshalled for a different thread
-        media_capture = MediaCapture()
+def open_file(file_path: str):
+    os.startfile(file_path)  # nosec B606
 
-        async def coroutine():
-            await (media_capture.initialize_async() or asyncio.sleep(0))
-        asyncio.run(coroutine())
-        direct_3d_device = media_capture.media_capture_settings and \
-            media_capture.media_capture_settings.direct3_d11_device
+
+def get_or_create_eventloop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return asyncio.get_event_loop()
+
+
+def get_direct3d_device():
+    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
+    # OSError: The application called an interface that was marshalled for a different thread
+    media_capture = MediaCapture()
+
+    async def init_mediacapture():
+        await (media_capture.initialize_async() or asyncio.sleep(0))
+    asyncio.run(init_mediacapture())
+    direct_3d_device = media_capture.media_capture_settings and \
+        media_capture.media_capture_settings.direct3_d11_device
+    if not direct_3d_device:
+        try:
+            # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
+            direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
+        # TODO: Unknown potential error, I don't have an older Win10 machine to test.
+        except BaseException:  # pylint: disable=broad-except
+            pass
     if not direct_3d_device:
         raise OSError("Unable to initialize a Direct3D Device.")
     return direct_3d_device
+
+
+def try_get_direct3d_device():
+    try:
+        return get_direct3d_device()
+    except OSError:
+        return None
 
 
 def fire_and_forget(func: Callable[..., Any]):
@@ -110,23 +136,44 @@ def fire_and_forget(func: Callable[..., Any]):
             thread = Thread(target=func, args=args, kwargs=kwargs)
             thread.start()
             return thread
-        return asyncio.get_event_loop().run_in_executor(None, func, *args, *kwargs)
+        return get_or_create_eventloop().run_in_executor(None, func, *args, *kwargs)
 
     return wrapped
 
 
+def getTopWindowAt(x: int, y: int):  # noqa: N802
+    # Immitating PyWinCTL's function
+    class Win32Window():
+        def __init__(self, hwnd: int) -> None:
+            self._hWnd = hwnd
+
+        def getHandle(self):  # noqa: N802
+            return self._hWnd
+
+        @property
+        def title(self):
+            return win32gui.GetWindowText(self._hWnd)
+    hwnd = win32gui.WindowFromPoint((x, y))
+
+    # Want to pull the parent window from the window handle
+    # By using GetAncestor we are able to get the parent window instead of the owner window.
+    while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
+        hwnd = ctypes.windll.user32.GetAncestor(hwnd, 2)
+    return Win32Window(hwnd) if hwnd else None
+
+
 # Environment specifics
-WINDOWS_BUILD_NUMBER = int(version().split(".")[2])
+WINDOWS_BUILD_NUMBER = int(version().split(".")[2]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 """AutoSplit Version number"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
-"""The directory of either AutoSplit.exe or AutoSplit.py"""
+"""The directory of either the AutoSplit executable or AutoSplit.py"""
+MAXBYTE = 255
 
 # Shared strings
 # Set AUTOSPLIT_BUILD_NUMBER to an empty string to generate a clean version number
 # AUTOSPLIT_BUILD_NUMBER = ""  # pyright: ignore[reportConstantRedefinition]  # noqa: F811
-AUTOSPLIT_VERSION = "2.0.0-alpha.6" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
-START_AUTO_SPLITTER_TEXT = "Start Auto Splitter"
+AUTOSPLIT_VERSION = "2.0.0-beta.1" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

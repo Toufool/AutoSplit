@@ -27,17 +27,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 ### Building
 
-(This is not required for normal use)
-
-- Python 3.9 - 3.11.
-- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-
-- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
-  - Run `./scripts/install.ps1` to install all dependencies.
-  - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
-  - Run `./scripts/build.ps1` to build an executable.
-- Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
-- All configured for VSCode, including Run (F5) and Build (Ctrl+Shift+B) commands.
+(This is not required for normal use)  
+Refer to the [build instructions](build%20instructions.md) if you'd like to build the application yourself or run it directly in Python.
 
 ## OPTIONS
 
@@ -72,6 +63,7 @@ This program can be used to automatically start, split, and reset your preferred
 - There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (or pHash).
   - L2 Norm: This method should be fine to use for most cases. It finds the difference between each pixel, squares it, sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
+    > This algorithm is particular reliable when the colour is a strong predictor of the object identity. The histogram intersection [...] is robust to occluding objects in the foreground.
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
 
 #### Capture Method
@@ -224,7 +216,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 - Place the .dll file into your `[...]\LiveSplit\Components` folder.
 - Open LiveSplit -> Right Click -> Edit Layout -> Plus Button -> Control -> AutoSplit Integration.
 - Click Layout Settings -> AutoSplit Integration
-- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit.exe) and Profile Path (path to your AutoSplit `.toml` profile file) respectively.
+- Click the Browse buttons to locate your AutoSplit Path (path to AutoSplit executable) and Profile Path (path to your AutoSplit `.toml` profile file) respectively.
   - If you have not yet set saved a profile, you can do so using AutoSplit, and then go back and set your Settings Path.
 - Once set, click OK, and then OK again to close the Layout Editor. Right click LiveSplit -> Save Layout to save your layout. AutoSplit and your selected profile will now open automatically when opening that LiveSplit Layout `.lsl` file.
 

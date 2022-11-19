@@ -4,7 +4,10 @@
     "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
+    "emeraldwalk.runonsave",
+    "ms-python.autopep8",
     "ms-python.flake8",
+    "ms-python.isort",
     "ms-python.pylint",
     "ms-python.python",
     "ms-python.vscode-pylance",
@@ -18,6 +21,8 @@
     // Must disable in this workspace //
     // https://github.com/microsoft/vscode/issues/40239 //
     //
+    // We use autopep8
+    "ms-python.black-formatter",
     // VSCode has implemented an optimized version
     "coenraads.bracket-pair-colorizer",
     "coenraads.bracket-pair-colorizer-2",
