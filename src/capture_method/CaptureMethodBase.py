@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 class CaptureMethodBase():
     def __init__(self, autosplit: AutoSplit | None = None):
+        # Some capture methods don't need an initialization process
         pass
 
     def reinitialize(self, autosplit: AutoSplit):
@@ -19,6 +20,7 @@ class CaptureMethodBase():
         self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
 
     def close(self, autosplit: AutoSplit):
+        # Some capture methods don't need an initialization process
         pass
 
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:

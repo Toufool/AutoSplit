@@ -112,16 +112,6 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
-def get_capture_method_index(capture_method: str | CaptureMethodEnum):
-    """
-    Returns 0 if the capture_method is invalid or unsupported
-    """
-    try:
-        return list(CAPTURE_METHODS.keys()).index(cast(CaptureMethodEnum, capture_method))
-    except ValueError:
-        return 0
-
-
 class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
     __video_capture_devices: list[CameraInfo] = []
     """
@@ -253,11 +243,16 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
-            hotkey_input.setText(cast(str, autosplit.settings_dict[f"{hotkey}_hotkey"]))
+            hotkey_input.setText(
+                cast(
+                    str,
+                    autosplit.settings_dict[f"{hotkey}_hotkey"],  # pyright: ignore[reportGeneralTypeIssues]
+                ),
+            )
 
             set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
-            if autosplit.is_auto_controlled:
+            if autosplit.is_auto_controlled and hotkey != "toggle_auto_reset_image":
                 set_hotkey_hotkey_button.setEnabled(False)
                 hotkey_input.setEnabled(False)
 
@@ -266,7 +261,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
         self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            get_capture_method_index(autosplit.settings_dict["capture_method"]),
+            CAPTURE_METHODS.get_index(autosplit.settings_dict["capture_method"]),
         )
         self.capture_device_combobox.currentIndexChanged.connect(
             lambda: self.__set_value("capture_device_id", self.__capture_device_changed()),

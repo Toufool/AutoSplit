@@ -32,20 +32,25 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+    <normaloff>:/resources/icon.ico</normaloff>
+    :/resources/icon.ico
+   </iconset>
   </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QLabel" name="x_label">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>11</x>
       <y>143</y>
-      <width>7</width>
-      <height>16</height>
+      <width>44</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>X</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="select_region_button">
@@ -235,27 +240,33 @@
    <widget class="QLabel" name="width_label">
     <property name="geometry">
      <rect>
-      <x>17</x>
+      <x>11</x>
       <y>183</y>
-      <width>33</width>
-      <height>16</height>
+      <width>44</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Width</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="height_label">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>66</x>
       <y>183</y>
-      <width>41</width>
-      <height>16</height>
+      <width>44</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Height</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="fps_value_label">
@@ -416,14 +427,17 @@
    <widget class="QLabel" name="y_label">
     <property name="geometry">
      <rect>
-      <x>85</x>
+      <x>66</x>
       <y>143</y>
-      <width>7</width>
-      <height>16</height>
+      <width>44</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Y</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="align_region_button">

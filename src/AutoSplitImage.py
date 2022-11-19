@@ -6,11 +6,10 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from win32con import MAXBYTE
 
 import error_messages
 from compare import check_if_image_has_transparency, compare_histograms, compare_l2_norm, compare_phash
-from utils import is_valid_image
+from utils import MAXBYTE, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit

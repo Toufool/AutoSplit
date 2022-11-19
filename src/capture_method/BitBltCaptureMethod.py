@@ -28,6 +28,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
         image: cv2.Mat | None = None
+
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
