@@ -95,17 +95,22 @@ def get_or_create_eventloop():
 
 
 def get_direct3d_device():
-    direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
-    if not direct_3d_device:
-        # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
-        # OSError: The application called an interface that was marshalled for a different thread
-        media_capture = MediaCapture()
+    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
+    # OSError: The application called an interface that was marshalled for a different thread
+    media_capture = MediaCapture()
 
-        async def coroutine():
-            await (media_capture.initialize_async() or asyncio.sleep(0))
-        asyncio.run(coroutine())
-        direct_3d_device = media_capture.media_capture_settings and \
-            media_capture.media_capture_settings.direct3_d11_device
+    async def init_mediacapture():
+        await (media_capture.initialize_async() or asyncio.sleep(0))
+    asyncio.run(init_mediacapture())
+    direct_3d_device = media_capture.media_capture_settings and \
+        media_capture.media_capture_settings.direct3_d11_device
+    if not direct_3d_device:
+        try:
+            # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
+            direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
+        # TODO: Unknown potential error, I don't have an older Win10 machine to test.
+        except BaseException:  # pylint: disable=broad-except
+            pass
     if not direct_3d_device:
         raise OSError("Unable to initialize a Direct3D Device.")
     return direct_3d_device
