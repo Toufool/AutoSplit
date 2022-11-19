@@ -281,8 +281,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
 
         self.split_image_number = 0
 
-        start_pause_time = self.start_image.get_pause_time(self)
-        if not wait_for_delay and start_pause_time > 0:
+        if not wait_for_delay and self.start_image.get_pause_time(self) > 0:
             self.start_image_status_value_label.setText("paused")
             self.table_current_image_highest_label.setText("-")
             self.table_current_image_threshold_label.setText("-")
@@ -542,6 +541,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         self.is_running = True
         self.gui_changes_on_start()
 
+        # Start pause time
+        if self.start_image:
+            self.__pause_loop(self.start_image.get_pause_time(self), "None (Paused).")
+
         # Initialize a few attributes
         self.split_image_number = 0
         self.waiting_for_split_delay = False
@@ -604,8 +607,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             # If its not the last split image, pause for the amount set by the user
             # A pause loop to check if the user presses skip split, undo split, or reset here.
             # Also updates the current split image text, counting down the time until the next split image
-            pause_time = self.split_image.get_pause_time(self)
-            if self.__pause_loop(pause_time, "None (Paused)."):
+            if self.__pause_loop(self.split_image.get_pause_time(self), "None (Paused)."):
                 return
 
         # loop breaks to here when the last image splits
@@ -794,7 +796,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 similarity = self.reset_image.compare_with_capture(self, capture)
                 threshold = self.reset_image.get_similarity_threshold(self)
 
-                paused = time() - self.run_start_time <= self.reset_image.get_pause_time(self)
+                pause_times = [self.reset_image.get_pause_time(self)]
+                if self.start_image:
+                    pause_times.append(self.start_image.get_pause_time(self))
+                paused = time() - self.run_start_time <= max(pause_times)
                 if paused:
                     should_reset = False
                     self.table_reset_image_live_label.setText("paused")
