@@ -582,15 +582,22 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 if split_delay > 0 and not self.waiting_for_split_delay:
                     split_time = round(time() + split_delay * 1000)
                     self.waiting_for_split_delay = True
-                    self.next_image_button.setEnabled(False)
-                    self.previous_image_button.setEnabled(False)
-                    self.undo_split_button.setEnabled(False)
-                    self.skip_split_button.setEnabled(False)
+                    buttons_to_disable = [
+                        self.next_image_button,
+                        self.previous_image_button,
+                        self.undo_split_button,
+                        self.skip_split_button,
+                    ]
+                    for button in buttons_to_disable:
+                        button.setEnabled(False)
                     self.current_image_file_label.clear()
 
                     # check for reset while delayed and display a counter of the remaining split delay time
                     if self.__pause_loop(split_delay, "Delayed Split:"):
                         return
+
+                    for button in buttons_to_disable:
+                        button.setEnabled(True)
 
                 self.waiting_for_split_delay = False
 
