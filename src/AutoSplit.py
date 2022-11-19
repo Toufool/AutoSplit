@@ -337,16 +337,18 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 self.start_image_status_value_label.setText("delaying start...")
                 delay_start_time = time()
                 start_delay = self.start_image.get_delay_time(self) / 1000
-                while time() - delay_start_time < start_delay:
-                    delay_time_left = start_delay - (time() - delay_start_time)
+                time_delta = 0
+                while time_delta < start_delay:
+                    delay_time_left = start_delay - time_delta
                     self.current_split_image.setText(
                         f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
                     )
-                    QTest.qWait(1)
+                    # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
+                    QTest.qWait(100)
+                    time_delta = time() - delay_start_time
 
             self.start_image_status_value_label.setText("started")
             send_command(self, "start")
-            QTest.qWait(int(1 / self.settings_dict["fps_limit"]))
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -649,9 +651,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             QApplication.processEvents()
 
             # Limit the number of time the comparison runs to reduce cpu usage
+            frame_interval = 1 / self.settings_dict["fps_limit"]
             # Use a time delta to have a consistant check interval
-            frame_interval: float = 1 / self.settings_dict["fps_limit"]
-            wait_delta = int(frame_interval - (time() - start) % frame_interval)
+            wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * 1000)
 
             below_flag = self.split_image.check_flag(BELOW_FLAG)
             # if the b flag is set, let similarity go above threshold first,
@@ -664,7 +666,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                         break
                     if not self.split_below_threshold:
                         self.split_below_threshold = True
-                        QTest.qWait(wait_delta)
+                        QTest.qWait(wait_delta_ms)
                         continue
 
                 elif (  # pylint: disable=confusing-consecutive-elif
@@ -673,7 +675,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                     self.split_below_threshold = False
                     break
 
-            QTest.qWait(wait_delta)
+            QTest.qWait(wait_delta_ms)
 
     def __pause_loop(self, stop_time: float, message: str):
         """
