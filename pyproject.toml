@@ -111,7 +111,7 @@ disable = [
   # No need to mention the fixmes
   "fixme",
   "missing-docstring",
-  # Already taken care of by Flake8 and isort
+  # Already taken care of by isort
   "ungrouped-imports",
   "unused-import",
   "wrong-import-order",

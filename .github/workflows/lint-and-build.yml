@@ -2,6 +2,12 @@
 name: Lint and build
 on:
   workflow_dispatch: #  Allows manual builds
+    inputs:
+      excludeBuildNumber:
+        description: "Exclude build number"
+        required: true
+        default: false
+        type: boolean
   push:
     branches:
       - main
@@ -26,6 +32,7 @@ on:
 
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+  GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
 
 jobs:
   add-trailing-comma:
