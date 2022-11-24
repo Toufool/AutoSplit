@@ -72,6 +72,8 @@
   },
   "python.formatting.provider": "autopep8",
   "python.analysis.diagnosticMode": "workspace",
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
   "python.linting.enabled": true,
   // Use the new Pylint extension instead
   "python.linting.pylintEnabled": false,
