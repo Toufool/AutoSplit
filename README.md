@@ -92,7 +92,7 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
 
 #### Capture Device
 
-Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method. Will show `[occupied]` if a device is detected but can't be started.
+Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.  <!-- Will show `[occupied]` if a device is detected but can't be started. (currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
 
 #### Show Live Similarity
 

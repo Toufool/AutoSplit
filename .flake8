@@ -4,12 +4,18 @@ max-line-length=120
 ; Auto generated
 exclude=src/gen/, typings/cv2-stubs/__init__.pyi
 ignore=
-  W503,   ; Linebreak before binary operator
-  E124,   ; Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
-  E402,   ; Allow imports at the bottom of file
-  Y026,   ; Not using typing_extensions
-  SIM105, ; contextlib.suppress is roughly 3x slower than try/except
-  CCE001, ; False positives for attribute docstrings
+  ; Linebreak before binary operator
+  W503,
+  ; Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
+  E124,
+  ; Allow imports at the bottom of file
+  E402,
+  ; Not using typing_extensions
+  Y026,
+  ; contextlib.suppress is roughly 3x slower than try/except
+  SIM105,
+  ; False positives for attribute docstrings
+  CCE001,
 per-file-ignores=
     ; Quotes
     ; Allow ... on same line as class

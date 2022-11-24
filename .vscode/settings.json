@@ -8,6 +8,19 @@
       72
     ]
   },
+  "trailing-spaces.includeEmptyLines": true,
+  "trailing-spaces.trimOnSave": true,
+  "trailing-spaces.syntaxIgnore": [
+    "markdown"
+  ],
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.comments.insertSpace": true,
+  "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
@@ -17,12 +30,6 @@
     "source.fixAll.convertImportFormat": true,
     "source.organizeImports": true,
   },
-  "files.insertFinalNewline": true,
-  "trailing-spaces.includeEmptyLines": true,
-  "trailing-spaces.trimOnSave": true,
-  "trailing-spaces.syntaxIgnore": [
-    "markdown"
-  ],
   "emeraldwalk.runonsave": {
     "commands": [
       {
@@ -72,6 +79,8 @@
   },
   "python.formatting.provider": "autopep8",
   "python.analysis.diagnosticMode": "workspace",
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
   "python.linting.enabled": true,
   // Use the new Pylint extension instead
   "python.linting.pylintEnabled": false,

@@ -41,14 +41,12 @@ else {
 
 Write-Host "`nRunning Bandit..."
 bandit src/ -f custom --silent --recursive
-# $exitCodes += $LastExitCode # Returns 1 on low
 if ($LastExitCode -gt 0) {
   Write-Host "`Bandit warning ($LastExitCode)" -ForegroundColor Yellow
 }
 else {
   Write-Host "`Bandit passed" -ForegroundColor Green
 }
-
 
 if ($exitCodes -gt 0) {
   Write-Host "`nLinting failed ($exitCodes)" -ForegroundColor Red

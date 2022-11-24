@@ -8,18 +8,16 @@
 #
 # Linters
 bandit
-flake8>=5  # flake8-pyi deprecation warnings
+flake8>=6  # Validates configuration
 flake8-builtins
 flake8-bugbear
 flake8-class-attributes-order
-flake8-comprehensions>=3.8  # flake8 5 support
+flake8-comprehensions>=3.8  # flake8 v5 support
 flake8-datetimez
-flake8-isort>=4.2,<=5.0  # flake8 5 support ; Breaking issue (https://github.com/gforcada/flake8-isort/issues/128)
-flake8-pyi>=22.10.0  # Fixes for negative numbers
-flake8-quotes
+flake8-pyi>=22.11.0  # flake8 v6 support
 flake8-simplify
 pep8-naming
-pylint>=2.14,<3.0.0  # New checks  # 3.0 still in pre-release
+pylint>=2.14,<3.0.0  # New checks  # 2.16 and 3.0 still in pre-release
 # Formatters
 add-trailing-comma>=2.3.0  # Added support for with statement
 autopep8>=2.0.0 # New checks
