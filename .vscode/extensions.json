@@ -21,19 +21,18 @@
     // Must disable in this workspace //
     // https://github.com/microsoft/vscode/issues/40239 //
     //
-    // We use autopep8
-    "ms-python.black-formatter",
     // VSCode has implemented an optimized version
     "coenraads.bracket-pair-colorizer",
     "coenraads.bracket-pair-colorizer-2",
     // Obsoleted by Pylance
     "ms-pyright.pyright",
-    "ms-python.black-formatter",
     // Not configurable per workspace, tends to conflict with other linters
     "sonarsource.sonarlint-vscode",
     //
     // Don't recommend to autoinstall //
     //
+    // We use autopep8
+    "ms-python.black-formatter",
     // This is a Git project
     "johnstoncode.svn-scm",
     // Prefer using VSCode itself as a text editor
