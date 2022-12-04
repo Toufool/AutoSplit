@@ -48,9 +48,7 @@ jobs:
           cache-dependency-path: "scripts/requirements*.txt"
       - run: scripts/install.ps1
         shell: pwsh
-      - run: (Get-Command pyuic6).Source
-        shell: pwsh
-      - name: Analysing the code with add-trailing-comma
+      - name: Analysing the code with isort
         run: isort src/ typings/ --check-only
   add-trailing-comma:
     runs-on: windows-latest

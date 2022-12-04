@@ -30,6 +30,11 @@ qt6-applications
 # Types
 types-d3dshot
 types-keyboard
+types-Pillow
+types-psutil
+types-PyAutoGUI
 types-pyinstaller
 types-pywin32
+types-requests
+types-toml
 typing-extensions

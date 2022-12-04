@@ -43,9 +43,7 @@
     ]
   },
   "files.associations": {
-    "*.json": "json",
-    "extensions.json": "jsonc",
-    "settings.json": "jsonc",
+    ".flake8": "properties",
     "*.qrc": "xml",
     "*.ui": "xml"
   },
@@ -57,11 +55,10 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "build": true,
-    ".mypy_cache": true,
+    "**/.mypy_cache": true,
     "**/__pycache__": true,
   },
   "search.exclude": {
-    "**/bower_components": true,
     "**/*.code-search": true,
     "*.lock": true,
   },
@@ -77,8 +74,10 @@
       120, // Our hard rule
     ],
   },
-  "python.formatting.provider": "autopep8",
+  // Important to follow the config in pyrightconfig.json
+  "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
+  "python.formatting.provider": "autopep8",
   "isort.check": true,
   "isort.importStrategy": "fromEnvironment",
   "python.linting.enabled": true,

@@ -81,7 +81,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
-def open_file(file_path: str):
+def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
     os.startfile(file_path)  # nosec B606
 
 
