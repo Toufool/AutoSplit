@@ -10,11 +10,11 @@ pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
-$BUILD_NUMBER = Get-Date -Format yyMMddHHmm
+$BUILD_NUMBER = If ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true) { '' } Else { Get-Date -Format yyMMddHHmm }
 $GITHUB_REPOSITORY = $Env:GITHUB_HEAD_REPOSITORY
 If (-not $GITHUB_REPOSITORY) {
   $repo_url = git config --get remote.origin.url
-  $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19 - 4)
+  $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
 }
 If (-not $GITHUB_REPOSITORY) {
   $GITHUB_REPOSITORY = 'Toufool/Auto-Split'

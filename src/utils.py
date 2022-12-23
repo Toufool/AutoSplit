@@ -81,7 +81,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
-def open_file(file_path: str):
+def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
     os.startfile(file_path)  # nosec B606
 
 
@@ -173,7 +173,6 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 MAXBYTE = 255
 
 # Shared strings
-# Set AUTOSPLIT_BUILD_NUMBER to an empty string to generate a clean version number
-# AUTOSPLIT_BUILD_NUMBER = ""  # pyright: ignore[reportConstantRedefinition]  # noqa: F811
+# Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
 AUTOSPLIT_VERSION = "2.0.0-beta.1" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

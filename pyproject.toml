@@ -105,13 +105,11 @@ max-branches = 15
 # https://github.com/PyCQA/pep8-naming/issues/164
 # OR doesn't fit CaptureMethodMeta
 valid-classmethod-first-arg = "self"
-# https://pylint.pycqa.org/en/latest/user_guide/options.html#naming-styles
-module-naming-style = "any"
 disable = [
   # No need to mention the fixmes
   "fixme",
   "missing-docstring",
-  # Already taken care of by Flake8 and isort
+  # Already taken care of by isort
   "ungrouped-imports",
   "unused-import",
   "wrong-import-order",
@@ -122,8 +120,6 @@ disable = [
   "unused-argument",
   # Only reports a single instance. Pyright does a better job anyway
   "cyclic-import",
-  # Doesn't work with local imports
-  "import-error",
   # Similar lines in 2 files, doesn't really work
   "R0801",
 ]

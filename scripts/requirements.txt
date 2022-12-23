@@ -12,20 +12,21 @@
 # Dependencies:
 certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
-git+https://github.com/Avasam/keyboard.git@fix-563#egg=keyboard  # Fix install on linux-ci https://github.com/boppreh/keyboard/pull/568
+git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.23.2  # Python 3.11 wheels
 opencv-python-headless>=4.6  # Breaking changes importing cv2.cv2
 packaging
 Pillow>=9.2 # gnome-screeshot checks
 psutil
 PyAutoGUI
---extra-index-url https://www.riverbankcomputing.com/pypi/simple/ --pre
-PyQt6>6.4.0  # Python 3.11 support
+# 6.4.1 fixes the rare Illegal Operation issue from RTADan, but the dev wheels are currently broken :/
+# 2.0.0-beta.2 contains the fixes if anyone needs it.
+PyQt6>=6.4.0  # Python 3.11 support
 requests
 toml
 #
 # Build and compile resources
-PyInstaller>=5.5  # Python 3.11 support
+pyinstaller>=5.5  # Python 3.11 support
 pyinstaller-hooks-contrib>=2022.9  # opencv-python 4.6 support. Changes for pywintypes and comtypes
 PySide6>=6.4.0.1  # Python 3.11 support
 #

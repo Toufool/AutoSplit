@@ -8,6 +8,19 @@
       72
     ]
   },
+  "trailing-spaces.includeEmptyLines": true,
+  "trailing-spaces.trimOnSave": true,
+  "trailing-spaces.syntaxIgnore": [
+    "markdown"
+  ],
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.comments.insertSpace": true,
+  "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
@@ -17,12 +30,6 @@
     "source.fixAll.convertImportFormat": true,
     "source.organizeImports": true,
   },
-  "files.insertFinalNewline": true,
-  "trailing-spaces.includeEmptyLines": true,
-  "trailing-spaces.trimOnSave": true,
-  "trailing-spaces.syntaxIgnore": [
-    "markdown"
-  ],
   "emeraldwalk.runonsave": {
     "commands": [
       {
@@ -36,9 +43,7 @@
     ]
   },
   "files.associations": {
-    "*.json": "json",
-    "extensions.json": "jsonc",
-    "settings.json": "jsonc",
+    ".flake8": "properties",
     "*.qrc": "xml",
     "*.ui": "xml"
   },
@@ -50,11 +55,10 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "build": true,
-    ".mypy_cache": true,
+    "**/.mypy_cache": true,
     "**/__pycache__": true,
   },
   "search.exclude": {
-    "**/bower_components": true,
     "**/*.code-search": true,
     "*.lock": true,
   },
@@ -70,8 +74,12 @@
       120, // Our hard rule
     ],
   },
-  "python.formatting.provider": "autopep8",
+  // Important to follow the config in pyrightconfig.json
+  "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
+  "python.formatting.provider": "autopep8",
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
   "python.linting.enabled": true,
   // Use the new Pylint extension instead
   "python.linting.pylintEnabled": false,
