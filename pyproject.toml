@@ -12,6 +12,8 @@ ignore = [
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
+# Prefer `pyright: ignore`
+enableTypeIgnoreComments = false
 # Extra strict
 reportImplicitStringConcatenation = "error"
 reportCallInDefaultInitializer = "error"
@@ -21,7 +23,7 @@ reportUninitializedInstanceVariable = "error"
 reportUnnecessaryTypeIgnoreComment = "error"
 # Exclude from scanning when running pyright
 exclude = [
-  # Auto generated, produces unecessary `# type: ignore`
+  # Auto generated, fails some strict pyright checks
   "src/gen/",
 ]
 # Ignore must be specified for Pylance to stop displaying errors

@@ -97,7 +97,6 @@ jobs:
         uses: jakebailey/pyright-action@v1
         with:
           working-directory: src/
-          extra-args: --warnings
   Pylint:
     runs-on: windows-latest
     strategy:
