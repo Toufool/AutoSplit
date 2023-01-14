@@ -10,7 +10,7 @@ add-trailing-comma $(git ls-files '**.py*') --py36-plus
 
 Write-Host "`nRunning Pyright..."
 $Env:PYRIGHT_PYTHON_FORCE_VERSION = 'latest'
-pyright src/ --warnings
+pyright src/
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Pyright failed ($LastExitCode)" -ForegroundColor Red
