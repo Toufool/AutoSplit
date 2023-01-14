@@ -57,7 +57,7 @@ def split_image_directory_empty():
 
 def image_type(image: str):
     set_text_message(
-        f'"{image}" is not a valid image file, does not exist, '
+        f"{image!r} is not a valid image file, does not exist, "
         + "or the full image file path contains a special character.",
     )
 
@@ -89,11 +89,11 @@ def alignment_not_matched():
 
 
 def no_keyword_image(keyword: str):
-    set_text_message(f'Your split image folder does not contain an image with the keyword "{keyword}".')
+    set_text_message(f"Your split image folder does not contain an image with the keyword {keyword!r}.")
 
 
 def multiple_keyword_images(keyword: str):
-    set_text_message(f'Only one image with the keyword "{keyword}" is allowed.')
+    set_text_message(f"Only one image with the keyword {keyword!r} is allowed.")
 
 
 def reset_hotkey():
@@ -111,7 +111,7 @@ def invalid_settings():
 
 
 def invalid_hotkey(hotkey_name: str):
-    set_text_message(f'Invalid hotkey "{hotkey_name}"')
+    set_text_message(f"Invalid hotkey {hotkey_name!r}")
 
 
 def no_settings_file_on_open():

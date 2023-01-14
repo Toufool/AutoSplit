@@ -148,7 +148,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     if not autosplit.capture_method.check_selected_region_exists(autosplit):
         autosplit.live_image.setText(
             "Reload settings after opening"
-            + f'\n"{autosplit.settings_dict["captured_window_title"]}"'
+            + f"\n{autosplit.settings_dict['captured_window_title']!r}"
             + "\nto automatically load Capture Region",
         )
 
