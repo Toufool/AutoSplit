@@ -66,7 +66,7 @@ def send_command(autosplit: AutoSplit, command: Commands):
         _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
 
     else:
-        raise KeyError(f"'{command}' is not a valid LiveSplit.AutoSplitIntegration command")
+        raise KeyError(f"{command!r} is not a valid LiveSplit.AutoSplitIntegration command")
 
 
 def _unhook(hotkey_callback: Callable[[], None] | None):
