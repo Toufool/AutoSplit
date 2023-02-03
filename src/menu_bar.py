@@ -144,8 +144,24 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         except ValueError:
             return 0
 
+    def __enable_capture_device_if_its_selected_method(
+            self, selected_capture_method: str | CaptureMethodEnum | None = None,
+    ):
+        if selected_capture_method is None:
+            selected_capture_method = self.autosplit.settings_dict["capture_method"]
+        is_video_capture_device = selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
+        self.capture_device_combobox.setEnabled(is_video_capture_device)
+        if is_video_capture_device:
+            self.capture_device_combobox.setCurrentIndex(
+                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]),
+            )
+        else:
+            self.capture_device_combobox.setPlaceholderText('Select "Video Capture Device" above')
+            self.capture_device_combobox.setCurrentIndex(-1)
+
     def __capture_method_changed(self):
         selected_capture_method = CAPTURE_METHODS.get_method_by_index(self.capture_method_combobox.currentIndex())
+        self.__enable_capture_device_if_its_selected_method(selected_capture_method)
         change_capture_method(selected_capture_method, self.autosplit)
         return selected_capture_method
 
@@ -157,6 +173,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.autosplit.settings_dict["capture_device_name"] = capture_device.name
         self.autosplit.settings_dict["capture_device_id"] = capture_device.device_id
         if self.autosplit.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
+            # Re-initializes the VideoCaptureDeviceCaptureMethod
             change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE, self.autosplit)
 
     @fire_and_forget
@@ -171,10 +188,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
                 + (" (occupied)" if device.occupied else "")
                 for device in self.__video_capture_devices
             ])
-            self.capture_device_combobox.setEnabled(True)
-            self.capture_device_combobox.setCurrentIndex(
-                self.get_capture_device_index(self.autosplit.settings_dict["capture_device_id"]),
-            )
+            self.__enable_capture_device_if_its_selected_method()
         else:
             self.capture_device_combobox.setPlaceholderText("No device found.")
 
@@ -263,9 +277,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.capture_method_combobox.setCurrentIndex(
             CAPTURE_METHODS.get_index(autosplit.settings_dict["capture_method"]),
         )
-        self.capture_device_combobox.currentIndexChanged.connect(
-            lambda: self.__set_value("capture_device_id", self.__capture_device_changed()),
-        )
+        # No self.capture_device_combobox.setCurrentIndex
+        # It'll set itself asynchronously in self.__set_all_capture_devices()
 
         # Image Settings
         self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
