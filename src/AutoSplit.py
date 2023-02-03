@@ -517,6 +517,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             self.gui_changes_on_reset(True)
             return
 
+        # Initialize a few attributes
+        self.run_start_time = time()
+        self.split_image_number = 0
+        self.waiting_for_split_delay = False
+        self.split_below_threshold = False
+        split_time = 0
+        number_of_split_images = len(self.split_images_and_loop_number)
+        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
+
         # Construct a list of images + loop count tuples.
         self.split_images_and_loop_number = [
             item for flattenlist
@@ -544,15 +553,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         # Start pause time
         if self.start_image:
             self.__pause_loop(self.start_image.get_pause_time(self), "None (Paused).")
-
-        # Initialize a few attributes
-        self.split_image_number = 0
-        self.waiting_for_split_delay = False
-        self.split_below_threshold = False
-        split_time = 0
-        number_of_split_images = len(self.split_images_and_loop_number)
-        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
-        self.run_start_time = time()
 
         # First loop: stays in this loop until all of the split images have been split
         while self.split_image_number < number_of_split_images:
