@@ -513,18 +513,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             error_messages.split_hotkey()
             return
 
+        # Set start time before parsing the images as it's a heavy operation that will cause delays
+        self.run_start_time = time()
+
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
             self.gui_changes_on_reset(True)
             return
-
-        # Initialize a few attributes
-        self.run_start_time = time()
-        self.split_image_number = 0
-        self.waiting_for_split_delay = False
-        self.split_below_threshold = False
-        split_time = 0
-        number_of_split_images = len(self.split_images_and_loop_number)
-        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
 
         # Construct a list of images + loop count tuples.
         self.split_images_and_loop_number = [
@@ -553,6 +547,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         # Start pause time
         if self.start_image:
             self.__pause_loop(self.start_image.get_pause_time(self), "None (Paused).")
+
+        # Initialize a few attributes
+        self.split_image_number = 0
+        self.waiting_for_split_delay = False
+        self.split_below_threshold = False
+        split_time = 0
+        number_of_split_images = len(self.split_images_and_loop_number)
+        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
 
         # First loop: stays in this loop until all of the split images have been split
         while self.split_image_number < number_of_split_images:
@@ -618,6 +620,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 return
 
         # loop breaks to here when the last image splits
+        self.is_running = False
         self.gui_changes_on_reset(True)
 
     def __similarity_threshold_loop(self, number_of_split_images: int, dummy_splits_array: list[bool]):
