@@ -17,7 +17,7 @@ If (-not $GITHUB_REPOSITORY) {
   $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
 }
 If (-not $GITHUB_REPOSITORY) {
-  $GITHUB_REPOSITORY = 'Toufool/Auto-Split'
+  $GITHUB_REPOSITORY = 'Toufool/AutoSplit'
 }
 
 New-Item $build_vars_path -ItemType File -Force | Out-Null

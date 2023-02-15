@@ -217,7 +217,7 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
     async def get_camera_info(index: int, device_name: str):
         backend = ""
         # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use
-        # https://github.com/Toufool/Auto-Split/issues/169
+        # #169
         # FIXME: Maybe offer the option to the user to obtain more info about their devies?
         #        Off by default. With a tooltip to explain the risk.
         # video_capture = cv2.VideoCapture(index)
