@@ -68,15 +68,15 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
 
 #### Capture Method
 
-- **BitBlt** (fastest, least compatible)  
-    A good default fast option. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
-    The smaller the selected region, the more efficient it is.  
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
     Due to current technical limitations, Windows versions below 10.0.0.17763 require having at least one audio or video Capture Device connected and enabled.
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
     Adds a yellow border on Windows 10 (not on Windows 11).
     Caps at around 60 FPS.  
+- **BitBlt** (fastest, least compatible)  
+    The best option when compatible. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
+    The smaller the selected region, the more efficient it is.  
 - **Direct3D Desktop Duplication** (slower, bound to display)  
     Duplicates the desktop using Direct3D.  
     It can record OpenGL and Hardware Accelerated windows.  
