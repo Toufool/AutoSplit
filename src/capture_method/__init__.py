@@ -118,17 +118,6 @@ NONE_CAPTURE_METHOD = CaptureMethodInfo(
 )
 
 CAPTURE_METHODS = CaptureMethodDict()
-CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
-    name="BitBlt",
-    short_description="fastest, least compatible",
-    description=(
-        "\nA good default fast option. But it cannot properly record "
-        "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-        "\nThe smaller the selected region, the more efficient it is. "
-    ),
-
-    implementation=BitBltCaptureMethod,
-)
 if (  # Windows Graphics Capture requires a minimum Windows Build
     WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
     # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
@@ -147,6 +136,17 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
         ),
         implementation=WindowsGraphicsCaptureMethod,
     )
+CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
+    name="BitBlt",
+    short_description="fastest, least compatible",
+    description=(
+        "\nThe best option when compatible. But it cannot properly record "
+        "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
+        "\nThe smaller the selected region, the more efficient it is. "
+    ),
+
+    implementation=BitBltCaptureMethod,
+)
 CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
     name="Direct3D Desktop Duplication",
     short_description="slower, bound to display",
