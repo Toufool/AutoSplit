@@ -14,7 +14,7 @@ import user_profile
 from capture_method import (
     CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method, get_all_video_capture_devices,
 )
-from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa F401
+from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import (
     AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal, fire_and_forget,
@@ -211,7 +211,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         # HACK: This is a workaround because custom_image_settings_info_label
         # simply will not open links with a left click no matter what we tried.
         self.readme_link_button.clicked.connect(
-            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
+            # PyQt6 typing is wrong
+            lambda: webbrowser.open(  # pyright: ignore[reportGeneralTypeIssues]
+                f"https://github.com/{GITHUB_REPOSITORY}#readme",
+            ),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 

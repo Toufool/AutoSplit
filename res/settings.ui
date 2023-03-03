@@ -208,7 +208,7 @@ This is a great method to use if you are using several masked images.
 Perceptual Hash:
 An explanation on pHash comparison can be found here
 http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
-It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.</string>
+It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.</string>
     </property>
     <item>
      <property name="text">

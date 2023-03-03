@@ -19,6 +19,8 @@ This program can be used to automatically start, split, and reset your preferred
 ## DOWNLOAD AND OPEN
 
 - Download the [latest version](/../../releases/latest)
+- You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
+<!-- (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev)) -->
 
 ### Compatibility
 
@@ -64,7 +66,7 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
   - L2 Norm: This method should be fine to use for most cases. It finds the difference between each pixel, squares it, sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
     > This algorithm is particular reliable when the colour is a strong predictor of the object identity. The histogram intersection [...] is robust to occluding objects in the foreground.
-  - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images. It is very inaccurate.
+  - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.
 
 #### Capture Method
 
@@ -82,12 +84,11 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
     It can record OpenGL and Hardware Accelerated windows.  
     About 10-15x slower than BitBlt. Not affected by window size.  
     overlapping windows will show up and can't record across displays.  
-- **Force Full Content Rendering** (very slow, can affect rendering pipeline)  
+- **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
 - **Video Capture Device**
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
-    There are currently performance issues, but it might be more convenient.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 #### Capture Device
@@ -173,7 +174,7 @@ If this option is disabled, when the reset hotkey is hit, the reset button is pr
 
 ### How to Create a Masked Image
 
-Masked images are very useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, as it is very inaccurate.
+Masked images are very useful if only a certain part of the capture region is consistent (for example, consistent text on the screen, but the background is always different). Histogram or L2 norm comparison is recommended if you use any masked images. It is highly recommended that you do NOT use pHash comparison if you use any masked images, or it'll be very inaccurate.
 
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
@@ -230,7 +231,8 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 Still need help?
 
 - [Open an issue](../../issues)
-- Join the [AutoSplit Discord](https://discord.gg/Qcbxv9y)
+- Join the [AutoSplit Discord  
+![AutoSplit Discord](https://badgen.net/discord/members/Qcbxv9y)](https://discord.gg/Qcbxv9y)
 
 ## Credits
 
