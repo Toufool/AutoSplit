@@ -149,8 +149,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         self.action_about_qt_for_python.triggered.connect(about_qt_for_python)
         self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
         self.action_settings.triggered.connect(lambda: open_settings(self))
-        self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
-        self.action_save_profile_as.triggered.connect(lambda: user_profile.save_settings_as(self))
+        # PyQt6 typing is wrong
+        self.action_save_profile.triggered.connect(
+            lambda: user_profile.save_settings(self),  # pyright: ignore[reportGeneralTypeIssues]
+        )
+        self.action_save_profile_as.triggered.connect(
+            lambda: user_profile.save_settings_as(self),  # pyright: ignore[reportGeneralTypeIssues]
+        )
         self.action_load_profile.triggered.connect(lambda: user_profile.load_settings(self))
 
         # Shortcut context can't be set through the designer because of a bug in pyuic6 that generates invalid code

@@ -211,7 +211,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         # HACK: This is a workaround because custom_image_settings_info_label
         # simply will not open links with a left click no matter what we tried.
         self.readme_link_button.clicked.connect(
-            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
+            # PyQt6 typing is wrong
+            lambda: webbrowser.open(  # pyright: ignore[reportGeneralTypeIssues]
+                f"https://github.com/{GITHUB_REPOSITORY}#readme",
+            ),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 

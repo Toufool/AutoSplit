@@ -45,11 +45,10 @@ class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
     def __contains__(self, other: str):
         try:
-            self(other)  # pyright: ignore [reportGeneralTypeIssues] pylint: disable=no-value-for-parameter
+            self(other)  # pylint: disable=no-value-for-parameter
         except ValueError:
             return False
-        else:
-            return True
+        return True
 
 
 @unique
@@ -222,7 +221,7 @@ def get_input_device_resolution(index: int):
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    named_video_inputs = FilterGraph().get_input_devices()
+    named_video_inputs: list[str] = FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
