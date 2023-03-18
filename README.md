@@ -82,6 +82,7 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
     It can record OpenGL and Hardware Accelerated windows.  
     About 10-15x slower than BitBlt. Not affected by window size.  
     overlapping windows will show up and can't record across displays.  
+    This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/D3DDD-Note-Laptops.md) for a solution.
 - **Force Full Content Rendering** (very slow, can affect rendering pipeline)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  

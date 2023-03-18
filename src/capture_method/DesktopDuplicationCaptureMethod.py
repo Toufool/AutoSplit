@@ -14,10 +14,13 @@ from utils import get_window_bounds
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-desktop_duplication = d3dshot.create(capture_output="numpy")
-
 
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=too-few-public-methods
+    def __init__(self):
+        super().__init__()
+        # Must not set statically as some laptops will throw an error
+        self.desktop_duplication = d3dshot.create(capture_output="numpy")
+
     def get_frame(self, autosplit: AutoSplit):
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
@@ -26,19 +29,19 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=t
             return None, False
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-        desktop_duplication.display = [
+        self.desktop_duplication.display = [
             display for display
-            in desktop_duplication.displays
+            in self.desktop_duplication.displays
             if display.hmonitor == hmonitor
         ][0]
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
-        offset_x -= desktop_duplication.display.position["left"]
-        offset_y -= desktop_duplication.display.position["top"]
+        offset_x -= self.desktop_duplication.display.position["left"]
+        offset_y -= self.desktop_duplication.display.position["top"]
         left = selection["x"] + offset_x + left_bounds
         top = selection["y"] + offset_y + top_bounds
         right = selection["width"] + left
         bottom = selection["height"] + top
-        screenshot = desktop_duplication.screenshot((left, top, right, bottom))
+        screenshot = self.desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None, False
         return cv2.cvtColor(cast(cv2.Mat, screenshot), cv2.COLOR_RGBA2BGRA), False
