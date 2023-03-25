@@ -4,6 +4,7 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING
 
 import cv2
+import numpy as np
 from pygrabber import dshow_graph
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -13,26 +14,22 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-OBS_CAMERA_BLANK = [127, 129, 128]
+OBS_CAMERA_BLANK_PIXEL = [127, 129, 128]
 
 
 def is_blank(image: cv2.Mat):
-    # Running np.all on the entire array is extremely slow.
-    # Because it always converts the entire array to boolean first
-    # So instead we loop manually to stop early.
-    for row in image:
-        for pixel in row:
-            if all(pixel != OBS_CAMERA_BLANK):
-                return False
-    return True
+    # Running np.all on the entire array or looping manually through the
+    # entire array is extremely slow when we can't stop early.
+    # Instead we check for a few key pixels, in this case, corners
+    return np.all(image[::image.shape[0] - 1, ::image.shape[1] - 1] == OBS_CAMERA_BLANK_PIXEL)
 
 
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
+    stop_thread: Event
     last_captured_frame: cv2.Mat | None = None
     is_old_image = False
-    stop_thread = Event()
 
     def __read_loop(self, autosplit: AutoSplit):
         try:
