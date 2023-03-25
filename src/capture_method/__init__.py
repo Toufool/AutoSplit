@@ -160,7 +160,7 @@ CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
 )
 CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethodInfo(
     name="Force Full Content Rendering",
-    short_description="very slow, can affect rendering pipeline",
+    short_description="very slow, can affect rendering",
     description=(
         "\nUses BitBlt behind the scene, but passes a special flag "
         "\nto PrintWindow to force rendering the entire desktop. "
@@ -175,7 +175,6 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = CaptureMethodInfo(
     description=(
         "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
         "\nYou can select one below. "
-        "\nThere are currently performance issues, but it might be more convenient. "
         "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
         "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
     ),
@@ -212,7 +211,8 @@ def get_input_device_resolution(index: int):
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    named_video_inputs = FilterGraph().get_input_devices()
+    # TODO: Fix partially Unknown list upstream
+    named_video_inputs: list[str] = FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""

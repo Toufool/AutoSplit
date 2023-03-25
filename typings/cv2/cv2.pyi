@@ -1,219 +1,232 @@
 from collections.abc import Sequence
-from typing import Any, ClassVar, TypeVar, Union, overload  # noqa: Y037
+from typing import ClassVar, Union, overload
 
+from _typeshed import Incomplete
 from cv2 import Mat, _MatF
 from cv2.gapi.streaming import queue_capacity
 from typing_extensions import TypeAlias
 
 # Y047 & Y018 (Unused TypeAlias and TypeVar): Helper types reused everywhere.
-# The noqa comments won't be necessary as types in this module are completed
+# The noqa comments won't be necessary when types in this module are more complete and use the aliases
 
 # Function argument types
+# Convertable to boolean
+_Boolean: TypeAlias = bool | int | None
+# "a scalar"
 _NumericScalar: TypeAlias = float | bool | None
+# cv::Scalar
 _Scalar: TypeAlias = Mat | _NumericScalar | Sequence[_NumericScalar]
-_Point: TypeAlias = Union[tuple[int, int], Sequence[int]]  # noqa: Y047
-_Size: TypeAlias = Union[tuple[int, int], Sequence[int]]  # noqa: Y047
-_Range: TypeAlias = Union[tuple[int, int], Sequence[int]]  # noqa: Y047
-_PointFloat: TypeAlias = Union[tuple[float, float], Sequence[float]]  # noqa: Y047
-_SizeFloat: TypeAlias = Union[tuple[float, float], Sequence[float]]  # noqa: Y047
-_Rect: TypeAlias = Union[tuple[int, int, int, int], Sequence[int]]  # noqa: Y047
-_Boolean: TypeAlias = bool | int | None  # noqa: Y047
-# _UMat also covers InputArray and InputOutputArray
-_UMat: TypeAlias = UMat | Mat | _NumericScalar
-_UMatF: TypeAlias = UMat | _MatF | _NumericScalar
-
-_TUMat = TypeVar("_TUMat", bound=_UMat)  # noqa: Y018
-_TUMatF = TypeVar("_TUMatF", bound=_UMatF)  # noqa: Y018
+# cv::TermCriteria
+_TermCriteria: TypeAlias = Union[tuple[int, int, float], Sequence[float]]  # noqa: Y047
+# cv::Point<int>
+_Point: TypeAlias = Union[tuple[int, int], Sequence[int]]
+# cv::Size<int>
+_Size: TypeAlias = Union[tuple[int, int], Sequence[int]]
+# cv::Range<int>
+_Range: TypeAlias = Union[tuple[int, int], Sequence[int]]
+# cv::Point<float>
+_PointFloat: TypeAlias = Union[tuple[float, float], Sequence[float]]
+# cv::Size<float>
+_SizeFloat: TypeAlias = Union[tuple[float, float], Sequence[float]]
+# cv::Rect<int>
+_Rect: TypeAlias = Union[tuple[int, int, int, int], Sequence[int]]
+# cv::Rect<float>
+_RectFloat: TypeAlias = Union[tuple[int, int, int, int], Sequence[int]]  # noqa: Y047
+# cv::RotatedRect
+_RotatedRect: TypeAlias = Union[tuple[_PointFloat, _SizeFloat, float], Sequence[_PointFloat | _SizeFloat | float]]  # noqa: Y047
+_RotatedRectResult: TypeAlias = tuple[tuple[float, float], tuple[float, float], float]
+# cv:UMat, cv::InputArray, cv::OutputArray and cv::InputOutputArray
+_UMat: TypeAlias = UMat | _MatF | _NumericScalar
 
 # TODO: Complete types until all the aliases below are gone!
 # These are temporary placeholder return types, as were in the docstrings signatures from microsoft/python-type-stubs
-# This is often (but not always) sign a TypeVar should be used to return the same type as a param.
+# This is often (but not always) a sign that a TypeVar should be used to return the same type as a param.
 # retval is equivalent to Unknown
-_flow: TypeAlias = Any  # noqa: Y042
-_image: TypeAlias = Any  # noqa: Y042
-_edgeList: TypeAlias = Any  # noqa: Y042
-_leadingEdgeList: TypeAlias = Any  # noqa: Y042
-_triangleList: TypeAlias = Any  # noqa: Y042
-_matches_info: TypeAlias = Any  # noqa: Y042
-_arg3: TypeAlias = Any  # noqa: Y042
-_outputBlobs: TypeAlias = Any  # noqa: Y042
-_layersTypes: TypeAlias = Any  # noqa: Y042
-_detections: TypeAlias = Any  # noqa: Y042
-_results: TypeAlias = Any  # noqa: Y042
-_corners: TypeAlias = Any  # noqa: Y042
-_pts: TypeAlias = Any  # noqa: Y042
-_dst: TypeAlias = Any  # noqa: Y042
-_markers: TypeAlias = Any  # noqa: Y042
-_masks: TypeAlias = Any  # noqa: Y042
-_window: TypeAlias = Any  # noqa: Y042
-_edges: TypeAlias = Any  # noqa: Y042
-_lowerBound: TypeAlias = Any  # noqa: Y042
-_circles: TypeAlias = Any  # noqa: Y042
-_lines: TypeAlias = Any  # noqa: Y042
-_hu: TypeAlias = Any  # noqa: Y042
-_points2f: TypeAlias = Any  # noqa: Y042
-_keypoints: TypeAlias = Any  # noqa: Y042
-_mean: TypeAlias = Any  # noqa: Y042
-_eigenvectors: TypeAlias = Any  # noqa: Y042
-_eigenvalues: TypeAlias = Any  # noqa: Y042
-_result: TypeAlias = Any  # noqa: Y042
-_mtxR: TypeAlias = Any  # noqa: Y042
-_mtxQ: TypeAlias = Any  # noqa: Y042
-_Qx: TypeAlias = Any  # noqa: Y042
-_Qy: TypeAlias = Any  # noqa: Y042
-_Qz: TypeAlias = Any  # noqa: Y042
-_jacobian: TypeAlias = Any  # noqa: Y042
-_w: TypeAlias = Any  # noqa: Y042
-_u: TypeAlias = Any  # noqa: Y042
-_vt: TypeAlias = Any  # noqa: Y042
-_approxCurve: TypeAlias = Any  # noqa: Y042
-_img: TypeAlias = Any  # noqa: Y042
-_dist: TypeAlias = Any  # noqa: Y042
-_nidx: TypeAlias = Any  # noqa: Y042
-_points: TypeAlias = Any  # noqa: Y042
-_pyramid: TypeAlias = Any  # noqa: Y042
-_covar: TypeAlias = Any  # noqa: Y042
-_nextPts: TypeAlias = Any  # noqa: Y042
-_status: TypeAlias = Any  # noqa: Y042
-_err: TypeAlias = Any  # noqa: Y042
-_cameraMatrix: TypeAlias = Any  # noqa: Y042
-_distCoeffs: TypeAlias = Any  # noqa: Y042
-_rvecs: TypeAlias = Any  # noqa: Y042
-_tvecs: TypeAlias = Any  # noqa: Y042
-_stdDeviationsIntrinsics: TypeAlias = Any  # noqa: Y042
-_stdDeviationsExtrinsics: TypeAlias = Any  # noqa: Y042
-_perViewErrors: TypeAlias = Any  # noqa: Y042
-_newObjPoints: TypeAlias = Any  # noqa: Y042
-_stdDeviationsObjPoints: TypeAlias = Any  # noqa: Y042
-_R_cam2gripper: TypeAlias = Any  # noqa: Y042
-_t_cam2gripper: TypeAlias = Any  # noqa: Y042
-_fovx: TypeAlias = Any  # noqa: Y042
-_fovy: TypeAlias = Any  # noqa: Y042
-_focalLength: TypeAlias = Any  # noqa: Y042
-_principalPoint: TypeAlias = Any  # noqa: Y042
-_aspectRatio: TypeAlias = Any  # noqa: Y042
-_magnitude: TypeAlias = Any  # noqa: Y042
-_angle: TypeAlias = Any  # noqa: Y042
-_pt1: TypeAlias = Any  # noqa: Y042
-_pt2: TypeAlias = Any  # noqa: Y042
-_pos: TypeAlias = Any  # noqa: Y042
-_m: TypeAlias = Any  # noqa: Y042
-_rvec3: TypeAlias = Any  # noqa: Y042
-_tvec3: TypeAlias = Any  # noqa: Y042
-_dr3dr1: TypeAlias = Any  # noqa: Y042
-_dr3dt1: TypeAlias = Any  # noqa: Y042
-_dr3dr2: TypeAlias = Any  # noqa: Y042
-_dr3dt2: TypeAlias = Any  # noqa: Y042
-_dt3dr1: TypeAlias = Any  # noqa: Y042
-_dt3dt1: TypeAlias = Any  # noqa: Y042
-_dt3dr2: TypeAlias = Any  # noqa: Y042
-_dt3dt2: TypeAlias = Any  # noqa: Y042
-_labels: TypeAlias = Any  # noqa: Y042
-_stats: TypeAlias = Any  # noqa: Y042
-_centroids: TypeAlias = Any  # noqa: Y042
-_dstmap1: TypeAlias = Any  # noqa: Y042
-_dstmap2: TypeAlias = Any  # noqa: Y042
-_hull: TypeAlias = Any  # noqa: Y042
-_convexityDefects: TypeAlias = Any  # noqa: Y042
-_newPoints1: TypeAlias = Any  # noqa: Y042
-_newPoints2: TypeAlias = Any  # noqa: Y042
-_grayscale: TypeAlias = Any  # noqa: Y042
-_color_boost: TypeAlias = Any  # noqa: Y042
-_R1: TypeAlias = Any  # noqa: Y042
-_R2: TypeAlias = Any  # noqa: Y042
-_t: TypeAlias = Any  # noqa: Y042
-_rotations: TypeAlias = Any  # noqa: Y042
-_translations: TypeAlias = Any  # noqa: Y042
-_normals: TypeAlias = Any  # noqa: Y042
-_rotMatrix: TypeAlias = Any  # noqa: Y042
-_transVect: TypeAlias = Any  # noqa: Y042
-_rotMatrixX: TypeAlias = Any  # noqa: Y042
-_rotMatrixY: TypeAlias = Any  # noqa: Y042
-_rotMatrixZ: TypeAlias = Any  # noqa: Y042
-_eulerAngles: TypeAlias = Any  # noqa: Y042
-_outImage: TypeAlias = Any  # noqa: Y042
-_outImg: TypeAlias = Any  # noqa: Y042
-_inliers: TypeAlias = Any  # noqa: Y042
-_out: TypeAlias = Any  # noqa: Y042
-_sharpness: TypeAlias = Any  # noqa: Y042
-_possibleSolutions: TypeAlias = Any  # noqa: Y042
-_buf: TypeAlias = Any  # noqa: Y042
-_meta: TypeAlias = Any  # noqa: Y042
-_centers: TypeAlias = Any  # noqa: Y042
-_contours: TypeAlias = Any  # noqa: Y042
-_hierarchy: TypeAlias = Any  # noqa: Y042
-_mask: TypeAlias = Any  # noqa: Y042
-_idx: TypeAlias = Any  # noqa: Y042
-_warpMatrix: TypeAlias = Any  # noqa: Y042
-_line: TypeAlias = Any  # noqa: Y042
-_rect: TypeAlias = Any  # noqa: Y042
-_kx: TypeAlias = Any  # noqa: Y042
-_ky: TypeAlias = Any  # noqa: Y042
-_validPixROI: TypeAlias = Any  # noqa: Y042
-_patch: TypeAlias = Any  # noqa: Y042
-_baseLine: TypeAlias = Any  # noqa: Y042
-_bgdModel: TypeAlias = Any  # noqa: Y042
-_fgdModel: TypeAlias = Any  # noqa: Y042
-_rectList: TypeAlias = Any  # noqa: Y042
-_weights: TypeAlias = Any  # noqa: Y042
-_mats: TypeAlias = Any  # noqa: Y042
-_map1: TypeAlias = Any  # noqa: Y042
-_map2: TypeAlias = Any  # noqa: Y042
-_sum: TypeAlias = Any  # noqa: Y042
-_sqsum: TypeAlias = Any  # noqa: Y042
-_tilted: TypeAlias = Any  # noqa: Y042
-_p12: TypeAlias = Any  # noqa: Y042
-_iM: TypeAlias = Any  # noqa: Y042
-_bestLabels: TypeAlias = Any  # noqa: Y042
-_dABdA: TypeAlias = Any  # noqa: Y042
-_dABdB: TypeAlias = Any  # noqa: Y042
-_stddev: TypeAlias = Any  # noqa: Y042
-_center: TypeAlias = Any  # noqa: Y042
-_radius: TypeAlias = Any  # noqa: Y042
-_triangle: TypeAlias = Any  # noqa: Y042
-_c: TypeAlias = Any  # noqa: Y042
-_a: TypeAlias = Any  # noqa: Y042
-_dst1: TypeAlias = Any  # noqa: Y042
-_dst2: TypeAlias = Any  # noqa: Y042
-_response: TypeAlias = Any  # noqa: Y042
-_x: TypeAlias = Any  # noqa: Y042
-_y: TypeAlias = Any  # noqa: Y042
-_imagePoints: TypeAlias = Any  # noqa: Y042
-_R: TypeAlias = Any  # noqa: Y042
-_R3: TypeAlias = Any  # noqa: Y042
-_P1: TypeAlias = Any  # noqa: Y042
-_P2: TypeAlias = Any  # noqa: Y042
-_P3: TypeAlias = Any  # noqa: Y042
-_Q: TypeAlias = Any  # noqa: Y042
-_roi1: TypeAlias = Any  # noqa: Y042
-_roi2: TypeAlias = Any  # noqa: Y042
-_3dImage: TypeAlias = Any  # noqa: Y042
-_intersectingRegion: TypeAlias = Any  # noqa: Y042
-_blend: TypeAlias = Any  # noqa: Y042
-_boundingBoxes: TypeAlias = Any  # noqa: Y042
-_mtx: TypeAlias = Any  # noqa: Y042
-_roots: TypeAlias = Any  # noqa: Y042
-_z: TypeAlias = Any  # noqa: Y042
-_rvec: TypeAlias = Any  # noqa: Y042
-_tvec: TypeAlias = Any  # noqa: Y042
-_reprojectionError: TypeAlias = Any  # noqa: Y042
-_dx: TypeAlias = Any  # noqa: Y042
-_dy: TypeAlias = Any  # noqa: Y042
-_mv: TypeAlias = Any  # noqa: Y042
-_cameraMatrix1: TypeAlias = Any  # noqa: Y042
-_distCoeffs1: TypeAlias = Any  # noqa: Y042
-_cameraMatrix2: TypeAlias = Any  # noqa: Y042
-_distCoeffs2: TypeAlias = Any  # noqa: Y042
-_T: TypeAlias = Any  # noqa: Y042
-_E: TypeAlias = Any  # noqa: Y042
-_F: TypeAlias = Any  # noqa: Y042
-_validPixROI1: TypeAlias = Any  # noqa: Y042
-_validPixROI2: TypeAlias = Any  # noqa: Y042
-_H1: TypeAlias = Any  # noqa: Y042
-_H2: TypeAlias = Any  # noqa: Y042
-_points4D: TypeAlias = Any  # noqa: Y042
-_disparity: TypeAlias = Any  # noqa: Y042
-_triangulatedPoints: TypeAlias = Any  # noqa: Y042
+_flow: TypeAlias = Incomplete  # noqa: Y042
+_image: TypeAlias = Incomplete  # noqa: Y042
+_edgeList: TypeAlias = Incomplete  # noqa: Y042
+_leadingEdgeList: TypeAlias = Incomplete  # noqa: Y042
+_triangleList: TypeAlias = Incomplete  # noqa: Y042
+_matches_info: TypeAlias = Incomplete  # noqa: Y042
+_arg3: TypeAlias = Incomplete  # noqa: Y042
+_outputBlobs: TypeAlias = Incomplete  # noqa: Y042
+_layersTypes: TypeAlias = Incomplete  # noqa: Y042
+_detections: TypeAlias = Incomplete  # noqa: Y042
+_results: TypeAlias = Incomplete  # noqa: Y042
+_corners: TypeAlias = Incomplete  # noqa: Y042
+_pts: TypeAlias = Incomplete  # noqa: Y042
+_dst: TypeAlias = Incomplete  # noqa: Y042
+_markers: TypeAlias = Incomplete  # noqa: Y042
+_masks: TypeAlias = Incomplete  # noqa: Y042
+_window: TypeAlias = Incomplete  # noqa: Y042
+_edges: TypeAlias = Incomplete  # noqa: Y042
+_lowerBound: TypeAlias = Incomplete  # noqa: Y042
+_circles: TypeAlias = Incomplete  # noqa: Y042
+_lines: TypeAlias = Incomplete  # noqa: Y042
+_hu: TypeAlias = Incomplete  # noqa: Y042
+_points2f: TypeAlias = Incomplete  # noqa: Y042
+_keypoints: TypeAlias = Incomplete  # noqa: Y042
+_mean: TypeAlias = Incomplete  # noqa: Y042
+_eigenvectors: TypeAlias = Incomplete  # noqa: Y042
+_eigenvalues: TypeAlias = Incomplete  # noqa: Y042
+_result: TypeAlias = Incomplete  # noqa: Y042
+_mtxR: TypeAlias = Incomplete  # noqa: Y042
+_mtxQ: TypeAlias = Incomplete  # noqa: Y042
+_Qx: TypeAlias = Incomplete
+_Qy: TypeAlias = Incomplete
+_Qz: TypeAlias = Incomplete
+_jacobian: TypeAlias = Incomplete  # noqa: Y042
+_w: TypeAlias = Incomplete  # noqa: Y042
+_u: TypeAlias = Incomplete  # noqa: Y042
+_vt: TypeAlias = Incomplete  # noqa: Y042
+_approxCurve: TypeAlias = Incomplete  # noqa: Y042
+_img: TypeAlias = Incomplete  # noqa: Y042
+_dist: TypeAlias = Incomplete  # noqa: Y042
+_nidx: TypeAlias = Incomplete  # noqa: Y042
+_points: TypeAlias = Incomplete  # noqa: Y042
+_pyramid: TypeAlias = Incomplete  # noqa: Y042
+_covar: TypeAlias = Incomplete  # noqa: Y042
+_nextPts: TypeAlias = Incomplete  # noqa: Y042
+_status: TypeAlias = Incomplete  # noqa: Y042
+_err: TypeAlias = Incomplete  # noqa: Y042
+_cameraMatrix: TypeAlias = Incomplete  # noqa: Y042
+_distCoeffs: TypeAlias = Incomplete  # noqa: Y042
+_rvecs: TypeAlias = Incomplete  # noqa: Y042
+_tvecs: TypeAlias = Incomplete  # noqa: Y042
+_stdDeviationsIntrinsics: TypeAlias = Incomplete  # noqa: Y042
+_stdDeviationsExtrinsics: TypeAlias = Incomplete  # noqa: Y042
+_perViewErrors: TypeAlias = Incomplete  # noqa: Y042
+_newObjPoints: TypeAlias = Incomplete  # noqa: Y042
+_stdDeviationsObjPoints: TypeAlias = Incomplete  # noqa: Y042
+_R_cam2gripper: TypeAlias = Incomplete
+_t_cam2gripper: TypeAlias = Incomplete  # noqa: Y042
+_fovx: TypeAlias = Incomplete  # noqa: Y042
+_fovy: TypeAlias = Incomplete  # noqa: Y042
+_focalLength: TypeAlias = Incomplete  # noqa: Y042
+_principalPoint: TypeAlias = Incomplete  # noqa: Y042
+_aspectRatio: TypeAlias = Incomplete  # noqa: Y042
+_magnitude: TypeAlias = Incomplete  # noqa: Y042
+_angle: TypeAlias = Incomplete  # noqa: Y042
+_pt1: TypeAlias = Incomplete  # noqa: Y042
+_pt2: TypeAlias = Incomplete  # noqa: Y042
+_pos: TypeAlias = Incomplete  # noqa: Y042
+_m: TypeAlias = Incomplete  # noqa: Y042
+_rvec3: TypeAlias = Incomplete  # noqa: Y042
+_tvec3: TypeAlias = Incomplete  # noqa: Y042
+_dr3dr1: TypeAlias = Incomplete  # noqa: Y042
+_dr3dt1: TypeAlias = Incomplete  # noqa: Y042
+_dr3dr2: TypeAlias = Incomplete  # noqa: Y042
+_dr3dt2: TypeAlias = Incomplete  # noqa: Y042
+_dt3dr1: TypeAlias = Incomplete  # noqa: Y042
+_dt3dt1: TypeAlias = Incomplete  # noqa: Y042
+_dt3dr2: TypeAlias = Incomplete  # noqa: Y042
+_dt3dt2: TypeAlias = Incomplete  # noqa: Y042
+_labels: TypeAlias = Incomplete  # noqa: Y042
+_stats: TypeAlias = Incomplete  # noqa: Y042
+_centroids: TypeAlias = Incomplete  # noqa: Y042
+_dstmap1: TypeAlias = Incomplete  # noqa: Y042
+_dstmap2: TypeAlias = Incomplete  # noqa: Y042
+_hull: TypeAlias = Incomplete  # noqa: Y042
+_convexityDefects: TypeAlias = Incomplete  # noqa: Y042
+_newPoints1: TypeAlias = Incomplete  # noqa: Y042
+_newPoints2: TypeAlias = Incomplete  # noqa: Y042
+_grayscale: TypeAlias = Incomplete  # noqa: Y042
+_color_boost: TypeAlias = Incomplete  # noqa: Y042
+_R1: TypeAlias = Incomplete
+_R2: TypeAlias = Incomplete
+_t: TypeAlias = Incomplete  # noqa: Y042
+_rotations: TypeAlias = Incomplete  # noqa: Y042
+_translations: TypeAlias = Incomplete  # noqa: Y042
+_normals: TypeAlias = Incomplete  # noqa: Y042
+_rotMatrix: TypeAlias = Incomplete  # noqa: Y042
+_transVect: TypeAlias = Incomplete  # noqa: Y042
+_rotMatrixX: TypeAlias = Incomplete  # noqa: Y042
+_rotMatrixY: TypeAlias = Incomplete  # noqa: Y042
+_rotMatrixZ: TypeAlias = Incomplete  # noqa: Y042
+_eulerAngles: TypeAlias = Incomplete  # noqa: Y042
+_outImage: TypeAlias = Incomplete  # noqa: Y042
+_outImg: TypeAlias = Incomplete  # noqa: Y042
+_inliers: TypeAlias = Incomplete  # noqa: Y042
+_out: TypeAlias = Incomplete  # noqa: Y042
+_sharpness: TypeAlias = Incomplete  # noqa: Y042
+_possibleSolutions: TypeAlias = Incomplete  # noqa: Y042
+_buf: TypeAlias = Incomplete  # noqa: Y042
+_meta: TypeAlias = Incomplete  # noqa: Y042
+_centers: TypeAlias = Incomplete  # noqa: Y042
+_contours: TypeAlias = Incomplete  # noqa: Y042
+_hierarchy: TypeAlias = Incomplete  # noqa: Y042
+_mask: TypeAlias = Incomplete  # noqa: Y042
+_idx: TypeAlias = Incomplete  # noqa: Y042
+_warpMatrix: TypeAlias = Incomplete  # noqa: Y042
+_line: TypeAlias = Incomplete  # noqa: Y042
+_rect: TypeAlias = Incomplete  # noqa: Y042
+_kx: TypeAlias = Incomplete  # noqa: Y042
+_ky: TypeAlias = Incomplete  # noqa: Y042
+_validPixROI: TypeAlias = Incomplete  # noqa: Y042
+_patch: TypeAlias = Incomplete  # noqa: Y042
+_baseLine: TypeAlias = Incomplete  # noqa: Y042
+_bgdModel: TypeAlias = Incomplete  # noqa: Y042
+_fgdModel: TypeAlias = Incomplete  # noqa: Y042
+_rectList: TypeAlias = Incomplete  # noqa: Y042
+_weights: TypeAlias = Incomplete  # noqa: Y042
+_mats: TypeAlias = Incomplete  # noqa: Y042
+_map1: TypeAlias = Incomplete  # noqa: Y042
+_map2: TypeAlias = Incomplete  # noqa: Y042
+_sum: TypeAlias = Incomplete  # noqa: Y042
+_sqsum: TypeAlias = Incomplete  # noqa: Y042
+_tilted: TypeAlias = Incomplete  # noqa: Y042
+_p12: TypeAlias = Incomplete  # noqa: Y042
+_iM: TypeAlias = Incomplete  # noqa: Y042
+_bestLabels: TypeAlias = Incomplete  # noqa: Y042
+_dABdA: TypeAlias = Incomplete  # noqa: Y042
+_dABdB: TypeAlias = Incomplete  # noqa: Y042
+_stddev: TypeAlias = Incomplete  # noqa: Y042
+_center: TypeAlias = Incomplete  # noqa: Y042
+_radius: TypeAlias = Incomplete  # noqa: Y042
+_triangle: TypeAlias = Incomplete  # noqa: Y042
+_c: TypeAlias = Incomplete  # noqa: Y042
+_a: TypeAlias = Incomplete  # noqa: Y042
+_dst1: TypeAlias = Incomplete  # noqa: Y042
+_dst2: TypeAlias = Incomplete  # noqa: Y042
+_response: TypeAlias = Incomplete  # noqa: Y042
+_x: TypeAlias = Incomplete  # noqa: Y042
+_y: TypeAlias = Incomplete  # noqa: Y042
+_imagePoints: TypeAlias = Incomplete  # noqa: Y042
+_R: TypeAlias = Incomplete
+_R3: TypeAlias = Incomplete
+_P1: TypeAlias = Incomplete
+_P2: TypeAlias = Incomplete
+_P3: TypeAlias = Incomplete
+_Q: TypeAlias = Incomplete
+_roi1: TypeAlias = Incomplete  # noqa: Y042
+_roi2: TypeAlias = Incomplete  # noqa: Y042
+_3dImage: TypeAlias = Incomplete
+_intersectingRegion: TypeAlias = Incomplete  # noqa: Y042
+_blend: TypeAlias = Incomplete  # noqa: Y042
+_boundingBoxes: TypeAlias = Incomplete  # noqa: Y042
+_mtx: TypeAlias = Incomplete  # noqa: Y042
+_roots: TypeAlias = Incomplete  # noqa: Y042
+_z: TypeAlias = Incomplete  # noqa: Y042
+_rvec: TypeAlias = Incomplete  # noqa: Y042
+_tvec: TypeAlias = Incomplete  # noqa: Y042
+_reprojectionError: TypeAlias = Incomplete  # noqa: Y042
+_dx: TypeAlias = Incomplete  # noqa: Y042
+_dy: TypeAlias = Incomplete  # noqa: Y042
+_mv: TypeAlias = Incomplete  # noqa: Y042
+_cameraMatrix1: TypeAlias = Incomplete  # noqa: Y042
+_distCoeffs1: TypeAlias = Incomplete  # noqa: Y042
+_cameraMatrix2: TypeAlias = Incomplete  # noqa: Y042
+_distCoeffs2: TypeAlias = Incomplete  # noqa: Y042
+_T: TypeAlias = Incomplete
+_E: TypeAlias = Incomplete
+_F: TypeAlias = Incomplete
+_validPixROI1: TypeAlias = Incomplete  # noqa: Y042
+_validPixROI2: TypeAlias = Incomplete  # noqa: Y042
+_H1: TypeAlias = Incomplete
+_H2: TypeAlias = Incomplete
+_points4D: TypeAlias = Incomplete  # noqa: Y042
+_disparity: TypeAlias = Incomplete  # noqa: Y042
+_triangulatedPoints: TypeAlias = Incomplete  # noqa: Y042
 
 __version__: str
 
@@ -1835,7 +1848,7 @@ class AgastFeatureDetector(Feature2D):
 
 
 class Algorithm:
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+    def __init__(self, *args, **kwargs) -> None: ...
     def clear(self) -> None: ...
     def empty(self, *args, **kwargs): ...  # incomplete
     def getDefaultName(self, *args, **kwargs): ...  # incomplete
@@ -1845,12 +1858,10 @@ class Algorithm:
 
 
 class AlignExposures(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def process(self, src, dst, times, response) -> None: ...
 
 
 class AlignMTB(AlignExposures):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def calculateShift(self, *args, **kwargs): ...  # incomplete
     def computeBitmaps(self, *args, **kwargs): ...  # incomplete
     def getCut(self, *args, **kwargs): ...  # incomplete
@@ -1859,7 +1870,7 @@ class AlignMTB(AlignExposures):
     @overload
     def process(self, src, dst, times, response) -> None: ...
     @overload
-    def process(src, dst) -> None: ...
+    def process(self, src, dst) -> None: ...
     def setCut(self, value) -> None: ...
     def setExcludeRange(self, exclude_range) -> None: ...
     def setMaxBits(self, max_bits) -> None: ...
@@ -1875,7 +1886,7 @@ class AsyncArray:
 
 
 class BFMatcher(DescriptorMatcher):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+    def __init__(self, normType: int | None = ..., crossCheck: _Boolean = ...) -> None: ...
     def create(self, *args, **kwargs): ...  # incomplete
 
 
@@ -1913,13 +1924,11 @@ class BRISK(Feature2D):
 
 
 class BackgroundSubtractor(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def apply(self, *args, **kwargs): ...  # incomplete
     def getBackgroundImage(self, *args, **kwargs): ...  # incomplete
 
 
 class BackgroundSubtractorKNN(BackgroundSubtractor):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getDetectShadows(self, *args, **kwargs): ...  # incomplete
     def getDist2Threshold(self, *args, **kwargs): ...  # incomplete
     def getHistory(self, *args, **kwargs): ...  # incomplete
@@ -1937,7 +1946,6 @@ class BackgroundSubtractorKNN(BackgroundSubtractor):
 
 
 class BackgroundSubtractorMOG2(BackgroundSubtractor):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def apply(self, *args, **kwargs): ...  # incomplete
     def getBackgroundRatio(self, *args, **kwargs): ...  # incomplete
     def getComplexityReductionThreshold(self, *args, **kwargs): ...  # incomplete
@@ -1965,12 +1973,10 @@ class BackgroundSubtractorMOG2(BackgroundSubtractor):
     def setVarThresholdGen(self, varThresholdGen) -> None: ...
 
 
-class BaseCascadeClassifier(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+class BaseCascadeClassifier(Algorithm): ...
 
 
 class CLAHE(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def apply(self, *args, **kwargs): ...  # incomplete
     def collectGarbage(self) -> None: ...
     def getClipLimit(self, *args, **kwargs): ...  # incomplete
@@ -1980,12 +1986,10 @@ class CLAHE(Algorithm):
 
 
 class CalibrateCRF(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def process(self, *args, **kwargs): ...  # incomplete
 
 
 class CalibrateDebevec(CalibrateCRF):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getLambda(self, *args, **kwargs): ...  # incomplete
     def getRandom(self, *args, **kwargs): ...  # incomplete
     def getSamples(self, *args, **kwargs): ...  # incomplete
@@ -1995,7 +1999,6 @@ class CalibrateDebevec(CalibrateCRF):
 
 
 class CalibrateRobertson(CalibrateCRF):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getMaxIter(self, *args, **kwargs): ...  # incomplete
     def getRadiance(self, *args, **kwargs): ...  # incomplete
     def getThreshold(self, *args, **kwargs): ...  # incomplete
@@ -2018,26 +2021,25 @@ class CascadeClassifier:
 
 
 class CirclesGridFinderParameters:
-    convexHullFactor: Any
-    densityNeighborhoodSize: Any
-    edgeGain: Any
-    edgePenalty: Any
-    existingVertexGain: Any
-    keypointScale: Any
-    kmeansAttempts: Any
-    maxRectifiedDistance: Any
-    minDensity: Any
-    minDistanceToAddKeypoint: Any
-    minGraphConfidence: Any
-    minRNGEdgeSwitchDist: Any
-    squareSize: Any
-    vertexGain: Any
-    vertexPenalty: Any
+    convexHullFactor: Incomplete
+    densityNeighborhoodSize: Incomplete
+    edgeGain: Incomplete
+    edgePenalty: Incomplete
+    existingVertexGain: Incomplete
+    keypointScale: Incomplete
+    kmeansAttempts: Incomplete
+    maxRectifiedDistance: Incomplete
+    minDensity: Incomplete
+    minDistanceToAddKeypoint: Incomplete
+    minGraphConfidence: Incomplete
+    minRNGEdgeSwitchDist: Incomplete
+    squareSize: Incomplete
+    vertexGain: Incomplete
+    vertexPenalty: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class DISOpticalFlow(DenseOpticalFlow):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getFinestScale(self, *args, **kwargs): ...  # incomplete
     def getGradientDescentIterations(self, *args, **kwargs): ...  # incomplete
@@ -2062,21 +2064,19 @@ class DISOpticalFlow(DenseOpticalFlow):
 
 
 class DMatch:
-    distance: Any
-    imgIdx: Any
-    queryIdx: Any
-    trainIdx: Any
+    distance: Incomplete
+    imgIdx: Incomplete
+    queryIdx: Incomplete
+    trainIdx: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class DenseOpticalFlow(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def calc(self, I0, I1, flow) -> _flow: ...
     def collectGarbage(self) -> None: ...
 
 
 class DescriptorMatcher(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def add(self, descriptors) -> None: ...
     def clear(self) -> None: ...
     def clone(self, *args, **kwargs): ...  # incomplete
@@ -2115,7 +2115,6 @@ class FaceRecognizerSF:
 
 
 class FarnebackOpticalFlow(DenseOpticalFlow):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getFastPyramids(self, *args, **kwargs): ...  # incomplete
     def getFlags(self, *args, **kwargs): ...  # incomplete
@@ -2126,7 +2125,7 @@ class FarnebackOpticalFlow(DenseOpticalFlow):
     def getPyrScale(self, *args, **kwargs): ...  # incomplete
     def getWinSize(self, *args, **kwargs): ...  # incomplete
     def setFastPyramids(self, fastPyramids) -> None: ...
-    def setFlags(self, flags) -> None: ...
+    def setFlags(self, flags: int | None) -> None: ...
     def setNumIters(self, numIters) -> None: ...
     def setNumLevels(self, numLevels) -> None: ...
     def setPolyN(self, polyN) -> None: ...
@@ -2160,7 +2159,7 @@ class Feature2D:
     @overload
     def read(self, fileName) -> None: ...
     @overload
-    def read(arg1) -> None: ...
+    def read(self, arg1) -> None: ...
     def write(self, fileName) -> None: ...
 
 
@@ -2203,7 +2202,7 @@ class FileStorage:
 
 
 class FlannBasedMatcher(DescriptorMatcher):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+    def __init__(self, indexParams=..., searchParams=...) -> None: ...
     def create(self, *args, **kwargs): ...  # incomplete
 
 
@@ -2273,11 +2272,11 @@ class GMat:
 
 
 class GMatDesc:
-    chan: Any
-    depth: Any
-    dims: Any
-    planar: Any
-    size: Any
+    chan: Incomplete
+    depth: Incomplete
+    dims: Incomplete
+    planar: Incomplete
+    size: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def asInterleaved(self, *args, **kwargs): ...  # incomplete
     def asPlanar(self, *args, **kwargs): ...  # incomplete
@@ -2308,16 +2307,12 @@ class GStreamingCompiled:
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def pull(self, *args, **kwargs): ...  # incomplete
     def running(self, *args, **kwargs): ...  # incomplete
-    @overload
     def setSource(self, callback) -> None: ...
-    @overload
-    def setSource(self): ...
     def start(self) -> None: ...
     def stop(self) -> None: ...
 
 
 class GeneralizedHough(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def detect(self, *args, **kwargs): ...  # incomplete
     def getCannyHighThresh(self, *args, **kwargs): ...  # incomplete
     def getCannyLowThresh(self, *args, **kwargs): ...  # incomplete
@@ -2333,7 +2328,6 @@ class GeneralizedHough(Algorithm):
 
 
 class GeneralizedHoughBallard(GeneralizedHough):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getLevels(self, *args, **kwargs): ...  # incomplete
     def getVotesThreshold(self, *args, **kwargs): ...  # incomplete
     def setLevels(self, levels) -> None: ...
@@ -2341,7 +2335,6 @@ class GeneralizedHoughBallard(GeneralizedHough):
 
 
 class GeneralizedHoughGuil(GeneralizedHough):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getAngleEpsilon(self, *args, **kwargs): ...  # incomplete
     def getAngleStep(self, *args, **kwargs): ...  # incomplete
     def getAngleThresh(self, *args, **kwargs): ...  # incomplete
@@ -2369,19 +2362,19 @@ class GeneralizedHoughGuil(GeneralizedHough):
 
 
 class HOGDescriptor:
-    L2HysThreshold: Any
-    blockSize: Any
-    blockStride: Any
-    cellSize: Any
-    derivAperture: Any
-    gammaCorrection: Any
-    histogramNormType: Any
-    nbins: Any
-    nlevels: Any
-    signedGradient: Any
-    svmDetector: Any
-    winSigma: Any
-    winSize: Any
+    L2HysThreshold: Incomplete
+    blockSize: Incomplete
+    blockStride: Incomplete
+    cellSize: Incomplete
+    derivAperture: Incomplete
+    gammaCorrection: Incomplete
+    histogramNormType: Incomplete
+    nbins: Incomplete
+    nlevels: Incomplete
+    signedGradient: Incomplete
+    svmDetector: Incomplete
+    winSigma: Incomplete
+    winSize: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def checkDetectorSize(self, *args, **kwargs): ...  # incomplete
     def compute(self, *args, **kwargs): ...  # incomplete
@@ -2416,35 +2409,34 @@ class KAZE(Feature2D):
 
 
 class KalmanFilter:
-    controlMatrix: Any
-    errorCovPost: Any
-    errorCovPre: Any
-    gain: Any
-    measurementMatrix: Any
-    measurementNoiseCov: Any
-    processNoiseCov: Any
-    statePost: Any
-    statePre: Any
-    transitionMatrix: Any
+    controlMatrix: Incomplete
+    errorCovPost: Incomplete
+    errorCovPre: Incomplete
+    gain: Incomplete
+    measurementMatrix: Incomplete
+    measurementNoiseCov: Incomplete
+    processNoiseCov: Incomplete
+    statePost: Incomplete
+    statePre: Incomplete
+    transitionMatrix: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def correct(self, *args, **kwargs): ...  # incomplete
     def predict(self, *args, **kwargs): ...  # incomplete
 
 
 class KeyPoint:
-    angle: Any
-    class_id: Any
-    octave: Any
-    pt: Any
-    response: Any
-    size: Any
+    angle: Incomplete
+    class_id: Incomplete
+    octave: Incomplete
+    pt: Incomplete
+    response: Incomplete
+    size: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def convert(self, *args, **kwargs): ...  # incomplete
     def overlap(self, *args, **kwargs): ...  # incomplete
 
 
 class LineSegmentDetector(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def compareSegments(self, *args, **kwargs): ...  # incomplete
     def detect(self, *args, **kwargs): ...  # incomplete
     def drawSegments(self, image, lines) -> _image: ...
@@ -2466,17 +2458,14 @@ class MSER(Feature2D):
 
 
 class MergeDebevec(MergeExposures):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def process(self, *args, **kwargs): ...  # incomplete
 
 
 class MergeExposures(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def process(self, *args, **kwargs): ...  # incomplete
 
 
 class MergeMertens(MergeExposures):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getContrastWeight(self, *args, **kwargs): ...  # incomplete
     def getExposureWeight(self, *args, **kwargs): ...  # incomplete
     def getSaturationWeight(self, *args, **kwargs): ...  # incomplete
@@ -2487,7 +2476,6 @@ class MergeMertens(MergeExposures):
 
 
 class MergeRobertson(MergeExposures):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def process(self, *args, **kwargs): ...  # incomplete
 
 
@@ -2549,10 +2537,10 @@ class QRCodeEncoder:
 
 
 class QRCodeEncoder_Params:
-    correction_level: Any
-    mode: Any
-    structure_number: Any
-    version: Any
+    correction_level: Incomplete
+    mode: Incomplete
+    structure_number: Incomplete
+    version: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
@@ -2569,42 +2557,40 @@ class SimpleBlobDetector(Feature2D):
 
 
 class SimpleBlobDetector_Params:
-    blobColor: Any
-    filterByArea: Any
-    filterByCircularity: Any
-    filterByColor: Any
-    filterByConvexity: Any
-    filterByInertia: Any
-    maxArea: Any
-    maxCircularity: Any
-    maxConvexity: Any
-    maxInertiaRatio: Any
-    maxThreshold: Any
-    minArea: Any
-    minCircularity: Any
-    minConvexity: Any
-    minDistBetweenBlobs: Any
-    minInertiaRatio: Any
-    minRepeatability: Any
-    minThreshold: Any
-    thresholdStep: Any
+    blobColor: Incomplete
+    filterByArea: Incomplete
+    filterByCircularity: Incomplete
+    filterByColor: Incomplete
+    filterByConvexity: Incomplete
+    filterByInertia: Incomplete
+    maxArea: Incomplete
+    maxCircularity: Incomplete
+    maxConvexity: Incomplete
+    maxInertiaRatio: Incomplete
+    maxThreshold: Incomplete
+    minArea: Incomplete
+    minCircularity: Incomplete
+    minConvexity: Incomplete
+    minDistBetweenBlobs: Incomplete
+    minInertiaRatio: Incomplete
+    minRepeatability: Incomplete
+    minThreshold: Incomplete
+    thresholdStep: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class SparseOpticalFlow(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def calc(self, *args, **kwargs): ...  # incomplete
 
 
 class SparsePyrLKOpticalFlow(SparseOpticalFlow):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getFlags(self, *args, **kwargs): ...  # incomplete
     def getMaxLevel(self, *args, **kwargs): ...  # incomplete
     def getMinEigThreshold(self, *args, **kwargs): ...  # incomplete
     def getTermCriteria(self, *args, **kwargs): ...  # incomplete
     def getWinSize(self, *args, **kwargs): ...  # incomplete
-    def setFlags(self, flags) -> None: ...
+    def setFlags(self, flags: int | None) -> None: ...
     def setMaxLevel(self, maxLevel) -> None: ...
     def setMinEigThreshold(self, minEigThreshold) -> None: ...
     def setTermCriteria(self, crit) -> None: ...
@@ -2612,7 +2598,6 @@ class SparsePyrLKOpticalFlow(SparseOpticalFlow):
 
 
 class StereoBM(StereoMatcher):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getPreFilterCap(self, *args, **kwargs): ...  # incomplete
     def getPreFilterSize(self, *args, **kwargs): ...  # incomplete
@@ -2633,7 +2618,6 @@ class StereoBM(StereoMatcher):
 
 
 class StereoMatcher(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def compute(self, *args, **kwargs): ...  # incomplete
     def getBlockSize(self, *args, **kwargs): ...  # incomplete
     def getDisp12MaxDiff(self, *args, **kwargs): ...  # incomplete
@@ -2650,7 +2634,6 @@ class StereoMatcher(Algorithm):
 
 
 class StereoSGBM(StereoMatcher):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getMode(self, *args, **kwargs): ...  # incomplete
     def getP1(self, *args, **kwargs): ...  # incomplete
@@ -2675,7 +2658,7 @@ class Stitcher:
     def registrationResol(self, *args, **kwargs): ...  # incomplete
     def seamEstimationResol(self, *args, **kwargs): ...  # incomplete
     def setCompositingResol(self, resol_mpx) -> None: ...
-    def setInterpolationFlags(self, interp_flags) -> None: ...
+    def setInterpolationFlags(self, interp_flags: int | None) -> None: ...
     def setPanoConfidenceThresh(self, conf_thresh) -> None: ...
     def setRegistrationResol(self, resol_mpx) -> None: ...
     def setSeamEstimationResol(self, resol_mpx) -> None: ...
@@ -2720,14 +2703,12 @@ class TickMeter:
 
 
 class Tonemap(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getGamma(self, *args, **kwargs): ...  # incomplete
     def process(self, *args, **kwargs): ...  # incomplete
     def setGamma(self, gamma) -> None: ...
 
 
 class TonemapDrago(Tonemap):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getBias(self, *args, **kwargs): ...  # incomplete
     def getSaturation(self, *args, **kwargs): ...  # incomplete
     def setBias(self, bias) -> None: ...
@@ -2735,7 +2716,6 @@ class TonemapDrago(Tonemap):
 
 
 class TonemapMantiuk(Tonemap):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getSaturation(self, *args, **kwargs): ...  # incomplete
     def getScale(self, *args, **kwargs): ...  # incomplete
     def setSaturation(self, saturation) -> None: ...
@@ -2743,7 +2723,6 @@ class TonemapMantiuk(Tonemap):
 
 
 class TonemapReinhard(Tonemap):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getColorAdaptation(self, *args, **kwargs): ...  # incomplete
     def getIntensity(self, *args, **kwargs): ...  # incomplete
     def getLightAdaptation(self, *args, **kwargs): ...  # incomplete
@@ -2765,11 +2744,11 @@ class TrackerDaSiamRPN(Tracker):
 
 
 class TrackerDaSiamRPN_Params:
-    backend: Any
-    kernel_cls1: Any
-    kernel_r1: Any
-    model: Any
-    target: Any
+    backend: Incomplete
+    kernel_cls1: Incomplete
+    kernel_r1: Incomplete
+    model: Incomplete
+    target: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
@@ -2779,8 +2758,8 @@ class TrackerGOTURN(Tracker):
 
 
 class TrackerGOTURN_Params:
-    modelBin: Any
-    modelTxt: Any
+    modelBin: Incomplete
+    modelTxt: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
@@ -2790,19 +2769,39 @@ class TrackerMIL(Tracker):
 
 
 class TrackerMIL_Params:
-    featureSetNumFeatures: Any
-    samplerInitInRadius: Any
-    samplerInitMaxNegNum: Any
-    samplerSearchWinSize: Any
-    samplerTrackInRadius: Any
-    samplerTrackMaxNegNum: Any
-    samplerTrackMaxPosNum: Any
+    featureSetNumFeatures: Incomplete
+    samplerInitInRadius: Incomplete
+    samplerInitMaxNegNum: Incomplete
+    samplerSearchWinSize: Incomplete
+    samplerTrackInRadius: Incomplete
+    samplerTrackMaxNegNum: Incomplete
+    samplerTrackMaxPosNum: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class UMat:
-    offset: Any
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+    offset: Incomplete
+    @overload
+    def __init__(self, usageFlags: int | None = ...) -> None: ...
+    @overload
+    def __init__(self, rows: int | None, cols: int | None, type: int | None, usageFlags: int | None = ...) -> None: ...
+    @overload
+    def __init__(self, size: _Size | None, type: int | None, usageFlags: int | None = ...) -> None: ...
+
+    @overload
+    def __init__(
+        self, rows: int | None, cols: int | None, type: int | None, s: _Scalar, usageFlags: int | None = ...,
+    ) -> None: ...
+    @overload
+    def __init__(self, size: _Size | None, type: int | None, s: _Scalar, usageFlags: int | None = ...) -> None: ...
+    @overload
+    def __init__(self, m: _UMat) -> None: ...
+    @overload
+    def __init__(self, m: _UMat, rowRange: _Range | None, colRange: _Range | None = ...) -> None: ...
+    @overload
+    def __init__(self, m: _UMat, roi: _Rect | None) -> None: ...
+    @overload
+    def __init__(self, m: _UMat, ranges: Sequence[_Range | None] | None) -> None: ...
     @staticmethod
     def context(): ...
     def get(self): ...
@@ -2814,22 +2813,21 @@ class UMat:
 
 
 class UsacParams:
-    confidence: Any
-    isParallel: Any
-    loIterations: Any
-    loMethod: Any
-    loSampleSize: Any
-    maxIterations: Any
-    neighborsSearch: Any
-    randomGeneratorState: Any
-    sampler: Any
-    score: Any
-    threshold: Any
+    confidence: Incomplete
+    isParallel: Incomplete
+    loIterations: Incomplete
+    loMethod: Incomplete
+    loSampleSize: Incomplete
+    maxIterations: Incomplete
+    neighborsSearch: Incomplete
+    randomGeneratorState: Incomplete
+    sampler: Incomplete
+    score: Incomplete
+    threshold: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class VariationalRefinement(DenseOpticalFlow):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def calcUV(self, *args, **kwargs): ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getAlpha(self, *args, **kwargs): ...  # incomplete
@@ -2871,14 +2869,14 @@ class VideoCapture:
     @overload
     def open(self, index: int, apiPreference: int, params: Sequence[int]) -> bool: ...
     @overload
-    def read(self, image: None = ...) -> tuple[bool, Mat]: ...
+    def read(self, image: Mat | None = ...) -> tuple[bool, Mat]: ...
     @overload
-    def read(self, image: _TUMat) -> tuple[bool, _TUMat]: ...
+    def read(self, image: _UMat) -> tuple[bool, UMat]: ...
     def release(self) -> None: ...
     @overload
-    def retrieve(self, image: None = ..., flag: int = ...) -> tuple[bool, Mat]: ...
+    def retrieve(self, image: Mat | None = ..., flag: int = ...) -> tuple[bool, Mat]: ...
     @overload
-    def retrieve(self, image: _TUMat, flag: int = ...) -> tuple[bool, _TUMat]: ...
+    def retrieve(self, image: _UMat, flag: int = ...) -> tuple[bool, UMat]: ...
     def set(self, propId: int, value: float) -> bool: ...
     def setExceptionMode(self, enable: bool) -> None: ...
 
@@ -2978,7 +2976,7 @@ class cuda_GpuData:
 
 
 class cuda_GpuMat:
-    step: Any
+    step: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def adjustROI(self, *args, **kwargs): ...  # incomplete
     def assignTo(self, *args, **kwargs): ...  # incomplete
@@ -2991,7 +2989,7 @@ class cuda_GpuMat:
     @overload
     def create(self, rows, cols, type) -> None: ...
     @overload
-    def create(size, type) -> None: ...
+    def create(self, size, type) -> None: ...
     def cudaPtr(self, *args, **kwargs): ...  # incomplete
     def defaultAllocator(self, *args, **kwargs): ...  # incomplete
     def depth(self, *args, **kwargs): ...  # incomplete
@@ -3014,7 +3012,7 @@ class cuda_GpuMat:
     @overload
     def upload(self, arr) -> None: ...
     @overload
-    def upload(arr, stream) -> None: ...
+    def upload(self, arr, stream) -> None: ...
 
 
 class cuda_GpuMatND:
@@ -3026,7 +3024,7 @@ class cuda_GpuMat_Allocator:
 
 
 class cuda_HostMem:
-    step: Any
+    step: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def channels(self, *args, **kwargs): ...  # incomplete
     def clone(self, *args, **kwargs): ...  # incomplete
@@ -3046,7 +3044,8 @@ class cuda_HostMem:
 
 class cuda_Stream:
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
-    def Null(self, *args, **kwargs): ...  # incomplete
+    @staticmethod
+    def Null() -> cuda_Stream: ...
     def cudaPtr(self, *args, **kwargs): ...  # incomplete
     def queryIfComplete(self, *args, **kwargs): ...  # incomplete
     def waitEvent(self, event) -> None: ...
@@ -3108,7 +3107,7 @@ class detail_BlocksCompensator(detail_ExposureCompensator):
     @overload
     def setBlockSize(self, width, height) -> None: ...
     @overload
-    def setBlockSize(size) -> None: ...
+    def setBlockSize(self, size) -> None: ...
     def setMatGains(self, umv) -> None: ...
     def setNrFeeds(self, nr_feeds) -> None: ...
     def setNrGainsFilteringIterations(self, nr_iterations) -> None: ...
@@ -3149,12 +3148,12 @@ class detail_BundleAdjusterReproj(detail_BundleAdjusterBase):
 
 
 class detail_CameraParams:
-    R: Any
-    aspect: Any
-    focal: Any
-    ppx: Any
-    ppy: Any
-    t: Any
+    R: Incomplete
+    aspect: Incomplete
+    focal: Incomplete
+    ppx: Incomplete
+    ppy: Incomplete
+    t: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def K(self, *args, **kwargs): ...  # incomplete
 
@@ -3230,20 +3229,20 @@ class detail_HomographyBasedEstimator(detail_Estimator):
 
 
 class detail_ImageFeatures:
-    descriptors: Any
-    img_idx: Any
-    img_size: Any
-    keypoints: Any
+    descriptors: Incomplete
+    img_idx: Incomplete
+    img_size: Incomplete
+    keypoints: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getKeypoints(self, *args, **kwargs): ...  # incomplete
 
 
 class detail_MatchesInfo:
-    H: Any
-    confidence: Any
-    dst_img_idx: Any
-    num_inliers: Any
-    src_img_idx: Any
+    H: Incomplete
+    confidence: Incomplete
+    dst_img_idx: Incomplete
+    num_inliers: Incomplete
+    src_img_idx: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def getInliers(self, *args, **kwargs): ...  # incomplete
     def getMatches(self, *args, **kwargs): ...  # incomplete
@@ -3340,11 +3339,10 @@ class dnn_KeypointsModel(dnn_Model):
 
 
 class dnn_Layer(Algorithm):
-    blobs: Any
-    name: Any
-    preferableTarget: Any
-    type: Any
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
+    blobs: Incomplete
+    name: Incomplete
+    preferableTarget: Incomplete
+    type: Incomplete
     def finalize(self, *args, **kwargs): ...  # incomplete
     def outputNameToIndex(self, *args, **kwargs): ...  # incomplete
     def run(self, *args, **kwargs): ...  # incomplete
@@ -3502,54 +3500,54 @@ class gapi_wip_IStreamSource:
 
 
 class gapi_wip_draw_Circle:
-    center: Any
-    color: Any
-    lt: Any
-    radius: Any
-    shift: Any
-    thick: Any
+    center: Incomplete
+    color: Incomplete
+    lt: Incomplete
+    radius: Incomplete
+    shift: Incomplete
+    thick: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class gapi_wip_draw_Image:
-    alpha: Any
-    img: Any
-    org: Any
+    alpha: Incomplete
+    img: Incomplete
+    org: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class gapi_wip_draw_Line:
-    color: Any
-    lt: Any
-    pt1: Any
-    pt2: Any
-    shift: Any
-    thick: Any
+    color: Incomplete
+    lt: Incomplete
+    pt1: Incomplete
+    pt2: Incomplete
+    shift: Incomplete
+    thick: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class gapi_wip_draw_Mosaic:
-    cellSz: Any
-    decim: Any
-    mos: Any
+    cellSz: Incomplete
+    decim: Incomplete
+    mos: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class gapi_wip_draw_Poly:
-    color: Any
-    lt: Any
-    points: Any
-    shift: Any
-    thick: Any
+    color: Incomplete
+    lt: Incomplete
+    points: Incomplete
+    shift: Incomplete
+    thick: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
 class gapi_wip_draw_Rect:
-    color: Any
-    lt: Any
-    rect: Any
-    shift: Any
-    thick: Any
+    color: Incomplete
+    lt: Incomplete
+    rect: Incomplete
+    shift: Incomplete
+    thick: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
 
 
@@ -3566,7 +3564,6 @@ class gapi_wip_draw_Text:
 
 
 class ml_ANN_MLP(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getAnnealCoolingRatio(self, *args, **kwargs): ...  # incomplete
     def getAnnealFinalT(self, *args, **kwargs): ...  # incomplete
@@ -3602,7 +3599,6 @@ class ml_ANN_MLP(ml_StatModel):
 
 
 class ml_Boost(ml_DTrees):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getBoostType(self, *args, **kwargs): ...  # incomplete
     def getWeakCount(self, *args, **kwargs): ...  # incomplete
@@ -3614,7 +3610,6 @@ class ml_Boost(ml_DTrees):
 
 
 class ml_DTrees(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getCVFolds(self, *args, **kwargs): ...  # incomplete
     def getMaxCategories(self, *args, **kwargs): ...  # incomplete
@@ -3638,7 +3633,6 @@ class ml_DTrees(ml_StatModel):
 
 
 class ml_EM(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getClustersNumber(self, *args, **kwargs): ...  # incomplete
     def getCovarianceMatrixType(self, *args, **kwargs): ...  # incomplete
@@ -3658,7 +3652,6 @@ class ml_EM(ml_StatModel):
 
 
 class ml_KNearest(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def findNearest(self, *args, **kwargs): ...  # incomplete
     def getAlgorithmType(self, *args, **kwargs): ...  # incomplete
@@ -3673,7 +3666,6 @@ class ml_KNearest(ml_StatModel):
 
 
 class ml_LogisticRegression(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getIterations(self, *args, **kwargs): ...  # incomplete
     def getLearningRate(self, *args, **kwargs): ...  # incomplete
@@ -3693,22 +3685,20 @@ class ml_LogisticRegression(ml_StatModel):
 
 
 class ml_NormalBayesClassifier(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def load(self, *args, **kwargs): ...  # incomplete
     def predictProb(self, *args, **kwargs): ...  # incomplete
 
 
 class ml_ParamGrid:
-    logStep: Any
-    maxVal: Any
-    minVal: Any
+    logStep: Incomplete
+    maxVal: Incomplete
+    minVal: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
 
 
 class ml_RTrees(ml_DTrees):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getActiveVarCount(self, *args, **kwargs): ...  # incomplete
     def getCalculateVarImportance(self, *args, **kwargs): ...  # incomplete
@@ -3723,7 +3713,6 @@ class ml_RTrees(ml_DTrees):
 
 
 class ml_SVM(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getC(self, *args, **kwargs): ...  # incomplete
     def getClassWeights(self, *args, **kwargs): ...  # incomplete
@@ -3754,7 +3743,6 @@ class ml_SVM(ml_StatModel):
 
 
 class ml_SVMSGD(ml_StatModel):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def create(self, *args, **kwargs): ...  # incomplete
     def getInitialStepSize(self, *args, **kwargs): ...  # incomplete
     def getMarginRegularization(self, *args, **kwargs): ...  # incomplete
@@ -3775,7 +3763,6 @@ class ml_SVMSGD(ml_StatModel):
 
 
 class ml_StatModel(Algorithm):
-    def __init__(self, *args, **kwargs) -> None: ...  # incomplete
     def calcError(self, *args, **kwargs): ...  # incomplete
     def empty(self, *args, **kwargs): ...  # incomplete
     def getVarCount(self, *args, **kwargs): ...  # incomplete
@@ -3937,7 +3924,7 @@ def BRISK_create(thresh=..., octaves=..., patternScale=...): ...
 def BRISK_create(radiusList, numberList, dMax=..., dMin=..., indexChange=...): ...
 @overload
 def BRISK_create(thresh, octaves, radiusList, numberList, dMax=..., dMin=..., indexChange=...): ...
-def CamShift(probImage, window, criteria) -> tuple[tuple[Any, _window]]: ...
+def CamShift(probImage, window, criteria) -> tuple[_RotatedRectResult, _window]: ...
 @overload
 def Canny(image: Mat, threshold1, threshold2, edges=..., apertureSize=..., L2gradient=...) -> _edges: ...
 @overload
@@ -3959,7 +3946,7 @@ def EMD(
     flow=...,
 ) -> tuple[
     tuple[
-        Any,
+        Incomplete,
         _lowerBound,
         _flow,
     ]
@@ -3978,7 +3965,7 @@ def FarnebackOpticalFlow_create(
     numIters=...,
     polyN=...,
     polySigma=...,
-    flags: int = ...,
+    flags: int | None = ...,
 ): ...
 
 
@@ -4092,15 +4079,25 @@ def QRCodeEncoder_create(*args, **kwargs): ...  # incomplete
 
 def RQDecomp3x3(
     src: Mat, mtxR=..., mtxQ=..., Qx=..., Qy=..., Qz=...,
-) -> tuple[tuple[Any, _mtxR, _mtxQ, _Qx, _Qy, _Qz]]: ...
+) -> tuple[tuple[Incomplete, _mtxR, _mtxQ, _Qx, _Qy, _Qz]]: ...
 def Rodrigues(src: Mat, dst: Mat = ..., jacobian=...) -> tuple[tuple[_dst, _jacobian]]: ...
 def SIFT_create(nfeatures=..., nOctaveLayers=..., contrastThreshold=..., edgeThreshold=..., sigma=...): ...
 def SVBackSubst(w, u, vt, rhs, dst: Mat = ...) -> _dst: ...
-def SVDecomp(src: Mat, w=..., u=..., vt=..., flags: int = ...) -> tuple[tuple[_w, _u, _vt]]: ...
+def SVDecomp(src: Mat, w=..., u=..., vt=..., flags: int | None = ...) -> tuple[tuple[_w, _u, _vt]]: ...
 def Scharr(src: Mat, ddepth, dx, dy, dst: Mat = ..., scale=..., delta=..., borderType=...) -> _dst: ...
 def SimpleBlobDetector_create(parameters=...): ...
 def Sobel(src: Mat, ddepth, dx, dy, dst: Mat = ..., ksize=..., scale=..., delta=..., borderType=...) -> _dst: ...
-def SparsePyrLKOpticalFlow_create(winSize=..., maxLevel=..., crit=..., flags: int = ..., minEigThreshold=...): ...
+
+
+def SparsePyrLKOpticalFlow_create(
+    winSize=...,
+    maxLevel=...,
+    crit=...,
+    flags: int | None = ...,
+    minEigThreshold=...,
+): ...
+
+
 def StereoBM_create(numDisparities=..., blockSize=...): ...
 
 
@@ -4184,7 +4181,7 @@ def buildOpticalFlowPyramid(
     derivBorder=...,
     tryReuseInputImage=...,
 ) -> tuple[
-    Any,
+    Incomplete,
     _pyramid,
 ]: ...
 
@@ -4192,7 +4189,7 @@ def buildOpticalFlowPyramid(
 def calcBackProject(
     images: Sequence[Mat], channels: Sequence[int], hist, ranges: Sequence[int], scale, dst: Mat = ...,
 ) -> _dst: ...
-def calcCovarMatrix(samples, mean, flags: int, covar=..., ctype=...) -> tuple[_covar, _mean]: ...
+def calcCovarMatrix(samples, mean, flags: int | None, covar=..., ctype=...) -> tuple[_covar, _mean]: ...
 
 
 def calcHist(
@@ -4207,7 +4204,7 @@ def calcHist(
 
 
 def calcOpticalFlowFarneback(
-    prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags: int,
+    prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags: int | None,
 ) -> _flow: ...
 
 
@@ -4221,7 +4218,7 @@ def calcOpticalFlowPyrLK(
     winSize=...,
     maxLevel=...,
     criteria=...,
-    flags: int = ...,
+    flags: int | None = ...,
     minEigThreshold=...,
 ) -> tuple[_nextPts, _status, _err]: ...
 
@@ -4234,10 +4231,10 @@ def calibrateCamera(
     distCoeffs,
     rvecs=...,
     tvecs=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
 ) -> tuple[
-    Any,
+    Incomplete,
     _cameraMatrix,
     _distCoeffs,
     _rvecs,
@@ -4256,10 +4253,17 @@ def calibrateCameraExtended(
     stdDeviationsIntrinsics=...,
     stdDeviationsExtrinsics=...,
     perViewErrors=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
 ) -> tuple[
-    Any, _cameraMatrix, _distCoeffs, _rvecs, _tvecs, _stdDeviationsIntrinsics, _stdDeviationsExtrinsics, _perViewErrors,
+    Incomplete,
+    _cameraMatrix,
+    _distCoeffs,
+    _rvecs,
+    _tvecs,
+    _stdDeviationsIntrinsics,
+    _stdDeviationsExtrinsics,
+    _perViewErrors,
 ]: ...
 
 
@@ -4273,9 +4277,9 @@ def calibrateCameraRO(
     rvecs=...,
     tvecs=...,
     newObjPoints=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
-) -> tuple[Any, _cameraMatrix, _distCoeffs, _rvecs, _tvecs, _newObjPoints]: ...
+) -> tuple[Incomplete, _cameraMatrix, _distCoeffs, _rvecs, _tvecs, _newObjPoints]: ...
 
 
 def calibrateCameraROExtended(
@@ -4292,10 +4296,10 @@ def calibrateCameraROExtended(
     stdDeviationsExtrinsics=...,
     stdDeviationsObjPoints=...,
     perViewErrors=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
 ) -> tuple[
-    Any,
+    Incomplete,
     _cameraMatrix,
     _distCoeffs,
     _rvecs,
@@ -4320,9 +4324,9 @@ def calibrationMatrixValues(
 def cartToPolar(x, y, magnitude=..., angle=..., angleInDegrees=...) -> tuple[_magnitude, _angle]: ...
 def checkChessboard(img: Mat, size): ...
 def checkHardwareSupport(feature): ...
-def checkRange(a, quiet=..., minVal=..., maxVal=...) -> tuple[Any, _pos]: ...
+def checkRange(a, quiet=..., minVal=..., maxVal=...) -> tuple[Incomplete, _pos]: ...
 def circle(img: Mat, center, radius, color, thickness=..., lineType=..., shift=...) -> _img: ...
-def clipLine(imgRect, pt1, pt2) -> tuple[Any, _pt1, _pt2]: ...
+def clipLine(imgRect, pt1, pt2) -> tuple[Incomplete, _pt1, _pt2]: ...
 def colorChange(src: Mat, mask: Mat, dst: Mat = ..., red_mul=..., green_mul=..., blue_mul=...) -> _dst: ...
 def compare(src1: Mat, src2: Mat, cmpop, dst: Mat = ...) -> _dst: ...
 def compareHist(H1: Mat, H2: Mat, method: int) -> float: ...
@@ -4347,18 +4351,29 @@ def composeRT(
 ) -> tuple[_rvec3, _tvec3, _dr3dr1, _dr3dt1, _dr3dr2, _dr3dt2, _dt3dr1, _dt3dt1, _dt3dr2, _dt3dt2]: ...
 def computeCorrespondEpilines(points, whichImage, F, lines=...) -> _lines: ...
 def computeECC(templateImage, inputImage, inputMask=...): ...
-def connectedComponents(image: Mat, labels=..., connectivity=..., ltype=...) -> tuple[Any, _labels]: ...
-def connectedComponentsWithAlgorithm(image: Mat, connectivity, ltype, ccltype, labels=...) -> tuple[Any, _labels]: ...
+def connectedComponents(image: Mat, labels=..., connectivity=..., ltype=...) -> tuple[Incomplete, _labels]: ...
+
+
+def connectedComponentsWithAlgorithm(
+    image: Mat,
+    connectivity,
+    ltype,
+    ccltype,
+    labels=...,
+) -> tuple[
+    Incomplete,
+    _labels,
+]: ...
 
 
 def connectedComponentsWithStats(
     image: Mat, labels=..., stats=..., centroids=..., connectivity=..., ltype=...,
-) -> tuple[Any, _labels, _stats, _centroids]: ...
+) -> tuple[Incomplete, _labels, _stats, _centroids]: ...
 
 
 def connectedComponentsWithStatsWithAlgorithm(
     image: Mat, connectivity, ltype, ccltype, labels=..., stats=..., centroids=...,
-) -> tuple[Any, _labels, _stats, _centroids]: ...
+) -> tuple[Incomplete, _labels, _stats, _centroids]: ...
 @overload
 def contourArea(approx): ...
 @overload
@@ -4418,14 +4433,14 @@ def createTrackbar(trackbarName, windowName, value, count, onChange) -> None: ..
 def cubeRoot(val): ...
 def cvtColor(src: Mat, code: int, dst: Mat = ..., dstCn: int = ...) -> Mat: ...
 def cvtColorTwoPlane(src1: Mat, src2: Mat, code: int, dst: Mat = ...) -> _dst: ...
-def dct(src: Mat, dst: Mat = ..., flags: int = ...) -> _dst: ...
+def dct(src: Mat, dst: Mat = ..., flags: int | None = ...) -> _dst: ...
 def decolor(src: Mat, grayscale=..., color_boost=...) -> tuple[_grayscale, _color_boost]: ...
 def decomposeEssentialMat(E, R1=..., R2=..., t=...) -> tuple[_R1, _R2, _t]: ...
 
 
 def decomposeHomographyMat(
     H, K, rotations=..., translations=..., normals=...,
-) -> tuple[Any, _rotations, _translations, _normals]: ...
+) -> tuple[Incomplete, _rotations, _translations, _normals]: ...
 
 
 def decomposeProjectionMatrix(
@@ -4454,7 +4469,7 @@ def destroyAllWindows() -> None: ...
 def destroyWindow(winname) -> None: ...
 def detailEnhance(src: Mat, dst: Mat = ..., sigma_s=..., sigma_r=...) -> _dst: ...
 def determinant(mtx): ...
-def dft(src: Mat, dst: Mat = ..., flags: int = ..., nonzeroRows=...) -> _dst: ...
+def dft(src: Mat, dst: Mat = ..., flags: int | None = ..., nonzeroRows=...) -> _dst: ...
 def dilate(src: Mat, kernel, dst: Mat = ..., anchor=..., iterations=..., borderType=..., borderValue=...) -> _dst: ...
 def displayOverlay(winname, text, delayms=...) -> None: ...
 def displayStatusBar(winname, text, delayms=...) -> None: ...
@@ -4478,7 +4493,7 @@ def drawContours(
     image: Mat, contours, contourIdx, color, thickness=..., lineType=..., hierarchy=..., maxLevel=..., offset=...,
 ) -> _image: ...
 def drawFrameAxes(image: Mat, cameraMatrix, distCoeffs, rvec, tvec, length, thickness=...) -> _image: ...
-def drawKeypoints(image: Mat, keypoints, outImage, color=..., flags: int = ...) -> _outImage: ...
+def drawKeypoints(image: Mat, keypoints, outImage, color=..., flags: int | None = ...) -> _outImage: ...
 def drawMarker(img: Mat, position, color, markerType=..., markerSize=..., thickness=..., line_type=...) -> _img: ...
 
 
@@ -4492,7 +4507,7 @@ def drawMatches(
     matchColor=...,
     singlePointColor=...,
     matchesMask=...,
-    flags: int = ...,
+    flags: int | None = ...,
 ) -> _outImg: ...
 
 
@@ -4506,10 +4521,10 @@ def drawMatchesKnn(
     matchColor=...,
     singlePointColor=...,
     matchesMask=...,
-    flags: int = ...,
+    flags: int | None = ...,
 ) -> _outImg: ...
-def edgePreservingFilter(src: Mat, dst: Mat = ..., flags: int = ..., sigma_s=..., sigma_r=...) -> _dst: ...
-def eigen(src: Mat, eigenvalues=..., eigenvectors=...) -> tuple[Any, _eigenvalues, _eigenvectors]: ...
+def edgePreservingFilter(src: Mat, dst: Mat = ..., flags: int | None = ..., sigma_s=..., sigma_r=...) -> _dst: ...
+def eigen(src: Mat, eigenvalues=..., eigenvectors=...) -> tuple[Incomplete, _eigenvalues, _eigenvectors]: ...
 def eigenNonSymmetric(src: Mat, eigenvalues=..., eigenvectors=...) -> tuple[_eigenvalues, _eigenvectors]: ...
 
 
@@ -4540,27 +4555,27 @@ def erode(src: Mat, kernel, dst: Mat = ..., anchor=..., iterations=..., borderTy
 
 def estimateAffine2D(
     from_, to, inliers=..., method: int = ..., ransacReprojThreshold=..., maxIters=..., confidence=..., refineIters=...,
-) -> tuple[Any, _inliers]: ...
+) -> tuple[Incomplete, _inliers]: ...
 
 
 def estimateAffine3D(
     src: Mat, dst: Mat, out=..., inliers=..., ransacThreshold=..., confidence=...,
-) -> tuple[Any, _out, _inliers]: ...
+) -> tuple[Incomplete, _out, _inliers]: ...
 
 
 def estimateAffinePartial2D(
     from_, to, inliers=..., method: int = ..., ransacReprojThreshold=..., maxIters=..., confidence=..., refineIters=...,
-) -> tuple[Any, _inliers]: ...
+) -> tuple[Incomplete, _inliers]: ...
 
 
 def estimateChessboardSharpness(
     image: Mat, patternSize, corners, rise_distance=..., vertical=..., sharpness=...,
-) -> tuple[Any, _sharpness]: ...
+) -> tuple[Incomplete, _sharpness]: ...
 
 
 def estimateTranslation3D(
     src: Mat, dst: Mat, out=..., inliers=..., ransacThreshold=..., confidence=...,
-) -> tuple[Any, _out, _inliers]: ...
+) -> tuple[Incomplete, _out, _inliers]: ...
 def exp(src: Mat, dst: Mat = ...) -> _dst: ...
 def extractChannel(src: Mat, coi, dst: Mat = ...) -> _dst: ...
 def fastAtan2(y, x): ...
@@ -4615,22 +4630,42 @@ def filterHomographyDecompByVisibleRefpoints(
     rotations, normals, beforePoints, afterPoints, possibleSolutions=..., pointsMask=...,
 ) -> _possibleSolutions: ...
 def filterSpeckles(img: Mat, newVal, maxSpeckleSize, maxDiff, buf=...) -> tuple[_img, _buf]: ...
-def find4QuadCornerSubpix(img: Mat, corners, region_size) -> tuple[Any, _corners]: ...
-def findChessboardCorners(image: Mat, patternSize, corners=..., flags: int = ...) -> tuple[Any, _corners]: ...
-def findChessboardCornersSB(image: Mat, patternSize, corners=..., flags: int = ...) -> tuple[Any, _corners]: ...
+def find4QuadCornerSubpix(img: Mat, corners, region_size) -> tuple[Incomplete, _corners]: ...
+
+
+def findChessboardCorners(
+    image: Mat,
+    patternSize,
+    corners=...,
+    flags: int | None = ...,
+) -> tuple[
+    Incomplete,
+    _corners,
+]: ...
+
+
+def findChessboardCornersSB(
+    image: Mat,
+    patternSize,
+    corners=...,
+    flags: int | None = ...,
+) -> tuple[
+    Incomplete,
+    _corners,
+]: ...
 
 
 def findChessboardCornersSBWithMeta(
-    image: Mat, patternSize, flags: int, corners=..., meta=...,
-) -> tuple[Any, _corners, _meta]: ...
+    image: Mat, patternSize, flags: int | None, corners=..., meta=...,
+) -> tuple[Incomplete, _corners, _meta]: ...
 
 
 @overload
 def findCirclesGrid(
-    image: Mat, patternSize, flags: int, blobDetector, parameters, centers=...,
-) -> tuple[Any, _centers]: ...
+    image: Mat, patternSize, flags: int | None, blobDetector, parameters, centers=...,
+) -> tuple[Incomplete, _centers]: ...
 @overload
-def findCirclesGrid(image, patternSize, centers=..., flags=..., blobDetector=...) -> tuple[Any, _centers]: ...
+def findCirclesGrid(image, patternSize, centers=..., flags=..., blobDetector=...) -> tuple[Incomplete, _centers]: ...
 
 
 def findContours(
@@ -4649,36 +4684,36 @@ def findContours(
 @overload
 def findEssentialMat(
     points1, points2, cameraMatrix, method: int = ..., prob=..., threshold=..., mask: Mat = ...,
-) -> tuple[Any, _mask]: ...
+) -> tuple[Incomplete, _mask]: ...
 
 
 @overload
 def findEssentialMat(
     points1, points2, focal=..., pp=..., method=..., prob=..., threshold=..., mask=...,
-) -> tuple[Any, _mask]: ...
+) -> tuple[Incomplete, _mask]: ...
 
 
 @overload
 def findFundamentalMat(
     points1, points2, method: int, ransacReprojThreshold, confidence, maxIters, mask: Mat = ...,
-) -> tuple[Any, _mask]: ...
+) -> tuple[Incomplete, _mask]: ...
 
 
 @overload
 def findFundamentalMat(
     points1, points2, method=..., ransacReprojThreshold=..., confidence=..., mask=...,
-) -> tuple[Any, _mask]: ...
+) -> tuple[Incomplete, _mask]: ...
 
 
 def findHomography(
     srcPoints, dstPoints, method: int = ..., ransacReprojThreshold=..., mask: Mat = ..., maxIters=..., confidence=...,
-) -> tuple[Any, _mask]: ...
+) -> tuple[Incomplete, _mask]: ...
 def findNonZero(src: Mat, idx=...) -> _idx: ...
 
 
 def findTransformECC(
     templateImage, inputImage, warpMatrix, motionType, criteria, inputMask, gaussFiltSize,
-) -> tuple[Any, _warpMatrix]: ...
+) -> tuple[Incomplete, _warpMatrix]: ...
 def fitEllipse(points): ...
 def fitEllipseAMS(points): ...
 def fitEllipseDirect(points): ...
@@ -4687,9 +4722,9 @@ def flip(src: Mat, flipCode, dst: Mat = ...) -> _dst: ...
 
 
 def floodFill(
-    image: Mat, mask: Mat | None, seedPoint, newVal, loDiff=..., upDiff=..., flags: int = ...,
-) -> tuple[Any, _image, _mask, _rect]: ...
-def gemm(src1: Mat, src2: Mat, alpha, src3, beta, dst: Mat = ..., flags: int = ...) -> _dst: ...
+    image: Mat, mask: Mat | None, seedPoint, newVal, loDiff=..., upDiff=..., flags: int | None = ...,
+) -> tuple[Incomplete, _image, _mask, _rect]: ...
+def gemm(src1: Mat, src2: Mat, alpha, src3, beta, dst: Mat = ..., flags: int | None = ...) -> _dst: ...
 def getAffineTransform(src: Mat, dst: Mat): ...
 def getBuildInformation(): ...
 def getCPUFeaturesLine(): ...
@@ -4708,12 +4743,12 @@ def getOptimalDFTSize(vecsize): ...
 
 def getOptimalNewCameraMatrix(
     cameraMatrix, distCoeffs, imageSize, alpha, newImgSize=..., centerPrincipalPoint=...,
-) -> tuple[Any, _validPixROI]: ...
+) -> tuple[Incomplete, _validPixROI]: ...
 def getPerspectiveTransform(src: Mat, dst: Mat, solveMethod=...): ...
 def getRectSubPix(image: Mat, patchSize, center, patch=..., patchType=...) -> _patch: ...
 def getRotationMatrix2D(center, angle, scale): ...
 def getStructuringElement(shape, ksize, anchor=...): ...
-def getTextSize(text, fontFace, fontScale, thickness) -> tuple[Any, _baseLine]: ...
+def getTextSize(text, fontFace, fontScale, thickness) -> tuple[Incomplete, _baseLine]: ...
 def getThreadNum(): ...
 def getTickCount(): ...
 def getTickFrequency(): ...
@@ -4779,14 +4814,14 @@ def haveImageReader(filename: str): ...
 def haveImageWriter(filename: str): ...
 def haveOpenVX(): ...
 def hconcat(src: Mat | Sequence[Mat], dst: Mat = ...) -> _dst: ...
-def idct(src: Mat, dst: Mat = ..., flags: int = ...) -> _dst: ...
-def idft(src: Mat, dst: Mat = ..., flags: int = ..., nonzeroRows=...) -> _dst: ...
+def idct(src: Mat, dst: Mat = ..., flags: int | None = ...) -> _dst: ...
+def idft(src: Mat, dst: Mat = ..., flags: int | None = ..., nonzeroRows=...) -> _dst: ...
 def illuminationChange(src: Mat, mask: Mat, dst: Mat = ..., alpha=..., beta=...) -> _dst: ...
 def imcount(*args, **kwargs): ...  # incomplete
-def imdecode(buf, flags: int): ...
-def imencode(ext, img: Mat, params=...) -> tuple[Any, _buf]: ...
-def imread(filename: str, flags: int = ...) -> Mat: ...
-def imreadmulti(filename: str, mats=..., flags: int = ...) -> tuple[Any, _mats]: ...
+def imdecode(buf, flags: int | None): ...
+def imencode(ext, img: Mat, params=...) -> tuple[Incomplete, _buf]: ...
+def imread(filename: str, flags: int | None = ...) -> Mat: ...
+def imreadmulti(filename: str, mats=..., flags: int | None = ...) -> tuple[Incomplete, _mats]: ...
 def imshow(winname, mat) -> None: ...
 def imwrite(filename: str, img: Mat, params: Sequence[int] = ...) -> bool: ...
 def imwritemulti(*args, **kwargs): ...  # incomplete
@@ -4798,34 +4833,38 @@ def initInverseRectificationMap(*args, **kwargs): ...  # incomplete
 def initUndistortRectifyMap(
     cameraMatrix, distCoeffs, R, newCameraMatrix, size, m1type, map1=..., map2=...,
 ) -> tuple[_map1, _map2]: ...
-def inpaint(src: Mat, inpaintMask, inpaintRadius, flags: int, dst: Mat = ...) -> _dst: ...
+def inpaint(src: Mat, inpaintMask, inpaintRadius, flags: int | None, dst: Mat = ...) -> _dst: ...
 def insertChannel(src: Mat, dst: Mat, coi) -> _dst: ...
 def integral(src: Mat, sum=..., sdepth=...) -> _sum: ...
 def integral2(src: Mat, sum=..., sqsum=..., sdepth=..., sqdepth=...) -> tuple[_sum, _sqsum]: ...
 def integral3(src: Mat, sum=..., sqsum=..., tilted=..., sdepth=..., sqdepth=...) -> tuple[_sum, _sqsum, _tilted]: ...
-def intersectConvexConvex(_p1, _p2, _p12=..., handleNested=...) -> tuple[Any, _p12]: ...
-def invert(src: Mat, dst: Mat = ..., flags: int = ...) -> tuple[Any, _dst]: ...
+def intersectConvexConvex(_p1, _p2, _p12=..., handleNested=...) -> tuple[Incomplete, _p12]: ...
+def invert(src: Mat, dst: Mat = ..., flags: int | None = ...) -> tuple[Incomplete, _dst]: ...
 def invertAffineTransform(M, iM=...) -> _iM: ...
 def isContourConvex(contour): ...
-def kmeans(data, K, bestLabels, criteria, attempts, flags: int, centers=...) -> tuple[Any, _bestLabels, _centers]: ...
+
+
+def kmeans(
+    data, K, bestLabels, criteria, attempts, flags: int | None, centers=...,
+) -> tuple[Incomplete, _bestLabels, _centers]: ...
 def line(img: Mat, pt1, pt2, color, thickness=..., lineType=..., shift=...) -> _img: ...
-def linearPolar(src: Mat, center, maxRadius, flags: int, dst: Mat = ...) -> _dst: ...
+def linearPolar(src: Mat, center, maxRadius, flags: int | None, dst: Mat = ...) -> _dst: ...
 def log(src: Mat, dst: Mat = ...) -> _dst: ...
-def logPolar(src: Mat, center, M, flags: int, dst: Mat = ...) -> _dst: ...
+def logPolar(src: Mat, center, M, flags: int | None, dst: Mat = ...) -> _dst: ...
 def magnitude(x, y, magnitude=...) -> _magnitude: ...
 def matMulDeriv(A, B, dABdA=..., dABdB=...) -> tuple[_dABdA, _dABdB]: ...
 def matchShapes(contour1, contour2, method: int, parameter): ...
 def matchTemplate(image: Mat, templ: Mat, method: int, result: Mat = ..., mask: Mat | None = ...) -> Mat: ...
 def max(src1: Mat, src2: Mat, dst: Mat = ...) -> _dst: ...
 def mean(src: Mat, mask: Mat = ...): ...
-def meanShift(probImage, window, criteria) -> tuple[Any, _window]: ...
+def meanShift(probImage, window, criteria) -> tuple[Incomplete, _window]: ...
 def meanStdDev(src: Mat, mean=..., stddev=..., mask: Mat = ...) -> tuple[_mean, _stddev]: ...
 def medianBlur(src: Mat, ksize, dst: Mat = ...) -> _dst: ...
 def merge(mv, dst: Mat = ...) -> _dst: ...
 def min(src1: Mat, src2: Mat, dst: Mat = ...) -> _dst: ...
 def minAreaRect(points): ...
 def minEnclosingCircle(points) -> tuple[_center, _radius]: ...
-def minEnclosingTriangle(points, triangle=...) -> tuple[Any, _triangle]: ...
+def minEnclosingTriangle(points, triangle=...) -> tuple[Incomplete, _triangle]: ...
 def minMaxLoc(src: Mat, mask: Mat = ...) -> tuple[float, float, tuple[int, int], tuple[int, int]]: ...
 def mixChannels(src: Mat, dst: Mat, fromTo) -> _dst: ...
 def moments(array, binaryImage=...): ...
@@ -4844,10 +4883,10 @@ def morphologyEx(
 
 
 def moveWindow(winname, x, y) -> None: ...
-def mulSpectrums(a, b, flags: int, c=..., conjB=...) -> _c: ...
+def mulSpectrums(a, b, flags: int | None, c=..., conjB=...) -> _c: ...
 def mulTransposed(src: Mat, aTa, dst: Mat = ..., delta=..., scale=..., dtype=...) -> _dst: ...
 def multiply(src1: Mat, src2: Mat, dst: Mat = ..., scale=..., dtype=...) -> _dst: ...
-def namedWindow(winname, flags: int = ...) -> None: ...
+def namedWindow(winname, flags: int | None = ...) -> None: ...
 @overload
 def norm(src1: Mat, src2: Mat, normType: int = ..., mask: Mat | None = ...) -> float: ...
 @overload
@@ -4861,7 +4900,7 @@ def pencilSketch(
 ) -> tuple[_dst1, _dst2]: ...
 def perspectiveTransform(src: Mat, m, dst: Mat = ...) -> _dst: ...
 def phase(x, y, angle=..., angleInDegrees=...) -> _angle: ...
-def phaseCorrelate(src1: Mat, src2: Mat, window=...) -> tuple[Any, _response]: ...
+def phaseCorrelate(src1: Mat, src2: Mat, window=...) -> tuple[Incomplete, _response]: ...
 def pointPolygonTest(contour, pt, measureDist): ...
 def polarToCart(magnitude, angle, x=..., y=..., angleInDegrees=...) -> tuple[_x, _y]: ...
 def pollKey(*args, **kwargs): ...  # incomplete
@@ -4897,16 +4936,33 @@ def randu(dst: Mat, low, high) -> _dst: ...
 def readOpticalFlow(path): ...
 @overload
 def recoverPose(points1, points2, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, E, R, t, mask): ...
+
+
 @overload
-def recoverPose(E, points1, points2, cameraMatrix, R=..., t=..., mask: Mat = ...) -> tuple[Any, _R, _t, _mask]: ...
+def recoverPose(
+    E,
+    points1,
+    points2,
+    cameraMatrix,
+    R=...,
+    t=...,
+    mask: Mat = ...,
+) -> tuple[
+    Incomplete,
+    _R,
+    _t,
+    _mask,
+]: ...
+
+
 @overload
-def recoverPose(E, points1, points2, R=..., t=..., focal=..., pp=..., mask=...) -> tuple[Any, _R, _t, _mask]: ...
+def recoverPose(E, points1, points2, R=..., t=..., focal=..., pp=..., mask=...) -> tuple[Incomplete, _R, _t, _mask]: ...
 
 
 @overload
 def recoverPose(
     E, points1, points2, cameraMatrix, distanceThresh, R=..., t=..., mask=..., triangulatedPoints=...,
-) -> tuple[Any, _R, _t, _mask, _triangulatedPoints]: ...
+) -> tuple[Incomplete, _R, _t, _mask, _triangulatedPoints]: ...
 @overload
 def rectangle(img: Mat, pt1: _Point, pt2: _Point, color, thickness=..., lineType=..., shift=...) -> Mat: ...
 @overload
@@ -4929,7 +4985,7 @@ def rectify3Collinear(
     T13,
     alpha,
     newImgSize,
-    flags: int,
+    flags: int | None,
     R1=...,
     R2=...,
     R3=...,
@@ -4937,7 +4993,7 @@ def rectify3Collinear(
     P2=...,
     P3=...,
     Q=...,
-) -> tuple[Any, _R1, _R2, _R3, _P1, _P2, _P3, _Q, _roi1, _roi2]: ...
+) -> tuple[Incomplete, _R1, _R2, _R3, _P1, _P2, _P3, _Q, _roi1, _roi2]: ...
 def redirectError(onError) -> None: ...
 def reduce(src: Mat, dim, rtype, dst: Mat = ..., dtype=...) -> _dst: ...
 def reduceArgMax(*args, **kwargs): ...  # incomplete
@@ -4948,20 +5004,22 @@ def reprojectImageTo3D(disparity, Q, _3dImage=..., handleMissingValues=..., ddep
 
 
 def resize(
-    src: Mat | int | bool, dsize: _Size | None, dst: Mat | _NumericScalar = ..., fx: float = ...,
-    fy: float = ..., interpolation: int = ...,
+    src: Mat | int | bool,
+    dsize: _Size | None,
+    dst: Mat | _NumericScalar = ...,
+    fx: float = ...,
+    fy: float = ...,
+    interpolation: int = ...,
 ) -> Mat: ...
-
-
 @overload
 def resizeWindow(winname, width, height) -> None: ...
 @overload
 def resizeWindow(winname, size) -> None: ...
 def rotate(src: Mat, rotateCode, dst: Mat = ...) -> _dst: ...
-def rotatedRectangleIntersection(rect1, rect2, intersectingRegion=...) -> tuple[Any, _intersectingRegion]: ...
+def rotatedRectangleIntersection(rect1, rect2, intersectingRegion=...) -> tuple[Incomplete, _intersectingRegion]: ...
 def sampsonDistance(pt1, pt2, F): ...
 def scaleAdd(src1: Mat, alpha, src2: Mat, dst: Mat = ...) -> _dst: ...
-def seamlessClone(src: Mat, dst: Mat, mask: Mat | None, p, flags: int, blend=...) -> _blend: ...
+def seamlessClone(src: Mat, dst: Mat, mask: Mat | None, p, flags: int | None, blend=...) -> _blend: ...
 @overload
 def selectROI(windowName, img: Mat, showCrosshair=..., fromCenter=...): ...
 @overload
@@ -4980,19 +5038,30 @@ def setUseOpenVX(flag) -> None: ...
 def setUseOptimized(onoff) -> None: ...
 def setWindowProperty(winname, prop_id, prop_value) -> None: ...
 def setWindowTitle(winname, title) -> None: ...
-def solve(src1: Mat, src2: Mat, dst: Mat = ..., flags: int = ...) -> tuple[Any, _dst]: ...
-def solveCubic(coeffs, roots=...) -> tuple[Any, _roots]: ...
-def solveLP(Func, Constr, z=...) -> tuple[Any, _z]: ...
+def solve(src1: Mat, src2: Mat, dst: Mat = ..., flags: int | None = ...) -> tuple[Incomplete, _dst]: ...
+def solveCubic(coeffs, roots=...) -> tuple[Incomplete, _roots]: ...
+def solveLP(Func, Constr, z=...) -> tuple[Incomplete, _z]: ...
 
 
 def solveP3P(
-    objectPoints, imagePoints, cameraMatrix, distCoeffs, flags: int, rvecs=..., tvecs=...,
-) -> tuple[Any, _rvecs, _tvecs]: ...
+    objectPoints, imagePoints, cameraMatrix, distCoeffs, flags: int | None, rvecs=..., tvecs=...,
+) -> tuple[Incomplete, _rvecs, _tvecs]: ...
 
 
 def solvePnP(
-    objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec=..., tvec=..., useExtrinsicGuess=..., flags: int = ...,
-) -> tuple[Any, _rvec, _tvec]: ...
+    objectPoints,
+    imagePoints,
+    cameraMatrix,
+    distCoeffs,
+    rvec=...,
+    tvec=...,
+    useExtrinsicGuess=...,
+    flags: int | None = ...,
+) -> tuple[
+    Incomplete,
+    _rvec,
+    _tvec,
+]: ...
 
 
 def solvePnPGeneric(
@@ -5003,11 +5072,11 @@ def solvePnPGeneric(
     rvecs=...,
     tvecs=...,
     useExtrinsicGuess=...,
-    flags: int = ...,
+    flags: int | None = ...,
     rvec=...,
     tvec=...,
     reprojectionError=...,
-) -> tuple[Any, _rvecs, _tvecs, _reprojectionError]: ...
+) -> tuple[Incomplete, _rvecs, _tvecs, _reprojectionError]: ...
 
 
 def solvePnPRansac(
@@ -5022,8 +5091,8 @@ def solvePnPRansac(
     reprojectionError=...,
     confidence=...,
     inliers=...,
-    flags: int = ...,
-) -> tuple[Any, _rvec, _tvec, _inliers]: ...
+    flags: int | None = ...,
+) -> tuple[Incomplete, _rvec, _tvec, _inliers]: ...
 
 
 def solvePnPRefineLM(
@@ -5043,9 +5112,9 @@ def solvePnPRefineLM(
 def solvePnPRefineVVS(
     objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, criteria=..., VVSlambda=...,
 ) -> tuple[_rvec, _tvec]: ...
-def solvePoly(coeffs, roots=..., maxIters=...) -> tuple[Any, _roots]: ...
-def sort(src: Mat, flags: int, dst: Mat = ...) -> _dst: ...
-def sortIdx(src: Mat, flags: int, dst: Mat = ...) -> _dst: ...
+def solvePoly(coeffs, roots=..., maxIters=...) -> tuple[Incomplete, _roots]: ...
+def sort(src: Mat, flags: int | None, dst: Mat = ...) -> _dst: ...
+def sortIdx(src: Mat, flags: int | None, dst: Mat = ...) -> _dst: ...
 def spatialGradient(src: Mat, dx=..., dy=..., ksize=..., borderType=...) -> tuple[_dx, _dy]: ...
 def split(m, mv=...) -> _mv: ...
 def sqrBoxFilter(src: Mat, ddepth, ksize, dst: Mat = ..., anchor=..., normalize=..., borderType=...) -> _dst: ...
@@ -5066,9 +5135,9 @@ def stereoCalibrate(
     T=...,
     E=...,
     F=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
-) -> tuple[Any, _cameraMatrix1, _distCoeffs1, _cameraMatrix2, _distCoeffs2, _R, _T, _E, _F]: ...
+) -> tuple[Incomplete, _cameraMatrix1, _distCoeffs1, _cameraMatrix2, _distCoeffs2, _R, _T, _E, _F]: ...
 
 
 def stereoCalibrateExtended(
@@ -5085,9 +5154,9 @@ def stereoCalibrateExtended(
     E=...,
     F=...,
     perViewErrors=...,
-    flags: int = ...,
+    flags: int | None = ...,
     criteria=...,
-) -> tuple[Any, _cameraMatrix1, _distCoeffs1, _cameraMatrix2, _distCoeffs2, _R, _T, _E, _F, _perViewErrors]: ...
+) -> tuple[Incomplete, _cameraMatrix1, _distCoeffs1, _cameraMatrix2, _distCoeffs2, _R, _T, _E, _F, _perViewErrors]: ...
 
 
 def stereoRectify(
@@ -5103,11 +5172,27 @@ def stereoRectify(
     P1=...,
     P2=...,
     Q=...,
-    flags: int = ...,
+    flags: int | None = ...,
     alpha=...,
     newImageSize=...,
 ) -> tuple[_R1, _R2, _P1, _P2, _Q, _validPixROI1, _validPixROI2]: ...
-def stereoRectifyUncalibrated(points1, points2, F, imgSize, H1=..., H2=..., threshold=...) -> tuple[Any, _H1, _H2]: ...
+
+
+def stereoRectifyUncalibrated(
+    points1,
+    points2,
+    F,
+    imgSize,
+    H1=...,
+    H2=...,
+    threshold=...,
+) -> tuple[
+    Incomplete,
+    _H1,
+    _H2,
+]: ...
+
+
 def stylization(src: Mat, dst: Mat = ..., sigma_s=..., sigma_r=...) -> _dst: ...
 
 
@@ -5133,7 +5218,7 @@ def textureFlattening(
 ) -> _dst: ...
 
 
-def threshold(src: Mat, thresh, maxval, type, dst: Mat = ...) -> tuple[Any, _dst]: ...
+def threshold(src: Mat, thresh, maxval, type, dst: Mat = ...) -> tuple[Incomplete, _dst]: ...
 def trace(mtx): ...
 def transform(src: Mat, m, dst: Mat = ...) -> _dst: ...
 def transpose(src: Mat, dst: Mat = ...) -> _dst: ...
@@ -5150,27 +5235,13 @@ def waitKeyEx(delay=...): ...
 
 
 def warpAffine(
-    src: Mat,
-    M,
-    dsize: _Size,
-    _dst: Mat = ...,
-    _flags: int = ...,
-    _borderMode=...,
-    _borderValue=...,
+    src: Mat, M, dsize: _Size, _dst: Mat = ..., _flags: int | None = ..., _borderMode=..., _borderValue=...,
 ) -> _dst: ...
 
 
 def warpPerspective(
-    src: Mat,
-    M,
-    dsize: _Size,
-    _dst: Mat = ...,
-    _flags: int = ...,
-    _borderMode=...,
-    _borderValue=...,
+    src: Mat, M, dsize: _Size, _dst: Mat = ..., _flags: int | None = ..., _borderMode=..., _borderValue=...,
 ) -> _dst: ...
-
-
-def warpPolar(src: Mat, dsize: _Size, _center, _maxRadius, _flags: int, _dst: Mat = ...) -> _dst: ...
+def warpPolar(src: Mat, dsize: _Size, _center, _maxRadius, _flags: int | None, _dst: Mat = ...) -> _dst: ...
 def watershed(image: Mat, markers) -> _markers: ...
 def writeOpticalFlow(path, flow): ...
