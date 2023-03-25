@@ -1,0 +1,174 @@
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+name: Lint and build
+on:
+  workflow_dispatch: #  Allows manual builds
+    inputs:
+      excludeBuildNumber:
+        description: "Exclude build number"
+        required: true
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "**.py"
+      - "**.ui"
+      - ".github/workflows/lint-and-build.yml"
+      - "**/requirements.txt"
+  pull_request:
+    branches:
+      - main
+      - master
+      - dev*
+      - 2.0.0
+    paths:
+      - "**.py"
+      - "**.pyi"
+      - "**.ui"
+      - ".github/workflows/lint-and-build.yml"
+      - "**/requirements*.txt"
+
+env:
+  GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+  GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
+
+jobs:
+  isort:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements*.txt"
+      - run: scripts/install.ps1
+        shell: pwsh
+      - name: Analysing the code with isort
+        run: isort src/ typings/ --check-only
+  add-trailing-comma:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: pip install add-trailing-comma
+      - name: Analysing the code with add-trailing-comma
+        run: add-trailing-comma $(git ls-files '**.py*') --py36-plus
+  Bandit:
+    # Bandit only matters on the version deployed. Platform checks are ignored
+    runs-on: windows-latest
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: pip install bandit
+      - name: Analysing the code with Bandit
+        run: bandit src/ -n 1 --severity-level medium --recursive
+  Pyright:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      # Pyright is version and platform sensible
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements*.txt"
+      - run: scripts/install.ps1
+        shell: pwsh
+      - name: Analysing the code with Pyright
+        uses: jakebailey/pyright-action@v1
+        with:
+          working-directory: src/
+  Pylint:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      # Pylint is version and platform sensible
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements*.txt"
+      - run: scripts/install.ps1
+        shell: pwsh
+      - name: Analysing the code with Pylint
+        run: pylint src/ --reports=y --output-format=colorized
+  Flake8:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      # Flake8 is tied to the version of Python on which it runs. Platform checks are ignored
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements*.txt"
+      - run: scripts/install.ps1
+        shell: pwsh
+      - name: Analysing the code with Flake8
+        run: flake8 src/ typings/
+  Build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      # Only the Python version we plan on shipping matters.
+      matrix:
+        python-version: ["3.10", "3.11"]
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: "scripts/requirements.txt"
+      - run: scripts/install.ps1
+        shell: pwsh
+      - run: scripts/build.ps1
+        shell: pwsh
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: AutoSplit (Python ${{ matrix.python-version }})
+          path: dist/AutoSplit*
+          if-no-files-found: error
+      - name: Upload Build logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build logs (Python ${{ matrix.python-version }})
+          path: |
+            build/AutoSplit/*.toc
+            build/AutoSplit/*.txt
+            build/AutoSplit/*.html
+          if-no-files-found: error

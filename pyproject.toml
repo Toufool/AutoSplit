@@ -1,0 +1,141 @@
+# https://github.com/hhatto/autopep8#usage
+# https://github.com/hhatto/autopep8#more-advanced-usage
+[tool.autopep8]
+max_line_length = 120
+recursive = true
+aggressive = 3
+ignore = [
+  "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
+  "E70" # Allow ... on same line as def
+]
+
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
+[tool.pyright]
+typeCheckingMode = "strict"
+# Prefer `pyright: ignore`
+enableTypeIgnoreComments = false
+# Extra strict
+reportImplicitStringConcatenation = "error"
+reportCallInDefaultInitializer = "error"
+reportMissingSuperCall = "none" # False positives on base classes
+reportPropertyTypeMismatch = "error"
+reportUninitializedInstanceVariable = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
+# Exclude from scanning when running pyright
+exclude = [
+  # Auto generated, fails some strict pyright checks
+  "src/gen/",
+]
+# Ignore must be specified for Pylance to stop displaying errors
+ignore = [
+  # We expect stub files to be incomplete or contain useless statements
+  "**/*.pyi",
+]
+reportUnusedCallResult = "none"
+# Type stubs may not be completable
+reportMissingTypeStubs = "warning"
+# False positives with TYPE_CHECKING
+reportImportCycles = "information"
+# False positives with PyQt .connect. pylint(no-member) works instead
+reportFunctionMemberAccess = "none"
+# Extra runtime safety
+reportUnnecessaryComparison = "warning"
+# Flake8 does a better job
+reportUnusedImport = "none"
+# numpy has way too many complex types that triggers this
+reportUnknownMemberType = "none"
+
+# https://github.com/PyCQA/pylint/blob/main/examples/pylintrc
+# https://pylint.pycqa.org/en/latest/technical_reference/features.html
+[tool.pylint.REPORTS]
+# Just like default but any error, warning or convention will make drop to 9 or less. refactor are worth more
+evaluation = "10.0 - error - warning - convention - ((10 * refactor) / statement) * 10"
+[tool.pylint.MASTER]
+fail-under = 9.0
+# https://pydocbrowser.github.io/pylint/latest/pylint.extensions.html
+# https://pylint.pycqa.org/en/latest/technical_reference/extensions.html
+load-plugins = [
+  "pylint.extensions.bad_builtin",
+  "pylint.extensions.check_elif",
+  "pylint.extensions.comparison_placement",
+  "pylint.extensions.confusing_elif",
+  "pylint.extensions.consider_ternary_expression",
+  "pylint.extensions.empty_comment",
+  "pylint.extensions.emptystring",
+  "pylint.extensions.for_any_all",
+  "pylint.extensions.eq_without_hash",
+  "pylint.extensions.mccabe",
+  "pylint.extensions.overlapping_exceptions",
+  "pylint.extensions.private_import",
+  # "pylint.extensions.redefined_loop_name", # 2.16
+  "pylint.extensions.redefined_variable_type",
+  "pylint.extensions.set_membership",
+  "pylint.extensions.typing",
+  # TODO: Maybe later
+  # "pylint.extensions.docparams",
+  # Not wanted/needed
+  # "pylint.extensions.broad_try_clause",
+  # "pylint.extensions.code_style",
+  # "pylint.extensions.comparetozero",
+  # "pylint.extensions.docstyle",
+  # "pylint.extensions.no_self_use",
+  # "pylint.extensions.while_used",
+]
+ignore-paths = [
+  # Auto generated
+  "^src/gen/.*$",
+  # We expect stub files to be incomplete or contain useless statements
+  "^.*.pyi$",
+]
+extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui", "win32.win32gui"]
+
+[tool.pylint.FORMAT]
+max-line-length = 120
+
+[tool.pylint.DESIGN]
+# Same as SonarLint
+max-args = 7
+# Arbitrary to 2 bytes
+max-attributes = 15
+max-locals = 15
+
+[tool.pylint.'MESSAGES CONTROL']
+# Same as SonarLint
+max-complexity = 15
+# At least same as max-complexity
+max-branches = 15
+# https://github.com/PyCQA/pep8-naming/issues/164
+# OR doesn't fit CaptureMethodMeta
+valid-classmethod-first-arg = "self"
+disable = [
+  # No need to mention the fixmes
+  "fixme",
+  "missing-docstring",
+  # Already taken care of by isort
+  "ungrouped-imports",
+  "unused-import",
+  "wrong-import-order",
+  "wrong-import-position",
+  # Already taken care of by Flake8-naming, which does a better job
+  "invalid-name",
+  # Already taken care of and grayed out. Also conflicts with Pylance reportIncompatibleMethodOverride
+  "unused-argument",
+  # Only reports a single instance. Pyright does a better job anyway
+  "cyclic-import",
+  # Similar lines in 2 files, doesn't really work
+  "R0801",
+]
+
+[tool.pylint.TYPECHECK]
+generated-members = [
+  # https://github.com/PyCQA/pylint/issues/4987
+  "cv2",
+  # https://github.com/mhammond/pywin32/issues/1913
+  "pywintypes.error",
+]
+
+[tool.isort]
+line_length = 120
+combine_as_imports = true
+include_trailing_comma = true
+multi_line_output = 5

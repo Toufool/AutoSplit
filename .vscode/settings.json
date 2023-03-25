@@ -8,58 +8,137 @@
       72
     ]
   },
-  "editor.detectIndentation": false,
-  "editor.tabSize": 2,
-  "[python]": {
-    "editor.tabSize": 4,
-    "editor.rulers": [
-      79,
-      100,
-      120,
-    ]
-  },
-  // Keeping autoformat to false for now to keep minimal changes
-  "editor.formatOnSave": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": false,
-  },
-  "python.linting.enabled": true,
-  "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.diagnosticSeverityOverrides": {
-    // Too many false positives with pywin32 (all functions have 0 arguments in type stub)
-    "reportGeneralTypeIssues":"none"
-  },
-  // https://code.visualstudio.com/docs/python/linting#_specific-linters
-  // Maybe consider PyLint once all Flake8 linting is fixed
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": false,
-  // Flake8 is already a pycodestyle wrapper
-  "python.linting.pycodestyleEnabled": false,
-  "python.linting.pylintArgs": [
-    "--disable=no-member",
-    "--max-line-length=120"
-  ],
-  "python.linting.flake8CategorySeverity.E": "Warning",
-  "python.linting.flake8Args": [
-    "--max-line-length=120"
-  ],
-  "python.formatting.autopep8Args": [
-    "--max-line-length=120"
-  ],
-  "files.insertFinalNewline": true,
-  "trailing-spaces.deleteModifiedLinesOnly": true,
   "trailing-spaces.includeEmptyLines": true,
   "trailing-spaces.trimOnSave": true,
   "trailing-spaces.syntaxIgnore": [
     "markdown"
   ],
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.comments.insertSpace": true,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.unusedImports": false,
+    "source.fixAll.convertImportFormat": true,
+    "source.organizeImports": true,
+  },
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.pyi?",
+        "cmd": "unify ${file} --in-place --quote=\"\\\"\""
+      },
+      {
+        "match": "\\.pyi?",
+        "cmd": "add-trailing-comma ${file} --py36-plus"
+      },
+    ]
+  },
   "files.associations": {
+    ".flake8": "properties",
     "*.qrc": "xml",
     "*.ui": "xml"
   },
-  "markdownlint.config": {
-    "default": true,
-    "MD025": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "build": true,
+    "**/.mypy_cache": true,
+    "**/__pycache__": true,
   },
+  "search.exclude": {
+    "**/*.code-search": true,
+    "*.lock": true,
+  },
+  "[python]": {
+    // Cannot use autotpep8 until https://github.com/microsoft/vscode-autopep8/issues/32 is fixed
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.tabSize": 4,
+    "editor.rulers": [
+      72, // PEP8-17 docstrings
+      // 79, // PEP8-17 default max
+      // 88, // Black default
+      // 99, // PEP8-17 acceptable max
+      120, // Our hard rule
+    ],
+  },
+  // Important to follow the config in pyrightconfig.json
+  "python.analysis.useLibraryCodeForTypes": false,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.formatting.provider": "autopep8",
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
+  "python.linting.enabled": true,
+  // Use the new Pylint extension instead
+  "python.linting.pylintEnabled": false,
+  "pylint.severity": {
+    "convention": "Warning",
+    "error": "Error",
+    "fatal": "Error",
+    "refactor": "Warning",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  // Use the new Flake8 extension instead
+  "python.linting.flake8Enabled": false,
+  // Partial codes don't work yet: https://github.com/microsoft/vscode-flake8/issues/7
+  "flake8.severity": {
+    "convention": "Warning",
+    "error": "Error",
+    "fatal": "Error",
+    "refactor": "Warning",
+    "warning": "Warning",
+    "info": "Warning",
+    // builtins
+    "A": "Warning",
+    // mccabe
+    "C": "Warning",
+    // class attributes order
+    "CCE": "Warning",
+    // pycodestyles
+    "E": "Warning",
+    "E9": "Error", // Runtime
+    "W": "Warning",
+    "W6": "Error", // Deprecation warning
+    // Pyflakes
+    "F": "Warning",
+    // PEP8 Naming convention
+    "N": "Warning",
+    // Simplify
+    "SIM": "Warning",
+    "SIM9": "Information",
+    // PYI
+    "Y": "Warning",
+  },
+  // PyRight obsoletes mypy
+  "python.linting.mypyEnabled": false,
+  // Is already wrapped by Flake8, prospector and pylama
+  "python.linting.pycodestyleEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.prospectorEnabled": false,
+  // Just another wrapper, use Flake8 OR this
+  "python.linting.pylamaEnabled": false,
+  "python.linting.banditEnabled": true,
+  "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
+  "powershell.codeFormatting.autoCorrectAliases": true,
+  "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
+  "powershell.codeFormatting.useConstantStrings": true,
+  "powershell.codeFormatting.useCorrectCasing": true,
+  "powershell.codeFormatting.whitespaceBetweenParameters": true,
+  "powershell.integratedConsole.showOnStartup": false,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "xml.codeLens.enabled": true,
+  "xml.format.spaceBeforeEmptyCloseTag": false,
 }
