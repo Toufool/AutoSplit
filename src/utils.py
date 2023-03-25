@@ -174,5 +174,5 @@ MAXBYTE = 255
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.0.0-beta.1" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.0.0-beta.3" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY
