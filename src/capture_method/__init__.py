@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, TypedDict, cast
 
+from _ctypes import COMError  # pylint: disable=C2701
 from pygrabber.dshow_graph import FilterGraph
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -14,7 +15,7 @@ from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCap
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
-from utils import WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+from utils import GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -44,11 +45,10 @@ class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
     def __contains__(self, other: str):
         try:
-            self(other)  # pyright: ignore [reportGeneralTypeIssues] pylint: disable=no-value-for-parameter
+            self(other)  # pylint: disable=no-value-for-parameter
         except ValueError:
             return False
-        else:
-            return True
+        return True
 
 
 @unique
@@ -147,17 +147,26 @@ CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
 
     implementation=BitBltCaptureMethod,
 )
-CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
-    name="Direct3D Desktop Duplication",
-    short_description="slower, bound to display",
-    description=(
-        "\nDuplicates the desktop using Direct3D. "
-        "\nIt can record OpenGL and Hardware Accelerated windows. "
-        "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
-        "\nOverlapping windows will show up and can't record across displays. "
-    ),
-    implementation=DesktopDuplicationCaptureMethod,
-)
+try:
+    import d3dshot
+    d3dshot.create(capture_output="numpy")
+except (ModuleNotFoundError, COMError):
+    pass
+else:
+    CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
+        name="Direct3D Desktop Duplication",
+        short_description="slower, bound to display",
+        description=(
+            "\nDuplicates the desktop using Direct3D. "
+            "\nIt can record OpenGL and Hardware Accelerated windows. "
+            "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
+            "\nOverlapping windows will show up and can't record across displays. "
+            "\nThis option may not be available for hybrid GPU laptops, "
+            "\nsee D3DDD-Note-Laptops.md for a solution. "
+            f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
+        ),
+        implementation=DesktopDuplicationCaptureMethod,
+    )
 CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethodInfo(
     name="Force Full Content Rendering",
     short_description="very slow, can affect rendering",
