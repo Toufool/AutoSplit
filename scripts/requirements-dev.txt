@@ -25,9 +25,9 @@ autopep8>=2.0.0 # New checks
 isort
 unify
 #
-# Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
+# Run `./scripts/designer.ps1` to quickly open the bundled Qt Designer.
 # Can also be downloaded externally as a non-python package
-qt6-applications
+# qt6-applications
 # Types
 types-d3dshot
 types-keyboard

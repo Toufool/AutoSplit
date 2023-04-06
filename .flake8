@@ -29,7 +29,7 @@ per-file-ignores=
     ; Type re-exports
     ; mypy 3.7 Union issue
     *.pyi: Q000,E701,E704,E501,N8,A001,A002,A003,CCE002,F401,Y037
-; PyQt methods
+; Qt methods, we can't control the names
 ignore-names=closeEvent,paintEvent,keyPressEvent,mousePressEvent,mouseMoveEvent,mouseReleaseEvent
 ; McCabe max-complexity is also taken care of by Pylint and doesn't fail the build there
 ; So this is the hard limit

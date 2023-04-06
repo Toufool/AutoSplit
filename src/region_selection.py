@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtTest import QTest
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtTest import QTest
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
@@ -303,8 +303,8 @@ class BaseSelectWidget(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
-    def keyPressEvent(self, a0: QtGui.QKeyEvent):
-        if a0.key() == QtCore.Qt.Key.Key_Escape:
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
 
 
@@ -313,9 +313,9 @@ class SelectWindowWidget(BaseSelectWidget):
     Widget to select a window and obtain its bounds
     """
 
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
-        self._x = int(a0.position().x()) + self.geometry().x()
-        self._y = int(a0.position().y()) + self.geometry().y()
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
+        self._x = int(event.position().x()) + self.geometry().x()
+        self._y = int(event.position().y()) + self.geometry().y()
         self.close()
 
 
@@ -339,23 +339,23 @@ class SelectRegionWidget(BaseSelectWidget):
     def width(self):
         return self._right - self._x
 
-    def paintEvent(self, a0: QtGui.QPaintEvent):
+    def paintEvent(self, event: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qpainter = QtGui.QPainter(self)
             qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
             qpainter.setBrush(QtGui.QColor("opaque"))
             qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
-    def mousePressEvent(self, a0: QtGui.QMouseEvent):
-        self.__begin = a0.position().toPoint()
+    def mousePressEvent(self, event: QtGui.QMouseEvent):
+        self.__begin = event.position().toPoint()
         self.__end = self.__begin
         self.update()
 
-    def mouseMoveEvent(self, a0: QtGui.QMouseEvent):
-        self.__end = a0.position().toPoint()
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
+        self.__end = event.position().toPoint()
         self.update()
 
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
             # so the added virtual screen offsets convert them back to the virtual screen coordinates

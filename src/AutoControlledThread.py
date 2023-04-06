@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt6 import QtCore
+from PySide6 import QtCore
 
 import error_messages
 import user_profile
@@ -11,11 +11,12 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class AutoControlledWorker(QtCore.QObject):
+class AutoControlledThread(QtCore.QThread):
     def __init__(self, autosplit: AutoSplit):
         self.autosplit = autosplit
         super().__init__()
 
+    @QtCore.Slot()
     def run(self):
         while True:
             try:

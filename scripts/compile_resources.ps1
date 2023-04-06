@@ -2,11 +2,17 @@ $originalDirectory = $pwd
 Set-Location "$PSScriptRoot/.."
 
 New-Item -Force -ItemType directory ./src/gen | Out-Null
-pyuic6 './res/about.ui' -o './src/gen/about.py'
-pyuic6 './res/design.ui' -o './src/gen/design.py'
-pyuic6 './res/settings.ui' -o './src/gen/settings.py'
-pyuic6 './res/update_checker.ui' -o './src/gen/update_checker.py'
+pyside6-uic './res/about.ui' -o './src/gen/about.py'
+pyside6-uic './res/design.ui' -o './src/gen/design.py'
+pyside6-uic './res/settings.ui' -o './src/gen/settings.py'
+pyside6-uic './res/update_checker.ui' -o './src/gen/update_checker.py'
 pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
+$files = Get-ChildItem ./src/gen/ *.py
+foreach ($file in $files) {
+    (Get-Content $file.PSPath) |
+    ForEach-Object { $_ -replace 'import resources_rc', 'from . import resources_rc' } |
+    Set-Content $file.PSPath
+}
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"

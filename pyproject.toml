@@ -36,7 +36,7 @@ reportUnusedCallResult = "none"
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# False positives with PyQt .connect. pylint(no-member) works instead
+# False positives with PySide .connect. pylint(no-member) works instead
 reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"
@@ -87,7 +87,14 @@ ignore-paths = [
   # We expect stub files to be incomplete or contain useless statements
   "^.*.pyi$",
 ]
-extension-pkg-allow-list = ["PyQt6", "PySide6", "win32ui", "win32.win32gui"]
+extension-pkg-allow-list = [
+  "PySide6.QtCore",
+  "PySide6.QtGui",
+  "PySide6.QtTest",
+  "PySide6.QtWidgets",
+  "win32ui",
+  "win32.win32gui",
+]
 
 [tool.pylint.FORMAT]
 max-line-length = 120
