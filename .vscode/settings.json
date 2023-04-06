@@ -91,6 +91,7 @@
     "warning": "Warning",
     "info": "Information"
   },
+  "pylint.importStrategy": "fromEnvironment",
   // Use the new Flake8 extension instead
   "python.linting.flake8Enabled": false,
   // Partial codes don't work yet: https://github.com/microsoft/vscode-flake8/issues/7

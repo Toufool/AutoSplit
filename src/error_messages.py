@@ -6,7 +6,7 @@ import signal
 import sys
 import traceback
 from types import TracebackType
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NoReturn
 
 from PySide6 import QtCore, QtWidgets
 
@@ -185,7 +185,7 @@ def make_excepthook(autosplit: AutoSplit):
     return excepthook
 
 
-def handle_top_level_exceptions(exception: Exception):
+def handle_top_level_exceptions(exception: Exception) -> NoReturn:
     message = f"AutoSplit encountered an unrecoverable exception and will likely now close. {CREATE_NEW_ISSUE_MESSAGE}"
     # Print error to console if not running in executable
     if FROZEN:
