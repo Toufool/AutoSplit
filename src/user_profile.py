@@ -81,13 +81,16 @@ def save_settings_as(autosplit: AutoSplit):
     @return: The save settings filepath selected. Empty if cancelled
     """
     # User picks save destination
-    save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
-        autosplit,
-        "Save Settings As",
-        autosplit.last_successfully_loaded_settings_file_path
-        or os.path.join(auto_split_directory, "settings.toml"),
-        "TOML (*.toml)",
-    )[0]
+    save_settings_file_path = cast(
+        str,  # https://bugreports.qt.io/browse/PYSIDE-2285
+        QtWidgets.QFileDialog.getSaveFileName(
+            autosplit,
+            "Save Settings As",
+            autosplit.last_successfully_loaded_settings_file_path
+            or os.path.join(auto_split_directory, "settings.toml"),
+            "TOML (*.toml)",
+        )[0],
+    )
 
     # If user cancels save destination window, don't save settings
     if not save_settings_file_path:
@@ -156,12 +159,15 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
 
 def load_settings(autosplit: AutoSplit, from_path: str = ""):
-    load_settings_file_path = from_path or QtWidgets.QFileDialog.getOpenFileName(
-        autosplit,
-        "Load Profile",
-        os.path.join(auto_split_directory, "settings.toml"),
-        "TOML (*.toml)",
-    )[0]
+    load_settings_file_path = from_path or cast(
+        str,  # https://bugreports.qt.io/browse/PYSIDE-2285
+        QtWidgets.QFileDialog.getOpenFileName(
+            autosplit,
+            "Load Profile",
+            os.path.join(auto_split_directory, "settings.toml"),
+            "TOML (*.toml)",
+        )[0],
+    )
     if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
         return
 

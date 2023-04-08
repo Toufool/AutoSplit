@@ -4,7 +4,7 @@ import ctypes
 import ctypes.wintypes
 import os
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import numpy as np
@@ -12,7 +12,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-from winsdk._winrt import initialize_with_window
+from winsdk._winrt import initialize_with_window  # pylint: disable=no-name-in-module
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
@@ -165,12 +165,15 @@ def align_region(autosplit: AutoSplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
-    template_filename = QtWidgets.QFileDialog.getOpenFileName(
-        autosplit,
-        "Select Reference Image",
-        "",
-        IMREAD_EXT_FILTER,
-    )[0]
+    template_filename = cast(
+        str,  # https://bugreports.qt.io/browse/PYSIDE-2285
+        QtWidgets.QFileDialog.getOpenFileName(
+            autosplit,
+            "Select Reference Image",
+            "",
+            IMREAD_EXT_FILTER,
+        )[0],
+    )
 
     # Return if the user presses cancel
     if not template_filename:

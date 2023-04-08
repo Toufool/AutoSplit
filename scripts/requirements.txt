@@ -5,9 +5,11 @@
 # Usage: ./scripts/install.ps1
 #
 # If you're having issues with the libraries, you might want to first run:
-# pip uninstall -y -r ./scripts/requirements-dev.txt
+# pip uninstall -y -r ./scripts/requirements-dev.txt PySide6 shiboken6
 #
 # Creating an AutoSplit executable with PyInstaller: ./scripts/build.ps1
+#
+# PySide6 dev wheels: https://download.qt.io/snapshots/ci/pyside/dev/?C=M;O=D
 #
 # Dependencies:
 certifi
@@ -19,11 +21,7 @@ packaging
 Pillow>=9.2  # gnome-screeshot checks
 psutil
 PyAutoGUI
-# PySide6-Essentials>6.4.2  # Python 3.11 support,
-# Dev PySide6 past March 7th fixes https://bugreports.qt.io/browse/PYSIDE-2189 and https://bugreports.qt.io/browse/PYSIDE-1603
-# https://download.qt.io/snapshots/ci/pyside/dev/?C=M;O=D
-https://download.qt.io/snapshots/ci/pyside/dev/0142b21d429a7cf0ef78a5bf9a0d972c2a7223b2/split_wheels/PySide6_Essentials-6.5.0a1.dev1678202304-cp37-abi3-win_amd64.whl
-https://download.qt.io/snapshots/ci/pyside/dev/0142b21d429a7cf0ef78a5bf9a0d972c2a7223b2/split_wheels/shiboken6-6.5.0a1.dev1678202304-cp37-abi3-win_amd64.whl
+PySide6-Essentials>=6.5 # fixes https://bugreports.qt.io/browse/PYSIDE-2189 and https://bugreports.qt.io/browse/PYSIDE-1603
 requests<=2.28.1  # 2.28.2 has issues with PyInstaller https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 toml
 #

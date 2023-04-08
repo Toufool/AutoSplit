@@ -16,7 +16,7 @@ import cv2
 from psutil import process_iter
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 
 import error_messages
 import user_profile
