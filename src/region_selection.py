@@ -24,7 +24,8 @@ user32 = ctypes.windll.user32
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-
+ALIGN_REGION_THRESHOLD = 0.9
+BORDER_WIDTH = 2
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
@@ -193,7 +194,7 @@ def align_region(autosplit: AutoSplit):
 
     # Go ahead and check if this satisfies our requirement before setting the region
     # We don't want a low similarity image to be aligned.
-    if best_match < 0.9:
+    if best_match < ALIGN_REGION_THRESHOLD:
         error_messages.alignment_not_matched()
         return
 
@@ -339,7 +340,7 @@ class SelectRegionWidget(BaseSelectWidget):
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qpainter = QtGui.QPainter(self)
-            qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
+            qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), BORDER_WIDTH))
             qpainter.setBrush(QtGui.QColor("opaque"))
             qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 

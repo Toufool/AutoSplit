@@ -40,12 +40,9 @@ ignore = [
 
   ### FIXME (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
   "PTH",
-  "PLR2004", # Pylint Refactor: magic-value-comparison
 ]
 
 [tool.ruff.per-file-ignores]
-# We know this file and class is too big and need to do something about it
-# "src/AutoSplit.py" = ["PLR0912", "PLR0915"]
 "typings/**/*.pyi" = [
   "F821", # https://github.com/charliermarsh/ruff/issues/3011
   "I002", # https://github.com/charliermarsh/ruff/issues/3072

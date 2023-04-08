@@ -28,7 +28,7 @@ def __value_from_filename(
     delimiters: str,
     default_value: T,
 ) -> T:
-    if len(delimiters) != 2:
+    if len(delimiters) != 2:  # noqa: PLR2004
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
         value_type = type(default_value)
@@ -52,7 +52,7 @@ def threshold_from_filename(filename: str):
     value = __value_from_filename(filename, "()", -1.0)
 
     # Check to make sure if it is a valid threshold
-    return value if 0.0 <= value <= 1.0 else None
+    return value if 0 <= value <= 1 else None
 
 
 def pause_from_filename(filename: str):
@@ -68,7 +68,7 @@ def pause_from_filename(filename: str):
     value = __value_from_filename(filename, "[]", -1.0)
 
     # Pause times should always be positive or zero
-    return value if value >= 0.0 else None
+    return value if value >= 0 else None
 
 
 def delay_time_from_filename(filename: str):

@@ -13,7 +13,7 @@ from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
+from utils import RGBA_CHANNEL_COUNT, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -106,7 +106,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
-        image.shape = (self.size.height, self.size.width, 4)
+        image.shape = (self.size.height, self.size.width, RGBA_CHANNEL_COUNT)
         image = image[
             selection["y"]:selection["y"] + selection["height"],
             selection["x"]:selection["x"] + selection["width"],

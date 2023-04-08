@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from enum import Enum
+from enum import IntEnum
 from math import sqrt
 from typing import TYPE_CHECKING
 
@@ -9,8 +9,8 @@ import cv2
 import numpy as np
 
 import error_messages
-from compare import check_if_image_has_transparency, compare_histograms, compare_l2_norm, compare_phash
-from utils import MAXBYTE, is_valid_image
+from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
+from utils import MAXBYTE, RGB_CHANNEL_COUNT, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -26,7 +26,7 @@ START_KEYWORD = "start_auto_splitter"
 RESET_KEYWORD = "reset"
 
 
-class ImageType(Enum):
+class ImageType(IntEnum):
     SPLIT = 0
     RESET = 1
     START = 2
@@ -108,7 +108,7 @@ class AutoSplitImage():
             # the number of nonzero elements in the alpha channel of the split image.
             # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency.
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, 3])))
+            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])))
 
             image = cv2.resize(
                 image,
@@ -123,7 +123,7 @@ class AutoSplitImage():
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             # Add Alpha channel if missing
-            if image.shape[2] == 3:
+            if image.shape[ImageShape.Alpha] == RGB_CHANNEL_COUNT:
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
@@ -141,13 +141,11 @@ class AutoSplitImage():
             return 0.0
         capture = cv2.resize(capture, self.byte_array.shape[1::-1])
         comparison_method = self.__get_comparison_method(default)
-        if comparison_method == 0:
-            return compare_l2_norm(self.byte_array, capture, self.mask)
-        if comparison_method == 1:
-            return compare_histograms(self.byte_array, capture, self.mask)
-        if comparison_method == 2:
-            return compare_phash(self.byte_array, capture, self.mask)
-        return 0.0
+
+        return COMPARE_METHODS_BY_INDEX.get(comparison_method, compare_dummy)(self.byte_array, capture, self.mask)
+
+
+def compare_dummy(*_: object): return 0.0
 
 
 if True:

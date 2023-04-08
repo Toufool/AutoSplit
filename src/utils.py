@@ -6,6 +6,7 @@ import ctypes.wintypes
 import os
 import sys
 from collections.abc import Callable, Iterable
+from enum import IntEnum
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -22,6 +23,24 @@ if TYPE_CHECKING:
     P = ParamSpec("P")
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
+MAXBYTE = 255
+RGB_CHANNEL_COUNT = 3
+"""How many channels in an RGB image"""
+RGBA_CHANNEL_COUNT = 4
+"""How many channels in an RGB image"""
+
+
+class ImageShape(IntEnum):
+    X = 0
+    Y = 1
+    Alpha = 2
+
+
+class ColorChannel(IntEnum):
+    Red = 0
+    Green = 1
+    Blue = 2
+    Alpha = 3
 
 
 def decimal(value: int | float):
@@ -35,7 +54,7 @@ def is_digit(value: str | int | None):
     if value is None:
         return False
     try:
-        return 0 <= int(value) <= 9
+        return 0 <= int(value) <= 9  # noqa: PLR2004
     except (ValueError, TypeError):
         return False
 
@@ -161,14 +180,13 @@ def getTopWindowAt(x: int, y: int):  # noqa: N802
 
 
 # Environment specifics
-WINDOWS_BUILD_NUMBER = int(version().split(".")[2]) if sys.platform == "win32" else -1
+WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 """AutoSplit Version number"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 """The directory of either the AutoSplit executable or AutoSplit.py"""
-MAXBYTE = 255
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
