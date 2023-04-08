@@ -8,6 +8,7 @@ import signal
 import sys
 from time import time
 from types import FunctionType
+from typing import NoReturn
 
 import certifi
 import cv2
@@ -694,6 +695,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
 
             QTest.qWait(wait_delta_ms)
 
+        return False
+
     def __pause_loop(self, stop_time: float, message: str):
         """
         Wait for a certain time and show the timer to the user.
@@ -870,7 +873,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         Exit safely when closing the window
         """
 
-        def exit_program():
+        def exit_program() -> NoReturn:
             if self.update_auto_control:
                 self.update_auto_control.terminate()
             self.capture_method.close(self)
