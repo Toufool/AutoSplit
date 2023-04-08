@@ -32,9 +32,11 @@ def __value_from_filename(
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
         value_type = type(default_value)
-        return value_type(filename.split(delimiters[0], 1)[1].split(delimiters[1])[0])
+        value = value_type(filename.split(delimiters[0], 1)[1].split(delimiters[1])[0])
     except (IndexError, ValueError):
         return default_value
+    else:
+        return value
 
 
 def threshold_from_filename(filename: str):
@@ -45,7 +47,6 @@ def threshold_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: A valid threshold, if not then None
     """
-
     # Check to make sure there is a valid floating point number between
     # parentheses of the filename
     value = __value_from_filename(filename, "()", -1.0)
@@ -62,7 +63,6 @@ def pause_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: A valid pause time, if not then None
     """
-
     # Check to make sure there is a valid pause time between brackets
     # of the filename
     value = __value_from_filename(filename, "[]", -1.0)
@@ -79,7 +79,6 @@ def delay_time_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: A valid delay time, if not then none
     """
-
     # Check to make sure there is a valid delay time between brackets
     # of the filename
     value = __value_from_filename(filename, "##", -1)
@@ -96,7 +95,6 @@ def loop_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: A valid loop number, if not then 1
     """
-
     # Check to make sure there is a valid delay time between brackets
     # of the filename
     value = __value_from_filename(filename, "@@", 1)
@@ -113,7 +111,6 @@ def comparison_method_from_filename(filename: str):
     @param filename: String containing the file's name
     @return: A valid comparison method index, if not then none
     """
-
     # Check to make sure there is a valid delay time between brackets
     # of the filename
     value = __value_from_filename(filename, "^^", -1)
@@ -124,7 +121,7 @@ def comparison_method_from_filename(filename: str):
 
 def flags_from_filename(filename: str):
     """
-    Retrieve the flags from the filename, if there are no flags then 0 is returned
+    Retrieve the flags from the filename, if there are no flags then 0 is returned.
 
     @param filename: String containing the file's name
     @return: The flags as an integer, if invalid flags are found it returns 0
@@ -134,7 +131,6 @@ def flags_from_filename(filename: str):
     "b" = below threshold, after threshold is met, split when it goes below the threhsold.
     "p" = pause, hit pause key when this split is found
     """
-
     # Check to make sure there are flags between curly braces
     # of the filename
     flags_str = __value_from_filename(filename, "{}", "")

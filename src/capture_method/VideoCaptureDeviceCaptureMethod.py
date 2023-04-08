@@ -55,7 +55,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
                 self.last_captured_frame = image
                 self.is_old_image = False
-        except Exception as exception:  # pylint: disable=broad-except # We really want to catch everything here
+        except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self.capture_device.release()
             autosplit.show_error_signal.emit(
@@ -115,7 +115,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())

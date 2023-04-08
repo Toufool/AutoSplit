@@ -25,7 +25,6 @@ def compare_histograms(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None =
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
     @return: The similarity between the histograms as a number 0 to 1.
     """
-
     source_hist = cv2.calcHist([source], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
     capture_hist = cv2.calcHist([capture], CHANNELS, mask, HISTOGRAM_SIZE, RANGES)
 
@@ -43,7 +42,6 @@ def compare_l2_norm(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = No
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
     @return: The similarity between the images as a number 0 to 1.
     """
-
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
@@ -59,7 +57,7 @@ def compare_l2_norm(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = No
 def compare_template(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = None):
     """
     Checks if the source is located within the capture by using the sum of square differences.
-    The mask is used to search for non-rectangular images within the capture
+    The mask is used to search for non-rectangular images within the capture.
 
     @param source: The subsection being searched for within the capture
     @param capture: Capture of an image larger than the source
@@ -67,7 +65,6 @@ def compare_template(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = N
     @return: The best similarity for a region found in the image. This is
     represented as a number from 0 to 1.
     """
-
     result = cv2.matchTemplate(capture, source, cv2.TM_SQDIFF, mask=mask)
     min_val, *_ = cv2.minMaxLoc(result)
 
@@ -89,7 +86,6 @@ def compare_phash(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = None
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
     @return: The similarity between the hashes of the image as a number 0 to 1.
     """
-
     # Since imagehash doesn't have any masking itself, bitwise_and will allow us
     # to apply the mask to the source and capture before calculating the pHash for
     # each of the images. As a result of this, this function is not going to be very

@@ -47,9 +47,7 @@ IMREAD_EXT_FILTER = "All Files (" \
 
 def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
     # TODO: For later as a different picker option
-    """
-    Uses the built-in GraphicsCapturePicker to select the Window
-    """
+    """Uses the built-in GraphicsCapturePicker to select the Window."""
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
             if async_status != AsyncStatus.COMPLETED:
@@ -221,14 +219,14 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=too-many-locals
+def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller
     than the dimensions of the capture. Since we are using SQDIFF
     the best match will be the min_val which is located at min_loc.
     The best match found in the image, set everything to 0 by default
-    so that way the first match will overwrite these values
+    so that way the first match will overwrite these values.
     """
     best_match = 0.0
     best_height = 0
@@ -309,9 +307,7 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
 
 class SelectWindowWidget(BaseSelectWidget):
-    """
-    Widget to select a window and obtain its bounds
-    """
+    """Widget to select a window and obtain its bounds."""
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         self._x = int(a0.position().x()) + self.geometry().x()
@@ -322,8 +318,9 @@ class SelectWindowWidget(BaseSelectWidget):
 class SelectRegionWidget(BaseSelectWidget):
     """
     Widget for dragging screen region
-    https://github.com/harupy/snipping-tool
+    https://github.com/harupy/snipping-tool.
     """
+
     _right: int = 0
     _bottom: int = 0
     __begin = QtCore.QPoint()

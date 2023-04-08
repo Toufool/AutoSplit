@@ -31,9 +31,7 @@ def decimal(value: int | float):
 
 
 def is_digit(value: str | int | None):
-    """
-    Checks if `value` is a single-digit string from 0-9
-    """
+    """Checks if `value` is a single-digit string from 0-9."""
     if value is None:
         return False
     try:
@@ -47,7 +45,7 @@ def is_valid_image(image: cv2.Mat | None) -> TypeGuard[cv2.Mat]:
 
 
 def is_valid_hwnd(hwnd: int):
-    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `\"\"`"""
+    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
     if not hwnd:
         return False
     if sys.platform == "win32":
@@ -60,7 +58,7 @@ T = TypeVar("T")
 
 
 def first(iterable: Iterable[T]) -> T:
-    """@return: The first element of a collection. Dictionaries will return the first key"""
+    """@return: The first element of a collection. Dictionaries will return the first key."""
     return next(iter(iterable))
 
 
@@ -109,7 +107,7 @@ def get_direct3d_device():
             # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
             direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
         # TODO: Unknown potential error, I don't have an older Win10 machine to test.
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # noqa: S110,BLE001
             pass
     if not direct_3d_device:
         raise OSError("Unable to initialize a Direct3D Device.")
@@ -125,7 +123,7 @@ def try_get_direct3d_device():
 
 def fire_and_forget(func: Callable[..., Any]):
     """
-    Runs synchronous function asynchronously without waiting for a response
+    Runs synchronous function asynchronously without waiting for a response.
 
     Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
 

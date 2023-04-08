@@ -64,8 +64,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             except OSError:
                 # OSError: The application called an interface that was marshalled for a different thread
                 # This still seems to close the session and prevent the following hard crash in LiveSplit
-                # pylint: disable=line-too-long
-                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"  # noqa: E501
+                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # noqa: E501
                 pass
             self.session = None
 
@@ -122,7 +121,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         autosplit.hwnd = hwnd
         self.close(autosplit)
         try:
-            self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(autosplit)
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):

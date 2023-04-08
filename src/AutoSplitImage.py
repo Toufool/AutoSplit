@@ -49,36 +49,28 @@ class AutoSplitImage():
     __similarity_threshold: float | None = None
 
     def get_delay_time(self, default: AutoSplit | int):
-        """
-        Get image's delay time or fallback to the default value from spinbox
-        """
+        """Get image's delay time or fallback to the default value from spinbox."""
         default_value = default \
             if isinstance(default, int) \
             else default.settings_dict["default_delay_time"]
         return default_value if self.__delay_time is None else self.__delay_time
 
     def __get_comparison_method(self, default: AutoSplit | int):
-        """
-        Get image's comparison or fallback to the default value from combobox
-        """
+        """Get image's comparison or fallback to the default value from combobox."""
         default_value = default \
             if isinstance(default, int) \
             else default.settings_dict["default_comparison_method"]
         return default_value if self.__comparison_method is None else self.__comparison_method
 
     def get_pause_time(self, default: AutoSplit | float):
-        """
-        Get image's pause time or fallback to the default value from spinbox
-        """
+        """Get image's pause time or fallback to the default value from spinbox."""
         default_value = default \
             if isinstance(default, float) \
             else default.settings_dict["default_pause_time"]
         return default_value if self.__pause_time is None else self.__pause_time
 
     def get_similarity_threshold(self, default: AutoSplit | float):
-        """
-        Get image's similarity threshold or fallback to the default value from spinbox
-        """
+        """Get image's similarity threshold or fallback to the default value from spinbox."""
         default_value = default \
             if isinstance(default, float) \
             else default.settings_dict["default_similarity_threshold"]
@@ -144,10 +136,7 @@ class AutoSplitImage():
         default: AutoSplit | int,
         capture: cv2.Mat | None,
     ):
-        """
-        Compare image with capture using image's comparison method. Falls back to combobox
-        """
-
+        """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
         capture = cv2.resize(capture, self.byte_array.shape[1::-1])
@@ -161,8 +150,12 @@ class AutoSplitImage():
         return 0.0
 
 
-if True:  # pylint: disable=using-constant-test
+if True:
     from split_parser import (
-        comparison_method_from_filename, delay_time_from_filename, flags_from_filename, loop_from_filename,
-        pause_from_filename, threshold_from_filename,
+        comparison_method_from_filename,
+        delay_time_from_filename,
+        flags_from_filename,
+        loop_from_filename,
+        pause_from_filename,
+        threshold_from_filename,
     )
