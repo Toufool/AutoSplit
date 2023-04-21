@@ -1,4 +1,6 @@
-import numpy
+from __future__ import annotations
+
+import numpy as np
 from typing_extensions import TypeAlias
 
 _Unused: TypeAlias = object
@@ -6,7 +8,7 @@ _Unused: TypeAlias = object
 __all__: list[str] = []
 
 
-_NDArray = numpy.ndarray[float, numpy.dtype[numpy.generic]]
+_NDArray: TypeAlias = np.ndarray[float, np.dtype[np.generic]]
 
 # TODO: Make Mat generic with int or float
 

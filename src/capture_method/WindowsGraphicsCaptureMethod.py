@@ -13,7 +13,7 @@ from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
+from utils import RGBA_CHANNEL_COUNT, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -64,8 +64,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             except OSError:
                 # OSError: The application called an interface that was marshalled for a different thread
                 # This still seems to close the session and prevent the following hard crash in LiveSplit
-                # pylint: disable=line-too-long
-                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>"  # noqa: E501
+                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # noqa: E501
                 pass
             self.session = None
 
@@ -107,7 +106,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
-        image.shape = (self.size.height, self.size.width, 4)
+        image.shape = (self.size.height, self.size.width, RGBA_CHANNEL_COUNT)
         image = image[
             selection["y"]:selection["y"] + selection["height"],
             selection["x"]:selection["x"] + selection["width"],
@@ -122,7 +121,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         autosplit.hwnd = hwnd
         self.close(autosplit)
         try:
-            self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(autosplit)
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):

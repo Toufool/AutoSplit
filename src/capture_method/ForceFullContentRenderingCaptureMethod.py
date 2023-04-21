@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 
 
-class ForceFullContentRenderingCaptureMethod(BitBltCaptureMethod):  # pylint: disable=too-few-public-methods
+class ForceFullContentRenderingCaptureMethod(BitBltCaptureMethod):
     _render_full_content = True
