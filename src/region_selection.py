@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtTest import QTest
+from typing_extensions import override
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window  # pylint: disable=no-name-in-module
@@ -17,14 +18,23 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import MAXBYTE, get_window_bounds, getTopWindowAt, is_valid_hwnd, is_valid_image
+from utils import (
+    MAXBYTE,
+    RGB_CHANNEL_COUNT,
+    ImageShape,
+    get_window_bounds,
+    getTopWindowAt,
+    is_valid_hwnd,
+    is_valid_image,
+)
 
 user32 = ctypes.windll.user32
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-
+ALIGN_REGION_THRESHOLD = 0.9
+BORDER_WIDTH = 2
 SUPPORTED_IMREAD_FORMATS = [
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
@@ -47,9 +57,7 @@ IMREAD_EXT_FILTER = "All Files (" \
 
 def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
     # TODO: For later as a different picker option
-    """
-    Uses the built-in GraphicsCapturePicker to select the Window
-    """
+    """Uses the built-in GraphicsCapturePicker to select the Window."""
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
             if async_status != AsyncStatus.COMPLETED:
@@ -195,7 +203,7 @@ def align_region(autosplit: AutoSplit):
 
     # Go ahead and check if this satisfies our requirement before setting the region
     # We don't want a low similarity image to be aligned.
-    if best_match < 0.9:
+    if best_match < ALIGN_REGION_THRESHOLD:
         error_messages.alignment_not_matched()
         return
 
@@ -221,14 +229,14 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=too-many-locals
+def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller
     than the dimensions of the capture. Since we are using SQDIFF
     the best match will be the min_val which is located at min_loc.
     The best match found in the image, set everything to 0 by default
-    so that way the first match will overwrite these values
+    so that way the first match will overwrite these values.
     """
     best_match = 0.0
     best_height = 0
@@ -237,7 +245,7 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=to
 
     # Add alpha channel to template if it's missing. The cv2.matchTemplate() function
     # needs both images to have the same color dimensions, and capture has an alpha channel
-    if template.shape[2] == 3:
+    if template.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
 
     # This tests 50 images scaled from 20% to 300% of the original template size
@@ -287,9 +295,11 @@ class BaseSelectWidget(QtWidgets.QWidget):
     _x = 0
     _y = 0
 
+    @override
     def x(self):
         return self._x
 
+    @override
     def y(self):
         return self._y
 
@@ -308,16 +318,16 @@ class BaseSelectWidget(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
+    @override
     def keyPressEvent(self, a0: QtGui.QKeyEvent):
         if a0.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
 
 
 class SelectWindowWidget(BaseSelectWidget):
-    """
-    Widget to select a window and obtain its bounds
-    """
+    """Widget to select a window and obtain its bounds."""
 
+    @override
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         self._x = int(a0.position().x()) + self.geometry().x()
         self._y = int(a0.position().y()) + self.geometry().y()
@@ -327,8 +337,9 @@ class SelectWindowWidget(BaseSelectWidget):
 class SelectRegionWidget(BaseSelectWidget):
     """
     Widget for dragging screen region
-    https://github.com/harupy/snipping-tool
+    https://github.com/harupy/snipping-tool.
     """
+
     _right: int = 0
     _bottom: int = 0
     __begin = QtCore.QPoint()
@@ -338,28 +349,34 @@ class SelectRegionWidget(BaseSelectWidget):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
         super().__init__()
 
+    @override
     def height(self):
         return self._bottom - self._y
 
+    @override
     def width(self):
         return self._right - self._x
 
+    @override
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qpainter = QtGui.QPainter(self)
-            qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), 2))
+            qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), BORDER_WIDTH))
             qpainter.setBrush(QtGui.QColor("opaque"))
             qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
+    @override
     def mousePressEvent(self, a0: QtGui.QMouseEvent):
         self.__begin = a0.position().toPoint()
         self.__end = self.__begin
         self.update()
 
+    @override
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent):
         self.__end = a0.position().toPoint()
         self.update()
 
+    @override
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
@@ -371,6 +388,7 @@ class SelectRegionWidget(BaseSelectWidget):
 
             self.close()
 
+    @override
     def close(self):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
         return super().close()

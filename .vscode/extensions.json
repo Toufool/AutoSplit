@@ -6,16 +6,12 @@
     "eamodio.gitlens",
     "emeraldwalk.runonsave",
     "ms-python.autopep8",
-    "ms-python.flake8",
-    "ms-python.isort",
-    "ms-python.pylint",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "ms-vscode.powershell",
     "pkief.material-icon-theme",
     "redhat.vscode-xml",
     "redhat.vscode-yaml",
-    "shardulm94.trailing-spaces",
   ],
   "unwantedRecommendations": [
     // Must disable in this workspace //
@@ -24,6 +20,7 @@
     // VSCode has implemented an optimized version
     "coenraads.bracket-pair-colorizer",
     "coenraads.bracket-pair-colorizer-2",
+    "shardulm94.trailing-spaces",
     // Obsoleted by Pylance
     "ms-pyright.pyright",
     // Not configurable per workspace, tends to conflict with other linters
@@ -31,6 +28,10 @@
     //
     // Don't recommend to autoinstall //
     //
+    // Use Ruff instead
+    "ms-python.flake8",
+    "ms-python.isort",
+    "ms-python.pylint",
     // We use autopep8
     "ms-python.black-formatter",
     // This is a Git project

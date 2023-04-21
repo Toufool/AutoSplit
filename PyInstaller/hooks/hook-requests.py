@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from PyInstaller.utils.hooks import collect_data_files
 
 # Get the cacert.pem
