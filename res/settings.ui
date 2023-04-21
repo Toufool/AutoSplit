@@ -32,9 +32,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/resources/icon.ico</normaloff>
-    :/resources/icon.ico
-   </iconset>
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">
@@ -202,8 +200,8 @@ Histograms:
 An explanation on Histograms comparison can be found here
 https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
 This is a great method to use if you are using several masked images.
-> This algorithm is particular reliable when the colour is a strong predictor of the object identity.
-> The histogram intersection [...] is robust to occluding objects in the foreground.
+&gt; This algorithm is particular reliable when the colour is a strong predictor of the object identity.
+&gt; The histogram intersection [...] is robust to occluding objects in the foreground.
 
 Perceptual Hash:
 An explanation on pHash comparison can be found here
@@ -737,11 +735,11 @@ reset image</string>
   </widget>
  </widget>
  <tabstops>
-  <tabstop>split_input</tabstop>
-  <tabstop>reset_input</tabstop>
-  <tabstop>undo_split_input</tabstop>
-  <tabstop>skip_split_input</tabstop>
-  <tabstop>pause_input</tabstop>
+  <tabstop>set_split_hotkey_button</tabstop>
+  <tabstop>set_reset_hotkey_button</tabstop>
+  <tabstop>set_undo_split_hotkey_button</tabstop>
+  <tabstop>set_skip_split_hotkey_button</tabstop>
+  <tabstop>set_pause_hotkey_button</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
   <tabstop>capture_method_combobox</tabstop>

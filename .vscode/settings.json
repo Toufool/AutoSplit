@@ -96,4 +96,18 @@
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
+  "xml.format.preserveSpace": [
+    // Default
+    "xsl:text",
+    "xsl:comment",
+    "xsl:processing-instruction",
+    "literallayout",
+    "programlisting",
+    "screen",
+    "synopsis",
+    "pre",
+    "xd:pre",
+    // Custom
+    "string"
+  ]
 }

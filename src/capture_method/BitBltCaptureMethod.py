@@ -22,6 +22,14 @@ PW_RENDERFULLCONTENT = 0x00000002
 
 
 class BitBltCaptureMethod(CaptureMethodBase):
+    name = "BitBlt"
+    short_description = "fastest, least compatible"
+    description = (
+        "\nThe best option when compatible. But it cannot properly record "
+        + "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
+        + "\nThe smaller the selected region, the more efficient it is. "
+    )
+
     _render_full_content = False
 
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:

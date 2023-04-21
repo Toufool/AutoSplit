@@ -69,6 +69,7 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.
 
 #### Capture Method
+<!-- Keep all descriptions in sync with in-code descriptions in src/capture_method/*CaptureMethod.py-->
 
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
@@ -94,7 +95,8 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
 
 #### Capture Device
 
-Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.  <!-- Will show `[occupied]` if a device is detected but can't be started. (currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
+Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.
+<!-- Will show `[occupied]` if a device is detected but can't be started. (feature currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
 
 #### Show Live Similarity
 

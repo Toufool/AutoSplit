@@ -9,13 +9,25 @@ import win32con
 from win32 import win32gui
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
-from utils import get_window_bounds
+from utils import GITHUB_REPOSITORY, get_window_bounds
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
+    name = "Direct3D Desktop Duplication"
+    short_description = "slower, bound to display"
+    description = (
+        "\nDuplicates the desktop using Direct3D. "
+        + "\nIt can record OpenGL and Hardware Accelerated windows. "
+        + "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
+        + "\nOverlapping windows will show up and can't record across displays. "
+        + "\nThis option may not be available for hybrid GPU laptops, "
+        + "\nsee D3DDD-Note-Laptops.md for a solution. "
+        + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
+    )
+
     def __init__(self):
         super().__init__()
         # Must not set statically as some laptops will throw an error
