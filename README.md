@@ -187,7 +187,7 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 
 ### Start image
 
-The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before checking for the start image once a run ends/is reset. Delay times will be used to delay starting your timer after the threshold is met. If you need to pause comparison for any amount of time after the Start Image, the best option right now is to use a dummy split image `{d}` with a similarity threshold of `(0.00)` and a pause threshold `[]` of however long you need to pause comparison as your first split image. This will trigger the pause immediately after your timer is started.
+The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
 
 ### Profiles
 
