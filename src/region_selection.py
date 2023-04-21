@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtTest import QTest
+from typing_extensions import override
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
@@ -281,9 +282,11 @@ class BaseSelectWidget(QtWidgets.QWidget):
     _x = 0
     _y = 0
 
+    @override
     def x(self):
         return self._x
 
+    @override
     def y(self):
         return self._y
 
@@ -302,6 +305,7 @@ class BaseSelectWidget(QtWidgets.QWidget):
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
 
+    @override
     def keyPressEvent(self, a0: QtGui.QKeyEvent):
         if a0.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
@@ -310,6 +314,7 @@ class BaseSelectWidget(QtWidgets.QWidget):
 class SelectWindowWidget(BaseSelectWidget):
     """Widget to select a window and obtain its bounds."""
 
+    @override
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         self._x = int(a0.position().x()) + self.geometry().x()
         self._y = int(a0.position().y()) + self.geometry().y()
@@ -331,12 +336,15 @@ class SelectRegionWidget(BaseSelectWidget):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
         super().__init__()
 
+    @override
     def height(self):
         return self._bottom - self._y
 
+    @override
     def width(self):
         return self._right - self._x
 
+    @override
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qpainter = QtGui.QPainter(self)
@@ -344,15 +352,18 @@ class SelectRegionWidget(BaseSelectWidget):
             qpainter.setBrush(QtGui.QColor("opaque"))
             qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
+    @override
     def mousePressEvent(self, a0: QtGui.QMouseEvent):
         self.__begin = a0.position().toPoint()
         self.__end = self.__begin
         self.update()
 
+    @override
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent):
         self.__end = a0.position().toPoint()
         self.update()
 
+    @override
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
@@ -364,6 +375,7 @@ class SelectRegionWidget(BaseSelectWidget):
 
             self.close()
 
+    @override
     def close(self):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
         return super().close()

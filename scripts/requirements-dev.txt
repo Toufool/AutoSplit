@@ -9,7 +9,7 @@
 # Linters & Formatters
 add-trailing-comma>=2.3.0  # Added support for with statement
 autopep8>=2.0.0 # New checks
-ruff>=0.0.260 # ignores C0414 in .pyi
+ruff>=0.0.262 # Avoid N802 violations for @override + Avoid adding required imports to stub files
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
@@ -24,4 +24,3 @@ types-pyinstaller
 types-pywin32
 types-requests
 types-toml
-typing-extensions

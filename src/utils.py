@@ -9,18 +9,15 @@ from collections.abc import Callable, Iterable
 from enum import IntEnum
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 import cv2
+from typing_extensions import TypeGuard
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
-
-if TYPE_CHECKING:
-    from typing_extensions import ParamSpec, TypeGuard
-    P = ParamSpec("P")
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
@@ -99,7 +96,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # nosec B606
+    os.startfile(file_path)  # noqa: S606
 
 
 def get_or_create_eventloop():

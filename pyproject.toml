@@ -45,17 +45,11 @@ ignore = [
 [tool.ruff.per-file-ignores]
 "typings/**/*.pyi" = [
   "F821", # https://github.com/charliermarsh/ruff/issues/3011
-  "I002", # https://github.com/charliermarsh/ruff/issues/3072
   # The following can't be controlled for external libraries:
   "N8",      # Naming conventions
   "A",       # Shadowing builtin names
   "PLR0913", # Argument count
 ]
-
-[tool.ruff.pep8-naming]
-# https://github.com/charliermarsh/ruff/issues/3910
-# PyQt methods
-ignore-names = ["closeEvent", "paintEvent", "keyPressEvent", "mousePressEvent", "mouseMoveEvent", "mouseReleaseEvent"]
 
 # https://beta.ruff.rs/docs/settings/#flake8-implicit-str-concat
 [tool.ruff.flake8-implicit-str-concat]

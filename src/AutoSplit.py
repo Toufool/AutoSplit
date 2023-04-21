@@ -15,6 +15,7 @@ from psutil import process_iter
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
+from typing_extensions import override
 
 import error_messages
 import user_profile
@@ -865,6 +866,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
 
+    @override
     def closeEvent(self, a0: QtGui.QCloseEvent | None = None):
         """Exit safely when closing the window."""
 
