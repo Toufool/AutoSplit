@@ -17,7 +17,7 @@ class CaptureMethodBase():
 
     def reinitialize(self, autosplit: AutoSplit):
         self.close(autosplit)
-        self.__init__(autosplit)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(autosplit)
 
     def close(self, autosplit: AutoSplit):
         # Some capture methods don't need an initialization process
@@ -26,7 +26,7 @@ class CaptureMethodBase():
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
         """
         Captures an image of the region for a window matching the given
-        parameters of the bounding box
+        parameters of the bounding box.
 
         @return: The image of the region in the window in BGRA format
         """

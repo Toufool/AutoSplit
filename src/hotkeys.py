@@ -29,9 +29,7 @@ def remove_all_hotkeys():
 
 
 def before_setting_hotkey(autosplit: AutoSplit):
-    """
-    Do all of these after you click "Set Hotkey" but before you type the hotkey
-    """
+    """Do all of these after you click "Set Hotkey" but before you type the hotkey."""
     autosplit.start_auto_splitter_button.setEnabled(False)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
@@ -41,7 +39,7 @@ def before_setting_hotkey(autosplit: AutoSplit):
 def after_setting_hotkey(autosplit: AutoSplit):
     """
     Do all of these things after you set a hotkey.
-    A signal connects to this because changing GUI stuff is only possible in the main thread
+    A signal connects to this because changing GUI stuff is only possible in the main thread.
     """
     if not autosplit.is_running:
         autosplit.start_auto_splitter_button.setEnabled(True)
@@ -78,9 +76,7 @@ def _unhook(hotkey_callback: Callable[[], None] | None):
 
 
 def _send_hotkey(hotkey_or_scan_code: int | str | None):
-    """
-    Supports sending the appropriate scan code for all the special cases
-    """
+    """Supports sending the appropriate scan code for all the special cases."""
     if not hotkey_or_scan_code:
         return
 
@@ -109,7 +105,7 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     NOTE: This is a workaround very specific to numpads.
     Windows reports different physical keys with the same scan code.
     For example, "Home", "Num Home" and "Num 7" are all `71`.
-    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684
+    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684.
 
     Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
     We're also trying to achieve the same hotkey behaviour as LiveSplit has.
@@ -137,16 +133,14 @@ def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action
     """
     We're doing the check here instead of saving the key code because
     the non-keypad shared keys are localized while the keypad ones aren't.
-    They also share scan codes on Windows
+    They also share scan codes on Windows.
     """
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
         action()
 
 
 def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
-    """
-    Ensures proper keypad name
-    """
+    """Ensures proper keypad name."""
     event_name = str(keyboard_event.name)
     # Normally this is done by keyboard.get_hotkey_name. But our code won't always get there.
     if event_name == "+":
@@ -159,7 +153,7 @@ def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
 def __get_hotkey_name(names: list[str]):
     """
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
-    See: https://github.com/boppreh/keyboard/issues/516
+    See: https://github.com/boppreh/keyboard/issues/516.
     """
     def sorting_key(key: str):
         return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
@@ -175,7 +169,7 @@ def __get_hotkey_name(names: list[str]):
 def __read_hotkey():
     """
     Blocks until a hotkey combination is read.
-    Returns the hotkey_name and last KeyboardEvent
+    Returns the hotkey_name and last KeyboardEvent.
     """
     names: list[str] = []
     while True:
@@ -281,7 +275,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
             autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name  # pyright: ignore[reportGeneralTypeIssues]
-        except Exception as exception:   # pylint: disable=broad-except # We really want to catch everything here
+        except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
         finally:

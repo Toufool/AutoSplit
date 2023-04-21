@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=too-few-public-methods
+class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
     def __init__(self):
         super().__init__()
         # Must not set statically as some laptops will throw an error

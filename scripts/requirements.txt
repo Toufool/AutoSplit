@@ -24,6 +24,7 @@ PyAutoGUI
 PySide6-Essentials>=6.5 # fixes https://bugreports.qt.io/browse/PYSIDE-2189 and https://bugreports.qt.io/browse/PYSIDE-1603
 requests<=2.28.1  # 2.28.2 has issues with PyInstaller https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 toml
+typing-extensions>=4.4.0 # @override decorator support
 #
 # Build and compile resources
 pyinstaller>=5.5  # Python 3.11 support

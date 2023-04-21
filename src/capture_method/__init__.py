@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, TypedDict, cast
 
-from _ctypes import COMError  # pylint: disable=C2701
+from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -45,7 +45,7 @@ class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
     def __contains__(self, other: str):
         try:
-            self(other)  # pylint: disable=no-value-for-parameter
+            self(other)
         except ValueError:
             return False
         return True
@@ -76,9 +76,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
 
 class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
     def get_index(self, capture_method: str | CaptureMethodEnum):
-        """
-        Returns 0 if the capture_method is invalid or unsupported
-        """
+        """Returns 0 if the capture_method is invalid or unsupported."""
         try:
             return list(self.keys()).index(cast(CaptureMethodEnum, capture_method))
         except ValueError:
@@ -96,8 +94,8 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
             return first(self)
         return list(self.keys())[index]
 
-    if TYPE_CHECKING:  # noqa: CCE002
-        __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues]  # Disallow unsafe get
+    if TYPE_CHECKING:
+        __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues] # Disallow unsafe get
 
     def get(self, __key: CaptureMethodEnum):
         """
@@ -128,11 +126,11 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
         short_description="fast, most compatible, capped at 60fps",
         description=(
             f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-            f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
-            "\nrequire having at least one audio or video Capture Device connected and enabled."
-            "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
-            "\nAdds a yellow border on Windows 10 (not on Windows 11)."
-            "\nCaps at around 60 FPS. "
+            + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
+            + "\nrequire having at least one audio or video Capture Device connected and enabled."
+            + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
+            + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
+            + "\nCaps at around 60 FPS. "
         ),
         implementation=WindowsGraphicsCaptureMethod,
     )
@@ -141,8 +139,8 @@ CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
     short_description="fastest, least compatible",
     description=(
         "\nThe best option when compatible. But it cannot properly record "
-        "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-        "\nThe smaller the selected region, the more efficient it is. "
+        + "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
+        + "\nThe smaller the selected region, the more efficient it is. "
     ),
 
     implementation=BitBltCaptureMethod,
@@ -158,12 +156,12 @@ else:
         short_description="slower, bound to display",
         description=(
             "\nDuplicates the desktop using Direct3D. "
-            "\nIt can record OpenGL and Hardware Accelerated windows. "
-            "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
-            "\nOverlapping windows will show up and can't record across displays. "
-            "\nThis option may not be available for hybrid GPU laptops, "
-            "\nsee D3DDD-Note-Laptops.md for a solution. "
-            f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
+            + "\nIt can record OpenGL and Hardware Accelerated windows. "
+            + "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
+            + "\nOverlapping windows will show up and can't record across displays. "
+            + "\nThis option may not be available for hybrid GPU laptops, "
+            + "\nsee D3DDD-Note-Laptops.md for a solution. "
+            + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
         ),
         implementation=DesktopDuplicationCaptureMethod,
     )
@@ -172,9 +170,9 @@ CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethod
     short_description="very slow, can affect rendering",
     description=(
         "\nUses BitBlt behind the scene, but passes a special flag "
-        "\nto PrintWindow to force rendering the entire desktop. "
-        "\nAbout 10-15x slower than BitBlt based on original window size "
-        "\nand can mess up some applications' rendering pipelines. "
+        + "\nto PrintWindow to force rendering the entire desktop. "
+        + "\nAbout 10-15x slower than BitBlt based on original window size "
+        + "\nand can mess up some applications' rendering pipelines. "
     ),
     implementation=ForceFullContentRenderingCaptureMethod,
 )
@@ -183,9 +181,9 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = CaptureMethodInfo(
     short_description="see below",
     description=(
         "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
-        "\nYou can select one below. "
-        "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
-        "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
+        + "\nYou can select one below. "
+        + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
+        + "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
     ),
     implementation=VideoCaptureDeviceCaptureMethod,
 )

@@ -1,4 +1,4 @@
-"""Error messages"""
+"""Error messages."""
 from __future__ import annotations
 
 import os

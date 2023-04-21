@@ -68,18 +68,14 @@ def have_settings_changed(autosplit: AutoSplit):
 
 
 def save_settings(autosplit: AutoSplit):
-    """
-    @return: The save settings filepath. Or None if "Save Settings As" is cancelled
-    """
+    """@return: The save settings filepath. Or None if "Save Settings As" is cancelled."""
     return __save_settings_to_file(autosplit, autosplit.last_successfully_loaded_settings_file_path) \
         if autosplit.last_successfully_loaded_settings_file_path \
         else save_settings_as(autosplit)
 
 
 def save_settings_as(autosplit: AutoSplit):
-    """
-    @return: The save settings filepath selected. Empty if cancelled
-    """
+    """@return: The save settings filepath selected. Empty if cancelled."""
     # User picks save destination
     save_settings_file_path = cast(
         str,  # https://bugreports.qt.io/browse/PYSIDE-2285
@@ -113,7 +109,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
     try:
-        with open(load_settings_file_path, "r", encoding="utf-8") as file:
+        with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
             loaded_settings = cast(
@@ -210,10 +206,7 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
-    """
-    Sets the "Check For Updates On Open" QSettings value and the checkbox state
-    """
-
+    """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
     design_window.action_check_for_updates_on_open.setChecked(value)
     QtCore \
         .QSettings("AutoSplit", "Check For Updates On Open") \

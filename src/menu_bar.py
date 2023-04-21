@@ -12,20 +12,29 @@ from requests.exceptions import RequestException
 import error_messages
 import user_profile
 from capture_method import (
-    CAPTURE_METHODS, CameraInfo, CaptureMethodEnum, change_capture_method, get_all_video_capture_devices,
+    CAPTURE_METHODS,
+    CameraInfo,
+    CaptureMethodEnum,
+    change_capture_method,
+    get_all_video_capture_devices,
 )
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import (
-    AUTOSPLIT_VERSION, FIRST_WIN_11_BUILD, GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, decimal, fire_and_forget,
+    AUTOSPLIT_VERSION,
+    FIRST_WIN_11_BUILD,
+    GITHUB_REPOSITORY,
+    WINDOWS_BUILD_NUMBER,
+    decimal,
+    fire_and_forget,
 )
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
-    """About Window"""
+class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
+    """About Window."""
 
     def __init__(self):
         super().__init__()
@@ -41,7 +50,7 @@ def open_about(autosplit: AutoSplit):
         autosplit.AboutWidget = __AboutWidget()
 
 
-class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
+class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):  # noqa: N801 # Private class
     def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, check_on_open: bool = False):
         super().__init__()
         self.setupUi(self)
@@ -82,7 +91,7 @@ def view_help():
     webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#tutorial")
 
 
-class __CheckForUpdatesThread(QtCore.QThread):
+class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
     def __init__(self, autosplit: AutoSplit, check_on_open: bool):
         super().__init__()
         self.autosplit = autosplit
@@ -111,7 +120,7 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
-class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
+class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noqa: N801 # Private class
     __video_capture_devices: list[CameraInfo] = []
     """
     Used to temporarily store the existing cameras,
@@ -135,9 +144,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.autosplit.settings_dict[key] = value
 
     def get_capture_device_index(self, capture_device_id: int):
-        """
-        Returns 0 if the capture_device_id is invalid
-        """
+        """Returns 0 if the capture_device_id is invalid."""
         try:
             return [device.device_id for device in self.__video_capture_devices].index(capture_device_id)
         except ValueError:

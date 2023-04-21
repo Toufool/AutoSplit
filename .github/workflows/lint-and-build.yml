@@ -36,21 +36,25 @@ env:
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
 
 jobs:
-  isort:
+  ruff:
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      # Ruff is version and platform sensible
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
-      - name: Set up Python 3.11
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
           cache-dependency-path: "scripts/requirements*.txt"
       - run: scripts/install.ps1
         shell: pwsh
-      - name: Analysing the code with isort
-        run: isort src/ typings/ --check-only
+      - run: ruff check .
   add-trailing-comma:
     runs-on: windows-latest
     steps:
@@ -63,19 +67,6 @@ jobs:
       - run: pip install add-trailing-comma
       - name: Analysing the code with add-trailing-comma
         run: add-trailing-comma $(git ls-files '**.py*') --py36-plus
-  Bandit:
-    # Bandit only matters on the version deployed. Platform checks are ignored
-    runs-on: windows-latest
-    steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - run: pip install bandit
-      - name: Analysing the code with Bandit
-        run: bandit src/ -n 1 --severity-level medium --recursive
   Pyright:
     runs-on: windows-latest
     strategy:
@@ -98,46 +89,6 @@ jobs:
         uses: jakebailey/pyright-action@v1
         with:
           working-directory: src/
-  Pylint:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      # Pylint is version and platform sensible
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-    steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements*.txt"
-      - run: scripts/install.ps1
-        shell: pwsh
-      - name: Analysing the code with Pylint
-        run: pylint src/ --reports=y --output-format=colorized
-  Flake8:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      # Flake8 is tied to the version of Python on which it runs. Platform checks are ignored
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-    steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements*.txt"
-      - run: scripts/install.ps1
-        shell: pwsh
-      - name: Analysing the code with Flake8
-        run: flake8 src/ typings/
   Build:
     runs-on: windows-latest
     strategy:
