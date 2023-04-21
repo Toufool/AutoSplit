@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>661</height>
+    <width>290</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>291</width>
-    <height>661</height>
+    <width>290</width>
+    <height>660</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>291</width>
+    <width>290</width>
     <height>661</height>
    </size>
   </property>
@@ -39,7 +39,7 @@
     <rect>
      <x>10</x>
      <y>200</y>
-     <width>271</width>
+     <width>270</width>
      <height>181</height>
     </rect>
    </property>
@@ -50,9 +50,9 @@
     <property name="geometry">
      <rect>
       <x>138</x>
-      <y>25</y>
+      <y>24</y>
       <width>51</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
     </property>
     <property name="correctionMode">
@@ -85,14 +85,11 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="live_capture_region_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>6</x>
       <y>49</y>
-      <width>129</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -164,7 +161,7 @@
     <rect>
      <x>10</x>
      <y>390</y>
-     <width>271</width>
+     <width>270</width>
      <height>261</height>
     </rect>
    </property>
@@ -183,9 +180,9 @@
    <widget class="QComboBox" name="default_comparison_method">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>180</x>
       <y>25</y>
-      <width>88</width>
+      <width>81</width>
       <height>22</height>
      </rect>
     </property>
@@ -229,7 +226,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>28</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -242,7 +239,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>118</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -253,10 +250,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_pause_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>180</x>
       <y>115</y>
-      <width>87</width>
-      <height>22</height>
+      <width>81</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -294,10 +291,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_similarity_threshold_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>210</x>
       <y>55</y>
-      <width>52</width>
-      <height>22</height>
+      <width>51</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -317,14 +314,11 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     </property>
    </widget>
    <widget class="QCheckBox" name="loop_splits_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>6</x>
       <y>143</y>
-      <width>235</width>
+      <width>261</width>
       <height>20</height>
      </rect>
     </property>
@@ -344,7 +338,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>6</x>
       <y>190</y>
       <width>261</width>
-      <height>61</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
@@ -365,7 +359,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>88</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -376,10 +370,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QSpinBox" name="default_delay_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>180</x>
       <y>85</y>
-      <width>87</width>
-      <height>22</height>
+      <width>81</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -395,14 +389,15 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QCommandLinkButton" name="readme_link_button">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>210</y>
+      <x>139</x>
+      <y>215</y>
       <width>71</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI</family>
       <pointsize>8</pointsize>
       <bold>true</bold>
      </font>
@@ -425,7 +420,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>168</y>
-      <width>151</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -442,7 +437,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>271</width>
+     <width>270</width>
      <height>191</height>
     </rect>
    </property>
@@ -464,7 +459,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>130</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -475,15 +470,12 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     </property>
    </widget>
    <widget class="QLineEdit" name="split_input">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>76</x>
       <y>30</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -499,7 +491,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>76</x>
       <y>80</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -528,7 +520,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>76</x>
       <y>55</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -544,7 +536,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>80</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -589,7 +581,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>30</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -618,7 +610,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>76</x>
       <y>130</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -647,7 +639,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>105</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -676,7 +668,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>76</x>
       <y>105</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -692,7 +684,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>155</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -722,7 +714,7 @@ reset image</string>
       <x>76</x>
       <y>155</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
