@@ -6,6 +6,12 @@
 
 - Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).  
 
+### Linux
+
+- [Powershell](https://github.com/PowerShell/PowerShell/releases) is used to run all the scripts
+- You need to be part of the `input` and `tty` groups, as well as have permissions on a few files and folders.  
+  If you are missing from either groups, the install script will take care of it on its first run, but you'll need to restart your session.  
+
 ### All platforms
 
 - [Python](https://www.python.org/downloads/) 3.9+.

@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import sys
+
+if sys.platform != "win32":
+    raise OSError
+
 import asyncio
 from typing import TYPE_CHECKING, cast
 

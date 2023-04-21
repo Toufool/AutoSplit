@@ -94,6 +94,8 @@
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
   "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.linux": "pwsh",
+  "terminal.integrated.defaultProfile.osx": "pwsh",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
 }

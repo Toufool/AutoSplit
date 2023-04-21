@@ -13,6 +13,17 @@
       }
     }
   },
+  "linux": {
+    "options": {
+      "shell": {
+        "executable": "pwsh",
+        "args": [
+          "-NoProfile",
+          "-Command"
+        ]
+      }
+    }
+  },
   "tasks": [
     {
       "label": "Compile resources",

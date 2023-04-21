@@ -22,10 +22,30 @@ This program can be used to automatically start, split, and reset your preferred
 - You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
 <!-- (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev)) -->
 
+- Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
+
+  <!-- https://github.com/boppreh/keyboard/issues/312#issuecomment-1189734564 -->
+  <!-- Keep in sync with scripts/install.ps1 and src/error_messages.py -->
+  ```shell
+  sudo usermod -a -G tty,input $USER
+  sudo touch /dev/uinput
+  sudo chmod +0666 /dev/uinput
+  echo 'KERNEL=="uinput", TAG+="uaccess""' | sudo tee /etc/udev/rules.d/50-uinput.rules
+  echo 'SUBSYSTEM=="input", MODE="0666" GROUP="plugdev"' | sudo tee /etc/udev/rules.d/12-input.rules
+  echo 'SUBSYSTEM=="misc", MODE="0666" GROUP="plugdev"' | sudo tee -a /etc/udev/rules.d/12-input.rules
+  echo 'SUBSYSTEM=="tty", MODE="0666" GROUP="plugdev"' | sudo tee -a /etc/udev/rules.d/12-input.rules
+  loginctl terminate-user $USER
+  ```
+
+  <!-- Keep in sync with src/error_messages.py -->
+  All screen capture method are incompatible with Wayland. Follow [this guide](https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop) to disable it.
+
 ### Compatibility
 
 - Python 3.9+
 - Windows 10 and 11.
+- Linux (Only tested on Ubuntu 22.04)
+  - Wayland is not supported
 
 ### Building
 
@@ -69,6 +89,9 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.
 
 #### Capture Method
+<!-- Keep all descriptions in sync with in-code descriptions in src/capture_method/*CaptureMethod.py-->
+
+##### Windows
 
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
@@ -88,13 +111,26 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
 - **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
+
+##### Linux
+
+- **XDisplay** (fast, requires xcb)  
+    Uses X to take screenshots of the display.
+- **Scrot** (very slow, may leave files)  
+    Uses Scrot (SCReenshOT) to take screenshots.  
+    Leaves behind a screenshot file if interrupted.  
+    <!-- Keep in sync with src/menu_bar.py -->
+    "scrot" must be installed: `sudo apt-get install scrot`  
+
+##### All platforms
+
 - **Video Capture Device**
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 #### Capture Device
 
-Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.  <!-- Will show `[occupied]` if a device is detected but can't be started. (currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
+Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.  <!-- Will show `[occupied]` if a device is detected but can't be started. (feature currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
 
 #### Show Live Similarity
 

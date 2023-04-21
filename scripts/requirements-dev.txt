@@ -15,12 +15,13 @@ ruff>=0.0.262 # Avoid N802 violations for @override + Avoid adding required impo
 # Can also be downloaded externally as a non-python package
 # qt6-applications
 # Types
-types-d3dshot
+types-D3DShot ; sys_platform == 'win32'
 types-keyboard
 types-Pillow
 types-psutil
 types-PyAutoGUI
 types-pyinstaller
-types-pywin32
+types-python-xlib ; sys_platform == 'linux'
+types-pywin32 ; sys_platform == 'win32'
 types-requests
 types-toml

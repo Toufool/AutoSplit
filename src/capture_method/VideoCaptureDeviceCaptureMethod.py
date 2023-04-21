@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from threading import Event, Thread
+import sys
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from pygrabber import dshow_graph
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
-from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
+import error_messages
+from capture_method.CaptureMethodBase import ThreadedCaptureMethod
 from utils import is_valid_image
+
+if sys.platform == "win32":
+    from pygrabber.dshow_graph import FilterGraph
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -24,83 +26,67 @@ def is_blank(image: cv2.Mat):
     return np.all(image[::image.shape[0] - 1, ::image.shape[1] - 1] == OBS_CAMERA_BLANK_PIXEL)
 
 
-class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
+class VideoCaptureDeviceCaptureMethod(ThreadedCaptureMethod):
     capture_device: cv2.VideoCapture
-    capture_thread: Thread | None
-    stop_thread: Event
-    last_captured_frame: cv2.Mat | None = None
-    is_old_image = False
 
-    def __read_loop(self, autosplit: AutoSplit):
+    def _read_action(self, autosplit: AutoSplit):
+        result = False
+        image = None
         try:
-            while not self.stop_thread.is_set():
-                try:
-                    result, image = self.capture_device.read()
-                except cv2.error as error:
-                    if not (
-                        error.code == cv2.Error.STS_ERROR and error.msg.endswith(
-                            "in function 'cv::VideoCapture::grab'\n",
-                        )
-                    ):
-                        raise
-                    # STS_ERROR most likely means the camera is occupied
-                    result = False
-                    image = None
-                if not result:
-                    image = None
-
-                # Blank frame. Reuse the previous one.
-                if image is not None and is_blank(image):
-                    continue
-
-                self.last_captured_frame = image
-                self.is_old_image = False
+            result, image = self.capture_device.read()
+        except cv2.error as error:
+            # STS_ERROR most likely means the camera is occupied
+            if not (
+               error.code != cv2.Error.STS_ERROR
+               and error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
+            ):
+                raise
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self.capture_device.release()
             autosplit.show_error_signal.emit(
-                lambda: exception_traceback(
+                lambda: error_messages.exception_traceback(
                     error,
                     "AutoSplit encountered an unhandled exception while "
                     + "trying to grab a frame and has stopped capture. "
-                    + CREATE_NEW_ISSUE_MESSAGE,
+                    + error_messages.CREATE_NEW_ISSUE_MESSAGE,
                 ),
             )
+        if not result or not is_valid_image(image):
+            return None, False
+        # Blank frame: Reuse the previous one.
+        if is_blank(image):
+            return self._last_captured_frame, True
+        return image, False
 
     def __init__(self, autosplit: AutoSplit):
-        super().__init__()
-        filter_graph = dshow_graph.FilterGraph()
-        filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-        width, height = filter_graph.get_input_device().get_current_format()
-        filter_graph.remove_filters()
-
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
-        # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        try:
-            self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        # Some cameras don't allow changing the resolution
-        except cv2.error:
-            pass
-        self.stop_thread = Event()
-        self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
-        self.capture_thread.start()
 
-    def close(self, autosplit: AutoSplit):
-        self.stop_thread.set()
-        if self.capture_thread:
-            self.capture_thread.join()
-            self.capture_thread = None
+        # Ensure we're using the right camera size. And not OpenCV's default 640x480
+        if sys.platform == "win32":
+            filter_graph = FilterGraph()
+            filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
+            width, height = filter_graph.get_input_device().get_current_format()
+            filter_graph.remove_filters()
+            try:
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            # Some cameras don't allow changing the resolution
+            except cv2.error:
+                pass
+
+        super().__init__(autosplit)
+
+    def close(self, autosplit: AutoSplit, from_exception: bool = False):
+        super().close(autosplit, from_exception)
         self.capture_device.release()
 
     def get_frame(self, autosplit: AutoSplit):
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
-        image = self.last_captured_frame
-        is_old_image = self.is_old_image
-        self.is_old_image = True
+        image, is_old_image = super().get_frame(autosplit)
         if not is_valid_image(image):
             return None, is_old_image
 
@@ -113,9 +99,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             x:x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
-
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
-        raise NotImplementedError
 
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())

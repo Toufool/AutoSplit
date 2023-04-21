@@ -1,21 +1,32 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import sys
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, TypedDict, cast
 
-from _ctypes import COMError
-from pygrabber.dshow_graph import FilterGraph
-
-from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
-from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 from utils import GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+
+if sys.platform == "win32":
+    from _ctypes import COMError  # pylint: disable=import-private-name
+    from pygrabber.dshow_graph import FilterGraph
+
+    from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
+    from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
+    from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
+    from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
+if sys.platform == "linux":
+    import pyscreeze
+    from PIL import features
+
+    from capture_method.ScrotCaptureMethod import ScrotCaptureMethod
+    from capture_method.XDisplayCaptureMethod import XDisplayCaptureMethod
+
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -71,6 +82,8 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     WINDOWS_GRAPHICS_CAPTURE = "WINDOWS_GRAPHICS_CAPTURE"
     PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
     DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
+    SCROT = "SCROT"
+    XDISPLAY = "XDISPLAY"
     VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
 
 
@@ -86,6 +99,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
         """
         Returns the `CaptureMethodEnum` at index.
         If index is invalid, returns the first (default) `CaptureMethodEnum`.
+
         Returns `CaptureMethodEnum.NONE` if there are no capture methods available.
         """
         if len(self) <= 0:
@@ -101,6 +115,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
         """
         Returns the `CaptureMethodInfo` for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
+
         Returns the `CaptureMethodBase` (default) implementation if there's no capture methods.
         """
         if __key == CaptureMethodEnum.NONE or len(self) <= 0:
@@ -116,75 +131,90 @@ NONE_CAPTURE_METHOD = CaptureMethodInfo(
 )
 
 CAPTURE_METHODS = CaptureMethodDict()
-if (  # Windows Graphics Capture requires a minimum Windows Build
-    WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
-    # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
-    and try_get_direct3d_device()
-):
-    CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = CaptureMethodInfo(
-        name="Windows Graphics Capture",
-        short_description="fast, most compatible, capped at 60fps",
-        description=(
-            f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
+if sys.platform == "win32":
+    if (  # Windows Graphics Capture requires a minimum Windows Build
+        WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
+        # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
+        and try_get_direct3d_device()
+    ):
+        CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = CaptureMethodInfo(
+            name="Windows Graphics Capture",
+            short_description="fast, most compatible, capped at 60fps",
+            description=f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
             + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
             + "\nrequire having at least one audio or video Capture Device connected and enabled."
             + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
             + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
-            + "\nCaps at around 60 FPS. "
-        ),
-        implementation=WindowsGraphicsCaptureMethod,
-    )
-CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
-    name="BitBlt",
-    short_description="fastest, least compatible",
-    description=(
-        "\nThe best option when compatible. But it cannot properly record "
+            + "\nCaps at around 60 FPS. ",
+            implementation=WindowsGraphicsCaptureMethod,
+        )
+    CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
+        name="BitBlt",
+        short_description="fastest, least compatible",
+        description="\nThe best option when compatible. But it cannot properly record "
         + "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-        + "\nThe smaller the selected region, the more efficient it is. "
-    ),
+        + "\nThe smaller the selected region, the more efficient it is. ",
 
-    implementation=BitBltCaptureMethod,
-)
-try:
-    import d3dshot
-    d3dshot.create(capture_output="numpy")
-except (ModuleNotFoundError, COMError):
-    pass
-else:
-    CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
-        name="Direct3D Desktop Duplication",
-        short_description="slower, bound to display",
-        description=(
-            "\nDuplicates the desktop using Direct3D. "
+        implementation=BitBltCaptureMethod,
+    )
+    try:
+        import d3dshot
+        d3dshot.create(capture_output="numpy")
+    except (ModuleNotFoundError, COMError):
+        pass
+    else:
+        CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
+            name="Direct3D Desktop Duplication",
+            short_description="slower, bound to display",
+            description="\nDuplicates the desktop using Direct3D. "
             + "\nIt can record OpenGL and Hardware Accelerated windows. "
             + "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
             + "\nOverlapping windows will show up and can't record across displays. "
             + "\nThis option may not be available for hybrid GPU laptops, "
             + "\nsee D3DDD-Note-Laptops.md for a solution. "
-            + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
-        ),
-        implementation=DesktopDuplicationCaptureMethod,
-    )
-CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethodInfo(
-    name="Force Full Content Rendering",
-    short_description="very slow, can affect rendering",
-    description=(
-        "\nUses BitBlt behind the scene, but passes a special flag "
+            + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method ",
+            implementation=DesktopDuplicationCaptureMethod,
+        )
+    CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethodInfo(
+        name="Force Full Content Rendering",
+        short_description="very slow, can affect rendering",
+        description="\nUses BitBlt behind the scene, but passes a special flag "
         + "\nto PrintWindow to force rendering the entire desktop. "
         + "\nAbout 10-15x slower than BitBlt based on original window size "
-        + "\nand can mess up some applications' rendering pipelines. "
-    ),
-    implementation=ForceFullContentRenderingCaptureMethod,
-)
+        + "\nand can mess up some applications' rendering pipelines. ",
+        implementation=ForceFullContentRenderingCaptureMethod,
+    )
+elif sys.platform == "linux":
+    if features.check_feature(feature="xcb"):
+        CAPTURE_METHODS[CaptureMethodEnum.XDISPLAY] = CaptureMethodInfo(
+            name="XDisplay",
+            short_description="fast, requires xcb",
+            description="\nUses XCB to take screenshots of the display",
+            implementation=XDisplayCaptureMethod,
+        )
+
+    try:
+        pyscreeze.screenshot()
+    except NotImplementedError:
+        pass
+    else:
+        # TODO: Investigate solution for Slow Scrot:
+        # https://github.com/asweigart/pyscreeze/issues/68
+        CAPTURE_METHODS[CaptureMethodEnum.SCROT] = CaptureMethodInfo(
+            name="Scrot",
+            short_description="very slow, may leave files",
+            description="\nUses Scrot (SCReenshOT) to take screenshots. "
+            + "\nLeaves behind a screenshot file if interrupted. ",
+            implementation=ScrotCaptureMethod,
+        )
+
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = CaptureMethodInfo(
     name="Video Capture Device",
     short_description="see below",
-    description=(
-        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
-        + "\nYou can select one below. "
-        + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
-        + "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
-    ),
+    description="\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+    + "\nYou can select one below. "
+    + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
+    + "\nhttps://github.com/Avasam/obs-virtual-cam/releases",
     implementation=VideoCaptureDeviceCaptureMethod,
 )
 
@@ -209,17 +239,34 @@ class CameraInfo():
     resolution: tuple[int, int] | None
 
 
+def get_input_devices():
+    if sys.platform == "win32":
+        # https://github.com/andreaschiavinato/python_grabber/pull/24
+        return cast(list[str], FilterGraph().get_input_devices())
+
+    cameras: list[str] = []
+    if sys.platform == "linux":
+        try:
+            for index in range(len(os.listdir("/sys/class/video4linux"))):
+                with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
+                    cameras.append(file.readline()[:-2])
+        except FileNotFoundError:
+            pass
+    return cameras
+
+
 def get_input_device_resolution(index: int):
-    filter_graph = FilterGraph()
-    filter_graph.add_video_input_device(index)
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
-    return resolution
+    if sys.platform == "win32":
+        filter_graph = FilterGraph()
+        filter_graph.add_video_input_device(index)
+        resolution = filter_graph.get_input_device().get_current_format()
+        filter_graph.remove_filters()
+        return resolution
+    return None
 
 
-async def get_all_video_capture_devices() -> list[CameraInfo]:
-    # TODO: Fix partially Unknown list upstream
-    named_video_inputs: list[str] = FilterGraph().get_input_devices()
+async def get_all_video_capture_devices():
+    named_video_inputs = get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
@@ -227,11 +274,11 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         # #169
         # FIXME: Maybe offer the option to the user to obtain more info about their devies?
         #        Off by default. With a tooltip to explain the risk.
-        # video_capture = cv2.VideoCapture(index)
+        # video_capture=cv2.VideoCapture(index)
         # video_capture.setExceptionMode(True)
         # try:
         #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-        #     backend = video_capture.getBackendName()  # STS_ASSERT
+        #     backend=video_capture.getBackendName()  # STS_ASSERT
         #     video_capture.grab()  # STS_ERROR
         # except cv2.error as error:
         #     return CameraInfo(index, device_name, True, backend) \
@@ -242,7 +289,8 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
 
         return CameraInfo(index, device_name, False, backend, get_input_device_resolution(index))
 
-    future = asyncio.gather(
+    # https://github.com/python/typeshed/issues/2652
+    future: asyncio.Future[list[CameraInfo | None]] = asyncio.gather(
         *[
             get_camera_info(index, name) for index, name
             in enumerate(named_video_inputs)

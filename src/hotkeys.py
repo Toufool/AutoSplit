@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast
 
@@ -8,7 +9,20 @@ import pyautogui
 from PySide6 import QtWidgets
 
 import error_messages
-from utils import fire_and_forget, is_digit
+from utils import fire_and_forget, is_digit, try_input_device_access
+
+if sys.platform == "linux":
+    import grp  # pylint: disable=import-error
+    import os
+
+    # https://github.com/PyCQA/pylint/issues/7240
+    groups = {grp.getgrgid(group).gr_name for group in os.getgroups()}  # pylint: disable=no-member
+    KEYBOARD_GROUPS_ISSUE = not {"input", "tty"}.issubset(groups)
+    KEYBOARD_UINPUT_ISSUE = not try_input_device_access()
+else:
+    KEYBOARD_GROUPS_ISSUE = False
+    KEYBOARD_UINPUT_ISSUE = False
+
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -25,7 +39,8 @@ HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", 
 
 
 def remove_all_hotkeys():
-    keyboard.unhook_all()
+    if not KEYBOARD_GROUPS_ISSUE and not KEYBOARD_UINPUT_ISSUE:
+        keyboard.unhook_all()
 
 
 def before_setting_hotkey(autosplit: AutoSplit):
@@ -105,7 +120,7 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     NOTE: This is a workaround very specific to numpads.
     Windows reports different physical keys with the same scan code.
     For example, "Home", "Num Home" and "Num 7" are all `71`.
-    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684.
+    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684 .
 
     Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
     We're also trying to achieve the same hotkey behaviour as LiveSplit has.
@@ -227,6 +242,15 @@ def is_valid_hotkey_name(hotkey_name: str):
 
 
 def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: str = ""):
+    if KEYBOARD_GROUPS_ISSUE:
+        if not preselected_hotkey_name:
+            error_messages.linux_groups()
+        return
+    if KEYBOARD_UINPUT_ISSUE:
+        if not preselected_hotkey_name:
+            error_messages.linux_uinput()
+        return
+
     if autosplit.SettingsWidget:
         # Unfocus all fields
         cast(QtWidgets.QWidget, autosplit.SettingsWidget).setFocus()

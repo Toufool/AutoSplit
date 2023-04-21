@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import asyncio
-import ctypes
-import ctypes.wintypes
+import fcntl
 import os
+import subprocess
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
@@ -13,11 +13,16 @@ from typing import Any, TypeVar, cast
 
 import cv2
 from typing_extensions import TypeGuard
-from win32 import win32gui
-from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
+
+if sys.platform == "win32":
+    import ctypes
+    import ctypes.wintypes
+
+    from win32 import win32gui
+    from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
+    from winsdk.windows.media.capture import MediaCapture
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
@@ -79,6 +84,9 @@ def first(iterable: Iterable[T]) -> T:
 
 
 def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
+    if sys.platform != "win32":
+        raise OSError
+
     extended_frame_bounds = ctypes.wintypes.RECT()
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
         hwnd,
@@ -96,7 +104,11 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # noqa: S606
+    if sys.platform == "win32":
+        os.startfile(file_path)  # noqa: S606
+    else:
+        opener = "xdg-open" if sys.platform == "linux" else "open"
+        subprocess.call([opener, file_path])   # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -109,6 +121,9 @@ def get_or_create_eventloop():
 
 
 def get_direct3d_device():
+    if sys.platform != "win32":
+        raise OSError("Direct3D Device is only available on Windows")
+
     # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
     # OSError: The application called an interface that was marshalled for a different thread
     media_capture = MediaCapture()
@@ -137,11 +152,25 @@ def try_get_direct3d_device():
         return None
 
 
+def try_input_device_access():
+    """Same as `make_uinput` in `keyboard/_nixcommon.py`."""
+    if sys.platform != "linux":
+        return False
+    try:
+        UI_SET_EVBIT = 0x40045564  # noqa: N806
+        with open("/dev/uinput", "wb") as uinput:
+            fcntl.ioctl(uinput, UI_SET_EVBIT)
+    except OSError:
+        return False
+    return True
+
+
 def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
+    Uses threads on Windows because ~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
+    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Toufool/Auto-Split/pull/156
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
@@ -155,27 +184,6 @@ def fire_and_forget(func: Callable[..., Any]):
     return wrapped
 
 
-def getTopWindowAt(x: int, y: int):  # noqa: N802
-    # Immitating PyWinCTL's function
-    class Win32Window():
-        def __init__(self, hwnd: int) -> None:
-            self._hWnd = hwnd
-
-        def getHandle(self):  # noqa: N802
-            return self._hWnd
-
-        @property
-        def title(self):
-            return win32gui.GetWindowText(self._hWnd)
-    hwnd = win32gui.WindowFromPoint((x, y))
-
-    # Want to pull the parent window from the window handle
-    # By using GetAncestor we are able to get the parent window instead of the owner window.
-    while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
-        hwnd = ctypes.windll.user32.GetAncestor(hwnd, 2)
-    return Win32Window(hwnd) if hwnd else None
-
-
 # Environment specifics
 WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
@@ -184,6 +192,7 @@ FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 """The directory of either the AutoSplit executable or AutoSplit.py"""
+IS_WAYLAND = bool(os.environ.get("WAYLAND_DISPLAY", False))
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number

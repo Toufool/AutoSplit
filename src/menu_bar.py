@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 import webbrowser
 from typing import TYPE_CHECKING, Any, cast
 
@@ -31,6 +32,14 @@ from utils import (
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
+LINUX_SCREENSHOT_SUPPORT = (
+    "\n\n----------------------------------------------------\n\n"
+    + error_messages.WAYLAND_WARNING
+    # Keep in sync with README.md#Capture_Method_Linux
+    + '\n"scrot" must be installed to use SCReenshOT. '
+    + "\nRun: sudo apt-get install scrot"
+) if sys.platform == "linux" else ""
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
@@ -253,8 +262,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             "\n\n".join([
                 f"{method.name} :\n{method.description}"
                 for method in capture_method_values
-            ]),
+            ]) + LINUX_SCREENSHOT_SUPPORT,
         )
+
 # endregion
 
         # Hotkey initial values and bindings

@@ -24,7 +24,7 @@ import user_profile
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
-from hotkeys import HOTKEYS, after_setting_hotkey, send_command
+from hotkeys import HOTKEYS, KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
 from menu_bar import (
     about_qt,
     about_qt_for_python,
@@ -42,6 +42,7 @@ from utils import (
     AUTOSPLIT_VERSION,
     FIRST_WIN_11_BUILD,
     FROZEN,
+    IS_WAYLAND,
     WINDOWS_BUILD_NUMBER,
     auto_split_directory,
     decimal,
@@ -54,10 +55,11 @@ DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
-myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-# qt.qpa.window: SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) failed: COM error 0x5: Access is denied.  # noqa: E501  # pylint: disable=line-too-long
-# ctypes.windll.user32.SetProcessDpiAwarenessContext(2)
+if sys.platform == "win32":
+    myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    # qt.qpa.window: SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) failed: COM error 0x5: Access is denied.  # noqa: E501  # pylint: disable=line-too-long
+    # ctypes.windll.user32.SetProcessDpiAwarenessContext(2)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -432,7 +434,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
 
     def undo_split(self, navigate_image_only: bool = False):
-        """"Undo Split" and "Prev. Img." buttons connect to here."""
+        """Undo Split" and "Prev. Img." buttons connect to here."""
         # Can't undo until timer is started
         # or Undoing past the first image
         if not self.is_running \
@@ -454,7 +456,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             send_command(self, "undo")
 
     def skip_split(self, navigate_image_only: bool = False):
-        """"Skip Split" and "Next Img." buttons connect to here."""
+        """Skip Split" and "Next Img." buttons connect to here."""
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
         if not self.is_running \
@@ -956,6 +958,12 @@ def main():
 
         if is_already_open():
             error_messages.already_open()
+        if KEYBOARD_GROUPS_ISSUE:
+            error_messages.linux_groups()
+        if KEYBOARD_UINPUT_ISSUE:
+            error_messages.linux_uinput()
+        if IS_WAYLAND:
+            error_messages.linux_wayland()
 
         AutoSplit()
 

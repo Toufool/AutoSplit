@@ -115,7 +115,7 @@ Thank you!</string>
   <widget class="QLabel" name="icon_label">
    <property name="geometry">
     <rect>
-     <x>181</x>
+     <x>190</x>
      <y>17</y>
      <width>64</width>
      <height>64</height>
