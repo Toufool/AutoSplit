@@ -131,7 +131,7 @@ reportUnusedCallResult = "none"
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# False positives with PyQt .connect
+# False positives with PySide .connect
 reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"

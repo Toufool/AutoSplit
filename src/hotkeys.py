@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
-from PyQt6 import QtWidgets
+from PySide6 import QtWidgets
 
 import error_messages
 from utils import fire_and_forget, is_digit

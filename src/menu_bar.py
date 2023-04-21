@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import requests
 from packaging.version import parse as version_parse
-from PyQt6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
 
 import error_messages
@@ -18,7 +18,7 @@ from capture_method import (
     change_capture_method,
     get_all_video_capture_devices,
 )
-from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
+from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import (
     AUTOSPLIT_VERSION,
@@ -113,7 +113,6 @@ def about_qt():
 
 def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
-    webbrowser.open("https://www.riverbankcomputing.com/software/pyqt")
 
 
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
@@ -218,10 +217,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # HACK: This is a workaround because custom_image_settings_info_label
         # simply will not open links with a left click no matter what we tried.
         self.readme_link_button.clicked.connect(
-            # PyQt6 typing is wrong
-            lambda: webbrowser.open(  # pyright: ignore[reportGeneralTypeIssues]
-                f"https://github.com/{GITHUB_REPOSITORY}#readme",
-            ),
+            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 

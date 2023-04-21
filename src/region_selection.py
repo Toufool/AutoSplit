@@ -4,16 +4,16 @@ import ctypes
 import ctypes.wintypes
 import os
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import numpy as np
-from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtTest import QTest
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtTest import QTest
 from typing_extensions import override
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-from winsdk._winrt import initialize_with_window
+from winsdk._winrt import initialize_with_window  # pylint: disable=no-name-in-module
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
@@ -165,12 +165,15 @@ def align_region(autosplit: AutoSplit):
         error_messages.region()
         return
     # This is the image used for aligning the capture region to the best fit for the user.
-    template_filename = QtWidgets.QFileDialog.getOpenFileName(
-        autosplit,
-        "Select Reference Image",
-        "",
-        IMREAD_EXT_FILTER,
-    )[0]
+    template_filename = cast(
+        str,  # https://bugreports.qt.io/browse/PYSIDE-2285
+        QtWidgets.QFileDialog.getOpenFileName(
+            autosplit,
+            "Select Reference Image",
+            "",
+            IMREAD_EXT_FILTER,
+        )[0],
+    )
 
     # Return if the user presses cancel
     if not template_filename:
@@ -306,8 +309,8 @@ class BaseSelectWidget(QtWidgets.QWidget):
         self.show()
 
     @override
-    def keyPressEvent(self, a0: QtGui.QKeyEvent):
-        if a0.key() == QtCore.Qt.Key.Key_Escape:
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == QtCore.Qt.Key.Key_Escape:
             self.close()
 
 
@@ -315,9 +318,9 @@ class SelectWindowWidget(BaseSelectWidget):
     """Widget to select a window and obtain its bounds."""
 
     @override
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
-        self._x = int(a0.position().x()) + self.geometry().x()
-        self._y = int(a0.position().y()) + self.geometry().y()
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
+        self._x = int(event.position().x()) + self.geometry().x()
+        self._y = int(event.position().y()) + self.geometry().y()
         self.close()
 
 
@@ -345,7 +348,7 @@ class SelectRegionWidget(BaseSelectWidget):
         return self._right - self._x
 
     @override
-    def paintEvent(self, a0: QtGui.QPaintEvent):
+    def paintEvent(self, event: QtGui.QPaintEvent):
         if self.__begin != self.__end:
             qpainter = QtGui.QPainter(self)
             qpainter.setPen(QtGui.QPen(QtGui.QColor("red"), BORDER_WIDTH))
@@ -353,18 +356,18 @@ class SelectRegionWidget(BaseSelectWidget):
             qpainter.drawRect(QtCore.QRect(self.__begin, self.__end))
 
     @override
-    def mousePressEvent(self, a0: QtGui.QMouseEvent):
-        self.__begin = a0.position().toPoint()
+    def mousePressEvent(self, event: QtGui.QMouseEvent):
+        self.__begin = event.position().toPoint()
         self.__end = self.__begin
         self.update()
 
     @override
-    def mouseMoveEvent(self, a0: QtGui.QMouseEvent):
-        self.__end = a0.position().toPoint()
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
+        self.__end = event.position().toPoint()
         self.update()
 
     @override
-    def mouseReleaseEvent(self, a0: QtGui.QMouseEvent):
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
             # so the added virtual screen offsets convert them back to the virtual screen coordinates
