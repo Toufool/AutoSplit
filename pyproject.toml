@@ -40,6 +40,8 @@ ignore = [
 
   ### FIXME (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
   "PTH",
+  # Ignore until linux support
+  "EXE",
 ]
 
 [tool.ruff.per-file-ignores]
