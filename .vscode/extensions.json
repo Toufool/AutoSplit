@@ -1,14 +1,41 @@
+// Keep in alphabetical order
 {
   "recommendations": [
-    "ms-python.vscode-pylance",
-    "ms-python.python",
-    "sonarsource.sonarlint-vscode",
+    "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
+    "eamodio.gitlens",
+    "emeraldwalk.runonsave",
+    "ms-python.autopep8",
+    "ms-python.flake8",
+    "ms-python.isort",
+    "ms-python.pylint",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-vscode.powershell",
+    "pkief.material-icon-theme",
+    "redhat.vscode-xml",
+    "redhat.vscode-yaml",
     "shardulm94.trailing-spaces",
-    "eamodio.gitlens"
   ],
   "unwantedRecommendations": [
+    // Must disable in this workspace //
+    // https://github.com/microsoft/vscode/issues/40239 //
+    //
+    // VSCode has implemented an optimized version
+    "coenraads.bracket-pair-colorizer",
+    "coenraads.bracket-pair-colorizer-2",
+    // Obsoleted by Pylance
     "ms-pyright.pyright",
-    "esbenp.prettier-vscode"
-  ]
+    // Not configurable per workspace, tends to conflict with other linters
+    "sonarsource.sonarlint-vscode",
+    //
+    // Don't recommend to autoinstall //
+    //
+    // We use autopep8
+    "ms-python.black-formatter",
+    // This is a Git project
+    "johnstoncode.svn-scm",
+    // Prefer using VSCode itself as a text editor
+    "vscodevim.vim",
+  ],
 }
