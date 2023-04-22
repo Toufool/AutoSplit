@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </size>
   </property>
   <property name="font">
@@ -43,9 +43,9 @@
   <widget class="QLabel" name="update_status_label">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>10</y>
-     <width>218</width>
+     <width>251</width>
      <height>16</height>
     </rect>
    </property>
@@ -62,9 +62,9 @@
   <widget class="QLabel" name="current_version_label">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>30</y>
-     <width>91</width>
+     <width>101</width>
      <height>16</height>
     </rect>
    </property>
@@ -75,9 +75,9 @@
   <widget class="QLabel" name="latest_version_label">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>50</y>
-     <width>81</width>
+     <width>101</width>
      <height>16</height>
     </rect>
    </property>
@@ -88,9 +88,9 @@
   <widget class="QLabel" name="go_to_download_label">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>80</y>
-     <width>119</width>
+     <width>141</width>
      <height>16</height>
     </rect>
    </property>
@@ -101,9 +101,9 @@
   <widget class="QPushButton" name="left_button">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>160</x>
      <y>100</y>
-     <width>75</width>
+     <width>71</width>
      <height>24</height>
     </rect>
    </property>
@@ -117,9 +117,9 @@
   <widget class="QPushButton" name="right_button">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>240</x>
      <y>100</y>
-     <width>75</width>
+     <width>71</width>
      <height>24</height>
     </rect>
    </property>
@@ -130,9 +130,9 @@
   <widget class="QLabel" name="current_version_number_label">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>110</x>
      <y>30</y>
-     <width>181</width>
+     <width>191</width>
      <height>16</height>
     </rect>
    </property>
@@ -143,9 +143,9 @@
   <widget class="QLabel" name="latest_version_number_label">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>110</x>
      <y>50</y>
-     <width>181</width>
+     <width>191</width>
      <height>16</height>
     </rect>
    </property>
@@ -156,9 +156,9 @@
   <widget class="QCheckBox" name="do_not_ask_again_checkbox">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>102</y>
-     <width>131</width>
+     <width>151</width>
      <height>20</height>
     </rect>
    </property>

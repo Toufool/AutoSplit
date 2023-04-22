@@ -141,7 +141,8 @@ def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
+    Uses threads on Windows because ~~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
+    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
@@ -155,31 +156,12 @@ def fire_and_forget(func: Callable[..., Any]):
     return wrapped
 
 
-def getTopWindowAt(x: int, y: int):  # noqa: N802
-    # Immitating PyWinCTL's function
-    class Win32Window():
-        def __init__(self, hwnd: int) -> None:
-            self._hWnd = hwnd
-
-        def getHandle(self):  # noqa: N802
-            return self._hWnd
-
-        @property
-        def title(self):
-            return win32gui.GetWindowText(self._hWnd)
-    hwnd = win32gui.WindowFromPoint((x, y))
-
-    # Want to pull the parent window from the window handle
-    # By using GetAncestor we are able to get the parent window instead of the owner window.
-    while win32gui.IsChild(win32gui.GetParent(hwnd), hwnd):
-        hwnd = ctypes.windll.user32.GetAncestor(hwnd, 2)
-    return Win32Window(hwnd) if hwnd else None
-
-
 # Environment specifics
 WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 """AutoSplit Version number"""
+WGC_MIN_BUILD = 17134
+"""https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))

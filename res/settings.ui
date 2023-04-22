@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>661</height>
+    <width>290</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>291</width>
-    <height>661</height>
+    <width>290</width>
+    <height>664</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>291</width>
-    <height>661</height>
+    <width>290</width>
+    <height>664</height>
    </size>
   </property>
   <property name="font">
@@ -32,16 +32,14 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/resources/icon.ico</normaloff>
-    :/resources/icon.ico
-   </iconset>
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <widget class="QGroupBox" name="capture_settings_groupbox">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>200</y>
-     <width>271</width>
+     <width>270</width>
      <height>181</height>
     </rect>
    </property>
@@ -51,10 +49,10 @@
    <widget class="QSpinBox" name="fps_limit_spinbox">
     <property name="geometry">
      <rect>
-      <x>138</x>
-      <y>25</y>
+      <x>150</x>
+      <y>24</y>
       <width>51</width>
-      <height>22</height>
+      <height>24</height>
      </rect>
     </property>
     <property name="correctionMode">
@@ -75,7 +73,7 @@
      <rect>
       <x>6</x>
       <y>27</y>
-      <width>121</width>
+      <width>141</width>
       <height>16</height>
      </rect>
     </property>
@@ -87,14 +85,11 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="live_capture_region_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>6</x>
       <y>49</y>
-      <width>129</width>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -166,8 +161,8 @@
     <rect>
      <x>10</x>
      <y>390</y>
-     <width>271</width>
-     <height>261</height>
+     <width>270</width>
+     <height>266</height>
     </rect>
    </property>
    <property name="title">
@@ -185,9 +180,9 @@
    <widget class="QComboBox" name="default_comparison_method">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>170</x>
       <y>25</y>
-      <width>88</width>
+      <width>91</width>
       <height>22</height>
      </rect>
     </property>
@@ -202,8 +197,8 @@ Histograms:
 An explanation on Histograms comparison can be found here
 https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
 This is a great method to use if you are using several masked images.
-> This algorithm is particular reliable when the colour is a strong predictor of the object identity.
-> The histogram intersection [...] is robust to occluding objects in the foreground.
+&gt; This algorithm is particular reliable when the colour is a strong predictor of the object identity.
+&gt; The histogram intersection [...] is robust to occluding objects in the foreground.
 
 Perceptual Hash:
 An explanation on pHash comparison can be found here
@@ -231,7 +226,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>28</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -244,7 +239,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>118</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -255,10 +250,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_pause_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>170</x>
       <y>115</y>
-      <width>87</width>
-      <height>22</height>
+      <width>91</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -285,7 +280,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>58</y>
-      <width>151</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -296,10 +291,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_similarity_threshold_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>170</x>
       <y>55</y>
-      <width>52</width>
-      <height>22</height>
+      <width>51</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -319,14 +314,11 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     </property>
    </widget>
    <widget class="QCheckBox" name="loop_splits_checkbox">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
       <x>6</x>
       <y>143</y>
-      <width>235</width>
+      <width>261</width>
       <height>20</height>
      </rect>
     </property>
@@ -344,9 +336,9 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>190</y>
+      <y>193</y>
       <width>261</width>
-      <height>61</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
@@ -367,7 +359,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>88</y>
-      <width>161</width>
+      <width>171</width>
       <height>16</height>
      </rect>
     </property>
@@ -378,10 +370,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QSpinBox" name="default_delay_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>167</x>
+      <x>170</x>
       <y>85</y>
-      <width>87</width>
-      <height>22</height>
+      <width>91</width>
+      <height>24</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -398,13 +390,14 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>210</y>
+      <y>218</y>
       <width>71</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI</family>
       <pointsize>8</pointsize>
       <bold>true</bold>
      </font>
@@ -427,7 +420,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>168</y>
-      <width>151</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -444,7 +437,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>271</width>
+     <width>270</width>
      <height>191</height>
     </rect>
    </property>
@@ -466,7 +459,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>130</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -477,15 +470,12 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     </property>
    </widget>
    <widget class="QLineEdit" name="split_input">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>30</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -498,10 +488,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QLineEdit" name="undo_split_input">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>80</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -527,10 +517,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QLineEdit" name="reset_input">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>55</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -546,7 +536,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>80</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -591,7 +581,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>30</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -617,10 +607,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QLineEdit" name="pause_input">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>130</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -649,7 +639,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>105</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -675,10 +665,10 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QLineEdit" name="skip_split_input">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>105</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -694,7 +684,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <x>180</x>
       <y>155</y>
       <width>81</width>
-      <height>21</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="focusPolicy">
@@ -721,10 +711,10 @@ reset image</string>
    <widget class="QLineEdit" name="toggle_auto_reset_image_input">
     <property name="geometry">
      <rect>
-      <x>76</x>
+      <x>80</x>
       <y>155</y>
       <width>94</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
     </property>
     <property name="text">
@@ -737,11 +727,11 @@ reset image</string>
   </widget>
  </widget>
  <tabstops>
-  <tabstop>split_input</tabstop>
-  <tabstop>reset_input</tabstop>
-  <tabstop>undo_split_input</tabstop>
-  <tabstop>skip_split_input</tabstop>
-  <tabstop>pause_input</tabstop>
+  <tabstop>set_split_hotkey_button</tabstop>
+  <tabstop>set_reset_hotkey_button</tabstop>
+  <tabstop>set_undo_split_hotkey_button</tabstop>
+  <tabstop>set_skip_split_hotkey_button</tabstop>
+  <tabstop>set_pause_hotkey_button</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
   <tabstop>capture_method_combobox</tabstop>
