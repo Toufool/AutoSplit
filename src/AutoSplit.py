@@ -949,6 +949,9 @@ def is_already_open():
 
 
 def main():
+    # Best to call setStyle before the QApplication constructor
+    # https://doc.qt.io/qt-6/qapplication.html#setStyle-1
+    QApplication.setStyle("fusion")
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:
