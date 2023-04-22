@@ -147,7 +147,7 @@ CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
 
     implementation=BitBltCaptureMethod,
 )
-try:
+try:  # Test for laptop cross-GPU Desktop Duplication issue
     import d3dshot
     d3dshot.create(capture_output="numpy")
 except (ModuleNotFoundError, COMError):

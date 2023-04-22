@@ -68,7 +68,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             )
 
     def __init__(self, autosplit: AutoSplit):
-        super().__init__()
+        super().__init__(autosplit)
         filter_graph = dshow_graph.FilterGraph()
         filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
         width, height = filter_graph.get_input_device().get_current_format()

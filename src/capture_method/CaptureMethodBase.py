@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class CaptureMethodBase():
-    def __init__(self, autosplit: AutoSplit | None = None):
+    def __init__(self, autosplit: AutoSplit | None):
         # Some capture methods don't need an initialization process
         pass
 
