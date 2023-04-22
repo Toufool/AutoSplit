@@ -202,7 +202,9 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     value = QtCore \
         .QSettings("AutoSplit", "Check For Updates On Open") \
         .value("check_for_updates_on_open", True, type=bool)
-    autosplit.action_check_for_updates_on_open.setChecked(value)  # pyright: ignore[reportGeneralTypeIssues]  # Type not infered by PySide6  # noqa: E501  # pylint: disable=line-too-long
+    # Type not infered by PySide6
+    # TODO: Report this issue upstream
+    autosplit.action_check_for_updates_on_open.setChecked(value)  # pyright: ignore[reportGeneralTypeIssues]
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):

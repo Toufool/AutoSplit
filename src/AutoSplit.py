@@ -58,7 +58,7 @@ os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 if sys.platform == "win32":
     myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-    # qt.qpa.window: SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) failed: COM error 0x5: Access is denied.  # noqa: E501  # pylint: disable=line-too-long
+    # qt.qpa.window: SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) failed: COM error 0x5: Access is denied.  # noqa: E501
     # ctypes.windll.user32.SetProcessDpiAwarenessContext(2)
 
 

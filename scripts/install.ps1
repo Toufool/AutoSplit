@@ -31,13 +31,11 @@ If ($IsLinux) {
 
 # Installing Python dependencies
 $dev = If ($env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
-# Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
-&"$python" -m pip install wheel pip setuptools --upgrade
 If ($IsLinux) {
   If (-not $env:GITHUB_JOB -or $env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
-    # Required for splash screen
-    sudo apt-get install -y python3-tk
+    # python3-tk for splash screen, npm for pyright
+    sudo apt-get install -y python3-pip python3-tk npm
     # Helps ensure build machine has the required PySide6 libraries for all target machines.
     # Not everything here is required, but using the documentation from
     # https://wiki.qt.io/Building_Qt_5_from_Git#Libxcb
@@ -45,6 +43,8 @@ If ($IsLinux) {
     sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
   }
 }
+# Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
+&"$python" -m pip install wheel pip setuptools --upgrade
 pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 
 # Don't compile resources on the Build CI job as it'll do so in build script

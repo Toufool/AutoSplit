@@ -31,7 +31,7 @@ class ScrotCaptureMethod(CaptureMethodBase):
         image = test.toImage()
         b = image.bits()
         # sip.voidptr must know size to support python buffer interface
-        b.setsize(200 * 200 * 3)
+        # b.setsize(200 * 200 * 3)
         frame = np.frombuffer(cast(cv2.Mat, b), np.uint8).reshape((200, 200, 3))
 
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

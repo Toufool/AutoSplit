@@ -27,6 +27,15 @@ def is_blank(image: cv2.Mat):
 
 
 class VideoCaptureDeviceCaptureMethod(ThreadedCaptureMethod):
+    name = "Video Capture Device"
+    short_description = "see below"
+    description = (
+        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+        + "\nYou can select one below. "
+        + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
+        + "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
+    )
+
     capture_device: cv2.VideoCapture
 
     def _read_action(self, autosplit: AutoSplit):

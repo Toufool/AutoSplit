@@ -32,9 +32,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/resources/icon.ico</normaloff>
-    :/resources/icon.ico
-   </iconset>
+    <normaloff>:/resources/icon.ico</normaloff> :/resources/icon.ico </iconset>
   </property>
   <widget class="QPushButton" name="ok_button">
    <property name="geometry">

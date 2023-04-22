@@ -20,6 +20,13 @@ if TYPE_CHECKING:
 
 
 class ScrotCaptureMethod(ThreadedCaptureMethod):
+    name = "Scrot"
+    short_description = "very slow, may leave files"
+    description = (
+        "\nUses Scrot (SCReenshOT) to take screenshots. "
+        + "\nLeaves behind a screenshot file if interrupted. "
+    )
+
     def _read_action(self, autosplit: AutoSplit):
         if not self.check_selected_region_exists(autosplit):
             return None, False

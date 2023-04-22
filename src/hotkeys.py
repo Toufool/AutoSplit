@@ -168,7 +168,7 @@ def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
 def __get_hotkey_name(names: list[str]):
     """
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
-    See: https://github.com/boppreh/keyboard/issues/516.
+    See: https://github.com/boppreh/keyboard/issues/516 .
     """
     def sorting_key(key: str):
         return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])

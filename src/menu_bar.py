@@ -229,6 +229,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
+        # if sys.platform == "linux":
+        #     geometry = self.readme_link_button.geometry()
+        #     self.readme_link_button.setGeometry(QtCore.QRect(51, 225, geometry.width(), geometry.height()))
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()

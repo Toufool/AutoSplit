@@ -13,6 +13,10 @@ if TYPE_CHECKING:
 
 
 class CaptureMethodBase():
+    name = "None"
+    short_description = ""
+    description = ""
+
     def __init__(self, autosplit: AutoSplit | None = None):
         # Some capture methods don't need an initialization process
         pass

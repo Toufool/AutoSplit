@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>313</width>
-    <height>133</height>
+    <width>318</width>
+    <height>132</height>
    </size>
   </property>
   <property name="font">
@@ -77,7 +77,7 @@
     <rect>
      <x>10</x>
      <y>50</y>
-     <width>91</width>
+     <width>101</width>
      <height>16</height>
     </rect>
    </property>
@@ -101,9 +101,9 @@
   <widget class="QPushButton" name="left_button">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>160</x>
      <y>100</y>
-     <width>75</width>
+     <width>71</width>
      <height>24</height>
     </rect>
    </property>
@@ -117,9 +117,9 @@
   <widget class="QPushButton" name="right_button">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>240</x>
      <y>100</y>
-     <width>75</width>
+     <width>71</width>
      <height>24</height>
     </rect>
    </property>

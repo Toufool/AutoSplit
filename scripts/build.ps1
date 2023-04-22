@@ -1,7 +1,7 @@
 & "$PSScriptRoot/compile_resources.ps1"
 
 $arguments = @(
-  "$PSScriptRoot/../src/AutoSplit.py"
+  "$PSScriptRoot/../src/AutoSplit.py",
   '--onefile',
   '--windowed',
   '--additional-hooks-dir=Pyinstaller/hooks',

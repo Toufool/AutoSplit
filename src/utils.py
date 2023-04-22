@@ -169,8 +169,8 @@ def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because ~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
-    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Toufool/Auto-Split/pull/156
+    Uses threads on Windows because ~~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
+    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
@@ -188,6 +188,8 @@ def fire_and_forget(func: Callable[..., Any]):
 WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 """AutoSplit Version number"""
+WGC_MIN_BUILD = 17134
+"""https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))

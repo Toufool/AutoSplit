@@ -20,6 +20,10 @@ if TYPE_CHECKING:
 
 
 class XDisplayCaptureMethod(ThreadedCaptureMethod):
+    name = "XDisplay"
+    short_description = "fast, requires xcb"
+    description = "\nUses XCB to take screenshots of the display"
+
     _xdisplay: str | None = ""  # ":0"
 
     def _read_action(self, autosplit: AutoSplit):

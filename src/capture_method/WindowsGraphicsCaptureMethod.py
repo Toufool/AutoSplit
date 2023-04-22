@@ -18,15 +18,28 @@ from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import RGBA_CHANNEL_COUNT, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
+from utils import RGBA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
+LEARNING_MODE_DEVICE_BUILD = 17763
+"""https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 
 class WindowsGraphicsCaptureMethod(CaptureMethodBase):
+    name = "Windows Graphics Capture"
+    short_description = "fast, most compatible, capped at 60fps"
+    description = (
+        f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
+        + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
+        + "\nrequire having at least one audio or video Capture Device connected and enabled."
+        + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
+        + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
+        + "\nCaps at around 60 FPS. "
+    )
+
     size: SizeInt32
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None

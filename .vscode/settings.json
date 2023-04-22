@@ -59,8 +59,7 @@
   },
   "[python]": {
     // Ruff is not yet a formatter: https://github.com/charliermarsh/ruff/issues/1904
-    // Cannot use autotpep8 until https://github.com/microsoft/vscode-autopep8/issues/32 is fixed
-    "editor.defaultFormatter": "ms-python.python",
+    "editor.defaultFormatter": "ms-python.autopep8",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
@@ -73,7 +72,6 @@
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
-  "python.formatting.provider": "autopep8",
   "python.linting.enabled": true,
   "ruff.importStrategy": "fromEnvironment",
   // Use the Ruff extension instead
@@ -84,6 +82,8 @@
   "python.linting.pycodestyleEnabled": false,
   "python.linting.pylamaEnabled": false,
   "python.linting.pylintEnabled": false,
+  // Use the autopep8 extension instead
+  "python.formatting.provider": "none",
   // Use Pyright/Pylance instead
   "python.linting.mypyEnabled": false,
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
@@ -98,4 +98,18 @@
   "terminal.integrated.defaultProfile.osx": "pwsh",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
+  "xml.format.preserveSpace": [
+    // Default
+    "xsl:text",
+    "xsl:comment",
+    "xsl:processing-instruction",
+    "literallayout",
+    "programlisting",
+    "screen",
+    "synopsis",
+    "pre",
+    "xd:pre",
+    // Custom
+    "string"
+  ]
 }
