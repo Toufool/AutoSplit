@@ -14,7 +14,7 @@ from pywinctl import getTopWindowAt
 from typing_extensions import override
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-from winsdk._winrt import initialize_with_window  # pylint: disable=no-name-in-module
+from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 

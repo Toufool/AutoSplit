@@ -397,6 +397,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     </property>
     <property name="font">
      <font>
+      <family>Segoe UI</family>
       <pointsize>8</pointsize>
       <bold>true</bold>
      </font>
