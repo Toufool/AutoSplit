@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # Workaround for https://github.com/adamchainz/pre-commit-dprint/issues/4
+      - id: pretty-format-json
+        exclude: ".vscode/.*|dprint.json" # Exclude jsonc
+        args: [--autofix, --no-sort-keys]
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=crlf]
+      - id: check-case-conflict
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.8.0
+    hooks:
+      - id: pretty-format-ini
+        args: [--autofix]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.262" # Must match requirements-dev.txt
+    hooks:
+      - id: ruff
+        args: [--fix]
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: "v2.0.2" # Must match requirements-dev.txt
+    hooks:
+      - id: autopep8
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.4.0 # Must match requirements-dev.txt
+    hooks:
+      - id: add-trailing-comma
