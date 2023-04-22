@@ -145,7 +145,7 @@
      <rect>
       <x>10</x>
       <y>270</y>
-      <width>51</width>
+      <width>53</width>
       <height>23</height>
      </rect>
     </property>
@@ -505,7 +505,7 @@
    <widget class="QLineEdit" name="split_image_folder_input">
     <property name="geometry">
      <rect>
-      <x>132</x>
+      <x>127</x>
       <y>6</y>
       <width>561</width>
       <height>22</height>
@@ -937,7 +937,7 @@
      <x>0</x>
      <y>0</y>
      <width>786</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_help">

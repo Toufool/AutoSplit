@@ -180,9 +180,9 @@
    <widget class="QComboBox" name="default_comparison_method">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>170</x>
       <y>25</y>
-      <width>81</width>
+      <width>91</width>
       <height>22</height>
      </rect>
     </property>
@@ -250,9 +250,9 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_pause_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>170</x>
       <y>115</y>
-      <width>81</width>
+      <width>91</width>
       <height>24</height>
      </rect>
     </property>
@@ -291,7 +291,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QDoubleSpinBox" name="default_similarity_threshold_spinbox">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>170</x>
       <y>55</y>
       <width>51</width>
       <height>24</height>
@@ -370,9 +370,9 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QSpinBox" name="default_delay_time_spinbox">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>170</x>
       <y>85</y>
-      <width>81</width>
+      <width>91</width>
       <height>24</height>
      </rect>
     </property>
@@ -389,8 +389,8 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
    <widget class="QCommandLinkButton" name="readme_link_button">
     <property name="geometry">
      <rect>
-      <x>139</x>
-      <y>215</y>
+      <x>140</x>
+      <y>218</y>
       <width>71</width>
       <height>31</height>
      </rect>
