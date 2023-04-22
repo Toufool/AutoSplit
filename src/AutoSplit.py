@@ -38,16 +38,7 @@ from menu_bar import (
 from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
-from utils import (
-    AUTOSPLIT_VERSION,
-    FIRST_WIN_11_BUILD,
-    FROZEN,
-    WINDOWS_BUILD_NUMBER,
-    auto_split_directory,
-    decimal,
-    is_valid_image,
-    open_file,
-)
+from utils import AUTOSPLIT_VERSION, FROZEN, auto_split_directory, decimal, is_valid_image, open_file
 
 CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
@@ -127,14 +118,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle(f"AutoSplit v{AUTOSPLIT_VERSION}")
-        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
-        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
-        # Arrow buttons tend to move a lot as well
-        if WINDOWS_BUILD_NUMBER >= FIRST_WIN_11_BUILD:
-            self.x_spinbox.setFrame(False)
-            self.y_spinbox.setFrame(False)
-            self.width_spinbox.setFrame(False)
-            self.height_spinbox.setFrame(False)
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
         for hotkey in HOTKEYS:
