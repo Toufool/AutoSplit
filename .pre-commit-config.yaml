@@ -30,3 +30,9 @@ repos:
     rev: v2.4.0 # Must match requirements-dev.txt
     hooks:
       - id: add-trailing-comma
+      
+ci:
+  skip:
+    # Ignore until Linux support. We don't want lf everywhere yet
+    # And crlf fails on CI because pre-commit runs on linux
+    - "mixed-line-ending"
