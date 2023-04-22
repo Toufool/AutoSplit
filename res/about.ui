@@ -32,9 +32,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/resources/icon.ico</normaloff>
-    :/resources/icon.ico
-   </iconset>
+    <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <widget class="QPushButton" name="ok_button">
    <property name="geometry">
@@ -81,7 +79,7 @@
      <x>10</x>
      <y>90</y>
      <width>241</width>
-     <height>41</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -105,9 +103,6 @@ Thank you!</string>
    <property name="text">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;amp;business=BYRHQG69YRHBA&amp;amp;item_name=AutoSplit+development&amp;amp;currency_code=USD&amp;amp;source=url&quot;&gt;&lt;img src=&quot;:/resources/btn_donateCC_LG.png&quot;/&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/resources/btn_donateCC_LG.png</pixmap>
-   </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
@@ -115,7 +110,7 @@ Thank you!</string>
   <widget class="QLabel" name="icon_label">
    <property name="geometry">
     <rect>
-     <x>181</x>
+     <x>190</x>
      <y>17</y>
      <width>64</width>
      <height>64</height>
