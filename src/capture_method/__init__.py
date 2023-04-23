@@ -15,6 +15,7 @@ from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCap
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
+from capture_method.DXCamCaptureMethod import DXCamCaptureMethod
 from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
 
 if TYPE_CHECKING:
@@ -59,6 +60,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
     DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
     VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
+    DXCAM = "DXCAM"
 
 
 class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]]):
@@ -110,6 +112,7 @@ except (ModuleNotFoundError, COMError):
     pass
 else:
     CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
+CAPTURE_METHODS[CaptureMethodEnum.DXCAM] = DXCamCaptureMethod
 CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 
