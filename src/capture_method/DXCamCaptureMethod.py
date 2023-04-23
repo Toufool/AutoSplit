@@ -4,13 +4,13 @@ import ctypes
 from typing import TYPE_CHECKING, cast
 
 import cv2
+
 # import d3dshot
 import dxcam
 import win32con
-from win32 import win32gui, win32api
+from win32 import win32api, win32gui
 
 from capture_method import CaptureMethodBase
-from utils import get_window_bounds
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -70,7 +70,8 @@ class DXCamCaptureMethod(CaptureMethodBase):
 
     def get_cached_monitor(self, autosplit: AutoSplit):
         hmonitor = ctypes.windll.user32.MonitorFromWindow(
-            autosplit.hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+            autosplit.hwnd, win32con.MONITOR_DEFAULTTONEAREST,
+        )
         index, rect = self.monitor_handle_to_index(hmonitor)
         if index == -1 or not self.check_selected_region_exists(autosplit):
             return None, False
@@ -102,7 +103,8 @@ class DXCamCaptureMethod(CaptureMethodBase):
         monitor, do_reset_monitor = self.get_cached_monitor(autosplit)
         selection, do_reset_selection = self.get_cached_selection(
             autosplit.hwnd,
-            autosplit.settings_dict["capture_region"])
+            autosplit.settings_dict["capture_region"],
+        )
 
         if do_reset_monitor:
             self.create_camera(monitor)
@@ -111,18 +113,20 @@ class DXCamCaptureMethod(CaptureMethodBase):
         if do_reset_selection:
             self.camera.stop()
 
-            left = max()
-            top = max()
+            max()
+            max()
 
             right = min(selection["x"] + selection["width"], self.monitor_rect["right"])
             bottom = min(selection["y"] + selection["height"], self.monitor_rect["bottom"])
 
-            self.camera.start(region=(
-                selection["x"],
-                selection["y"],
-                right,
-                bottom
-            ))
+            self.camera.start(
+                region=(
+                    selection["x"],
+                    selection["y"],
+                    right,
+                    bottom,
+                ),
+            )
 
         screenshot = self.camera.get_latest_frame()
         if screenshot is None:

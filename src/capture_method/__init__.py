@@ -12,10 +12,10 @@ from pygrabber.dshow_graph import FilterGraph
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
+from capture_method.DXCamCaptureMethod import DXCamCaptureMethod
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
-from capture_method.DXCamCaptureMethod import DXCamCaptureMethod
 from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
 
 if TYPE_CHECKING:
