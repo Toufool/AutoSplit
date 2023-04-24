@@ -28,9 +28,8 @@ DWMWA_EXTENDED_FRAME_BOUNDS = 9
 
 
 def decimal(value: int | float):
-    # NOTE: The coeficient (1000) has to be above what's mathematically necessary (100)
-    # because of python float rounding errors (ie: xx.99999999999999)
-    return f"{int(value * 1000) / 1000:.2f}"
+    # Using ljust instead of :2f because of python float rounding errors
+    return f"{int(value * 100) / 100}".ljust(4, "0")
 
 
 def is_digit(value: str | int | None):
