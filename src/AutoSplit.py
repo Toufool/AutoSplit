@@ -347,23 +347,24 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             self.timer_start_image.stop()
             self.split_below_threshold = False
 
-            # delay start image if needed
-            if self.start_image.get_delay_time(self) > 0:
-                self.start_image_status_value_label.setText("delaying start...")
-                delay_start_time = time()
-                start_delay = self.start_image.get_delay_time(self) / 1000
-                time_delta = 0
-                while time_delta < start_delay:
-                    delay_time_left = start_delay - time_delta
-                    self.current_split_image.setText(
-                        f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
-                    )
-                    # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
-                    QTest.qWait(100)
-                    time_delta = time() - delay_start_time
+            if not self.start_image.check_flag(DUMMY_FLAG):
+                # Delay start image if needed
+                if self.start_image.get_delay_time(self) > 0:
+                    self.start_image_status_value_label.setText("delaying start...")
+                    delay_start_time = time()
+                    start_delay = self.start_image.get_delay_time(self) / 1000
+                    time_delta = 0
+                    while time_delta < start_delay:
+                        delay_time_left = start_delay - time_delta
+                        self.current_split_image.setText(
+                            f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
+                        )
+                        # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
+                        QTest.qWait(100)
+                        time_delta = time() - delay_start_time
+                send_command(self, "start")
 
             self.start_image_status_value_label.setText("started")
-            send_command(self, "start")
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
