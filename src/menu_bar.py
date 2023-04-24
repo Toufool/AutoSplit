@@ -176,6 +176,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
             # Re-initializes the VideoCaptureDeviceCaptureMethod
             change_capture_method(CaptureMethodEnum.VIDEO_CAPTURE_DEVICE, self.autosplit)
 
+    def __fps_limit_changed(self, value: int):
+        value = self.fps_limit_spinbox.value()
+        self.autosplit.settings_dict["fps_limit"] = value
+        self.autosplit.timer_live_image.setInterval(int(1000 / value))
+        self.autosplit.timer_live_image.setInterval(int(1000 / value))
+
     @fire_and_forget
     def __set_all_capture_devices(self):
         self.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
@@ -293,9 +299,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
 # endregion
 # region Binding
         # Capture Settings
-        self.fps_limit_spinbox.valueChanged.connect(
-            lambda: self.__set_value("fps_limit", self.fps_limit_spinbox.value()),
-        )
+        self.fps_limit_spinbox.valueChanged.connect(self.__fps_limit_changed)
         self.live_capture_region_checkbox.stateChanged.connect(
             lambda: self.__set_value("live_capture_region", self.live_capture_region_checkbox.isChecked()),
         )
