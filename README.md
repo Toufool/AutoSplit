@@ -139,11 +139,6 @@ If this option is enabled, when the last split meets the threshold and splits, A
 If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
-#### Auto Start On Reset
-
-If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
-If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
-
 ### Custom Split Image Settings
 
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
