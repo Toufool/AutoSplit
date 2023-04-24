@@ -516,10 +516,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         Check if AutoSplit is started, if not either restart (loop splits) or update the GUI
         """
         if not self.is_running:
-            if self.settings_dict["loop_splits"]:
-                self.start_auto_splitter_signal.emit()
-            else:
-                self.gui_changes_on_reset(True)
+            self.gui_changes_on_reset(True)
             return True
         return False
 
