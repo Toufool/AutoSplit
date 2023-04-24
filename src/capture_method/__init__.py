@@ -162,7 +162,7 @@ else:
             "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
             "\nOverlapping windows will show up and can't record across displays. "
             "\nThis option may not be available for hybrid GPU laptops, "
-            "\nsee D3DDD-Note-Laptops.md for a solution. "
+            "\nsee /docs/D3DDD-Note-Laptops.md for a solution. "
             f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
         ),
         implementation=DesktopDuplicationCaptureMethod,

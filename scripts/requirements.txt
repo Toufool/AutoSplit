@@ -1,13 +1,6 @@
 # Requirements file for AutoSplit
 #
-# Python: CPython 3.9+
-#
-# Usage: ./scripts/install.ps1
-#
-# If you're having issues with the libraries, you might want to first run:
-# pip uninstall -y -r ./scripts/requirements-dev.txt
-#
-# Creating an AutoSplit executable with PyInstaller: ./scripts/build.ps1
+# Read /docs/build%20instructions.md for more information on how to install, run and build the python code.
 #
 # Dependencies:
 certifi
