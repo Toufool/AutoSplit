@@ -12,9 +12,7 @@ packaging
 Pillow>=9.2  # gnome-screeshot checks
 psutil
 PyAutoGUI
-# 6.4.1 fixes the rare Illegal Operation issue from RTADan, but the dev wheels are currently broken :/
-# 2.0.0-beta.2 contains the fixes if anyone needs it.
-PyQt6>=6.4.0  # Python 3.11 support
+PyQt6>=6.4.2  # Python 3.11 support
 requests<=2.28.1  # 2.28.2 has issues with PyInstaller https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 toml
 #
