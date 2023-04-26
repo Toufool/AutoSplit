@@ -102,8 +102,6 @@ def compare_phash(source: cv2.Mat, capture: cv2.Mat, mask: cv2.Mat | None = None
     source_hash = imagehash.phash(Image.fromarray(source))
     capture_hash = imagehash.phash(Image.fromarray(capture))
     hash_diff = source_hash - capture_hash
-    if not hash_diff:
-        return 0.0
     return 1 - (hash_diff / 64.0)
 
 

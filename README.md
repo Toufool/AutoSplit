@@ -12,7 +12,7 @@ Easy to use image comparison based auto splitter for speedrunning on console or 
 
 This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), and can be integrated with LiveSplit.
 
-![Example](res/2.0.0_gif.gif)
+![Example](/docs/2.0.0_gif.gif)
 
 # TUTORIAL
 
@@ -24,13 +24,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 ### Compatibility
 
-- Python 3.9+
 - Windows 10 and 11.
-
-### Building
-
-(This is not required for normal use)  
-Refer to the [build instructions](build%20instructions.md) if you'd like to build the application yourself or run it directly in Python.
+- Python 3.9+ (Not requried for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## OPTIONS
 
@@ -84,11 +79,11 @@ Refer to the [build instructions](build%20instructions.md) if you'd like to buil
     It can record OpenGL and Hardware Accelerated windows.  
     About 10-15x slower than BitBlt. Not affected by window size.  
     overlapping windows will show up and can't record across displays.  
-    This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/D3DDD-Note-Laptops.md) for a solution.
+    This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
 - **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
-- **Video Capture Device**
+- **Video Capture Device**  
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
     If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
@@ -144,11 +139,6 @@ If this option is enabled, when the last split meets the threshold and splits, A
 If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
-#### Auto Start On Reset
-
-If this option is enabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will reset and automatically start again back at the first split image.
-If this option is disabled, when the reset hotkey is hit, the reset button is pressed, or the reset split image meets its threshold, AutoSplit will stop running comparisons.
-
 ### Custom Split Image Settings
 
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
@@ -179,7 +169,7 @@ Masked images are very useful if only a certain part of the capture region is co
 
 The best way to create a masked image is to set your capture region as the entire game screen, take a screenshot, and use a program like [paint.net](https://www.getpaint.net/) to "erase" (make transparent) everything you don't want the program to compare. More on creating images with transparency using paint.net can be found in [this tutorial](https://www.youtube.com/watch?v=v53kkUYFVn8). For visualization, here is what the capture region compared to a masked split image looks like if you would want to split on "Shine Get!" text in Super Mario Sunshine:
 
-![Mask Example](res/mask_example_image.png)
+![Mask Example](/docs/mask_example_image.png)
 
 ### Reset image
 
@@ -226,14 +216,43 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
+- OBS' integrated Virtual Camera does not work and makes AutoSplit crash.
 
 ## Resources
 
 Still need help?
-
-- [Check if your issue already exists or open a new one](../../issues)
+<!-- open issues sorted by reactions -->
+- [Check if your issue already exists](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc)
+  - If it does, upvote it 👍
+  - If it doesn't, create a new one
 - Join the [AutoSplit Discord  
 ![AutoSplit Discord](https://badgen.net/discord/members/Qcbxv9y)](https://discord.gg/Qcbxv9y)
+
+## Contributing
+
+See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.  
+Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
+
+Not a developper? You can still help through the following methods:
+<!-- open enhancements sorted by reactions -->
+- Donating (see link below)
+- [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in
+- Sharing AutoSplit with other speedrunners
+- Upvoting the following upstream issues in libraries and tools we use:
+  - <https://github.com/opencv/opencv/issues/23539>
+  - <https://github.com/opencv/opencv/issues/14590>
+  - <https://github.com/opencv/opencv/issues/23537>
+  - <https://github.com/opencv/opencv/issues/23158>
+  - <https://github.com/opencv/opencv/issues/22632>
+  - <https://github.com/pywinrt/python-winsdk/issues/11>
+  - <https://github.com/adamchainz/pre-commit-dprint/issues/4>
+  - <https://github.com/mhammond/pywin32/issues/1913>
+  - <https://github.com/microsoft/vscode/issues/40239>
+  - <https://github.com/hhatto/autopep8/issues/675>
+  - <https://github.com/boppreh/keyboard/issues/171>
+  - <https://github.com/boppreh/keyboard/issues/516>
+  - <https://github.com/boppreh/keyboard/issues/216>
+  - <https://github.com/boppreh/keyboard/issues/161>
 
 ## Credits
 

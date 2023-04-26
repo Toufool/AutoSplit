@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 
 
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):  # pylint: disable=too-few-public-methods
-    def __init__(self):
-        super().__init__()
+    def __init__(self, autosplit: AutoSplit | None):
+        super().__init__(autosplit)
         # Must not set statically as some laptops will throw an error
         self.desktop_duplication = d3dshot.create(capture_output="numpy")
 

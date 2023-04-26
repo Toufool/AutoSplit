@@ -11,6 +11,7 @@ from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import cv2
+import win32ui
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
@@ -18,6 +19,8 @@ from winsdk.windows.media.capture import MediaCapture
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if TYPE_CHECKING:
+    # Source does not exist, keep this under TYPE_CHECKING
+    from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
     from typing_extensions import ParamSpec, TypeGuard
     P = ParamSpec("P")
 
@@ -25,9 +28,8 @@ DWMWA_EXTENDED_FRAME_BOUNDS = 9
 
 
 def decimal(value: int | float):
-    # NOTE: The coeficient (1000) has to be above what's mathematically necessary (100)
-    # because of python float rounding errors (ie: xx.99999999999999)
-    return f"{int(value * 1000) / 1000:.2f}"
+    # Using ljust instead of :2f because of python float rounding errors
+    return f"{int(value * 100) / 100}".ljust(4, "0")
 
 
 def is_digit(value: str | int | None):
@@ -62,6 +64,13 @@ T = TypeVar("T")
 def first(iterable: Iterable[T]) -> T:
     """@return: The first element of a collection. Dictionaries will return the first key"""
     return next(iter(iterable))
+
+
+def try_delete_dc(dc: PyCDC):
+    try:
+        dc.DeleteDC()
+    except win32ui.error:
+        pass
 
 
 def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:

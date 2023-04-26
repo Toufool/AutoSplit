@@ -78,7 +78,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
     split_image_number = 0
     split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
     split_groups: list[list[int]] = []
-    capture_method = CaptureMethodBase()
+    capture_method = CaptureMethodBase(None)
     is_running = False
 
     # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
@@ -206,8 +206,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         self.pause_signal.connect(self.pause)
 
         # live image checkbox
-        self.timer_live_image.timeout.connect(self.__live_image_function)
-        self.timer_live_image.start(int(1000 / 60))
+        self.timer_live_image.timeout.connect(lambda: self.__update_live_image_details(None, True))
+        self.timer_live_image.start(int(1000 / self.settings_dict["fps_limit"]))
 
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__start_image_function)
@@ -244,16 +244,26 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
             self.load_start_image_signal.emit()
 
-    def __live_image_function(self):
+    def __update_live_image_details(self, capture: cv2.Mat | None, called_from_timer: bool = False):
+        # HACK: Since this is also called in __get_capture_for_comparison,
+        # we don't need to update anything if the app is running
+        if called_from_timer:
+            if self.is_running or self.start_image:
+                return
+            else:
+                capture, _ = self.capture_method.get_frame(self)
+
+        # Update title from target window or Capture Device name
         capture_region_window_label = self.settings_dict["capture_device_name"] \
             if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE \
             else self.settings_dict["captured_window_title"]
         self.capture_region_window_label.setText(capture_region_window_label)
+
+        # Simply clear if "live capture region" setting is off
         if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
             self.live_image.clear()
             return
-        # Set live image in UI
-        capture, _ = self.capture_method.get_frame(self)
+
         set_preview_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
@@ -337,23 +347,24 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
             self.timer_start_image.stop()
             self.split_below_threshold = False
 
-            # delay start image if needed
-            if self.start_image.get_delay_time(self) > 0:
-                self.start_image_status_value_label.setText("delaying start...")
-                delay_start_time = time()
-                start_delay = self.start_image.get_delay_time(self) / 1000
-                time_delta = 0
-                while time_delta < start_delay:
-                    delay_time_left = start_delay - time_delta
-                    self.current_split_image.setText(
-                        f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
-                    )
-                    # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
-                    QTest.qWait(100)
-                    time_delta = time() - delay_start_time
+            if not self.start_image.check_flag(DUMMY_FLAG):
+                # Delay start image if needed
+                if self.start_image.get_delay_time(self) > 0:
+                    self.start_image_status_value_label.setText("delaying start...")
+                    delay_start_time = time()
+                    start_delay = self.start_image.get_delay_time(self) / 1000
+                    time_delta = 0
+                    while time_delta < start_delay:
+                        delay_time_left = start_delay - time_delta
+                        self.current_split_image.setText(
+                            f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
+                        )
+                        # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
+                        QTest.qWait(100)
+                        time_delta = time() - delay_start_time
+                send_command(self, "start")
 
             self.start_image_status_value_label.setText("started")
-            send_command(self, "start")
             self.start_auto_splitter()
 
     # update x, y, width, height when spinbox values are changed
@@ -506,10 +517,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
         Check if AutoSplit is started, if not either restart (loop splits) or update the GUI
         """
         if not self.is_running:
-            if self.settings_dict["loop_splits"]:
-                self.start_auto_splitter_signal.emit()
-            else:
-                self.gui_changes_on_reset(True)
+            self.gui_changes_on_reset(True)
             return True
         return False
 
@@ -803,6 +811,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):  # pylint: disable=too-many-
                 if recovered:
                     capture, _ = self.capture_method.get_frame(self)
 
+        self.__update_live_image_details(capture)
         return capture, is_old_image
 
     def __reset_if_should(self, capture: cv2.Mat | None):

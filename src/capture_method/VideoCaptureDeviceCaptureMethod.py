@@ -38,12 +38,16 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     result, image = self.capture_device.read()
                 except cv2.error as error:
                     if not (
-                        error.code == cv2.Error.STS_ERROR and error.msg.endswith(
-                            "in function 'cv::VideoCapture::grab'\n",
+                        error.code == cv2.Error.STS_ERROR
+                        and (
+                            # Likely means the camera is occupied
+                            error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
+                            # Some capture cards we cannot use directly
+                            # https://github.com/opencv/opencv/issues/23539
+                            or error.msg.endswith("in function 'cv::VideoCapture::retrieve'\n")
                         )
                     ):
                         raise
-                    # STS_ERROR most likely means the camera is occupied
                     result = False
                     image = None
                 if not result:
@@ -68,7 +72,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             )
 
     def __init__(self, autosplit: AutoSplit):
-        super().__init__()
+        super().__init__(autosplit)
         filter_graph = dshow_graph.FilterGraph()
         filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
         width, height = filter_graph.get_input_device().get_current_format()
@@ -80,8 +84,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         try:
             self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        # Some cameras don't allow changing the resolution
         except cv2.error:
+            # Some cameras don't allow changing the resolution
             pass
         self.stop_thread = Event()
         self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))

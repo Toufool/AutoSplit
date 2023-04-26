@@ -17,9 +17,11 @@
 
 ## Install and Build steps
 
-- Read [requirements.txt](/scripts/requirements.txt) for more information on how to install, run and build the python code.
-  - Run `./scripts/install.ps1` to install all dependencies.
-  - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
-    - Or debug by pressing `F5` in VSCode
-  - Run `./scripts/build.ps1` or press `CTRL+Shift+B` in VSCode to build an executable.
-- Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
+- Run `./scripts/install.ps1` to install all dependencies.
+  - If you're having issues with the PySide generated code, you might want to first run `pip uninstall -y shiboken6 PySide PySide-Essentials`
+- Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
+  - Or debug by pressing `F5` in VSCode.
+  - The `--auto-controlled` flag is passed when AutoSplit is started by LiveSplit.
+- Run `./scripts/build.ps1` or press `CTRL+Shift+B` in VSCode to build an executable.
+- Optional: Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
+  - This should be done automatically by other scripts
