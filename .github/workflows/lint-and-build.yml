@@ -22,7 +22,6 @@ on:
       - main
       - master
       - dev*
-      - 2.0.0
     paths:
       - "**.py"
       - "**.pyi"
@@ -143,7 +142,7 @@ jobs:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.11"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3

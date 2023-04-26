@@ -233,7 +233,7 @@ Still need help?
 See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.  
 Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
 
-Not a developper? You can still help through the following methods:
+Not a developer? You can still help through the following methods:
 <!-- open enhancements sorted by reactions -->
 - Donating (see link below)
 - [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in

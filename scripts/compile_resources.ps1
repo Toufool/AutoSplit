@@ -10,7 +10,14 @@ pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
-$BUILD_NUMBER = If ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true) { '' } Else { Get-Date -Format yyMMddHHmm }
+If ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true -or (
+    $Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'master')
+) {
+  $BUILD_NUMBER = ''
+}
+Else {
+  $BUILD_NUMBER = Get-Date -Format yyMMddHHmm
+}
 $GITHUB_REPOSITORY = $Env:GITHUB_HEAD_REPOSITORY
 If (-not $GITHUB_REPOSITORY) {
   $repo_url = git config --get remote.origin.url

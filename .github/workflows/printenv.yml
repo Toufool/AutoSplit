@@ -1,0 +1,26 @@
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+name: printenv
+on:
+  workflow_dispatch: #  Allows manual builds
+    inputs:
+      excludeBuildNumber:
+        description: "Exclude build number"
+        required: true
+        default: false
+        type: boolean
+  # push:
+  #   branches:
+  #     - master
+  #     - dev
+
+env:
+  GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+  GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
+
+jobs:
+  printenv:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout ${{ github.repository }}/${{ github.ref }}
+        uses: actions/checkout@v3
+      - run: printenv
