@@ -234,7 +234,14 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=to
     best_height = 0
     best_width = 0
     best_loc = (0, 0)
-
+    
+    # Strip excess color channels if they are present
+    if capture.shape[2] != template.shape[2]:
+        if capture.shape[2] == 4:
+            capture = capture[:, :, :3]
+        if template.shape[2] == 4:
+            template = template[:, :, :3]
+    
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
         width = int(template.shape[1] * scale)
