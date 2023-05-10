@@ -235,12 +235,10 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):  # pylint: disable=to
     best_width = 0
     best_loc = (0, 0)
 
-    # If the number of color channels don't match, we can run cv2.matchTemplate()
-    if capture.shape[2] != template.shape[2]:
-        if capture.shape[2] == 4:
-            capture = capture[:, :, :3]
-        if template.shape[2] == 4:
-            template = template[:, :, :3]
+    # Add alpha channel to template if it's missing. The cv2.matchTemplate() function
+    # needs both images to have the same color dimensions, and capture has an alpha channel
+    if template.shape[2] == 3:
+        template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
 
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
