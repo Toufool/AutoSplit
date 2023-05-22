@@ -20,7 +20,7 @@ This program can be used to automatically start, split, and reset your preferred
 
 - Download the [latest version](/../../releases/latest)
 - You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
-<!-- (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev)) -->
+  (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev))
 
 ### Compatibility
 
