@@ -208,12 +208,17 @@ class CameraInfo():
     name: str
     occupied: bool
     backend: str
-    resolution: tuple[int, int] | None
+    resolution: tuple[int, int]
 
 
 def get_input_device_resolution(index: int):
     filter_graph = FilterGraph()
-    filter_graph.add_video_input_device(index)
+    try:
+        filter_graph.add_video_input_device(index)
+    # This can happen since OBS 29.1 DLL blocking breaking VirtualCam
+    # https://github.com/Toufool/AutoSplit/issues/238
+    except COMError:
+        return None
     resolution = filter_graph.get_input_device().get_current_format()
     filter_graph.remove_filters()
     return resolution
@@ -242,7 +247,10 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         # finally:
         #     video_capture.release()
 
-        return CameraInfo(index, device_name, False, backend, get_input_device_resolution(index))
+        resolution = get_input_device_resolution(index)
+        return CameraInfo(index, device_name, False, backend, resolution) \
+            if resolution is not None \
+            else None
 
     future = asyncio.gather(
         *[
