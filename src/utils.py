@@ -6,12 +6,14 @@ import ctypes.wintypes
 import os
 import sys
 from collections.abc import Callable, Iterable
+from enum import IntEnum
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import cv2
 import win32ui
+from typing_extensions import TypeGuard
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
@@ -21,10 +23,26 @@ from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
-    from typing_extensions import ParamSpec, TypeGuard
-    P = ParamSpec("P")
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
+MAXBYTE = 255
+RGB_CHANNEL_COUNT = 3
+"""How many channels in an RGB image"""
+RGBA_CHANNEL_COUNT = 4
+"""How many channels in an RGB image"""
+
+
+class ImageShape(IntEnum):
+    X = 0
+    Y = 1
+    Channels = 2
+
+
+class ColorChannel(IntEnum):
+    Red = 0
+    Green = 1
+    Blue = 2
+    Alpha = 3
 
 
 def decimal(value: int | float):
@@ -33,13 +51,11 @@ def decimal(value: int | float):
 
 
 def is_digit(value: str | int | None):
-    """
-    Checks if `value` is a single-digit string from 0-9
-    """
+    """Checks if `value` is a single-digit string from 0-9."""
     if value is None:
         return False
     try:
-        return 0 <= int(value) <= 9
+        return 0 <= int(value) <= 9  # noqa: PLR2004
     except (ValueError, TypeError):
         return False
 
@@ -49,7 +65,7 @@ def is_valid_image(image: cv2.Mat | None) -> TypeGuard[cv2.Mat]:
 
 
 def is_valid_hwnd(hwnd: int):
-    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `\"\"`"""
+    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
     if not hwnd:
         return False
     if sys.platform == "win32":
@@ -62,7 +78,7 @@ T = TypeVar("T")
 
 
 def first(iterable: Iterable[T]) -> T:
-    """@return: The first element of a collection. Dictionaries will return the first key"""
+    """@return: The first element of a collection. Dictionaries will return the first key."""
     return next(iter(iterable))
 
 
@@ -91,7 +107,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # nosec B606
+    os.startfile(file_path)  # noqa: S606
 
 
 def get_or_create_eventloop():
@@ -118,7 +134,7 @@ def get_direct3d_device():
             # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
             direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
         # TODO: Unknown potential error, I don't have an older Win10 machine to test.
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # noqa: S110,BLE001
             pass
     if not direct_3d_device:
         raise OSError("Unable to initialize a Direct3D Device.")
@@ -134,7 +150,7 @@ def try_get_direct3d_device():
 
 def fire_and_forget(func: Callable[..., Any]):
     """
-    Runs synchronous function asynchronously without waiting for a response
+    Runs synchronous function asynchronously without waiting for a response.
 
     Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
 
@@ -172,14 +188,13 @@ def getTopWindowAt(x: int, y: int):  # noqa: N802
 
 
 # Environment specifics
-WINDOWS_BUILD_NUMBER = int(version().split(".")[2]) if sys.platform == "win32" else -1
+WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 """AutoSplit Version number"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 """The directory of either the AutoSplit executable or AutoSplit.py"""
-MAXBYTE = 255
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number

@@ -6,24 +6,10 @@
 # Dependencies
 -r requirements.txt
 #
-# Linters
-bandit
-flake8>=6  # Validates configuration
-flake8-builtins
-flake8-bugbear
-flake8-class-attributes-order
-flake8-comprehensions>=3.8  # flake8 v5 support
-flake8-datetimez
-flake8-noqa>=1.3.0  # flake8 v6 support
-flake8-pyi>=22.11.0  # flake8 v6 support
-flake8-simplify
-pep8-naming
-pylint>=2.14,<3.0.0  # New checks  # 2.16 and 3.0 still in pre-release
-# Formatters
+# Linters & Formatters
 add-trailing-comma>=2.3.0  # Added support for with statement
 autopep8>=2.0.0 # New checks
-isort
-unify
+ruff>=0.0.269 # New TODO and PYI violations
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled PyQt Designer.
 # Can also be downloaded externally as a non-python package
@@ -38,4 +24,3 @@ types-pyinstaller
 types-pywin32
 types-requests
 types-toml
-typing-extensions
