@@ -28,6 +28,12 @@ Your Pull Request has to pass all checks ot be accepted. If it is still a work-i
 Most coding standards will be enforced by automated tooling.
 As time goes on, project-specific standards and "gotchas" in the frameworks we use will be listed here.
 
+### Magic numbers
+
+Please avoid using magic numbers and prefer constants and enums that have a meaningful name when possible.
+If a constant is shared throughout the app, it should live in `src/utils.py`. Unless it is very-specific to a module.
+For image shape and channels, please use `utils.ImageShape` and `utils.ColorChannel`.
+
 ## Testing
 
 None 😦 Please help us create test suites, we lack the time, but we really want (need!) them. <https://github.com/Toufool/AutoSplit/issues/216>

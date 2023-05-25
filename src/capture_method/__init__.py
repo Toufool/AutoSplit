@@ -134,11 +134,17 @@ class CameraInfo():
     resolution: tuple[int, int]
 
 
+def get_input_devices():
+    """https://github.com/andreaschiavinato/python_grabber/pull/24 ."""
+    return cast(list[str], FilterGraph().get_input_devices())
+
+
 def get_input_device_resolution(index: int):
     filter_graph = FilterGraph()
     try:
         filter_graph.add_video_input_device(index)
-    # This can happen since OBS 29.1 DLL blocking breaking VirtualCam
+    # This can happen with virtual cameras throwing errors.
+    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
     # https://github.com/Toufool/AutoSplit/issues/238
     except COMError:
         return None
@@ -148,8 +154,7 @@ def get_input_device_resolution(index: int):
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    # TODO: Fix partially Unknown list upstream
-    named_video_inputs: list[str] = FilterGraph().get_input_devices()
+    named_video_inputs = get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
@@ -175,6 +180,7 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
             if resolution is not None \
             else None
 
+    # Note: Return type required https://github.com/python/typeshed/issues/2652
     future = asyncio.gather(
         *[
             get_camera_info(index, name) for index, name

@@ -46,10 +46,13 @@ ignore = [
 
   ### FIXME (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
   "PTH",
+  # Ignore until linux support
+  "EXE",
 ]
 
 [tool.ruff.per-file-ignores]
 "typings/**/*.pyi" = [
+  "F811", # Re-exports false positives
   "F821", # https://github.com/charliermarsh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "N8",      # Naming conventions
@@ -104,7 +107,6 @@ max-branches = 15
 # https://github.com/hhatto/autopep8#more-advanced-usage
 [tool.autopep8]
 max_line_length = 120
-recursive = true
 aggressive = 3
 ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)

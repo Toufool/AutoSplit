@@ -244,9 +244,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Simply clear if "live capture region" setting is off
         if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
             self.live_image.clear()
-            return
-
-        set_preview_image(self.live_image, capture, False)
+        # Set live image in UI
+        else:
+            set_preview_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """Not thread safe (if triggered by LiveSplit for example). Use `load_start_image_signal.emit` instead."""
@@ -423,7 +423,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
 
     def undo_split(self, navigate_image_only: bool = False):
-        """"Undo Split" and "Prev. Img." buttons connect to here."""
+        """Undo Split" and "Prev. Img." buttons connect to here."""
         # Can't undo until timer is started
         # or Undoing past the first image
         if not self.is_running \
@@ -445,7 +445,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             send_command(self, "undo")
 
     def skip_split(self, navigate_image_only: bool = False):
-        """"Skip Split" and "Next Img." buttons connect to here."""
+        """Skip Split" and "Next Img." buttons connect to here."""
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
         if not self.is_running \
@@ -491,7 +491,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_auto_splitter_signal.emit()
 
     def __check_for_reset_state_update_ui(self):
-        """Check if AutoSplit is started, if not either restart (loop splits) or update the GUI."""
+        """Check if AutoSplit is started, if not then update the GUI."""
         if not self.is_running:
             self.gui_changes_on_reset(True)
             return True

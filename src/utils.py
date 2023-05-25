@@ -152,7 +152,8 @@ def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because `RuntimeError: There is no current event loop in thread 'MainThread'.`
+    Uses threads on Windows because ~~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
+    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
