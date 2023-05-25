@@ -73,7 +73,7 @@ required-imports = ["from __future__ import annotations"]
 known-local-folder = [
   "capture_method",
   "gen",
-  "AutoControlledWorker",
+  "AutoControlledThread",
   "AutoSplit",
   "AutoSplitImage",
   "compare",
@@ -138,7 +138,7 @@ reportUnusedCallResult = "none"
 reportMissingTypeStubs = "warning"
 # False positives with TYPE_CHECKING
 reportImportCycles = "information"
-# False positives with PyQt .connect
+# False positives with PySide .connect
 reportFunctionMemberAccess = "none"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"

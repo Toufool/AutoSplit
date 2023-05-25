@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING, TypedDict, cast
 
 import toml
-from PyQt6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
@@ -84,7 +84,6 @@ def save_settings_as(autosplit: AutoSplit):
         or os.path.join(auto_split_directory, "settings.toml"),
         "TOML (*.toml)",
     )[0]
-
     # If user cancels save destination window, don't save settings
     if not save_settings_file_path:
         return ""
@@ -164,7 +163,7 @@ def load_settings(autosplit: AutoSplit, from_path: str = ""):
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     # TODO: Should this check be in `__load_start_image` ?
     if not autosplit.is_running:
-        autosplit.load_start_image_signal.emit()
+        autosplit.load_start_image_signal.emit(False, True)
 
 
 def load_settings_on_open(autosplit: AutoSplit):
@@ -196,7 +195,9 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     value = QtCore \
         .QSettings("AutoSplit", "Check For Updates On Open") \
         .value("check_for_updates_on_open", True, type=bool)
-    autosplit.action_check_for_updates_on_open.setChecked(value)
+    # Type not infered by PySide6
+    # TODO: Report this issue upstream
+    autosplit.action_check_for_updates_on_open.setChecked(value)  # pyright: ignore[reportGeneralTypeIssues]
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
