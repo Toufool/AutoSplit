@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
+from pywinctl import getTopWindowAt
 from typing_extensions import override
 from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
@@ -18,15 +19,7 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import (
-    MAXBYTE,
-    RGB_CHANNEL_COUNT,
-    ImageShape,
-    get_window_bounds,
-    getTopWindowAt,
-    is_valid_hwnd,
-    is_valid_image,
-)
+from utils import MAXBYTE, RGB_CHANNEL_COUNT, ImageShape, get_window_bounds, is_valid_hwnd, is_valid_image
 
 user32 = ctypes.windll.user32
 
