@@ -25,6 +25,15 @@ def is_blank(image: cv2.Mat):
 
 
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
+    name = "Video Capture Device"
+    short_description = "see below"
+    description = (
+        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+        + "\nYou can select one below. "
+        + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
+        + "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
+    )
+
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     stop_thread: Event
@@ -117,9 +126,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             x:x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
-
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
-        raise NotImplementedError
 
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())
