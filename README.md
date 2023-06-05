@@ -86,7 +86,6 @@ This program can be used to automatically start, split, and reset your preferred
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
 - **Video Capture Device**
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
-    If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 #### Capture Device
 
@@ -218,7 +217,6 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
-- OBS' integrated Virtual Camera does not work and makes AutoSplit crash. So it's been disabled. Use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 ## Resources
 

@@ -185,9 +185,6 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
         *[
             get_camera_info(index, name) for index, name
             in enumerate(named_video_inputs)
-            # Will crash when trying to resize, and does not work to begin with
-            # TODO: Should be fixed in next release of OpenCV (4.8)
-            if name != "OBS Virtual Camera"
         ],
     )
 
