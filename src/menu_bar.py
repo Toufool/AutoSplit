@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import requests
 from packaging.version import parse as version_parse
-from PyQt6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
 
 import error_messages
@@ -18,16 +18,9 @@ from capture_method import (
     change_capture_method,
     get_all_video_capture_devices,
 )
-from gen import about, design, resources_rc, settings as settings_ui, update_checker  # noqa: F401
+from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
-from utils import (
-    AUTOSPLIT_VERSION,
-    FIRST_WIN_11_BUILD,
-    GITHUB_REPOSITORY,
-    WINDOWS_BUILD_NUMBER,
-    decimal,
-    fire_and_forget,
-)
+from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -113,7 +106,6 @@ def about_qt():
 
 def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
-    webbrowser.open("https://www.riverbankcomputing.com/software/pyqt")
 
 
 def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
@@ -205,16 +197,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         else:
             self.capture_device_combobox.setPlaceholderText("No device found.")
 
-    def __apply_os_specific_ui_fixes(self):
-        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
-        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
-        # Arrow buttons tend to move a lot as well
-        if WINDOWS_BUILD_NUMBER >= FIRST_WIN_11_BUILD:
-            self.fps_limit_spinbox.setFrame(False)
-            self.default_similarity_threshold_spinbox.setFrame(False)
-            self.default_delay_time_spinbox.setFrame(False)
-            self.default_pause_time_spinbox.setFrame(False)
-
     def __set_readme_link(self):
         self.custom_image_settings_info_label.setText(
             self.custom_image_settings_info_label
@@ -224,10 +206,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # HACK: This is a workaround because custom_image_settings_info_label
         # simply will not open links with a left click no matter what we tried.
         self.readme_link_button.clicked.connect(
-            # PyQt6 typing is wrong
-            lambda: webbrowser.open(  # pyright: ignore[reportGeneralTypeIssues]
-                f"https://github.com/{GITHUB_REPOSITORY}#readme",
-            ),
+            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 
@@ -235,7 +214,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         super().__init__()
         self.setupUi(self)
         self.autosplit = autosplit
-        self.__apply_os_specific_ui_fixes()
         self.__set_readme_link()
         # Don't autofocus any particular field
         self.setFocus()
@@ -244,21 +222,18 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
         self.__set_all_capture_devices()
-        capture_list_items = [
+
+        # TODO: Word-wrapping works, but there's lots of extra padding to the right. Raise issue upstream
+        # list_view = QtWidgets.QListView()
+        # list_view.setWordWrap(True)
+        # list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # list_view.setFixedWidth(self.capture_method_combobox.width())
+        # self.capture_method_combobox.setView(list_view)
+
+        self.capture_method_combobox.addItems([
             f"- {method.name} ({method.short_description})"
             for method in capture_method_values
-        ]
-        list_view = QtWidgets.QListView()
-        list_view.setWordWrap(True)
-        # HACK: The first time the dropdown is rendered, it does not have the right height
-        # Assuming all options take 2 lines (except camera and BitBlt which have 1).
-        # And all lines take 16 pixels
-        # And all separators take 2 pixels
-        doubled_len = 2 * len(capture_method_values) or 2
-        list_view.setMinimumHeight((doubled_len - 2) * 16 + doubled_len)
-        list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.capture_method_combobox.setView(list_view)
-        self.capture_method_combobox.addItems(capture_list_items)
+        ])
         self.capture_method_combobox.setToolTip(
             "\n\n".join([
                 f"{method.name} :\n{method.description}"

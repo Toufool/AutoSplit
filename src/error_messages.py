@@ -8,7 +8,7 @@ import traceback
 from types import TracebackType
 from typing import TYPE_CHECKING, NoReturn
 
-from PyQt6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from utils import FROZEN, GITHUB_REPOSITORY
 
@@ -177,7 +177,7 @@ def make_excepthook(autosplit: AutoSplit):
         # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture
         if (
             exception_type is SystemError
-            and str(exception) == "<class 'PyQt6.QtGui.QPaintEvent'> returned a result with an error set"
+            and str(exception) == "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):
             return
         # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors

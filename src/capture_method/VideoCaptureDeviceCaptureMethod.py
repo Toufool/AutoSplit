@@ -14,17 +14,24 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-OBS_CAMERA_BLANK_PIXEL = [127, 129, 128]
+OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
 
 
 def is_blank(image: cv2.Mat):
     # Running np.all on the entire array or looping manually through the
     # entire array is extremely slow when we can't stop early.
     # Instead we check for a few key pixels, in this case, corners
-    return np.all(image[::image.shape[0] - 1, ::image.shape[1] - 1] == OBS_CAMERA_BLANK_PIXEL)
+    return np.all(image[::image.shape[0] - 1, ::image.shape[1] - 1] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL)
 
 
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
+    name = "Video Capture Device"
+    short_description = "see below"
+    description = (
+        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+        + "\nYou can select one below. "
+    )
+
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     stop_thread: Event
@@ -117,9 +124,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             x:x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
-
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
-        raise NotImplementedError
 
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())

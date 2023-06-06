@@ -17,12 +17,11 @@ repos:
     hooks:
       - id: pretty-format-ini
         args: [--autofix]
-  # TODO: Re-enable in dev, master doesn't have Ruff configs
-  # - repo: https://github.com/charliermarsh/ruff-pre-commit
-  #   rev: "v0.0.262" # Must match requirements-dev.txt
-  #   hooks:
-  #     - id: ruff
-  #       args: [--fix]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.269" # Must match requirements-dev.txt
+    hooks:
+      - id: ruff
+        args: [--fix]
   - repo: https://github.com/pre-commit/mirrors-autopep8
     rev: "v2.0.2" # Must match requirements-dev.txt
     hooks:

@@ -5,6 +5,7 @@ import ctypes
 import os
 import signal
 import sys
+from collections.abc import Callable
 from time import time
 from types import FunctionType
 from typing import NoReturn
@@ -12,14 +13,14 @@ from typing import NoReturn
 import certifi
 import cv2
 from psutil import process_iter
-from PyQt6 import QtCore, QtGui
-from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
+from PySide6 import QtCore, QtGui
+from PySide6.QtTest import QTest
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 from typing_extensions import override
 
 import error_messages
 import user_profile
-from AutoControlledWorker import AutoControlledWorker
+from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
@@ -37,23 +38,17 @@ from menu_bar import (
 from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
-from utils import (
-    AUTOSPLIT_VERSION,
-    FIRST_WIN_11_BUILD,
-    FROZEN,
-    WINDOWS_BUILD_NUMBER,
-    auto_split_directory,
-    decimal,
-    is_valid_image,
-    open_file,
-)
+from utils import AUTOSPLIT_VERSION, FROZEN, auto_split_directory, decimal, is_valid_image, open_file
 
 CHECK_FPS_ITERATIONS = 10
+DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+# qt.qpa.window: SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) failed: COM error 0x5: Access is denied.  # noqa: E501
+# ctypes.windll.user32.SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -61,16 +56,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     is_auto_controlled = "--auto-controlled" in sys.argv
 
     # Signals
-    start_auto_splitter_signal = QtCore.pyqtSignal()
-    reset_signal = QtCore.pyqtSignal()
-    skip_split_signal = QtCore.pyqtSignal()
-    undo_split_signal = QtCore.pyqtSignal()
-    pause_signal = QtCore.pyqtSignal()
-    after_setting_hotkey_signal = QtCore.pyqtSignal()
-    update_checker_widget_signal = QtCore.pyqtSignal(str, bool)
-    load_start_image_signal = QtCore.pyqtSignal([], [bool], [bool, bool])
+    start_auto_splitter_signal = QtCore.Signal()
+    reset_signal = QtCore.Signal()
+    skip_split_signal = QtCore.Signal()
+    undo_split_signal = QtCore.Signal()
+    pause_signal = QtCore.Signal()
+    after_setting_hotkey_signal = QtCore.Signal()
+    update_checker_widget_signal = QtCore.Signal(str, bool)
+    load_start_image_signal = QtCore.Signal(bool, bool)
     # Use this signal when trying to show an error from outside the main thread
-    show_error_signal = QtCore.pyqtSignal(FunctionType)
+    show_error_signal = QtCore.Signal(FunctionType)
 
     # Timers
     timer_live_image = QtCore.QTimer()
@@ -110,25 +105,19 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     reset_image: AutoSplitImage | None = None
     split_images: list[AutoSplitImage] = []
     split_image: AutoSplitImage | None = None
-    update_auto_control: QtCore.QThread | None = None
+    update_auto_control: AutoControlledThread | None = None
 
-    def __init__(self, parent: QWidget | None = None):  # noqa: PLR0915
-        super().__init__(parent)
+    def __init__(self):  # noqa: PLR0915
+        super().__init__()
 
         # Setup global error handling
-        self.show_error_signal.connect(lambda error_message_box: error_message_box())
+        def _show_error_signal_slot(error_message_box: Callable[..., object]):
+            return error_message_box()
+        self.show_error_signal.connect(_show_error_signal_slot)
         sys.excepthook = error_messages.make_excepthook(self)
 
         self.setupUi(self)
         self.setWindowTitle(f"AutoSplit v{AUTOSPLIT_VERSION}")
-        # Spinbox frame disappears and reappears on Windows 11. It's much cleaner to just disable them.
-        # Most likely related: https://bugreports.qt.io/browse/QTBUG-95215?jql=labels%20%3D%20Windows11
-        # Arrow buttons tend to move a lot as well
-        if WINDOWS_BUILD_NUMBER >= FIRST_WIN_11_BUILD:
-            self.x_spinbox.setFrame(False)
-            self.y_spinbox.setFrame(False)
-            self.width_spinbox.setFrame(False)
-            self.height_spinbox.setFrame(False)
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
         for hotkey in HOTKEYS:
@@ -146,10 +135,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             print(f"{AUTOSPLIT_VERSION}\n{os.getpid()}", flush=True)
 
             # Use and Start the thread that checks for updates from LiveSplit
-            self.update_auto_control = QtCore.QThread()
-            worker = AutoControlledWorker(self)
-            worker.moveToThread(self.update_auto_control)
-            self.update_auto_control.started.connect(worker.run)
+            self.update_auto_control = AutoControlledThread(self)
             self.update_auto_control.start()
 
         # split image folder line edit text
@@ -162,22 +148,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.action_about_qt_for_python.triggered.connect(about_qt_for_python)
         self.action_check_for_updates.triggered.connect(lambda: check_for_updates(self))
         self.action_settings.triggered.connect(lambda: open_settings(self))
-        # PyQt6 typing is wrong
-        self.action_save_profile.triggered.connect(
-            lambda: user_profile.save_settings(self),  # pyright: ignore[reportGeneralTypeIssues]
-        )
-        self.action_save_profile_as.triggered.connect(
-            lambda: user_profile.save_settings_as(self),  # pyright: ignore[reportGeneralTypeIssues]
-        )
+        self.action_save_profile.triggered.connect(lambda: user_profile.save_settings(self))
+        self.action_save_profile_as.triggered.connect(lambda: user_profile.save_settings_as(self))
         self.action_load_profile.triggered.connect(lambda: user_profile.load_settings(self))
-
-        # Shortcut context can't be set through the designer because of a bug in pyuic6 that generates invalid code
-        # Email sent to pyqt@riverbankcomputing.com
-        self.action_view_help.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
-        self.action_settings.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
-        self.action_save_profile.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
-        self.action_save_profile_as.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
-        self.action_load_profile.setShortcutContext(QtCore.Qt.ShortcutContext.ApplicationShortcut)
 
         # Connecting button clicks to functions
         self.browse_button.clicked.connect(self.__browse)
@@ -206,12 +179,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # connect signals to functions
         self.after_setting_hotkey_signal.connect(lambda: after_setting_hotkey(self))
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
-        self.update_checker_widget_signal.connect(
-            lambda latest_version, check_on_open: open_update_checker(self, latest_version, check_on_open),
-        )
+
+        def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):
+            return open_update_checker(self, latest_version, check_on_open)
+        self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
+
         self.load_start_image_signal.connect(self.__load_start_image)
-        self.load_start_image_signal[bool].connect(self.__load_start_image)
-        self.load_start_image_signal[bool, bool].connect(self.__load_start_image)
         self.reset_signal.connect(self.reset)
         self.skip_split_signal.connect(self.skip_split)
         self.undo_split_signal.connect(self.undo_split)
@@ -254,12 +227,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.settings_dict["split_image_directory"] = new_split_image_directory
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
-            self.load_start_image_signal.emit()
+            self.load_start_image_signal.emit(False, True)
 
     def __update_live_image_details(self, capture: cv2.Mat | None, called_from_timer: bool = False):
         # HACK: Since this is also called in __get_capture_for_comparison,
         # we don't need to update anything if the app is running
-        if called_from_timer and not (self.is_running or self.start_image):
+        if called_from_timer:
+            if self.is_running or self.start_image:
+                return
             capture, _ = self.capture_method.get_frame(self)
 
         # Update title from target window or Capture Device name
@@ -271,9 +246,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Simply clear if "live capture region" setting is off
         if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
             self.live_image.clear()
-            return
-
-        set_preview_image(self.live_image, capture, False)
+        # Set live image in UI
+        else:
+            set_preview_image(self.live_image, capture, False)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """Not thread safe (if triggered by LiveSplit for example). Use `load_start_image_signal.emit` instead."""
@@ -450,7 +425,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
 
     def undo_split(self, navigate_image_only: bool = False):
-        """"Undo Split" and "Prev. Img." buttons connect to here."""
+        """Undo Split" and "Prev. Img." buttons connect to here."""
         # Can't undo until timer is started
         # or Undoing past the first image
         if not self.is_running \
@@ -472,7 +447,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             send_command(self, "undo")
 
     def skip_split(self, navigate_image_only: bool = False):
-        """"Skip Split" and "Next Img." buttons connect to here."""
+        """Skip Split" and "Next Img." buttons connect to here."""
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
         if not self.is_running \
@@ -518,7 +493,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_auto_splitter_signal.emit()
 
     def __check_for_reset_state_update_ui(self):
-        """Check if AutoSplit is started, if not either restart (loop splits) or update the GUI."""
+        """Check if AutoSplit is started, if not then update the GUI."""
         if not self.is_running:
             self.gui_changes_on_reset(True)
             return True
@@ -792,7 +767,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         QApplication.processEvents()
         if safe_to_reload_start_image:
-            self.load_start_image_signal[bool, bool].emit(False, False)
+            self.load_start_image_signal.emit(False, False)
 
     def __get_capture_for_comparison(self):
         """Grab capture region and resize for comparison."""
@@ -875,15 +850,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
 
     @override
-    def closeEvent(self, a0: QtGui.QCloseEvent | None = None):
+    def closeEvent(self, event: QtGui.QCloseEvent | None = None):
         """Exit safely when closing the window."""
 
         def exit_program() -> NoReturn:
             if self.update_auto_control:
                 self.update_auto_control.terminate()
             self.capture_method.close(self)
-            if a0 is not None:
-                a0.accept()
+            if event is not None:
+                event.accept()
             if self.is_auto_controlled:
                 # stop main thread (which is probably blocked reading input) via an interrupt signal
                 os.kill(os.getpid(), signal.SIGINT)
@@ -892,7 +867,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Simulates LiveSplit quitting without asking. See "TODO" at update_auto_control Worker
         # This also more gracefully exits LiveSplit
         # Users can still manually save their settings
-        if a0 is None:
+        if event is None:
             exit_program()
 
         if user_profile.have_settings_changed(self):
@@ -913,11 +888,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if user_profile.save_settings(self):
                     exit_program()
                 else:
-                    a0.ignore()
+                    event.ignore()
             if warning is QMessageBox.StandardButton.No:
                 exit_program()
             if warning is QMessageBox.StandardButton.Cancel:
-                a0.ignore()
+                event.ignore()
         else:
             exit_program()
 
@@ -965,6 +940,9 @@ def is_already_open():
 
 
 def main():
+    # Best to call setStyle before the QApplication constructor
+    # https://doc.qt.io/qt-6/qapplication.html#setStyle-1
+    QApplication.setStyle("fusion")
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:

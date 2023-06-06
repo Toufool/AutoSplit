@@ -15,15 +15,10 @@ from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCap
 from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
 from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
-from utils import GITHUB_REPOSITORY, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-
-WGC_MIN_BUILD = 17134
-"""https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
-LEARNING_MODE_DEVICE_BUILD = 17763
-"""https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 
 class Region(TypedDict):
@@ -31,14 +26,6 @@ class Region(TypedDict):
     y: int
     width: int
     height: int
-
-
-@dataclass
-class CaptureMethodInfo():
-    name: str
-    short_description: str
-    description: str
-    implementation: type[CaptureMethodBase]
 
 
 class CaptureMethodMeta(EnumMeta):
@@ -74,7 +61,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
 
 
-class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
+class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]]):
     def get_index(self, capture_method: str | CaptureMethodEnum):
         """Returns 0 if the capture_method is invalid or unsupported."""
         try:
@@ -99,21 +86,14 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, CaptureMethodInfo]):
 
     def get(self, __key: CaptureMethodEnum):
         """
-        Returns the `CaptureMethodInfo` for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
+        Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
-        Returns the `CaptureMethodBase` (default) implementation if there's no capture methods.
+        Returns `CaptureMethodBase` (default) directly if there's no capture methods.
         """
         if __key == CaptureMethodEnum.NONE or len(self) <= 0:
-            return NONE_CAPTURE_METHOD
+            return CaptureMethodBase
         return super().get(__key, first(self.values()))
 
-
-NONE_CAPTURE_METHOD = CaptureMethodInfo(
-    name="None",
-    short_description="",
-    description="",
-    implementation=CaptureMethodBase,
-)
 
 CAPTURE_METHODS = CaptureMethodDict()
 if (  # Windows Graphics Capture requires a minimum Windows Build
@@ -121,77 +101,22 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
     # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
     and try_get_direct3d_device()
 ):
-    CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = CaptureMethodInfo(
-        name="Windows Graphics Capture",
-        short_description="fast, most compatible, capped at 60fps",
-        description=(
-            f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-            + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
-            + "\nrequire having at least one audio or video Capture Device connected and enabled."
-            + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
-            + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
-            + "\nCaps at around 60 FPS. "
-        ),
-        implementation=WindowsGraphicsCaptureMethod,
-    )
-CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = CaptureMethodInfo(
-    name="BitBlt",
-    short_description="fastest, least compatible",
-    description=(
-        "\nThe best option when compatible. But it cannot properly record "
-        + "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-        + "\nThe smaller the selected region, the more efficient it is. "
-    ),
-
-    implementation=BitBltCaptureMethod,
-)
+    CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
+CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
 try:  # Test for laptop cross-GPU Desktop Duplication issue
     import d3dshot
     d3dshot.create(capture_output="numpy")
 except (ModuleNotFoundError, COMError):
     pass
 else:
-    CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = CaptureMethodInfo(
-        name="Direct3D Desktop Duplication",
-        short_description="slower, bound to display",
-        description=(
-            "\nDuplicates the desktop using Direct3D. "
-            + "\nIt can record OpenGL and Hardware Accelerated windows. "
-            + "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
-            + "\nOverlapping windows will show up and can't record across displays. "
-            + "\nThis option may not be available for hybrid GPU laptops, "
-            + "\nsee /docs/D3DDD-Note-Laptops.md for a solution. "
-            + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
-        ),
-        implementation=DesktopDuplicationCaptureMethod,
-    )
-CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = CaptureMethodInfo(
-    name="Force Full Content Rendering",
-    short_description="very slow, can affect rendering",
-    description=(
-        "\nUses BitBlt behind the scene, but passes a special flag "
-        + "\nto PrintWindow to force rendering the entire desktop. "
-        + "\nAbout 10-15x slower than BitBlt based on original window size "
-        + "\nand can mess up some applications' rendering pipelines. "
-    ),
-    implementation=ForceFullContentRenderingCaptureMethod,
-)
-CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = CaptureMethodInfo(
-    name="Video Capture Device",
-    short_description="see below",
-    description=(
-        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
-        + "\nYou can select one below. "
-        + "\nIf you want to use this with OBS' Virtual Camera, use the Virtualcam plugin instead "
-        + "\nhttps://github.com/Avasam/obs-virtual-cam/releases"
-    ),
-    implementation=VideoCaptureDeviceCaptureMethod,
-)
+    CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
+CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
+CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 
 
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit):
     autosplit.capture_method.close(autosplit)
-    autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method).implementation(autosplit)
+    autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
     if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
         autosplit.select_region_button.setDisabled(True)
         autosplit.select_window_button.setDisabled(True)
@@ -209,11 +134,17 @@ class CameraInfo():
     resolution: tuple[int, int]
 
 
+def get_input_devices():
+    """https://github.com/andreaschiavinato/python_grabber/pull/24 ."""
+    return cast(list[str], FilterGraph().get_input_devices())
+
+
 def get_input_device_resolution(index: int):
     filter_graph = FilterGraph()
     try:
         filter_graph.add_video_input_device(index)
-    # This can happen since OBS 29.1 DLL blocking breaking VirtualCam
+    # This can happen with virtual cameras throwing errors.
+    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
     # https://github.com/Toufool/AutoSplit/issues/238
     except COMError:
         return None
@@ -223,8 +154,7 @@ def get_input_device_resolution(index: int):
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    # TODO: Fix partially Unknown list upstream
-    named_video_inputs: list[str] = FilterGraph().get_input_devices()
+    named_video_inputs = get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
@@ -250,13 +180,11 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
             if resolution is not None \
             else None
 
+    # Note: Return type required https://github.com/python/typeshed/issues/2652
     future = asyncio.gather(
         *[
             get_camera_info(index, name) for index, name
             in enumerate(named_video_inputs)
-            # Will crash when trying to resize, and does not work to begin with
-            # TODO: Should be fixed in next release of OpenCV (4.8)
-            if name != "OBS Virtual Camera"
         ],
     )
 

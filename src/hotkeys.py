@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
-from PyQt6 import QtWidgets
+from PySide6 import QtWidgets
 
 import error_messages
 from utils import fire_and_forget, is_digit
@@ -105,7 +105,7 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     NOTE: This is a workaround very specific to numpads.
     Windows reports different physical keys with the same scan code.
     For example, "Home", "Num Home" and "Num 7" are all `71`.
-    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684.
+    See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684 .
 
     Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
     We're also trying to achieve the same hotkey behaviour as LiveSplit has.
@@ -153,7 +153,7 @@ def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
 def __get_hotkey_name(names: list[str]):
     """
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
-    See: https://github.com/boppreh/keyboard/issues/516.
+    See: https://github.com/boppreh/keyboard/issues/516 .
     """
     def sorting_key(key: str):
         return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])

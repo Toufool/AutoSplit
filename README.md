@@ -64,6 +64,7 @@ This program can be used to automatically start, split, and reset your preferred
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.
 
 #### Capture Method
+<!-- Keep all descriptions in sync with in-code descriptions in src/capture_method/*CaptureMethod.py-->
 
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
@@ -83,13 +84,13 @@ This program can be used to automatically start, split, and reset your preferred
 - **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
     About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
-- **Video Capture Device**  
+- **Video Capture Device**
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
-    If you want to use this with OBS' Virtual Camera, use the [Virtualcam plugin](https://github.com/Avasam/obs-virtual-cam/releases) instead.  
 
 #### Capture Device
 
-Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.  <!-- Will show `[occupied]` if a device is detected but can't be started. (currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
+Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.
+<!-- Will show `[occupied]` if a device is detected but can't be started. (feature currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
 
 #### Show Live Similarity
 
@@ -216,7 +217,6 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 
 - For many games, it will be difficult to find a split image for the last split of the run.
 - The window of the capture region cannot be minimized.
-- OBS' integrated Virtual Camera does not work and makes AutoSplit crash.
 
 ## Resources
 
