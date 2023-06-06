@@ -232,7 +232,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def __update_live_image_details(self, capture: cv2.Mat | None, called_from_timer: bool = False):
         # HACK: Since this is also called in __get_capture_for_comparison,
         # we don't need to update anything if the app is running
-        if called_from_timer and not (self.is_running or self.start_image):
+        if called_from_timer:
+            if self.is_running or self.start_image:
+                return
             capture, _ = self.capture_method.get_frame(self)
 
         # Update title from target window or Capture Device name
