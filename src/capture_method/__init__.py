@@ -84,7 +84,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     if TYPE_CHECKING:
         __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues] # Disallow unsafe get
 
-    def get(self, __key: CaptureMethodEnum):
+    def get(self, __key: CaptureMethodEnum):  # pyright: ignore[reportIncompatibleMethodOverride]  # No default
         """
         Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.

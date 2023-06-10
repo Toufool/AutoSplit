@@ -4,6 +4,7 @@ import asyncio
 from typing import TYPE_CHECKING, cast
 
 import cv2
+import cv2.typing
 import numpy as np
 from win32 import win32gui
 from winsdk.windows.graphics import SizeInt32
@@ -39,7 +40,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
-    last_captured_frame: cv2.Mat | None = None
+    last_captured_frame: cv2.typing.MatLike | None = None
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
@@ -81,7 +82,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
                 pass
             self.session = None
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
+    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (

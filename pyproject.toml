@@ -30,6 +30,11 @@ ignore = [
   "D212", # pydocstyle: multi-line-summary-first-line
   # Allow differentiating between broken (FIXME) and to be done/added/completed (TODO)
   "TD001", # flake8-todos: invalid-todo-tag
+
+  ###
+  # These should be warnings (https://github.com/charliermarsh/ruff/issues/1256)
+  ###
+  "FIX", # flake8-fixme
   # Not all TODOs are worth an issue, this would be better as a warning
   "TD003", # flake8-todos: missing-todo-link
 
@@ -55,6 +60,7 @@ ignore = [
   "F811", # Re-exports false positives
   "F821", # https://github.com/charliermarsh/ruff/issues/3011
   # The following can't be controlled for external libraries:
+  "ICN001",  # unconventional-import-alias
   "N8",      # Naming conventions
   "A",       # Shadowing builtin names
   "PLR0913", # Argument count

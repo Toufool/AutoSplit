@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import ctypes
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Union, cast
 
 import cv2
+import cv2.typing
 import d3dshot
+import numpy as np
 import win32con
 from win32 import win32gui
 
@@ -53,7 +55,10 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         top = selection["y"] + offset_y + top_bounds
         right = selection["width"] + left
         bottom = selection["height"] + top
-        screenshot = self.desktop_duplication.screenshot((left, top, right, bottom))
+        screenshot = cast(
+            Union[np.ndarray[int, np.dtype[np.generic]], None],
+            self.desktop_duplication.screenshot((left, top, right, bottom)),
+        )
         if screenshot is None:
             return None, False
-        return cv2.cvtColor(cast(cv2.Mat, screenshot), cv2.COLOR_RGBA2BGRA), False
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA), False

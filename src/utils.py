@@ -12,6 +12,7 @@ from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import cv2
+import cv2.typing
 import win32ui
 from typing_extensions import TypeGuard
 from win32 import win32gui
@@ -60,7 +61,7 @@ def is_digit(value: str | int | None):
         return False
 
 
-def is_valid_image(image: cv2.Mat | None) -> TypeGuard[cv2.Mat]:
+def is_valid_image(image: cv2.typing.MatLike | None) -> TypeGuard[cv2.typing.MatLike]:
     return image is not None and bool(image.size)
 
 

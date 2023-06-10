@@ -1,13 +1,12 @@
+import numpy as np
 from _typeshed import Unused
-from cv2.typing import _NDArray
+from typing_extensions import TypeAlias
 
 __all__: list[str] = []
+_NDArray: TypeAlias = np.ndarray[float, np.dtype[np.generic]]
 
 
-# TODO: Make MatLike generic with int or float
-
-
-class MatLike(_NDArray):
+class Mat(_NDArray):
     wrap_channels: bool | None
 
     def __new__(cls, arr: _NDArray, wrap_channels: bool = ..., **kwargs: Unused) -> _NDArray: ...

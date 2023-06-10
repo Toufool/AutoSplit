@@ -7,6 +7,7 @@ from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
+import cv2.typing
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
@@ -222,7 +223,7 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
+def __test_alignment(capture: cv2.typing.MatLike, template: cv2.typing.MatLike):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller
@@ -236,7 +237,7 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
     best_width = 0
     best_loc = (0, 0)
 
-    # Add alpha channel to template if it's missing. The cv2.matchTemplate() function
+    # Add alpha channel to template if it's missing. The cv2.typing.MatLikechTemplate() function
     # needs both images to have the same color dimensions, and capture has an alpha channel
     if template.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import cv2
+import cv2.typing
 
 from utils import is_valid_hwnd
 
@@ -27,7 +28,7 @@ class CaptureMethodBase():
         # Some capture methods don't need an initialization process
         pass
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
+    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.

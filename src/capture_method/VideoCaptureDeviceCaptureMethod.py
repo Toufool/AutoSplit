@@ -1,15 +1,14 @@
-from __future__ import annotations
-
+from __future__ import annotations  # noqa: I001
+from utils import is_valid_image
+from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
+from capture_method.CaptureMethodBase import CaptureMethodBase
+from pygrabber import dshow_graph
+import numpy as np
+import cv2
+import cv2.typing
+import cv2.Error
 from threading import Event, Thread
 from typing import TYPE_CHECKING
-
-import cv2
-import numpy as np
-from pygrabber import dshow_graph
-
-from capture_method.CaptureMethodBase import CaptureMethodBase
-from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
-from utils import is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
 
 
-def is_blank(image: cv2.Mat):
+def is_blank(image: cv2.typing.MatLike):
     # Running np.all on the entire array or looping manually through the
     # entire array is extremely slow when we can't stop early.
     # Instead we check for a few key pixels, in this case, corners
@@ -35,7 +34,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     stop_thread: Event
-    last_captured_frame: cv2.Mat | None = None
+    last_captured_frame: cv2.typing.MatLike | None = None
     is_old_image = False
 
     def __read_loop(self, autosplit: AutoSplit):

@@ -12,6 +12,7 @@ from typing import NoReturn
 
 import certifi
 import cv2
+import cv2.typing
 from psutil import process_iter
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
@@ -229,7 +230,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
             self.load_start_image_signal.emit(False, True)
 
-    def __update_live_image_details(self, capture: cv2.Mat | None, called_from_timer: bool = False):
+    def __update_live_image_details(self, capture: cv2.typing.MatLike | None, called_from_timer: bool = False):
         # HACK: Since this is also called in __get_capture_for_comparison,
         # we don't need to update anything if the app is running
         if called_from_timer:
@@ -788,7 +789,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.__update_live_image_details(capture)
         return capture, is_old_image
 
-    def __reset_if_should(self, capture: cv2.Mat | None):
+    def __reset_if_should(self, capture: cv2.typing.MatLike | None):
         """Checks if we should reset, resets if it's the case, and returns the result."""
         if self.reset_image:
             if self.settings_dict["enable_auto_reset"]:
@@ -897,7 +898,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             exit_program()
 
 
-def set_preview_image(qlabel: QLabel, image: cv2.Mat | None, transparency: bool):
+def set_preview_image(qlabel: QLabel, image: cv2.typing.MatLike | None, transparency: bool):
     if not is_valid_image(image):
         # Clear current pixmap if no image. But don't clear text
         if not qlabel.text():

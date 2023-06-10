@@ -6,6 +6,7 @@ from math import sqrt
 from typing import TYPE_CHECKING
 
 import cv2
+import cv2.typing
 import numpy as np
 
 import error_messages
@@ -38,8 +39,8 @@ class AutoSplitImage():
     flags: int
     loops: int
     image_type: ImageType
-    byte_array: cv2.Mat | None = None
-    mask: cv2.Mat | None = None
+    byte_array: cv2.typing.MatLike | None = None
+    mask: cv2.typing.MatLike | None = None
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -134,7 +135,7 @@ class AutoSplitImage():
     def compare_with_capture(
         self,
         default: AutoSplit | int,
-        capture: cv2.Mat | None,
+        capture: cv2.typing.MatLike | None,
     ):
         """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
