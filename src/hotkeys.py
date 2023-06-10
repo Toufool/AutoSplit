@@ -2,13 +2,19 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast
+from unittest.mock import patch
 
 import keyboard
-import pyautogui
 from PySide6 import QtWidgets
 
 import error_messages
 from utils import fire_and_forget, is_digit
+
+# Prevent pyautogui from setting Process DPI Awareness,
+# which Qt tries to do then throws warnings about it
+# https://github.com/asweigart/pyautogui/issues/663#issuecomment-1296719464
+with patch("ctypes.windll.user32.SetProcessDPIAware", autospec=True):
+    import pyautogui
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
