@@ -856,7 +856,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         def exit_program() -> NoReturn:
             if self.update_auto_control:
-                self.update_auto_control.terminate()
+                # self.update_auto_control.terminate() hangs in PySide6
+                self.update_auto_control.quit()
             self.capture_method.close(self)
             if event is not None:
                 event.accept()
