@@ -2,9 +2,8 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-      # Workaround for https://github.com/adamchainz/pre-commit-dprint/issues/4
       - id: pretty-format-json
-        exclude: ".vscode/.*|dprint.json" # Exclude jsonc
+        exclude: ".vscode/.*" # Exclude jsonc
         args: [--autofix, --no-sort-keys]
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]

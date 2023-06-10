@@ -239,18 +239,18 @@ Not a developer? You can still help through the following methods:
 - [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in
 - Sharing AutoSplit with other speedrunners
 - Upvoting the following upstream issues in libraries and tools we use:
-  - <https://github.com/opencv/opencv/issues/23539>
-  - <https://github.com/opencv/opencv/issues/14590>
-  - <https://github.com/opencv/opencv/pull/20370>
-  - <https://github.com/opencv/opencv/issues/23537>
-  - <https://github.com/opencv/opencv/issues/23158>
+  - <https://bugreports.qt.io/browse/QTBUG-114436>
+  - <https://github.com/astral-sh/ruff/issues?q=is%3Aopen+involves%3AAvasam>
+  - <https://github.com/opencv/opencv/issues/created_by/Avasam>
+  - <https://github.com/opencv/opencv/issues?q=is%3Aopen+involves%3AAvasam>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
-  - <https://github.com/adamchainz/pre-commit-dprint/issues/4>
   - <https://github.com/microsoft/vscode/issues/40239>
+  - <https://github.com/microsoft/vscode/issues/168411>
   - <https://github.com/boppreh/keyboard/issues/171>
   - <https://github.com/boppreh/keyboard/issues/516>
   - <https://github.com/boppreh/keyboard/issues/216>
   - <https://github.com/boppreh/keyboard/issues/161>
+  - <https://github.com/asweigart/pyautogui/issues/663>
 
 ## Credits
 
