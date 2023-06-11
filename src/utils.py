@@ -27,22 +27,22 @@ if TYPE_CHECKING:
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
-RGB_CHANNEL_COUNT = 3
+BGR_CHANNEL_COUNT = 3
 """How many channels in an RGB image"""
-RGBA_CHANNEL_COUNT = 4
-"""How many channels in an RGB image"""
+BGRA_CHANNEL_COUNT = 4
+"""How many channels in an RGBA image"""
 
 
 class ImageShape(IntEnum):
-    X = 0
-    Y = 1
+    Y = 0
+    X = 1
     Channels = 2
 
 
 class ColorChannel(IntEnum):
-    Red = 0
+    Blue = 0
     Green = 1
-    Blue = 2
+    Red = 2
     Alpha = 3
 
 

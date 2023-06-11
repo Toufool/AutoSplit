@@ -241,7 +241,6 @@ Not a developer? You can still help through the following methods:
 - Upvoting the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aopen+involves%3AAvasam>
-  - <https://github.com/opencv/opencv/issues/created_by/Avasam>
   - <https://github.com/opencv/opencv/issues?q=is%3Aopen+involves%3AAvasam>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
   - <https://github.com/microsoft/vscode/issues/40239>

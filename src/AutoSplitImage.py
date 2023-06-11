@@ -11,7 +11,7 @@ import numpy as np
 
 import error_messages
 from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
-from utils import MAXBYTE, RGB_CHANNEL_COUNT, ColorChannel, ImageShape, is_valid_image
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -124,7 +124,7 @@ class AutoSplitImage():
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             # Add Alpha channel if missing
-            if image.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
+            if image.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
