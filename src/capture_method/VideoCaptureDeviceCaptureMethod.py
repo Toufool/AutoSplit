@@ -1,16 +1,20 @@
-from __future__ import annotations  # noqa: I001
-from utils import ImageShape, is_valid_image
-from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
-from capture_method.CaptureMethodBase import CaptureMethodBase
-from pygrabber import dshow_graph
-import numpy as np
-import cv2
-import cv2.typing
-import cv2.Error
+from __future__ import annotations
+
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
+import cv2
+import cv2.Error
+import numpy as np
+from pygrabber import dshow_graph
+
+from capture_method.CaptureMethodBase import CaptureMethodBase
+from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
+from utils import ImageShape, is_valid_image
+
 if TYPE_CHECKING:
+    import cv2.typing  # noqa: TCH004
+
     from AutoSplit import AutoSplit
 
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]

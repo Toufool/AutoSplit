@@ -3,11 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import cv2
-import cv2.typing
 
 from utils import is_valid_hwnd
 
 if TYPE_CHECKING:
+    import cv2.typing
+
     from AutoSplit import AutoSplit
 
 

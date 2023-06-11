@@ -12,7 +12,6 @@ from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import cv2
-import cv2.typing
 import win32ui
 from typing_extensions import TypeGuard
 from win32 import win32gui
@@ -22,6 +21,8 @@ from winsdk.windows.media.capture import MediaCapture
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if TYPE_CHECKING:
+    import cv2.typing
+
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
 

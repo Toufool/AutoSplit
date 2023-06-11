@@ -6,6 +6,9 @@ import cv2.gapi.streaming
 import cv2.typing
 import numpy
 
+#
+
+
 class error(Exception):
     code: typing.ClassVar[int]
     err: typing.ClassVar[str]

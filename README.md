@@ -240,6 +240,8 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Upvoting the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
+  - <https://github.com/astral-sh/ruff/issues/3821>
+  - <https://github.com/charliermarsh/ruff/issues/1256>
   - <https://github.com/opencv/opencv/issues/created_by/Avasam>
   - <https://github.com/opencv/opencv/issues/23539>
   - <https://github.com/opencv/opencv/issues/23158>

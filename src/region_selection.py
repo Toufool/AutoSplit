@@ -7,7 +7,6 @@ from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
-import cv2.typing
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
@@ -25,6 +24,8 @@ from utils import BGR_CHANNEL_COUNT, MAXBYTE, ImageShape, get_window_bounds, is_
 user32 = ctypes.windll.user32
 
 if TYPE_CHECKING:
+    import cv2.typing  # noqa: TCH004
+
     from AutoSplit import AutoSplit
 
 ALIGN_REGION_THRESHOLD = 0.9

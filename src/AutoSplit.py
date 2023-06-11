@@ -8,11 +8,10 @@ import sys
 from collections.abc import Callable
 from time import time
 from types import FunctionType
-from typing import NoReturn
+from typing import TYPE_CHECKING, NoReturn
 
 import certifi
 import cv2
-import cv2.typing
 from psutil import process_iter
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
@@ -48,6 +47,9 @@ from utils import (
     is_valid_image,
     open_file,
 )
+
+if TYPE_CHECKING:
+    import cv2.typing  # noqa: TCH004
 
 CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2

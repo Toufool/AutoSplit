@@ -4,7 +4,6 @@ import asyncio
 from typing import TYPE_CHECKING, cast
 
 import cv2
-import cv2.typing
 import numpy as np
 from win32 import win32gui
 from winsdk.windows.graphics import SizeInt32
@@ -17,6 +16,8 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
+    import cv2.typing
+
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
