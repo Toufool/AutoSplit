@@ -20,7 +20,7 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import MAXBYTE, RGB_CHANNEL_COUNT, ImageShape, get_window_bounds, is_valid_hwnd, is_valid_image
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, ImageShape, get_window_bounds, is_valid_hwnd, is_valid_image
 
 user32 = ctypes.windll.user32
 
@@ -178,7 +178,10 @@ def align_region(autosplit: AutoSplit):
     if not template_filename:
         return
 
-    template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
+    template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
+    # Add alpha channel to template if it's missing.
+    if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
+        template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
 
     # Validate template is a valid image file
     if not is_valid_image(template):
@@ -237,18 +240,13 @@ def __test_alignment(capture: cv2.typing.MatLike, template: cv2.typing.MatLike):
     best_width = 0
     best_loc = (0, 0)
 
-    # Add alpha channel to template if it's missing. The cv2.typing.MatLikechTemplate() function
-    # needs both images to have the same color dimensions, and capture has an alpha channel
-    if template.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
-        template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
-
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
-        width = int(template.shape[1] * scale)
-        height = int(template.shape[0] * scale)
+        width = int(template.shape[ImageShape.X] * scale)
+        height = int(template.shape[ImageShape.Y] * scale)
 
         # The template can not be larger than the capture
-        if width > capture.shape[1] or height > capture.shape[0]:
+        if width > capture.shape[ImageShape.X] or height > capture.shape[ImageShape.Y]:
             continue
 
         resized = cv2.resize(template, (width, height), interpolation=cv2.INTER_NEAREST)

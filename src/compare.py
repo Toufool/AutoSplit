@@ -7,7 +7,7 @@ import cv2.typing
 import imagehash
 from PIL import Image
 
-from utils import MAXBYTE, RGBA_CHANNEL_COUNT, ColorChannel, is_valid_image
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS: list[int] = [ColorChannel.Red, ColorChannel.Green, ColorChannel.Blue]
@@ -104,7 +104,7 @@ def compare_phash(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask:
 
 def check_if_image_has_transparency(image: cv2.typing.MatLike):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
-    if image.shape[2] != RGBA_CHANNEL_COUNT:
+    if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
         return False
     mean: float = image[:, :, ColorChannel.Alpha].mean()
     if mean == 0:

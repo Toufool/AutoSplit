@@ -1,5 +1,5 @@
 from __future__ import annotations  # noqa: I001
-from utils import is_valid_image
+from utils import ImageShape, is_valid_image
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from pygrabber import dshow_graph
@@ -20,7 +20,12 @@ def is_blank(image: cv2.typing.MatLike):
     # Running np.all on the entire array or looping manually through the
     # entire array is extremely slow when we can't stop early.
     # Instead we check for a few key pixels, in this case, corners
-    return np.all(image[::image.shape[0] - 1, ::image.shape[1] - 1] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL)
+    return np.all(
+        image[
+            ::image.shape[ImageShape.Y] - 1,
+            ::image.shape[ImageShape.X] - 1,
+        ] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+    )
 
 
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
@@ -116,8 +121,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
         selection = autosplit.settings_dict["capture_region"]
         # Ensure we can't go OOB of the image
-        y = min(selection["y"], image.shape[0] - 1)
-        x = min(selection["x"], image.shape[1] - 1)
+        y = min(selection["y"], image.shape[ImageShape.Y] - 1)
+        x = min(selection["x"], image.shape[ImageShape.X] - 1)
         image = image[
             y:y + selection["height"],
             x:x + selection["width"],

@@ -4,7 +4,6 @@ import ctypes
 from typing import TYPE_CHECKING, Union, cast
 
 import cv2
-import cv2.typing
 import d3dshot
 import numpy as np
 import win32con
@@ -61,4 +60,4 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         )
         if screenshot is None:
             return None, False
-        return cv2.cvtColor(screenshot, cv2.COLOR_RGBA2BGRA), False
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA), False

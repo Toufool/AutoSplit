@@ -239,6 +239,7 @@ Not a developer? You can still help through the following methods:
 - [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in
 - Sharing AutoSplit with other speedrunners
 - Upvoting the following upstream issues in libraries and tools we use:
+  - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://github.com/opencv/opencv/issues/created_by/Avasam>
   - <https://github.com/opencv/opencv/issues/23539>
   - <https://github.com/opencv/opencv/issues/23158>

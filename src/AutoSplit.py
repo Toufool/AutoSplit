@@ -39,7 +39,15 @@ from menu_bar import (
 from region_selection import align_region, select_region, select_window, validate_before_parsing
 from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
 from user_profile import DEFAULT_PROFILE
-from utils import AUTOSPLIT_VERSION, FROZEN, auto_split_directory, decimal, is_valid_image, open_file
+from utils import (
+    AUTOSPLIT_VERSION,
+    BGRA_CHANNEL_COUNT,
+    FROZEN,
+    auto_split_directory,
+    decimal,
+    is_valid_image,
+    open_file,
+)
 
 CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
@@ -247,14 +255,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.live_image.clear()
         # Set live image in UI
         else:
-            set_preview_image(self.live_image, capture, False)
+            set_preview_image(self.live_image, capture)
 
     def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """Not thread safe (if triggered by LiveSplit for example). Use `load_start_image_signal.emit` instead."""
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
-        set_preview_image(self.current_split_image, None, True)
+        set_preview_image(self.current_split_image, None)
 
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
             QApplication.processEvents()
@@ -836,7 +844,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
         if is_valid_image(self.split_image.byte_array):
-            set_preview_image(self.current_split_image, self.split_image.byte_array, True)
+            set_preview_image(self.current_split_image, self.split_image.byte_array)
 
         self.current_image_file_label.setText(self.split_image.filename)
         self.table_current_image_threshold_label.setText(decimal(self.split_image.get_similarity_threshold(self)))
@@ -897,21 +905,21 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             exit_program()
 
 
-def set_preview_image(qlabel: QLabel, image: cv2.typing.MatLike | None, transparency: bool):
+def set_preview_image(qlabel: QLabel, image: cv2.typing.MatLike | None):
     if not is_valid_image(image):
         # Clear current pixmap if no image. But don't clear text
         if not qlabel.text():
             qlabel.clear()
     else:
-        if transparency:
-            color_code = cv2.COLOR_BGRA2RGBA
-            image_format = QtGui.QImage.Format.Format_RGBA8888
-        else:
-            color_code = cv2.COLOR_BGRA2BGR
-            image_format = QtGui.QImage.Format.Format_BGR888
+        height, width, channels = image.shape
 
-        capture = cv2.cvtColor(image, color_code)
-        height, width, channels = capture.shape
+        if channels == BGRA_CHANNEL_COUNT:
+            image_format = QtGui.QImage.Format.Format_RGBA8888
+            capture = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA)
+        else:
+            image_format = QtGui.QImage.Format.Format_BGR888
+            capture = image
+
         qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
         qlabel.setPixmap(
             QtGui.QPixmap(qimage).scaled(
