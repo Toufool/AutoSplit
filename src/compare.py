@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from math import sqrt
+from typing import TYPE_CHECKING
 
 import cv2
-import cv2.typing
 import imagehash
 from PIL import Image
 
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+
+if TYPE_CHECKING:
+    import cv2.typing  # noqa: TCH004
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS: list[int] = [ColorChannel.Red, ColorChannel.Green, ColorChannel.Blue]

@@ -38,6 +38,9 @@ ignore = [
   # Not all TODOs are worth an issue, this would be better as a warning
   "TD003", # flake8-todos: missing-todo-link
 
+  # False-positives
+  "TCH004", # https://github.com/astral-sh/ruff/issues/3821
+
   ###
   # Specific to this project
   ###
