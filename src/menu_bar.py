@@ -8,6 +8,7 @@ import requests
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
 from requests.exceptions import RequestException
+from typing_extensions import override
 
 import error_messages
 import user_profile
@@ -90,6 +91,7 @@ class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
         self.autosplit = autosplit
         self.check_on_open = check_on_open
 
+    @override
     def run(self):
         try:
             response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30)

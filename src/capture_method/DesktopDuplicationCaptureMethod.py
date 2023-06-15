@@ -7,6 +7,7 @@ import cv2
 import d3dshot
 import numpy as np
 import win32con
+from typing_extensions import override
 from win32 import win32gui
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -34,6 +35,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         # Must not set statically as some laptops will throw an error
         self.desktop_duplication = d3dshot.create(capture_output="numpy")
 
+    @override
     def get_frame(self, autosplit: AutoSplit):
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd

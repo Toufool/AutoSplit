@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, cast
 
 import cv2
 import numpy as np
+from typing_extensions import override
 from win32 import win32gui
 from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
@@ -69,6 +70,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         self.size = item.size
         self.frame_pool = frame_pool
 
+    @override
     def close(self, autosplit: AutoSplit):
         if self.frame_pool:
             self.frame_pool.close()
@@ -83,6 +85,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
                 pass
             self.session = None
 
+    @override
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
@@ -129,6 +132,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         self.last_captured_frame = image
         return image, False
 
+    @override
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
@@ -144,6 +148,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             raise
         return self.check_selected_region_exists(autosplit)
 
+    @override
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(
             is_valid_hwnd(autosplit.hwnd)
