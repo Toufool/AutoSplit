@@ -9,6 +9,7 @@ import numpy as np
 import pywintypes
 import win32con
 import win32ui
+from typing_extensions import override
 from win32 import win32gui
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -34,6 +35,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
 
     _render_full_content = False
 
+    @override
     def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
@@ -78,6 +80,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         win32gui.DeleteObject(bitmap.GetHandle())
         return image, False
 
+    @override
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):

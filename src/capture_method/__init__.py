@@ -4,10 +4,11 @@ import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
+from typing_extensions import Never, override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -30,6 +31,7 @@ class Region(TypedDict):
 
 class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
+    @override
     def __contains__(self, other: str):
         try:
             self(other)
@@ -41,15 +43,18 @@ class CaptureMethodMeta(EnumMeta):
 @unique
 class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # Allow TOML to save as a simple string
+    @override
     def __repr__(self):
         return self.value
     __str__ = __repr__
 
     # Allow direct comparison with strings
+    @override
     def __eq__(self, other: object):
         return self.value == other.__str__()
 
     # Restore hashing functionality
+    @override
     def __hash__(self):
         return self.value.__hash__()
 
@@ -82,17 +87,22 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
         return list(self.keys())[index]
 
     if TYPE_CHECKING:
-        __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues] # Disallow unsafe get
+        @override
+        def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride] # Disallow unsafe get
+            self,
+            __key: Never,
+        ) -> NoReturn: ...
 
-    def get(self, __key: CaptureMethodEnum):  # pyright: ignore[reportIncompatibleMethodOverride]  # No default
+    @override
+    def get(self, key: CaptureMethodEnum, __default: object = None):
         """
         Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
-        Returns `CaptureMethodBase` (default) directly if there's no capture methods.
+        Returns `CaptureMethodBase` directly if there's no capture methods.
         """
-        if __key == CaptureMethodEnum.NONE or len(self) <= 0:
+        if key == CaptureMethodEnum.NONE or len(self) <= 0:
             return CaptureMethodBase
-        return super().get(__key, first(self.values()))
+        return super().get(key, first(self.values()))
 
 
 CAPTURE_METHODS = CaptureMethodDict()

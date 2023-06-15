@@ -7,6 +7,7 @@ import cv2
 import cv2.Error
 import numpy as np
 from pygrabber import dshow_graph
+from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
@@ -106,6 +107,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
         self.capture_thread.start()
 
+    @override
     def close(self, autosplit: AutoSplit):
         self.stop_thread.set()
         if self.capture_thread:
@@ -113,6 +115,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             self.capture_thread = None
         self.capture_device.release()
 
+    @override
     def get_frame(self, autosplit: AutoSplit):
         if not self.check_selected_region_exists(autosplit):
             return None, False
@@ -133,5 +136,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
+    @override
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())

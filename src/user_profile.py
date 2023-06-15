@@ -130,12 +130,9 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
         for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
-            if autosplit.settings_dict[hotkey_name]:  # pyright: ignore[reportGeneralTypeIssues]
-                set_hotkey(
-                    autosplit,
-                    hotkey,
-                    cast(str, autosplit.settings_dict[hotkey_name]),  # pyright: ignore[reportGeneralTypeIssues]
-                )
+            hotkey_value = cast(str, autosplit.settings_dict[hotkey_name])  # pyright: ignore[reportGeneralTypeIssues]
+            if hotkey_value:
+                set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
     if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:

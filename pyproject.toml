@@ -128,6 +128,7 @@ typeCheckingMode = "strict"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
 # Extra strict
+reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
 reportCallInDefaultInitializer = "error"
 reportMissingSuperCall = "none"               # False positives on base classes

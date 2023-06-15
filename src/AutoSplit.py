@@ -346,7 +346,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     self.start_image_status_value_label.setText("delaying start...")
                     delay_start_time = time()
                     start_delay = self.start_image.get_delay_time(self) / 1000
-                    time_delta = 0
+                    time_delta = 0.0
                     while time_delta < start_delay:
                         delay_time_left = start_delay - time_delta
                         self.current_split_image.setText(
