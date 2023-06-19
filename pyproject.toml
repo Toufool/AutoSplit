@@ -8,11 +8,11 @@ ignore = [
   ###
   # Not needed or wanted
   ###
-  "D1",     # pydocstyle Missing doctring
-  "D401",   # pydocstyle: non-imperative-mood
-  "EM",     # flake8-errmsg
-  "FBT",    # flake8-boolean-trap
-  "INP",    # flake8-no-pep420
+  "D1", # pydocstyle Missing doctring
+  "D401", # pydocstyle: non-imperative-mood
+  "EM", # flake8-errmsg
+  "FBT", # flake8-boolean-trap
+  "INP", # flake8-no-pep420
   "ISC003", # flake8-implicit-str-concat: explicit-string-concatenation
   # Short messages are still considered "long" messages
   "TRY003", # tryceratops : raise-vanilla-args
@@ -47,8 +47,8 @@ ignore = [
   # We have some Pascal case module names
   "N999", # pep8-naming: Invalid module name
   # Print are used as debug logs
-  "T20",  # flake8-print
   "D205", # Not all docstrings have a short description + desrciption
+  "T20", # flake8-print
   # This is a relatively small, low contributors project. Git blame suffice.
   "TD002",
 
@@ -63,11 +63,11 @@ ignore = [
   "F811", # Re-exports false positives
   "F821", # https://github.com/charliermarsh/ruff/issues/3011
   # The following can't be controlled for external libraries:
-  "ICN001",  # unconventional-import-alias
-  "N8",      # Naming conventions
-  "A",       # Shadowing builtin names
+  "A", # Shadowing builtin names
+  "ICN001", # unconventional-import-alias
+  "N8", # Naming conventions
   "PLR0913", # Argument count
-  "PYI042",  # CamelCase TypeAlias
+  "PYI042", # CamelCase TypeAlias
 ]
 
 # https://beta.ruff.rs/docs/settings/#flake8-implicit-str-concat
@@ -83,14 +83,14 @@ required-imports = ["from __future__ import annotations"]
 # https://github.com/charliermarsh/ruff/issues/2419
 # https://github.com/charliermarsh/ruff/issues/3115
 known-local-folder = [
-  "capture_method",
-  "gen",
   "AutoControlledThread",
   "AutoSplit",
   "AutoSplitImage",
+  "capture_method",
   "compare",
   "error_messages",
   "error_messages",
+  "gen",
   "hotkeys",
   "menu_bar",
   "region_selection",
@@ -119,7 +119,7 @@ max_line_length = 120
 aggressive = 3
 ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
-  "E70",  # Allow ... on same line as def
+  "E70", # Allow ... on same line as def
 ]
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
@@ -131,7 +131,7 @@ enableTypeIgnoreComments = false
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
 reportCallInDefaultInitializer = "error"
-reportMissingSuperCall = "none"               # False positives on base classes
+reportMissingSuperCall = "none" # False positives on base classes
 reportPropertyTypeMismatch = "error"
 reportUninitializedInstanceVariable = "error"
 reportUnnecessaryTypeIgnoreComment = "error"

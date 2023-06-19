@@ -109,5 +109,25 @@
     "xd:pre",
     // Custom
     "string"
-  ]
+  ],
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "evenBetterToml.formatter.alignComments": false,
+  "evenBetterToml.formatter.alignEntries": false,
+  "evenBetterToml.formatter.allowedBlankLines": 1,
+  "evenBetterToml.formatter.arrayAutoCollapse": true,
+  "evenBetterToml.formatter.arrayAutoExpand": true,
+  "evenBetterToml.formatter.arrayTrailingComma": true,
+  "evenBetterToml.formatter.columnWidth": 80,
+  "evenBetterToml.formatter.compactArrays": true,
+  "evenBetterToml.formatter.compactEntries": false,
+  "evenBetterToml.formatter.compactInlineTables": false,
+  "evenBetterToml.formatter.indentEntries": false,
+  "evenBetterToml.formatter.indentTables": false,
+  "evenBetterToml.formatter.inlineTableExpand": false,
+  "evenBetterToml.formatter.reorderArrays": true,
+  "evenBetterToml.formatter.trailingNewline": true,
+  // We like keeping TOML keys in a certain non-alphabetical order that feels more natural
+  "evenBetterToml.formatter.reorderKeys": false
 }

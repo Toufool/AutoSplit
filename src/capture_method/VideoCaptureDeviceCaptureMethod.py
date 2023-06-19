@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import cv2
 import cv2.Error
 import numpy as np
-from pygrabber import dshow_graph
+from pygrabber.dshow_graph import FilterGraph
 from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -89,7 +89,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
-        filter_graph = dshow_graph.FilterGraph()
+        filter_graph = FilterGraph()
         filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
         width, height = filter_graph.get_input_device().get_current_format()
         filter_graph.remove_filters()
