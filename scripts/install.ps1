@@ -12,7 +12,7 @@ pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 $pyautoguiPath = python -c 'import pyautogui as _; print(_.__path__[0])'
 (Get-Content "$pyautoguiPath/_pyautogui_win.py").replace('ctypes.windll.user32.SetProcessDPIAware()', 'pass') |
   Set-Content "$pyautoguiPath/_pyautogui_win.py"
-python -m pip uninstall pyscreeze
+python -m pip uninstall pyscreeze -y
 
 
 # Don't compile resources on the Build CI job as it'll do so in build script
