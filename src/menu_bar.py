@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import asyncio
 import webbrowser
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import requests
 from packaging.version import parse as version_parse
@@ -12,13 +11,8 @@ from typing_extensions import override
 
 import error_messages
 import user_profile
-from capture_method import (
-    CAPTURE_METHODS,
-    CameraInfo,
-    CaptureMethodEnum,
-    change_capture_method,
-    get_all_video_capture_devices,
-)
+from capture_method import CAPTURE_METHODS, CaptureMethodEnum, change_capture_method
+from capture_method.VideoCaptureDeviceCaptureMethod import CameraInfo, get_all_video_capture_devices
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
@@ -179,13 +173,14 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
 
     @fire_and_forget
     def __set_all_capture_devices(self):
-        __SettingsWidget.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
+        self.__video_capture_devices = get_all_video_capture_devices()
         if len(self.__video_capture_devices) > 0:
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
             self.capture_device_combobox.addItems([
                 f"* {device.name}"
                 + (f" [{device.backend}]" if device.backend else "")
+                + f" ({device.resolution[0]}x{device.resolution[1]})"
                 + (" (occupied)" if device.occupied else "")
                 for device in self.__video_capture_devices
             ])

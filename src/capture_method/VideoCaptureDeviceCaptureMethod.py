@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
 import cv2
 import cv2.Error
 import numpy as np
-from pygrabber.dshow_graph import FilterGraph
+from device import getDeviceList
 from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -89,13 +90,12 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
-        filter_graph = FilterGraph()
-        filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-        width, height = filter_graph.get_input_device().get_current_format()
-        filter_graph.remove_filters()
 
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
+
+        width, height = get_all_video_capture_devices()[autosplit.settings_dict["capture_device_id"]].resolution
+        # https://github.com/opencv/opencv/issues/17012
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
         try:
             self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -139,3 +139,54 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     @override
     def check_selected_region_exists(self, autosplit: AutoSplit):
         return bool(self.capture_device.isOpened())
+
+
+@dataclass
+class CameraInfo:
+    device_id: int
+    name: str
+    occupied: bool
+    backend: str
+    resolution: tuple[int, int]
+
+
+def get_all_video_capture_devices() -> list[CameraInfo]:
+    named_video_inputs = getDeviceList()
+
+    # async def get_camera_info(index: int, device_name: str, resolution: tuple[int, int]):
+    #     backend = ""
+    #     occupied = False
+    #     # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use
+    #     # #169
+    #     # FIXME: Maybe offer the option to the user to obtain more info about their devies?
+    #     #        Off by default. With a tooltip to explain the risk.
+    #     # video_capture = cv2.VideoCapture(index)
+    #     # video_capture.setExceptionMode(True)
+    #     # try:
+    #     #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
+    #     #     backend = video_capture.getBackendName()  # STS_ASSERT
+    #     #     video_capture.grab()  # STS_ERROR
+    #     # except cv2.error as error:
+    #     #     return CameraInfo(index, device_name, True, backend) \
+    #     #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
+    #     #         else None
+    #     # finally:
+    #     #     video_capture.release()
+
+    #     return CameraInfo(index, device_name, occupied, backend, resolution)
+
+    # # Note: Return type required https://github.com/python/typeshed/issues/2652
+    # future = asyncio.gather(
+    #     *[
+    #         get_camera_info(index, info[0], info[1][0]) for index, info
+    #         in enumerate(named_video_inputs)
+    #     ],
+    # )
+
+    # return [
+    #     camera_info for camera_info
+    #     in await future
+    #     if camera_info is not None
+    # ]
+
+    return [CameraInfo(index, info[0], False, "", info[1][0]) for index, info in enumerate(named_video_inputs)]

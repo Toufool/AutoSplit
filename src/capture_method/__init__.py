@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import asyncio
 from collections import OrderedDict
-from dataclasses import dataclass
 from enum import Enum, EnumMeta, unique
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
-from pygrabber.dshow_graph import FilterGraph
 from typing_extensions import Never, override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -133,73 +130,3 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
     else:
         autosplit.select_region_button.setDisabled(False)
         autosplit.select_window_button.setDisabled(False)
-
-
-@dataclass
-class CameraInfo:
-    device_id: int
-    name: str
-    occupied: bool
-    backend: str
-    resolution: tuple[int, int]
-
-
-def get_input_devices():
-    """https://github.com/andreaschiavinato/python_grabber/pull/24 ."""
-    return cast(list[str], FilterGraph().get_input_devices())
-
-
-def get_input_device_resolution(index: int):
-    filter_graph = FilterGraph()
-    try:
-        filter_graph.add_video_input_device(index)
-    # This can happen with virtual cameras throwing errors.
-    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
-    # https://github.com/Toufool/AutoSplit/issues/238
-    except COMError:
-        return None
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
-    return resolution
-
-
-async def get_all_video_capture_devices() -> list[CameraInfo]:
-    named_video_inputs = get_input_devices()
-
-    async def get_camera_info(index: int, device_name: str):
-        backend = ""
-        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use
-        # #169
-        # FIXME: Maybe offer the option to the user to obtain more info about their devies?
-        #        Off by default. With a tooltip to explain the risk.
-        # video_capture = cv2.VideoCapture(index)
-        # video_capture.setExceptionMode(True)
-        # try:
-        #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-        #     backend = video_capture.getBackendName()  # STS_ASSERT
-        #     video_capture.grab()  # STS_ERROR
-        # except cv2.error as error:
-        #     return CameraInfo(index, device_name, True, backend) \
-        #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
-        #         else None
-        # finally:
-        #     video_capture.release()
-
-        resolution = get_input_device_resolution(index)
-        return CameraInfo(index, device_name, False, backend, resolution) \
-            if resolution is not None \
-            else None
-
-    # Note: Return type required https://github.com/python/typeshed/issues/2652
-    future = asyncio.gather(
-        *[
-            get_camera_info(index, name) for index, name
-            in enumerate(named_video_inputs)
-        ],
-    )
-
-    return [
-        camera_info for camera_info
-        in await future
-        if camera_info is not None
-    ]

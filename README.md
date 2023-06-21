@@ -243,6 +243,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aopen+involves%3AAvasam>
   - <https://github.com/opencv/opencv/issues/created_by/Avasam>
   - <https://github.com/opencv/opencv/issues?q=is%3Aopen+involves%3AAvasam>
+  - <https://github.com/yushulx/python-capture-device-list/issues/5>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
