@@ -79,8 +79,8 @@ def pause_hotkey():
     )
 
 
-def align_region_image_type():
-    set_text_message("File not a valid image file")
+def image_validity(image: str = "File"):
+    set_text_message(f"{image} not a valid image file")
 
 
 def alignment_not_matched():
