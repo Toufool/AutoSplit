@@ -211,7 +211,9 @@ def parse_and_validate_images(autosplit: AutoSplit):
         for image in autosplit.split_images:
             # Test for image without transparency
             if not is_valid_image(image.byte_array):
-                error_message = lambda: ()  # noqa: E731
+                def image_validity(filename: str):
+                    return lambda: error_messages.image_validity(filename)
+                error_message = image_validity(image.filename)
                 break
 
             # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.

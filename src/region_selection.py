@@ -186,7 +186,7 @@ def align_region(autosplit: AutoSplit):
 
     # Validate template is a valid image file
     if not is_valid_image(template):
-        error_messages.align_region_image_type()
+        error_messages.image_validity()
         return
 
     # Obtaining the capture of a region which contains the
