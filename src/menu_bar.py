@@ -116,12 +116,6 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noqa: N801 # Private class
-    __video_capture_devices: ClassVar[list[CameraInfo]] = []
-    """
-    Used to temporarily store the existing cameras,
-    we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
-    """
-
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
@@ -214,6 +208,11 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
+        self.__video_capture_devices: list[CameraInfo] = []
+        """
+        Used to temporarily store the existing cameras,
+        we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
+        """
         self.setupUi(self)
         self.autosplit = autosplit
         self.__set_readme_link()
