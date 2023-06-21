@@ -248,14 +248,22 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
         try:
             hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
 
+            # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit
+            if hotkey_name == "esc":
+                _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
+                autosplit.settings_dict[f"{hotkey}_hotkey"] = ""  # pyright: ignore[reportGeneralTypeIssues]
+                if autosplit.SettingsWidget:
+                    getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
+                return
+
             if not is_valid_hotkey_name(hotkey_name):
                 autosplit.show_error_signal.emit(lambda: error_messages.invalid_hotkey(hotkey_name))
                 return
 
             # Try to remove the previously set hotkey if there is one
             _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-            # Remove any hotkey using the same key combination
 
+            # Remove any hotkey using the same key combination
             __remove_key_already_set(autosplit, hotkey_name)
 
             action = __get_hotkey_action(autosplit, hotkey)
