@@ -10,7 +10,7 @@ from PIL import Image
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing  # noqa: TCH004
+    import cv2.typing
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS: list[int] = [ColorChannel.Red, ColorChannel.Green, ColorChannel.Blue]

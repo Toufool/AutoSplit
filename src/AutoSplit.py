@@ -49,7 +49,7 @@ from utils import (
 )
 
 if TYPE_CHECKING:
-    import cv2.typing  # noqa: TCH004
+    import cv2.typing
 
 CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
@@ -86,38 +86,38 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
 
-    # Initialize a few attributes
-    hwnd = 0
-    """Window Handle used for Capture Region"""
-    last_saved_settings = DEFAULT_PROFILE
-    similarity = 0.0
-    split_image_number = 0
-    split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
-    split_groups: list[list[int]] = []
-    capture_method = CaptureMethodBase(None)
-    is_running = False
-
-    # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
-    last_loaded_settings = DEFAULT_PROFILE
-    last_successfully_loaded_settings_file_path: str | None = None
-    """For when a file has never loaded, but you successfully "Save File As"."""
-
-    # Automatic timer start
-    highest_similarity = 0.0
-    reset_highest_similarity = 0.0
-
-    # Ensure all other attributes are defined
-    waiting_for_split_delay = False
-    split_below_threshold = False
-    run_start_time = 0.0
-    start_image: AutoSplitImage | None = None
-    reset_image: AutoSplitImage | None = None
-    split_images: list[AutoSplitImage] = []
-    split_image: AutoSplitImage | None = None
-    update_auto_control: AutoControlledThread | None = None
-
     def __init__(self):  # noqa: PLR0915
         super().__init__()
+
+        # Initialize a few attributes
+        self.hwnd = 0
+        """Window Handle used for Capture Region"""
+        self.last_saved_settings = DEFAULT_PROFILE
+        self.similarity = 0.0
+        self.split_image_number = 0
+        self.split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
+        self.split_groups: list[list[int]] = []
+        self.capture_method = CaptureMethodBase(None)
+        self.is_running = False
+
+        # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
+        self.last_loaded_settings = DEFAULT_PROFILE
+        self.last_successfully_loaded_settings_file_path: str | None = None
+        """For when a file has never loaded, but you successfully "Save File As"."""
+
+        # Automatic timer start
+        self.highest_similarity = 0.0
+        self.reset_highest_similarity = 0.0
+
+        # Ensure all other attributes are defined
+        self.waiting_for_split_delay = False
+        self.split_below_threshold = False
+        self.run_start_time = 0.0
+        self.start_image: AutoSplitImage | None = None
+        self.reset_image: AutoSplitImage | None = None
+        self.split_images: list[AutoSplitImage] = []
+        self.split_image: AutoSplitImage | None = None
+        self.update_auto_control: AutoControlledThread | None = None
 
         # Setup global error handling
         def _show_error_signal_slot(error_message_box: Callable[..., object]):

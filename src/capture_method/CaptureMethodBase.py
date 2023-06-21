@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-class CaptureMethodBase():
+class CaptureMethodBase:
     name = "None"
     short_description = ""
     description = ""

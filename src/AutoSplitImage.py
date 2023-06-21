@@ -13,7 +13,7 @@ from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
 from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing  # noqa: TCH004
+    import cv2.typing
 
     from AutoSplit import AutoSplit
 
@@ -34,7 +34,7 @@ class ImageType(IntEnum):
     START = 2
 
 
-class AutoSplitImage():
+class AutoSplitImage:
     path: str
     filename: str
     flags: int
