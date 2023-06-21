@@ -161,11 +161,14 @@ def __get_hotkey_name(names: list[str]):
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
     See: https://github.com/boppreh/keyboard/issues/516 .
     """
-    def sorting_key(key: str):
-        return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
+    if len(names) == 0:
+        return ""
 
     if len(names) == 1:
         return names[0]
+
+    def sorting_key(key: str):
+        return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
     clean_names = sorted(keyboard.get_hotkey_name(names).split("+"), key=sorting_key)
     # Replace the last key in hotkey_name with what we actually got as a last key_name
     # This ensures we keep proper keypad names
@@ -182,6 +185,10 @@ def __read_hotkey():
         keyboard_event = keyboard.read_event(True)
         # LiveSplit supports modifier keys as the last key, so any keyup means end of hotkey
         if keyboard_event.event_type == keyboard.KEY_UP:
+            # Unless keyup is also the very first event,
+            # which can happen from a very fast press at the same time we start reading
+            if len(names) == 0:
+                continue
             break
         key_name = __get_key_name(keyboard_event)
         # Ignore long presses
