@@ -186,6 +186,26 @@ def parse_and_validate_images(autosplit: AutoSplit):
     autosplit.reset_image = __pop_image_type(all_images, ImageType.RESET)
     autosplit.split_images = all_images
 
+    # If there is no start hotkey set but a start image is present, and is not auto controlled, throw an error.
+    if (
+        autosplit.start_image
+        and not autosplit.settings_dict["split_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
+        autosplit.gui_changes_on_reset()
+        error_messages.load_start_image()
+        return False
+
+    # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
+    if (
+        autosplit.reset_image
+        and not autosplit.settings_dict["reset_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
+        autosplit.gui_changes_on_reset()
+        error_messages.reset_hotkey()
+        return False
+
     # Make sure that each of the images follows the guidelines for correct format
     # according to all of the settings selected by the user.
     for image in autosplit.split_images:
@@ -206,11 +226,6 @@ def parse_and_validate_images(autosplit: AutoSplit):
 
         # Check that there's only one reset image
         if image.image_type == ImageType.RESET:
-            # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
-            if not autosplit.settings_dict["reset_hotkey"] and not autosplit.is_auto_controlled:
-                autosplit.gui_changes_on_reset()
-                error_messages.reset_hotkey()
-                return False
             autosplit.gui_changes_on_reset()
             error_messages.multiple_keyword_images(RESET_KEYWORD)
             return False
