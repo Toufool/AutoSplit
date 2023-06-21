@@ -133,8 +133,8 @@ def check_for_updates():
 
 def load_start_image():
     set_text_message(
-        "Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
-        + "Please set these hotkeys, and then click the Reload Start Image button.",
+        "Start Image found, but cannot be loaded unless Start hotkey is set. "
+        + "Please set the hotkey, and then click the Reload Start Image button.",
     )
 
 

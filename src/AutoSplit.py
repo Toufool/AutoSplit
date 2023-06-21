@@ -270,17 +270,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             QApplication.processEvents()
             return
 
-        if self.start_image:
-            if not self.is_auto_controlled \
-                    and (
-                        not self.settings_dict["split_hotkey"]
-                        or not self.settings_dict["reset_hotkey"]
-                        or not self.settings_dict["pause_hotkey"]
-                    ):
-                error_messages.load_start_image()
-                QApplication.processEvents()
-                return
-        else:
+        if not self.start_image:
             if started_by_button:
                 error_messages.no_keyword_image(START_KEYWORD)
             QApplication.processEvents()
@@ -518,7 +508,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.run_start_time = time()
 
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
-            self.gui_changes_on_reset(True)
+            # `safe_to_reload_start_image: bool = False` becasue __load_start_image also does this check,
+            # we don't want to double a start/reset image error message
+            self.gui_changes_on_reset(False)
             return
 
         # Construct a list of images + loop count tuples.
