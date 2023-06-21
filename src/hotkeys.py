@@ -82,8 +82,10 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
 
     # Deal with regular inputs
     # If an int or does not contain the following strings
-    if isinstance(hotkey_or_scan_code, int) \
-            or not ("num " in hotkey_or_scan_code or "decimal" in hotkey_or_scan_code or "+" in hotkey_or_scan_code):
+    if (
+        isinstance(hotkey_or_scan_code, int)
+        or not any(key in hotkey_or_scan_code for key in ("num ", "decimal", "+"))
+    ):
         keyboard.send(hotkey_or_scan_code)
         return
 

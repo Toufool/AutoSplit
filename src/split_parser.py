@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
@@ -186,53 +187,55 @@ def parse_and_validate_images(autosplit: AutoSplit):
     autosplit.reset_image = __pop_image_type(all_images, ImageType.RESET)
     autosplit.split_images = all_images
 
+    error_message: Callable[[], object] | None = None
+
     # If there is no start hotkey set but a start image is present, and is not auto controlled, throw an error.
     if (
         autosplit.start_image
         and not autosplit.settings_dict["split_hotkey"]
         and not autosplit.is_auto_controlled
     ):
-        autosplit.gui_changes_on_reset()
-        error_messages.load_start_image()
-        return False
+        error_message = error_messages.load_start_image
 
     # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
-    if (
+    elif (
         autosplit.reset_image
         and not autosplit.settings_dict["reset_hotkey"]
         and not autosplit.is_auto_controlled
     ):
-        autosplit.gui_changes_on_reset()
-        error_messages.reset_hotkey()
-        return False
+        error_message = error_messages.reset_hotkey
 
     # Make sure that each of the images follows the guidelines for correct format
     # according to all of the settings selected by the user.
-    for image in autosplit.split_images:
-        # Test for image without transparency
-        if not is_valid_image(image.byte_array):
-            autosplit.gui_changes_on_reset()
-            return False
+    else:
+        for image in autosplit.split_images:
+            # Test for image without transparency
+            if not is_valid_image(image.byte_array):
+                error_message = lambda: ()  # noqa: E731
+                break
 
-        # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (
-            not autosplit.settings_dict["pause_hotkey"]
-            and image.check_flag(PAUSE_FLAG)
-            and not autosplit.is_auto_controlled
-        ):
-            autosplit.gui_changes_on_reset()
-            error_messages.pause_hotkey()
-            return False
+            # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+            if (
+                not autosplit.settings_dict["pause_hotkey"]
+                and image.check_flag(PAUSE_FLAG)
+                and not autosplit.is_auto_controlled
+            ):
+                error_message = error_messages.pause_hotkey
+                break
 
-        # Check that there's only one reset image
-        if image.image_type == ImageType.RESET:
-            autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images(RESET_KEYWORD)
-            return False
+            # Check that there's only one reset image
+            if image.image_type == ImageType.RESET:
+                error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # noqa: E731
+                break
 
-        # Check that there's only one start image
-        if image.image_type == ImageType.START:
-            autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images(START_KEYWORD)
-            return False
+            # Check that there's only one start image
+            if image.image_type == ImageType.START:
+                error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # noqa: E731
+                break
+
+    if error_message:
+        autosplit.gui_changes_on_reset()
+        error_message()
+        return False
+
     return True

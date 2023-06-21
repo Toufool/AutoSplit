@@ -14,7 +14,7 @@ from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing  # noqa: TCH004
+    import cv2.typing
 
     from AutoSplit import AutoSplit
 

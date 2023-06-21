@@ -75,8 +75,7 @@ def split_hotkey():
 
 def pause_hotkey():
     set_text_message(
-        "Your split image folder contains an image filename with a pause flag {p}, "
-        + "but no pause hotkey is set.",
+        "Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.",
     )
 
 

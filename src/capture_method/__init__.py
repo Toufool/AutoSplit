@@ -136,7 +136,7 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
 
 
 @dataclass
-class CameraInfo():
+class CameraInfo:
     device_id: int
     name: str
     occupied: bool

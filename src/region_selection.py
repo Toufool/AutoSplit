@@ -24,7 +24,7 @@ from utils import BGR_CHANNEL_COUNT, MAXBYTE, ImageShape, get_window_bounds, is_
 user32 = ctypes.windll.user32
 
 if TYPE_CHECKING:
-    import cv2.typing  # noqa: TCH004
+    import cv2.typing
 
     from AutoSplit import AutoSplit
 
