@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Toufool</author>
  <class>UpdateChecker</class>
  <widget class="QDialog" name="UpdateChecker">
   <property name="enabled">

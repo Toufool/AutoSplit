@@ -20,8 +20,8 @@ SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
-Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
-HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "toggle_auto_reset_image"]
+Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
+HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
 
 
 def remove_all_hotkeys():

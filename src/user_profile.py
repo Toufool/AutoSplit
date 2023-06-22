@@ -22,6 +22,7 @@ class UserProfileDict(TypedDict):
     undo_split_hotkey: str
     skip_split_hotkey: str
     pause_hotkey: str
+    screenshot_hotkey: str
     toggle_auto_reset_image_hotkey: str
     fps_limit: int
     live_capture_region: bool
@@ -35,6 +36,7 @@ class UserProfileDict(TypedDict):
     default_pause_time: float
     loop_splits: bool
     split_image_directory: str
+    screenshot_directory: str
     captured_window_title: str
     capture_region: Region
 
@@ -45,6 +47,7 @@ DEFAULT_PROFILE = UserProfileDict(
     undo_split_hotkey="",
     skip_split_hotkey="",
     pause_hotkey="",
+    screenshot_hotkey="",
     toggle_auto_reset_image_hotkey="",
     fps_limit=60,
     live_capture_region=True,
@@ -58,6 +61,7 @@ DEFAULT_PROFILE = UserProfileDict(
     default_pause_time=10,
     loop_splits=False,
     split_image_directory="",
+    screenshot_directory="",
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )

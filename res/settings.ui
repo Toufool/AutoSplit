@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Toufool</author>
  <class>SettingsWidget</class>
  <widget class="QWidget" name="SettingsWidget">
   <property name="geometry">
@@ -7,19 +8,19 @@
     <x>0</x>
     <y>0</y>
     <width>290</width>
-    <height>664</height>
+    <height>746</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>290</width>
-    <height>664</height>
+    <height>746</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>290</width>
-    <height>664</height>
+    <height>746</height>
    </size>
   </property>
   <property name="font">
@@ -38,9 +39,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>200</y>
+     <y>230</y>
      <width>270</width>
-     <height>181</height>
+     <height>231</height>
     </rect>
    </property>
    <property name="title">
@@ -108,7 +109,7 @@
      <rect>
       <x>6</x>
       <y>97</y>
-      <width>251</width>
+      <width>255</width>
       <height>22</height>
      </rect>
     </property>
@@ -147,7 +148,7 @@
      <rect>
       <x>6</x>
       <y>148</y>
-      <width>251</width>
+      <width>255</width>
       <height>22</height>
      </rect>
     </property>
@@ -155,12 +156,54 @@
      <string>Scanning for existing devices...</string>
     </property>
    </widget>
+   <widget class="QLabel" name="screenshot_directory_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>182</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Screenshots folder:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="screenshot_directory_input">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>204</y>
+      <width>255</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="screenshot_directory_browse_button">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>178</y>
+      <width>71</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Browse...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="image_settings_groupbox">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>390</y>
+     <y>470</y>
      <width>270</width>
      <height>266</height>
     </rect>
@@ -177,7 +220,7 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <widget class="QComboBox" name="default_comparison_method">
+   <widget class="QComboBox" name="default_comparison_method_combobox">
     <property name="geometry">
      <rect>
       <x>170</x>
@@ -221,7 +264,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      </property>
     </item>
    </widget>
-   <widget class="QLabel" name="default_comparison_method_label">
+   <widget class="QLabel" name="default_comparison_method_combobox_label">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -438,7 +481,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <x>10</x>
      <y>10</y>
      <width>270</width>
-     <height>191</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="title">
@@ -551,7 +594,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>54</y>
-      <width>41</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -596,7 +639,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>132</y>
-      <width>41</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -654,7 +697,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <rect>
       <x>6</x>
       <y>106</y>
-      <width>61</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -682,7 +725,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>154</y>
+      <y>180</y>
       <width>81</width>
       <height>24</height>
      </rect>
@@ -698,7 +741,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <property name="geometry">
      <rect>
       <x>6</x>
-      <y>151</y>
+      <y>177</y>
       <width>71</width>
       <height>32</height>
      </rect>
@@ -709,6 +752,51 @@ reset image</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="toggle_auto_reset_image_input">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>181</y>
+      <width>94</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="screenshot_label">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>158</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Screenshot:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_screenshot_hotkey_button">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>154</y>
+      <width>81</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="text">
+     <string>Set Hotkey</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="screenshot_input">
     <property name="geometry">
      <rect>
       <x>80</x>
@@ -732,11 +820,14 @@ reset image</string>
   <tabstop>set_undo_split_hotkey_button</tabstop>
   <tabstop>set_skip_split_hotkey_button</tabstop>
   <tabstop>set_pause_hotkey_button</tabstop>
+  <tabstop>set_screenshot_hotkey_button</tabstop>
+  <tabstop>set_toggle_auto_reset_image_hotkey_button</tabstop>
   <tabstop>fps_limit_spinbox</tabstop>
   <tabstop>live_capture_region_checkbox</tabstop>
   <tabstop>capture_method_combobox</tabstop>
   <tabstop>capture_device_combobox</tabstop>
-  <tabstop>default_comparison_method</tabstop>
+  <tabstop>screenshot_directory_browse_button</tabstop>
+  <tabstop>default_comparison_method_combobox</tabstop>
   <tabstop>default_similarity_threshold_spinbox</tabstop>
   <tabstop>default_delay_time_spinbox</tabstop>
   <tabstop>default_pause_time_spinbox</tabstop>

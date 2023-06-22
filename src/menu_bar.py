@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, cast
 import requests
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
+from PySide6.QtWidgets import QFileDialog
 from requests.exceptions import RequestException
 from typing_extensions import override
 
@@ -207,6 +208,15 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 
+    def __select_screenshot_directory(self):
+        self.autosplit.settings_dict["screenshot_directory"] = QFileDialog.getExistingDirectory(
+            self,
+            "Select Screenshots Directory",
+            self.autosplit.settings_dict["screenshot_directory"]
+            or self.autosplit.settings_dict["split_image_directory"],
+        )
+        self.screenshot_directory_input.setText(self.autosplit.settings_dict["screenshot_directory"])
+
     def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.__video_capture_devices: list[CameraInfo] = []
@@ -272,9 +282,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         )
         # No self.capture_device_combobox.setCurrentIndex
         # It'll set itself asynchronously in self.__set_all_capture_devices()
+        self.screenshot_directory_input.setText(self.autosplit.settings_dict["screenshot_directory"])
 
         # Image Settings
-        self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
+        self.default_comparison_method_combobox.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
         self.default_similarity_threshold_spinbox.setValue(autosplit.settings_dict["default_similarity_threshold"])
         self.default_delay_time_spinbox.setValue(autosplit.settings_dict["default_delay_time"])
         self.default_pause_time_spinbox.setValue(autosplit.settings_dict["default_pause_time"])
@@ -291,10 +302,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             lambda: self.__set_value("capture_method", self.__capture_method_changed()),
         )
         self.capture_device_combobox.currentIndexChanged.connect(self.__capture_device_changed)
+        self.screenshot_directory_browse_button.clicked.connect(self.__select_screenshot_directory)
 
         # Image Settings
-        self.default_comparison_method.currentIndexChanged.connect(
-            lambda: self.__set_value("default_comparison_method", self.default_comparison_method.currentIndex()),
+        self.default_comparison_method_combobox.currentIndexChanged.connect(
+            lambda: self.__set_value(
+                "default_comparison_method", self.default_comparison_method_combobox.currentIndex(),
+            ),
         )
         self.default_similarity_threshold_spinbox.valueChanged.connect(
             lambda: self.__update_default_threshold(self.default_similarity_threshold_spinbox.value()),
@@ -331,6 +345,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
         "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
         "pause_hotkey": default_settings_dialog.pause_input.text(),
+        "screenshot_hotkey": default_settings_dialog.screenshot_input.text(),
         "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
@@ -340,12 +355,13 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         ),
         "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
         "capture_device_name": "",
-        "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
+        "default_comparison_method": default_settings_dialog.default_comparison_method_combobox.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
         "split_image_directory": autosplit.split_image_folder_input.text(),
+        "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),
         "captured_window_title": "",
         "capture_region": {
             "x": autosplit.x_spinbox.value(),
