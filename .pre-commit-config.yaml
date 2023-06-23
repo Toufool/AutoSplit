@@ -26,11 +26,12 @@ repos:
     hooks:
       - id: autopep8
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.4.0 # Must match requirements-dev.txt
+    rev: v3.0.0 # Must match requirements-dev.txt
     hooks:
       - id: add-trailing-comma
 
 ci:
+  autoupdate_branch: dev
   skip:
     # Ignore until Linux support. We don't want lf everywhere yet
     # And crlf fails on CI because pre-commit runs on linux

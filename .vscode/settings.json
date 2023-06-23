@@ -29,7 +29,7 @@
     "commands": [
       {
         "match": "\\.pyi?",
-        "cmd": "add-trailing-comma ${file} --py36-plus"
+        "cmd": "add-trailing-comma ${file}"
       },
     ]
   },

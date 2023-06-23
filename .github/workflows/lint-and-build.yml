@@ -65,7 +65,7 @@ jobs:
           python-version: "3.11"
       - run: pip install add-trailing-comma
       - name: Analysing the code with add-trailing-comma
-        run: add-trailing-comma $(git ls-files '**.py*') --py36-plus
+        run: add-trailing-comma $(git ls-files '**.py*')
   Pyright:
     runs-on: windows-latest
     strategy:

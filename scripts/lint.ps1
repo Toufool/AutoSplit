@@ -4,7 +4,7 @@ $exitCodes = 0
 
 Write-Host "`nRunning formatting..."
 autopep8 src/ --recursive --in-place
-add-trailing-comma $(git ls-files '**.py*') --py36-plus
+add-trailing-comma $(git ls-files '**.py*')
 
 Write-Host "`nRunning Ruff..."
 ruff check . --fix
