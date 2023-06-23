@@ -7,7 +7,7 @@
 -r requirements.txt
 #
 # Linters & Formatters
-add-trailing-comma>=2.4.0  # Added support for with statement # Must match .pre-commit-config.yaml
+add-trailing-comma>=2.5.1  # Added support for with statement # Must match .pre-commit-config.yaml
 autopep8>=2.0.2 # New checks # Must match .pre-commit-config.yaml
 ruff>=0.0.274 # Fix ignored "ignore" configuration + cache fixes # Must match .pre-commit-config.yaml
 #
