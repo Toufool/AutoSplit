@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>290</height>
+    <width>285</width>
+    <height>274</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>310</width>
-    <height>290</height>
+    <width>200</width>
+    <height>200</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -38,10 +38,10 @@
   <widget class="QTabWidget" name="settings_tabs">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
+     <x>-3</x>
+     <y>-3</y>
      <width>291</width>
-     <height>271</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -523,6 +523,25 @@ reset image</string>
       <string>Screenshots folder:</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="open_screenshot_checkbox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>181</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Open screenshots on capture</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="image_settings_tab">
     <attribute name="title">
@@ -532,7 +551,7 @@ reset image</string>
      <property name="geometry">
       <rect>
        <x>144</x>
-       <y>200</y>
+       <y>205</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -674,7 +693,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
        <x>10</x>
        <y>180</y>
        <width>261</width>
-       <height>61</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="font">
