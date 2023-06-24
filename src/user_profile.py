@@ -37,6 +37,7 @@ class UserProfileDict(TypedDict):
     loop_splits: bool
     split_image_directory: str
     screenshot_directory: str
+    open_screenshot: bool
     captured_window_title: str
     capture_region: Region
 
@@ -62,6 +63,7 @@ DEFAULT_PROFILE = UserProfileDict(
     loop_splits=False,
     split_image_directory="",
     screenshot_directory="",
+    open_screenshot=True,
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )
