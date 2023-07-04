@@ -108,17 +108,13 @@ Select the Video Capture Device that you wanna use if selecting the `Video Captu
 
 - This value will be set as the threshold for an image if there is no custom threshold set for that image.
 
-#### Pause Time
+#### Default Delay Time
 
-- Time in seconds that the program stops comparison after a split. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
+- Time in milliseconds that the program waits before hitting the split hotkey for that specific split if there is no custom Delay Time set for that image.
 
 #### Default Pause Time
 
-- This value will be set as the Pause Time for an image if there is no custom Pause Time set for that image.
-
-#### Delay Time
-
-- Time in milliseconds that the program waits before hitting the split hotkey for that specific split.
+- Time in seconds that the program stops comparison after a split if there is no custom Pause Time set for that image. Useful for if you have two of the same split images in a row and want to avoid double-splitting. Also useful for reducing CPU usage.
 
 #### Dummy splits when undoing / skipping
 
@@ -134,28 +130,32 @@ In this situation you would have only 3 splits in LiveSplit/wsplit (even though 
 - If you are in the 3rd, 4th or 5th image and press the skip key, it will end up on the 6th image
 - If you are in the 6th image and press the undo key, it will end up on the 5th image
 
-#### Loop Split Images
+#### Loop last Split Image to first Split Image
 
 If this option is enabled, when the last split meets the threshold and splits, AutoSplit will loop back to the first split image and continue comparisons.
 If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
+#### Enable auto Reset Image
+
+This option is mainly meant to be toggled with the `Toggle auto Reset Image` hotkey. You can enable it to temporarily disable the Reset Image if you make a mistake in your run that would cause the Reset Image to trigger. Like exiting back to the game's menu (aka Save&Quit).
+
 ### Custom Split Image Settings
 
 - Each split image can have different thresholds, pause times, delay split times, loop amounts, and can be flagged.
 - These settings are handled in the image's filename.
-- Custom thresholds are place between parenthesis `()` in the filename. This value will override the default threshold.
-- Custom pause times are placed between square brackets `[]` in the filename. This value will override the default pause time.
-- Custom delay times are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
-- A different comparison method can be specified with their 0-base index between carets `^^`:
+- **Custom thresholds** are place between parenthesis `()` in the filename. This value will override the default threshold.
+- **Custom pause times** are placed between square brackets `[]` in the filename. This value will override the default pause time.
+- **Custom delay times** are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
+- A different **comparison method** can be specified with their 0-base index between carets `^^`:
   - `^0^`: L2 Norm
   - `^1^`: Histogram
   - `^2^`: Perceptual Hash
-- Image loop amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
-- Flags are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
-  - `{d}` dummy split image. When matched, it moves to the next image without hitting your split hotkey.
-  - `{b}` split when similarity goes below the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
-  - `{p}` pause flag. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
+- **Image loop** amounts are placed between at symbols `@@` in the filename. For example, a specific image that you want to split 5 times in a row would be `@5@`. The current loop # is conveniently located beneath the current split image.
+- **Flags** are placed between curly brackets `{}` in the filename. Multiple flags are placed in the same set of curly brackets. Current available flags:
+  - `{d}` **dummy split image**. When matched, it moves to the next image without hitting your split hotkey.
+  - `{b}` split when **similarity goes below** the threshold rather than above. When a split image filename has this flag, the split image similarity will go above the threshold, do nothing, and then split the next time the similarity goes below the threshold.
+  - `{p}` **pause flag**. When a split image filename has this flag, it will hit your pause hotkey rather than your split hokey.
 - Filename examples:
   - `001_SplitName_(0.9)_[10].png` is a split image with a threshold of 0.9 and a pause time of 10 seconds.
   - `002_SplitName_(0.9)_[10]_{d}.png` is the second split image with a threshold of 0.9, pause time of 10, and is a dummy split.
@@ -172,17 +172,18 @@ The best way to create a masked image is to set your capture region as the entir
 
 ![Mask Example](/docs/mask_example_image.png)
 
-### Reset image
+### Reset Image
 
-You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a threshold and pause time for it. The pause time is the amount of seconds AutoSplit will wait before checking for the reset image once the run starts. For example: `Reset_(0.95)_[10].png`.
+You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a threshold and pause time for it. The pause time is the amount of seconds AutoSplit will wait before checking for the Reset Image once the run starts. For example: `Reset_(0.95)_[10].png`.
 
-### Start image
+### Start Image
 
-The start image is similar to the reset image. You can only have one start image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
+The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
 
 ### Profiles
 
-- Profiles are saved under `%appdata%\AutoSplit\profiles` and use the extension `.toml`. Profiles can be saved and loaded by using File -> Save Profile As... and File -> Load Profile.
+<!-- TODO: Profiles are saved under `%appdata%\AutoSplit\profiles` and -->
+- Profiles use the extension `.toml`. Profiles can be saved and loaded by using `File -> Save Profile As...` and `File -> Load Profile`.
 - The profile contains all of your settings, including information about the capture region.
 - You can save multiple profiles, which is useful if you speedrun multiple games.
 - If you change your display setup (like using a new monitor, or upgrading to Windows 11), you may need to readjust or reselect your Capture Region.

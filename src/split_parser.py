@@ -189,7 +189,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
 
     error_message: Callable[[], object] | None = None
 
-    # If there is no start hotkey set but a start image is present, and is not auto controlled, throw an error.
+    # If there is no start hotkey set but a Start Image is present, and is not auto controlled, throw an error.
     if (
         start_image
         and not autosplit.settings_dict["split_hotkey"]
@@ -197,7 +197,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     ):
         error_message = error_messages.load_start_image
 
-    # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
+    # If there is no reset hotkey set but a Reset Image is present, and is not auto controlled, throw an error.
     elif (
         reset_image
         and not autosplit.settings_dict["reset_hotkey"]
@@ -225,12 +225,12 @@ def parse_and_validate_images(autosplit: AutoSplit):
                 error_message = error_messages.pause_hotkey
                 break
 
-            # Check that there's only one reset image
+            # Check that there's only one Reset Image
             if image.image_type == ImageType.RESET:
                 error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # noqa: E731
                 break
 
-            # Check that there's only one start image
+            # Check that there's only one Start Image
             if image.image_type == ImageType.START:
                 error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # noqa: E731
                 break
