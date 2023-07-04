@@ -315,6 +315,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.default_delay_time_spinbox.setValue(self.autosplit.settings_dict["default_delay_time"])
         self.default_pause_time_spinbox.setValue(self.autosplit.settings_dict["default_pause_time"])
         self.loop_splits_checkbox.setChecked(self.autosplit.settings_dict["loop_splits"])
+        self.start_also_resets_checkbox.setChecked(self.autosplit.settings_dict["start_also_resets"])
         self.enable_auto_reset_image_checkbox.setChecked(self.autosplit.settings_dict["enable_auto_reset"])
 # endregion
 # region Binding
@@ -350,6 +351,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.loop_splits_checkbox.stateChanged.connect(
             lambda: self.__set_value("loop_splits", self.loop_splits_checkbox.isChecked()),
         )
+        self.start_also_resets_checkbox.stateChanged.connect(
+            lambda: self.__set_value("start_also_resets", self.start_also_resets_checkbox.isChecked()),
+        )
         self.enable_auto_reset_image_checkbox.stateChanged.connect(
             lambda: self.__set_value("enable_auto_reset", self.enable_auto_reset_image_checkbox.isChecked()),
         )
@@ -375,7 +379,6 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex(),
         ),
@@ -386,6 +389,8 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
+        "start_also_resets": default_settings_dialog.start_also_resets_checkbox.isChecked(),
+        "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),
         "open_screenshot": default_settings_dialog.open_screenshot_checkbox.isChecked(),
