@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 import cv2.Error
+import cv2.typing
 import numpy as np
 from pygrabber.dshow_graph import FilterGraph
 from typing_extensions import override
@@ -14,7 +15,6 @@ from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing
 
     from AutoSplit import AutoSplit
 

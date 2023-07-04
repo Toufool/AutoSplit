@@ -6,6 +6,7 @@ from math import sqrt
 from typing import TYPE_CHECKING
 
 import cv2
+import cv2.typing
 import numpy as np
 
 import error_messages
@@ -13,7 +14,6 @@ from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
 from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing
 
     from AutoSplit import AutoSplit
 

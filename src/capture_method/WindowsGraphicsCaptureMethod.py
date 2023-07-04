@@ -4,6 +4,7 @@ import asyncio
 from typing import TYPE_CHECKING, cast
 
 import cv2
+import cv2.typing
 import numpy as np
 from typing_extensions import override
 from win32 import win32gui
@@ -17,7 +18,6 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
-    import cv2.typing
 
     from AutoSplit import AutoSplit
 

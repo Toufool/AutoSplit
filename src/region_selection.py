@@ -7,6 +7,7 @@ from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
+import cv2.typing
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
@@ -31,8 +32,8 @@ from utils import (
 
 user32 = ctypes.windll.user32
 
+
 if TYPE_CHECKING:
-    import cv2.typing
 
     from AutoSplit import AutoSplit
 

@@ -5,6 +5,7 @@ import ctypes.wintypes
 from typing import TYPE_CHECKING, cast
 
 import cv2
+import cv2.typing
 import numpy as np
 import pywintypes
 import win32con
@@ -16,7 +17,6 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 if TYPE_CHECKING:
-    import cv2.typing
 
     from AutoSplit import AutoSplit
 
