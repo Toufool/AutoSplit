@@ -51,7 +51,9 @@ ignore = [
   "D205", # Not all docstrings have a short description + desrciption
   "T20", # flake8-print
   # This is a relatively small, low contributors project. Git blame suffice.
-  "TD002",
+  "TD002", # missing-todo-author
+  # Python 3.11, introduced "zero cost" exception handling
+  "PERF203", # try-except-in-loop
 
   ### FIXME/TODO (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
   "CPY001",
