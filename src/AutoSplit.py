@@ -128,7 +128,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         sys.excepthook = error_messages.make_excepthook(self)
 
         self.setupUi(self)
-        self.setWindowTitle(f"AutoSplit v{AUTOSPLIT_VERSION}")
+        self.setWindowTitle(
+            f"AutoSplit v{AUTOSPLIT_VERSION}" +
+            (" (externally controlled)" if self.is_auto_controlled else ""),
+        )
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
         for hotkey in HOTKEYS:
