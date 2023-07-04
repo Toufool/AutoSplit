@@ -50,9 +50,18 @@ def after_setting_hotkey(autosplit: AutoSplit):
 
 
 def send_command(autosplit: AutoSplit, command: Commands):
+    # Note: Rather than having the start image able to also reset the timer,
+    # having the reset image check be active at all time would be a better, more organic solution,
+    # but that is dependent on migrating to an observer pattern (#219) and being able to reload all images.
     if autosplit.is_auto_controlled:
+        if command == "start" and autosplit.settings_dict["start_also_resets"]:
+            print("reset", flush=True)
         print(command, flush=True)
-    elif command in {"split", "start"}:
+    elif command == "start":
+        if autosplit.settings_dict["start_also_resets"]:
+            _send_hotkey(autosplit.settings_dict["reset_hotkey"])
+        _send_hotkey(autosplit.settings_dict["split_hotkey"])
+    elif command == "split":
         _send_hotkey(autosplit.settings_dict["split_hotkey"])
     elif command == "pause":
         _send_hotkey(autosplit.settings_dict["pause_hotkey"])
@@ -64,7 +73,7 @@ def send_command(autosplit: AutoSplit, command: Commands):
         _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
 
     else:
-        raise KeyError(f"{command!r} is not a valid LiveSplit.AutoSplitIntegration command")
+        raise KeyError(f"{command!r} is not a valid command")
 
 
 def _unhook(hotkey_callback: Callable[[], None] | None):

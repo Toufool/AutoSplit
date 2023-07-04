@@ -26,7 +26,6 @@ class UserProfileDict(TypedDict):
     toggle_auto_reset_image_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    enable_auto_reset: bool
     capture_method: str | CaptureMethodEnum
     capture_device_id: int
     capture_device_name: str
@@ -35,6 +34,8 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
+    start_also_resets: bool
+    enable_auto_reset: bool
     split_image_directory: str
     screenshot_directory: str
     open_screenshot: bool
@@ -52,7 +53,6 @@ DEFAULT_PROFILE = UserProfileDict(
     toggle_auto_reset_image_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    enable_auto_reset=True,
     capture_method=CAPTURE_METHODS.get_method_by_index(0),
     capture_device_id=0,
     capture_device_name="",
@@ -61,6 +61,8 @@ DEFAULT_PROFILE = UserProfileDict(
     default_delay_time=0,
     default_pause_time=10,
     loop_splits=False,
+    start_also_resets=False,
+    enable_auto_reset=True,
     split_image_directory="",
     screenshot_directory="",
     open_screenshot=True,
