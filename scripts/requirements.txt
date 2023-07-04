@@ -7,17 +7,16 @@ certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.23.2  # Python 3.11 wheels
-# wheel-0-1-0-x64 from https://github.com/opencv/opencv-python/actions/runs/5227795017
-./res/opencv_python_headless-4.7.0+772599a-cp37-abi3-win_amd64.whl # New typing + OBS Camera fixes
+opencv-python-headless>=4.8.0.74  # New typing + OBS Camera fixes
 packaging
 Pillow>=9.2  # gnome-screeshot checks
 psutil
 PyAutoGUI
-PyWinCtl>=0.0.42 # py.typed
-PySide6-Essentials>=6.5.1 # fixes incomplete tuple return types https://bugreports.qt.io/browse/PYSIDE-2285
+PyWinCtl>=0.0.42  # py.typed
+PySide6-Essentials>=6.5.1  # fixes incomplete tuple return types https://bugreports.qt.io/browse/PYSIDE-2285
 requests<=2.28.1  # 2.28.2 has issues with PyInstaller https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 toml
-typing-extensions>=4.4.0 # @override decorator support
+typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
 pyinstaller>=5.5  # Python 3.11 support
