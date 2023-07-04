@@ -96,7 +96,7 @@ def multiple_keyword_images(keyword: str):
 
 
 def reset_hotkey():
-    set_text_message("Your split image folder contains a reset image, but no reset hotkey is set.")
+    set_text_message("Your split image folder contains a Reset Image, but no reset hotkey is set.")
 
 
 def old_version_settings_file():

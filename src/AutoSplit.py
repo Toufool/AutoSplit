@@ -337,7 +337,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_below_threshold = False
 
             if not self.start_image.check_flag(DUMMY_FLAG):
-                # Delay start image if needed
+                # Delay Start Image if needed
                 if self.start_image.get_delay_time(self) > 0:
                     self.start_image_status_value_label.setText("delaying start...")
                     delay_start_time = time()
@@ -518,7 +518,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
             # `safe_to_reload_start_image: bool = False` becasue __load_start_image also does this check,
-            # we don't want to double a start/reset image error message
+            # we don't want to double a Start/Reset Image error message
             self.gui_changes_on_reset(False)
             return
 
@@ -671,7 +671,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # if the b flag is set, let similarity go above threshold first,
             # then split on similarity below threshold.
             # if no b flag, just split when similarity goes above threshold.
-            # TODO: Abstract with similar check in start image
+            # TODO: Abstract with similar check in Start Image
             if not self.waiting_for_split_delay:
                 if similarity >= self.split_image.get_similarity_threshold(self):
                     if not below_flag:
@@ -703,7 +703,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # This is done so that it can detect if user hit split/undo split while paused/delayed.
         pause_split_image_number = self.split_image_number
         while True:
-            # Calculate similarity for reset image
+            # Calculate similarity for Reset Image
             if self.__reset_if_should(self.__get_capture_for_comparison()[0]):
                 return True
 
