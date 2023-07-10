@@ -3,20 +3,20 @@ from __future__ import annotations
 from math import sqrt
 
 import cv2
-import cv2.typing
 import imagehash
+from cv2.typing import MatLike
 from PIL import Image
 
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
-CHANNELS: list[int] = [ColorChannel.Red, ColorChannel.Green, ColorChannel.Blue]
+CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
 HISTOGRAM_SIZE = [8, 8, 8]
 RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
 
 
-def compare_histograms(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = None):
+def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
     Compares two images by calculating their histograms, normalizing
     them, and then comparing them using Bhattacharyya distance.
@@ -35,7 +35,7 @@ def compare_histograms(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, 
     return 1 - cv2.compareHist(source_hist, capture_hist, cv2.HISTCMP_BHATTACHARYYA)
 
 
-def compare_l2_norm(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = None):
+def compare_l2_norm(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
     Compares two images by calculating the L2 Error (square-root of sum of squared error)
     @param source: Image of any given shape
@@ -55,7 +55,7 @@ def compare_l2_norm(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mas
     return 1 - (error / max_error)
 
 
-def compare_template(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = None):
+def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
     Checks if the source is located within the capture by using the sum of square differences.
     The mask is used to search for non-rectangular images within the capture.
@@ -78,7 +78,7 @@ def compare_template(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, ma
     return 1 - (min_val / max_error)
 
 
-def compare_phash(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = None):
+def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
     Compares the Perceptual Hash of the two given images and returns the similarity between the two.
 
@@ -102,7 +102,7 @@ def compare_phash(source: cv2.typing.MatLike, capture: cv2.typing.MatLike, mask:
     return 1 - (hash_diff / 64.0)
 
 
-def check_if_image_has_transparency(image: cv2.typing.MatLike):
+def check_if_image_has_transparency(image: MatLike):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
         return False

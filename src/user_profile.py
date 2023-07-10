@@ -124,7 +124,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
                 },
             )
             # TODO: Data Validation / fallbacks ?
-            autosplit.settings_dict = UserProfileDict(**loaded_settings)
+            autosplit.settings_dict = UserProfileDict(**loaded_settings)  # type: ignore[misc]
             autosplit.last_loaded_settings = autosplit.settings_dict
 
             autosplit.x_spinbox.setValue(autosplit.settings_dict["capture_region"]["x"])
@@ -198,12 +198,15 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *toml settings values.
     """
-    value = QtCore \
-        .QSettings("AutoSplit", "Check For Updates On Open") \
-        .value("check_for_updates_on_open", True, type=bool)
     # Type not infered by PySide6
     # TODO: Report this issue upstream
-    autosplit.action_check_for_updates_on_open.setChecked(value)  # pyright: ignore[reportGeneralTypeIssues]
+    value = cast(
+        bool,
+        QtCore
+        .QSettings("AutoSplit", "Check For Updates On Open")
+        .value("check_for_updates_on_open", True, type=bool),
+    )
+    autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):

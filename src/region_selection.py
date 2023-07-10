@@ -7,8 +7,8 @@ from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
-import cv2.typing
 import numpy as np
+from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
@@ -236,7 +236,7 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.typing.MatLike, template: cv2.typing.MatLike):
+def __test_alignment(capture: MatLike, template: MatLike):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller

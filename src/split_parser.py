@@ -32,8 +32,8 @@ def __value_from_filename(
     if len(delimiters) != 2:  # noqa: PLR2004
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
-        value_type = type(default_value)
-        value = value_type(filename.split(delimiters[0], 1)[1].split(delimiters[1])[0])
+        string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1])[0]
+        value: T = type(default_value)(string_value)
     except (IndexError, ValueError):
         return default_value
     else:

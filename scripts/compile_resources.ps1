@@ -1,7 +1,8 @@
 $originalDirectory = $pwd
 Set-Location "$PSScriptRoot/.."
 
-New-Item -Force -ItemType directory ./src/gen | Out-Null
+New-Item ./src/gen -ItemType directory -Force | Out-Null
+New-Item ./src/gen/__init__.py -ItemType File -Force | Out-Null
 pyside6-uic './res/about.ui' -o './src/gen/about.py'
 pyside6-uic './res/design.ui' -o './src/gen/design.py'
 pyside6-uic './res/settings.ui' -o './src/gen/settings.py'
