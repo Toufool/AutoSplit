@@ -32,7 +32,7 @@ from utils import (
 user32 = ctypes.windll.user32
 
 if TYPE_CHECKING:
-    import cv2.typing
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
     from AutoSplit import AutoSplit
 
@@ -235,7 +235,7 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.typing.MatLike, template: cv2.typing.MatLike):
+def __test_alignment(capture: MatLike, template: MatLike):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller

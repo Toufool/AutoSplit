@@ -121,6 +121,60 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noqa: N801 # Private class
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__()
+        self.__video_capture_devices: list[CameraInfo] = []
+        """
+        Used to temporarily store the existing cameras,
+        we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
+        """
+
+        self.setupUi(self)
+
+        # Fix Fusion Dark Theme's tabs content looking weird because it's using the button role
+        window_color = self.palette().color(QPalette.ColorRole.Window)
+        if window_color.red() < HALF_BRIGHTNESS:
+            brush = QBrush(window_color)
+            brush.setStyle(Qt.BrushStyle.SolidPattern)
+            palette = QPalette()
+            palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush)
+            palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, brush)
+            palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush)
+            self.settings_tabs.setPalette(palette)
+
+        self.autosplit = autosplit
+        self.__set_readme_link()
+        # Don't autofocus any particular field
+        self.setFocus()
+
+
+# region Build the Capture method combobox
+        capture_method_values = CAPTURE_METHODS.values()
+        self.__set_all_capture_devices()
+
+        # TODO: Word-wrapping works, but there's lots of extra padding to the right. Raise issue upstream
+        # list_view = QtWidgets.QListView()
+        # list_view.setWordWrap(True)
+        # list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # list_view.setFixedWidth(self.capture_method_combobox.width())
+        # self.capture_method_combobox.setView(list_view)
+
+        self.capture_method_combobox.addItems([
+            f"- {method.name} ({method.short_description})"
+            for method in capture_method_values
+        ])
+        self.capture_method_combobox.setToolTip(
+            "\n\n".join([
+                f"{method.name} :\n{method.description}"
+                for method in capture_method_values
+            ]),
+        )
+# endregion
+
+        self.__setup_bindings()
+
+        self.show()
+
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
         self.autosplit.table_current_image_threshold_label.setText(
@@ -220,60 +274,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             or self.autosplit.settings_dict["split_image_directory"],
         )
         self.screenshot_directory_input.setText(self.autosplit.settings_dict["screenshot_directory"])
-
-    def __init__(self, autosplit: AutoSplit):
-        super().__init__()
-        self.__video_capture_devices: list[CameraInfo] = []
-        """
-        Used to temporarily store the existing cameras,
-        we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
-        """
-
-        self.setupUi(self)
-
-        # Fix Fusion Dark Theme's tabs content looking weird because it's using the button role
-        window_color = self.palette().color(QPalette.ColorRole.Window)
-        if window_color.red() < HALF_BRIGHTNESS:
-            brush = QBrush(window_color)
-            brush.setStyle(Qt.BrushStyle.SolidPattern)
-            palette = QPalette()
-            palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush)
-            palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, brush)
-            palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush)
-            self.settings_tabs.setPalette(palette)
-
-        self.autosplit = autosplit
-        self.__set_readme_link()
-        # Don't autofocus any particular field
-        self.setFocus()
-
-
-# region Build the Capture method combobox
-        capture_method_values = CAPTURE_METHODS.values()
-        self.__set_all_capture_devices()
-
-        # TODO: Word-wrapping works, but there's lots of extra padding to the right. Raise issue upstream
-        # list_view = QtWidgets.QListView()
-        # list_view.setWordWrap(True)
-        # list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # list_view.setFixedWidth(self.capture_method_combobox.width())
-        # self.capture_method_combobox.setView(list_view)
-
-        self.capture_method_combobox.addItems([
-            f"- {method.name} ({method.short_description})"
-            for method in capture_method_values
-        ])
-        self.capture_method_combobox.setToolTip(
-            "\n\n".join([
-                f"{method.name} :\n{method.description}"
-                for method in capture_method_values
-            ]),
-        )
-# endregion
-
-        self.__setup_bindings()
-
-        self.show()
 
     def __setup_bindings(self):
         # Hotkey initial values and bindings

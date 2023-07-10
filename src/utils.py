@@ -11,7 +11,6 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
-import cv2
 import win32ui
 from typing_extensions import TypeGuard
 from win32 import win32gui
@@ -21,10 +20,9 @@ from winsdk.windows.media.capture import MediaCapture
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if TYPE_CHECKING:
-    import cv2.typing
-
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
 _T = TypeVar("_T")
 
@@ -65,16 +63,15 @@ def is_digit(value: str | int | None):
         return False
 
 
-def is_valid_image(image: cv2.typing.MatLike | None) -> TypeGuard[cv2.typing.MatLike]:
+def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
     return image is not None and bool(image.size)
 
 
-def is_valid_hwnd(hwnd: int):
+def is_valid_hwnd(hwnd: int) -> bool:
     """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
     if not hwnd:
         return False
     if sys.platform == "win32":
-        # TODO: Fix stubs, IsWindow should return a boolean
         return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
 

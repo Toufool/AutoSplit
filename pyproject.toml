@@ -23,6 +23,7 @@ ignore = [
   "SIM105", # flake8-simplify: use-contextlib-suppress
   # Checked by type-checker (pyright)
   "ANN", # flake-annotations
+  "PGH003", # blanket-type-ignore
   "TCH", # flake8-type-checking
   # Already shown by Pylance, checked by pyright, and can be caused by overloads.
   "ARG002", # Unused method argument
@@ -45,10 +46,10 @@ ignore = [
   ###
   # Specific to this project
   ###
+  "D205", # Not all docstrings have a short description + desrciption
   # We have some Pascal case module names
   "N999", # pep8-naming: Invalid module name
   # Print are used as debug logs
-  "D205", # Not all docstrings have a short description + desrciption
   "T20", # flake8-print
   # This is a relatively small, low contributors project. Git blame suffice.
   "TD002", # missing-todo-author

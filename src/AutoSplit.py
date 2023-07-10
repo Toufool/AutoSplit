@@ -50,7 +50,7 @@ from utils import (
 )
 
 if TYPE_CHECKING:
-    import cv2.typing
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
 CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
@@ -244,7 +244,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
             self.load_start_image_signal.emit(False, True)
 
-    def __update_live_image_details(self, capture: cv2.typing.MatLike | None, called_from_timer: bool = False):
+    def __update_live_image_details(self, capture: MatLike | None, called_from_timer: bool = False):
         # HACK: Since this is also called in __get_capture_for_comparison,
         # we don't need to update anything if the app is running
         if called_from_timer:
@@ -533,11 +533,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Construct groups of splits
         self.split_groups = []
+        dummy_splits_array = []
+        number_of_split_images = len(self.split_images_and_loop_number)
         current_group: list[int] = []
         self.split_groups.append(current_group)
         for i, image in enumerate(self.split_images_and_loop_number):
             current_group.append(i)
-            if not image[0].check_flag(DUMMY_FLAG) and i < len(self.split_images_and_loop_number) - 1:
+            dummy = image[0].check_flag(DUMMY_FLAG)
+            dummy_splits_array.append(dummy)
+            if not dummy and i < number_of_split_images - 1:
                 current_group = []
                 self.split_groups.append(current_group)
 
@@ -553,8 +557,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.waiting_for_split_delay = False
         self.split_below_threshold = False
         split_time = 0
-        number_of_split_images = len(self.split_images_and_loop_number)
-        dummy_splits_array = [image_loop[0].check_flag(DUMMY_FLAG) for image_loop in self.split_images_and_loop_number]
 
         # First loop: stays in this loop until all of the split images have been split
         while self.split_image_number < number_of_split_images:
@@ -796,7 +798,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.__update_live_image_details(capture)
         return capture, is_old_image
 
-    def __reset_if_should(self, capture: cv2.typing.MatLike | None):
+    def __reset_if_should(self, capture: MatLike | None):
         """Checks if we should reset, resets if it's the case, and returns the result."""
         if self.reset_image:
             if self.settings_dict["enable_auto_reset"]:
@@ -906,7 +908,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             exit_program()
 
 
-def set_preview_image(qlabel: QLabel, image: cv2.typing.MatLike | None):
+def set_preview_image(qlabel: QLabel, image: MatLike | None):
     if not is_valid_image(image):
         # Clear current pixmap if no image. But don't clear text
         if not qlabel.text():

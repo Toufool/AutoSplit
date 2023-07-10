@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING, cast
 
-import cv2
 import numpy as np
 from typing_extensions import override
 from win32 import win32gui
@@ -17,7 +16,7 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
-    import cv2.typing
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
     from AutoSplit import AutoSplit
 
@@ -42,7 +41,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
-    last_captured_frame: cv2.typing.MatLike | None = None
+    last_captured_frame: MatLike | None = None
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
@@ -86,7 +85,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             self.session = None
 
     @override
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
+    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (
@@ -138,9 +137,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         if not is_valid_hwnd(hwnd):
             return False
         autosplit.hwnd = hwnd
-        self.close(autosplit)
         try:
-            self.__init__(autosplit)
+            self.reinitialize(autosplit)
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):

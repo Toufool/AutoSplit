@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum, EnumMeta, unique
+from enum import Enum, EnumMeta, auto, unique
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
@@ -32,7 +32,7 @@ class Region(TypedDict):
 class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
-    def __contains__(self, other: str):
+    def __contains__(self, other: object):
         try:
             self(other)
         except ValueError:
@@ -41,29 +41,39 @@ class CaptureMethodMeta(EnumMeta):
 
 
 @unique
+# TODO: Try StrEnum in Python 3.11
 class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # Allow TOML to save as a simple string
     @override
     def __repr__(self):
         return self.value
-    __str__ = __repr__
 
-    # Allow direct comparison with strings
     @override
     def __eq__(self, other: object):
-        return self.value == other.__str__()
+        if isinstance(other, str):
+            return self.value == other
+        if isinstance(other, Enum):
+            return self.value == other.value
+        return other == self
 
-    # Restore hashing functionality
+    # Restore hashing functionality for use in Maps
     @override
     def __hash__(self):
         return self.value.__hash__()
 
+    # https://github.com/python/typeshed/issues/10428
+    @override
+    def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
+        name: str | CaptureMethodEnum, *_,  # noqa: N805
+    ):
+        return name
+
     NONE = ""
-    BITBLT = "BITBLT"
-    WINDOWS_GRAPHICS_CAPTURE = "WINDOWS_GRAPHICS_CAPTURE"
-    PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
-    DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
-    VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
+    BITBLT = auto()
+    WINDOWS_GRAPHICS_CAPTURE = auto()
+    PRINTWINDOW_RENDERFULLCONTENT = auto()
+    DESKTOP_DUPLICATION = auto()
+    VIDEO_CAPTURE_DEVICE = auto()
 
 
 class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]]):
@@ -86,12 +96,13 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
             return first(self)
         return list(self.keys())[index]
 
-    if TYPE_CHECKING:
-        @override
-        def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride] # Disallow unsafe get
-            self,
-            __key: Never,
-        ) -> NoReturn: ...
+    # Disallow unsafe get w/o breaking it at runtime
+    @override
+    def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        __key: Never,
+    ):
+        return super().__getitem__(__key)
 
     @override
     def get(self, key: CaptureMethodEnum, __default: object = None):

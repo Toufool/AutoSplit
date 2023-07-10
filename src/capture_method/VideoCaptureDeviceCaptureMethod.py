@@ -14,14 +14,14 @@ from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-    import cv2.typing
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
     from AutoSplit import AutoSplit
 
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
 
 
-def is_blank(image: cv2.typing.MatLike):
+def is_blank(image: MatLike):
     # Running np.all on the entire array or looping manually through the
     # entire array is extremely slow when we can't stop early.
     # Instead we check for a few key pixels, in this case, corners
@@ -44,7 +44,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None
     stop_thread: Event
-    last_captured_frame: cv2.typing.MatLike | None = None
+    last_captured_frame: MatLike | None = None
     is_old_image = False
 
     def __read_loop(self, autosplit: AutoSplit):
@@ -52,15 +52,15 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             while not self.stop_thread.is_set():
                 try:
                     result, image = self.capture_device.read()
-                except cv2.error as error:
+                except cv2.error as cv2_error:
                     if not (
-                        error.code == cv2.Error.STS_ERROR
+                        cv2_error.code == cv2.Error.STS_ERROR
                         and (
                             # Likely means the camera is occupied
-                            error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
+                            cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539
-                            or error.msg.endswith("in function 'cv::VideoCapture::retrieve'\n")
+                            or cv2_error.msg.endswith("in function 'cv::VideoCapture::retrieve'\n")
                         )
                     ):
                         raise

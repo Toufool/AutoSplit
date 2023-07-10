@@ -4,7 +4,6 @@ import ctypes
 import ctypes.wintypes
 from typing import TYPE_CHECKING, cast
 
-import cv2
 import numpy as np
 import pywintypes
 import win32con
@@ -16,7 +15,7 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 if TYPE_CHECKING:
-    import cv2.typing
+    from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
     from AutoSplit import AutoSplit
 
@@ -36,10 +35,10 @@ class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     @override
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.typing.MatLike | None, bool]:
+    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
-        image: cv2.typing.MatLike | None = None
+        image: MatLike | None = None
 
         if not self.check_selected_region_exists(autosplit):
             return None, False
