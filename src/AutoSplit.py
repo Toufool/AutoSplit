@@ -8,7 +8,7 @@ import sys
 from collections.abc import Callable
 from time import time
 from types import FunctionType
-from typing import TYPE_CHECKING, NoReturn
+from typing import TYPE_CHECKING, Final, NoReturn
 
 import certifi
 import cv2
@@ -41,10 +41,10 @@ from user_profile import DEFAULT_PROFILE
 from utils import (
     AUTOSPLIT_VERSION,
     BGRA_CHANNEL_COUNT,
-    FROZEN,
     auto_split_directory,
     decimal,
     flatten,
+    frozen,
     is_valid_image,
     open_file,
 )
@@ -52,8 +52,8 @@ from utils import (
 if TYPE_CHECKING:
     from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
-CHECK_FPS_ITERATIONS = 10
-DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
+CHECK_FPS_ITERATIONS: Final = 10
+DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2: Final = 2
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
@@ -940,7 +940,7 @@ def seconds_remaining_text(seconds: float):
 def is_already_open():
     # When running directly in Python, any AutoSplit process means it's already open
     # When bundled, we must ignore itself and the splash screen
-    max_processes = 3 if FROZEN else 1
+    max_processes = 3 if frozen else 1
     process_count = 0
     for process in process_iter():
         if process.name() == "AutoSplit.exe":
@@ -964,7 +964,7 @@ def main():
 
         AutoSplit()
 
-        if not FROZEN:
+        if not frozen:
             # Kickoff the event loop every so often so we can handle KeyboardInterrupt (^C)
             timer = QtCore.QTimer()
             timer.timeout.connect(lambda: None)

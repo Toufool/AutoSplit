@@ -4,7 +4,7 @@ import ctypes
 import ctypes.wintypes
 import os
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 import cv2
 import numpy as np
@@ -36,9 +36,9 @@ if TYPE_CHECKING:
 
     from AutoSplit import AutoSplit
 
-ALIGN_REGION_THRESHOLD = 0.9
-BORDER_WIDTH = 2
-SUPPORTED_IMREAD_FORMATS = [
+ALIGN_REGION_THRESHOLD: Final = 0.9
+BORDER_WIDTH: Final = 2
+SUPPORTED_IMREAD_FORMATS: Final = [
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
     ("JPEG 2000 files", "*.jp2"),
@@ -52,7 +52,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("Radiance HDR", "*.hdr *.pic"),
 ]
 """https://docs.opencv.org/4.5.4/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56"""
-IMREAD_EXT_FILTER = "All Files (" \
+IMREAD_EXT_FILTER: Final = "All Files (" \
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
     + ");;"\
     + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
@@ -189,7 +189,7 @@ def align_region(autosplit: AutoSplit):
 
     template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Add alpha channel to template if it's missing.
-    if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
+    if template.shape[ImageShape.Channels.value] == BGR_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
 
     # Validate template is a valid image file
@@ -251,11 +251,11 @@ def __test_alignment(capture: MatLike, template: MatLike):
 
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
-        width = int(template.shape[ImageShape.X] * scale)
-        height = int(template.shape[ImageShape.Y] * scale)
+        width = int(template.shape[ImageShape.X.value] * scale)
+        height = int(template.shape[ImageShape.Y.value] * scale)
 
         # The template can not be larger than the capture
-        if width > capture.shape[ImageShape.X] or height > capture.shape[ImageShape.Y]:
+        if width > capture.shape[ImageShape.X.value] or height > capture.shape[ImageShape.Y.value]:
             continue
 
         resized = cv2.resize(template, (width, height), interpolation=cv2.INTER_NEAREST)

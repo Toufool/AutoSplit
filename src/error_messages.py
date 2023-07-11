@@ -6,11 +6,11 @@ import signal
 import sys
 import traceback
 from types import TracebackType
-from typing import TYPE_CHECKING, NoReturn
+from typing import TYPE_CHECKING, Final, NoReturn
 
 from PySide6 import QtCore, QtWidgets
 
-from utils import FROZEN, GITHUB_REPOSITORY
+from utils import GITHUB_REPOSITORY, frozen
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -161,7 +161,7 @@ def exception_traceback(exception: BaseException, message: str = ""):
     )
 
 
-CREATE_NEW_ISSUE_MESSAGE = (
+CREATE_NEW_ISSUE_MESSAGE: Final = (
     f"Please create a New Issue at <a href='https://github.com/{GITHUB_REPOSITORY}/issues'>"
     + f"github.com/{GITHUB_REPOSITORY}/issues</a>, describe what happened, "
     + "and copy & paste the entire error message below"
@@ -187,7 +187,7 @@ def make_excepthook(autosplit: AutoSplit):
 def handle_top_level_exceptions(exception: Exception) -> NoReturn:
     message = f"AutoSplit encountered an unrecoverable exception and will likely now close. {CREATE_NEW_ISSUE_MESSAGE}"
     # Print error to console if not running in executable
-    if FROZEN:
+    if frozen:
         exception_traceback(exception, message)
     else:
         traceback.print_exception(type(exception), exception, exception.__traceback__)

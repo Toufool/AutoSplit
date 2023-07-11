@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Final, cast
 
 import numpy as np
 from typing_extensions import override
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
     from AutoSplit import AutoSplit
 
-WGC_NO_BORDER_MIN_BUILD = 20348
-LEARNING_MODE_DEVICE_BUILD = 17763
+WGC_NO_BORDER_MIN_BUILD: Final = 20348
+LEARNING_MODE_DEVICE_BUILD: Final = 17763
 """https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 

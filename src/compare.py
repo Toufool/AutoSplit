@@ -12,11 +12,11 @@ from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_vali
 if TYPE_CHECKING:
     from cv2.typing import MatLike  # pyright: ignore[reportMissingModuleSource]
 
-MAXRANGE = MAXBYTE + 1
-CHANNELS = [ColorChannel.Red, ColorChannel.Green, ColorChannel.Blue]
-HISTOGRAM_SIZE = [8, 8, 8]
-RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
-MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
+MAXRANGE: Final = MAXBYTE + 1
+CHANNELS: Final = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
+HISTOGRAM_SIZE: Final = [8, 8, 8]
+RANGES: Final = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+MASK_SIZE_MULTIPLIER: Final = ColorChannel.Alpha.value * MAXBYTE * MAXBYTE
 
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
@@ -107,9 +107,9 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
 
 def check_if_image_has_transparency(image: MatLike):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
-    if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
+    if image.shape[ImageShape.Channels.value] != BGRA_CHANNEL_COUNT:
         return False
-    mean: float = image[:, :, ColorChannel.Alpha].mean()
+    mean: float = image[:, :, ColorChannel.Alpha.value].mean()
     if mean == 0:
         # Non-transparent images code path is usually faster and simpler, so let's return that
         return False
@@ -119,4 +119,4 @@ def check_if_image_has_transparency(image: MatLike):
     return mean != MAXBYTE
 
 
-COMPARE_METHODS_BY_INDEX = {0: compare_l2_norm, 1: compare_histograms, 2: compare_phash}
+COMPARE_METHODS_BY_INDEX: Final = {0: compare_l2_norm, 1: compare_histograms, 2: compare_phash}

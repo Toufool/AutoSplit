@@ -14,6 +14,13 @@ foreach ($file in $files) {
     ForEach-Object { $_ -replace 'import resources_rc', 'from . import resources_rc' } |
     Set-Content $file.PSPath
 }
+# Fix for "error C2026: string too big, trailing characters truncated" with mypyc
+(Get-Content ./src/gen/resources_rc.py) |
+    ForEach-Object { $_ -replace 'qt_resource_data =', 'from typing import TYPE_CHECKING
+if TYPE_CHECKING: qt_resource_data = b""
+else: qt_resource_data =' } |
+    Set-Content ./src/gen/resources_rc.py
+
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
@@ -35,8 +42,9 @@ If (-not $GITHUB_REPOSITORY) {
 }
 
 New-Item $build_vars_path -ItemType File -Force | Out-Null
-Add-Content $build_vars_path "AUTOSPLIT_BUILD_NUMBER = `"$BUILD_NUMBER`""
-Add-Content $build_vars_path "AUTOSPLIT_GITHUB_REPOSITORY = `"$GITHUB_REPOSITORY`""
+Add-Content $build_vars_path 'from typing import Final'
+Add-Content $build_vars_path "AUTOSPLIT_BUILD_NUMBER: Final = `"$BUILD_NUMBER`""
+Add-Content $build_vars_path "AUTOSPLIT_GITHUB_REPOSITORY: Final = `"$GITHUB_REPOSITORY`""
 Write-Host "Generated build number: `"$BUILD_NUMBER`""
 Write-Host "Set repository to `"$GITHUB_REPOSITORY`""
 

@@ -13,7 +13,7 @@ dist/
 *.prof
 # Generated
 **/gen/*.py
-!**/gen/*.pyi
+**/*.pyd
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

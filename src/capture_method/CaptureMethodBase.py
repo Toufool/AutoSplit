@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from utils import is_valid_hwnd
 
@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 
 class CaptureMethodBase:
-    name = "None"
-    short_description = ""
-    description = ""
+    name: ClassVar[str] = "None"
+    short_description: ClassVar[str] = ""
+    description: ClassVar[str] = ""
 
     def __init__(self, autosplit: AutoSplit | None):
         # Some capture methods don't need an initialization process

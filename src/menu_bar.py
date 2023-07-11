@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import webbrowser
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Final, cast
 
 import requests
 from packaging.version import parse as version_parse
@@ -29,7 +29,7 @@ from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-HALF_BRIGHTNESS = 128
+HALF_BRIGHTNESS: Final = 128
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Final, cast
 
 import numpy as np
 import pywintypes
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # This is an undocumented nFlag value for PrintWindow
-PW_RENDERFULLCONTENT = 0x00000002
+PW_RENDERFULLCONTENT: Final = 0x00000002
 
 
 class BitBltCaptureMethod(CaptureMethodBase):

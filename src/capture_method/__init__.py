@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum, EnumMeta, auto, unique
-from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
+from enum import Enum, auto, unique
+from typing import TYPE_CHECKING, Final, TypedDict, cast
 
 from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
@@ -28,21 +28,22 @@ class Region(TypedDict):
     width: int
     height: int
 
-
-class CaptureMethodMeta(EnumMeta):
-    # Allow checking if simple string is enum
-    @override
-    def __contains__(self, other: object):
-        try:
-            self(other)
-        except ValueError:
-            return False
-        return True
+# Haven't needed this in a while. Probably use an alternative if needed again
+# class CaptureMethodMeta(EnumMeta):
+#     # Allow checking if simple string is enum
+#     @override
+#     def __contains__(self, other: object):
+#         try:
+#             self(other)
+#         except ValueError:
+#             return False
+#         return True
 
 
 @unique
 # TODO: Try StrEnum in Python 3.11
-class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
+# class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
+class CaptureMethodEnum(Enum):
     # Allow TOML to save as a simple string
     @override
     def __repr__(self):
@@ -65,8 +66,8 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     @override
     def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
         name: str | CaptureMethodEnum, *_,  # noqa: N805
-    ):
-        return name
+    ) -> str:
+        return cast(str, name)
 
     NONE = ""
     BITBLT = auto()
@@ -116,7 +117,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
         return super().get(key, first(self.values()))
 
 
-CAPTURE_METHODS = CaptureMethodDict()
+CAPTURE_METHODS: Final = CaptureMethodDict()
 if (  # Windows Graphics Capture requires a minimum Windows Build
     WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
     # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice

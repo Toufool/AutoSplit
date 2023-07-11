@@ -6,10 +6,10 @@ import ctypes.wintypes
 import os
 import sys
 from collections.abc import Callable, Generator, Iterable
-from enum import IntEnum
+from enum import Enum
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Final, TypeVar, cast
 
 import win32ui
 from typing_extensions import TypeGuard
@@ -27,21 +27,24 @@ if TYPE_CHECKING:
 _T = TypeVar("_T")
 
 
-DWMWA_EXTENDED_FRAME_BOUNDS = 9
-MAXBYTE = 255
-BGR_CHANNEL_COUNT = 3
+DWMWA_EXTENDED_FRAME_BOUNDS: Final = 9
+MAXBYTE: Final = 255
+BGR_CHANNEL_COUNT: Final = 3
 """How many channels in an RGB image"""
-BGRA_CHANNEL_COUNT = 4
+BGRA_CHANNEL_COUNT: Final = 4
 """How many channels in an RGBA image"""
 
+# TODO: Switch back to IntEnum and remove all `.value` once fixed in mypyc
+# https://github.com/mypyc/mypyc/issues/721
 
-class ImageShape(IntEnum):
+
+class ImageShape(Enum):
     Y = 0
     X = 1
     Channels = 2
 
 
-class ColorChannel(IntEnum):
+class ColorChannel(Enum):
     Blue = 0
     Green = 1
     Red = 2
@@ -179,17 +182,21 @@ def flatten(nested_iterable: Iterable[Iterable[_T]]) -> Generator[_T, None, None
 
 
 # Environment specifics
-WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
-FIRST_WIN_11_BUILD = 22000
+WINDOWS_BUILD_NUMBER: Final = int(version().split(".")[-1]) if sys.platform == "win32" else -1
+FIRST_WIN_11_BUILD: Final = 22000
 """AutoSplit Version number"""
-WGC_MIN_BUILD = 17134
+WGC_MIN_BUILD: Final = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
-FROZEN = hasattr(sys, "frozen")
+# NOTE: Marking as Final so mypyc early binds, __file__ won't be accessible during compiled runtime
+CURRENT_FILE_PATH: Final = os.path.abspath(__file__)
+# NOTE: Do NOT mark as Final, "sys.frozen" is set by PyInstaller,
+# we don't want mypyc to early bind this to Literal[False]
+frozen = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
-auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
+auto_split_directory = os.path.dirname(sys.executable if frozen else CURRENT_FILE_PATH)
 """The directory of either the AutoSplit executable or AutoSplit.py"""
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.1.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
-GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY
+AUTOSPLIT_VERSION: Final = "2.1.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+GITHUB_REPOSITORY: Final = AUTOSPLIT_GITHUB_REPOSITORY

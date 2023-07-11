@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
-from enum import IntEnum
+from enum import Enum
 from math import sqrt
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 import cv2
 import numpy as np
@@ -18,17 +18,20 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 # Resize to these width and height so that FPS performance increases
-COMPARISON_RESIZE_WIDTH = 320
-COMPARISON_RESIZE_HEIGHT = 240
-COMPARISON_RESIZE = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
-COMPARISON_RESIZE_AREA = COMPARISON_RESIZE_WIDTH * COMPARISON_RESIZE_HEIGHT
-MASK_LOWER_BOUND = np.array([0, 0, 0, 1], dtype="uint8")
-MASK_UPPER_BOUND = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
-START_KEYWORD = "start_auto_splitter"
-RESET_KEYWORD = "reset"
+COMPARISON_RESIZE_WIDTH: Final = 320
+COMPARISON_RESIZE_HEIGHT: Final = 240
+COMPARISON_RESIZE: Final = (COMPARISON_RESIZE_WIDTH, COMPARISON_RESIZE_HEIGHT)
+COMPARISON_RESIZE_AREA: Final = COMPARISON_RESIZE_WIDTH * COMPARISON_RESIZE_HEIGHT
+MASK_LOWER_BOUND: Final = np.array([0, 0, 0, 1], dtype="uint8")
+MASK_UPPER_BOUND: Final = np.array([MAXBYTE, MAXBYTE, MAXBYTE, MAXBYTE], dtype="uint8")
+START_KEYWORD: Final = "start_auto_splitter"
+RESET_KEYWORD: Final = "reset"
+
+# TODO: Switch back to IntEnum and remove all `.value` once fixed in mypyc
+# https://github.com/mypyc/mypyc/issues/721
 
 
-class ImageType(IntEnum):
+class ImageType(Enum):
     SPLIT = 0
     RESET = 1
     START = 2
@@ -110,7 +113,7 @@ class AutoSplitImage:
             # the number of nonzero elements in the alpha channel of the split image.
             # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency.
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])))
+            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha.value])))
 
             image = cv2.resize(
                 image,

@@ -52,6 +52,8 @@
   "search.exclude": {
     "**/*.code-search": true,
     "*.lock": true,
+    // mypyc-compiled
+    "*.c": true,
   },
   // Set the default formatter to help avoid Prettier
   "[json][jsonc]": {

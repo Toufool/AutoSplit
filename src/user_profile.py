@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, Final, TypedDict, cast
 
 import toml
 from PySide6 import QtCore, QtWidgets
@@ -42,7 +42,7 @@ class UserProfileDict(TypedDict):
     capture_region: Region
 
 
-DEFAULT_PROFILE = UserProfileDict(
+DEFAULT_PROFILE: Final = UserProfileDict(
     split_hotkey="",
     reset_hotkey="",
     undo_split_hotkey="",

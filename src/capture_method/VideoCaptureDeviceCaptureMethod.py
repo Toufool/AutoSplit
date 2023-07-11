@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from threading import Event, Thread
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 import cv2
 import cv2.Error
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from AutoSplit import AutoSplit
 
-OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
+OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL: Final = [127, 129, 128]
 
 
 def is_blank(image: MatLike):
@@ -27,8 +27,8 @@ def is_blank(image: MatLike):
     # Instead we check for a few key pixels, in this case, corners
     return np.all(
         image[
-            ::image.shape[ImageShape.Y] - 1,
-            ::image.shape[ImageShape.X] - 1,
+            ::image.shape[ImageShape.Y.value] - 1,
+            ::image.shape[ImageShape.X.value] - 1,
         ] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
     )
 
@@ -128,8 +128,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
         selection = autosplit.settings_dict["capture_region"]
         # Ensure we can't go OOB of the image
-        y = min(selection["y"], image.shape[ImageShape.Y] - 1)
-        x = min(selection["x"], image.shape[ImageShape.X] - 1)
+        y = min(selection["y"], image.shape[ImageShape.Y.value] - 1)
+        x = min(selection["x"], image.shape[ImageShape.X.value] - 1)
         image = image[
             y:y + selection["height"],
             x:x + selection["width"],

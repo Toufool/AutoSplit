@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Final, Literal, cast
 
 import keyboard
 import pyautogui
@@ -16,12 +16,15 @@ if TYPE_CHECKING:
 # While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
 pyautogui.FAILSAFE = False
 
-SET_HOTKEY_TEXT = "Set Hotkey"
-PRESS_A_KEY_TEXT = "Press a key..."
+SET_HOTKEY_TEXT: Final = "Set Hotkey"
+PRESS_A_KEY_TEXT: Final = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
-HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
+HOTKEYS: Final[list[Hotkey]] = [
+    "split", "reset", "skip_split",
+    "undo_split", "pause", "screenshot", "toggle_auto_reset_image",
+]
 
 
 def remove_all_hotkeys():
