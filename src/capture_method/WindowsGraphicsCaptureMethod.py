@@ -30,7 +30,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     short_description = "fast, most compatible, capped at 60fps"
     description = (
         f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-        + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
+        + f"\nDue to current technical limitations, Windows versions below 10.0.{LEARNING_MODE_DEVICE_BUILD}"
         + "\nrequire having at least one audio or video Capture Device connected and enabled."
         + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
         + "\nAdds a yellow border on Windows 10 (not on Windows 11)."

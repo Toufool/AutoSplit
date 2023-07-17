@@ -181,19 +181,26 @@ def flatten(nested_iterable: Iterable[Iterable[_T]]) -> Generator[_T, None, None
     )
 
 
+def __get_auto_split_directory():
+    """
+    `Cpython` doesn't populate `__file__` until after the module init routine returns,
+    so modules that reference at the toplevel will be busted.
+    https://github.com/mypyc/mypyc/issues/700 .
+    """
+    return os.path.dirname(sys.executable if frozen else os.path.abspath(__file__))
+
+
 # Environment specifics
 WINDOWS_BUILD_NUMBER: Final = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD: Final = 22000
 """AutoSplit Version number"""
 WGC_MIN_BUILD: Final = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
-# NOTE: Marking as Final so mypyc early binds, __file__ won't be accessible during compiled runtime
-CURRENT_FILE_PATH: Final = os.path.abspath(__file__)
 # NOTE: Do NOT mark as Final, "sys.frozen" is set by PyInstaller,
 # we don't want mypyc to early bind this to Literal[False]
 frozen = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
-auto_split_directory = os.path.dirname(sys.executable if frozen else CURRENT_FILE_PATH)
+auto_split_directory = __get_auto_split_directory()
 """The directory of either the AutoSplit executable or AutoSplit.py"""
 
 # Shared strings

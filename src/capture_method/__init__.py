@@ -59,13 +59,14 @@ class CaptureMethodEnum(Enum):
 
     # Restore hashing functionality for use in Maps
     @override
+    @staticmethod
     def __hash__(self):
         return self.value.__hash__()
 
     # https://github.com/python/typeshed/issues/10428
-    @override
-    def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        name: str | CaptureMethodEnum, *_,  # noqa: N805
+    @staticmethod
+    def _generate_next_value_(  # type:ignore[override]
+        name: str | CaptureMethodEnum, *_,
     ) -> str:
         return cast(str, name)
 
