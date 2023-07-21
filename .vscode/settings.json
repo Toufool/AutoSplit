@@ -45,9 +45,14 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "build": true,
-    "**/.mypy_cache": true,
+    "**/.*_cache": true, // mypy and Ruff cache
     "**/__pycache__": true,
+    // Only show useful PyInstaller logs
+    "build/*.*": true,
+    "build/[b-z]*": true,
+    "build/**/localpycs": true,
+    "build/**/Tree-*": true,
+    "build/**/*.{manifest,pkg,zip,tcl,res,pyz}": true,
   },
   "search.exclude": {
     "**/*.code-search": true,
