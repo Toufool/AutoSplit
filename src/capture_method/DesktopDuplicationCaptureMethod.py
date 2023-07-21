@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import ctypes
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Union, cast
 
 import cv2
 import d3dshot
+import numpy as np
 import win32con
+from typing_extensions import override
 from win32 import win32gui
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -33,6 +35,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         # Must not set statically as some laptops will throw an error
         self.desktop_duplication = d3dshot.create(capture_output="numpy")
 
+    @override
     def get_frame(self, autosplit: AutoSplit):
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
@@ -53,7 +56,10 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         top = selection["y"] + offset_y + top_bounds
         right = selection["width"] + left
         bottom = selection["height"] + top
-        screenshot = self.desktop_duplication.screenshot((left, top, right, bottom))
+        screenshot = cast(
+            Union[np.ndarray[int, np.dtype[np.generic]], None],
+            self.desktop_duplication.screenshot((left, top, right, bottom)),
+        )
         if screenshot is None:
             return None, False
-        return cv2.cvtColor(cast(cv2.Mat, screenshot), cv2.COLOR_RGBA2BGRA), False
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA), False

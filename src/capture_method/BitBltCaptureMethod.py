@@ -4,17 +4,19 @@ import ctypes
 import ctypes.wintypes
 from typing import TYPE_CHECKING, cast
 
-import cv2
 import numpy as np
 import pywintypes
 import win32con
 import win32ui
+from cv2.typing import MatLike
+from typing_extensions import override
 from win32 import win32gui
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import RGBA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
+from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 if TYPE_CHECKING:
+
     from AutoSplit import AutoSplit
 
 # This is an undocumented nFlag value for PrintWindow
@@ -32,10 +34,11 @@ class BitBltCaptureMethod(CaptureMethodBase):
 
     _render_full_content = False
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[cv2.Mat | None, bool]:
+    @override
+    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
-        image: cv2.Mat | None = None
+        image: MatLike | None = None
 
         if not self.check_selected_region_exists(autosplit):
             return None, False
@@ -64,7 +67,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
                 win32con.SRCCOPY,
             )
             image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
-            image.shape = (selection["height"], selection["width"], RGBA_CHANNEL_COUNT)
+            image.shape = (selection["height"], selection["width"], BGRA_CHANNEL_COUNT)
         except (win32ui.error, pywintypes.error):
             # Invalid handle or the window was closed while it was being manipulated
             return None, False
@@ -76,6 +79,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         win32gui.DeleteObject(bitmap.GetHandle())
         return image, False
 
+    @override
     def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):

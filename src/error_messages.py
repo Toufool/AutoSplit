@@ -75,13 +75,12 @@ def split_hotkey():
 
 def pause_hotkey():
     set_text_message(
-        "Your split image folder contains an image filename with a pause flag {p}, "
-        + "but no pause hotkey is set.",
+        "Your split image folder contains an image filename with a pause flag {p}, but no pause hotkey is set.",
     )
 
 
-def align_region_image_type():
-    set_text_message("File not a valid image file")
+def image_validity(image: str = "File"):
+    set_text_message(f"{image} not a valid image file")
 
 
 def alignment_not_matched():
@@ -97,7 +96,7 @@ def multiple_keyword_images(keyword: str):
 
 
 def reset_hotkey():
-    set_text_message("Your split image folder contains a reset image, but no reset hotkey is set.")
+    set_text_message("Your split image folder contains a Reset Image, but no reset hotkey is set.")
 
 
 def old_version_settings_file():
@@ -133,8 +132,8 @@ def check_for_updates():
 
 def load_start_image():
     set_text_message(
-        "Start Image found, but cannot be loaded unless Start, Reset, and Pause hotkeys are set. "
-        + "Please set these hotkeys, and then click the Reload Start Image button.",
+        "Start Image found, but cannot be loaded unless Start hotkey is set. "
+        + "Please set the hotkey, and then click the Reload Start Image button.",
     )
 
 

@@ -5,14 +5,14 @@ import ctypes
 import ctypes.wintypes
 import os
 import sys
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Generator, Iterable
 from enum import IntEnum
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
-import cv2
 import win32ui
+from cv2.typing import MatLike
 from typing_extensions import TypeGuard
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
@@ -24,24 +24,27 @@ if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
 
+_T = TypeVar("_T")
+
+
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
-RGB_CHANNEL_COUNT = 3
+BGR_CHANNEL_COUNT = 3
 """How many channels in an RGB image"""
-RGBA_CHANNEL_COUNT = 4
-"""How many channels in an RGB image"""
+BGRA_CHANNEL_COUNT = 4
+"""How many channels in an RGBA image"""
 
 
 class ImageShape(IntEnum):
-    X = 0
-    Y = 1
+    Y = 0
+    X = 1
     Channels = 2
 
 
 class ColorChannel(IntEnum):
-    Red = 0
+    Blue = 0
     Green = 1
-    Blue = 2
+    Red = 2
     Alpha = 3
 
 
@@ -60,16 +63,15 @@ def is_digit(value: str | int | None):
         return False
 
 
-def is_valid_image(image: cv2.Mat | None) -> TypeGuard[cv2.Mat]:
+def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
     return image is not None and bool(image.size)
 
 
-def is_valid_hwnd(hwnd: int):
+def is_valid_hwnd(hwnd: int) -> bool:
     """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
     if not hwnd:
         return False
     if sys.platform == "win32":
-        # TODO: Fix stubs, IsWindow should return a boolean
         return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
 
@@ -126,9 +128,9 @@ def get_direct3d_device():
 
     async def init_mediacapture():
         await (media_capture.initialize_async() or asyncio.sleep(0))
+
     asyncio.run(init_mediacapture())
-    direct_3d_device = media_capture.media_capture_settings and \
-        media_capture.media_capture_settings.direct3_d11_device
+    direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
     if not direct_3d_device:
         try:
             # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
@@ -157,6 +159,7 @@ def fire_and_forget(func: Callable[..., Any]):
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
+
     def wrapped(*args: Any, **kwargs: Any):
         if sys.platform == "win32":
             thread = Thread(target=func, args=args, kwargs=kwargs)
@@ -165,6 +168,14 @@ def fire_and_forget(func: Callable[..., Any]):
         return get_or_create_eventloop().run_in_executor(None, func, *args, *kwargs)
 
     return wrapped
+
+
+def flatten(nested_iterable: Iterable[Iterable[_T]]) -> Generator[_T, None, None]:
+    return (
+        item for flatten
+        in nested_iterable
+        for item in flatten
+    )
 
 
 # Environment specifics

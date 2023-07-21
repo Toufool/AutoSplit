@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Toufool</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -473,7 +474,7 @@
      <string>Select Window</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="browse_button">
+   <widget class="QPushButton" name="split_image_folder_button">
     <property name="geometry">
      <rect>
       <x>696</x>
@@ -894,42 +895,6 @@
      <string>&gt;</string>
     </property>
    </widget>
-   <zorder>x_label</zorder>
-   <zorder>select_region_button</zorder>
-   <zorder>start_auto_splitter_button</zorder>
-   <zorder>reset_button</zorder>
-   <zorder>undo_split_button</zorder>
-   <zorder>skip_split_button</zorder>
-   <zorder>check_fps_button</zorder>
-   <zorder>fps_label</zorder>
-   <zorder>current_image_label</zorder>
-   <zorder>live_image</zorder>
-   <zorder>current_split_image</zorder>
-   <zorder>width_label</zorder>
-   <zorder>height_label</zorder>
-   <zorder>fps_value_label</zorder>
-   <zorder>width_spinbox</zorder>
-   <zorder>height_spinbox</zorder>
-   <zorder>capture_region_label</zorder>
-   <zorder>current_image_file_label</zorder>
-   <zorder>take_screenshot_button</zorder>
-   <zorder>x_spinbox</zorder>
-   <zorder>y_spinbox</zorder>
-   <zorder>y_label</zorder>
-   <zorder>align_region_button</zorder>
-   <zorder>select_window_button</zorder>
-   <zorder>browse_button</zorder>
-   <zorder>split_image_folder_label</zorder>
-   <zorder>split_image_folder_input</zorder>
-   <zorder>capture_region_window_label</zorder>
-   <zorder>image_loop_label</zorder>
-   <zorder>similarity_viewer_groupbox</zorder>
-   <zorder>reload_start_image_button</zorder>
-   <zorder>start_image_status_label</zorder>
-   <zorder>start_image_status_value_label</zorder>
-   <zorder>image_loop_value_label</zorder>
-   <zorder>previous_image_button</zorder>
-   <zorder>next_image_button</zorder>
   </widget>
   <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">

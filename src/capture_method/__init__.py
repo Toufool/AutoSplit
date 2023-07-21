@@ -3,11 +3,12 @@ from __future__ import annotations
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum, EnumMeta, unique
-from typing import TYPE_CHECKING, TypedDict, cast
+from enum import Enum, EnumMeta, auto, unique
+from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
+from typing_extensions import Never, override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -30,7 +31,8 @@ class Region(TypedDict):
 
 class CaptureMethodMeta(EnumMeta):
     # Allow checking if simple string is enum
-    def __contains__(self, other: str):
+    @override
+    def __contains__(self, other: object):
         try:
             self(other)
         except ValueError:
@@ -39,26 +41,39 @@ class CaptureMethodMeta(EnumMeta):
 
 
 @unique
+# TODO: Try StrEnum in Python 3.11
 class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # Allow TOML to save as a simple string
+    @override
     def __repr__(self):
         return self.value
-    __str__ = __repr__
 
-    # Allow direct comparison with strings
+    @override
     def __eq__(self, other: object):
-        return self.value == other.__str__()
+        if isinstance(other, str):
+            return self.value == other
+        if isinstance(other, Enum):
+            return self.value == other.value
+        return other == self
 
-    # Restore hashing functionality
+    # Restore hashing functionality for use in Maps
+    @override
     def __hash__(self):
         return self.value.__hash__()
 
+    # https://github.com/python/typeshed/issues/10428
+    @override
+    def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
+        name: str | CaptureMethodEnum, *_,  # noqa: N805
+    ):
+        return name
+
     NONE = ""
-    BITBLT = "BITBLT"
-    WINDOWS_GRAPHICS_CAPTURE = "WINDOWS_GRAPHICS_CAPTURE"
-    PRINTWINDOW_RENDERFULLCONTENT = "PRINTWINDOW_RENDERFULLCONTENT"
-    DESKTOP_DUPLICATION = "DESKTOP_DUPLICATION"
-    VIDEO_CAPTURE_DEVICE = "VIDEO_CAPTURE_DEVICE"
+    BITBLT = auto()
+    WINDOWS_GRAPHICS_CAPTURE = auto()
+    PRINTWINDOW_RENDERFULLCONTENT = auto()
+    DESKTOP_DUPLICATION = auto()
+    VIDEO_CAPTURE_DEVICE = auto()
 
 
 class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]]):
@@ -81,18 +96,24 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
             return first(self)
         return list(self.keys())[index]
 
-    if TYPE_CHECKING:
-        __getitem__ = None  # pyright: ignore[reportGeneralTypeIssues] # Disallow unsafe get
+    # Disallow unsafe get w/o breaking it at runtime
+    @override
+    def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        __key: Never,
+    ) -> NoReturn | type[CaptureMethodBase]:
+        return super().__getitem__(__key)
 
-    def get(self, __key: CaptureMethodEnum):
+    @override
+    def get(self, key: CaptureMethodEnum, __default: object = None):
         """
         Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
-        Returns `CaptureMethodBase` (default) directly if there's no capture methods.
+        Returns `CaptureMethodBase` directly if there's no capture methods.
         """
-        if __key == CaptureMethodEnum.NONE or len(self) <= 0:
+        if key == CaptureMethodEnum.NONE or len(self) <= 0:
             return CaptureMethodBase
-        return super().get(__key, first(self.values()))
+        return super().get(key, first(self.values()))
 
 
 CAPTURE_METHODS = CaptureMethodDict()
@@ -126,7 +147,7 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
 
 
 @dataclass
-class CameraInfo():
+class CameraInfo:
     device_id: int
     name: str
     occupied: bool

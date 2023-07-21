@@ -1,7 +1,6 @@
 // Keep in alphabetical order
 {
   "recommendations": [
-    "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
     "emeraldwalk.runonsave",
@@ -13,11 +12,14 @@
     "pkief.material-icon-theme",
     "redhat.vscode-xml",
     "redhat.vscode-yaml",
+    "tamasfe.even-better-toml",
   ],
   "unwantedRecommendations": [
     // Must disable in this workspace //
     // https://github.com/microsoft/vscode/issues/40239 //
     //
+    // even-better-toml has format on save
+    "bungcip.better-toml",
     // VSCode has implemented an optimized version
     "coenraads.bracket-pair-colorizer",
     "coenraads.bracket-pair-colorizer-2",

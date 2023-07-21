@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
@@ -19,11 +20,21 @@ from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
-from utils import MAXBYTE, RGB_CHANNEL_COUNT, ImageShape, get_window_bounds, is_valid_hwnd, is_valid_image
+from utils import (
+    BGR_CHANNEL_COUNT,
+    MAXBYTE,
+    ImageShape,
+    auto_split_directory,
+    get_window_bounds,
+    is_valid_hwnd,
+    is_valid_image,
+)
 
 user32 = ctypes.windll.user32
 
+
 if TYPE_CHECKING:
+
     from AutoSplit import AutoSplit
 
 ALIGN_REGION_THRESHOLD = 0.9
@@ -169,7 +180,7 @@ def align_region(autosplit: AutoSplit):
     template_filename = QtWidgets.QFileDialog.getOpenFileName(
         autosplit,
         "Select Reference Image",
-        "",
+        autosplit.settings_dict["split_image_directory"] or auto_split_directory,
         IMREAD_EXT_FILTER,
     )[0]
 
@@ -177,11 +188,14 @@ def align_region(autosplit: AutoSplit):
     if not template_filename:
         return
 
-    template = cv2.imread(template_filename, cv2.IMREAD_COLOR)
+    template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
+    # Add alpha channel to template if it's missing.
+    if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
+        template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
 
     # Validate template is a valid image file
     if not is_valid_image(template):
-        error_messages.align_region_image_type()
+        error_messages.image_validity()
         return
 
     # Obtaining the capture of a region which contains the
@@ -222,7 +236,7 @@ def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, h
     autosplit.height_spinbox.setValue(height)
 
 
-def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
+def __test_alignment(capture: MatLike, template: MatLike):
     """
     Obtain the best matching point for the template within the
     capture. This assumes that the template is actually smaller
@@ -236,18 +250,13 @@ def __test_alignment(capture: cv2.Mat, template: cv2.Mat):
     best_width = 0
     best_loc = (0, 0)
 
-    # Add alpha channel to template if it's missing. The cv2.matchTemplate() function
-    # needs both images to have the same color dimensions, and capture has an alpha channel
-    if template.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
-        template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
-
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
-        width = int(template.shape[1] * scale)
-        height = int(template.shape[0] * scale)
+        width = int(template.shape[ImageShape.X] * scale)
+        height = int(template.shape[ImageShape.Y] * scale)
 
         # The template can not be larger than the capture
-        if width > capture.shape[1] or height > capture.shape[0]:
+        if width > capture.shape[ImageShape.X] or height > capture.shape[ImageShape.Y]:
             continue
 
         resized = cv2.resize(template, (width, height), interpolation=cv2.INTER_NEAREST)

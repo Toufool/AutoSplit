@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING, Any, cast
 import requests
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QBrush, QPalette
+from PySide6.QtWidgets import QFileDialog
 from requests.exceptions import RequestException
+from typing_extensions import override
 
 import error_messages
 import user_profile
@@ -24,6 +28,8 @@ from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
+HALF_BRIGHTNESS = 128
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
@@ -90,6 +96,7 @@ class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
         self.autosplit = autosplit
         self.check_on_open = check_on_open
 
+    @override
     def run(self):
         try:
             response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30)
@@ -114,11 +121,59 @@ def check_for_updates(autosplit: AutoSplit, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noqa: N801 # Private class
-    __video_capture_devices: list[CameraInfo] = []
-    """
-    Used to temporarily store the existing cameras,
-    we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
-    """
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__()
+        self.__video_capture_devices: list[CameraInfo] = []
+        """
+        Used to temporarily store the existing cameras,
+        we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
+        """
+
+        self.setupUi(self)
+
+        # Fix Fusion Dark Theme's tabs content looking weird because it's using the button role
+        window_color = self.palette().color(QPalette.ColorRole.Window)
+        if window_color.red() < HALF_BRIGHTNESS:
+            brush = QBrush(window_color)
+            brush.setStyle(Qt.BrushStyle.SolidPattern)
+            palette = QPalette()
+            palette.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush)
+            palette.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, brush)
+            palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush)
+            self.settings_tabs.setPalette(palette)
+
+        self.autosplit = autosplit
+        self.__set_readme_link()
+        # Don't autofocus any particular field
+        self.setFocus()
+
+
+# region Build the Capture method combobox
+        capture_method_values = CAPTURE_METHODS.values()
+        self.__set_all_capture_devices()
+
+        # TODO: Word-wrapping works, but there's lots of extra padding to the right. Raise issue upstream
+        # list_view = QtWidgets.QListView()
+        # list_view.setWordWrap(True)
+        # list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # list_view.setFixedWidth(self.capture_method_combobox.width())
+        # self.capture_method_combobox.setView(list_view)
+
+        self.capture_method_combobox.addItems([
+            f"- {method.name} ({method.short_description})"
+            for method in capture_method_values
+        ])
+        self.capture_method_combobox.setToolTip(
+            "\n\n".join([
+                f"{method.name} :\n{method.description}"
+                for method in capture_method_values
+            ]),
+        )
+# endregion
+
+        self.__setup_bindings()
+
+        self.show()
 
     def __update_default_threshold(self, value: Any):
         self.__set_value("default_similarity_threshold", value)
@@ -144,7 +199,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             return 0
 
     def __enable_capture_device_if_its_selected_method(
-            self, selected_capture_method: str | CaptureMethodEnum | None = None,
+        self,
+        selected_capture_method: str | CaptureMethodEnum | None = None,
     ):
         if selected_capture_method is None:
             selected_capture_method = self.autosplit.settings_dict["capture_method"]
@@ -210,38 +266,16 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
 
-    def __init__(self, autosplit: AutoSplit):
-        super().__init__()
-        self.setupUi(self)
-        self.autosplit = autosplit
-        self.__set_readme_link()
-        # Don't autofocus any particular field
-        self.setFocus()
-
-
-# region Build the Capture method combobox
-        capture_method_values = CAPTURE_METHODS.values()
-        self.__set_all_capture_devices()
-
-        # TODO: Word-wrapping works, but there's lots of extra padding to the right. Raise issue upstream
-        # list_view = QtWidgets.QListView()
-        # list_view.setWordWrap(True)
-        # list_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # list_view.setFixedWidth(self.capture_method_combobox.width())
-        # self.capture_method_combobox.setView(list_view)
-
-        self.capture_method_combobox.addItems([
-            f"- {method.name} ({method.short_description})"
-            for method in capture_method_values
-        ])
-        self.capture_method_combobox.setToolTip(
-            "\n\n".join([
-                f"{method.name} :\n{method.description}"
-                for method in capture_method_values
-            ]),
+    def __select_screenshot_directory(self):
+        self.autosplit.settings_dict["screenshot_directory"] = QFileDialog.getExistingDirectory(
+            self,
+            "Select Screenshots Directory",
+            self.autosplit.settings_dict["screenshot_directory"]
+            or self.autosplit.settings_dict["split_image_directory"],
         )
-# endregion
+        self.screenshot_directory_input.setText(self.autosplit.settings_dict["screenshot_directory"])
 
+    def __setup_bindings(self):
         # Hotkey initial values and bindings
         def hotkey_connect(hotkey: Hotkey):
             return lambda: set_hotkey(self.autosplit, hotkey)
@@ -251,33 +285,38 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             hotkey_input.setText(
                 cast(
                     str,
-                    autosplit.settings_dict[f"{hotkey}_hotkey"],  # pyright: ignore[reportGeneralTypeIssues]
+                    self.autosplit.settings_dict[f"{hotkey}_hotkey"],  # pyright: ignore[reportGeneralTypeIssues]
                 ),
             )
 
             set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
-            if autosplit.is_auto_controlled and hotkey != "toggle_auto_reset_image":
+            if self.autosplit.is_auto_controlled and hotkey != "toggle_auto_reset_image":
                 set_hotkey_hotkey_button.setEnabled(False)
                 hotkey_input.setEnabled(False)
 
 # region Set initial values
         # Capture Settings
-        self.fps_limit_spinbox.setValue(autosplit.settings_dict["fps_limit"])
-        self.live_capture_region_checkbox.setChecked(autosplit.settings_dict["live_capture_region"])
+        self.fps_limit_spinbox.setValue(self.autosplit.settings_dict["fps_limit"])
+        self.live_capture_region_checkbox.setChecked(self.autosplit.settings_dict["live_capture_region"])
         self.capture_method_combobox.setCurrentIndex(
-            CAPTURE_METHODS.get_index(autosplit.settings_dict["capture_method"]),
+            CAPTURE_METHODS.get_index(self.autosplit.settings_dict["capture_method"]),
         )
         # No self.capture_device_combobox.setCurrentIndex
         # It'll set itself asynchronously in self.__set_all_capture_devices()
+        self.screenshot_directory_input.setText(self.autosplit.settings_dict["screenshot_directory"])
+        self.open_screenshot_checkbox.setChecked(self.autosplit.settings_dict["open_screenshot"])
 
         # Image Settings
-        self.default_comparison_method.setCurrentIndex(autosplit.settings_dict["default_comparison_method"])
-        self.default_similarity_threshold_spinbox.setValue(autosplit.settings_dict["default_similarity_threshold"])
-        self.default_delay_time_spinbox.setValue(autosplit.settings_dict["default_delay_time"])
-        self.default_pause_time_spinbox.setValue(autosplit.settings_dict["default_pause_time"])
-        self.loop_splits_checkbox.setChecked(autosplit.settings_dict["loop_splits"])
-        self.enable_auto_reset_image_checkbox.setChecked(autosplit.settings_dict["enable_auto_reset"])
+        self.default_comparison_method_combobox.setCurrentIndex(
+            self.autosplit.settings_dict["default_comparison_method"],
+        )
+        self.default_similarity_threshold_spinbox.setValue(self.autosplit.settings_dict["default_similarity_threshold"])
+        self.default_delay_time_spinbox.setValue(self.autosplit.settings_dict["default_delay_time"])
+        self.default_pause_time_spinbox.setValue(self.autosplit.settings_dict["default_pause_time"])
+        self.loop_splits_checkbox.setChecked(self.autosplit.settings_dict["loop_splits"])
+        self.start_also_resets_checkbox.setChecked(self.autosplit.settings_dict["start_also_resets"])
+        self.enable_auto_reset_image_checkbox.setChecked(self.autosplit.settings_dict["enable_auto_reset"])
 # endregion
 # region Binding
         # Capture Settings
@@ -289,10 +328,16 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             lambda: self.__set_value("capture_method", self.__capture_method_changed()),
         )
         self.capture_device_combobox.currentIndexChanged.connect(self.__capture_device_changed)
+        self.screenshot_directory_browse_button.clicked.connect(self.__select_screenshot_directory)
+        self.open_screenshot_checkbox.stateChanged.connect(
+            lambda: self.__set_value("open_screenshot", self.open_screenshot_checkbox.isChecked()),
+        )
 
         # Image Settings
-        self.default_comparison_method.currentIndexChanged.connect(
-            lambda: self.__set_value("default_comparison_method", self.default_comparison_method.currentIndex()),
+        self.default_comparison_method_combobox.currentIndexChanged.connect(
+            lambda: self.__set_value(
+                "default_comparison_method", self.default_comparison_method_combobox.currentIndex(),
+            ),
         )
         self.default_similarity_threshold_spinbox.valueChanged.connect(
             lambda: self.__update_default_threshold(self.default_similarity_threshold_spinbox.value()),
@@ -306,12 +351,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.loop_splits_checkbox.stateChanged.connect(
             lambda: self.__set_value("loop_splits", self.loop_splits_checkbox.isChecked()),
         )
+        self.start_also_resets_checkbox.stateChanged.connect(
+            lambda: self.__set_value("start_also_resets", self.start_also_resets_checkbox.isChecked()),
+        )
         self.enable_auto_reset_image_checkbox.stateChanged.connect(
             lambda: self.__set_value("enable_auto_reset", self.enable_auto_reset_image_checkbox.isChecked()),
         )
 # endregion
-
-        self.show()
 
 
 def open_settings(autosplit: AutoSplit):
@@ -329,21 +375,25 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
         "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
         "pause_hotkey": default_settings_dialog.pause_input.text(),
+        "screenshot_hotkey": default_settings_dialog.screenshot_input.text(),
         "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input.text(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
-        "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex(),
         ),
         "capture_device_id": default_settings_dialog.capture_device_combobox.currentIndex(),
         "capture_device_name": "",
-        "default_comparison_method": default_settings_dialog.default_comparison_method.currentIndex(),
+        "default_comparison_method": default_settings_dialog.default_comparison_method_combobox.currentIndex(),
         "default_similarity_threshold": default_settings_dialog.default_similarity_threshold_spinbox.value(),
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
+        "start_also_resets": default_settings_dialog.start_also_resets_checkbox.isChecked(),
+        "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "split_image_directory": autosplit.split_image_folder_input.text(),
+        "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),
+        "open_screenshot": default_settings_dialog.open_screenshot_checkbox.isChecked(),
         "captured_window_title": "",
         "capture_region": {
             "x": autosplit.x_spinbox.value(),

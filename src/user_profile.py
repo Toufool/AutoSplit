@@ -22,10 +22,10 @@ class UserProfileDict(TypedDict):
     undo_split_hotkey: str
     skip_split_hotkey: str
     pause_hotkey: str
+    screenshot_hotkey: str
     toggle_auto_reset_image_hotkey: str
     fps_limit: int
     live_capture_region: bool
-    enable_auto_reset: bool
     capture_method: str | CaptureMethodEnum
     capture_device_id: int
     capture_device_name: str
@@ -34,7 +34,11 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
+    start_also_resets: bool
+    enable_auto_reset: bool
     split_image_directory: str
+    screenshot_directory: str
+    open_screenshot: bool
     captured_window_title: str
     capture_region: Region
 
@@ -45,10 +49,10 @@ DEFAULT_PROFILE = UserProfileDict(
     undo_split_hotkey="",
     skip_split_hotkey="",
     pause_hotkey="",
+    screenshot_hotkey="",
     toggle_auto_reset_image_hotkey="",
     fps_limit=60,
     live_capture_region=True,
-    enable_auto_reset=True,
     capture_method=CAPTURE_METHODS.get_method_by_index(0),
     capture_device_id=0,
     capture_device_name="",
@@ -57,7 +61,11 @@ DEFAULT_PROFILE = UserProfileDict(
     default_delay_time=0,
     default_pause_time=10,
     loop_splits=False,
+    start_also_resets=False,
+    enable_auto_reset=True,
     split_image_directory="",
+    screenshot_directory="",
+    open_screenshot=True,
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )
@@ -109,13 +117,14 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
             loaded_settings = cast(
-                UserProfileDict, {
+                UserProfileDict,
+                {
                     **DEFAULT_PROFILE,
                     **toml.load(file),
                 },
             )
             # TODO: Data Validation / fallbacks ?
-            autosplit.settings_dict = UserProfileDict(**loaded_settings)
+            autosplit.settings_dict = UserProfileDict(**loaded_settings)  # type: ignore[misc]
             autosplit.last_loaded_settings = autosplit.settings_dict
 
             autosplit.x_spinbox.setValue(autosplit.settings_dict["capture_region"]["x"])
@@ -130,12 +139,9 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
         for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
-            if autosplit.settings_dict[hotkey_name]:  # pyright: ignore[reportGeneralTypeIssues]
-                set_hotkey(
-                    autosplit,
-                    hotkey,
-                    cast(str, autosplit.settings_dict[hotkey_name]),  # pyright: ignore[reportGeneralTypeIssues]
-                )
+            hotkey_value = cast(str, autosplit.settings_dict[hotkey_name])  # pyright: ignore[reportGeneralTypeIssues]
+            if hotkey_value:
+                set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
     if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
@@ -192,12 +198,15 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *toml settings values.
     """
-    value = QtCore \
-        .QSettings("AutoSplit", "Check For Updates On Open") \
-        .value("check_for_updates_on_open", True, type=bool)
     # Type not infered by PySide6
     # TODO: Report this issue upstream
-    autosplit.action_check_for_updates_on_open.setChecked(value)  # pyright: ignore[reportGeneralTypeIssues]
+    value = cast(
+        bool,
+        QtCore
+        .QSettings("AutoSplit", "Check For Updates On Open")
+        .value("check_for_updates_on_open", True, type=bool),
+    )
+    autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):

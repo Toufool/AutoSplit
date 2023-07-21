@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+from cv2.typing import MatLike
 
 import error_messages
 from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
-from utils import MAXBYTE, RGB_CHANNEL_COUNT, ColorChannel, ImageShape, is_valid_image
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
+
     from AutoSplit import AutoSplit
 
 # Resize to these width and height so that FPS performance increases
@@ -32,14 +34,14 @@ class ImageType(IntEnum):
     START = 2
 
 
-class AutoSplitImage():
+class AutoSplitImage:
     path: str
     filename: str
     flags: int
     loops: int
     image_type: ImageType
-    byte_array: cv2.Mat | None = None
-    mask: cv2.Mat | None = None
+    byte_array: MatLike | None = None
+    mask: MatLike | None = None
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -123,7 +125,7 @@ class AutoSplitImage():
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
             # Add Alpha channel if missing
-            if image.shape[ImageShape.Channels] == RGB_CHANNEL_COUNT:
+            if image.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
@@ -134,15 +136,19 @@ class AutoSplitImage():
     def compare_with_capture(
         self,
         default: AutoSplit | int,
-        capture: cv2.Mat | None,
+        capture: MatLike | None,
     ):
         """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
-        capture = cv2.resize(capture, self.byte_array.shape[1::-1])
+        resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1])
         comparison_method = self.__get_comparison_method(default)
 
-        return COMPARE_METHODS_BY_INDEX.get(comparison_method, compare_dummy)(self.byte_array, capture, self.mask)
+        return COMPARE_METHODS_BY_INDEX.get(
+            comparison_method, compare_dummy,
+        )(
+            self.byte_array, resized_capture, self.mask,
+        )
 
 
 def compare_dummy(*_: object): return 0.0

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Toufool</author>
  <class>AboutAutoSplitWidget</class>
  <widget class="QWidget" name="AboutAutoSplitWidget">
   <property name="geometry">
@@ -126,12 +127,12 @@ Thank you!</string>
     <bool>true</bool>
    </property>
   </widget>
-  <zorder>ok_button</zorder>
-  <zorder>donate_text_label</zorder>
-  <zorder>donate_button_label</zorder>
   <zorder>icon_label</zorder>
+  <zorder>donate_text_label</zorder>
   <zorder>version_label</zorder>
   <zorder>created_by_label</zorder>
+  <zorder>ok_button</zorder>
+  <zorder>donate_button_label</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>

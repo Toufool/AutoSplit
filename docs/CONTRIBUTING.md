@@ -34,6 +34,10 @@ Please avoid using magic numbers and prefer constants and enums that have a mean
 If a constant is shared throughout the app, it should live in `src/utils.py`. Unless it is very-specific to a module.
 For image shape and channels, please use `utils.ImageShape` and `utils.ColorChannel`.
 
+### Image color format and channels
+
+To avoid image shape mismatch issues, and to keep code simpler, we standardize the image color format to BGRA. This should always be done early in the pipeline, so whatever functionality takes care of obtaining an image should also ensure its color format. You can do so with `cv2.cvtColor` (ie: `cv2.cvtColor(image, cv2.COLOR_RGBA2BGRA)` or `cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)`).
+
 ## Testing
 
 None 😦 Please help us create test suites, we lack the time, but we really want (need!) them. <https://github.com/Toufool/AutoSplit/issues/216>

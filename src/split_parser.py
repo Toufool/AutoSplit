@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
@@ -31,8 +32,8 @@ def __value_from_filename(
     if len(delimiters) != 2:  # noqa: PLR2004
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
-        value_type = type(default_value)
-        value = value_type(filename.split(delimiters[0], 1)[1].split(delimiters[1])[0])
+        string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1])[0]
+        value: T = type(default_value)(string_value)
     except (IndexError, ValueError):
         return default_value
     else:
@@ -182,42 +183,67 @@ def parse_and_validate_images(autosplit: AutoSplit):
     ]
 
     # Find non-split images and then remove them from the list
-    autosplit.start_image = __pop_image_type(all_images, ImageType.START)
-    autosplit.reset_image = __pop_image_type(all_images, ImageType.RESET)
-    autosplit.split_images = all_images
+    start_image = __pop_image_type(all_images, ImageType.START)
+    reset_image = __pop_image_type(all_images, ImageType.RESET)
+    split_images = all_images
+
+    error_message: Callable[[], object] | None = None
+
+    # If there is no start hotkey set but a Start Image is present, and is not auto controlled, throw an error.
+    if (
+        start_image
+        and not autosplit.settings_dict["split_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
+        error_message = error_messages.load_start_image
+
+    # If there is no reset hotkey set but a Reset Image is present, and is not auto controlled, throw an error.
+    elif (
+        reset_image
+        and not autosplit.settings_dict["reset_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
+        error_message = error_messages.reset_hotkey
 
     # Make sure that each of the images follows the guidelines for correct format
     # according to all of the settings selected by the user.
-    for image in autosplit.split_images:
-        # Test for image without transparency
-        if not is_valid_image(image.byte_array):
-            autosplit.gui_changes_on_reset()
-            return False
+    else:
+        for image in split_images:
+            # Test for image without transparency
+            if not is_valid_image(image.byte_array):
+                def image_validity(filename: str):
+                    return lambda: error_messages.image_validity(filename)
+                error_message = image_validity(image.filename)
+                break
 
-        # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-        if (
-            not autosplit.settings_dict["pause_hotkey"]
-            and image.check_flag(PAUSE_FLAG)
-            and not autosplit.is_auto_controlled
-        ):
-            autosplit.gui_changes_on_reset()
-            error_messages.pause_hotkey()
-            return False
+            # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+            if (
+                not autosplit.settings_dict["pause_hotkey"]
+                and image.check_flag(PAUSE_FLAG)
+                and not autosplit.is_auto_controlled
+            ):
+                error_message = error_messages.pause_hotkey
+                break
 
-        # Check that there's only one reset image
-        if image.image_type == ImageType.RESET:
-            # If there is no reset hotkey set but a reset image is present, and is not auto controlled, throw an error.
-            if not autosplit.settings_dict["reset_hotkey"] and not autosplit.is_auto_controlled:
-                autosplit.gui_changes_on_reset()
-                error_messages.reset_hotkey()
-                return False
-            autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images(RESET_KEYWORD)
-            return False
+            # Check that there's only one Reset Image
+            if image.image_type == ImageType.RESET:
+                error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # noqa: E731
+                break
 
-        # Check that there's only one start image
-        if image.image_type == ImageType.START:
-            autosplit.gui_changes_on_reset()
-            error_messages.multiple_keyword_images(START_KEYWORD)
-            return False
+            # Check that there's only one Start Image
+            if image.image_type == ImageType.START:
+                error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # noqa: E731
+                break
+
+    if error_message:
+        autosplit.start_image = None
+        autosplit.reset_image = None
+        autosplit.split_images = []
+        autosplit.gui_changes_on_reset()
+        error_message()
+        return False
+
+    autosplit.start_image = start_image
+    autosplit.reset_image = reset_image
+    autosplit.split_images = split_images
     return True
