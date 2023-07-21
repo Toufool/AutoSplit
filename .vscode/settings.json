@@ -74,6 +74,7 @@
     // https://github.com/microsoft/vscode-mypy/issues/37#issuecomment-1602702174
     "--config-file=mypy.ini",
   ],
+  "python.terminal.activateEnvironment": true,
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",

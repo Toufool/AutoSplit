@@ -122,7 +122,7 @@ max-branches = 15
 [tool.autopep8]
 max_line_length = 120
 aggressive = 3
-exclude = "src/gen/*"
+exclude = ".venv/*,src/gen/*"
 ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
   "E70", # Allow ... on same line as def
@@ -150,7 +150,9 @@ reportUninitializedInstanceVariable = "error"
 reportUnnecessaryTypeIgnoreComment = "error"
 # Exclude from scanning when running pyright
 exclude = [
+  ".venv/",
   # Auto generated, fails some strict pyright checks
+  "build/",
   "src/gen/",
 ]
 # Ignore must be specified for Pylance to stop displaying errors
