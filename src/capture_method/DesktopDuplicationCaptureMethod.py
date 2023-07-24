@@ -44,11 +44,11 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
             return None, False
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-        self.desktop_duplication.display = [
+        self.desktop_duplication.display = next(
             display for display
             in self.desktop_duplication.displays
             if display.hmonitor == hmonitor
-        ][0]
+        )
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
         offset_x -= self.desktop_duplication.display.position["left"]
         offset_y -= self.desktop_duplication.display.position["top"]
