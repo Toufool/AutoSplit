@@ -45,6 +45,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("JPEG 2000 files", "*.jp2"),
     ("Portable Network Graphics", "*.png"),
     ("WebP", "*.webp"),
+    ("AVIF", "*.avif"),
     ("Portable image format", "*.pbm *.pgm *.ppm *.pxm *.pnm"),
     ("PFM files", "*.pfm"),
     ("Sun rasters", "*.sr *.ras"),
@@ -52,7 +53,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("OpenEXR Image files", "*.exr"),
     ("Radiance HDR", "*.hdr *.pic"),
 ]
-"""https://docs.opencv.org/4.5.4/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56"""
+"""https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = "All Files (" \
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
     + ");;"\

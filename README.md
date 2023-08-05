@@ -25,14 +25,14 @@ This program can be used to automatically start, split, and reset your preferred
 ### Compatibility
 
 - Windows 10 and 11.
-- Python 3.9+ (Not requried for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Python 3.9+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## OPTIONS
 
 #### Split Image Folder
 
-- Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
-- Images can be any size.
+- Supported image file types: PNG, JPEG, bitmaps, WebP, and [more](https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread).
+- Images can be any size and ratio.
 - Images are matched in alphanumerical order.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`...
 - Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
