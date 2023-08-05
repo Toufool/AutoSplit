@@ -191,5 +191,5 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.1.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.2.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY
