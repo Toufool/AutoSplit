@@ -47,327 +47,6 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="hotkeys_tab">
-    <attribute name="title">
-     <string>Hotkeys</string>
-    </attribute>
-    <widget class="QPushButton" name="set_toggle_auto_reset_image_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>189</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="split_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>10</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="undo_split_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>73</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Undo Split:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="undo_split_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>70</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_reset_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>39</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="pause_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>133</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pause:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_undo_split_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>69</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="reset_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>40</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="skip_split_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>103</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Skip Split:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_split_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>9</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_skip_split_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>99</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_screenshot_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>159</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="toggle_auto_reset_image_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>190</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="set_pause_hotkey_button">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>129</y>
-       <width>81</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::NoFocus</enum>
-     </property>
-     <property name="text">
-      <string>Set Hotkey</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="split_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>13</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Start / Split:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="pause_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>130</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="toggle_auto_reset_image_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>186</y>
-       <width>71</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Toggle auto
-reset image</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="reset_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>43</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Reset:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="screenshot_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>160</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="screenshot_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>163</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Screenshot:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="skip_split_input">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>100</y>
-       <width>91</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </widget>
    <widget class="QWidget" name="captur_settings_tab">
     <attribute name="title">
      <string>Capture Settings</string>
@@ -833,6 +512,327 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <zorder>default_delay_time_label</zorder>
     <zorder>readme_link_button</zorder>
     <zorder>start_also_resets_checkbox</zorder>
+   </widget>
+   <widget class="QWidget" name="hotkeys_tab">
+    <attribute name="title">
+     <string>Hotkeys</string>
+    </attribute>
+    <widget class="QPushButton" name="set_toggle_auto_reset_image_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>189</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="split_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>10</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="undo_split_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>73</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Undo Split:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="undo_split_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>70</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_reset_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>39</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pause_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>133</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pause:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_undo_split_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>69</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="reset_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>40</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="skip_split_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>103</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Skip Split:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_split_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>9</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_skip_split_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>99</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_screenshot_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>159</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="toggle_auto_reset_image_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>190</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="set_pause_hotkey_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>129</y>
+       <width>81</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string>Set Hotkey</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="split_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>13</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start / Split:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="pause_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>130</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="toggle_auto_reset_image_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>186</y>
+       <width>71</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Toggle auto
+reset image</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="reset_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>43</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="screenshot_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>160</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="screenshot_label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>163</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Screenshot:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="skip_split_input">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>100</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
