@@ -42,7 +42,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     )
 
     capture_device: cv2.VideoCapture
-    capture_thread: Thread | None
+    capture_thread: Thread | None = None
     stop_thread: Event
     last_captured_frame: MatLike | None = None
     is_old_image = False
@@ -56,7 +56,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     if not (
                         cv2_error.code == cv2.Error.STS_ERROR
                         and (
-                            # Likely means the camera is occupied
+                            # Likely means the camera is occupied OR the camera index is out of range (like -1)
                             cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539
@@ -89,13 +89,19 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
+        self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
+        self.capture_device.setExceptionMode(True)
+        self.stop_thread = Event()
+
+        # The video capture device isn't accessible, don't bother with it.
+        if not self.capture_device.isOpened():
+            return
+
         filter_graph = FilterGraph()
         filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
         width, height = filter_graph.get_input_device().get_current_format()
         filter_graph.remove_filters()
 
-        self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
-        self.capture_device.setExceptionMode(True)
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
         try:
             self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -103,7 +109,6 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         except cv2.error:
             # Some cameras don't allow changing the resolution
             pass
-        self.stop_thread = Event()
         self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
         self.capture_thread.start()
 

@@ -21,8 +21,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.unusedImports": false,
-    "source.fixAll.convertImportFormat": true,
+    // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": false,
   },
   "emeraldwalk.runonsave": {
@@ -80,6 +79,11 @@
     "--config-file=mypy.ini",
   ],
   "python.terminal.activateEnvironment": true,
+  // python.analysis is Pylance (pyright) configurations
+  "python.analysis.fixAll": [
+    "source.convertImportFormat"
+    // Explicitly omiting "source.unusedImports", can be annoying when commenting code for debugging
+  ],
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",

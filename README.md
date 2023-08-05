@@ -79,7 +79,7 @@ This program can be used to automatically start, split, and reset your preferred
     Duplicates the desktop using Direct3D.  
     It can record OpenGL and Hardware Accelerated windows.  
     About 10-15x slower than BitBlt. Not affected by window size.  
-    overlapping windows will show up and can't record across displays.  
+    Overlapping windows will show up and can't record across displays.  
     This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
 - **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
