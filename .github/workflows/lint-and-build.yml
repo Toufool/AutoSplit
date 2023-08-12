@@ -34,6 +34,10 @@ env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   ruff:
     runs-on: windows-latest

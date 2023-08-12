@@ -94,7 +94,6 @@ known-local-folder = [
   "capture_method",
   "compare",
   "error_messages",
-  "error_messages",
   "gen",
   "hotkeys",
   "menu_bar",
