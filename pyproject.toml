@@ -72,6 +72,7 @@ ignore = [
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
   "PLR0913", # Argument count
+  "PLW3201", # misspelled dunder method name
   "PYI042", # CamelCase TypeAlias
 ]
 

@@ -7,9 +7,9 @@
 -r requirements.txt
 #
 # Linters & Formatters
-add-trailing-comma>=3.0.0  # Added support for with statement # Must match .pre-commit-config.yaml
-autopep8>=2.0.2 # New checks # Must match .pre-commit-config.yaml
-ruff>=0.0.276 # Fix ignored "ignore" configuration + cache fixes # Must match .pre-commit-config.yaml
+add-trailing-comma>=3.0.4 # Must match .pre-commit-config.yaml
+autopep8>=2.0.4 # Must match .pre-commit-config.yaml
+ruff>=0.0.289 # Ignore @override for bad-dunder-name # Must match .pre-commit-config.yaml
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled Qt Designer.
 # Can also be downloaded externally as a non-python package

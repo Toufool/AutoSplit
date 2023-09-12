@@ -17,16 +17,16 @@ repos:
       - id: pretty-format-ini
         args: [--autofix]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.286" # Must match requirements-dev.txt
+    rev: "v0.0.289" # Must match requirements-dev.txt
     hooks:
       - id: ruff
         args: [--fix]
-  - repo: https://github.com/pre-commit/mirrors-autopep8
+  - repo: https://github.com/hhatto/autopep8
     rev: "v2.0.4" # Must match requirements-dev.txt
     hooks:
       - id: autopep8
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.0.1 # Must match requirements-dev.txt
+    rev: v3.0.4 # Must match requirements-dev.txt
     hooks:
       - id: add-trailing-comma
 

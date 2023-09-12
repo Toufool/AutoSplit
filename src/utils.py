@@ -9,7 +9,7 @@ from collections.abc import Callable, Generator, Iterable
 from enum import IntEnum
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import win32ui
 from cv2.typing import MatLike
@@ -48,7 +48,7 @@ class ColorChannel(IntEnum):
     Alpha = 3
 
 
-def decimal(value: int | float):
+def decimal(value: float):
     # Using ljust instead of :2f because of python float rounding errors
     return f"{int(value * 100) / 100}".ljust(4, "0")
 
@@ -101,10 +101,10 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     )
 
     window_rect = win32gui.GetWindowRect(hwnd)
-    window_left_bounds = cast(int, extended_frame_bounds.left) - window_rect[0]
-    window_top_bounds = cast(int, extended_frame_bounds.top) - window_rect[1]
-    window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
-    window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
+    window_left_bounds = extended_frame_bounds.left - window_rect[0]
+    window_top_bounds = extended_frame_bounds.top - window_rect[1]
+    window_width = extended_frame_bounds.right - extended_frame_bounds.left
+    window_height = extended_frame_bounds.bottom - extended_frame_bounds.top
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 

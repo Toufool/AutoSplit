@@ -5,8 +5,12 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)  
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![autopep8](https://badgen.net/badge/code%20style/autopep8/blue)](https://github.com/hhatto/autopep8)
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
