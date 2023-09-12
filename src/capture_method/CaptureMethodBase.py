@@ -28,7 +28,7 @@ class CaptureMethodBase:
         # Some capture methods don't need an initialization process
         pass
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
+    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:  # noqa: PLR6301
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
@@ -37,8 +37,8 @@ class CaptureMethodBase:
         """
         return None, False
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
+    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:  # noqa: PLR6301
         return False
 
-    def check_selected_region_exists(self, autosplit: AutoSplit) -> bool:
+    def check_selected_region_exists(self, autosplit: AutoSplit) -> bool:  # noqa: PLR6301
         return is_valid_hwnd(autosplit.hwnd)
