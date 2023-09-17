@@ -52,31 +52,35 @@ class AutoSplitImage:
 
     def get_delay_time(self, default: AutoSplit | int):
         """Get image's delay time or fallback to the default value from spinbox."""
-        default_value = default \
-            if isinstance(default, int) \
-            else default.settings_dict["default_delay_time"]
-        return default_value if self.__delay_time is None else self.__delay_time
+        if self.__delay_time is not None:
+            return self.__delay_time
+        if isinstance(default, int):
+            return default
+        return default.settings_dict["default_delay_time"]
 
     def __get_comparison_method(self, default: AutoSplit | int):
         """Get image's comparison or fallback to the default value from combobox."""
-        default_value = default \
-            if isinstance(default, int) \
-            else default.settings_dict["default_comparison_method"]
-        return default_value if self.__comparison_method is None else self.__comparison_method
+        if self.__comparison_method is not None:
+            return self.__comparison_method
+        if isinstance(default, int):
+            return default
+        return default.settings_dict["default_comparison_method"]
 
     def get_pause_time(self, default: AutoSplit | float):
         """Get image's pause time or fallback to the default value from spinbox."""
-        default_value = default \
-            if isinstance(default, float) \
-            else default.settings_dict["default_pause_time"]
-        return default_value if self.__pause_time is None else self.__pause_time
+        if self.__pause_time is not None:
+            return self.__pause_time
+        if isinstance(default, float):
+            return default
+        return default.settings_dict["default_pause_time"]
 
     def get_similarity_threshold(self, default: AutoSplit | float):
         """Get image's similarity threshold or fallback to the default value from spinbox."""
-        default_value = default \
-            if isinstance(default, float) \
-            else default.settings_dict["default_similarity_threshold"]
-        return default_value if self.__similarity_threshold is None else self.__similarity_threshold
+        if self.__similarity_threshold is not None:
+            return self.__similarity_threshold
+        if isinstance(default, float):
+            return default
+        return default.settings_dict["default_similarity_threshold"]
 
     def __init__(self, path: str):
         self.path = path
