@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       # Ruff is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12-dev"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -63,10 +63,10 @@ jobs:
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
-      - name: Set up Python 3.11
+      - name: Set up Python 3.12-dev
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.12-dev"
       - run: pip install add-trailing-comma
       - name: Analysing the code with add-trailing-comma
         run: add-trailing-comma $(git ls-files '**.py*')
@@ -76,7 +76,7 @@ jobs:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12-dev"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -98,7 +98,7 @@ jobs:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.11", "3.12-dev"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
