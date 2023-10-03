@@ -87,20 +87,20 @@
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
-  "python.linting.enabled": true,
   "ruff.importStrategy": "fromEnvironment",
   // Use the Ruff extension instead
   "isort.check": false,
+  // linting/formatting options deprecated, use dedicated extensions instead
+  // https://github.com/microsoft/vscode-python/wiki/Migration-to-Python-Tools-Extensions
+  "python.linting.enabled": false,
   "python.linting.banditEnabled": false,
   "python.linting.flake8Enabled": false,
   "python.linting.prospectorEnabled": false,
   "python.linting.pycodestyleEnabled": false,
   "python.linting.pylamaEnabled": false,
   "python.linting.pylintEnabled": false,
-  // Use the autopep8 extension instead
-  "python.formatting.provider": "none",
-  // Use Pyright/Pylance instead
   "python.linting.mypyEnabled": false,
+  "python.formatting.provider": "none",
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
   "powershell.codeFormatting.autoCorrectAliases": true,
   "powershell.codeFormatting.trimWhitespaceAroundPipe": true,

@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
     from AutoSplit import AutoSplit
 
+
 # Resize to these width and height so that FPS performance increases
 COMPARISON_RESIZE_WIDTH = 320
 COMPARISON_RESIZE_HEIGHT = 240
@@ -70,7 +71,7 @@ class AutoSplitImage:
         """Get image's pause time or fallback to the default value from spinbox."""
         if self.__pause_time is not None:
             return self.__pause_time
-        if isinstance(default, float):
+        if isinstance(default, (float, int)):
             return default
         return default.settings_dict["default_pause_time"]
 
@@ -78,7 +79,7 @@ class AutoSplitImage:
         """Get image's similarity threshold or fallback to the default value from spinbox."""
         if self.__similarity_threshold is not None:
             return self.__similarity_threshold
-        if isinstance(default, float):
+        if isinstance(default, (float, int)):
             return default
         return default.settings_dict["default_similarity_threshold"]
 

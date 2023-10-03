@@ -9,7 +9,7 @@
 # Linters & Formatters
 add-trailing-comma>=3.1.0 # Must match .pre-commit-config.yaml
 autopep8>=2.0.4 # Must match .pre-commit-config.yaml
-ruff>=0.0.290 # Ignore @override for bad-dunder-name # Must match .pre-commit-config.yaml
+ruff>=0.0.292 # Ignore @override for bad-dunder-name # Must match .pre-commit-config.yaml
 #
 # Run `./scripts/designer.ps1` to quickly open the bundled Qt Designer.
 # Can also be downloaded externally as a non-python package

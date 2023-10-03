@@ -7,7 +7,7 @@ certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.23.2  # Python 3.11 wheels
-opencv-python-headless>=4.8.0.76  # Typing fixes
+opencv-python-headless>=4.8.1.78  # Typing fixes
 packaging
 Pillow>=9.2  # gnome-screeshot checks
 psutil

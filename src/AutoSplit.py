@@ -523,7 +523,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Construct a list of images + loop count tuples.
         self.split_images_and_loop_number = list(
             flatten(
-                [(split_image, i + 1) for i in range(split_image.loops)]
+                ((split_image, i + 1) for i in range(split_image.loops))
                 for split_image
                 in self.split_images
             ),
@@ -921,7 +921,12 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             image_format = QtGui.QImage.Format.Format_BGR888
             capture = image
 
-        qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
+        qimage = QtGui.QImage(
+            capture.data,  # pyright: ignore[reportGeneralTypeIssues] # https://bugreports.qt.io/browse/PYSIDE-2476
+            width, height,
+            width *
+            channels, image_format,
+        )
         qlabel.setPixmap(
             QtGui.QPixmap(qimage).scaled(
                 qlabel.size(),
