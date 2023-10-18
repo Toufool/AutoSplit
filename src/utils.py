@@ -5,8 +5,9 @@ import ctypes
 import ctypes.wintypes
 import os
 import sys
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Iterable
 from enum import IntEnum
+from itertools import chain
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -170,12 +171,8 @@ def fire_and_forget(func: Callable[..., Any]):
     return wrapped
 
 
-def flatten(nested_iterable: Iterable[Iterable[_T]]) -> Generator[_T, None, None]:
-    return (
-        item for flatten
-        in nested_iterable
-        for item in flatten
-    )
+def flatten(nested_iterable: Iterable[Iterable[_T]]) -> chain[_T]:
+    return chain(*nested_iterable)
 
 
 # Environment specifics

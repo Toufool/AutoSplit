@@ -124,7 +124,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
                 },
             )
             # TODO: Data Validation / fallbacks ?
-            autosplit.settings_dict = UserProfileDict(**loaded_settings)  # type: ignore[misc]
+            autosplit.settings_dict = UserProfileDict(**loaded_settings)
             autosplit.last_loaded_settings = autosplit.settings_dict
 
             autosplit.x_spinbox.setValue(autosplit.settings_dict["capture_region"]["x"])
@@ -139,7 +139,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
         for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
-            hotkey_value = cast(str, autosplit.settings_dict[hotkey_name])  # pyright: ignore[reportGeneralTypeIssues]
+            hotkey_value = autosplit.settings_dict.get(hotkey_name)
             if hotkey_value:
                 set_hotkey(autosplit, hotkey, hotkey_value)
 

@@ -14,7 +14,7 @@
 # Linters & Formatters
 add-trailing-comma>=3.1.0 # Must match .pre-commit-config.yaml
 autopep8>=2.0.4 # Must match .pre-commit-config.yaml
-ruff>=0.0.290 # Ignore @override for bad-dunder-name # Must match .pre-commit-config.yaml
+ruff>=0.0.292 # Ignore @override for bad-dunder-name # Must match .pre-commit-config.yaml
 #
 # Types
 types-D3DShot ; sys_platform == 'win32'

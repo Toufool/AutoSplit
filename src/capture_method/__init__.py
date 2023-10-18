@@ -4,6 +4,7 @@ import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
+from itertools import starmap
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
@@ -201,16 +202,9 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
             if resolution is not None \
             else None
 
-    # Note: Return type required https://github.com/python/typeshed/issues/2652
-    future = asyncio.gather(
-        *[
-            get_camera_info(index, name) for index, name
-            in enumerate(named_video_inputs)
-        ],
-    )
-
     return [
         camera_info for camera_info
-        in await future
+        # Note: Return type required https://github.com/python/typeshed/issues/2652
+        in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None
     ]

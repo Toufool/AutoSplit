@@ -166,7 +166,7 @@ def __get_hotkey_name(names: list[str]):
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
     See: https://github.com/boppreh/keyboard/issues/516 .
     """
-    if len(names) == 0:
+    if not names:
         return ""
 
     if len(names) == 1:
@@ -192,7 +192,7 @@ def __read_hotkey():
         if keyboard_event.event_type == keyboard.KEY_UP:
             # Unless keyup is also the very first event,
             # which can happen from a very fast press at the same time we start reading
-            if len(names) == 0:
+            if not names:
                 continue
             break
         key_name = __get_key_name(keyboard_event)
@@ -209,7 +209,7 @@ def __read_hotkey():
 def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
     for hotkey in HOTKEYS:
         settings_key = f"{hotkey}_hotkey"
-        if autosplit.settings_dict[settings_key] == key_name:  # pyright: ignore[reportGeneralTypeIssues]
+        if autosplit.settings_dict.get(settings_key) == key_name:
             _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
             autosplit.settings_dict[settings_key] = ""  # pyright: ignore[reportGeneralTypeIssues]
             if autosplit.SettingsWidget:
@@ -258,7 +258,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
     @fire_and_forget
     def read_and_set_hotkey():
         try:
-            hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
+            hotkey_name = preselected_hotkey_name or __read_hotkey()
 
             # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit
             if hotkey_name == "esc":
