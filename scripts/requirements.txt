@@ -7,13 +7,13 @@ certifi
 ImageHash>=4.3.1  # Contains type information + setup as package not module
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.26  # Python 3.12 support
-opencv-python-headless>=4.8.1.78 ; python_version < "3.12" # Typing fixes
+opencv-python-headless>=4.8.1.78 ; python_version < "3.12"  # Typing fixes
 # September 18th dev snapshot
 https://download.qt.io/snapshots/ci/pyside/dev/a53379153abe1fc3b1ac5625714c6002510c6d73/split_wheels/PySide6_Essentials-6.6.0a1.dev1694513817-cp37-abi3-win_amd64.whl#egg=pyside6-essentials; python_version >= "3.12.0"
 https://download.qt.io/snapshots/ci/pyside/dev/a53379153abe1fc3b1ac5625714c6002510c6d73/split_wheels/shiboken6-6.6.0a1.dev1694513817-cp37-abi3-win_amd64.whl#shiboken6 ; python_version >= "3.12.0"
 packaging
 Pillow>=10.0  # Python 3.12 support
-psutil # TODO: Bump to 5.9.6 when released for Python 3.12 fixes
+psutil>=5.9.6  # Python 3.12 fixes
 PyAutoGUI
 PyWinCtl>=0.0.42  # py.typed
 PySide6-Essentials>=6.5.1  # fixes incomplete tuple return types https://bugreports.qt.io/browse/PYSIDE-2285
