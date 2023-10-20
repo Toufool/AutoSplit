@@ -7,6 +7,13 @@ preview = true
 # https://docs.astral.sh/ruff/rules/
 ignore = [
   ###
+  # Conflicts with ruff-format
+  ###
+  "COM812", # missing-trailing-comma
+  "E203", # whitespace-before-punctuation
+  "ISC001", # single-line-implicit-string-concatenation
+
+  ###
   # Not needed or wanted
   ###
   "D1", # pydocstyle Missing doctring
@@ -65,6 +72,9 @@ ignore = [
   "EXE", # flake8-executable
 ]
 
+[tool.ruff.format]
+docstring-code-format = true
+
 [tool.ruff.per-file-ignores]
 "typings/**/*.pyi" = [
   "F811", # Re-exports false positives
@@ -119,29 +129,6 @@ max-complexity = 31
 max-args = 7
 # At least same as max-complexity
 max-branches = 15
-
-# https://github.com/hhatto/autopep8#usage
-# https://github.com/hhatto/autopep8#more-advanced-usage
-[tool.autopep8]
-max_line_length = 120
-aggressive = 3
-exclude = ".venv/*,src/gen/*"
-ignore = [
-  "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
-  "E70", # Allow ... on same line as def
-  "E721", # Breaks when needing an exact type
-  # Autofixed by Ruff
-  # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
-  "E2", # Whitespace
-  "E703", #	useless-semicolon
-  "E71", # Statement (comparisons)
-  "E731", # lambda-assignment
-  "W29", # Whitespace warning
-  "W605", # invalid-escape-sequence
-  # Autofixed by other Ruff rules
-  "E401", # I001: unsorted-imports
-  "W690", # UP: pyupgrade
-]
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
