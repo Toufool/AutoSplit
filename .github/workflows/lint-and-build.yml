@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       # Ruff is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -58,25 +58,13 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - run: ruff check .
-  add-trailing-comma:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-      - run: pip install add-trailing-comma
-      - name: Analysing the code with add-trailing-comma
-        run: add-trailing-comma $(git ls-files '**.py*')
   Pyright:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -92,6 +80,7 @@ jobs:
         uses: jakebailey/pyright-action@v1
         with:
           working-directory: src/
+          python-version: ${{ matrix.python-version }}
   Build:
     runs-on: windows-latest
     strategy:

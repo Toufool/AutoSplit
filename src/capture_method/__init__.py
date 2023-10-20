@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
@@ -62,11 +60,9 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     def __hash__(self):
         return self.value.__hash__()
 
-    # https://github.com/python/typeshed/issues/10428
     @override
-    def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        name: str | CaptureMethodEnum, *_,  # noqa: N805
-    ):
+    @staticmethod
+    def _generate_next_value_(name: "str | CaptureMethodEnum", *_):
         return name
 
     NONE = ""
@@ -127,6 +123,7 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
 CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
 try:  # Test for laptop cross-GPU Desktop Duplication issue
     import d3dshot
+
     d3dshot.create(capture_output="numpy")
 except (ModuleNotFoundError, COMError):
     pass
@@ -136,7 +133,7 @@ CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullCont
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 
 
-def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit):
+def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     autosplit.capture_method.close(autosplit)
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
     if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
@@ -156,11 +153,6 @@ class CameraInfo:
     resolution: tuple[int, int]
 
 
-def get_input_devices():
-    """https://github.com/andreaschiavinato/python_grabber/pull/24 ."""
-    return cast(list[str], FilterGraph().get_input_devices())
-
-
 def get_input_device_resolution(index: int):
     filter_graph = FilterGraph()
     try:
@@ -176,7 +168,7 @@ def get_input_device_resolution(index: int):
 
 
 async def get_all_video_capture_devices() -> list[CameraInfo]:
-    named_video_inputs = get_input_devices()
+    named_video_inputs = FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
@@ -203,7 +195,8 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
             else None
 
     return [
-        camera_info for camera_info
+        camera_info
+        for camera_info
         # Note: Return type required https://github.com/python/typeshed/issues/2652
         in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None

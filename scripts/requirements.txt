@@ -28,7 +28,7 @@ pyinstaller-hooks-contrib>=2022.15  # charset-normalizer fix https://github.com/
 # https://peps.python.org/pep-0508/#environment-markers
 #
 # Windows-only dependencies:
-git+https://github.com/andreaschiavinato/python_grabber.git#egg=pygrabber ; sys_platform == 'win32'  # Completed types
+pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=301 ; sys_platform == 'win32'
 winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot ; sys_platform == 'win32'  # D3DShot from PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5

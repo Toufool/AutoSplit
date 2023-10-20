@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 from typing import TYPE_CHECKING, cast
 
@@ -17,7 +15,6 @@ from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
@@ -43,7 +40,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     """This is stored to prevent session from being garbage collected"""
     last_captured_frame: MatLike | None = None
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
         if not is_valid_hwnd(autosplit.hwnd):
             return
@@ -70,7 +67,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         self.frame_pool = frame_pool
 
     @override
-    def close(self, autosplit: AutoSplit):
+    def close(self, autosplit: "AutoSplit"):
         if self.frame_pool:
             self.frame_pool.close()
             self.frame_pool = None
@@ -85,7 +82,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             self.session = None
 
     @override
-    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
+    def get_frame(self, autosplit: "AutoSplit") -> tuple[MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (
@@ -106,6 +103,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             if not frame:
                 return None
             return await (SoftwareBitmap.create_copy_from_surface_async(frame.surface) or asyncio.sleep(0, None))
+
         try:
             software_bitmap = asyncio.run(coroutine())
         except SystemError as exception:
@@ -125,14 +123,14 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
         image = image[
-            selection["y"]:selection["y"] + selection["height"],
-            selection["x"]:selection["x"] + selection["width"],
+            selection["y"]: selection["y"] + selection["height"],
+            selection["x"]: selection["x"] + selection["width"],
         ]
         self.last_captured_frame = image
         return image, False
 
     @override
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
+    def recover_window(self, captured_window_title: str, autosplit: "AutoSplit"):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False
@@ -147,7 +145,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         return self.check_selected_region_exists(autosplit)
 
     @override
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self, autosplit: "AutoSplit"):
         return bool(
             is_valid_hwnd(autosplit.hwnd)
             and self.frame_pool

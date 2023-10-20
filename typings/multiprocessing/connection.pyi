@@ -1,10 +1,9 @@
 # https://github.com/python/typeshed/blob/main/stdlib/multiprocessing/connection.pyi
 import sys
 from types import TracebackType
-from typing import Any, Generic, SupportsIndex, TypeVar
+from typing import Any, Generic, Self, SupportsIndex, TypeVar
 
 from _typeshed import ReadableBuffer
-from typing_extensions import Self
 
 _T1 = TypeVar("_T1")
 _T2 = TypeVar("_T2")
@@ -29,7 +28,10 @@ class _ConnectionBase(Generic[_T1, _T2]):
     def __enter__(self) -> Self: ...
 
     def __exit__(
-        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, exc_tb: TracebackType | None,
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None: ...
 
 

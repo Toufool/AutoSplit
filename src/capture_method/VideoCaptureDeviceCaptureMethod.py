@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
@@ -15,7 +13,6 @@ from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
@@ -27,9 +24,10 @@ def is_blank(image: MatLike):
     # Instead we check for a few key pixels, in this case, corners
     return np.all(
         image[
-            ::image.shape[ImageShape.Y] - 1,
-            ::image.shape[ImageShape.X] - 1,
-        ] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+            :: image.shape[ImageShape.Y] - 1,
+            :: image.shape[ImageShape.X] - 1,
+        ]
+        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
     )
 
 
@@ -47,7 +45,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     last_captured_frame: MatLike | None = None
     is_old_image = False
 
-    def __read_loop(self, autosplit: AutoSplit):
+    def __read_loop(self, autosplit: "AutoSplit"):
         try:
             while not self.stop_thread.is_set():
                 try:
@@ -87,7 +85,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 ),
             )
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
@@ -113,7 +111,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_thread.start()
 
     @override
-    def close(self, autosplit: AutoSplit):
+    def close(self, autosplit: "AutoSplit"):
         self.stop_thread.set()
         if self.capture_thread:
             self.capture_thread.join()
@@ -121,7 +119,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_device.release()
 
     @override
-    def get_frame(self, autosplit: AutoSplit):
+    def get_frame(self, autosplit: "AutoSplit"):
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
@@ -136,11 +134,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         y = min(selection["y"], image.shape[ImageShape.Y] - 1)
         x = min(selection["x"], image.shape[ImageShape.X] - 1)
         image = image[
-            y:y + selection["height"],
-            x:x + selection["width"],
+            y: y + selection["height"],
+            x: x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
     @override
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self, autosplit: "AutoSplit"):
         return bool(self.capture_device.isOpened())

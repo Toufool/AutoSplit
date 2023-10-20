@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import os
-from enum import IntEnum
+from enum import IntEnum, auto
 from math import sqrt
 from typing import TYPE_CHECKING
 
@@ -10,11 +8,10 @@ import numpy as np
 from cv2.typing import MatLike
 
 import error_messages
-from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
+from compare import check_if_image_has_transparency, get_comparison_method_by_index
 from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 
@@ -30,9 +27,9 @@ RESET_KEYWORD = "reset"
 
 
 class ImageType(IntEnum):
-    SPLIT = 0
-    RESET = 1
-    START = 2
+    SPLIT = auto()
+    RESET = auto()
+    START = auto()
 
 
 class AutoSplitImage:
@@ -51,7 +48,7 @@ class AutoSplitImage:
     __pause_time: float | None = None
     __similarity_threshold: float | None = None
 
-    def get_delay_time(self, default: AutoSplit | int):
+    def get_delay_time(self, default: "AutoSplit | int"):
         """Get image's delay time or fallback to the default value from spinbox."""
         if self.__delay_time is not None:
             return self.__delay_time
@@ -59,7 +56,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_delay_time"]
 
-    def __get_comparison_method(self, default: AutoSplit | int):
+    def __get_comparison_method_index(self, default: "AutoSplit | int"):
         """Get image's comparison or fallback to the default value from combobox."""
         if self.__comparison_method is not None:
             return self.__comparison_method
@@ -67,7 +64,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_comparison_method"]
 
-    def get_pause_time(self, default: AutoSplit | float):
+    def get_pause_time(self, default: "AutoSplit | float"):
         """Get image's pause time or fallback to the default value from spinbox."""
         if self.__pause_time is not None:
             return self.__pause_time
@@ -75,7 +72,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_pause_time"]
 
-    def get_similarity_threshold(self, default: AutoSplit | float):
+    def get_similarity_threshold(self, default: "AutoSplit | float"):
         """Get image's similarity threshold or fallback to the default value from spinbox."""
         if self.__similarity_threshold is not None:
             return self.__similarity_threshold
@@ -140,23 +137,21 @@ class AutoSplitImage:
 
     def compare_with_capture(
         self,
-        default: AutoSplit | int,
+        default: "AutoSplit | int",
         capture: MatLike | None,
     ):
         """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
         resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1])
-        comparison_method = self.__get_comparison_method(default)
 
-        return COMPARE_METHODS_BY_INDEX.get(
-            comparison_method, compare_dummy,
+        return get_comparison_method_by_index(
+            self.__get_comparison_method_index(default),
         )(
-            self.byte_array, resized_capture, self.mask,
+            self.byte_array,
+            resized_capture,
+            self.mask,
         )
-
-
-def compare_dummy(*_: object): return 0.0
 
 
 if True:
