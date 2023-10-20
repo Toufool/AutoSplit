@@ -106,6 +106,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             if not frame:
                 return None
             return await (SoftwareBitmap.create_copy_from_surface_async(frame.surface) or asyncio.sleep(0, None))
+
         try:
             software_bitmap = asyncio.run(coroutine())
         except SystemError as exception:
@@ -125,8 +126,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
         image = image[
-            selection["y"]:selection["y"] + selection["height"],
-            selection["x"]:selection["x"] + selection["width"],
+            selection["y"] : selection["y"] + selection["height"],
+            selection["x"] : selection["x"] + selection["width"],
         ]
         self.last_captured_frame = image
         return image, False

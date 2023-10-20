@@ -152,8 +152,10 @@ def already_open():
 
 def exception_traceback(exception: BaseException, message: str = ""):
     if not message:
-        message = "AutoSplit encountered an unhandled exception and will try to recover, " + \
-            f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}"
+        message = (
+            "AutoSplit encountered an unhandled exception and will try to recover, "
+            + f"however, there is no guarantee it will keep working properly. {CREATE_NEW_ISSUE_MESSAGE}"
+        )
     set_text_message(
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)),
@@ -181,6 +183,7 @@ def make_excepthook(autosplit: AutoSplit):
             return
         # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
+
     return excepthook
 
 

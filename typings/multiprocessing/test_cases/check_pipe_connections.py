@@ -10,7 +10,8 @@ a, b = Pipe()
 
 # More type safe, but extra variable
 connections_wrong: tuple[
-    PipeConnection[str, int], PipeConnection[str, int],
+    PipeConnection[str, int],
+    PipeConnection[str, int],
 ] = Pipe()  # pyright: ignore[reportGeneralTypeIssues]
 connections_ok: tuple[PipeConnection[str, int], PipeConnection[int, str]] = Pipe()
 a, b = connections_ok

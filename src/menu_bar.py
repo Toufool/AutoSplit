@@ -147,7 +147,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # Don't autofocus any particular field
         self.setFocus()
 
-
 # region Build the Capture method combobox
         capture_method_values = CAPTURE_METHODS.values()
         self.__set_all_capture_devices()
@@ -279,6 +278,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # Hotkey initial values and bindings
         def hotkey_connect(hotkey: Hotkey):
             return lambda: set_hotkey(self.autosplit, hotkey)
+
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
@@ -331,7 +331,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # Image Settings
         self.default_comparison_method_combobox.currentIndexChanged.connect(
             lambda: self.__set_value(
-                "default_comparison_method", self.default_comparison_method_combobox.currentIndex(),
+                "default_comparison_method",
+                self.default_comparison_method_combobox.currentIndex(),
             ),
         )
         self.default_similarity_threshold_spinbox.valueChanged.connect(

@@ -80,9 +80,11 @@ def have_settings_changed(autosplit: AutoSplit):
 
 def save_settings(autosplit: AutoSplit):
     """@return: The save settings filepath. Or None if "Save Settings As" is cancelled."""
-    return __save_settings_to_file(autosplit, autosplit.last_successfully_loaded_settings_file_path) \
-        if autosplit.last_successfully_loaded_settings_file_path \
+    return (
+        __save_settings_to_file(autosplit, autosplit.last_successfully_loaded_settings_file_path)
+        if autosplit.last_successfully_loaded_settings_file_path
         else save_settings_as(autosplit)
+    )
 
 
 def save_settings_as(autosplit: AutoSplit):
@@ -160,12 +162,15 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
 
 def load_settings(autosplit: AutoSplit, from_path: str = ""):
-    load_settings_file_path = from_path or QtWidgets.QFileDialog.getOpenFileName(
-        autosplit,
-        "Load Profile",
-        os.path.join(auto_split_directory, "settings.toml"),
-        "TOML (*.toml)",
-    )[0]
+    load_settings_file_path = (
+        from_path
+        or QtWidgets.QFileDialog.getOpenFileName(
+            autosplit,
+            "Load Profile",
+            os.path.join(auto_split_directory, "settings.toml"),
+            "TOML (*.toml)",
+        )[0]
+    )
     if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
         return
 
