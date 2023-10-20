@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ctypes
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import d3dshot
@@ -57,7 +57,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         right = selection["width"] + left
         bottom = selection["height"] + top
         screenshot = cast(
-            Union[np.ndarray[int, np.dtype[np.generic]], None],
+            np.ndarray[int, np.dtype[np.generic]] | None,
             self.desktop_duplication.screenshot((left, top, right, bottom)),
         )
         if screenshot is None:

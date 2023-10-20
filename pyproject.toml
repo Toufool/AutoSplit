@@ -21,6 +21,8 @@ ignore = [
   "ERA001", # eradicate: commented-out-code
   # contextlib.suppress is roughly 3x slower than try/except
   "SIM105", # flake8-simplify: use-contextlib-suppress
+  # Negative performance impact
+  "UP038", # non-pep604-isinstance
   # Checked by type-checker (pyright)
   "ANN", # flake-annotations
   "PGH003", # blanket-type-ignore
