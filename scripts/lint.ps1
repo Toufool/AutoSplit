@@ -3,7 +3,7 @@ Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
 
 Write-Host "`nRunning formatting..."
-autopep8 src/ --recursive --in-place
+ruff format .
 add-trailing-comma $(git ls-files '**.py*')
 
 Write-Host "`nRunning Ruff..."

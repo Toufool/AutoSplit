@@ -14,6 +14,7 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
+  "files.eol": "\n",
   "editor.comments.insertSpace": true,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
@@ -62,8 +63,7 @@
     "editor.defaultFormatter": "vscode.json-language-features",
   },
   "[python]": {
-    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
-    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
@@ -87,6 +87,10 @@
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
+  "ruff.enable": true,
+  "ruff.enableExperimentalFormatter": true,
+  "ruff.fixAll": true,
+  "ruff.organizeImports": true,
   "ruff.importStrategy": "fromEnvironment",
   // Use the Ruff extension instead
   "isort.check": false,

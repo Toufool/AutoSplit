@@ -20,11 +20,8 @@ repos:
     rev: "v0.1.1" # Must match requirements-dev.txt
     hooks:
       - id: ruff
+      - id: ruff-format
         args: [--fix]
-  - repo: https://github.com/hhatto/autopep8
-    rev: "v2.0.4" # Must match requirements-dev.txt
-    hooks:
-      - id: autopep8
   - repo: https://github.com/asottile/add-trailing-comma
     rev: v3.1.0 # Must match requirements-dev.txt
     hooks:
