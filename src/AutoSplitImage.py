@@ -14,7 +14,6 @@ from compare import COMPARE_METHODS_BY_INDEX, check_if_image_has_transparency
 from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 
@@ -150,13 +149,17 @@ class AutoSplitImage:
         comparison_method = self.__get_comparison_method(default)
 
         return COMPARE_METHODS_BY_INDEX.get(
-            comparison_method, compare_dummy,
+            comparison_method,
+            compare_dummy,
         )(
-            self.byte_array, resized_capture, self.mask,
+            self.byte_array,
+            resized_capture,
+            self.mask,
         )
 
 
-def compare_dummy(*_: object): return 0.0
+def compare_dummy(*_: object):
+    return 0.0
 
 
 if True:

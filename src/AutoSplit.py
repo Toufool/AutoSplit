@@ -122,6 +122,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Setup global error handling
         def _show_error_signal_slot(error_message_box: Callable[..., object]):
             return error_message_box()
+
         self.show_error_signal.connect(_show_error_signal_slot)
         sys.excepthook = error_messages.make_excepthook(self)
 
@@ -194,6 +195,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):
             return open_update_checker(self, latest_version, check_on_open)
+
         self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
 
         self.load_start_image_signal.connect(self.__load_start_image)
@@ -214,6 +216,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         try:
             import pyi_splash  # pyright: ignore[reportMissingModuleSource]
+
             pyi_splash.close()
         except ModuleNotFoundError:
             pass
@@ -251,9 +254,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             capture, _ = self.capture_method.get_frame(self)
 
         # Update title from target window or Capture Device name
-        capture_region_window_label = self.settings_dict["capture_device_name"] \
-            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE \
+        capture_region_window_label = (
+            self.settings_dict["capture_device_name"]
+            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
             else self.settings_dict["captured_window_title"]
+        )
         self.capture_region_window_label.setText(capture_region_window_label)
 
         # Simply clear if "live capture region" setting is off
@@ -330,7 +335,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))  # noqa: PLR0916 # See above TODO
             or (not below_flag and similarity_diff >= 0)
         ):
-
             self.timer_start_image.stop()
             self.split_below_threshold = False
 
@@ -456,10 +460,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         """Skip Split" and "Next Img." buttons connect to here."""
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
-        if not self.is_running \
-                or "Delayed Split" in self.current_split_image.text() \
-                or not (self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only) \
-                or self.__is_current_split_out_of_range():
+        if (
+            not self.is_running
+            or "Delayed Split" in self.current_split_image.text()
+            or not (self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only)
+            or self.__is_current_split_out_of_range()
+        ):
             return
 
         if not navigate_image_only:
@@ -558,7 +564,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # First loop: stays in this loop until all of the split images have been split
         while self.split_image_number < number_of_split_images:
-
             # Check if we are not waiting for the split delay to send the key press
             if self.waiting_for_split_delay:
                 time_millis = int(round(time() * 1000))
@@ -882,9 +887,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if user_profile.have_settings_changed(self):
             # Give a different warning if there was never a settings file that was loaded successfully,
             # and "save as" instead of "save".
-            settings_file_name = "Untitled" \
-                if not self.last_successfully_loaded_settings_file_path \
+            settings_file_name = (
+                "Untitled"
+                if not self.last_successfully_loaded_settings_file_path
                 else os.path.basename(self.last_successfully_loaded_settings_file_path)
+            )
 
             warning = QMessageBox.warning(
                 self,
@@ -923,9 +930,10 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
 
         qimage = QtGui.QImage(
             capture.data,  # pyright: ignore[reportGeneralTypeIssues] # https://bugreports.qt.io/browse/PYSIDE-2476
-            width, height,
-            width *
-            channels, image_format,
+            width,
+            height,
+            width * channels,
+            image_format,
         )
         qlabel.setPixmap(
             QtGui.QPixmap(qimage).scaled(

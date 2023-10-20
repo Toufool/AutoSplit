@@ -65,7 +65,8 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # https://github.com/python/typeshed/issues/10428
     @override
     def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        name: str | CaptureMethodEnum, *_,  # noqa: N805
+        name: str | CaptureMethodEnum,  # noqa: N805
+        *_,
     ):
         return name
 
@@ -127,6 +128,7 @@ if (  # Windows Graphics Capture requires a minimum Windows Build
 CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
 try:  # Test for laptop cross-GPU Desktop Duplication issue
     import d3dshot
+
     d3dshot.create(capture_output="numpy")
 except (ModuleNotFoundError, COMError):
     pass
@@ -198,7 +200,8 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
             else None
 
     return [
-        camera_info for camera_info
+        camera_info
+        for camera_info
         # Note: Return type required https://github.com/python/typeshed/issues/2652
         in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None

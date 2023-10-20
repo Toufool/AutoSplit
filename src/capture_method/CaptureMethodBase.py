@@ -7,7 +7,6 @@ from cv2.typing import MatLike
 from utils import is_valid_hwnd
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 

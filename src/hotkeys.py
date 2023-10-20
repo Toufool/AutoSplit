@@ -174,6 +174,7 @@ def __get_hotkey_name(names: list[str]):
 
     def sorting_key(key: str):
         return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
+
     clean_names = sorted(keyboard.get_hotkey_name(names).split("+"), key=sorting_key)
     # Replace the last key in hotkey_name with what we actually got as a last key_name
     # This ensures we keep proper keypad names
@@ -224,11 +225,13 @@ def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     if hotkey == "undo_split":
         return lambda: autosplit.undo_split(True)
     if hotkey == "toggle_auto_reset_image":
+
         def toggle_auto_reset_image():
             new_value = not autosplit.settings_dict["enable_auto_reset"]
             autosplit.settings_dict["enable_auto_reset"] = new_value
             if autosplit.SettingsWidget:
                 autosplit.SettingsWidget.enable_auto_reset_image_checkbox.setChecked(new_value)
+
         return toggle_auto_reset_image
     return getattr(autosplit, f"{hotkey}_signal").emit
 

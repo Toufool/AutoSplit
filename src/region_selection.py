@@ -34,7 +34,6 @@ user32 = ctypes.windll.user32
 
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 ALIGN_REGION_THRESHOLD = 0.9
@@ -54,15 +53,18 @@ SUPPORTED_IMREAD_FORMATS = [
     ("Radiance HDR", "*.hdr *.pic"),
 ]
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
-IMREAD_EXT_FILTER = "All Files (" \
-    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
-    + ");;"\
+IMREAD_EXT_FILTER = (
+    "All Files ("
+    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
+    + ");;"
     + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
+)
 
 
+# TODO: For later as a different picker option
 def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
-    # TODO: For later as a different picker option
     """Uses the built-in GraphicsCapturePicker to select the Window."""
+
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
             if async_status != AsyncStatus.COMPLETED:
