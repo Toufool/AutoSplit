@@ -29,7 +29,7 @@ This program can be used to automatically start, split, and reset your preferred
 ### Compatibility
 
 - Windows 10 and 11.
-- Python 3.9+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## OPTIONS
 
