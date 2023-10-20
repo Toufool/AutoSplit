@@ -3,11 +3,11 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
 from itertools import starmap
-from typing import TYPE_CHECKING, Never, NoReturn, TypedDict, cast
+from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
-from typing_extensions import override
+from typing_extensions import Never, override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from capture_method.CaptureMethodBase import CaptureMethodBase

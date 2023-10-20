@@ -142,6 +142,7 @@ ignore = [
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
+pythonVersion = "3.10"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
 # Extra strict
