@@ -62,7 +62,7 @@
     "editor.defaultFormatter": "vscode.json-language-features",
   },
   "[python]": {
-    // Ruff is not yet a formatter: https://github.com/charliermarsh/ruff/issues/1904
+    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.tabSize": 4,
     "editor.rulers": [

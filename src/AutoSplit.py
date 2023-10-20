@@ -327,7 +327,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_below_threshold = True
             return
         if (
-            (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))
+            (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))  # noqa: PLR0916 # See above TODO
             or (not below_flag and similarity_diff >= 0)
         ):
 

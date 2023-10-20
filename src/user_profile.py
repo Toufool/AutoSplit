@@ -72,7 +72,10 @@ DEFAULT_PROFILE = UserProfileDict(
 
 
 def have_settings_changed(autosplit: AutoSplit):
-    return autosplit.settings_dict not in (autosplit.last_loaded_settings, autosplit.last_saved_settings)
+    return (
+        autosplit.settings_dict != autosplit.last_saved_settings
+        or autosplit.settings_dict != autosplit.last_loaded_settings
+    )
 
 
 def save_settings(autosplit: AutoSplit):

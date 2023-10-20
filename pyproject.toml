@@ -1,10 +1,10 @@
-# https://beta.ruff.rs/docs/configuration
+# https://docs.astral.sh/ruff/configuration/
 [tool.ruff]
 target-version = "py39"
 line-length = 120
 select = ["ALL"]
 preview = true
-# https://beta.ruff.rs/docs/rules
+# https://docs.astral.sh/ruff/rules/
 ignore = [
   ###
   # Not needed or wanted
@@ -34,7 +34,7 @@ ignore = [
   "TD001", # flake8-todos: invalid-todo-tag
 
   ###
-  # These should be warnings (https://github.com/charliermarsh/ruff/issues/1256)
+  # These should be warnings (https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774)
   ###
   "FIX", # flake8-fixme
   # Not all TODOs are worth an issue, this would be better as a warning
@@ -56,7 +56,7 @@ ignore = [
   # Python 3.11, introduced "zero cost" exception handling
   "PERF203", # try-except-in-loop
 
-  ### FIXME/TODO (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
+  ### FIXME/TODO (no warnings in Ruff yet: https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
   "CPY001", # flake8-copyright
   "PTH", # flake8-use-pathlib
   # Ignore until linux support
@@ -66,7 +66,7 @@ ignore = [
 [tool.ruff.per-file-ignores]
 "typings/**/*.pyi" = [
   "F811", # Re-exports false positives
-  "F821", # https://github.com/charliermarsh/ruff/issues/3011
+  "F821", # https://github.com/astral-sh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "A", # Shadowing builtin names
   "ICN001", # unconventional-import-alias
@@ -77,18 +77,17 @@ ignore = [
   "PYI042", # CamelCase TypeAlias
 ]
 
-# https://beta.ruff.rs/docs/settings/#flake8-implicit-str-concat
+# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
 [tool.ruff.flake8-implicit-str-concat]
 allow-multiline = false
 
-# https://beta.ruff.rs/docs/settings/#isort
+# https://docs.astral.sh/ruff/settings/#isort
 [tool.ruff.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
 required-imports = ["from __future__ import annotations"]
 # Unlike isort, Ruff only counts relative imports as local-folder by default for know.
-# https://github.com/charliermarsh/ruff/issues/2419
-# https://github.com/charliermarsh/ruff/issues/3115
+# https://github.com/astral-sh/ruff/issues/3115
 known-local-folder = [
   "AutoControlledThread",
   "AutoSplit",
@@ -105,7 +104,7 @@ known-local-folder = [
   "utils",
 ]
 
-# https://beta.ruff.rs/docs/settings/#mccabe
+# https://docs.astral.sh/ruff/settings/#mccabe
 [tool.ruff.mccabe]
 # Hard limit, arbitrary to 4 bytes
 max-complexity = 31
@@ -128,7 +127,10 @@ ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
   "E70", # Allow ... on same line as def
   # Autofixed by Ruff
-  # Check for the "Fix" flag https://beta.ruff.rs/docs/rules/#pycodestyle-e-w
+  # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+  "E20", # whitespace-after-* & whitespace-before-*
+  "E211", # whitespace-before-parameters
+  "E231", # missing-whitespace
   "E401", # I001: unsorted-imports
   "E71", # Comparisons
   "E731", # lambda-assignment
