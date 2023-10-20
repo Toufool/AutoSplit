@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
@@ -65,7 +63,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     # https://github.com/python/typeshed/issues/10428
     @override
     def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        name: str | CaptureMethodEnum,  # noqa: N805
+        name: "str | CaptureMethodEnum",  # noqa: N805
         *_,
     ):
         return name

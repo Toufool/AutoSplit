@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 
 

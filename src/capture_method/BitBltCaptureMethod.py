@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import ctypes
 import ctypes.wintypes
 from typing import TYPE_CHECKING, cast
