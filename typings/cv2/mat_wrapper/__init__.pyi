@@ -1,9 +1,11 @@
+from typing import TypeAlias
+
 import numpy as np
 from _typeshed import Unused
-from typing_extensions import TypeAlias
 
 __all__: list[str] = []
 _NDArray: TypeAlias = np.ndarray[float, np.dtype[np.generic]]
+
 
 class Mat(_NDArray):
     wrap_channels: bool | None

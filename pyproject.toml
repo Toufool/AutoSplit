@@ -1,6 +1,6 @@
 # https://docs.astral.sh/ruff/configuration/
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 120
 select = ["ALL"]
 preview = true
@@ -21,6 +21,8 @@ ignore = [
   "ERA001", # eradicate: commented-out-code
   # contextlib.suppress is roughly 3x slower than try/except
   "SIM105", # flake8-simplify: use-contextlib-suppress
+  # Negative performance impact
+  "UP038", # non-pep604-isinstance
   # Checked by type-checker (pyright)
   "ANN", # flake-annotations
   "PGH003", # blanket-type-ignore
@@ -85,7 +87,6 @@ allow-multiline = false
 [tool.ruff.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
-required-imports = ["from __future__ import annotations"]
 # Unlike isort, Ruff only counts relative imports as local-folder by default for know.
 # https://github.com/astral-sh/ruff/issues/3115
 known-local-folder = [
@@ -141,6 +142,7 @@ ignore = [
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
+pythonVersion = "3.10"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
 # Extra strict

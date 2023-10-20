@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 from collections import OrderedDict
 from dataclasses import dataclass
@@ -62,12 +60,9 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     def __hash__(self):
         return self.value.__hash__()
 
-    # https://github.com/python/typeshed/issues/10428
     @override
-    def _generate_next_value_(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        name: str | CaptureMethodEnum,  # noqa: N805
-        *_,
-    ):
+    @staticmethod
+    def _generate_next_value_(name: "str | CaptureMethodEnum", *_):
         return name
 
     NONE = ""
@@ -138,7 +133,7 @@ CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullCont
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 
 
-def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit):
+def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     autosplit.capture_method.close(autosplit)
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
     if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:

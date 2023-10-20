@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-from __future__ import annotations
-
 import ctypes
 import os
 import signal
@@ -878,39 +876,35 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 os.kill(os.getpid(), signal.SIGINT)
             sys.exit()
 
-        # Simulates LiveSplit quitting without asking. See "TODO" at update_auto_control Worker
+        # `event is None` simulates LiveSplit quitting without asking.
         # This also more gracefully exits LiveSplit
         # Users can still manually save their settings
-        if event is None:
+        if event is None or not user_profile.have_settings_changed(self):
             exit_program()
 
-        if user_profile.have_settings_changed(self):
-            # Give a different warning if there was never a settings file that was loaded successfully,
-            # and "save as" instead of "save".
-            settings_file_name = (
-                "Untitled"
-                if not self.last_successfully_loaded_settings_file_path
-                else os.path.basename(self.last_successfully_loaded_settings_file_path)
-            )
+        # Give a different warning if there was never a settings file that was loaded successfully,
+        # and "save as" instead of "save".
+        settings_file_name = (
+            "Untitled"
+            if not self.last_successfully_loaded_settings_file_path
+            else os.path.basename(self.last_successfully_loaded_settings_file_path)
+        )
 
-            warning = QMessageBox.warning(
-                self,
-                "AutoSplit",
-                f"Do you want to save changes made to settings file {settings_file_name}?",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
-            )
+        warning = QMessageBox.warning(
+            self,
+            "AutoSplit",
+            f"Do you want to save changes made to settings file {settings_file_name}?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
+        )
 
-            if warning is QMessageBox.StandardButton.Yes:
-                if user_profile.save_settings(self):
-                    exit_program()
-                else:
-                    event.ignore()
-            if warning is QMessageBox.StandardButton.No:
-                exit_program()
-            if warning is QMessageBox.StandardButton.Cancel:
-                event.ignore()
-        else:
+        if (
+            (warning is QMessageBox.StandardButton.Yes and user_profile.save_settings(self))
+            or warning is QMessageBox.StandardButton.No
+        ):
             exit_program()
+
+        # Fallthrough case: Prevent program from closing.
+        event.ignore()
 
 
 def set_preview_image(qlabel: QLabel, image: MatLike | None):

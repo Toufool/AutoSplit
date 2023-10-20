@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from multiprocessing.connection import Pipe, PipeConnection
 
 # Less type-safe, but no extra variable. User could mix up send and recv types.
