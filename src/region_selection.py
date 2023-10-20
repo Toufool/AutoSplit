@@ -60,7 +60,7 @@ IMREAD_EXT_FILTER = (
 
 
 # TODO: For later as a different picker option
-def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
+def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
     """Uses the built-in GraphicsCapturePicker to select the Window."""
 
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
@@ -86,7 +86,7 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         async_operation.completed = callback
 
 
-def select_region(autosplit: AutoSplit):
+def select_region(autosplit: "AutoSplit"):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -129,7 +129,7 @@ def select_region(autosplit: AutoSplit):
     )
 
 
-def select_window(autosplit: AutoSplit):
+def select_window(autosplit: "AutoSplit"):
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -172,7 +172,7 @@ def select_window(autosplit: AutoSplit):
     )
 
 
-def align_region(autosplit: AutoSplit):
+def align_region(autosplit: "AutoSplit"):
     # Check to see if a region has been set
     if not autosplit.capture_method.check_selected_region_exists(autosplit):
         error_messages.region()
@@ -225,7 +225,7 @@ def align_region(autosplit: AutoSplit):
     )
 
 
-def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
+def __set_region_values(autosplit: "AutoSplit", left: int, top: int, width: int, height: int):
     autosplit.settings_dict["capture_region"]["x"] = left
     autosplit.settings_dict["capture_region"]["y"] = top
     autosplit.settings_dict["capture_region"]["width"] = width
@@ -279,7 +279,7 @@ def __test_alignment(capture: MatLike, template: MatLike):
     return best_match, best_height, best_width, best_loc
 
 
-def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
+def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, check_empty_directory: bool = True):
     error = None
     if not autosplit.settings_dict["split_image_directory"]:
         error = error_messages.split_image_directory

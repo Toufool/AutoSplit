@@ -100,6 +100,22 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
+def get_comparison_method_by_index(comparison_method_index: int):
+    match comparison_method_index:
+        case 0:
+            return compare_l2_norm
+        case 1:
+            return compare_histograms
+        case 2:
+            return compare_phash
+        case _:
+            return __compare_dummy
+
+
+def __compare_dummy(*_: object):
+    return 0.0
+
+
 def check_if_image_has_transparency(image: MatLike):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
     if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
@@ -112,6 +128,3 @@ def check_if_image_has_transparency(image: MatLike):
         # (the image appears as all black in windows, so it's not obvious for the user what they did wrong)
 
     return mean != MAXBYTE
-
-
-COMPARE_METHODS_BY_INDEX = {0: compare_l2_norm, 1: compare_histograms, 2: compare_phash}

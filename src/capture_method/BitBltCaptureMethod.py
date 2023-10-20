@@ -32,7 +32,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     @override
-    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
+    def get_frame(self, autosplit: "AutoSplit") -> tuple[MatLike | None, bool]:
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
         image: MatLike | None = None
@@ -77,7 +77,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         return image, False
 
     @override
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit):
+    def recover_window(self, captured_window_title: str, autosplit: "AutoSplit"):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False

@@ -45,7 +45,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     last_captured_frame: MatLike | None = None
     is_old_image = False
 
-    def __read_loop(self, autosplit: AutoSplit):
+    def __read_loop(self, autosplit: "AutoSplit"):
         try:
             while not self.stop_thread.is_set():
                 try:
@@ -85,7 +85,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 ),
             )
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
@@ -111,7 +111,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_thread.start()
 
     @override
-    def close(self, autosplit: AutoSplit):
+    def close(self, autosplit: "AutoSplit"):
         self.stop_thread.set()
         if self.capture_thread:
             self.capture_thread.join()
@@ -119,7 +119,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_device.release()
 
     @override
-    def get_frame(self, autosplit: AutoSplit):
+    def get_frame(self, autosplit: "AutoSplit"):
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
@@ -140,5 +140,5 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
     @override
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self, autosplit: "AutoSplit"):
         return bool(self.capture_device.isOpened())

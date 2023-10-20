@@ -82,7 +82,7 @@ def first(iterable: Iterable[T]) -> T:
     return next(iter(iterable))
 
 
-def try_delete_dc(dc: PyCDC):
+def try_delete_dc(dc: "PyCDC"):
     try:
         dc.DeleteDC()
     except win32ui.error:
