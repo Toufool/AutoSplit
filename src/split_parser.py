@@ -99,7 +99,7 @@ def loop_from_filename(filename: str):
     value = __value_from_filename(filename, "@@", 1)
 
     # Loop should always be positive
-    return value if value >= 1 else 1
+    return max(value, 1)
 
 
 def comparison_method_from_filename(filename: str):
