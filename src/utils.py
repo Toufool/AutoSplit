@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import ctypes
 import ctypes.wintypes
@@ -10,11 +8,10 @@ from enum import IntEnum
 from itertools import chain
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
 import win32ui
 from cv2.typing import MatLike
-from typing_extensions import TypeGuard
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
@@ -85,7 +82,7 @@ def first(iterable: Iterable[T]) -> T:
     return next(iter(iterable))
 
 
-def try_delete_dc(dc: PyCDC):
+def try_delete_dc(dc: "PyCDC"):
     try:
         dc.DeleteDC()
     except win32ui.error:

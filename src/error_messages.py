@@ -1,6 +1,4 @@
 """Error messages."""
-from __future__ import annotations
-
 import os
 import signal
 import sys
@@ -170,7 +168,7 @@ CREATE_NEW_ISSUE_MESSAGE = (
 )
 
 
-def make_excepthook(autosplit: AutoSplit):
+def make_excepthook(autosplit: "AutoSplit"):
     def excepthook(exception_type: type[BaseException], exception: BaseException, _traceback: TracebackType | None):
         # Catch Keyboard Interrupts for a clean close
         if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):

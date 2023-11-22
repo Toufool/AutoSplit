@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 from collections.abc import Callable
 from typing import TYPE_CHECKING, TypeVar
@@ -142,20 +140,20 @@ def flags_from_filename(filename: str):
     flags = 0x00
 
     for flag_str in flags_str:
-        character = flag_str.upper()
-        if character == "D":
-            flags |= DUMMY_FLAG
-        elif character == "B":
-            flags |= BELOW_FLAG
-        elif character == "P":
-            flags |= PAUSE_FLAG
-        # Legacy flags
-        elif character == "M":
-            continue
-        else:
-            # An invalid flag was caught, this filename was written incorrectly
-            # return 0. We don't want to interpret any misleading filenames
-            return 0
+        match flag_str.upper():
+            case  "D":
+                flags |= DUMMY_FLAG
+            case "B":
+                flags |= BELOW_FLAG
+            case "P":
+                flags |= PAUSE_FLAG
+            # Legacy flags
+            case "M":
+                continue
+            # An invalid flag was caught, this filename was written incorrectly return 0.
+            # We don't want to interpret any misleading filenames
+            case _:
+                return 0
 
     # Check for any conflicting flags that were set
     # For instance, we can't have a dummy split also pause
@@ -174,7 +172,7 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     return None
 
 
-def parse_and_validate_images(autosplit: AutoSplit):
+def parse_and_validate_images(autosplit: "AutoSplit"):
     # Get split images
     all_images = [
         AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
