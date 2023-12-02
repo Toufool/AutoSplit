@@ -535,7 +535,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Construct groups of splits
         self.split_groups = []
-        dummy_splits_array = []
+        dummy_splits_array: list[bool] = []
         number_of_split_images = len(self.split_images_and_loop_number)
         current_group: list[int] = []
         self.split_groups.append(current_group)

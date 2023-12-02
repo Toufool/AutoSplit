@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
 import win32ui
 from cv2.typing import MatLike
+from typing_extensions import reveal_type
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
@@ -129,6 +130,7 @@ def get_direct3d_device():
 
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
+    reveal_type(direct_3d_device)
     if not direct_3d_device:
         try:
             # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
@@ -169,7 +171,7 @@ def fire_and_forget(func: Callable[..., Any]):
 
 
 def flatten(nested_iterable: Iterable[Iterable[_T]]) -> chain[_T]:
-    return chain(*nested_iterable)
+    return chain.from_iterable(nested_iterable)
 
 
 # Environment specifics
