@@ -13,19 +13,21 @@ class CaptureMethodBase:
     short_description = ""
     description = ""
 
-    def __init__(self, autosplit: "AutoSplit | None"):
+    _autosplit_ref: "AutoSplit"
+
+    def __init__(self, autosplit: "AutoSplit"):
+        # Some capture methods don't need an initialization process
+        self._autosplit_ref = autosplit
+
+    def reinitialize(self):
+        self.close()
+        self.__init__(self._autosplit_ref)  # type: ignore[misc]
+
+    def close(self):
         # Some capture methods don't need an initialization process
         pass
 
-    def reinitialize(self, autosplit: "AutoSplit"):
-        self.close(autosplit)
-        self.__init__(autosplit)  # type: ignore[misc]
-
-    def close(self, autosplit: "AutoSplit"):
-        # Some capture methods don't need an initialization process
-        pass
-
-    def get_frame(self, autosplit: "AutoSplit") -> tuple[MatLike | None, bool]:  # noqa: PLR6301
+    def get_frame(self) -> tuple[MatLike | None, bool]:  # noqa: PLR6301
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
@@ -34,8 +36,8 @@ class CaptureMethodBase:
         """
         return None, False
 
-    def recover_window(self, captured_window_title: str, autosplit: "AutoSplit") -> bool:  # noqa: PLR6301
+    def recover_window(self, captured_window_title: str) -> bool:  # noqa: PLR6301
         return False
 
-    def check_selected_region_exists(self, autosplit: "AutoSplit") -> bool:  # noqa: PLR6301
-        return is_valid_hwnd(autosplit.hwnd)
+    def check_selected_region_exists(self) -> bool:
+        return is_valid_hwnd(self._autosplit_ref.hwnd)

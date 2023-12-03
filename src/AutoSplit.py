@@ -95,7 +95,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.split_image_number = 0
         self.split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
         self.split_groups: list[list[int]] = []
-        self.capture_method = CaptureMethodBase(None)
+        self.capture_method = CaptureMethodBase(self)
         self.is_running = False
 
         # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
@@ -249,7 +249,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if called_from_timer:
             if self.is_running or self.start_image:
                 return
-            capture, _ = self.capture_method.get_frame(self)
+            capture, _ = self.capture_method.get_frame()
 
         # Update title from target window or Capture Device name
         capture_region_window_label = (
@@ -387,7 +387,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture, _ = self.capture_method.get_frame(self)
+        capture, _ = self.capture_method.get_frame()
         if not is_valid_image(capture):
             error_messages.region()
             return
@@ -782,7 +782,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __get_capture_for_comparison(self):
         """Grab capture region and resize for comparison."""
-        capture, is_old_image = self.capture_method.get_frame(self)
+        capture, is_old_image = self.capture_method.get_frame()
 
         # This most likely means we lost capture
         # (ie the captured window was closed, crashed, lost capture device, etc.)
@@ -792,9 +792,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.live_image.setText("Waiting for capture device...")
             else:
                 self.live_image.setText("Trying to recover window...")
-                recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"], self)
+                recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
                 if recovered:
-                    capture, _ = self.capture_method.get_frame(self)
+                    capture, _ = self.capture_method.get_frame()
 
         self.__update_live_image_details(capture)
         return capture, is_old_image
@@ -868,7 +868,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self.update_auto_control:
                 # self.update_auto_control.terminate() hangs in PySide6
                 self.update_auto_control.quit()
-            self.capture_method.close(self)
+            self.capture_method.close()
             if event is not None:
                 event.accept()
             if self.is_auto_controlled:

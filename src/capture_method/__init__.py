@@ -134,8 +134,14 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCapt
 
 
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
-    autosplit.capture_method.close(autosplit)
+    """
+    Seemlessly change the current capture method,
+    initialize the new one with transfered subscriptions
+    and update UI as needed.
+    """
+    autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
+
     if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
         autosplit.select_region_button.setDisabled(True)
         autosplit.select_window_button.setDisabled(True)
