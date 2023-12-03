@@ -4,30 +4,29 @@
 #
 # Dependencies:
 certifi
-ImageHash>=4.3.1  # Contains type information + setup as package not module
+ImageHash>=4.3.1 ; python_version < '3.12' # Contains type information + setup as package not module  # PyWavelets install broken on Python 3.12
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
-numpy>=1.23.2  # Python 3.11 wheels
-# From https://github.com/opencv/opencv-python/actions/runs/5461702800
-./res/opencv_python_headless-4.8.0+4f81552-cp37-abi3-win_amd64.whl
-# opencv-python-headless>=4.8.0.74  # New typing + OBS Camera fixes
+numpy>=1.26  # Python 3.12 support
+opencv-python-headless>=4.8.1.78  # Typing fixes
 packaging
-Pillow>=9.2  # gnome-screeshot checks
-psutil
+Pillow>=10.0  # Python 3.12 support
+psutil>=5.9.6  # Python 3.12 fixes
 PyAutoGUI
 PyWinCtl>=0.0.42  # py.typed
-PySide6-Essentials>=6.5.1  # fixes incomplete tuple return types https://bugreports.qt.io/browse/PYSIDE-2285
-requests<=2.28.1  # 2.28.2 has issues with PyInstaller https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
+# When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev
+PySide6-Essentials>=6.6.0  # Python 3.12 support
+requests>=2.28.2  # charset_normalizer 3.x update
 toml
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
-pyinstaller>=5.5  # Python 3.11 support
-pyinstaller-hooks-contrib>=2022.9  # opencv-python 4.6 support. Changes for pywintypes and comtypes
+pyinstaller>=5.13  # Python 3.12 support
+pyinstaller-hooks-contrib>=2022.15  # charset-normalizer fix https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #
 # Windows-only dependencies:
-git+https://github.com/andreaschiavinato/python_grabber.git#egg=pygrabber ; sys_platform == 'win32'  # Completed types
+pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=301 ; sys_platform == 'win32'
-winsdk>=v1.0.0b7 ; sys_platform == 'win32'  # Python 3.11 support
+winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 git+https://github.com/ranchen421/D3DShot.git#egg=D3DShot ; sys_platform == 'win32'  # D3DShot from PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5

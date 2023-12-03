@@ -1,10 +1,10 @@
-# https://beta.ruff.rs/docs/configuration
+# https://docs.astral.sh/ruff/configuration/
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 120
-select = ["ALL", "NURSERY"]
-extend-fixable = ["NURSERY"]
-# https://beta.ruff.rs/docs/rules
+select = ["ALL"]
+preview = true
+# https://docs.astral.sh/ruff/rules/
 ignore = [
   ###
   # Not needed or wanted
@@ -21,6 +21,8 @@ ignore = [
   "ERA001", # eradicate: commented-out-code
   # contextlib.suppress is roughly 3x slower than try/except
   "SIM105", # flake8-simplify: use-contextlib-suppress
+  # Negative performance impact
+  "UP038", # non-pep604-isinstance
   # Checked by type-checker (pyright)
   "ANN", # flake-annotations
   "PGH003", # blanket-type-ignore
@@ -34,7 +36,7 @@ ignore = [
   "TD001", # flake8-todos: invalid-todo-tag
 
   ###
-  # These should be warnings (https://github.com/charliermarsh/ruff/issues/1256)
+  # These should be warnings (https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774)
   ###
   "FIX", # flake8-fixme
   # Not all TODOs are worth an issue, this would be better as a warning
@@ -56,44 +58,43 @@ ignore = [
   # Python 3.11, introduced "zero cost" exception handling
   "PERF203", # try-except-in-loop
 
-  ### FIXME/TODO (no warnings in Ruff yet: https://github.com/charliermarsh/ruff/issues/1256):
-  "CPY001",
-  "PTH",
+  ### FIXME/TODO (no warnings in Ruff yet: https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
+  "CPY001", # flake8-copyright
+  "PTH", # flake8-use-pathlib
   # Ignore until linux support
-  "EXE",
+  "EXE", # flake8-executable
 ]
 
 [tool.ruff.per-file-ignores]
 "typings/**/*.pyi" = [
   "F811", # Re-exports false positives
-  "F821", # https://github.com/charliermarsh/ruff/issues/3011
+  "F821", # https://github.com/astral-sh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "A", # Shadowing builtin names
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
+  "PLR0904", # Too many public methods
   "PLR0913", # Argument count
+  "PLW3201", # misspelled dunder method name
   "PYI042", # CamelCase TypeAlias
 ]
 
-# https://beta.ruff.rs/docs/settings/#flake8-implicit-str-concat
+# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
 [tool.ruff.flake8-implicit-str-concat]
 allow-multiline = false
 
-# https://beta.ruff.rs/docs/settings/#isort
+# https://docs.astral.sh/ruff/settings/#isort
 [tool.ruff.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
-required-imports = ["from __future__ import annotations"]
 # Unlike isort, Ruff only counts relative imports as local-folder by default for know.
-# https://github.com/charliermarsh/ruff/issues/2419
-# https://github.com/charliermarsh/ruff/issues/3115
+# https://github.com/astral-sh/ruff/issues/3115
 known-local-folder = [
   "AutoControlledThread",
   "AutoSplit",
   "AutoSplitImage",
   "capture_method",
   "compare",
-  "error_messages",
   "error_messages",
   "gen",
   "hotkeys",
@@ -104,7 +105,7 @@ known-local-folder = [
   "utils",
 ]
 
-# https://beta.ruff.rs/docs/settings/#mccabe
+# https://docs.astral.sh/ruff/settings/#mccabe
 [tool.ruff.mccabe]
 # Hard limit, arbitrary to 4 bytes
 max-complexity = 31
@@ -127,7 +128,10 @@ ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
   "E70", # Allow ... on same line as def
   # Autofixed by Ruff
-  # Check for the "Fix" flag https://beta.ruff.rs/docs/rules/#pycodestyle-e-w
+  # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+  "E20", # whitespace-after-* & whitespace-before-*
+  "E211", # whitespace-before-parameters
+  "E231", # missing-whitespace
   "E401", # I001: unsorted-imports
   "E71", # Comparisons
   "E731", # lambda-assignment
@@ -138,6 +142,7 @@ ignore = [
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
+pythonVersion = "3.10"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
 # Extra strict

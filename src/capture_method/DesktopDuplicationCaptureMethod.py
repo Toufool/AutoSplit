@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import ctypes
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import d3dshot
@@ -30,13 +28,13 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
     )
 
-    def __init__(self, autosplit: AutoSplit | None):
+    def __init__(self, autosplit: "AutoSplit | None"):
         super().__init__(autosplit)
         # Must not set statically as some laptops will throw an error
         self.desktop_duplication = d3dshot.create(capture_output="numpy")
 
     @override
-    def get_frame(self, autosplit: AutoSplit):
+    def get_frame(self, autosplit: "AutoSplit"):
         selection = autosplit.settings_dict["capture_region"]
         hwnd = autosplit.hwnd
         hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
@@ -44,11 +42,11 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
             return None, False
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-        self.desktop_duplication.display = [
+        self.desktop_duplication.display = next(
             display for display
             in self.desktop_duplication.displays
             if display.hmonitor == hmonitor
-        ][0]
+        )
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
         offset_x -= self.desktop_duplication.display.position["left"]
         offset_y -= self.desktop_duplication.display.position["top"]
@@ -57,7 +55,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         right = selection["width"] + left
         bottom = selection["height"] + top
         screenshot = cast(
-            Union[np.ndarray[int, np.dtype[np.generic]], None],
+            np.ndarray[int, np.dtype[np.generic]] | None,
             self.desktop_duplication.screenshot((left, top, right, bottom)),
         )
         if screenshot is None:

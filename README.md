@@ -5,8 +5,12 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)  
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![autopep8](https://badgen.net/badge/code%20style/autopep8/blue)](https://github.com/hhatto/autopep8)
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
@@ -25,14 +29,14 @@ This program can be used to automatically start, split, and reset your preferred
 ### Compatibility
 
 - Windows 10 and 11.
-- Python 3.9+ (Not requried for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## OPTIONS
 
 #### Split Image Folder
 
-- Supported image file types: .png, .jpg, .jpeg, .bmp, and [more](https://docs.opencv.org/3.0-beta/modules/imgcodecs/doc/reading_and_writing_images.html#imread).
-- Images can be any size.
+- Supported image file types: PNG, JPEG, bitmaps, WebP, and [more](https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread).
+- Images can be any size and ratio.
 - Images are matched in alphanumerical order.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`...
 - Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
@@ -79,7 +83,7 @@ This program can be used to automatically start, split, and reset your preferred
     Duplicates the desktop using Direct3D.  
     It can record OpenGL and Hardware Accelerated windows.  
     About 10-15x slower than BitBlt. Not affected by window size.  
-    overlapping windows will show up and can't record across displays.  
+    Overlapping windows will show up and can't record across displays.  
     This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
 - **Force Full Content Rendering** (very slow, can affect rendering)  
     Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  

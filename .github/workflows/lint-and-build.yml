@@ -34,6 +34,10 @@ env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   ruff:
     runs-on: windows-latest
@@ -41,7 +45,7 @@ jobs:
       fail-fast: false
       # Ruff is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -54,25 +58,13 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - run: ruff check .
-  add-trailing-comma:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - run: pip install add-trailing-comma
-      - name: Analysing the code with add-trailing-comma
-        run: add-trailing-comma $(git ls-files '**.py*')
   Pyright:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -88,13 +80,14 @@ jobs:
         uses: jakebailey/pyright-action@v1
         with:
           working-directory: src/
+          python-version: ${{ matrix.python-version }}
   Build:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.11", "3.12"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3

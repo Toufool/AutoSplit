@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
@@ -15,7 +13,6 @@ from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
@@ -27,9 +24,10 @@ def is_blank(image: MatLike):
     # Instead we check for a few key pixels, in this case, corners
     return np.all(
         image[
-            ::image.shape[ImageShape.Y] - 1,
-            ::image.shape[ImageShape.X] - 1,
-        ] == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+            :: image.shape[ImageShape.Y] - 1,
+            :: image.shape[ImageShape.X] - 1,
+        ]
+        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
     )
 
 
@@ -42,12 +40,12 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     )
 
     capture_device: cv2.VideoCapture
-    capture_thread: Thread | None
+    capture_thread: Thread | None = None
     stop_thread: Event
     last_captured_frame: MatLike | None = None
     is_old_image = False
 
-    def __read_loop(self, autosplit: AutoSplit):
+    def __read_loop(self, autosplit: "AutoSplit"):
         try:
             while not self.stop_thread.is_set():
                 try:
@@ -56,7 +54,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     if not (
                         cv2_error.code == cv2.Error.STS_ERROR
                         and (
-                            # Likely means the camera is occupied
+                            # Likely means the camera is occupied OR the camera index is out of range (like -1)
                             cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539
@@ -87,15 +85,21 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                 ),
             )
 
-    def __init__(self, autosplit: AutoSplit):
+    def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
+        self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
+        self.capture_device.setExceptionMode(True)
+        self.stop_thread = Event()
+
+        # The video capture device isn't accessible, don't bother with it.
+        if not self.capture_device.isOpened():
+            return
+
         filter_graph = FilterGraph()
         filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
         width, height = filter_graph.get_input_device().get_current_format()
         filter_graph.remove_filters()
 
-        self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
-        self.capture_device.setExceptionMode(True)
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
         try:
             self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -103,12 +107,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         except cv2.error:
             # Some cameras don't allow changing the resolution
             pass
-        self.stop_thread = Event()
         self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
         self.capture_thread.start()
 
     @override
-    def close(self, autosplit: AutoSplit):
+    def close(self, autosplit: "AutoSplit"):
         self.stop_thread.set()
         if self.capture_thread:
             self.capture_thread.join()
@@ -116,7 +119,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_device.release()
 
     @override
-    def get_frame(self, autosplit: AutoSplit):
+    def get_frame(self, autosplit: "AutoSplit"):
         if not self.check_selected_region_exists(autosplit):
             return None, False
 
@@ -131,11 +134,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         y = min(selection["y"], image.shape[ImageShape.Y] - 1)
         x = min(selection["x"], image.shape[ImageShape.X] - 1)
         image = image[
-            y:y + selection["height"],
-            x:x + selection["width"],
+            y: y + selection["height"],
+            x: x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
     @override
-    def check_selected_region_exists(self, autosplit: AutoSplit):
+    def check_selected_region_exists(self, autosplit: "AutoSplit"):
         return bool(self.capture_device.isOpened())

@@ -14,6 +14,7 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
+  "files.eol": "\n",
   "editor.comments.insertSpace": true,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
@@ -21,8 +22,7 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.unusedImports": false,
-    "source.fixAll.convertImportFormat": true,
+    // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": false,
   },
   "emeraldwalk.runonsave": {
@@ -63,7 +63,7 @@
     "editor.defaultFormatter": "vscode.json-language-features",
   },
   "[python]": {
-    // Ruff is not yet a formatter: https://github.com/charliermarsh/ruff/issues/1904
+    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.tabSize": 4,
     "editor.rulers": [
@@ -80,23 +80,28 @@
     "--config-file=mypy.ini",
   ],
   "python.terminal.activateEnvironment": true,
+  // python.analysis is Pylance (pyright) configurations
+  "python.analysis.fixAll": [
+    "source.convertImportFormat"
+    // Explicitly omiting "source.unusedImports", can be annoying when commenting code for debugging
+  ],
   // Important to follow the config in pyrightconfig.json
   "python.analysis.useLibraryCodeForTypes": false,
   "python.analysis.diagnosticMode": "workspace",
-  "python.linting.enabled": true,
   "ruff.importStrategy": "fromEnvironment",
   // Use the Ruff extension instead
   "isort.check": false,
+  // linting/formatting options deprecated, use dedicated extensions instead
+  // https://github.com/microsoft/vscode-python/wiki/Migration-to-Python-Tools-Extensions
+  "python.linting.enabled": false,
   "python.linting.banditEnabled": false,
   "python.linting.flake8Enabled": false,
   "python.linting.prospectorEnabled": false,
   "python.linting.pycodestyleEnabled": false,
   "python.linting.pylamaEnabled": false,
   "python.linting.pylintEnabled": false,
-  // Use the autopep8 extension instead
-  "python.formatting.provider": "none",
-  // Use Pyright/Pylance instead
   "python.linting.mypyEnabled": false,
+  "python.formatting.provider": "none",
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
   "powershell.codeFormatting.autoCorrectAliases": true,
   "powershell.codeFormatting.trimWhitespaceAroundPipe": true,

@@ -1,19 +1,18 @@
-from __future__ import annotations
-
 import asyncio
 import ctypes
 import ctypes.wintypes
 import os
 import sys
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Iterable
 from enum import IntEnum
+from itertools import chain
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
 import win32ui
 from cv2.typing import MatLike
-from typing_extensions import TypeGuard
+from typing_extensions import reveal_type
 from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
@@ -48,7 +47,7 @@ class ColorChannel(IntEnum):
     Alpha = 3
 
 
-def decimal(value: int | float):
+def decimal(value: float):
     # Using ljust instead of :2f because of python float rounding errors
     return f"{int(value * 100) / 100}".ljust(4, "0")
 
@@ -84,7 +83,7 @@ def first(iterable: Iterable[T]) -> T:
     return next(iter(iterable))
 
 
-def try_delete_dc(dc: PyCDC):
+def try_delete_dc(dc: "PyCDC"):
     try:
         dc.DeleteDC()
     except win32ui.error:
@@ -101,10 +100,10 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     )
 
     window_rect = win32gui.GetWindowRect(hwnd)
-    window_left_bounds = cast(int, extended_frame_bounds.left) - window_rect[0]
-    window_top_bounds = cast(int, extended_frame_bounds.top) - window_rect[1]
-    window_width = cast(int, extended_frame_bounds.right) - cast(int, extended_frame_bounds.left)
-    window_height = cast(int, extended_frame_bounds.bottom) - cast(int, extended_frame_bounds.top)
+    window_left_bounds = extended_frame_bounds.left - window_rect[0]
+    window_top_bounds = extended_frame_bounds.top - window_rect[1]
+    window_width = extended_frame_bounds.right - extended_frame_bounds.left
+    window_height = extended_frame_bounds.bottom - extended_frame_bounds.top
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
@@ -131,6 +130,7 @@ def get_direct3d_device():
 
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
+    reveal_type(direct_3d_device)
     if not direct_3d_device:
         try:
             # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
@@ -170,12 +170,8 @@ def fire_and_forget(func: Callable[..., Any]):
     return wrapped
 
 
-def flatten(nested_iterable: Iterable[Iterable[_T]]) -> Generator[_T, None, None]:
-    return (
-        item for flatten
-        in nested_iterable
-        for item in flatten
-    )
+def flatten(nested_iterable: Iterable[Iterable[_T]]) -> chain[_T]:
+    return chain.from_iterable(nested_iterable)
 
 
 # Environment specifics
@@ -191,5 +187,5 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.2.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.2.1" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

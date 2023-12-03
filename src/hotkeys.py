@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast
 
@@ -28,7 +26,7 @@ def remove_all_hotkeys():
     keyboard.unhook_all()
 
 
-def before_setting_hotkey(autosplit: AutoSplit):
+def before_setting_hotkey(autosplit: "AutoSplit"):
     """Do all of these after you click "Set Hotkey" but before you type the hotkey."""
     autosplit.start_auto_splitter_button.setEnabled(False)
     if autosplit.SettingsWidget:
@@ -36,7 +34,7 @@ def before_setting_hotkey(autosplit: AutoSplit):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
 
-def after_setting_hotkey(autosplit: AutoSplit):
+def after_setting_hotkey(autosplit: "AutoSplit"):
     """
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread.
@@ -49,31 +47,29 @@ def after_setting_hotkey(autosplit: AutoSplit):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
-def send_command(autosplit: AutoSplit, command: Commands):
+def send_command(autosplit: "AutoSplit", command: Commands):
     # Note: Rather than having the start image able to also reset the timer,
     # having the reset image check be active at all time would be a better, more organic solution,
     # but that is dependent on migrating to an observer pattern (#219) and being able to reload all images.
-    if autosplit.is_auto_controlled:
-        if command == "start" and autosplit.settings_dict["start_also_resets"]:
-            print("reset", flush=True)
-        print(command, flush=True)
-    elif command == "start":
-        if autosplit.settings_dict["start_also_resets"]:
+    match command:
+        case _ if autosplit.settings_dict["start_also_resets"]:
+            if command == "start" and autosplit.settings_dict["start_also_resets"]:
+                print("reset", flush=True)
+            print(command, flush=True)
+        case "start" if autosplit.settings_dict["start_also_resets"]:
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
-        _send_hotkey(autosplit.settings_dict["split_hotkey"])
-    elif command == "split":
-        _send_hotkey(autosplit.settings_dict["split_hotkey"])
-    elif command == "pause":
-        _send_hotkey(autosplit.settings_dict["pause_hotkey"])
-    elif command == "reset":
-        _send_hotkey(autosplit.settings_dict["reset_hotkey"])
-    elif command == "skip":
-        _send_hotkey(autosplit.settings_dict["skip_split_hotkey"])
-    elif command == "undo":
-        _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
-
-    else:
-        raise KeyError(f"{command!r} is not a valid command")
+        case "reset":
+            _send_hotkey(autosplit.settings_dict["reset_hotkey"])
+        case "start" | "split":
+            _send_hotkey(autosplit.settings_dict["split_hotkey"])
+        case "pause":
+            _send_hotkey(autosplit.settings_dict["pause_hotkey"])
+        case "skip":
+            _send_hotkey(autosplit.settings_dict["skip_split_hotkey"])
+        case "undo":
+            _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
+        case _:  # pyright: ignore[reportUnnecessaryComparison]
+            raise KeyError(f"{command!r} is not a valid command")
 
 
 def _unhook(hotkey_callback: Callable[[], None] | None):
@@ -166,7 +162,7 @@ def __get_hotkey_name(names: list[str]):
     Uses keyboard.get_hotkey_name but works with non-english modifiers and keypad
     See: https://github.com/boppreh/keyboard/issues/516 .
     """
-    if len(names) == 0:
+    if not names:
         return ""
 
     if len(names) == 1:
@@ -174,6 +170,7 @@ def __get_hotkey_name(names: list[str]):
 
     def sorting_key(key: str):
         return not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
+
     clean_names = sorted(keyboard.get_hotkey_name(names).split("+"), key=sorting_key)
     # Replace the last key in hotkey_name with what we actually got as a last key_name
     # This ensures we keep proper keypad names
@@ -192,7 +189,7 @@ def __read_hotkey():
         if keyboard_event.event_type == keyboard.KEY_UP:
             # Unless keyup is also the very first event,
             # which can happen from a very fast press at the same time we start reading
-            if len(names) == 0:
+            if not names:
                 continue
             break
         key_name = __get_key_name(keyboard_event)
@@ -206,17 +203,17 @@ def __read_hotkey():
     return __get_hotkey_name(names)
 
 
-def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
+def __remove_key_already_set(autosplit: "AutoSplit", key_name: str):
     for hotkey in HOTKEYS:
         settings_key = f"{hotkey}_hotkey"
-        if autosplit.settings_dict[settings_key] == key_name:  # pyright: ignore[reportGeneralTypeIssues]
+        if autosplit.settings_dict.get(settings_key) == key_name:
             _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
             autosplit.settings_dict[settings_key] = ""  # pyright: ignore[reportGeneralTypeIssues]
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
 
-def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
+def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
@@ -224,11 +221,13 @@ def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     if hotkey == "undo_split":
         return lambda: autosplit.undo_split(True)
     if hotkey == "toggle_auto_reset_image":
+
         def toggle_auto_reset_image():
             new_value = not autosplit.settings_dict["enable_auto_reset"]
             autosplit.settings_dict["enable_auto_reset"] = new_value
             if autosplit.SettingsWidget:
                 autosplit.SettingsWidget.enable_auto_reset_image_checkbox.setChecked(new_value)
+
         return toggle_auto_reset_image
     return getattr(autosplit, f"{hotkey}_signal").emit
 
@@ -244,7 +243,7 @@ def is_valid_hotkey_name(hotkey_name: str):
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
 
-def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: str = ""):
+def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: str = ""):
     if autosplit.SettingsWidget:
         # Unfocus all fields
         cast(QtWidgets.QWidget, autosplit.SettingsWidget).setFocus()
@@ -258,7 +257,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
     @fire_and_forget
     def read_and_set_hotkey():
         try:
-            hotkey_name = preselected_hotkey_name if preselected_hotkey_name else __read_hotkey()
+            hotkey_name = preselected_hotkey_name or __read_hotkey()
 
             # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit
             if hotkey_name == "esc":

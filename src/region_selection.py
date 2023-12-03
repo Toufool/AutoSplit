@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import ctypes
 import ctypes.wintypes
 import os
@@ -34,7 +32,6 @@ user32 = ctypes.windll.user32
 
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 ALIGN_REGION_THRESHOLD = 0.9
@@ -45,6 +42,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("JPEG 2000 files", "*.jp2"),
     ("Portable Network Graphics", "*.png"),
     ("WebP", "*.webp"),
+    ("AVIF", "*.avif"),
     ("Portable image format", "*.pbm *.pgm *.ppm *.pxm *.pnm"),
     ("PFM files", "*.pfm"),
     ("Sun rasters", "*.sr *.ras"),
@@ -52,16 +50,19 @@ SUPPORTED_IMREAD_FORMATS = [
     ("OpenEXR Image files", "*.exr"),
     ("Radiance HDR", "*.hdr *.pic"),
 ]
-"""https://docs.opencv.org/4.5.4/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56"""
-IMREAD_EXT_FILTER = "All Files (" \
-    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS]) \
-    + ");;"\
+"""https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
+IMREAD_EXT_FILTER = (
+    "All Files ("
+    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
+    + ");;"
     + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
+)
 
 
-def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnusedFunction]
-    # TODO: For later as a different picker option
+# TODO: For later as a different picker option
+def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
     """Uses the built-in GraphicsCapturePicker to select the Window."""
+
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
             if async_status != AsyncStatus.COMPLETED:
@@ -85,7 +86,7 @@ def __select_graphics_item(autosplit: AutoSplit):  # pyright: ignore [reportUnus
         async_operation.completed = callback
 
 
-def select_region(autosplit: AutoSplit):
+def select_region(autosplit: "AutoSplit"):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -128,7 +129,7 @@ def select_region(autosplit: AutoSplit):
     )
 
 
-def select_window(autosplit: AutoSplit):
+def select_window(autosplit: "AutoSplit"):
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -171,7 +172,7 @@ def select_window(autosplit: AutoSplit):
     )
 
 
-def align_region(autosplit: AutoSplit):
+def align_region(autosplit: "AutoSplit"):
     # Check to see if a region has been set
     if not autosplit.capture_method.check_selected_region_exists(autosplit):
         error_messages.region()
@@ -224,7 +225,7 @@ def align_region(autosplit: AutoSplit):
     )
 
 
-def __set_region_values(autosplit: AutoSplit, left: int, top: int, width: int, height: int):
+def __set_region_values(autosplit: "AutoSplit", left: int, top: int, width: int, height: int):
     autosplit.settings_dict["capture_region"]["x"] = left
     autosplit.settings_dict["capture_region"]["y"] = top
     autosplit.settings_dict["capture_region"]["width"] = width
@@ -278,7 +279,7 @@ def __test_alignment(capture: MatLike, template: MatLike):
     return best_match, best_height, best_width, best_loc
 
 
-def validate_before_parsing(autosplit: AutoSplit, show_error: bool = True, check_empty_directory: bool = True):
+def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, check_empty_directory: bool = True):
     error = None
     if not autosplit.settings_dict["split_image_directory"]:
         error = error_messages.split_image_directory

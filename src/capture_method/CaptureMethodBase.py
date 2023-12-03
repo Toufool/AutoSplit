@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 from cv2.typing import MatLike
@@ -7,7 +5,6 @@ from cv2.typing import MatLike
 from utils import is_valid_hwnd
 
 if TYPE_CHECKING:
-
     from AutoSplit import AutoSplit
 
 
@@ -16,19 +13,19 @@ class CaptureMethodBase:
     short_description = ""
     description = ""
 
-    def __init__(self, autosplit: AutoSplit | None):
+    def __init__(self, autosplit: "AutoSplit | None"):
         # Some capture methods don't need an initialization process
         pass
 
-    def reinitialize(self, autosplit: AutoSplit):
+    def reinitialize(self, autosplit: "AutoSplit"):
         self.close(autosplit)
         self.__init__(autosplit)  # type: ignore[misc]
 
-    def close(self, autosplit: AutoSplit):
+    def close(self, autosplit: "AutoSplit"):
         # Some capture methods don't need an initialization process
         pass
 
-    def get_frame(self, autosplit: AutoSplit) -> tuple[MatLike | None, bool]:
+    def get_frame(self, autosplit: "AutoSplit") -> tuple[MatLike | None, bool]:  # noqa: PLR6301
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
@@ -37,8 +34,8 @@ class CaptureMethodBase:
         """
         return None, False
 
-    def recover_window(self, captured_window_title: str, autosplit: AutoSplit) -> bool:
+    def recover_window(self, captured_window_title: str, autosplit: "AutoSplit") -> bool:  # noqa: PLR6301
         return False
 
-    def check_selected_region_exists(self, autosplit: AutoSplit) -> bool:
+    def check_selected_region_exists(self, autosplit: "AutoSplit") -> bool:  # noqa: PLR6301
         return is_valid_hwnd(autosplit.hwnd)
