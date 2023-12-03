@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class AutoControlledThread(QtCore.QThread):
     def __init__(self, autosplit: "AutoSplit"):
-        self.autosplit = autosplit
+        self._autosplit_ref = autosplit
         super().__init__()
 
     @QtCore.Slot()
@@ -20,27 +20,27 @@ class AutoControlledThread(QtCore.QThread):
             try:
                 line = input()
             except RuntimeError:
-                self.autosplit.show_error_signal.emit(error_messages.stdin_lost)
+                self._autosplit_ref.show_error_signal.emit(error_messages.stdin_lost)
                 break
             except EOFError:
                 continue
             match line:
                 # This is for use in a Development environment
                 case "kill":
-                    self.autosplit.closeEvent()
+                    self._autosplit_ref.closeEvent()
                     break
                 case "start":
-                    self.autosplit.start_auto_splitter()
+                    self._autosplit_ref.start_auto_splitter()
                 case "split" | "skip":
-                    self.autosplit.skip_split_signal.emit()
+                    self._autosplit_ref.skip_split_signal.emit()
                 case "undo":
-                    self.autosplit.undo_split_signal.emit()
+                    self._autosplit_ref.undo_split_signal.emit()
                 case "reset":
-                    self.autosplit.reset_signal.emit()
+                    self._autosplit_ref.reset_signal.emit()
                 # TODO: Not yet implemented in AutoSplit Integration
                 # case 'pause':
                 #     self.pause_signal.emit()
                 case line:
                     if line.startswith("settings"):
                         # Allow for any split character between "settings" and the path
-                        user_profile.load_settings(self.autosplit, line[9:])
+                        user_profile.load_settings(self._autosplit_ref, line[9:])

@@ -67,7 +67,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         self.frame_pool = frame_pool
 
     @override
-    def close(self, autosplit: "AutoSplit"):
+    def close(self):
         if self.frame_pool:
             self.frame_pool.close()
             self.frame_pool = None
@@ -82,11 +82,11 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             self.session = None
 
     @override
-    def get_frame(self, autosplit: "AutoSplit") -> tuple[MatLike | None, bool]:
-        selection = autosplit.settings_dict["capture_region"]
+    def get_frame(self) -> tuple[MatLike | None, bool]:
+        selection = self._autosplit_ref.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (
-            self.check_selected_region_exists(autosplit)
+            self.check_selected_region_exists()
             # Only needed for the type-checker
             and self.frame_pool
         ):
@@ -130,24 +130,24 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         return image, False
 
     @override
-    def recover_window(self, captured_window_title: str, autosplit: "AutoSplit"):
+    def recover_window(self, captured_window_title: str):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False
-        autosplit.hwnd = hwnd
+        self._autosplit_ref.hwnd = hwnd
         try:
-            self.reinitialize(autosplit)
+            self.reinitialize()
         # Unrecordable hwnd found as the game is crashing
         except OSError as exception:
             if str(exception).endswith("The parameter is incorrect"):
                 return False
             raise
-        return self.check_selected_region_exists(autosplit)
+        return self.check_selected_region_exists()
 
     @override
-    def check_selected_region_exists(self, autosplit: "AutoSplit"):
+    def check_selected_region_exists(self):
         return bool(
-            is_valid_hwnd(autosplit.hwnd)
+            is_valid_hwnd(self._autosplit_ref.hwnd)
             and self.frame_pool
             and self.session,
         )

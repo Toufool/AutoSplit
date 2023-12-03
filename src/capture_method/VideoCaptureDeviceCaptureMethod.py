@@ -45,7 +45,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     last_captured_frame: MatLike | None = None
     is_old_image = False
 
-    def __read_loop(self, autosplit: "AutoSplit"):
+    def __read_loop(self):
         try:
             while not self.stop_thread.is_set():
                 try:
@@ -76,7 +76,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self.capture_device.release()
-            autosplit.show_error_signal.emit(
+            self._autosplit_ref.show_error_signal.emit(
                 lambda: exception_traceback(
                     error,
                     "AutoSplit encountered an unhandled exception while "
@@ -107,11 +107,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         except cv2.error:
             # Some cameras don't allow changing the resolution
             pass
-        self.capture_thread = Thread(target=lambda: self.__read_loop(autosplit))
+        self.capture_thread = Thread(target=self.__read_loop)
         self.capture_thread.start()
 
     @override
-    def close(self, autosplit: "AutoSplit"):
+    def close(self):
         self.stop_thread.set()
         if self.capture_thread:
             self.capture_thread.join()
@@ -119,8 +119,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         self.capture_device.release()
 
     @override
-    def get_frame(self, autosplit: "AutoSplit"):
-        if not self.check_selected_region_exists(autosplit):
+    def get_frame(self):
+        if not self.check_selected_region_exists():
             return None, False
 
         image = self.last_captured_frame
@@ -129,7 +129,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         if not is_valid_image(image):
             return None, is_old_image
 
-        selection = autosplit.settings_dict["capture_region"]
+        selection = self._autosplit_ref.settings_dict["capture_region"]
         # Ensure we can't go OOB of the image
         y = min(selection["y"], image.shape[ImageShape.Y] - 1)
         x = min(selection["x"], image.shape[ImageShape.X] - 1)
@@ -140,5 +140,5 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
 
     @override
-    def check_selected_region_exists(self, autosplit: "AutoSplit"):
+    def check_selected_region_exists(self):
         return bool(self.capture_device.isOpened())
