@@ -75,6 +75,7 @@ ignore = [
   "N8", # Naming conventions
   "PLR0904", # Too many public methods
   "PLR0913", # Argument count
+  "PLR0917", # Too many positional arguments
   "PLW3201", # misspelled dunder method name
   "PYI042", # CamelCase TypeAlias
 ]
