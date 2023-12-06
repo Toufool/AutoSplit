@@ -17,6 +17,14 @@ from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_dele
 PW_RENDERFULLCONTENT = 0x00000002
 
 
+def is_blank(image: MatLike):
+    """
+    BitBlt can return a balnk buffer. Either because the target is unsupported,
+    or because there's two windows of the same name for the same executable.
+    """
+    return not image.any()
+
+
 class BitBltCaptureMethod(CaptureMethodBase):
     name = "BitBlt"
     short_description = "fastest, least compatible"
@@ -61,10 +69,14 @@ class BitBltCaptureMethod(CaptureMethodBase):
                 win32con.SRCCOPY,
             )
             image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
-            image.shape = (selection["height"], selection["width"], BGRA_CHANNEL_COUNT)
         except (win32ui.error, pywintypes.error):
             # Invalid handle or the window was closed while it was being manipulated
             return None, False
+
+        if is_blank(image):
+            image = None
+        else:
+            image.shape = (selection["height"], selection["width"], BGRA_CHANNEL_COUNT)
 
         # Cleanup DC and handle
         try_delete_dc(dc_object)
