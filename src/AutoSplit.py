@@ -791,7 +791,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
                 self.live_image.setText("Waiting for capture device...")
             else:
-                self.live_image.setText("Trying to recover window...")
+                message = "Trying to recover window..."
+                if self.settings_dict["capture_method"] == CaptureMethodEnum.BITBLT:
+                    message += "\n(captured window may be incompatible with BitBlt)"
+                self.live_image.setText(message)
                 recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
                 if recovered:
                     capture, _ = self.capture_method.get_frame()
