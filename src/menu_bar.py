@@ -22,7 +22,7 @@ from capture_method import (
 )
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
-from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
+from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -231,7 +231,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
     def __fps_limit_changed(self, value: int):
         value = self.fps_limit_spinbox.value()
         self._autosplit_ref.settings_dict["fps_limit"] = value
-        self._autosplit_ref.timer_live_image.setInterval(int(1000 / value))
+        self._autosplit_ref.timer_live_image.setInterval(int(ONE_SECOND / value))
 
     @fire_and_forget
     def __set_all_capture_devices(self):
