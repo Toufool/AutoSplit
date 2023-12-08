@@ -125,8 +125,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
         image = image[
-            selection["y"]: selection["y"] + selection["height"],
-            selection["x"]: selection["x"] + selection["width"],
+            selection["y"] : selection["y"] + selection["height"],
+            selection["x"] : selection["x"] + selection["width"],
         ]
         self.last_converted_frame = image
         return image

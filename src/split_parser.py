@@ -141,7 +141,7 @@ def flags_from_filename(filename: str):
 
     for flag_str in flags_str:
         match flag_str.upper():
-            case  "D":
+            case "D":
                 flags |= DUMMY_FLAG
             case "B":
                 flags |= BELOW_FLAG
