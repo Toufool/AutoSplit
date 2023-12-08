@@ -43,6 +43,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     capture_thread: Thread | None = None
     stop_thread: Event
     last_captured_frame: MatLike | None = None
+    last_converted_frame: MatLike | None = None
     is_old_image = False
 
     def __read_loop(self):
@@ -121,13 +122,16 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     @override
     def get_frame(self):
         if not self.check_selected_region_exists():
-            return None, False
+            return None
 
         image = self.last_captured_frame
         is_old_image = self.is_old_image
         self.is_old_image = True
         if not is_valid_image(image):
-            return None, is_old_image
+            return None
+
+        if is_old_image:
+            return self.last_converted_frame
 
         selection = self._autosplit_ref.settings_dict["capture_region"]
         # Ensure we can't go OOB of the image
@@ -137,7 +141,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             y: y + selection["height"],
             x: x + selection["width"],
         ]
-        return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA), is_old_image
+        self.last_converted_frame = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+        return self.last_converted_frame
 
     @override
     def check_selected_region_exists(self):

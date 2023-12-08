@@ -201,7 +201,7 @@ def align_region(autosplit: "AutoSplit"):
 
     # Obtaining the capture of a region which contains the
     # subregion being searched for to align the image.
-    capture, _ = autosplit.capture_method.get_frame()
+    capture = autosplit.capture_method.get_frame()
 
     if not is_valid_image(capture):
         error_messages.region()
