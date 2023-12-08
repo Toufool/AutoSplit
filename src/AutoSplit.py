@@ -252,7 +252,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if called_from_timer:
             if self.is_running or self.start_image:
                 return
-            capture, _ = self.capture_method.get_frame()
+            capture = self.capture_method.get_frame()
 
         # Update title from target window or Capture Device name
         capture_region_window_label = (
@@ -310,7 +310,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture, _ = self.__get_capture_for_comparison()
+        capture = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
 
@@ -390,7 +390,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture, _ = self.capture_method.get_frame()
+        capture = self.capture_method.get_frame()
         if not is_valid_image(capture):
             error_messages.region()
             return
@@ -415,14 +415,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # run X iterations of screenshotting capture region + comparison + displaying.
         t0 = time()
+        last_capture: MatLike | None = None
         for image in images:
             count = 0
             while count < CHECK_FPS_ITERATIONS:
-                capture, is_old_image = self.__get_capture_for_comparison()
-                _ = image.compare_with_capture(self, capture)
-                # TODO: If is_old_image=true is always returned, this becomes an infinite loop
-                if not is_old_image:
+                new_capture = self.__get_capture_for_comparison()
+                _ = image.compare_with_capture(self, new_capture)
+                # TODO: If an old image is always returned, this becomes an infinite loop
+                if new_capture is not last_capture:
                     count += 1
+                last_capture = new_capture
 
         # calculate FPS
         t1 = time()
@@ -641,7 +643,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         start = time()
         while True:
-            capture, _ = self.__get_capture_for_comparison()
+            capture = self.__get_capture_for_comparison()
 
             if self.__reset_if_should(capture):
                 return True
@@ -710,7 +712,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for Reset Image
-            if self.__reset_if_should(self.__get_capture_for_comparison()[0]):
+            if self.__reset_if_should(self.__get_capture_for_comparison()):
                 return True
 
             time_delta = time() - start_time
@@ -785,7 +787,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __get_capture_for_comparison(self):
         """Grab capture region and resize for comparison."""
-        capture, is_old_image = self.capture_method.get_frame()
+        capture = self.capture_method.get_frame()
 
         # This most likely means we lost capture
         # (ie the captured window was closed, crashed, lost capture device, etc.)
@@ -800,10 +802,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.live_image.setText(message)
                 recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
                 if recovered:
-                    capture, _ = self.capture_method.get_frame()
+                    capture = self.capture_method.get_frame()
 
         self.__update_live_image_details(capture)
-        return capture, is_old_image
+        return capture
 
     def __reset_if_should(self, capture: MatLike | None):
         """Checks if we should reset, resets if it's the case, and returns the result."""

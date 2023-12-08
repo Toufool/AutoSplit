@@ -36,13 +36,13 @@ class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     @override
-    def get_frame(self) -> tuple[MatLike | None, bool]:
+    def get_frame(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
         hwnd = self._autosplit_ref.hwnd
         image: MatLike | None = None
 
         if not self.check_selected_region_exists():
-            return None, False
+            return None
 
         # If the window closes while it's being manipulated, it could cause a crash
         try:
@@ -70,7 +70,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
             image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
         except (win32ui.error, pywintypes.error):
             # Invalid handle or the window was closed while it was being manipulated
-            return None, False
+            return None
 
         if is_blank(image):
             image = None
@@ -82,7 +82,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         try_delete_dc(compatible_dc)
         win32gui.ReleaseDC(hwnd, window_dc)
         win32gui.DeleteObject(bitmap.GetHandle())
-        return image, False
+        return image
 
     @override
     def recover_window(self, captured_window_title: str):

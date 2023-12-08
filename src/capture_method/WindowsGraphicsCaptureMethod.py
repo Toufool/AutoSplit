@@ -38,7 +38,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
-    last_captured_frame: MatLike | None = None
+    last_converted_frame: MatLike | None = None
 
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
@@ -82,7 +82,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             self.session = None
 
     @override
-    def get_frame(self) -> tuple[MatLike | None, bool]:
+    def get_frame(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (
@@ -90,17 +90,17 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             # Only needed for the type-checker
             and self.frame_pool
         ):
-            return None, False
+            return None
 
         try:
             frame = self.frame_pool.try_get_next_frame()
         # Frame pool is closed
         except OSError:
-            return None, False
+            return None
 
         # We were too fast and the next frame wasn't ready yet
         if not frame:
-            return self.last_captured_frame, True
+            return self.last_converted_frame
 
         async def coroutine():
             return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
@@ -110,13 +110,13 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         except SystemError as exception:
             # HACK: can happen when closing the GraphicsCapturePicker
             if str(exception).endswith("returned a result with an error set"):
-                return self.last_captured_frame, True
+                return self.last_converted_frame
             raise
 
         if not software_bitmap:
             # HACK: Can happen when starting the region selector
             # TODO: Validate if this is still true
-            return self.last_captured_frame, True
+            return self.last_converted_frame
             # raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
         if not bitmap_buffer:
@@ -128,8 +128,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             selection["y"]: selection["y"] + selection["height"],
             selection["x"]: selection["x"] + selection["width"],
         ]
-        self.last_captured_frame = image
-        return image, False
+        self.last_converted_frame = image
+        return image
 
     @override
     def recover_window(self, captured_window_title: str):
