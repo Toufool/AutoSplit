@@ -9,7 +9,7 @@ from cv2.typing import MatLike
 from typing_extensions import override
 from win32 import win32gui
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 # This is an undocumented nFlag value for PrintWindow
@@ -24,7 +24,7 @@ def is_blank(image: MatLike):
     return not image.any()
 
 
-class BitBltCaptureMethod(CaptureMethodBase):
+class BitBltCaptureMethod(ThreadedLoopCaptureMethod):
     name = "BitBlt"
     short_description = "fastest, least compatible"
     description = (
@@ -36,13 +36,13 @@ class BitBltCaptureMethod(CaptureMethodBase):
     _render_full_content = False
 
     @override
-    def get_frame(self) -> MatLike | None:
+    def _read_action(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
         hwnd = self._autosplit_ref.hwnd
         image: MatLike | None = None
 
-        if not self.check_selected_region_exists():
-            return None
+        # if not self.check_selected_region_exists():
+        #     return None
 
         # If the window closes while it's being manipulated, it could cause a crash
         try:

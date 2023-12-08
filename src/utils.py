@@ -26,6 +26,8 @@ T = TypeVar("T")
 
 ONE_SECOND = 1000
 """1000 milliseconds in 1 second"""
+QTIMER_FPS_LIMIT = 1000
+"""QTimers are accurate to the millisecond"""
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3

@@ -232,6 +232,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         value = self.fps_limit_spinbox.value()
         self._autosplit_ref.settings_dict["fps_limit"] = value
         self._autosplit_ref.timer_live_image.setInterval(int(ONE_SECOND / value))
+        self._autosplit_ref.capture_method.set_fps_limit(value)
 
     @fire_and_forget
     def __set_all_capture_devices(self):

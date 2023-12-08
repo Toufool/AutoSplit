@@ -11,7 +11,7 @@ from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
 
 if TYPE_CHECKING:
@@ -21,8 +21,10 @@ WGC_NO_BORDER_MIN_BUILD = 20348
 LEARNING_MODE_DEVICE_BUILD = 17763
 """https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
+WGC_QTIMER_LIMIT = 30
 
-class WindowsGraphicsCaptureMethod(CaptureMethodBase):
+
+class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     name = "Windows Graphics Capture"
     short_description = "fast, most compatible, capped at 60fps"
     description = (
@@ -38,7 +40,6 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
-    last_converted_frame: MatLike | None = None
 
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
@@ -68,6 +69,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
 
     @override
     def close(self):
+        super().close()
         if self.frame_pool:
             self.frame_pool.close()
             self.frame_pool = None
@@ -82,13 +84,22 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             self.session = None
 
     @override
-    def get_frame(self) -> MatLike | None:
+    def set_fps_limit(self, fps: int):
+        """
+        There's an issue in the interraction between QTimer and WGC API where setting the interval to even 1 ms
+        causes twice as many "called `try_get_next_frame` to fast.
+        So for FPS target above 30, we unlock interval speed.
+        """
+        super().set_fps_limit(fps if fps <= WGC_QTIMER_LIMIT else 0)
+
+    @override
+    def _read_action(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
         # We still need to check the hwnd because WGC will return a blank black image
         if not (
-            self.check_selected_region_exists()
+            # self.check_selected_region_exists() and
             # Only needed for the type-checker
-            and self.frame_pool
+            self.frame_pool
         ):
             return None
 
@@ -100,7 +111,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
 
         # We were too fast and the next frame wasn't ready yet
         if not frame:
-            return self.last_converted_frame
+            return self.last_captured_image
 
         async def coroutine():
             return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
@@ -110,13 +121,13 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         except SystemError as exception:
             # HACK: can happen when closing the GraphicsCapturePicker
             if str(exception).endswith("returned a result with an error set"):
-                return self.last_converted_frame
+                return self.last_captured_image
             raise
 
         if not software_bitmap:
             # HACK: Can happen when starting the region selector
             # TODO: Validate if this is still true
-            return self.last_converted_frame
+            return self.last_captured_image
             # raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
         if not bitmap_buffer:
@@ -124,12 +135,10 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
-        image = image[
-            selection["y"] : selection["y"] + selection["height"],
-            selection["x"] : selection["x"] + selection["width"],
+        return image[
+            selection["y"]: selection["y"] + selection["height"],
+            selection["x"]: selection["x"] + selection["width"],
         ]
-        self.last_converted_frame = image
-        return image
 
     @override
     def recover_window(self, captured_window_title: str):

@@ -42,6 +42,7 @@ from utils import (
     BGRA_CHANNEL_COUNT,
     FROZEN,
     ONE_SECOND,
+    QTIMER_FPS_LIMIT,
     auto_split_directory,
     decimal,
     flatten,
@@ -49,7 +50,6 @@ from utils import (
     open_file,
 )
 
-CHECK_FPS_ITERATIONS = 10
 DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
@@ -252,7 +252,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if called_from_timer:
             if self.is_running or self.start_image:
                 return
-            capture = self.capture_method.get_frame()
+            capture = self.capture_method.last_captured_image
 
         # Update title from target window or Capture Device name
         capture_region_window_label = (
@@ -390,7 +390,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             screenshot_index += 1
 
         # Grab screenshot of capture region
-        capture = self.capture_method.get_frame()
+        capture = self.capture_method.last_captured_image
         if not is_valid_image(capture):
             error_messages.region()
             return
@@ -413,23 +413,25 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if self.reset_image:
             images.append(self.reset_image)
 
-        # run X iterations of screenshotting capture region + comparison + displaying.
-        t0 = time()
-        last_capture: MatLike | None = None
-        for image in images:
-            count = 0
-            while count < CHECK_FPS_ITERATIONS:
-                new_capture = self.__get_capture_for_comparison()
-                _ = image.compare_with_capture(self, new_capture)
-                # TODO: If an old image is always returned, this becomes an infinite loop
-                if new_capture is not last_capture:
-                    count += 1
-                last_capture = new_capture
+        i = 0
 
-        # calculate FPS
-        t1 = time()
-        fps = int((CHECK_FPS_ITERATIONS * len(images)) / (t1 - t0))
-        self.fps_value_label.setText(str(fps))
+        def new_frames_counter(capture: MatLike | None):
+            nonlocal i
+            if self.capture_method.last_captured_image is None:
+                # Capture target dropped or inexistant
+                return
+            for image in images:
+                _ = image.compare_with_capture(self, capture)
+                i += 1
+
+        self.capture_method.set_fps_limit(QTIMER_FPS_LIMIT)
+        self.capture_method.subscribe_to_new_frame(new_frames_counter)
+        QTest.qWait(ONE_SECOND)
+        fps = str(int(i / len(images)) - 1)
+        self.capture_method.unsubscribe_from_new_frame(new_frames_counter)
+        self.capture_method.set_fps_limit(self.settings_dict["fps_limit"])
+
+        self.fps_value_label.setText(fps)
 
     def __is_current_split_out_of_range(self):
         return (
@@ -791,7 +793,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __get_capture_for_comparison(self):
         """Grab capture region and resize for comparison."""
-        capture = self.capture_method.get_frame()
+        capture = self.capture_method.last_captured_image
 
         # This most likely means we lost capture
         # (ie the captured window was closed, crashed, lost capture device, etc.)
@@ -804,9 +806,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if self.settings_dict["capture_method"] == CaptureMethodEnum.BITBLT:
                     message += "\n(captured window may be incompatible with BitBlt)"
                 self.live_image.setText(message)
-                recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
-                if recovered:
-                    capture = self.capture_method.get_frame()
+                _recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
+                # TODO: Gotta wait next loop now
+                # if recovered:
+                #     capture = self.capture_method.last_captured_image
 
         self.__update_live_image_details(capture)
         return capture
