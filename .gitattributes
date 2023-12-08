@@ -1,0 +1,6 @@
+# Normalize EOF
+* autocrlf=false
+* eol=lf
+# Set linguist-language to support comments syntax highlight
+pyrightconfig*.json linguist-language=jsonc
+.vscode/*.json linguist-language=jsonc
