@@ -24,7 +24,8 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
-
+ONE_SECOND = 1000
+"""1000 milliseconds in 1 second"""
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3
