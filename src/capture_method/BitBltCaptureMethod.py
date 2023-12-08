@@ -1,6 +1,5 @@
 import ctypes
 import ctypes.wintypes
-from typing import cast
 
 import numpy as np
 import pywintypes
@@ -68,7 +67,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
                 (selection["x"] + left_bounds, selection["y"] + top_bounds),
                 win32con.SRCCOPY,
             )
-            image = np.frombuffer(cast(bytes, bitmap.GetBitmapBits(True)), dtype=np.uint8)
+            image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
         except (win32ui.error, pywintypes.error):
             # Invalid handle or the window was closed while it was being manipulated
             return None, False

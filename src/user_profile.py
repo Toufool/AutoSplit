@@ -119,13 +119,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
-            loaded_settings = cast(
-                UserProfileDict,
-                {
-                    **DEFAULT_PROFILE,
-                    **toml.load(file),
-                },
-            )
+            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
         # TODO: Data Validation / fallbacks ?
         autosplit.settings_dict = UserProfileDict(**loaded_settings)
         autosplit.last_loaded_settings = autosplit.settings_dict
@@ -204,8 +198,7 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *toml settings values.
     """
-    # Type not infered by PySide6
-    # TODO: Report this issue upstream
+    # Type not infered by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
     value = cast(
         bool,
         QtCore

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
 
-_T = TypeVar("_T")
+T = TypeVar("T")
 
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
@@ -74,9 +74,6 @@ def is_valid_hwnd(hwnd: int) -> bool:
     return True
 
 
-T = TypeVar("T")
-
-
 def first(iterable: Iterable[T]) -> T:
     """@return: The first element of a collection. Dictionaries will return the first key."""
     return next(iter(iterable))
@@ -125,7 +122,7 @@ def get_direct3d_device():
     media_capture = MediaCapture()
 
     async def init_mediacapture():
-        await (media_capture.initialize_async() or asyncio.sleep(0))
+        await media_capture.initialize_async()
 
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
@@ -168,7 +165,7 @@ def fire_and_forget(func: Callable[..., Any]):
     return wrapped
 
 
-def flatten(nested_iterable: Iterable[Iterable[_T]]) -> chain[_T]:
+def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
 
 
