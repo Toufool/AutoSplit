@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, cast
 
 import cv2
 import d3dshot
-import numpy as np
 import win32con
+from cv2.typing import MatLike
 from typing_extensions import override
 from win32 import win32gui
 
@@ -55,7 +55,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         right = selection["width"] + left
         bottom = selection["height"] + top
         screenshot = cast(
-            np.ndarray[int, np.dtype[np.generic]] | None,
+            MatLike | None,
             self.desktop_duplication.screenshot((left, top, right, bottom)),
         )
         if screenshot is None:
