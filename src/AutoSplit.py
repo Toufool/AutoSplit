@@ -432,8 +432,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.fps_value_label.setText(str(fps))
 
     def __is_current_split_out_of_range(self):
-        return self.split_image_number < 0 \
+        return (
+            self.split_image_number < 0
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
+        )
 
     def undo_split(self, navigate_image_only: bool = False):
         """Undo Split" and "Prev. Img." buttons connect to here."""
@@ -497,8 +499,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Functions for the hotkeys to return to the main thread from signals and start their corresponding functions
     def start_auto_splitter(self):
         # If the auto splitter is already running or the button is disabled, don't emit the signal to start it.
-        if self.is_running \
-                or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled):
+        if (
+            self.is_running
+            or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled)
+        ):
             return
 
         start_label = self.start_image_status_value_label.text()

@@ -201,9 +201,11 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     # Type not infered by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
     value = cast(
         bool,
-        QtCore
-        .QSettings("AutoSplit", "Check For Updates On Open")
-        .value("check_for_updates_on_open", True, type=bool),
+        QtCore.QSettings(
+            "AutoSplit", "Check For Updates On Open",
+        ).value(
+            "check_for_updates_on_open", True, type=bool,
+        ),
     )
     autosplit.action_check_for_updates_on_open.setChecked(value)
 
@@ -211,6 +213,8 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
 def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
     """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
     design_window.action_check_for_updates_on_open.setChecked(value)
-    QtCore \
-        .QSettings("AutoSplit", "Check For Updates On Open") \
-        .setValue("check_for_updates_on_open", value)
+    QtCore.QSettings(
+        "AutoSplit", "Check For Updates On Open",
+    ).setValue(
+        "check_for_updates_on_open", value,
+    )
