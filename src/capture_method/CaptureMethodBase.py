@@ -27,14 +27,14 @@ class CaptureMethodBase:
         # Some capture methods don't need an initialization process
         pass
 
-    def get_frame(self) -> tuple[MatLike | None, bool]:  # noqa: PLR6301
+    def get_frame(self) -> MatLike | None:  # noqa: PLR6301
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
 
         @return: The image of the region in the window in BGRA format
         """
-        return None, False
+        return None
 
     def recover_window(self, captured_window_title: str) -> bool:  # noqa: PLR6301
         return False

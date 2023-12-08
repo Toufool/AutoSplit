@@ -39,7 +39,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         hwnd = self._autosplit_ref.hwnd
         hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
         if not hmonitor or not self.check_selected_region_exists():
-            return None, False
+            return None
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
         self.desktop_duplication.display = next(
@@ -59,5 +59,5 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
             self.desktop_duplication.screenshot((left, top, right, bottom)),
         )
         if screenshot is None:
-            return None, False
-        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA), False
+            return None
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
