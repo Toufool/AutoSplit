@@ -152,9 +152,11 @@ def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
     # Normally this is done by keyboard.get_hotkey_name. But our code won't always get there.
     if event_name == "+":
         return "plus"
-    return f"num {keyboard_event.name}"  \
-        if keyboard_event.is_keypad and is_digit(keyboard_event.name) \
+    return (
+        f"num {keyboard_event.name}"
+        if keyboard_event.is_keypad and is_digit(keyboard_event.name)
         else event_name
+    )
 
 
 def __get_hotkey_name(names: list[str]):
