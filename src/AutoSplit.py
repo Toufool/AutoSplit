@@ -41,6 +41,7 @@ from utils import (
     AUTOSPLIT_VERSION,
     BGRA_CHANNEL_COUNT,
     FROZEN,
+    ONE_SECOND,
     auto_split_directory,
     decimal,
     flatten,
@@ -76,7 +77,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     # Timers
     timer_live_image = QtCore.QTimer()
+    timer_live_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
     timer_start_image = QtCore.QTimer()
+    timer_start_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
 
     # Widgets
     AboutWidget: about.Ui_AboutAutoSplitWidget | None = None
@@ -205,7 +208,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # live image checkbox
         self.timer_live_image.timeout.connect(lambda: self.__update_live_image_details(None, True))
-        self.timer_live_image.start(int(1000 / self.settings_dict["fps_limit"]))
+        self.timer_live_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
 
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__start_image_function)
@@ -296,7 +299,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.reset_highest_similarity = 0.0
         self.split_below_threshold = False
-        self.timer_start_image.start(int(1000 / self.settings_dict["fps_limit"]))
+        self.timer_start_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
 
         QApplication.processEvents()
 
@@ -341,7 +344,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 if self.start_image.get_delay_time(self) > 0:
                     self.start_image_status_value_label.setText("delaying start...")
                     delay_start_time = time()
-                    start_delay = self.start_image.get_delay_time(self) / 1000
+                    start_delay = self.start_image.get_delay_time(self) / ONE_SECOND
                     time_delta = 0.0
                     while time_delta < start_delay:
                         delay_time_left = start_delay - time_delta
@@ -564,7 +567,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         while self.split_image_number < number_of_split_images:
             # Check if we are not waiting for the split delay to send the key press
             if self.waiting_for_split_delay:
-                time_millis = int(round(time() * 1000))
+                time_millis = int(round(time() * ONE_SECOND))
                 if time_millis < split_time:
                     QApplication.processEvents()
                     continue
@@ -583,9 +586,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if not self.split_image.check_flag(DUMMY_FLAG):
                 # If it's a delayed split, check if the delay has passed
                 # Otherwise calculate the split time for the key press
-                split_delay = self.split_image.get_delay_time(self) / 1000
+                split_delay = self.split_image.get_delay_time(self) / ONE_SECOND
                 if split_delay > 0 and not self.waiting_for_split_delay:
-                    split_time = round(time() + split_delay * 1000)
+                    split_time = round(time() + split_delay * ONE_SECOND)
                     self.waiting_for_split_delay = True
                     buttons_to_disable = [
                         self.next_image_button,
@@ -668,7 +671,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Limit the number of time the comparison runs to reduce cpu usage
             frame_interval = 1 / self.settings_dict["fps_limit"]
             # Use a time delta to have a consistant check interval
-            wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * 1000)
+            wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * ONE_SECOND)
 
             below_flag = self.split_image.check_flag(BELOW_FLAG)
             # if the b flag is set, let similarity go above threshold first,
