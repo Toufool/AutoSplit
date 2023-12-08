@@ -188,16 +188,20 @@ async def get_all_video_capture_devices():
         #     backend = video_capture.getBackendName()  # STS_ASSERT
         #     video_capture.grab()  # STS_ERROR
         # except cv2.error as error:
-        #     return CameraInfo(index, device_name, True, backend) \
-        #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT) \
+        #     return (
+        #         CameraInfo(index, device_name, True, backend)
+        #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT)
         #         else None
+        #     )
         # finally:
         #     video_capture.release()
 
         resolution = get_input_device_resolution(index)
-        return CameraInfo(index, device_name, False, backend, resolution) \
-            if resolution is not None \
+        return (
+            CameraInfo(index, device_name, False, backend, resolution)
+            if resolution is not None
             else None
+        )
 
     return [
         camera_info

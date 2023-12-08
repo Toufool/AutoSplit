@@ -44,9 +44,11 @@ def compare_l2_norm(source: MatLike, capture: MatLike, mask: MatLike | None = No
     error = cv2.norm(source, capture, cv2.NORM_L2, mask)
 
     # The L2 Error is summed across all pixels, so this normalizes
-    max_error = sqrt(source.size) * MAXBYTE \
-        if not is_valid_image(mask)\
+    max_error = (
+        sqrt(source.size) * MAXBYTE
+        if not is_valid_image(mask)
         else sqrt(cv2.countNonZero(mask) * MASK_SIZE_MULTIPLIER)
+    )
 
     if not max_error:
         return 0.0
@@ -69,9 +71,11 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
 
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
-    max_error = source.size * MAXBYTE * MAXBYTE \
-        if not is_valid_image(mask) \
+    max_error = (
+        source.size * MAXBYTE * MAXBYTE
+        if not is_valid_image(mask)
         else cv2.countNonZero(mask)
+    )
 
     return 1 - (min_val / max_error)
 
