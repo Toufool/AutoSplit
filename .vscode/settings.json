@@ -14,6 +14,7 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
+  "files.eol": "\n",
   "editor.comments.insertSpace": true,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
@@ -21,15 +22,14 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.fixAll.unusedImports": false,
-    "source.fixAll.convertImportFormat": true,
+    // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": false,
   },
   "emeraldwalk.runonsave": {
     "commands": [
       {
         "match": "\\.pyi?",
-        "cmd": "add-trailing-comma ${file} --py36-plus"
+        "cmd": "add-trailing-comma ${file}"
       },
     ]
   },
@@ -45,9 +45,14 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "build": true,
-    "**/.mypy_cache": true,
+    "**/.*_cache": true, // mypy and Ruff cache
     "**/__pycache__": true,
+    // Only show useful PyInstaller logs
+    "build/*.*": true,
+    "build/[b-z]*": true,
+    "build/**/localpycs": true,
+    "build/**/Tree-*": true,
+    "build/**/*.{manifest,pkg,zip,tcl,res,pyz}": true,
   },
   "search.exclude": {
     "**/*.code-search": true,
@@ -58,7 +63,7 @@
     "editor.defaultFormatter": "vscode.json-language-features",
   },
   "[python]": {
-    // Ruff is not yet a formatter: https://github.com/charliermarsh/ruff/issues/1904
+    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.tabSize": 4,
     "editor.rulers": [
@@ -69,23 +74,21 @@
       120, // Our hard rule
     ],
   },
-  // Important to follow the config in pyrightconfig.json
-  "python.analysis.useLibraryCodeForTypes": false,
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.args": [
+    // https://github.com/microsoft/vscode-mypy/issues/37#issuecomment-1602702174
+    "--config-file=mypy.ini",
+  ],
+  "python.terminal.activateEnvironment": true,
+  // python.analysis is Pylance (pyright) configurations
+  "python.analysis.fixAll": [
+    "source.convertImportFormat"
+    // Explicitly omiting "source.unusedImports", can be annoying when commenting code for debugging
+  ],
   "python.analysis.diagnosticMode": "workspace",
-  "python.linting.enabled": true,
   "ruff.importStrategy": "fromEnvironment",
   // Use the Ruff extension instead
   "isort.check": false,
-  "python.linting.banditEnabled": false,
-  "python.linting.flake8Enabled": false,
-  "python.linting.prospectorEnabled": false,
-  "python.linting.pycodestyleEnabled": false,
-  "python.linting.pylamaEnabled": false,
-  "python.linting.pylintEnabled": false,
-  // Use the autopep8 extension instead
-  "python.formatting.provider": "none",
-  // Use Pyright/Pylance instead
-  "python.linting.mypyEnabled": false,
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
   "powershell.codeFormatting.autoCorrectAliases": true,
   "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
@@ -111,5 +114,25 @@
     "xd:pre",
     // Custom
     "string"
-  ]
+  ],
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "evenBetterToml.formatter.alignComments": false,
+  "evenBetterToml.formatter.alignEntries": false,
+  "evenBetterToml.formatter.allowedBlankLines": 1,
+  "evenBetterToml.formatter.arrayAutoCollapse": true,
+  "evenBetterToml.formatter.arrayAutoExpand": true,
+  "evenBetterToml.formatter.arrayTrailingComma": true,
+  "evenBetterToml.formatter.columnWidth": 80,
+  "evenBetterToml.formatter.compactArrays": true,
+  "evenBetterToml.formatter.compactEntries": false,
+  "evenBetterToml.formatter.compactInlineTables": false,
+  "evenBetterToml.formatter.indentEntries": false,
+  "evenBetterToml.formatter.indentTables": false,
+  "evenBetterToml.formatter.inlineTableExpand": false,
+  "evenBetterToml.formatter.reorderArrays": true,
+  "evenBetterToml.formatter.trailingNewline": true,
+  // We like keeping TOML keys in a certain non-alphabetical order that feels more natural
+  "evenBetterToml.formatter.reorderKeys": false
 }
