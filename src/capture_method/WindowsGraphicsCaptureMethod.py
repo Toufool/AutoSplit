@@ -98,11 +98,12 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         except OSError:
             return None, False
 
+        # We were too fast and the next frame wasn't ready yet
+        if not frame:
+            return self.last_captured_frame, True
+
         async def coroutine():
-            # We were too fast and the next frame wasn't ready yet
-            if not frame:
-                return None
-            return await (SoftwareBitmap.create_copy_from_surface_async(frame.surface) or asyncio.sleep(0, None))
+            return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
 
         try:
             software_bitmap = asyncio.run(coroutine())
@@ -114,6 +115,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
 
         if not software_bitmap:
             # HACK: Can happen when starting the region selector
+            # TODO: Validate if this is still true
             return self.last_captured_frame, True
             # raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)

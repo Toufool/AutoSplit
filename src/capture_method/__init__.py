@@ -173,14 +173,13 @@ def get_input_device_resolution(index: int):
     return resolution
 
 
-async def get_all_video_capture_devices() -> list[CameraInfo]:
+async def get_all_video_capture_devices():
     named_video_inputs = FilterGraph().get_input_devices()
 
     async def get_camera_info(index: int, device_name: str):
         backend = ""
-        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use
-        # #169
-        # FIXME: Maybe offer the option to the user to obtain more info about their devies?
+        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use. See #169
+        # FIXME: Maybe offer the option to the user to obtain more info about their devices?
         #        Off by default. With a tooltip to explain the risk.
         # video_capture = cv2.VideoCapture(index)
         # video_capture.setExceptionMode(True)
@@ -203,7 +202,6 @@ async def get_all_video_capture_devices() -> list[CameraInfo]:
     return [
         camera_info
         for camera_info
-        # Note: Return type required https://github.com/python/typeshed/issues/2652
         in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None
     ]

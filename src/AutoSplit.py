@@ -496,7 +496,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled):
             return
 
-        start_label: str = self.start_image_status_value_label.text()
+        start_label = self.start_image_status_value_label.text()
         if start_label.endswith(("ready", "paused")):
             self.start_image_status_value_label.setText("not ready")
 
@@ -519,7 +519,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.run_start_time = time()
 
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
-            # `safe_to_reload_start_image: bool = False` becasue __load_start_image also does this check,
+            # `safe_to_reload_start_image: bool = False` because __load_start_image also does this check,
             # we don't want to double a Start/Reset Image error message
             self.gui_changes_on_reset(False)
             return
