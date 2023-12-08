@@ -138,8 +138,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
         y = min(selection["y"], image.shape[ImageShape.Y] - 1)
         x = min(selection["x"], image.shape[ImageShape.X] - 1)
         image = image[
-            y: y + selection["height"],
-            x: x + selection["width"],
+            y : y + selection["height"],
+            x : x + selection["width"],
         ]
         self.last_converted_frame = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
         return self.last_converted_frame

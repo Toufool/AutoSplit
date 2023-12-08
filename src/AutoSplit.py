@@ -670,7 +670,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.previous_image_button.setEnabled(self.split_image_number != 0)
             if not self.is_auto_controlled:
                 # If its the last non-dummy split image and last loop number, disable the skip split button
-                self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number:].count(False) > 1)
+                self.skip_split_button.setEnabled(dummy_splits_array[self.split_image_number :].count(False) > 1)
                 self.undo_split_button.setEnabled(self.split_image_number != 0)
             QApplication.processEvents()
 
@@ -909,10 +909,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
         )
 
-        if (
-            (warning is QMessageBox.StandardButton.Yes and user_profile.save_settings(self))
-            or warning is QMessageBox.StandardButton.No
-        ):
+        if warning is QMessageBox.StandardButton.Yes:
+            if user_profile.save_settings(self):
+                exit_program()
+        elif warning is QMessageBox.StandardButton.No:
             exit_program()
 
         # Fallthrough case: Prevent program from closing.
