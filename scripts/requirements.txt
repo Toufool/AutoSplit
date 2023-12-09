@@ -13,7 +13,7 @@ Pillow>=10.0  # Python 3.12 support
 psutil>=5.9.6  # Python 3.12 fixes
 PyAutoGUI
 PyWinCtl>=0.0.42  # py.typed
-# When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev
+# When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
 PySide6-Essentials>=6.6.0  # Python 3.12 support
 requests>=2.28.2  # charset_normalizer 3.x update
 toml

@@ -60,6 +60,7 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
     def __repr__(self):
         return self.value
 
+    # Allow direct comparison with strings
     @override
     def __eq__(self, other: object):
         if isinstance(other, str):

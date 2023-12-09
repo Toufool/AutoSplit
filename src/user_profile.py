@@ -1,8 +1,10 @@
 import os
+from copy import deepcopy
 from typing import TYPE_CHECKING, TypedDict, cast
 
 import toml
 from PySide6 import QtCore, QtWidgets
+from typing_extensions import deprecated, override
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
@@ -40,6 +42,10 @@ class UserProfileDict(TypedDict):
     captured_window_title: str
     capture_region: Region
 
+    @override  # pyright: ignore
+    @deprecated("Use `copy.deepcopy` instead")
+    def copy(): return super().copy()
+
 
 DEFAULT_PROFILE = UserProfileDict(
     split_hotkey="",
@@ -70,10 +76,7 @@ DEFAULT_PROFILE = UserProfileDict(
 
 
 def have_settings_changed(autosplit: "AutoSplit"):
-    return (
-        autosplit.settings_dict != autosplit.last_saved_settings
-        or autosplit.settings_dict != autosplit.last_loaded_settings
-    )
+    return autosplit.settings_dict != autosplit.last_saved_settings
 
 
 def save_settings(autosplit: "AutoSplit"):
@@ -95,6 +98,7 @@ def save_settings_as(autosplit: "AutoSplit"):
         or os.path.join(auto_split_directory, "settings.toml"),
         "TOML (*.toml)",
     )[0]
+
     # If user cancels save destination window, don't save settings
     if not save_settings_file_path:
         return ""
@@ -103,10 +107,10 @@ def save_settings_as(autosplit: "AutoSplit"):
 
 
 def __save_settings_to_file(autosplit: "AutoSplit", save_settings_file_path: str):
-    autosplit.last_saved_settings = autosplit.settings_dict
     # Save settings to a .toml file
     with open(save_settings_file_path, "w", encoding="utf-8") as file:
-        toml.dump(autosplit.last_saved_settings, file)
+        toml.dump(autosplit.settings_dict, file)
+    autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
 
@@ -120,9 +124,10 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file. This happens when new settings are added.
             loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
+
         # TODO: Data Validation / fallbacks ?
         autosplit.settings_dict = UserProfileDict(**loaded_settings)
-        autosplit.last_loaded_settings = autosplit.settings_dict
+        autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
 
         autosplit.x_spinbox.setValue(autosplit.settings_dict["capture_region"]["x"])
         autosplit.y_spinbox.setValue(autosplit.settings_dict["capture_region"]["y"])

@@ -38,9 +38,9 @@ QTIMER_FPS_LIMIT = 1000
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3
-"""How many channels in an RGB image"""
+"""How many channels in a BRG image"""
 BGRA_CHANNEL_COUNT = 4
-"""How many channels in an RGBA image"""
+"""How many channels in a BRGA image"""
 
 
 class ImageShape(IntEnum):
@@ -75,7 +75,7 @@ def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
     return image is not None and bool(image.size)
 
 
-def is_valid_hwnd(hwnd: int) -> bool:
+def is_valid_hwnd(hwnd: int):
     """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
     if not hwnd:
         return False
