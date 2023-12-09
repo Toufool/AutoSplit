@@ -1,6 +1,5 @@
-import ctypes
-import ctypes.wintypes
 import os
+import sys
 from math import ceil
 from typing import TYPE_CHECKING
 
@@ -11,11 +10,6 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
 from typing_extensions import override
-from win32 import win32gui
-from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-from winsdk._winrt import initialize_with_window
-from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
 from utils import (
@@ -28,12 +22,23 @@ from utils import (
     is_valid_image,
 )
 
-user32 = ctypes.windll.user32
+if sys.platform == "win32":
+    import ctypes
 
+    from win32 import win32gui
+    from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+    from winsdk._winrt import initialize_with_window
+    from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
+    from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+    user32 = ctypes.windll.user32
+
+if sys.platform == "linux":
+    from Xlib.display import Display
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
+GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
 SUPPORTED_IMREAD_FORMATS = [
@@ -62,6 +67,8 @@ IMREAD_EXT_FILTER = (
 # TODO: For later as a different picker option
 def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
     """Uses the built-in GraphicsCapturePicker to select the Window."""
+    if sys.platform != "win32":
+        raise OSError
 
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
@@ -106,7 +113,7 @@ def select_region(autosplit: "AutoSplit"):
     if not window:
         error_messages.region()
         return
-    hwnd = window.getHandle()
+    hwnd = window.getHandle().id if sys.platform == "linux" else window.getHandle()
     window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
@@ -116,10 +123,18 @@ def select_region(autosplit: "AutoSplit"):
     autosplit.settings_dict["captured_window_title"] = window_text
     autosplit.capture_method.reinitialize()
 
-    left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-    window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
-    offset_x = window_x + left_bounds
-    offset_y = window_y + top_bounds
+    if sys.platform == "win32":
+        left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
+        window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
+        offset_x = window_x + left_bounds
+        offset_y = window_y + top_bounds
+    else:
+        xdisplay = Display()
+        root = xdisplay.screen().root
+        data = root.translate_coords(autosplit.hwnd, 0, 0)._data  # noqa: SLF001
+        offset_x = data["x"]
+        offset_y = data["y"]
+
     __set_region_values(
         autosplit,
         left=x - offset_x,
@@ -147,7 +162,7 @@ def select_window(autosplit: "AutoSplit"):
     if not window:
         error_messages.region()
         return
-    hwnd = window.getHandle()
+    hwnd = window.getHandle().id if sys.platform == "linux" else window.getHandle()
     window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
@@ -157,11 +172,18 @@ def select_window(autosplit: "AutoSplit"):
     autosplit.settings_dict["captured_window_title"] = window_text
     autosplit.capture_method.reinitialize()
 
-    # Exlude the borders and titlebar from the window selection. To only get the client area.
-    _, __, window_width, window_height = get_window_bounds(hwnd)
-    _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
-    border_width = ceil((window_width - client_width) / 2)
-    titlebar_with_border_height = window_height - client_height - border_width
+    if sys.platform == "win32":
+        # Exlude the borders and titlebar from the window selection. To only get the client area.
+        _, __, window_width, window_height = get_window_bounds(hwnd)
+        _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
+        border_width = ceil((window_width - client_width) / 2)
+        titlebar_with_border_height = window_height - client_height - border_width
+    else:
+        data = window.getHandle().get_geometry()._data  # noqa: SLF001
+        client_height = data["height"]
+        client_width = data["width"]
+        border_width = data["border_width"]
+        titlebar_with_border_height = border_width
 
     __set_region_values(
         autosplit,
@@ -310,12 +332,21 @@ class BaseSelectWidget(QtWidgets.QWidget):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.setGeometry(
-            user32.GetSystemMetrics(SM_XVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_YVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_CXVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_CYVIRTUALSCREEN),
-        )
+        if sys.platform == "win32":
+            self.setGeometry(
+                user32.GetSystemMetrics(SM_XVIRTUALSCREEN),
+                user32.GetSystemMetrics(SM_YVIRTUALSCREEN),
+                user32.GetSystemMetrics(SM_CXVIRTUALSCREEN),
+                user32.GetSystemMetrics(SM_CYVIRTUALSCREEN),
+            )
+        else:
+            data = Display().screen().root.get_geometry()._data  # noqa: SLF001
+            self.setGeometry(
+                data["x"],
+                data["y"],
+                data["width"],
+                data["height"],
+            )
         self.setWindowTitle(" ")
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)

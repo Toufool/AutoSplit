@@ -6,12 +6,17 @@
 
 - Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).  
 
+### Linux
+
+- You need to be part of the `input` and `tty` groups, as well as have permissions on a few files and folders.  
+  If you are missing from either groups, the install script will take care of it on its first run, but you'll need to restart your session.  
+
 ### All platforms
 
 - [Python](https://www.python.org/downloads/) 3.10+.
 - [Node](https://nodejs.org) is optional, but required for complete linting.
   - Alternatively you can install the [pyright python wrapper](https://pypi.org/project/pyright/) which has a bit of an overhead delay.
-- [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+- [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) is used to run all the scripts
 - [VSCode](https://code.visualstudio.com/Download) is not required, but highly recommended.
   - Everything already configured in the workspace, including Run (F5) and Build (Ctrl+Shift+B) commands, default shell, and recommended extensions.
   - [PyCharm](https://www.jetbrains.com/pycharm/) is also a good Python IDE, but nothing is configured. If you are a PyCharm user, feel free to open a PR with all necessary workspace configurations!

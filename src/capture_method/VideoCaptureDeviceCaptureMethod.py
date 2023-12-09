@@ -1,14 +1,17 @@
+import sys
 from typing import TYPE_CHECKING
 
 import cv2
 import cv2.Error
 import numpy as np
 from cv2.typing import MatLike
-from pygrabber.dshow_graph import FilterGraph
 from typing_extensions import override
 
 from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import ImageShape, is_valid_image
+
+if sys.platform == "win32":
+    from pygrabber.dshow_graph import FilterGraph
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -47,18 +50,18 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
         if not self.capture_device.isOpened():
             return
 
-        filter_graph = FilterGraph()
-        filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-        width, height = filter_graph.get_input_device().get_current_format()
-        filter_graph.remove_filters()
-
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        try:
-            self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        except cv2.error:
-            # Some cameras don't allow changing the resolution
-            pass
+        if sys.platform == "win32":
+            filter_graph = FilterGraph()
+            filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
+            width, height = filter_graph.get_input_device().get_current_format()
+            filter_graph.remove_filters()
+            try:
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            except cv2.error:
+                # Some cameras don't allow changing the resolution
+                pass
         super().__init__(autosplit)
 
     @override
