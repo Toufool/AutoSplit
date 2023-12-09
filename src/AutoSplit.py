@@ -102,7 +102,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.capture_method = CaptureMethodBase(self)
         self.is_running = False
 
-        self.last_successfully_loaded_settings_file_path: str = ""
+        self.last_successfully_loaded_settings_file_path = ""
         """Path of the settings file to default to. `None` until we try to load once."""
 
         # Automatic timer start

@@ -38,9 +38,9 @@ QTIMER_FPS_LIMIT = 1000
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3
-"""How many channels in a BRG image"""
+"""How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
-"""How many channels in a BRGA image"""
+"""How many channels in a BGRA image"""
 
 
 class ImageShape(IntEnum):
