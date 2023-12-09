@@ -9,7 +9,7 @@ $arguments = @(
   '--splash=res/splash.png',
   # The install script should ensure that these are not installed
   # But we'll still include unused dependencies that would be picked up by PyInstaller
-  # if requirements.txt was used directly to help ensure consistency when buildign locally.
+  # if requirements.txt was used directly to help ensure consistency when building locally.
   #
   # Installed by PyAutoGUI
   '--exclude=pyscreeze',

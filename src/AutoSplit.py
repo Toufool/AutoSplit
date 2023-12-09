@@ -4,6 +4,7 @@ import os
 import signal
 import sys
 from collections.abc import Callable
+from copy import deepcopy
 from time import time
 from types import FunctionType
 from typing import NoReturn
@@ -50,8 +51,6 @@ from utils import (
     open_file,
 )
 
-DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 2
-
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
@@ -93,7 +92,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Initialize a few attributes
         self.hwnd = 0
         """Window Handle used for Capture Region"""
-        self.last_saved_settings = DEFAULT_PROFILE
+        self.last_saved_settings = deepcopy(DEFAULT_PROFILE)
         self.similarity = 0.0
         self.split_image_number = 0
         self.split_images_and_loop_number: list[tuple[AutoSplitImage, int]] = []
@@ -101,10 +100,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.capture_method = CaptureMethodBase(self)
         self.is_running = False
 
-        # Last loaded settings empty and last successful loaded settings file path to None until we try to load them
-        self.last_loaded_settings = DEFAULT_PROFILE
-        self.last_successfully_loaded_settings_file_path: str | None = None
-        """For when a file has never loaded, but you successfully "Save File As"."""
+        self.last_successfully_loaded_settings_file_path = ""
+        """Path of the settings file to default to. `None` until we try to load once."""
 
         # Automatic timer start
         self.highest_similarity = 0.0
