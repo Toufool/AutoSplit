@@ -31,7 +31,7 @@ def __value_from_filename(
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
         string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1])[0]
-        value: T = type(default_value)(string_value)
+        value = type(default_value)(string_value)
     except (IndexError, ValueError):
         return default_value
     else:
