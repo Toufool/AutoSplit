@@ -23,6 +23,7 @@ types-Pillow
 types-psutil
 types-PyAutoGUI
 types-pyinstaller
+types-python-xlib ; sys_platform == 'linux'
 types-pywin32 ; sys_platform == 'win32'
 types-requests
 types-toml

@@ -33,7 +33,3 @@ repos:
 ci:
   autoupdate_branch: dev
   autoupdate_schedule: monthly
-  skip:
-    # Ignore until Linux support. We don't want lf everywhere yet
-    # And crlf fails on CI because pre-commit runs on linux
-    - "mixed-line-ending"

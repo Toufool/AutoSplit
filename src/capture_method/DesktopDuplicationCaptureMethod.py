@@ -1,3 +1,7 @@
+import sys
+
+if sys.platform != "win32":
+    raise OSError
 import ctypes
 from typing import TYPE_CHECKING, cast
 

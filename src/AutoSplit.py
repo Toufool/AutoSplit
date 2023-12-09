@@ -24,7 +24,7 @@ from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
-from hotkeys import HOTKEYS, after_setting_hotkey, send_command
+from hotkeys import HOTKEYS, KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
 from menu_bar import (
     about_qt,
     about_qt_for_python,
@@ -42,6 +42,7 @@ from utils import (
     AUTOSPLIT_VERSION,
     BGRA_CHANNEL_COUNT,
     FROZEN,
+    IS_WAYLAND,
     ONE_SECOND,
     QTIMER_FPS_LIMIT,
     auto_split_directory,
@@ -53,8 +54,9 @@ from utils import (
 
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
-myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+if sys.platform == "win32":
+    myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -954,6 +956,7 @@ def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
+# TODO: Add Linux support
 def is_already_open():
     # When running directly in Python, any AutoSplit process means it's already open
     # When bundled, we must ignore itself and the splash screen
@@ -978,6 +981,12 @@ def main():
 
         if is_already_open():
             error_messages.already_open()
+        if KEYBOARD_GROUPS_ISSUE:
+            error_messages.linux_groups()
+        if KEYBOARD_UINPUT_ISSUE:
+            error_messages.linux_uinput()
+        if IS_WAYLAND:
+            error_messages.linux_wayland()
 
         AutoSplit()
 
