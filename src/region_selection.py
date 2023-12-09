@@ -8,7 +8,6 @@ import numpy as np
 from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
-from pywinctl import getTopWindowAt
 from typing_extensions import override
 
 import error_messages
@@ -34,6 +33,11 @@ if sys.platform == "win32":
 
 if sys.platform == "linux":
     from Xlib.display import Display
+    # This variable may be missing in desktopless environment. x11 | wayland
+    os.environ.setdefault("XDG_SESSION_TYPE", "x11")
+
+# Must come after the linux XDG_SESSION_TYPE environment variable is set
+from pywinctl import getTopWindowAt
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -113,7 +117,7 @@ def select_region(autosplit: "AutoSplit"):
     if not window:
         error_messages.region()
         return
-    hwnd = window.getHandle().id if sys.platform == "linux" else window.getHandle()
+    hwnd = window.getHandle()
     window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
@@ -162,7 +166,7 @@ def select_window(autosplit: "AutoSplit"):
     if not window:
         error_messages.region()
         return
-    hwnd = window.getHandle().id if sys.platform == "linux" else window.getHandle()
+    hwnd = window.getHandle()
     window_text = window.title
     if not is_valid_hwnd(hwnd) or not window_text:
         error_messages.region()
@@ -179,7 +183,7 @@ def select_window(autosplit: "AutoSplit"):
         border_width = ceil((window_width - client_width) / 2)
         titlebar_with_border_height = window_height - client_height - border_width
     else:
-        data = window.getHandle().get_geometry()._data  # noqa: SLF001
+        data = window._xWin.get_geometry()._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
         client_height = data["height"]
         client_width = data["width"]
         border_width = data["border_width"]

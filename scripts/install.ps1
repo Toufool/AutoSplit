@@ -34,13 +34,8 @@ $dev = If ($Env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
 If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
-    # python3-tk for splash screen, npm for pyright
-    sudo apt-get install -y python3-pip python3-tk npm
-    # Helps ensure build machine has the required PySide6 libraries for all target machines.
-    # Not everything here is required, but using the documentation from
-    # https://wiki.qt.io/Building_Qt_5_from_Git#Libxcb
-    # TODO: Test if still necessary with PySide6
-    sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+    # python3-tk for splash screen, npm for pyright, the rest for PySide6
+    sudo apt-get install -y python3-pip python3-tk npm libegl1 libxkbcommon
   }
 }
 # Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
@@ -61,21 +56,28 @@ pip install PyAutoGUI ImageHash scipy --no-deps --upgrade
 $libPath = &"$python" -c 'import pyautogui as _; print(_.__path__[0])'
 (Get-Content "$libPath/_pyautogui_win.py").replace('ctypes.windll.user32.SetProcessDPIAware()', 'pass') |
   Set-Content "$libPath/_pyautogui_win.py"
-$libPath = &"$python" -c 'import pymonctl as _; print(_.__path__[0])'
-(Get-Content "$libPath/_pymonctl_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
-  Set-Content "$libPath/_pymonctl_win.py"
-$libPath = &"$python" -c 'import pywinbox as _; print(_.__path__[0])'
-(Get-Content "$libPath/_pywinbox_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
-  Set-Content "$libPath/_pywinbox_win.py"
+If ($IsWindows) {
+  $libPath = &"$python" -c 'import pymonctl as _; print(_.__path__[0])'
+  (Get-Content "$libPath/_pymonctl_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
+    Set-Content "$libPath/_pymonctl_win.py"
+  $libPath = &"$python" -c 'import pywinbox as _; print(_.__path__[0])'
+  (Get-Content "$libPath/_pywinbox_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
+    Set-Content "$libPath/_pywinbox_win.py"
+  pip uninstall pyscreeze
+}
+# Because Ubuntu 22.04 is forced to use an older version of PySide6, we do a dirty typing patch
+# https://bugreports.qt.io/browse/QTBUG-114635
+If ($IsLinux) {
+  $libPath = &"$python" -c 'import PySide6 as _; print(_.__path__[0])'
+  (Get-Content "$libPath/QtWidgets.pyi").replace('-> Tuple:', '-> Tuple[str, ...]:') |
+    Set-Content "$libPath/QtWidgets.pyi"
+}
 # Uninstall optional dependencies if PyAutoGUI was installed outside this script
-# pyscreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness
+# pyscreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed
 # pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
 # (also --exclude from build script, but more consistent with unfrozen run)
 pip uninstall pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y
-If (-not $IsLinux) {
-  pip uninstall pyscreeze
-}
-
+If ($IsWindows) { pip uninstall pyscreeze }
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 If ($dev) {

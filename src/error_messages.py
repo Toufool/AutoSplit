@@ -168,7 +168,7 @@ def linux_groups():
 def linux_uinput():
     set_text_message(
         "Failed to create a device file using `uinput` module. "
-        + "This can happen when runnign Linux under WSL. "
+        + "This can happen when running Linux under WSL. "
         + "Keyboard events have been disabled.",
     )
 

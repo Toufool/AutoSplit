@@ -43,11 +43,13 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
     capture_device: cv2.VideoCapture
 
     def __init__(self, autosplit: "AutoSplit"):
+        super().__init__(autosplit)
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
 
         # The video capture device isn't accessible, don't bother with it.
         if not self.capture_device.isOpened():
+            self.close()
             return
 
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
@@ -62,7 +64,6 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
             except cv2.error:
                 # Some cameras don't allow changing the resolution
                 pass
-        super().__init__(autosplit)
 
     @override
     def close(self):

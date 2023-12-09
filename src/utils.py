@@ -90,6 +90,8 @@ def first(iterable: Iterable[T]) -> T:
 
 
 def try_delete_dc(dc: "PyCDC"):
+    if sys.platform != "win32":
+        raise OSError
     try:
         dc.DeleteDC()
     except win32ui.error:

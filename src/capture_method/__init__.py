@@ -24,7 +24,7 @@ if sys.platform == "win32":
 
 if sys.platform == "linux":
     import pyscreeze
-    from PIL import features
+    from PIL import UnidentifiedImageError, features
 
     from capture_method.ScrotCaptureMethod import ScrotCaptureMethod
     from capture_method.XDisplayCaptureMethod import XDisplayCaptureMethod
@@ -152,7 +152,7 @@ elif sys.platform == "linux":
         CAPTURE_METHODS[CaptureMethodEnum.XDISPLAY] = XDisplayCaptureMethod
     try:
         pyscreeze.screenshot()
-    except NotImplementedError:
+    except UnidentifiedImageError:
         pass
     else:
         # TODO: Investigate solution for Slow Scrot:
@@ -202,7 +202,7 @@ def get_input_devices():
     return cameras
 
 
-def get_input_device_resolution(index: int):
+def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
         return (0, 0)
     filter_graph = FilterGraph()

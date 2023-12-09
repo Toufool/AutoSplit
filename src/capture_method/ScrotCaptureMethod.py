@@ -40,11 +40,7 @@ class ScrotCaptureMethod(ThreadedLoopCaptureMethod):
                 selection["height"],
             ),
         )
-        return np.array(image)
-
-    @override
-    def get_frame(self):
-        image = super().get_frame()
+        image = np.array(image)
         if not is_valid_image(image):
             return None
         return cv2.cvtColor(image, cv2.COLOR_RGB2BGRA)

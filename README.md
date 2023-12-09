@@ -48,7 +48,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 - Windows 10 and 11.
 - Linux (Only tested on Ubuntu 22.04)
-  - Wayland is not supported
+  - Wayland is not currently supported
+  - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## OPTIONS
@@ -286,6 +287,8 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Upvoting the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
+  - <https://bugreports.qt.io/browse/QTBUG-114635>
+  - <https://bugreports.qt.io/browse/PYSIDE-2542>
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aopen+involves%3AAvasam>
   - <https://github.com/opencv/opencv/issues?q=is%3Aopen+involves%3AAvasam>
   - <https://github.com/opencv/opencv/issues/23906>

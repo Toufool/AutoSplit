@@ -1,4 +1,4 @@
-<!-- This has to in the repository's root, `docs/`, or `.github/` directory to be picked by github. Read more at: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors#about-contributing-guidelines -->
+<!-- This has to be in the repository's root, `docs/`, or `.github/` directory to be picked by github. Read more at: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors#about-contributing-guidelines -->
 
 # Contributing guidelines
 
