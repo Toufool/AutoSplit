@@ -1,7 +1,6 @@
 import asyncio
-import ctypes
-import ctypes.wintypes
 import os
+import subprocess
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
@@ -10,13 +9,21 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
-import win32ui
 from cv2.typing import MatLike
-from win32 import win32gui
-from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
+
+if sys.platform == "win32":
+    import ctypes
+    import ctypes.wintypes
+
+    import win32ui
+    from win32 import win32gui
+    from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
+    from winsdk.windows.media.capture import MediaCapture
+
+if sys.platform == "linux":
+    import fcntl
 
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
@@ -90,6 +97,9 @@ def try_delete_dc(dc: "PyCDC"):
 
 
 def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
+    if sys.platform != "win32":
+        raise OSError
+
     extended_frame_bounds = ctypes.wintypes.RECT()
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
         hwnd,
@@ -107,7 +117,11 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # noqa: S606
+    if sys.platform == "win32":
+        os.startfile(file_path)  # noqa: S606
+    else:
+        opener = "xdg-open" if sys.platform == "linux" else "open"
+        subprocess.call([opener, file_path])   # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -120,13 +134,15 @@ def get_or_create_eventloop():
 
 
 def get_direct3d_device():
+    if sys.platform != "win32":
+        raise OSError("Direct3D Device is only available on Windows")
+
     # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
     # OSError: The application called an interface that was marshalled for a different thread
     media_capture = MediaCapture()
 
     async def init_mediacapture():
         await media_capture.initialize_async()
-
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
     if not direct_3d_device:
@@ -146,6 +162,19 @@ def try_get_direct3d_device():
         return get_direct3d_device()
     except OSError:
         return None
+
+
+def try_input_device_access():
+    """Same as `make_uinput` in `keyboard/_nixcommon.py`."""
+    if sys.platform != "linux":
+        return False
+    try:
+        UI_SET_EVBIT = 0x40045564  # noqa: N806
+        with open("/dev/uinput", "wb") as uinput:
+            fcntl.ioctl(uinput, UI_SET_EVBIT)
+    except OSError:
+        return False
+    return True
 
 
 def fire_and_forget(func: Callable[..., Any]):
@@ -182,6 +211,7 @@ FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 """The directory of either the AutoSplit executable or AutoSplit.py"""
+IS_WAYLAND = bool(os.environ.get("WAYLAND_DISPLAY", False))
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number

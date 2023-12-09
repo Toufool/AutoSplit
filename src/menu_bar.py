@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import webbrowser
 from typing import TYPE_CHECKING, Any, cast
 
@@ -28,6 +29,13 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 HALF_BRIGHTNESS = 128
+LINUX_SCREENSHOT_SUPPORT = (
+    "\n\n----------------------------------------------------\n\n"
+    + error_messages.WAYLAND_WARNING
+    # Keep in sync with README.md#Capture_Method_Linux
+    + '\n"scrot" must be installed to use SCReenshOT. '
+    + "\nRun: sudo apt-get install scrot"
+) if sys.platform == "linux" else ""
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
@@ -164,7 +172,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             "\n\n".join([
                 f"{method.name} :\n{method.description}"
                 for method in capture_method_values
-            ]),
+            ]) + LINUX_SCREENSHOT_SUPPORT,
         )
 # endregion
 
@@ -262,6 +270,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
+        # TODO: Check if this is still necessary now that fusion theme is used on both
+        # if sys.platform == "linux":
+        #     geometry = self.readme_link_button.geometry()
+        #     self.readme_link_button.setGeometry(QtCore.QRect(51, 225, geometry.width(), geometry.height()))
 
     def __select_screenshot_directory(self):
         self._autosplit_ref.settings_dict["screenshot_directory"] = QFileDialog.getExistingDirectory(
