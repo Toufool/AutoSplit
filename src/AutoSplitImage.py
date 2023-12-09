@@ -14,7 +14,6 @@ from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-
 # Resize to these width and height so that FPS performance increases
 COMPARISON_RESIZE_WIDTH = 320
 COMPARISON_RESIZE_HEIGHT = 240

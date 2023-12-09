@@ -119,6 +119,8 @@ def get_comparison_method_by_index(comparison_method_index: int):
 def __compare_dummy(*_: object):
     return 0.0
 
+    return mean != MAXBYTE
+
 
 def check_if_image_has_transparency(image: MatLike):
     # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)

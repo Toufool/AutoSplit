@@ -182,7 +182,6 @@ def make_excepthook(autosplit: "AutoSplit"):
             return
         # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
-
     return excepthook
 
 

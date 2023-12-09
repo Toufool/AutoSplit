@@ -6,6 +6,7 @@ from _typeshed import Unused
 __all__: list[str] = []
 _NDArray: TypeAlias = np.ndarray[float, np.dtype[np.generic]]
 
+
 class Mat(_NDArray):
     wrap_channels: bool | None
 

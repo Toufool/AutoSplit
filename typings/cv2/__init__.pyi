@@ -2180,6 +2180,8 @@ RMat_Access = int
 """One of [RMat_Access_R, RMAT_ACCESS_R, RMat_Access_W, RMAT_ACCESS_W]"""
 
 # Classes
+
+
 class Algorithm:
     # Functions
     def clear(self) -> None: ...
@@ -2191,6 +2193,7 @@ class Algorithm:
     def empty(self) -> bool: ...
     def save(self, filename: str) -> None: ...
     def getDefaultName(self) -> str: ...
+
 
 class AsyncArray:
     # Functions
@@ -2206,6 +2209,7 @@ class AsyncArray:
     def get(self, timeoutNs: float, dst: UMat | None = ...) -> tuple[bool, UMat]: ...
     def wait_for(self, timeoutNs: float) -> bool: ...
     def valid(self) -> bool: ...
+
 
 class FileStorage:
     # Functions
@@ -2235,6 +2239,7 @@ class FileStorage:
     def endWriteStruct(self) -> None: ...
     def getFormat(self) -> int: ...
 
+
 class FileNode:
     # Functions
     def __init__(self) -> None: ...
@@ -2257,6 +2262,7 @@ class FileNode:
     def string(self) -> str: ...
     def mat(self) -> cv2.typing.MatLike: ...
 
+
 class RotatedRect:
     center: cv2.typing.Point2f
     size: cv2.typing.Size2f
@@ -2272,6 +2278,7 @@ class RotatedRect:
     def points(self) -> typing.Sequence[cv2.typing.Point2f]: ...
     def boundingRect(self) -> cv2.typing.Rect: ...
 
+
 class KeyPoint:
     pt: cv2.typing.Point2f
     size: float
@@ -2283,6 +2290,7 @@ class KeyPoint:
     # Functions
     @typing.overload
     def __init__(self) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2294,12 +2302,14 @@ class KeyPoint:
         octave: int = ...,
         class_id: int = ...,
     ) -> None: ...
+
     @staticmethod
     @typing.overload
     def convert(
         keypoints: typing.Sequence[KeyPoint],
         keypointIndexes: typing.Sequence[int] = ...,
     ) -> typing.Sequence[cv2.typing.Point2f]: ...
+
     @staticmethod
     @typing.overload
     def convert(
@@ -2311,6 +2321,7 @@ class KeyPoint:
     ) -> typing.Sequence[KeyPoint]: ...
     @staticmethod
     def overlap(kp1: KeyPoint, kp2: KeyPoint) -> float: ...
+
 
 class DMatch:
     queryIdx: int
@@ -2325,6 +2336,7 @@ class DMatch:
     def __init__(self, _queryIdx: int, _trainIdx: int, _distance: float) -> None: ...
     @typing.overload
     def __init__(self, _queryIdx: int, _trainIdx: int, _imgIdx: int, _distance: float) -> None: ...
+
 
 class TickMeter:
     # Functions
@@ -2341,6 +2353,7 @@ class TickMeter:
     def getAvgTimeMilli(self) -> float: ...
     def reset(self) -> None: ...
 
+
 class UMat:
     offset: int
 
@@ -2351,6 +2364,7 @@ class UMat:
     def __init__(self, rows: int, cols: int, type: int, usageFlags: UMatUsageFlags = ...) -> None: ...
     @typing.overload
     def __init__(self, size: cv2.typing.Size, type: int, usageFlags: UMatUsageFlags = ...) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2360,6 +2374,7 @@ class UMat:
         s: cv2.typing.Scalar,
         usageFlags: UMatUsageFlags = ...,
     ) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2385,6 +2400,7 @@ class UMat:
     def isSubmatrix(self) -> bool: ...
     def handle(self, accessFlags: AccessFlag) -> cv2.typing.IntPointer: ...
 
+
 class Subdiv2D:
     # Functions
     @typing.overload
@@ -2401,6 +2417,7 @@ class Subdiv2D:
     def getEdgeList(self) -> typing.Sequence[cv2.typing.Vec4f]: ...
     def getLeadingEdgeList(self) -> typing.Sequence[int]: ...
     def getTriangleList(self) -> typing.Sequence[cv2.typing.Vec6f]: ...
+
     def getVoronoiFacetList(
         self,
         idx: typing.Sequence[int],
@@ -2416,24 +2433,28 @@ class Subdiv2D:
     def edgeOrg(self, edge: int) -> tuple[int, cv2.typing.Point2f]: ...
     def edgeDst(self, edge: int) -> tuple[int, cv2.typing.Point2f]: ...
 
+
 class Feature2D:
     # Functions
     @typing.overload
     def detect(self, image: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = ...) -> typing.Sequence[KeyPoint]: ...
     @typing.overload
     def detect(self, image: UMat, mask: UMat | None = ...) -> typing.Sequence[KeyPoint]: ...
+
     @typing.overload
     def detect(
         self,
         images: typing.Sequence[cv2.typing.MatLike],
         masks: typing.Sequence[cv2.typing.MatLike] | None = ...,
     ) -> typing.Sequence[typing.Sequence[KeyPoint]]: ...
+
     @typing.overload
     def detect(
         self,
         images: typing.Sequence[UMat],
         masks: typing.Sequence[UMat] | None = ...,
     ) -> typing.Sequence[typing.Sequence[KeyPoint]]: ...
+
     @typing.overload
     def compute(
         self,
@@ -2444,6 +2465,7 @@ class Feature2D:
         typing.Sequence[KeyPoint],
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def compute(
         self,
@@ -2454,6 +2476,7 @@ class Feature2D:
         typing.Sequence[KeyPoint],
         UMat,
     ]: ...
+
     @typing.overload
     def compute(
         self,
@@ -2464,6 +2487,7 @@ class Feature2D:
         typing.Sequence[typing.Sequence[KeyPoint]],
         typing.Sequence[cv2.typing.MatLike],
     ]: ...
+
     @typing.overload
     def compute(
         self,
@@ -2474,6 +2498,7 @@ class Feature2D:
         typing.Sequence[typing.Sequence[KeyPoint]],
         typing.Sequence[UMat],
     ]: ...
+
     @typing.overload
     def detectAndCompute(
         self,
@@ -2485,6 +2510,7 @@ class Feature2D:
         typing.Sequence[KeyPoint],
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def detectAndCompute(
         self,
@@ -2510,6 +2536,7 @@ class Feature2D:
     def empty(self) -> bool: ...
     def getDefaultName(self) -> str: ...
 
+
 class BOWTrainer:
     # Functions
     def add(self, descriptors: cv2.typing.MatLike) -> None: ...
@@ -2521,11 +2548,13 @@ class BOWTrainer:
     @typing.overload
     def cluster(self, descriptors: cv2.typing.MatLike) -> cv2.typing.MatLike: ...
 
+
 class BOWImgDescriptorExtractor:
     # Functions
     def __init__(self, dextractor: cv2.typing.DescriptorExtractor, dmatcher: DescriptorMatcher) -> None: ...
     def setVocabulary(self, vocabulary: cv2.typing.MatLike) -> None: ...
     def getVocabulary(self) -> cv2.typing.MatLike: ...
+
     def compute(
         self,
         image: cv2.typing.MatLike,
@@ -2534,6 +2563,7 @@ class BOWImgDescriptorExtractor:
     ) -> cv2.typing.MatLike: ...
     def descriptorSize(self) -> int: ...
     def descriptorType(self) -> int: ...
+
 
 class VideoCapture:
     # Functions
@@ -2574,10 +2604,12 @@ class VideoCapture:
     @staticmethod
     def waitAny(streams: typing.Sequence[VideoCapture], timeoutNs: int = ...) -> tuple[bool, typing.Sequence[int]]: ...
 
+
 class VideoWriter:
     # Functions
     @typing.overload
     def __init__(self) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2587,6 +2619,7 @@ class VideoWriter:
         frameSize: cv2.typing.Size,
         isColor: bool = ...,
     ) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2597,6 +2630,7 @@ class VideoWriter:
         frameSize: cv2.typing.Size,
         isColor: bool = ...,
     ) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2606,6 +2640,7 @@ class VideoWriter:
         frameSize: cv2.typing.Size,
         params: typing.Sequence[int],
     ) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2618,6 +2653,7 @@ class VideoWriter:
     ) -> None: ...
     @typing.overload
     def open(self, filename: str, fourcc: int, fps: float, frameSize: cv2.typing.Size, isColor: bool = ...) -> bool: ...
+
     @typing.overload
     def open(
         self,
@@ -2628,6 +2664,7 @@ class VideoWriter:
         frameSize: cv2.typing.Size,
         isColor: bool = ...,
     ) -> bool: ...
+
     @typing.overload
     def open(
         self,
@@ -2637,6 +2674,7 @@ class VideoWriter:
         frameSize: cv2.typing.Size,
         params: typing.Sequence[int],
     ) -> bool: ...
+
     @typing.overload
     def open(
         self,
@@ -2659,6 +2697,7 @@ class VideoWriter:
     def fourcc(c1: str, c2: str, c3: str, c4: str) -> int: ...
     def getBackendName(self) -> str: ...
 
+
 class UsacParams:
     confidence: float
     isParallel: bool
@@ -2676,6 +2715,7 @@ class UsacParams:
 
     # Functions
     def __init__(self) -> None: ...
+
 
 class CirclesGridFinderParameters:
     densityNeighborhoodSize: cv2.typing.Size2f
@@ -2697,6 +2737,7 @@ class CirclesGridFinderParameters:
     # Functions
     def __init__(self) -> None: ...
 
+
 class CascadeClassifier:
     # Functions
     @typing.overload
@@ -2706,6 +2747,7 @@ class CascadeClassifier:
     def empty(self) -> bool: ...
     def load(self, filename: str) -> bool: ...
     def read(self, node: FileNode) -> bool: ...
+
     @typing.overload
     def detectMultiScale(
         self,
@@ -2716,6 +2758,7 @@ class CascadeClassifier:
         minSize: cv2.typing.Size = ...,
         maxSize: cv2.typing.Size = ...,
     ) -> typing.Sequence[cv2.typing.Rect]: ...
+
     @typing.overload
     def detectMultiScale(
         self,
@@ -2726,6 +2769,7 @@ class CascadeClassifier:
         minSize: cv2.typing.Size = ...,
         maxSize: cv2.typing.Size = ...,
     ) -> typing.Sequence[cv2.typing.Rect]: ...
+
     @typing.overload
     def detectMultiScale2(
         self,
@@ -2739,6 +2783,7 @@ class CascadeClassifier:
         typing.Sequence[cv2.typing.Rect],
         typing.Sequence[int],
     ]: ...
+
     @typing.overload
     def detectMultiScale2(
         self,
@@ -2752,6 +2797,7 @@ class CascadeClassifier:
         typing.Sequence[cv2.typing.Rect],
         typing.Sequence[int],
     ]: ...
+
     @typing.overload
     def detectMultiScale3(
         self,
@@ -2767,6 +2813,7 @@ class CascadeClassifier:
         typing.Sequence[int],
         typing.Sequence[float],
     ]: ...
+
     @typing.overload
     def detectMultiScale3(
         self,
@@ -2787,6 +2834,7 @@ class CascadeClassifier:
     def getFeatureType(self) -> int: ...
     @staticmethod
     def convert(oldcascade: str, newcascade: str) -> bool: ...
+
 
 class HOGDescriptor:
     @property
@@ -2819,6 +2867,7 @@ class HOGDescriptor:
     # Functions
     @typing.overload
     def __init__(self) -> None: ...
+
     @typing.overload
     def __init__(
         self,
@@ -2846,6 +2895,7 @@ class HOGDescriptor:
     def setSVMDetector(self, svmdetector: UMat) -> None: ...
     def load(self, filename: str, objname: str = ...) -> bool: ...
     def save(self, filename: str, objname: str = ...) -> None: ...
+
     @typing.overload
     def compute(
         self,
@@ -2854,6 +2904,7 @@ class HOGDescriptor:
         padding: cv2.typing.Size = ...,
         locations: typing.Sequence[cv2.typing.Point] = ...,
     ) -> typing.Sequence[float]: ...
+
     @typing.overload
     def compute(
         self,
@@ -2862,6 +2913,7 @@ class HOGDescriptor:
         padding: cv2.typing.Size = ...,
         locations: typing.Sequence[cv2.typing.Point] = ...,
     ) -> typing.Sequence[float]: ...
+
     @typing.overload
     def detect(
         self,
@@ -2874,6 +2926,7 @@ class HOGDescriptor:
         typing.Sequence[cv2.typing.Point],
         typing.Sequence[float],
     ]: ...
+
     @typing.overload
     def detect(
         self,
@@ -2886,6 +2939,7 @@ class HOGDescriptor:
         typing.Sequence[cv2.typing.Point],
         typing.Sequence[float],
     ]: ...
+
     @typing.overload
     def detectMultiScale(
         self,
@@ -2900,6 +2954,7 @@ class HOGDescriptor:
         typing.Sequence[cv2.typing.Rect],
         typing.Sequence[float],
     ]: ...
+
     @typing.overload
     def detectMultiScale(
         self,
@@ -2914,6 +2969,7 @@ class HOGDescriptor:
         typing.Sequence[cv2.typing.Rect],
         typing.Sequence[float],
     ]: ...
+
     @typing.overload
     def computeGradient(
         self,
@@ -2926,6 +2982,7 @@ class HOGDescriptor:
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def computeGradient(
         self,
@@ -2942,6 +2999,7 @@ class HOGDescriptor:
     def getDefaultPeopleDetector() -> typing.Sequence[float]: ...
     @staticmethod
     def getDaimlerPeopleDetector() -> typing.Sequence[float]: ...
+
 
 class QRCodeEncoder:
     # Classes
@@ -2962,18 +3020,21 @@ class QRCodeEncoder:
     def encode(self, encoded_info: str, qrcode: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
     @typing.overload
     def encode(self, encoded_info: str, qrcode: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def encodeStructuredAppend(
         self,
         encoded_info: str,
         qrcodes: typing.Sequence[cv2.typing.MatLike] | None = ...,
     ) -> typing.Sequence[cv2.typing.MatLike]: ...
+
     @typing.overload
     def encodeStructuredAppend(
         self,
         encoded_info: str,
         qrcodes: typing.Sequence[UMat] | None = ...,
     ) -> typing.Sequence[UMat]: ...
+
 
 class GraphicalCodeDetector:
     # Functions
@@ -2988,6 +3049,7 @@ class GraphicalCodeDetector:
     ]: ...
     @typing.overload
     def detect(self, img: UMat, points: UMat | None = ...) -> tuple[bool, UMat]: ...
+
     @typing.overload
     def decode(
         self,
@@ -3000,6 +3062,7 @@ class GraphicalCodeDetector:
     ]: ...
     @typing.overload
     def decode(self, img: UMat, points: UMat, straight_code: UMat | None = ...) -> tuple[str, UMat]: ...
+
     @typing.overload
     def detectAndDecode(
         self,
@@ -3011,6 +3074,7 @@ class GraphicalCodeDetector:
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def detectAndDecode(
         self,
@@ -3022,6 +3086,7 @@ class GraphicalCodeDetector:
         UMat,
         UMat,
     ]: ...
+
     @typing.overload
     def detectMulti(
         self,
@@ -3033,6 +3098,7 @@ class GraphicalCodeDetector:
     ]: ...
     @typing.overload
     def detectMulti(self, img: UMat, points: UMat | None = ...) -> tuple[bool, UMat]: ...
+
     @typing.overload
     def decodeMulti(
         self,
@@ -3044,6 +3110,7 @@ class GraphicalCodeDetector:
         typing.Sequence[str],
         typing.Sequence[cv2.typing.MatLike],
     ]: ...
+
     @typing.overload
     def decodeMulti(
         self,
@@ -3055,6 +3122,7 @@ class GraphicalCodeDetector:
         typing.Sequence[str],
         typing.Sequence[UMat],
     ]: ...
+
     @typing.overload
     def detectAndDecodeMulti(
         self,
@@ -3067,6 +3135,7 @@ class GraphicalCodeDetector:
         cv2.typing.MatLike,
         typing.Sequence[cv2.typing.MatLike],
     ]: ...
+
     @typing.overload
     def detectAndDecodeMulti(
         self,
@@ -3080,6 +3149,7 @@ class GraphicalCodeDetector:
         typing.Sequence[UMat],
     ]: ...
 
+
 class FaceDetectorYN:
     # Functions
     def setInputSize(self, input_size: cv2.typing.Size) -> None: ...
@@ -3090,6 +3160,7 @@ class FaceDetectorYN:
     def getNMSThreshold(self) -> float: ...
     def setTopK(self, top_k: int) -> None: ...
     def getTopK(self) -> int: ...
+
     @typing.overload
     def detect(
         self,
@@ -3101,6 +3172,7 @@ class FaceDetectorYN:
     ]: ...
     @typing.overload
     def detect(self, image: UMat, faces: UMat | None = ...) -> tuple[int, UMat]: ...
+
     @classmethod
     def create(
         cls,
@@ -3114,6 +3186,7 @@ class FaceDetectorYN:
         target_id: int = ...,
     ) -> FaceDetectorYN: ...
 
+
 class FaceRecognizerSF:
     # Functions
     @typing.overload
@@ -3125,6 +3198,7 @@ class FaceRecognizerSF:
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def alignCrop(self, src_img: UMat, face_box: UMat, aligned_img: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def feature(
         self,
@@ -3133,6 +3207,7 @@ class FaceRecognizerSF:
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def feature(self, aligned_img: UMat, face_feature: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def match(
         self,
@@ -3144,6 +3219,7 @@ class FaceRecognizerSF:
     def match(self, face_feature1: UMat, face_feature2: UMat, dis_type: int = ...) -> float: ...
     @classmethod
     def create(cls, model: str, config: str, backend_id: int = ..., target_id: int = ...) -> FaceRecognizerSF: ...
+
 
 class Stitcher:
     # Functions
@@ -3161,12 +3237,14 @@ class Stitcher:
     def setWaveCorrection(self, flag: bool) -> None: ...
     def interpolationFlags(self) -> InterpolationFlags: ...
     def setInterpolationFlags(self, interp_flags: InterpolationFlags) -> None: ...
+
     @typing.overload
     def estimateTransform(
         self,
         images: typing.Sequence[cv2.typing.MatLike],
         masks: typing.Sequence[cv2.typing.MatLike] | None = ...,
     ) -> Stitcher_Status: ...
+
     @typing.overload
     def estimateTransform(
         self,
@@ -3177,6 +3255,7 @@ class Stitcher:
     def composePanorama(self, pano: cv2.typing.MatLike | None = ...) -> tuple[Stitcher_Status, cv2.typing.MatLike]: ...
     @typing.overload
     def composePanorama(self, pano: UMat | None = ...) -> tuple[Stitcher_Status, UMat]: ...
+
     @typing.overload
     def composePanorama(
         self,
@@ -3186,6 +3265,7 @@ class Stitcher:
         Stitcher_Status,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def composePanorama(
         self,
@@ -3195,6 +3275,7 @@ class Stitcher:
         Stitcher_Status,
         UMat,
     ]: ...
+
     @typing.overload
     def stitch(
         self,
@@ -3206,6 +3287,7 @@ class Stitcher:
     ]: ...
     @typing.overload
     def stitch(self, images: typing.Sequence[UMat], pano: UMat | None = ...) -> tuple[Stitcher_Status, UMat]: ...
+
     @typing.overload
     def stitch(
         self,
@@ -3216,6 +3298,7 @@ class Stitcher:
         Stitcher_Status,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def stitch(
         self,
@@ -3228,6 +3311,7 @@ class Stitcher:
     ]: ...
     def workScale(self) -> float: ...
 
+
 class PyRotationWarper:
     # Functions
     @typing.overload
@@ -3238,6 +3322,7 @@ class PyRotationWarper:
     def warpPoint(self, pt: cv2.typing.Point2f, K: cv2.typing.MatLike, R: cv2.typing.MatLike) -> cv2.typing.Point2f: ...
     @typing.overload
     def warpPoint(self, pt: cv2.typing.Point2f, K: UMat, R: UMat) -> cv2.typing.Point2f: ...
+
     @typing.overload
     def warpPointBackward(
         self,
@@ -3247,6 +3332,7 @@ class PyRotationWarper:
     ) -> cv2.typing.Point2f: ...
     @typing.overload
     def warpPointBackward(self, pt: cv2.typing.Point2f, K: UMat, R: UMat) -> cv2.typing.Point2f: ...
+
     @typing.overload
     def warpPointBackward(
         self,
@@ -3256,6 +3342,7 @@ class PyRotationWarper:
     ) -> cv2.typing.Point2f: ...
     @typing.overload
     def warpPointBackward(self, pt: cv2.typing.Point2f, K: UMat, R: UMat) -> cv2.typing.Point2f: ...
+
     @typing.overload
     def buildMaps(
         self,
@@ -3269,6 +3356,7 @@ class PyRotationWarper:
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def buildMaps(
         self,
@@ -3282,6 +3370,7 @@ class PyRotationWarper:
         UMat,
         UMat,
     ]: ...
+
     @typing.overload
     def warp(
         self,
@@ -3295,6 +3384,7 @@ class PyRotationWarper:
         cv2.typing.Point,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def warp(
         self,
@@ -3308,6 +3398,7 @@ class PyRotationWarper:
         cv2.typing.Point,
         UMat,
     ]: ...
+
     @typing.overload
     def warpBackward(
         self,
@@ -3319,6 +3410,7 @@ class PyRotationWarper:
         dst_size: cv2.typing.Size,
         dst: cv2.typing.MatLike | None = ...,
     ) -> cv2.typing.MatLike: ...
+
     @typing.overload
     def warpBackward(
         self,
@@ -3337,7 +3429,9 @@ class PyRotationWarper:
     def getScale(self) -> float: ...
     def setScale(self, arg1: float) -> None: ...
 
+
 class WarperCreator: ...
+
 
 class KalmanFilter:
     statePre: cv2.typing.MatLike
@@ -3359,6 +3453,7 @@ class KalmanFilter:
     def predict(self, control: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
     def correct(self, measurement: cv2.typing.MatLike) -> cv2.typing.MatLike: ...
 
+
 class Tracker:
     # Functions
     @typing.overload
@@ -3370,7 +3465,9 @@ class Tracker:
     @typing.overload
     def update(self, image: UMat) -> tuple[bool, cv2.typing.Rect]: ...
 
+
 class GArrayDesc: ...
+
 
 class GComputation:
     # Functions
@@ -3382,11 +3479,13 @@ class GComputation:
     def __init__(self, in_: GMat, out: GScalar) -> None: ...
     @typing.overload
     def __init__(self, in1: GMat, in2: GMat, out: GMat) -> None: ...
+
     def apply(
         self,
         callback: cv2.typing.ExtractArgsCallback,
         args: typing.Sequence[GCompileArg] = ...,
     ) -> typing.Sequence[cv2.typing.GRunArg]: ...
+
     @typing.overload
     def compileStreaming(
         self,
@@ -3395,6 +3494,7 @@ class GComputation:
     ) -> GStreamingCompiled: ...
     @typing.overload
     def compileStreaming(self, args: typing.Sequence[GCompileArg] = ...) -> GStreamingCompiled: ...
+
     @typing.overload
     def compileStreaming(
         self,
@@ -3402,17 +3502,21 @@ class GComputation:
         args: typing.Sequence[GCompileArg] = ...,
     ) -> GStreamingCompiled: ...
 
+
 class GFrame:
     # Functions
     def __init__(self) -> None: ...
+
 
 class GKernelPackage:
     # Functions
     def size(self) -> int: ...
 
+
 class GMat:
     # Functions
     def __init__(self) -> None: ...
+
 
 class GMatDesc:
     @property
@@ -3448,7 +3552,9 @@ class GMatDesc:
     def asPlanar(self, planes: int) -> GMatDesc: ...
     def asInterleaved(self) -> GMatDesc: ...
 
+
 class GOpaqueDesc: ...
+
 
 class GScalar:
     # Functions
@@ -3457,7 +3563,9 @@ class GScalar:
     @typing.overload
     def __init__(self, s: cv2.typing.Scalar) -> None: ...
 
+
 class GScalarDesc: ...
+
 
 class GStreamingCompiled:
     # Functions
@@ -3468,15 +3576,18 @@ class GStreamingCompiled:
     def stop(self) -> None: ...
     def running(self) -> bool: ...
 
+
 class GOpaqueT:
     # Functions
     def __init__(self, type: cv2.gapi.ArgType) -> None: ...
     def type(self) -> cv2.gapi.ArgType: ...
 
+
 class GArrayT:
     # Functions
     def __init__(self, type: cv2.gapi.ArgType) -> None: ...
     def type(self) -> cv2.gapi.ArgType: ...
+
 
 class GCompileArg:
     # Functions
@@ -3487,6 +3598,7 @@ class GCompileArg:
     @typing.overload
     def __init__(self, arg: cv2.gapi.streaming.queue_capacity) -> None: ...
 
+
 class GInferInputs:
     # Functions
     def __init__(self) -> None: ...
@@ -3494,6 +3606,7 @@ class GInferInputs:
     def setInput(self, name: str, value: GMat) -> GInferInputs: ...
     @typing.overload
     def setInput(self, name: str, value: GFrame) -> GInferInputs: ...
+
 
 class GInferListInputs:
     # Functions
@@ -3503,15 +3616,18 @@ class GInferListInputs:
     @typing.overload
     def setInput(self, name: str, value: GArrayT) -> GInferListInputs: ...
 
+
 class GInferOutputs:
     # Functions
     def __init__(self) -> None: ...
     def at(self, name: str) -> GMat: ...
 
+
 class GInferListOutputs:
     # Functions
     def __init__(self) -> None: ...
     def at(self, name: str) -> GArrayT: ...
+
 
 class GeneralizedHough(Algorithm):
     # Functions
@@ -3519,6 +3635,7 @@ class GeneralizedHough(Algorithm):
     def setTemplate(self, templ: cv2.typing.MatLike, templCenter: cv2.typing.Point = ...) -> None: ...
     @typing.overload
     def setTemplate(self, templ: UMat, templCenter: cv2.typing.Point = ...) -> None: ...
+
     @typing.overload
     def setTemplate(
         self,
@@ -3529,6 +3646,7 @@ class GeneralizedHough(Algorithm):
     ) -> None: ...
     @typing.overload
     def setTemplate(self, edges: UMat, dx: UMat, dy: UMat, templCenter: cv2.typing.Point = ...) -> None: ...
+
     @typing.overload
     def detect(
         self,
@@ -3541,6 +3659,7 @@ class GeneralizedHough(Algorithm):
     ]: ...
     @typing.overload
     def detect(self, image: UMat, positions: UMat | None = ..., votes: UMat | None = ...) -> tuple[UMat, UMat]: ...
+
     @typing.overload
     def detect(
         self,
@@ -3553,6 +3672,7 @@ class GeneralizedHough(Algorithm):
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def detect(
         self,
@@ -3576,6 +3696,7 @@ class GeneralizedHough(Algorithm):
     def setMaxBufferSize(self, maxBufferSize: int) -> None: ...
     def getMaxBufferSize(self) -> int: ...
 
+
 class CLAHE(Algorithm):
     # Functions
     @typing.overload
@@ -3587,6 +3708,7 @@ class CLAHE(Algorithm):
     def setTilesGridSize(self, tileGridSize: cv2.typing.Size) -> None: ...
     def getTilesGridSize(self) -> cv2.typing.Size: ...
     def collectGarbage(self) -> None: ...
+
 
 class LineSegmentDetector(Algorithm):
     # Functions
@@ -3604,6 +3726,7 @@ class LineSegmentDetector(Algorithm):
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def detect(
         self,
@@ -3622,6 +3745,7 @@ class LineSegmentDetector(Algorithm):
     def drawSegments(self, image: cv2.typing.MatLike, lines: cv2.typing.MatLike) -> cv2.typing.MatLike: ...
     @typing.overload
     def drawSegments(self, image: UMat, lines: UMat) -> UMat: ...
+
     @typing.overload
     def compareSegments(
         self,
@@ -3633,6 +3757,7 @@ class LineSegmentDetector(Algorithm):
         int,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def compareSegments(
         self,
@@ -3645,6 +3770,7 @@ class LineSegmentDetector(Algorithm):
         UMat,
     ]: ...
 
+
 class Tonemap(Algorithm):
     # Functions
     @typing.overload
@@ -3653,6 +3779,7 @@ class Tonemap(Algorithm):
     def process(self, src: UMat, dst: UMat | None = ...) -> UMat: ...
     def getGamma(self) -> float: ...
     def setGamma(self, gamma: float) -> None: ...
+
 
 class AlignExposures(Algorithm):
     # Functions
@@ -3664,6 +3791,7 @@ class AlignExposures(Algorithm):
         times: cv2.typing.MatLike,
         response: cv2.typing.MatLike,
     ) -> None: ...
+
     @typing.overload
     def process(
         self,
@@ -3672,6 +3800,7 @@ class AlignExposures(Algorithm):
         times: UMat,
         response: UMat,
     ) -> None: ...
+
 
 class CalibrateCRF(Algorithm):
     # Functions
@@ -3685,6 +3814,7 @@ class CalibrateCRF(Algorithm):
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, dst: UMat | None = ...) -> UMat: ...
 
+
 class MergeExposures(Algorithm):
     # Functions
     @typing.overload
@@ -3697,6 +3827,7 @@ class MergeExposures(Algorithm):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, response: UMat, dst: UMat | None = ...) -> UMat: ...
+
 
 class AffineFeature(Feature2D):
     # Functions
@@ -3713,6 +3844,7 @@ class AffineFeature(Feature2D):
     def getViewParams(self, tilts: typing.Sequence[float], rolls: typing.Sequence[float]) -> None: ...
     def getDefaultName(self) -> str: ...
 
+
 class SIFT(Feature2D):
     # Functions
     @classmethod
@@ -3726,6 +3858,7 @@ class SIFT(Feature2D):
         sigma: float = ...,
         enable_precise_upscale: bool = ...,
     ) -> SIFT: ...
+
     @classmethod
     @typing.overload
     def create(
@@ -3750,11 +3883,13 @@ class SIFT(Feature2D):
     def setSigma(self, sigma: float) -> None: ...
     def getSigma(self) -> float: ...
 
+
 class BRISK(Feature2D):
     # Functions
     @classmethod
     @typing.overload
     def create(cls, thresh: int = ..., octaves: int = ..., patternScale: float = ...) -> BRISK: ...
+
     @classmethod
     @typing.overload
     def create(
@@ -3765,6 +3900,7 @@ class BRISK(Feature2D):
         dMin: float = ...,
         indexChange: typing.Sequence[int] = ...,
     ) -> BRISK: ...
+
     @classmethod
     @typing.overload
     def create(
@@ -3784,6 +3920,7 @@ class BRISK(Feature2D):
     def getOctaves(self) -> int: ...
     def setPatternScale(self, patternScale: float) -> None: ...
     def getPatternScale(self) -> float: ...
+
 
 class ORB(Feature2D):
     # Functions
@@ -3820,6 +3957,7 @@ class ORB(Feature2D):
     def getFastThreshold(self) -> int: ...
     def getDefaultName(self) -> str: ...
 
+
 class MSER(Feature2D):
     # Functions
     @classmethod
@@ -3835,6 +3973,7 @@ class MSER(Feature2D):
         min_margin: float = ...,
         edge_blur_size: int = ...,
     ) -> MSER: ...
+
     @typing.overload
     def detectRegions(
         self,
@@ -3843,6 +3982,7 @@ class MSER(Feature2D):
         typing.Sequence[typing.Sequence[cv2.typing.Point]],
         typing.Sequence[cv2.typing.Rect],
     ]: ...
+
     @typing.overload
     def detectRegions(
         self,
@@ -3873,6 +4013,7 @@ class MSER(Feature2D):
     def getPass2Only(self) -> bool: ...
     def getDefaultName(self) -> str: ...
 
+
 class FastFeatureDetector(Feature2D):
     # Functions
     @classmethod
@@ -3889,6 +4030,7 @@ class FastFeatureDetector(Feature2D):
     def setType(self, type: FastFeatureDetector_DetectorType) -> None: ...
     def getType(self) -> FastFeatureDetector_DetectorType: ...
     def getDefaultName(self) -> str: ...
+
 
 class AgastFeatureDetector(Feature2D):
     # Functions
@@ -3907,6 +4049,7 @@ class AgastFeatureDetector(Feature2D):
     def getType(self) -> AgastFeatureDetector_DetectorType: ...
     def getDefaultName(self) -> str: ...
 
+
 class GFTTDetector(Feature2D):
     # Functions
     @classmethod
@@ -3920,6 +4063,7 @@ class GFTTDetector(Feature2D):
         useHarrisDetector: bool = ...,
         k: float = ...,
     ) -> GFTTDetector: ...
+
     @classmethod
     @typing.overload
     def create(
@@ -3947,6 +4091,7 @@ class GFTTDetector(Feature2D):
     def setK(self, k: float) -> None: ...
     def getK(self) -> float: ...
     def getDefaultName(self) -> str: ...
+
 
 class SimpleBlobDetector(Feature2D):
     # Classes
@@ -3984,6 +4129,7 @@ class SimpleBlobDetector(Feature2D):
     def getDefaultName(self) -> str: ...
     def getBlobContours(self) -> typing.Sequence[typing.Sequence[cv2.typing.Point]]: ...
 
+
 class KAZE(Feature2D):
     # Functions
     @classmethod
@@ -4009,6 +4155,7 @@ class KAZE(Feature2D):
     def setDiffusivity(self, diff: KAZE_DiffusivityType) -> None: ...
     def getDiffusivity(self) -> KAZE_DiffusivityType: ...
     def getDefaultName(self) -> str: ...
+
 
 class AKAZE(Feature2D):
     # Functions
@@ -4039,6 +4186,7 @@ class AKAZE(Feature2D):
     def getDiffusivity(self) -> KAZE_DiffusivityType: ...
     def getDefaultName(self) -> str: ...
 
+
 class DescriptorMatcher(Algorithm):
     # Functions
     @typing.overload
@@ -4050,6 +4198,7 @@ class DescriptorMatcher(Algorithm):
     def empty(self) -> bool: ...
     def isMaskSupported(self) -> bool: ...
     def train(self) -> None: ...
+
     @typing.overload
     def match(
         self,
@@ -4057,6 +4206,7 @@ class DescriptorMatcher(Algorithm):
         trainDescriptors: cv2.typing.MatLike,
         mask: cv2.typing.MatLike | None = ...,
     ) -> typing.Sequence[DMatch]: ...
+
     @typing.overload
     def match(
         self,
@@ -4064,6 +4214,7 @@ class DescriptorMatcher(Algorithm):
         trainDescriptors: UMat,
         mask: UMat | None = ...,
     ) -> typing.Sequence[DMatch]: ...
+
     @typing.overload
     def match(
         self,
@@ -4072,6 +4223,7 @@ class DescriptorMatcher(Algorithm):
     ) -> typing.Sequence[DMatch]: ...
     @typing.overload
     def match(self, queryDescriptors: UMat, masks: typing.Sequence[UMat] | None = ...) -> typing.Sequence[DMatch]: ...
+
     @typing.overload
     def knnMatch(
         self,
@@ -4081,6 +4233,7 @@ class DescriptorMatcher(Algorithm):
         mask: cv2.typing.MatLike | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def knnMatch(
         self,
@@ -4090,6 +4243,7 @@ class DescriptorMatcher(Algorithm):
         mask: UMat | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def knnMatch(
         self,
@@ -4098,6 +4252,7 @@ class DescriptorMatcher(Algorithm):
         masks: typing.Sequence[cv2.typing.MatLike] | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def knnMatch(
         self,
@@ -4106,6 +4261,7 @@ class DescriptorMatcher(Algorithm):
         masks: typing.Sequence[UMat] | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def radiusMatch(
         self,
@@ -4115,6 +4271,7 @@ class DescriptorMatcher(Algorithm):
         mask: cv2.typing.MatLike | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def radiusMatch(
         self,
@@ -4124,6 +4281,7 @@ class DescriptorMatcher(Algorithm):
         mask: UMat | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def radiusMatch(
         self,
@@ -4132,6 +4290,7 @@ class DescriptorMatcher(Algorithm):
         masks: typing.Sequence[cv2.typing.MatLike] | None = ...,
         compactResult: bool = ...,
     ) -> typing.Sequence[typing.Sequence[DMatch]]: ...
+
     @typing.overload
     def radiusMatch(
         self,
@@ -4156,6 +4315,7 @@ class DescriptorMatcher(Algorithm):
     @typing.overload
     def create(cls, matcherType: DescriptorMatcher_MatcherType) -> DescriptorMatcher: ...
 
+
 class BOWKMeansTrainer(BOWTrainer):
     # Functions
     def __init__(
@@ -4169,6 +4329,7 @@ class BOWKMeansTrainer(BOWTrainer):
     def cluster(self) -> cv2.typing.MatLike: ...
     @typing.overload
     def cluster(self, descriptors: cv2.typing.MatLike) -> cv2.typing.MatLike: ...
+
 
 class StereoMatcher(Algorithm):
     # Functions
@@ -4194,7 +4355,9 @@ class StereoMatcher(Algorithm):
     def getDisp12MaxDiff(self) -> int: ...
     def setDisp12MaxDiff(self, disp12MaxDiff: int) -> None: ...
 
+
 class BaseCascadeClassifier(Algorithm): ...
+
 
 class QRCodeDetector(GraphicalCodeDetector):
     # Functions
@@ -4202,6 +4365,7 @@ class QRCodeDetector(GraphicalCodeDetector):
     def setEpsX(self, epsX: float) -> QRCodeDetector: ...
     def setEpsY(self, epsY: float) -> QRCodeDetector: ...
     def setUseAlignmentMarkers(self, useAlignmentMarkers: bool) -> QRCodeDetector: ...
+
     @typing.overload
     def decodeCurved(
         self,
@@ -4214,6 +4378,7 @@ class QRCodeDetector(GraphicalCodeDetector):
     ]: ...
     @typing.overload
     def decodeCurved(self, img: UMat, points: UMat, straight_qrcode: UMat | None = ...) -> tuple[str, UMat]: ...
+
     @typing.overload
     def detectAndDecodeCurved(
         self,
@@ -4225,6 +4390,7 @@ class QRCodeDetector(GraphicalCodeDetector):
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def detectAndDecodeCurved(
         self,
@@ -4236,6 +4402,7 @@ class QRCodeDetector(GraphicalCodeDetector):
         UMat,
         UMat,
     ]: ...
+
 
 class QRCodeDetectorAruco(GraphicalCodeDetector):
     # Classes
@@ -4262,6 +4429,7 @@ class QRCodeDetectorAruco(GraphicalCodeDetector):
     def getArucoParameters(self) -> cv2.aruco.DetectorParameters: ...
     def setArucoParameters(self, params: cv2.aruco.DetectorParameters) -> None: ...
 
+
 class BackgroundSubtractor(Algorithm):
     # Functions
     @typing.overload
@@ -4278,6 +4446,7 @@ class BackgroundSubtractor(Algorithm):
     @typing.overload
     def getBackgroundImage(self, backgroundImage: UMat | None = ...) -> UMat: ...
 
+
 class DenseOpticalFlow(Algorithm):
     # Functions
     @typing.overload
@@ -4285,6 +4454,7 @@ class DenseOpticalFlow(Algorithm):
     @typing.overload
     def calc(self, I0: UMat, I1: UMat, flow: UMat) -> UMat: ...
     def collectGarbage(self) -> None: ...
+
 
 class SparseOpticalFlow(Algorithm):
     # Functions
@@ -4302,6 +4472,7 @@ class SparseOpticalFlow(Algorithm):
         cv2.typing.MatLike,
         cv2.typing.MatLike,
     ]: ...
+
     @typing.overload
     def calc(
         self,
@@ -4316,6 +4487,7 @@ class SparseOpticalFlow(Algorithm):
         UMat,
         UMat,
     ]: ...
+
 
 class TrackerMIL(Tracker):
     # Classes
@@ -4336,6 +4508,7 @@ class TrackerMIL(Tracker):
     @classmethod
     def create(cls, parameters: TrackerMIL.Params = ...) -> TrackerMIL: ...
 
+
 class TrackerGOTURN(Tracker):
     # Classes
     class Params:
@@ -4349,6 +4522,7 @@ class TrackerGOTURN(Tracker):
 
     @classmethod
     def create(cls, parameters: TrackerGOTURN.Params = ...) -> TrackerGOTURN: ...
+
 
 class TrackerDaSiamRPN(Tracker):
     # Classes
@@ -4368,6 +4542,7 @@ class TrackerDaSiamRPN(Tracker):
     def create(cls, parameters: TrackerDaSiamRPN.Params = ...) -> TrackerDaSiamRPN: ...
     def getTrackingScore(self) -> float: ...
 
+
 class TrackerNano(Tracker):
     # Classes
     class Params:
@@ -4385,6 +4560,7 @@ class TrackerNano(Tracker):
     def create(cls, parameters: TrackerNano.Params = ...) -> TrackerNano: ...
     def getTrackingScore(self) -> float: ...
 
+
 class error(Exception):
     code: int
     err: str
@@ -4393,12 +4569,14 @@ class error(Exception):
     line: int
     msg: str
 
+
 class GeneralizedHoughBallard(GeneralizedHough):
     # Functions
     def setLevels(self, levels: int) -> None: ...
     def getLevels(self) -> int: ...
     def setVotesThreshold(self, votesThreshold: int) -> None: ...
     def getVotesThreshold(self) -> int: ...
+
 
 class GeneralizedHoughGuil(GeneralizedHough):
     # Functions
@@ -4427,12 +4605,14 @@ class GeneralizedHoughGuil(GeneralizedHough):
     def setPosThresh(self, posThresh: int) -> None: ...
     def getPosThresh(self) -> int: ...
 
+
 class TonemapDrago(Tonemap):
     # Functions
     def getSaturation(self) -> float: ...
     def setSaturation(self, saturation: float) -> None: ...
     def getBias(self) -> float: ...
     def setBias(self, bias: float) -> None: ...
+
 
 class TonemapReinhard(Tonemap):
     # Functions
@@ -4443,12 +4623,14 @@ class TonemapReinhard(Tonemap):
     def getColorAdaptation(self) -> float: ...
     def setColorAdaptation(self, color_adapt: float) -> None: ...
 
+
 class TonemapMantiuk(Tonemap):
     # Functions
     def getScale(self) -> float: ...
     def setScale(self, scale: float) -> None: ...
     def getSaturation(self) -> float: ...
     def setSaturation(self, saturation: float) -> None: ...
+
 
 class AlignMTB(AlignExposures):
     # Functions
@@ -4460,6 +4642,7 @@ class AlignMTB(AlignExposures):
         times: cv2.typing.MatLike,
         response: cv2.typing.MatLike,
     ) -> None: ...
+
     @typing.overload
     def process(
         self,
@@ -4476,6 +4659,7 @@ class AlignMTB(AlignExposures):
     def calculateShift(self, img0: cv2.typing.MatLike, img1: cv2.typing.MatLike) -> cv2.typing.Point: ...
     @typing.overload
     def calculateShift(self, img0: UMat, img1: UMat) -> cv2.typing.Point: ...
+
     @typing.overload
     def shiftMat(
         self,
@@ -4485,6 +4669,7 @@ class AlignMTB(AlignExposures):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def shiftMat(self, src: UMat, shift: cv2.typing.Point, dst: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def computeBitmaps(
         self,
@@ -4504,6 +4689,7 @@ class AlignMTB(AlignExposures):
     def getCut(self) -> bool: ...
     def setCut(self, value: bool) -> None: ...
 
+
 class CalibrateDebevec(CalibrateCRF):
     # Functions
     def getLambda(self) -> float: ...
@@ -4513,6 +4699,7 @@ class CalibrateDebevec(CalibrateCRF):
     def getRandom(self) -> bool: ...
     def setRandom(self, random: bool) -> None: ...
 
+
 class CalibrateRobertson(CalibrateCRF):
     # Functions
     def getMaxIter(self) -> int: ...
@@ -4520,6 +4707,7 @@ class CalibrateRobertson(CalibrateCRF):
     def getThreshold(self) -> float: ...
     def setThreshold(self, threshold: float) -> None: ...
     def getRadiance(self) -> cv2.typing.MatLike: ...
+
 
 class MergeDebevec(MergeExposures):
     # Functions
@@ -4533,6 +4721,7 @@ class MergeDebevec(MergeExposures):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, response: UMat, dst: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def process(
         self,
@@ -4542,6 +4731,7 @@ class MergeDebevec(MergeExposures):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, dst: UMat | None = ...) -> UMat: ...
+
 
 class MergeMertens(MergeExposures):
     # Functions
@@ -4555,6 +4745,7 @@ class MergeMertens(MergeExposures):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, response: UMat, dst: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def process(
         self,
@@ -4570,6 +4761,7 @@ class MergeMertens(MergeExposures):
     def getExposureWeight(self) -> float: ...
     def setExposureWeight(self, exposure_weight: float) -> None: ...
 
+
 class MergeRobertson(MergeExposures):
     # Functions
     @typing.overload
@@ -4582,6 +4774,7 @@ class MergeRobertson(MergeExposures):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, response: UMat, dst: UMat | None = ...) -> UMat: ...
+
     @typing.overload
     def process(
         self,
@@ -4592,11 +4785,13 @@ class MergeRobertson(MergeExposures):
     @typing.overload
     def process(self, src: typing.Sequence[UMat], times: UMat, dst: UMat | None = ...) -> UMat: ...
 
+
 class BFMatcher(DescriptorMatcher):
     # Functions
     def __init__(self, normType: int = ..., crossCheck: bool = ...) -> None: ...
     @classmethod
     def create(cls, normType: int = ..., crossCheck: bool = ...) -> BFMatcher: ...
+
 
 class FlannBasedMatcher(DescriptorMatcher):
     # Functions
@@ -4607,6 +4802,7 @@ class FlannBasedMatcher(DescriptorMatcher):
     ) -> None: ...
     @classmethod
     def create(cls) -> FlannBasedMatcher: ...
+
 
 class StereoBM(StereoMatcher):
     # Functions
@@ -4629,6 +4825,7 @@ class StereoBM(StereoMatcher):
     @classmethod
     def create(cls, numDisparities: int = ..., blockSize: int = ...) -> StereoBM: ...
 
+
 class StereoSGBM(StereoMatcher):
     # Functions
     def getPreFilterCap(self) -> int: ...
@@ -4641,6 +4838,7 @@ class StereoSGBM(StereoMatcher):
     def setP2(self, P2: int) -> None: ...
     def getMode(self) -> int: ...
     def setMode(self, mode: int) -> None: ...
+
     @classmethod
     def create(
         cls,
@@ -4656,6 +4854,7 @@ class StereoSGBM(StereoMatcher):
         speckleRange: int = ...,
         mode: int = ...,
     ) -> StereoSGBM: ...
+
 
 class BackgroundSubtractorMOG2(BackgroundSubtractor):
     # Functions
@@ -4683,6 +4882,7 @@ class BackgroundSubtractorMOG2(BackgroundSubtractor):
     def setShadowValue(self, value: int) -> None: ...
     def getShadowThreshold(self) -> float: ...
     def setShadowThreshold(self, threshold: float) -> None: ...
+
     @typing.overload
     def apply(
         self,
@@ -4692,6 +4892,7 @@ class BackgroundSubtractorMOG2(BackgroundSubtractor):
     ) -> cv2.typing.MatLike: ...
     @typing.overload
     def apply(self, image: UMat, fgmask: UMat | None = ..., learningRate: float = ...) -> UMat: ...
+
 
 class BackgroundSubtractorKNN(BackgroundSubtractor):
     # Functions
@@ -4709,6 +4910,7 @@ class BackgroundSubtractorKNN(BackgroundSubtractor):
     def setShadowValue(self, value: int) -> None: ...
     def getShadowThreshold(self) -> float: ...
     def setShadowThreshold(self, threshold: float) -> None: ...
+
 
 class FarnebackOpticalFlow(DenseOpticalFlow):
     # Functions
@@ -4728,6 +4930,7 @@ class FarnebackOpticalFlow(DenseOpticalFlow):
     def setPolySigma(self, polySigma: float) -> None: ...
     def getFlags(self) -> int: ...
     def setFlags(self, flags: int) -> None: ...
+
     @classmethod
     def create(
         cls,
@@ -4740,6 +4943,7 @@ class FarnebackOpticalFlow(DenseOpticalFlow):
         polySigma: float = ...,
         flags: int = ...,
     ) -> FarnebackOpticalFlow: ...
+
 
 class VariationalRefinement(DenseOpticalFlow):
     # Functions
@@ -4771,6 +4975,7 @@ class VariationalRefinement(DenseOpticalFlow):
     @classmethod
     def create(cls) -> VariationalRefinement: ...
 
+
 class DISOpticalFlow(DenseOpticalFlow):
     # Functions
     def getFinestScale(self) -> int: ...
@@ -4796,6 +5001,7 @@ class DISOpticalFlow(DenseOpticalFlow):
     @classmethod
     def create(cls, preset: int = ...) -> DISOpticalFlow: ...
 
+
 class SparsePyrLKOpticalFlow(SparseOpticalFlow):
     # Functions
     def getWinSize(self) -> cv2.typing.Size: ...
@@ -4808,6 +5014,7 @@ class SparsePyrLKOpticalFlow(SparseOpticalFlow):
     def setFlags(self, flags: int) -> None: ...
     def getMinEigThreshold(self) -> float: ...
     def setMinEigThreshold(self, minEigThreshold: float) -> None: ...
+
     @classmethod
     def create(
         cls,
@@ -4819,6 +5026,8 @@ class SparsePyrLKOpticalFlow(SparseOpticalFlow):
     ) -> SparsePyrLKOpticalFlow: ...
 
 # Functions
+
+
 @typing.overload
 def CamShift(
     probImage: cv2.typing.MatLike,
@@ -4828,6 +5037,8 @@ def CamShift(
     cv2.typing.RotatedRect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def CamShift(
     probImage: UMat,
@@ -4837,6 +5048,8 @@ def CamShift(
     cv2.typing.RotatedRect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def Canny(
     image: cv2.typing.MatLike,
@@ -4846,6 +5059,8 @@ def Canny(
     apertureSize: int = ...,
     L2gradient: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def Canny(
     image: UMat,
@@ -4855,6 +5070,8 @@ def Canny(
     apertureSize: int = ...,
     L2gradient: bool = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def Canny(
     dx: cv2.typing.MatLike,
@@ -4864,6 +5081,8 @@ def Canny(
     edges: cv2.typing.MatLike | None = ...,
     L2gradient: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def Canny(
     dx: UMat,
@@ -4873,6 +5092,8 @@ def Canny(
     edges: UMat | None = ...,
     L2gradient: bool = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def EMD(
     signature1: cv2.typing.MatLike,
@@ -4886,6 +5107,8 @@ def EMD(
     float,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def EMD(
     signature1: UMat,
@@ -4899,6 +5122,8 @@ def EMD(
     float,
     UMat,
 ]: ...
+
+
 @typing.overload
 def GaussianBlur(
     src: cv2.typing.MatLike,
@@ -4908,6 +5133,8 @@ def GaussianBlur(
     sigmaY: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def GaussianBlur(
     src: UMat,
@@ -4917,6 +5144,8 @@ def GaussianBlur(
     sigmaY: float = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def HoughCircles(
     image: cv2.typing.MatLike,
@@ -4929,6 +5158,8 @@ def HoughCircles(
     minRadius: int = ...,
     maxRadius: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def HoughCircles(
     image: UMat,
@@ -4941,6 +5172,8 @@ def HoughCircles(
     minRadius: int = ...,
     maxRadius: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def HoughLines(
     image: cv2.typing.MatLike,
@@ -4953,6 +5186,8 @@ def HoughLines(
     min_theta: float = ...,
     max_theta: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def HoughLines(
     image: UMat,
@@ -4965,6 +5200,8 @@ def HoughLines(
     min_theta: float = ...,
     max_theta: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def HoughLinesP(
     image: cv2.typing.MatLike,
@@ -4975,6 +5212,8 @@ def HoughLinesP(
     minLineLength: float = ...,
     maxLineGap: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def HoughLinesP(
     image: UMat,
@@ -4985,6 +5224,8 @@ def HoughLinesP(
     minLineLength: float = ...,
     maxLineGap: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def HoughLinesPointSet(
     point: cv2.typing.MatLike,
@@ -4998,6 +5239,8 @@ def HoughLinesPointSet(
     theta_step: float,
     lines: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def HoughLinesPointSet(
     point: UMat,
@@ -5011,6 +5254,8 @@ def HoughLinesPointSet(
     theta_step: float,
     lines: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def HoughLinesWithAccumulator(
     image: cv2.typing.MatLike,
@@ -5023,6 +5268,8 @@ def HoughLinesWithAccumulator(
     min_theta: float = ...,
     max_theta: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def HoughLinesWithAccumulator(
     image: UMat,
@@ -5039,6 +5286,8 @@ def HoughLinesWithAccumulator(
 def HuMoments(m: cv2.typing.Moments, hu: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def HuMoments(m: cv2.typing.Moments, hu: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def LUT(
     src: cv2.typing.MatLike,
@@ -5047,6 +5296,8 @@ def LUT(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def LUT(src: UMat, lut: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def Laplacian(
     src: cv2.typing.MatLike,
@@ -5057,6 +5308,8 @@ def Laplacian(
     delta: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def Laplacian(
     src: UMat,
@@ -5071,6 +5324,8 @@ def Laplacian(
 def Mahalanobis(v1: cv2.typing.MatLike, v2: cv2.typing.MatLike, icovar: cv2.typing.MatLike) -> float: ...
 @typing.overload
 def Mahalanobis(v1: UMat, v2: UMat, icovar: UMat) -> float: ...
+
+
 @typing.overload
 def PCABackProject(
     data: cv2.typing.MatLike,
@@ -5080,6 +5335,8 @@ def PCABackProject(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def PCABackProject(data: UMat, mean: UMat, eigenvectors: UMat, result: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def PCACompute(
     data: cv2.typing.MatLike,
@@ -5090,6 +5347,8 @@ def PCACompute(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def PCACompute(
     data: UMat,
@@ -5100,6 +5359,8 @@ def PCACompute(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def PCACompute(
     data: cv2.typing.MatLike,
@@ -5110,6 +5371,8 @@ def PCACompute(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def PCACompute(
     data: UMat,
@@ -5120,6 +5383,8 @@ def PCACompute(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def PCACompute2(
     data: cv2.typing.MatLike,
@@ -5132,6 +5397,8 @@ def PCACompute2(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def PCACompute2(
     data: UMat,
@@ -5144,6 +5411,8 @@ def PCACompute2(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def PCACompute2(
     data: cv2.typing.MatLike,
@@ -5156,6 +5425,8 @@ def PCACompute2(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def PCACompute2(
     data: UMat,
@@ -5168,6 +5439,8 @@ def PCACompute2(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def PCAProject(
     data: cv2.typing.MatLike,
@@ -5181,6 +5454,8 @@ def PCAProject(data: UMat, mean: UMat, eigenvectors: UMat, result: UMat | None =
 def PSNR(src1: cv2.typing.MatLike, src2: cv2.typing.MatLike, R: float = ...) -> float: ...
 @typing.overload
 def PSNR(src1: UMat, src2: UMat, R: float = ...) -> float: ...
+
+
 @typing.overload
 def RQDecomp3x3(
     src: cv2.typing.MatLike,
@@ -5197,6 +5472,8 @@ def RQDecomp3x3(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def RQDecomp3x3(
     src: UMat,
@@ -5213,6 +5490,8 @@ def RQDecomp3x3(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def Rodrigues(
     src: cv2.typing.MatLike,
@@ -5224,6 +5503,8 @@ def Rodrigues(
 ]: ...
 @typing.overload
 def Rodrigues(src: UMat, dst: UMat | None = ..., jacobian: UMat | None = ...) -> tuple[UMat, UMat]: ...
+
+
 @typing.overload
 def SVBackSubst(
     w: cv2.typing.MatLike,
@@ -5234,6 +5515,8 @@ def SVBackSubst(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def SVBackSubst(w: UMat, u: UMat, vt: UMat, rhs: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def SVDecomp(
     src: cv2.typing.MatLike,
@@ -5246,6 +5529,8 @@ def SVDecomp(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def SVDecomp(
     src: UMat,
@@ -5258,6 +5543,8 @@ def SVDecomp(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def Scharr(
     src: cv2.typing.MatLike,
@@ -5269,6 +5556,8 @@ def Scharr(
     delta: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def Scharr(
     src: UMat,
@@ -5280,6 +5569,8 @@ def Scharr(
     delta: float = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def Sobel(
     src: cv2.typing.MatLike,
@@ -5292,6 +5583,8 @@ def Sobel(
     delta: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def Sobel(
     src: UMat,
@@ -5304,6 +5597,8 @@ def Sobel(
     delta: float = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def absdiff(
     src1: cv2.typing.MatLike,
@@ -5312,6 +5607,8 @@ def absdiff(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def absdiff(src1: UMat, src2: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def accumulate(
     src: cv2.typing.MatLike,
@@ -5320,6 +5617,8 @@ def accumulate(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def accumulate(src: UMat, dst: UMat, mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def accumulateProduct(
     src1: cv2.typing.MatLike,
@@ -5329,6 +5628,8 @@ def accumulateProduct(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def accumulateProduct(src1: UMat, src2: UMat, dst: UMat, mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def accumulateSquare(
     src: cv2.typing.MatLike,
@@ -5337,6 +5638,8 @@ def accumulateSquare(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def accumulateSquare(src: UMat, dst: UMat, mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def accumulateWeighted(
     src: cv2.typing.MatLike,
@@ -5346,6 +5649,8 @@ def accumulateWeighted(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def accumulateWeighted(src: UMat, dst: UMat, alpha: float, mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def adaptiveThreshold(
     src: cv2.typing.MatLike,
@@ -5356,6 +5661,8 @@ def adaptiveThreshold(
     C: float,
     dst: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def adaptiveThreshold(
     src: UMat,
@@ -5366,6 +5673,8 @@ def adaptiveThreshold(
     C: float,
     dst: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def add(
     src1: cv2.typing.MatLike,
@@ -5376,6 +5685,8 @@ def add(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def add(src1: UMat, src2: UMat, dst: UMat | None = ..., mask: UMat | None = ..., dtype: int = ...) -> UMat: ...
+
+
 def addText(
     img: cv2.typing.MatLike,
     text: str,
@@ -5387,6 +5698,8 @@ def addText(
     style: int = ...,
     spacing: int = ...,
 ) -> None: ...
+
+
 @typing.overload
 def addWeighted(
     src1: cv2.typing.MatLike,
@@ -5397,6 +5710,8 @@ def addWeighted(
     dst: cv2.typing.MatLike | None = ...,
     dtype: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def addWeighted(
     src1: UMat,
@@ -5407,6 +5722,8 @@ def addWeighted(
     dst: UMat | None = ...,
     dtype: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def applyColorMap(
     src: cv2.typing.MatLike,
@@ -5415,6 +5732,8 @@ def applyColorMap(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def applyColorMap(src: UMat, colormap: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def applyColorMap(
     src: cv2.typing.MatLike,
@@ -5423,6 +5742,8 @@ def applyColorMap(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def applyColorMap(src: UMat, userColor: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def approxPolyDP(
     curve: cv2.typing.MatLike,
@@ -5436,6 +5757,8 @@ def approxPolyDP(curve: UMat, epsilon: float, closed: bool, approxCurve: UMat | 
 def arcLength(curve: cv2.typing.MatLike, closed: bool) -> float: ...
 @typing.overload
 def arcLength(curve: UMat, closed: bool) -> float: ...
+
+
 @typing.overload
 def arrowedLine(
     img: cv2.typing.MatLike,
@@ -5447,6 +5770,8 @@ def arrowedLine(
     shift: int = ...,
     tipLength: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def arrowedLine(
     img: UMat,
@@ -5458,6 +5783,8 @@ def arrowedLine(
     shift: int = ...,
     tipLength: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def batchDistance(
     src1: cv2.typing.MatLike,
@@ -5474,6 +5801,8 @@ def batchDistance(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def batchDistance(
     src1: UMat,
@@ -5490,6 +5819,8 @@ def batchDistance(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def bilateralFilter(
     src: cv2.typing.MatLike,
@@ -5499,6 +5830,8 @@ def bilateralFilter(
     dst: cv2.typing.MatLike | None = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def bilateralFilter(
     src: UMat,
@@ -5508,6 +5841,8 @@ def bilateralFilter(
     dst: UMat | None = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def bitwise_and(
     src1: cv2.typing.MatLike,
@@ -5517,6 +5852,8 @@ def bitwise_and(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def bitwise_and(src1: UMat, src2: UMat, dst: UMat | None = ..., mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def bitwise_not(
     src: cv2.typing.MatLike,
@@ -5525,6 +5862,8 @@ def bitwise_not(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def bitwise_not(src: UMat, dst: UMat | None = ..., mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def bitwise_or(
     src1: cv2.typing.MatLike,
@@ -5534,6 +5873,8 @@ def bitwise_or(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def bitwise_or(src1: UMat, src2: UMat, dst: UMat | None = ..., mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def bitwise_xor(
     src1: cv2.typing.MatLike,
@@ -5543,6 +5884,8 @@ def bitwise_xor(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def bitwise_xor(src1: UMat, src2: UMat, dst: UMat | None = ..., mask: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def blendLinear(
     src1: cv2.typing.MatLike,
@@ -5553,6 +5896,8 @@ def blendLinear(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def blendLinear(src1: UMat, src2: UMat, weights1: UMat, weights2: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def blur(
     src: cv2.typing.MatLike,
@@ -5561,6 +5906,8 @@ def blur(
     anchor: cv2.typing.Point = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def blur(
     src: UMat,
@@ -5574,6 +5921,8 @@ def borderInterpolate(p: int, len: int, borderType: int) -> int: ...
 def boundingRect(array: cv2.typing.MatLike) -> cv2.typing.Rect: ...
 @typing.overload
 def boundingRect(array: UMat) -> cv2.typing.Rect: ...
+
+
 @typing.overload
 def boxFilter(
     src: cv2.typing.MatLike,
@@ -5584,6 +5933,8 @@ def boxFilter(
     normalize: bool = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def boxFilter(
     src: UMat,
@@ -5598,6 +5949,8 @@ def boxFilter(
 def boxPoints(box: cv2.typing.RotatedRect, points: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def boxPoints(box: cv2.typing.RotatedRect, points: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def buildOpticalFlowPyramid(
     img: cv2.typing.MatLike,
@@ -5612,6 +5965,8 @@ def buildOpticalFlowPyramid(
     int,
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def buildOpticalFlowPyramid(
     img: UMat,
@@ -5626,6 +5981,8 @@ def buildOpticalFlowPyramid(
     int,
     typing.Sequence[UMat],
 ]: ...
+
+
 @typing.overload
 def calcBackProject(
     images: typing.Sequence[cv2.typing.MatLike],
@@ -5635,6 +5992,8 @@ def calcBackProject(
     scale: float,
     dst: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def calcBackProject(
     images: typing.Sequence[UMat],
@@ -5644,6 +6003,8 @@ def calcBackProject(
     scale: float,
     dst: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def calcCovarMatrix(
     samples: cv2.typing.MatLike,
@@ -5655,6 +6016,8 @@ def calcCovarMatrix(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calcCovarMatrix(
     samples: UMat,
@@ -5666,6 +6029,8 @@ def calcCovarMatrix(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calcHist(
     images: typing.Sequence[cv2.typing.MatLike],
@@ -5676,6 +6041,8 @@ def calcHist(
     hist: cv2.typing.MatLike | None = ...,
     accumulate: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def calcHist(
     images: typing.Sequence[UMat],
@@ -5686,6 +6053,8 @@ def calcHist(
     hist: UMat | None = ...,
     accumulate: bool = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def calcOpticalFlowFarneback(
     prev: cv2.typing.MatLike,
@@ -5699,6 +6068,8 @@ def calcOpticalFlowFarneback(
     poly_sigma: float,
     flags: int,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def calcOpticalFlowFarneback(
     prev: UMat,
@@ -5712,6 +6083,8 @@ def calcOpticalFlowFarneback(
     poly_sigma: float,
     flags: int,
 ) -> UMat: ...
+
+
 @typing.overload
 def calcOpticalFlowPyrLK(
     prevImg: cv2.typing.MatLike,
@@ -5730,6 +6103,8 @@ def calcOpticalFlowPyrLK(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calcOpticalFlowPyrLK(
     prevImg: UMat,
@@ -5748,6 +6123,8 @@ def calcOpticalFlowPyrLK(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrateCamera(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -5766,6 +6143,8 @@ def calibrateCamera(
     typing.Sequence[cv2.typing.MatLike],
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def calibrateCamera(
     objectPoints: typing.Sequence[UMat],
@@ -5784,6 +6163,8 @@ def calibrateCamera(
     typing.Sequence[UMat],
     typing.Sequence[UMat],
 ]: ...
+
+
 @typing.overload
 def calibrateCameraExtended(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -5808,6 +6189,8 @@ def calibrateCameraExtended(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calibrateCameraExtended(
     objectPoints: typing.Sequence[UMat],
@@ -5832,6 +6215,8 @@ def calibrateCameraExtended(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrateCameraRO(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -5853,6 +6238,8 @@ def calibrateCameraRO(
     typing.Sequence[cv2.typing.MatLike],
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calibrateCameraRO(
     objectPoints: typing.Sequence[UMat],
@@ -5874,6 +6261,8 @@ def calibrateCameraRO(
     typing.Sequence[UMat],
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrateCameraROExtended(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -5903,6 +6292,8 @@ def calibrateCameraROExtended(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calibrateCameraROExtended(
     objectPoints: typing.Sequence[UMat],
@@ -5932,6 +6323,8 @@ def calibrateCameraROExtended(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrateHandEye(
     R_gripper2base: typing.Sequence[cv2.typing.MatLike],
@@ -5945,6 +6338,8 @@ def calibrateHandEye(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calibrateHandEye(
     R_gripper2base: typing.Sequence[UMat],
@@ -5958,6 +6353,8 @@ def calibrateHandEye(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrateRobotWorldHandEye(
     R_world2cam: typing.Sequence[cv2.typing.MatLike],
@@ -5975,6 +6372,8 @@ def calibrateRobotWorldHandEye(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def calibrateRobotWorldHandEye(
     R_world2cam: typing.Sequence[UMat],
@@ -5992,6 +6391,8 @@ def calibrateRobotWorldHandEye(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def calibrationMatrixValues(
     cameraMatrix: cv2.typing.MatLike,
@@ -6005,6 +6406,8 @@ def calibrationMatrixValues(
     cv2.typing.Point2d,
     float,
 ]: ...
+
+
 @typing.overload
 def calibrationMatrixValues(
     cameraMatrix: UMat,
@@ -6018,6 +6421,8 @@ def calibrationMatrixValues(
     cv2.typing.Point2d,
     float,
 ]: ...
+
+
 @typing.overload
 def cartToPolar(
     x: cv2.typing.MatLike,
@@ -6029,6 +6434,8 @@ def cartToPolar(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def cartToPolar(
     x: UMat,
@@ -6045,6 +6452,8 @@ def checkChessboard(img: cv2.typing.MatLike, size: cv2.typing.Size) -> bool: ...
 @typing.overload
 def checkChessboard(img: UMat, size: cv2.typing.Size) -> bool: ...
 def checkHardwareSupport(feature: int) -> bool: ...
+
+
 @typing.overload
 def checkRange(
     a: cv2.typing.MatLike,
@@ -6055,6 +6464,8 @@ def checkRange(
     bool,
     cv2.typing.Point,
 ]: ...
+
+
 @typing.overload
 def checkRange(
     a: UMat,
@@ -6065,6 +6476,8 @@ def checkRange(
     bool,
     cv2.typing.Point,
 ]: ...
+
+
 @typing.overload
 def circle(
     img: cv2.typing.MatLike,
@@ -6075,6 +6488,8 @@ def circle(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def circle(
     img: UMat,
@@ -6085,6 +6500,8 @@ def circle(
     lineType: int = ...,
     shift: int = ...,
 ) -> UMat: ...
+
+
 def clipLine(
     imgRect: cv2.typing.Rect,
     pt1: cv2.typing.Point,
@@ -6094,6 +6511,8 @@ def clipLine(
     cv2.typing.Point,
     cv2.typing.Point,
 ]: ...
+
+
 @typing.overload
 def colorChange(
     src: cv2.typing.MatLike,
@@ -6103,6 +6522,8 @@ def colorChange(
     green_mul: float = ...,
     blue_mul: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def colorChange(
     src: UMat,
@@ -6112,6 +6533,8 @@ def colorChange(
     green_mul: float = ...,
     blue_mul: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def compare(
     src1: cv2.typing.MatLike,
@@ -6129,6 +6552,8 @@ def compareHist(H1: UMat, H2: UMat, method: int) -> float: ...
 def completeSymm(m: cv2.typing.MatLike, lowerToUpper: bool = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def completeSymm(m: UMat, lowerToUpper: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def composeRT(
     rvec1: cv2.typing.MatLike,
@@ -6157,6 +6582,8 @@ def composeRT(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def composeRT(
     rvec1: UMat,
@@ -6185,6 +6612,8 @@ def composeRT(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def computeCorrespondEpilines(
     points: cv2.typing.MatLike,
@@ -6194,6 +6623,8 @@ def computeCorrespondEpilines(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def computeCorrespondEpilines(points: UMat, whichImage: int, F: UMat, lines: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def computeECC(
     templateImage: cv2.typing.MatLike,
@@ -6202,6 +6633,8 @@ def computeECC(
 ) -> float: ...
 @typing.overload
 def computeECC(templateImage: UMat, inputImage: UMat, inputMask: UMat | None = ...) -> float: ...
+
+
 @typing.overload
 def connectedComponents(
     image: cv2.typing.MatLike,
@@ -6212,6 +6645,8 @@ def connectedComponents(
     int,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def connectedComponents(
     image: UMat,
@@ -6222,6 +6657,8 @@ def connectedComponents(
     int,
     UMat,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithAlgorithm(
     image: cv2.typing.MatLike,
@@ -6233,6 +6670,8 @@ def connectedComponentsWithAlgorithm(
     int,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithAlgorithm(
     image: UMat,
@@ -6244,6 +6683,8 @@ def connectedComponentsWithAlgorithm(
     int,
     UMat,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithStats(
     image: cv2.typing.MatLike,
@@ -6258,6 +6699,8 @@ def connectedComponentsWithStats(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithStats(
     image: UMat,
@@ -6272,6 +6715,8 @@ def connectedComponentsWithStats(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithStatsWithAlgorithm(
     image: cv2.typing.MatLike,
@@ -6287,6 +6732,8 @@ def connectedComponentsWithStatsWithAlgorithm(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def connectedComponentsWithStatsWithAlgorithm(
     image: UMat,
@@ -6310,6 +6757,8 @@ def contourArea(contour: UMat, oriented: bool = ...) -> float: ...
 def convertFp16(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def convertFp16(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def convertMaps(
     map1: cv2.typing.MatLike,
@@ -6322,6 +6771,8 @@ def convertMaps(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def convertMaps(
     map1: UMat,
@@ -6334,6 +6785,8 @@ def convertMaps(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def convertPointsFromHomogeneous(
     src: cv2.typing.MatLike,
@@ -6345,6 +6798,8 @@ def convertPointsFromHomogeneous(src: UMat, dst: UMat | None = ...) -> UMat: ...
 def convertPointsToHomogeneous(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def convertPointsToHomogeneous(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def convertScaleAbs(
     src: cv2.typing.MatLike,
@@ -6354,6 +6809,8 @@ def convertScaleAbs(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def convertScaleAbs(src: UMat, dst: UMat | None = ..., alpha: float = ..., beta: float = ...) -> UMat: ...
+
+
 @typing.overload
 def convexHull(
     points: cv2.typing.MatLike,
@@ -6363,6 +6820,8 @@ def convexHull(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def convexHull(points: UMat, hull: UMat | None = ..., clockwise: bool = ..., returnPoints: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def convexityDefects(
     contour: cv2.typing.MatLike,
@@ -6371,6 +6830,8 @@ def convexityDefects(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def convexityDefects(contour: UMat, convexhull: UMat, convexityDefects: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def copyMakeBorder(
     src: cv2.typing.MatLike,
@@ -6382,6 +6843,8 @@ def copyMakeBorder(
     dst: cv2.typing.MatLike | None = ...,
     value: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def copyMakeBorder(
     src: UMat,
@@ -6393,6 +6856,8 @@ def copyMakeBorder(
     dst: UMat | None = ...,
     value: cv2.typing.Scalar = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def copyTo(
     src: cv2.typing.MatLike,
@@ -6401,6 +6866,8 @@ def copyTo(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def copyTo(src: UMat, mask: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def cornerEigenValsAndVecs(
     src: cv2.typing.MatLike,
@@ -6409,6 +6876,8 @@ def cornerEigenValsAndVecs(
     dst: cv2.typing.MatLike | None = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def cornerEigenValsAndVecs(
     src: UMat,
@@ -6417,6 +6886,8 @@ def cornerEigenValsAndVecs(
     dst: UMat | None = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def cornerHarris(
     src: cv2.typing.MatLike,
@@ -6426,6 +6897,8 @@ def cornerHarris(
     dst: cv2.typing.MatLike | None = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def cornerHarris(
     src: UMat,
@@ -6435,6 +6908,8 @@ def cornerHarris(
     dst: UMat | None = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def cornerMinEigenVal(
     src: cv2.typing.MatLike,
@@ -6443,6 +6918,8 @@ def cornerMinEigenVal(
     ksize: int = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def cornerMinEigenVal(
     src: UMat,
@@ -6451,6 +6928,8 @@ def cornerMinEigenVal(
     ksize: int = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def cornerSubPix(
     image: cv2.typing.MatLike,
@@ -6459,6 +6938,8 @@ def cornerSubPix(
     zeroZone: cv2.typing.Size,
     criteria: cv2.typing.TermCriteria,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def cornerSubPix(
     image: UMat,
@@ -6467,6 +6948,8 @@ def cornerSubPix(
     zeroZone: cv2.typing.Size,
     criteria: cv2.typing.TermCriteria,
 ) -> UMat: ...
+
+
 @typing.overload
 def correctMatches(
     F: cv2.typing.MatLike,
@@ -6478,6 +6961,8 @@ def correctMatches(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def correctMatches(
     F: UMat,
@@ -6494,11 +6979,15 @@ def countNonZero(src: cv2.typing.MatLike) -> int: ...
 @typing.overload
 def countNonZero(src: UMat) -> int: ...
 def createAlignMTB(max_bits: int = ..., exclude_range: int = ..., cut: bool = ...) -> AlignMTB: ...
+
+
 def createBackgroundSubtractorKNN(
     history: int = ...,
     dist2Threshold: float = ...,
     detectShadows: bool = ...,
 ) -> BackgroundSubtractorKNN: ...
+
+
 def createBackgroundSubtractorMOG2(
     history: int = ...,
     varThreshold: float = ...,
@@ -6509,6 +6998,8 @@ def createCalibrateDebevec(samples: int = ..., lambda_: float = ..., random: boo
 def createCalibrateRobertson(max_iter: int = ..., threshold: float = ...) -> CalibrateRobertson: ...
 def createGeneralizedHoughBallard() -> GeneralizedHoughBallard: ...
 def createGeneralizedHoughGuil() -> GeneralizedHoughGuil: ...
+
+
 @typing.overload
 def createHanningWindow(
     winSize: cv2.typing.Size,
@@ -6517,6 +7008,8 @@ def createHanningWindow(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def createHanningWindow(winSize: cv2.typing.Size, type: int, dst: UMat | None = ...) -> UMat: ...
+
+
 def createLineSegmentDetector(
     refine: int = ...,
     scale: float = ...,
@@ -6528,6 +7021,8 @@ def createLineSegmentDetector(
     n_bins: int = ...,
 ) -> LineSegmentDetector: ...
 def createMergeDebevec() -> MergeDebevec: ...
+
+
 def createMergeMertens(
     contrast_weight: float = ...,
     saturation_weight: float = ...,
@@ -6537,6 +7032,8 @@ def createMergeRobertson() -> MergeRobertson: ...
 def createTonemap(gamma: float = ...) -> Tonemap: ...
 def createTonemapDrago(gamma: float = ..., saturation: float = ..., bias: float = ...) -> TonemapDrago: ...
 def createTonemapMantiuk(gamma: float = ..., scale: float = ..., saturation: float = ...) -> TonemapMantiuk: ...
+
+
 def createTonemapReinhard(
     gamma: float = ...,
     intensity: float = ...,
@@ -6544,6 +7041,8 @@ def createTonemapReinhard(
     color_adapt: float = ...,
 ) -> TonemapReinhard: ...
 def cubeRoot(val: float) -> float: ...
+
+
 @typing.overload
 def cvtColor(
     src: cv2.typing.MatLike,
@@ -6553,6 +7052,8 @@ def cvtColor(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def cvtColor(src: UMat, code: int, dst: UMat | None = ..., dstCn: int = ...) -> UMat: ...
+
+
 @typing.overload
 def cvtColorTwoPlane(
     src1: cv2.typing.MatLike,
@@ -6566,6 +7067,8 @@ def cvtColorTwoPlane(src1: UMat, src2: UMat, code: int, dst: UMat | None = ...) 
 def dct(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ..., flags: int = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def dct(src: UMat, dst: UMat | None = ..., flags: int = ...) -> UMat: ...
+
+
 @typing.overload
 def decolor(
     src: cv2.typing.MatLike,
@@ -6577,6 +7080,8 @@ def decolor(
 ]: ...
 @typing.overload
 def decolor(src: UMat, grayscale: UMat | None = ..., color_boost: UMat | None = ...) -> tuple[UMat, UMat]: ...
+
+
 @typing.overload
 def decomposeEssentialMat(
     E: cv2.typing.MatLike,
@@ -6588,6 +7093,8 @@ def decomposeEssentialMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def decomposeEssentialMat(
     E: UMat,
@@ -6599,6 +7106,8 @@ def decomposeEssentialMat(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def decomposeHomographyMat(
     H: cv2.typing.MatLike,
@@ -6612,6 +7121,8 @@ def decomposeHomographyMat(
     typing.Sequence[cv2.typing.MatLike],
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def decomposeHomographyMat(
     H: UMat,
@@ -6625,6 +7136,8 @@ def decomposeHomographyMat(
     typing.Sequence[UMat],
     typing.Sequence[UMat],
 ]: ...
+
+
 @typing.overload
 def decomposeProjectionMatrix(
     projMatrix: cv2.typing.MatLike,
@@ -6644,6 +7157,8 @@ def decomposeProjectionMatrix(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def decomposeProjectionMatrix(
     projMatrix: UMat,
@@ -6663,6 +7178,8 @@ def decomposeProjectionMatrix(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def demosaicing(
     src: cv2.typing.MatLike,
@@ -6672,6 +7189,8 @@ def demosaicing(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def demosaicing(src: UMat, code: int, dst: UMat | None = ..., dstCn: int = ...) -> UMat: ...
+
+
 def denoise_TVL1(
     observations: typing.Sequence[cv2.typing.MatLike],
     result: cv2.typing.MatLike,
@@ -6680,6 +7199,8 @@ def denoise_TVL1(
 ) -> None: ...
 def destroyAllWindows() -> None: ...
 def destroyWindow(winname: str) -> None: ...
+
+
 @typing.overload
 def detailEnhance(
     src: cv2.typing.MatLike,
@@ -6693,6 +7214,8 @@ def detailEnhance(src: UMat, dst: UMat | None = ..., sigma_s: float = ..., sigma
 def determinant(mtx: cv2.typing.MatLike) -> float: ...
 @typing.overload
 def determinant(mtx: UMat) -> float: ...
+
+
 @typing.overload
 def dft(
     src: cv2.typing.MatLike,
@@ -6702,6 +7225,8 @@ def dft(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def dft(src: UMat, dst: UMat | None = ..., flags: int = ..., nonzeroRows: int = ...) -> UMat: ...
+
+
 @typing.overload
 def dilate(
     src: cv2.typing.MatLike,
@@ -6712,6 +7237,8 @@ def dilate(
     borderType: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def dilate(
     src: UMat,
@@ -6724,6 +7251,8 @@ def dilate(
 ) -> UMat: ...
 def displayOverlay(winname: str, text: str, delayms: int = ...) -> None: ...
 def displayStatusBar(winname: str, text: str, delayms: int = ...) -> None: ...
+
+
 @typing.overload
 def distanceTransform(
     src: cv2.typing.MatLike,
@@ -6732,6 +7261,8 @@ def distanceTransform(
     dst: cv2.typing.MatLike | None = ...,
     dstType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def distanceTransform(
     src: UMat,
@@ -6740,6 +7271,8 @@ def distanceTransform(
     dst: UMat | None = ...,
     dstType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def distanceTransformWithLabels(
     src: cv2.typing.MatLike,
@@ -6752,6 +7285,8 @@ def distanceTransformWithLabels(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def distanceTransformWithLabels(
     src: UMat,
@@ -6764,6 +7299,8 @@ def distanceTransformWithLabels(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def divSpectrums(
     a: cv2.typing.MatLike,
@@ -6774,6 +7311,8 @@ def divSpectrums(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def divSpectrums(a: UMat, b: UMat, flags: int, c: UMat | None = ..., conjB: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def divide(
     src1: cv2.typing.MatLike,
@@ -6784,6 +7323,8 @@ def divide(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def divide(src1: UMat, src2: UMat, dst: UMat | None = ..., scale: float = ..., dtype: int = ...) -> UMat: ...
+
+
 @typing.overload
 def divide(
     scale: float,
@@ -6793,6 +7334,8 @@ def divide(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def divide(scale: float, src2: UMat, dst: UMat | None = ..., dtype: int = ...) -> UMat: ...
+
+
 @typing.overload
 def drawChessboardCorners(
     image: cv2.typing.MatLike,
@@ -6802,6 +7345,8 @@ def drawChessboardCorners(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def drawChessboardCorners(image: UMat, patternSize: cv2.typing.Size, corners: UMat, patternWasFound: bool) -> UMat: ...
+
+
 @typing.overload
 def drawContours(
     image: cv2.typing.MatLike,
@@ -6814,6 +7359,8 @@ def drawContours(
     maxLevel: int = ...,
     offset: cv2.typing.Point = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawContours(
     image: UMat,
@@ -6826,6 +7373,8 @@ def drawContours(
     maxLevel: int = ...,
     offset: cv2.typing.Point = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawFrameAxes(
     image: cv2.typing.MatLike,
@@ -6836,6 +7385,8 @@ def drawFrameAxes(
     length: float,
     thickness: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawFrameAxes(
     image: UMat,
@@ -6846,6 +7397,8 @@ def drawFrameAxes(
     length: float,
     thickness: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawKeypoints(
     image: cv2.typing.MatLike,
@@ -6854,6 +7407,8 @@ def drawKeypoints(
     color: cv2.typing.Scalar = ...,
     flags: DrawMatchesFlags = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawKeypoints(
     image: UMat,
@@ -6862,6 +7417,8 @@ def drawKeypoints(
     color: cv2.typing.Scalar = ...,
     flags: DrawMatchesFlags = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawMarker(
     img: cv2.typing.MatLike,
@@ -6872,6 +7429,8 @@ def drawMarker(
     thickness: int = ...,
     line_type: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawMarker(
     img: UMat,
@@ -6882,6 +7441,8 @@ def drawMarker(
     thickness: int = ...,
     line_type: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawMatches(
     img1: cv2.typing.MatLike,
@@ -6895,6 +7456,8 @@ def drawMatches(
     matchesMask: typing.Sequence[str] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawMatches(
     img1: UMat,
@@ -6908,6 +7471,8 @@ def drawMatches(
     matchesMask: typing.Sequence[str] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawMatches(
     img1: cv2.typing.MatLike,
@@ -6922,6 +7487,8 @@ def drawMatches(
     matchesMask: typing.Sequence[str] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawMatches(
     img1: UMat,
@@ -6936,6 +7503,8 @@ def drawMatches(
     matchesMask: typing.Sequence[str] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def drawMatchesKnn(
     img1: cv2.typing.MatLike,
@@ -6949,6 +7518,8 @@ def drawMatchesKnn(
     matchesMask: typing.Sequence[typing.Sequence[str]] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def drawMatchesKnn(
     img1: UMat,
@@ -6962,6 +7533,8 @@ def drawMatchesKnn(
     matchesMask: typing.Sequence[typing.Sequence[str]] = ...,
     flags: DrawMatchesFlags = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def edgePreservingFilter(
     src: cv2.typing.MatLike,
@@ -6970,6 +7543,8 @@ def edgePreservingFilter(
     sigma_s: float = ...,
     sigma_r: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def edgePreservingFilter(
     src: UMat,
@@ -6978,6 +7553,8 @@ def edgePreservingFilter(
     sigma_s: float = ...,
     sigma_r: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def eigen(
     src: cv2.typing.MatLike,
@@ -6990,6 +7567,8 @@ def eigen(
 ]: ...
 @typing.overload
 def eigen(src: UMat, eigenvalues: UMat | None = ..., eigenvectors: UMat | None = ...) -> tuple[bool, UMat, UMat]: ...
+
+
 @typing.overload
 def eigenNonSymmetric(
     src: cv2.typing.MatLike,
@@ -6999,6 +7578,8 @@ def eigenNonSymmetric(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def eigenNonSymmetric(
     src: UMat,
@@ -7008,6 +7589,8 @@ def eigenNonSymmetric(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def ellipse(
     img: cv2.typing.MatLike,
@@ -7021,6 +7604,8 @@ def ellipse(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def ellipse(
     img: UMat,
@@ -7034,6 +7619,8 @@ def ellipse(
     lineType: int = ...,
     shift: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def ellipse(
     img: cv2.typing.MatLike,
@@ -7042,6 +7629,8 @@ def ellipse(
     thickness: int = ...,
     lineType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def ellipse(
     img: UMat,
@@ -7050,6 +7639,8 @@ def ellipse(
     thickness: int = ...,
     lineType: int = ...,
 ) -> UMat: ...
+
+
 def ellipse2Poly(
     center: cv2.typing.Point,
     axes: cv2.typing.Size,
@@ -7065,6 +7656,8 @@ def empty_scalar_desc() -> GScalarDesc: ...
 def equalizeHist(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def equalizeHist(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def erode(
     src: cv2.typing.MatLike,
@@ -7075,6 +7668,8 @@ def erode(
     borderType: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def erode(
     src: UMat,
@@ -7085,6 +7680,8 @@ def erode(
     borderType: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def estimateAffine2D(
     from_: cv2.typing.MatLike,
@@ -7099,6 +7696,8 @@ def estimateAffine2D(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateAffine2D(
     from_: UMat,
@@ -7113,6 +7712,8 @@ def estimateAffine2D(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def estimateAffine2D(
     pts1: cv2.typing.MatLike,
@@ -7123,6 +7724,8 @@ def estimateAffine2D(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateAffine2D(
     pts1: UMat,
@@ -7133,6 +7736,8 @@ def estimateAffine2D(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def estimateAffine3D(
     src: cv2.typing.MatLike,
@@ -7146,6 +7751,8 @@ def estimateAffine3D(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateAffine3D(
     src: UMat,
@@ -7159,6 +7766,8 @@ def estimateAffine3D(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def estimateAffine3D(
     src: cv2.typing.MatLike,
@@ -7170,6 +7779,8 @@ def estimateAffine3D(
 ]: ...
 @typing.overload
 def estimateAffine3D(src: UMat, dst: UMat, force_rotation: bool = ...) -> tuple[cv2.typing.MatLike, float]: ...
+
+
 @typing.overload
 def estimateAffinePartial2D(
     from_: cv2.typing.MatLike,
@@ -7184,6 +7795,8 @@ def estimateAffinePartial2D(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateAffinePartial2D(
     from_: UMat,
@@ -7198,6 +7811,8 @@ def estimateAffinePartial2D(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def estimateChessboardSharpness(
     image: cv2.typing.MatLike,
@@ -7210,6 +7825,8 @@ def estimateChessboardSharpness(
     cv2.typing.Scalar,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateChessboardSharpness(
     image: UMat,
@@ -7222,6 +7839,8 @@ def estimateChessboardSharpness(
     cv2.typing.Scalar,
     UMat,
 ]: ...
+
+
 @typing.overload
 def estimateTranslation3D(
     src: cv2.typing.MatLike,
@@ -7235,6 +7854,8 @@ def estimateTranslation3D(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def estimateTranslation3D(
     src: UMat,
@@ -7257,6 +7878,8 @@ def extractChannel(src: cv2.typing.MatLike, coi: int, dst: cv2.typing.MatLike | 
 @typing.overload
 def extractChannel(src: UMat, coi: int, dst: UMat | None = ...) -> UMat: ...
 def fastAtan2(y: float, x: float) -> float: ...
+
+
 @typing.overload
 def fastNlMeansDenoising(
     src: cv2.typing.MatLike,
@@ -7265,6 +7888,8 @@ def fastNlMeansDenoising(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoising(
     src: UMat,
@@ -7273,6 +7898,8 @@ def fastNlMeansDenoising(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fastNlMeansDenoising(
     src: cv2.typing.MatLike,
@@ -7282,6 +7909,8 @@ def fastNlMeansDenoising(
     searchWindowSize: int = ...,
     normType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoising(
     src: UMat,
@@ -7291,6 +7920,8 @@ def fastNlMeansDenoising(
     searchWindowSize: int = ...,
     normType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingColored(
     src: cv2.typing.MatLike,
@@ -7300,6 +7931,8 @@ def fastNlMeansDenoisingColored(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingColored(
     src: UMat,
@@ -7309,6 +7942,8 @@ def fastNlMeansDenoisingColored(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingColoredMulti(
     srcImgs: typing.Sequence[cv2.typing.MatLike],
@@ -7320,6 +7955,8 @@ def fastNlMeansDenoisingColoredMulti(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingColoredMulti(
     srcImgs: typing.Sequence[UMat],
@@ -7331,6 +7968,8 @@ def fastNlMeansDenoisingColoredMulti(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingMulti(
     srcImgs: typing.Sequence[cv2.typing.MatLike],
@@ -7341,6 +7980,8 @@ def fastNlMeansDenoisingMulti(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingMulti(
     srcImgs: typing.Sequence[UMat],
@@ -7351,6 +7992,8 @@ def fastNlMeansDenoisingMulti(
     templateWindowSize: int = ...,
     searchWindowSize: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingMulti(
     srcImgs: typing.Sequence[cv2.typing.MatLike],
@@ -7362,6 +8005,8 @@ def fastNlMeansDenoisingMulti(
     searchWindowSize: int = ...,
     normType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fastNlMeansDenoisingMulti(
     srcImgs: typing.Sequence[UMat],
@@ -7373,6 +8018,8 @@ def fastNlMeansDenoisingMulti(
     searchWindowSize: int = ...,
     normType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fillConvexPoly(
     img: cv2.typing.MatLike,
@@ -7381,6 +8028,8 @@ def fillConvexPoly(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fillConvexPoly(
     img: UMat,
@@ -7389,6 +8038,8 @@ def fillConvexPoly(
     lineType: int = ...,
     shift: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def fillPoly(
     img: cv2.typing.MatLike,
@@ -7398,6 +8049,8 @@ def fillPoly(
     shift: int = ...,
     offset: cv2.typing.Point = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def fillPoly(
     img: UMat,
@@ -7407,6 +8060,8 @@ def fillPoly(
     shift: int = ...,
     offset: cv2.typing.Point = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def filter2D(
     src: cv2.typing.MatLike,
@@ -7417,6 +8072,8 @@ def filter2D(
     delta: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def filter2D(
     src: UMat,
@@ -7427,6 +8084,8 @@ def filter2D(
     delta: float = ...,
     borderType: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def filterHomographyDecompByVisibleRefpoints(
     rotations: typing.Sequence[cv2.typing.MatLike],
@@ -7436,6 +8095,8 @@ def filterHomographyDecompByVisibleRefpoints(
     possibleSolutions: cv2.typing.MatLike | None = ...,
     pointsMask: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def filterHomographyDecompByVisibleRefpoints(
     rotations: typing.Sequence[UMat],
@@ -7445,6 +8106,8 @@ def filterHomographyDecompByVisibleRefpoints(
     possibleSolutions: UMat | None = ...,
     pointsMask: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def filterSpeckles(
     img: cv2.typing.MatLike,
@@ -7456,6 +8119,8 @@ def filterSpeckles(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def filterSpeckles(
     img: UMat,
@@ -7467,6 +8132,8 @@ def filterSpeckles(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def find4QuadCornerSubpix(
     img: cv2.typing.MatLike,
@@ -7478,6 +8145,8 @@ def find4QuadCornerSubpix(
 ]: ...
 @typing.overload
 def find4QuadCornerSubpix(img: UMat, corners: UMat, region_size: cv2.typing.Size) -> tuple[bool, UMat]: ...
+
+
 @typing.overload
 def findChessboardCorners(
     image: cv2.typing.MatLike,
@@ -7488,6 +8157,8 @@ def findChessboardCorners(
     bool,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findChessboardCorners(
     image: UMat,
@@ -7498,6 +8169,8 @@ def findChessboardCorners(
     bool,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findChessboardCornersSB(
     image: cv2.typing.MatLike,
@@ -7508,6 +8181,8 @@ def findChessboardCornersSB(
     bool,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findChessboardCornersSB(
     image: UMat,
@@ -7518,6 +8193,8 @@ def findChessboardCornersSB(
     bool,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findChessboardCornersSBWithMeta(
     image: cv2.typing.MatLike,
@@ -7530,6 +8207,8 @@ def findChessboardCornersSBWithMeta(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findChessboardCornersSBWithMeta(
     image: UMat,
@@ -7542,6 +8221,8 @@ def findChessboardCornersSBWithMeta(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findCirclesGrid(
     image: cv2.typing.MatLike,
@@ -7554,6 +8235,8 @@ def findCirclesGrid(
     bool,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findCirclesGrid(
     image: UMat,
@@ -7566,6 +8249,8 @@ def findCirclesGrid(
     bool,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findCirclesGrid(
     image: cv2.typing.MatLike,
@@ -7577,6 +8262,8 @@ def findCirclesGrid(
     bool,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findCirclesGrid(
     image: UMat,
@@ -7588,6 +8275,8 @@ def findCirclesGrid(
     bool,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findContours(
     image: cv2.typing.MatLike,
@@ -7600,6 +8289,8 @@ def findContours(
     typing.Sequence[cv2.typing.MatLike],
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findContours(
     image: UMat,
@@ -7612,6 +8303,8 @@ def findContours(
     typing.Sequence[UMat],
     UMat,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: cv2.typing.MatLike,
@@ -7626,6 +8319,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: UMat,
@@ -7640,6 +8335,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: cv2.typing.MatLike,
@@ -7655,6 +8352,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: UMat,
@@ -7670,6 +8369,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: cv2.typing.MatLike,
@@ -7686,6 +8387,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: UMat,
@@ -7702,6 +8405,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: cv2.typing.MatLike,
@@ -7716,6 +8421,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findEssentialMat(
     points1: UMat,
@@ -7730,6 +8437,8 @@ def findEssentialMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: cv2.typing.MatLike,
@@ -7743,6 +8452,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: UMat,
@@ -7756,6 +8467,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: cv2.typing.MatLike,
@@ -7768,6 +8481,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: UMat,
@@ -7780,6 +8495,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: cv2.typing.MatLike,
@@ -7790,6 +8507,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findFundamentalMat(
     points1: UMat,
@@ -7800,6 +8519,8 @@ def findFundamentalMat(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findHomography(
     srcPoints: cv2.typing.MatLike,
@@ -7813,6 +8534,8 @@ def findHomography(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findHomography(
     srcPoints: UMat,
@@ -7826,6 +8549,8 @@ def findHomography(
     cv2.typing.MatLike,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findHomography(
     srcPoints: cv2.typing.MatLike,
@@ -7836,6 +8561,8 @@ def findHomography(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findHomography(
     srcPoints: UMat,
@@ -7850,6 +8577,8 @@ def findHomography(
 def findNonZero(src: cv2.typing.MatLike, idx: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def findNonZero(src: UMat, idx: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def findTransformECC(
     templateImage: cv2.typing.MatLike,
@@ -7863,6 +8592,8 @@ def findTransformECC(
     float,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findTransformECC(
     templateImage: UMat,
@@ -7876,6 +8607,8 @@ def findTransformECC(
     float,
     UMat,
 ]: ...
+
+
 @typing.overload
 def findTransformECC(
     templateImage: cv2.typing.MatLike,
@@ -7888,6 +8621,8 @@ def findTransformECC(
     float,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def findTransformECC(
     templateImage: UMat,
@@ -7912,6 +8647,8 @@ def fitEllipseAMS(points: UMat) -> cv2.typing.RotatedRect: ...
 def fitEllipseDirect(points: cv2.typing.MatLike) -> cv2.typing.RotatedRect: ...
 @typing.overload
 def fitEllipseDirect(points: UMat) -> cv2.typing.RotatedRect: ...
+
+
 @typing.overload
 def fitLine(
     points: cv2.typing.MatLike,
@@ -7931,6 +8668,8 @@ def flip(src: UMat, flipCode: int, dst: UMat | None = ...) -> UMat: ...
 def flipND(src: cv2.typing.MatLike, axis: int, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def flipND(src: UMat, axis: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def floodFill(
     image: cv2.typing.MatLike,
@@ -7946,6 +8685,8 @@ def floodFill(
     cv2.typing.MatLike,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def floodFill(
     image: UMat,
@@ -7961,6 +8702,8 @@ def floodFill(
     UMat,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def gemm(
     src1: cv2.typing.MatLike,
@@ -7971,6 +8714,8 @@ def gemm(
     dst: cv2.typing.MatLike | None = ...,
     flags: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def gemm(
     src1: UMat,
@@ -7988,18 +8733,24 @@ def getAffineTransform(src: UMat, dst: UMat) -> cv2.typing.MatLike: ...
 def getBuildInformation() -> str: ...
 def getCPUFeaturesLine() -> str: ...
 def getCPUTickCount() -> int: ...
+
+
 @typing.overload
 def getDefaultNewCameraMatrix(
     cameraMatrix: cv2.typing.MatLike,
     imgsize: cv2.typing.Size = ...,
     centerPrincipalPoint: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def getDefaultNewCameraMatrix(
     cameraMatrix: UMat,
     imgsize: cv2.typing.Size = ...,
     centerPrincipalPoint: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def getDerivKernels(
     dx: int,
@@ -8013,6 +8764,8 @@ def getDerivKernels(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def getDerivKernels(
     dx: int,
@@ -8027,6 +8780,8 @@ def getDerivKernels(
     UMat,
 ]: ...
 def getFontScaleFromHeight(fontFace: int, pixelHeight: int, thickness: int = ...) -> float: ...
+
+
 def getGaborKernel(
     ksize: cv2.typing.Size,
     sigma: float,
@@ -8042,6 +8797,8 @@ def getLogLevel() -> int: ...
 def getNumThreads() -> int: ...
 def getNumberOfCPUs() -> int: ...
 def getOptimalDFTSize(vecsize: int) -> int: ...
+
+
 @typing.overload
 def getOptimalNewCameraMatrix(
     cameraMatrix: cv2.typing.MatLike,
@@ -8054,6 +8811,8 @@ def getOptimalNewCameraMatrix(
     cv2.typing.MatLike,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def getOptimalNewCameraMatrix(
     cameraMatrix: UMat,
@@ -8066,6 +8825,8 @@ def getOptimalNewCameraMatrix(
     cv2.typing.MatLike,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def getPerspectiveTransform(
     src: cv2.typing.MatLike,
@@ -8074,6 +8835,8 @@ def getPerspectiveTransform(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def getPerspectiveTransform(src: UMat, dst: UMat, solveMethod: int = ...) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def getRectSubPix(
     image: cv2.typing.MatLike,
@@ -8082,6 +8845,8 @@ def getRectSubPix(
     patch: cv2.typing.MatLike | None = ...,
     patchType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def getRectSubPix(
     image: UMat,
@@ -8097,6 +8862,8 @@ def getThreadNum() -> int: ...
 def getTickCount() -> int: ...
 def getTickFrequency() -> float: ...
 def getTrackbarPos(trackbarname: str, winname: str) -> int: ...
+
+
 def getValidDisparityROI(
     roi1: cv2.typing.Rect,
     roi2: cv2.typing.Rect,
@@ -8110,6 +8877,8 @@ def getVersionRevision() -> int: ...
 def getVersionString() -> str: ...
 def getWindowImageRect(winname: str) -> cv2.typing.Rect: ...
 def getWindowProperty(winname: str, prop_id: int) -> float: ...
+
+
 @typing.overload
 def goodFeaturesToTrack(
     image: cv2.typing.MatLike,
@@ -8122,6 +8891,8 @@ def goodFeaturesToTrack(
     useHarrisDetector: bool = ...,
     k: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def goodFeaturesToTrack(
     image: UMat,
@@ -8134,6 +8905,8 @@ def goodFeaturesToTrack(
     useHarrisDetector: bool = ...,
     k: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def goodFeaturesToTrack(
     image: cv2.typing.MatLike,
@@ -8147,6 +8920,8 @@ def goodFeaturesToTrack(
     useHarrisDetector: bool = ...,
     k: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def goodFeaturesToTrack(
     image: UMat,
@@ -8160,6 +8935,8 @@ def goodFeaturesToTrack(
     useHarrisDetector: bool = ...,
     k: float = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def goodFeaturesToTrackWithQuality(
     image: cv2.typing.MatLike,
@@ -8177,6 +8954,8 @@ def goodFeaturesToTrackWithQuality(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def goodFeaturesToTrackWithQuality(
     image: UMat,
@@ -8194,6 +8973,8 @@ def goodFeaturesToTrackWithQuality(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def grabCut(
     img: cv2.typing.MatLike,
@@ -8208,6 +8989,8 @@ def grabCut(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def grabCut(
     img: UMat,
@@ -8222,6 +9005,8 @@ def grabCut(
     UMat,
     UMat,
 ]: ...
+
+
 def groupRectangles(
     rectList: typing.Sequence[cv2.typing.Rect],
     groupThreshold: int,
@@ -8245,6 +9030,8 @@ def hconcat(src: typing.Sequence[UMat], dst: UMat | None = ...) -> UMat: ...
 def idct(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ..., flags: int = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def idct(src: UMat, dst: UMat | None = ..., flags: int = ...) -> UMat: ...
+
+
 @typing.overload
 def idft(
     src: cv2.typing.MatLike,
@@ -8254,6 +9041,8 @@ def idft(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def idft(src: UMat, dst: UMat | None = ..., flags: int = ..., nonzeroRows: int = ...) -> UMat: ...
+
+
 @typing.overload
 def illuminationChange(
     src: cv2.typing.MatLike,
@@ -8262,6 +9051,8 @@ def illuminationChange(
     alpha: float = ...,
     beta: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def illuminationChange(
     src: UMat,
@@ -8275,6 +9066,8 @@ def imcount(filename: str, flags: int = ...) -> int: ...
 def imdecode(buf: cv2.typing.MatLike, flags: int) -> cv2.typing.MatLike: ...
 @typing.overload
 def imdecode(buf: UMat, flags: int) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def imdecodemulti(
     buf: cv2.typing.MatLike,
@@ -8284,6 +9077,8 @@ def imdecodemulti(
     bool,
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def imdecodemulti(
     buf: UMat,
@@ -8293,6 +9088,8 @@ def imdecodemulti(
     bool,
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def imencode(
     ext: str,
@@ -8305,6 +9102,8 @@ def imencode(
         numpy.dtype[numpy.uint8],
     ],
 ]: ...
+
+
 @typing.overload
 def imencode(
     ext: str,
@@ -8318,6 +9117,8 @@ def imencode(
     ],
 ]: ...
 def imread(filename: str, flags: int = ...) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def imreadmulti(
     filename: str,
@@ -8327,6 +9128,8 @@ def imreadmulti(
     bool,
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def imreadmulti(
     filename: str,
@@ -8348,6 +9151,8 @@ def imshow(winname: str, mat: UMat) -> None: ...
 def imwrite(filename: str, img: cv2.typing.MatLike, params: typing.Sequence[int] = ...) -> bool: ...
 @typing.overload
 def imwrite(filename: str, img: UMat, params: typing.Sequence[int] = ...) -> bool: ...
+
+
 @typing.overload
 def imwritemulti(
     filename: str,
@@ -8356,6 +9161,8 @@ def imwritemulti(
 ) -> bool: ...
 @typing.overload
 def imwritemulti(filename: str, img: typing.Sequence[UMat], params: typing.Sequence[int] = ...) -> bool: ...
+
+
 @typing.overload
 def inRange(
     src: cv2.typing.MatLike,
@@ -8365,6 +9172,8 @@ def inRange(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def inRange(src: UMat, lowerb: UMat, upperb: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def initCameraMatrix2D(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -8372,6 +9181,8 @@ def initCameraMatrix2D(
     imageSize: cv2.typing.Size,
     aspectRatio: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def initCameraMatrix2D(
     objectPoints: typing.Sequence[UMat],
@@ -8379,6 +9190,8 @@ def initCameraMatrix2D(
     imageSize: cv2.typing.Size,
     aspectRatio: float = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def initInverseRectificationMap(
     cameraMatrix: cv2.typing.MatLike,
@@ -8393,6 +9206,8 @@ def initInverseRectificationMap(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def initInverseRectificationMap(
     cameraMatrix: UMat,
@@ -8407,6 +9222,8 @@ def initInverseRectificationMap(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def initUndistortRectifyMap(
     cameraMatrix: cv2.typing.MatLike,
@@ -8421,6 +9238,8 @@ def initUndistortRectifyMap(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def initUndistortRectifyMap(
     cameraMatrix: UMat,
@@ -8435,6 +9254,8 @@ def initUndistortRectifyMap(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def inpaint(
     src: cv2.typing.MatLike,
@@ -8449,6 +9270,8 @@ def inpaint(src: UMat, inpaintMask: UMat, inpaintRadius: float, flags: int, dst:
 def insertChannel(src: cv2.typing.MatLike, dst: cv2.typing.MatLike, coi: int) -> cv2.typing.MatLike: ...
 @typing.overload
 def insertChannel(src: UMat, dst: UMat, coi: int) -> UMat: ...
+
+
 @typing.overload
 def integral(
     src: cv2.typing.MatLike,
@@ -8457,6 +9280,8 @@ def integral(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def integral(src: UMat, sum: UMat | None = ..., sdepth: int = ...) -> UMat: ...
+
+
 @typing.overload
 def integral2(
     src: cv2.typing.MatLike,
@@ -8468,6 +9293,8 @@ def integral2(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def integral2(
     src: UMat,
@@ -8479,6 +9306,8 @@ def integral2(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def integral3(
     src: cv2.typing.MatLike,
@@ -8492,6 +9321,8 @@ def integral3(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def integral3(
     src: UMat,
@@ -8505,6 +9336,8 @@ def integral3(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def intersectConvexConvex(
     p1: cv2.typing.MatLike,
@@ -8515,6 +9348,8 @@ def intersectConvexConvex(
     float,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def intersectConvexConvex(
     p1: UMat,
@@ -8525,6 +9360,8 @@ def intersectConvexConvex(
     float,
     UMat,
 ]: ...
+
+
 @typing.overload
 def invert(
     src: cv2.typing.MatLike,
@@ -8544,6 +9381,8 @@ def invertAffineTransform(M: UMat, iM: UMat | None = ...) -> UMat: ...
 def isContourConvex(contour: cv2.typing.MatLike) -> bool: ...
 @typing.overload
 def isContourConvex(contour: UMat) -> bool: ...
+
+
 @typing.overload
 def kmeans(
     data: cv2.typing.MatLike,
@@ -8558,6 +9397,8 @@ def kmeans(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def kmeans(
     data: UMat,
@@ -8572,6 +9413,8 @@ def kmeans(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def line(
     img: cv2.typing.MatLike,
@@ -8582,6 +9425,8 @@ def line(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def line(
     img: UMat,
@@ -8592,6 +9437,8 @@ def line(
     lineType: int = ...,
     shift: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def linearPolar(
     src: cv2.typing.MatLike,
@@ -8600,6 +9447,8 @@ def linearPolar(
     flags: int,
     dst: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def linearPolar(
     src: UMat,
@@ -8612,6 +9461,8 @@ def linearPolar(
 def log(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def log(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def logPolar(
     src: cv2.typing.MatLike,
@@ -8622,6 +9473,8 @@ def logPolar(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def logPolar(src: UMat, center: cv2.typing.Point2f, M: float, flags: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def magnitude(
     x: cv2.typing.MatLike,
@@ -8630,6 +9483,8 @@ def magnitude(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def magnitude(x: UMat, y: UMat, magnitude: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def matMulDeriv(
     A: cv2.typing.MatLike,
@@ -8646,6 +9501,8 @@ def matMulDeriv(A: UMat, B: UMat, dABdA: UMat | None = ..., dABdB: UMat | None =
 def matchShapes(contour1: cv2.typing.MatLike, contour2: cv2.typing.MatLike, method: int, parameter: float) -> float: ...
 @typing.overload
 def matchShapes(contour1: UMat, contour2: UMat, method: int, parameter: float) -> float: ...
+
+
 @typing.overload
 def matchTemplate(
     image: cv2.typing.MatLike,
@@ -8654,6 +9511,8 @@ def matchTemplate(
     result: cv2.typing.MatLike | None = ...,
     mask: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def matchTemplate(
     image: UMat,
@@ -8662,6 +9521,8 @@ def matchTemplate(
     result: UMat | None = ...,
     mask: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def max(
     src1: cv2.typing.MatLike,
@@ -8674,6 +9535,8 @@ def max(src1: UMat, src2: UMat, dst: UMat | None = ...) -> UMat: ...
 def mean(src: cv2.typing.MatLike, mask: cv2.typing.MatLike | None = ...) -> cv2.typing.Scalar: ...
 @typing.overload
 def mean(src: UMat, mask: UMat | None = ...) -> cv2.typing.Scalar: ...
+
+
 @typing.overload
 def meanShift(
     probImage: cv2.typing.MatLike,
@@ -8683,6 +9546,8 @@ def meanShift(
     int,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def meanShift(
     probImage: UMat,
@@ -8692,6 +9557,8 @@ def meanShift(
     int,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def meanStdDev(
     src: cv2.typing.MatLike,
@@ -8702,6 +9569,8 @@ def meanStdDev(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def meanStdDev(
     src: UMat,
@@ -8720,6 +9589,8 @@ def medianBlur(src: UMat, ksize: int, dst: UMat | None = ...) -> UMat: ...
 def merge(mv: typing.Sequence[cv2.typing.MatLike], dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def merge(mv: typing.Sequence[UMat], dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def min(
     src1: cv2.typing.MatLike,
@@ -8736,6 +9607,8 @@ def minAreaRect(points: UMat) -> cv2.typing.RotatedRect: ...
 def minEnclosingCircle(points: cv2.typing.MatLike) -> tuple[cv2.typing.Point2f, float]: ...
 @typing.overload
 def minEnclosingCircle(points: UMat) -> tuple[cv2.typing.Point2f, float]: ...
+
+
 @typing.overload
 def minEnclosingTriangle(
     points: cv2.typing.MatLike,
@@ -8746,6 +9619,8 @@ def minEnclosingTriangle(
 ]: ...
 @typing.overload
 def minEnclosingTriangle(points: UMat, triangle: UMat | None = ...) -> tuple[float, UMat]: ...
+
+
 @typing.overload
 def minMaxLoc(
     src: cv2.typing.MatLike,
@@ -8758,12 +9633,16 @@ def minMaxLoc(
 ]: ...
 @typing.overload
 def minMaxLoc(src: UMat, mask: UMat | None = ...) -> tuple[float, float, cv2.typing.Point, cv2.typing.Point]: ...
+
+
 @typing.overload
 def mixChannels(
     src: typing.Sequence[cv2.typing.MatLike],
     dst: typing.Sequence[cv2.typing.MatLike],
     fromTo: typing.Sequence[int],
 ) -> typing.Sequence[cv2.typing.MatLike]: ...
+
+
 @typing.overload
 def mixChannels(
     src: typing.Sequence[UMat],
@@ -8774,6 +9653,8 @@ def mixChannels(
 def moments(array: cv2.typing.MatLike, binaryImage: bool = ...) -> cv2.typing.Moments: ...
 @typing.overload
 def moments(array: UMat, binaryImage: bool = ...) -> cv2.typing.Moments: ...
+
+
 @typing.overload
 def morphologyEx(
     src: cv2.typing.MatLike,
@@ -8785,6 +9666,8 @@ def morphologyEx(
     borderType: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def morphologyEx(
     src: UMat,
@@ -8797,6 +9680,8 @@ def morphologyEx(
     borderValue: cv2.typing.Scalar = ...,
 ) -> UMat: ...
 def moveWindow(winname: str, x: int, y: int) -> None: ...
+
+
 @typing.overload
 def mulSpectrums(
     a: cv2.typing.MatLike,
@@ -8807,6 +9692,8 @@ def mulSpectrums(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def mulSpectrums(a: UMat, b: UMat, flags: int, c: UMat | None = ..., conjB: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def mulTransposed(
     src: cv2.typing.MatLike,
@@ -8816,6 +9703,8 @@ def mulTransposed(
     scale: float = ...,
     dtype: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def mulTransposed(
     src: UMat,
@@ -8825,6 +9714,8 @@ def mulTransposed(
     scale: float = ...,
     dtype: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def multiply(
     src1: cv2.typing.MatLike,
@@ -8840,6 +9731,8 @@ def namedWindow(winname: str, flags: int = ...) -> None: ...
 def norm(src1: cv2.typing.MatLike, normType: int = ..., mask: cv2.typing.MatLike | None = ...) -> float: ...
 @typing.overload
 def norm(src1: UMat, normType: int = ..., mask: UMat | None = ...) -> float: ...
+
+
 @typing.overload
 def norm(
     src1: cv2.typing.MatLike,
@@ -8849,6 +9742,8 @@ def norm(
 ) -> float: ...
 @typing.overload
 def norm(src1: UMat, src2: UMat, normType: int = ..., mask: UMat | None = ...) -> float: ...
+
+
 @typing.overload
 def normalize(
     src: cv2.typing.MatLike,
@@ -8859,6 +9754,8 @@ def normalize(
     dtype: int = ...,
     mask: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def normalize(
     src: UMat,
@@ -8873,6 +9770,8 @@ def normalize(
 def patchNaNs(a: cv2.typing.MatLike, val: float = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def patchNaNs(a: UMat, val: float = ...) -> UMat: ...
+
+
 @typing.overload
 def pencilSketch(
     src: cv2.typing.MatLike,
@@ -8885,6 +9784,8 @@ def pencilSketch(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def pencilSketch(
     src: UMat,
@@ -8897,6 +9798,8 @@ def pencilSketch(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def perspectiveTransform(
     src: cv2.typing.MatLike,
@@ -8905,6 +9808,8 @@ def perspectiveTransform(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def perspectiveTransform(src: UMat, m: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def phase(
     x: cv2.typing.MatLike,
@@ -8914,6 +9819,8 @@ def phase(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def phase(x: UMat, y: UMat, angle: UMat | None = ..., angleInDegrees: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def phaseCorrelate(
     src1: cv2.typing.MatLike,
@@ -8929,6 +9836,8 @@ def phaseCorrelate(src1: UMat, src2: UMat, window: UMat | None = ...) -> tuple[c
 def pointPolygonTest(contour: cv2.typing.MatLike, pt: cv2.typing.Point2f, measureDist: bool) -> float: ...
 @typing.overload
 def pointPolygonTest(contour: UMat, pt: cv2.typing.Point2f, measureDist: bool) -> float: ...
+
+
 @typing.overload
 def polarToCart(
     magnitude: cv2.typing.MatLike,
@@ -8940,6 +9849,8 @@ def polarToCart(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def polarToCart(
     magnitude: UMat,
@@ -8952,6 +9863,8 @@ def polarToCart(
     UMat,
 ]: ...
 def pollKey() -> int: ...
+
+
 @typing.overload
 def polylines(
     img: cv2.typing.MatLike,
@@ -8962,6 +9875,8 @@ def polylines(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def polylines(
     img: UMat,
@@ -8976,6 +9891,8 @@ def polylines(
 def pow(src: cv2.typing.MatLike, power: float, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def pow(src: UMat, power: float, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def preCornerDetect(
     src: cv2.typing.MatLike,
@@ -8985,6 +9902,8 @@ def preCornerDetect(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def preCornerDetect(src: UMat, ksize: int, dst: UMat | None = ..., borderType: int = ...) -> UMat: ...
+
+
 @typing.overload
 def projectPoints(
     objectPoints: cv2.typing.MatLike,
@@ -8999,6 +9918,8 @@ def projectPoints(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def projectPoints(
     objectPoints: UMat,
@@ -9013,6 +9934,8 @@ def projectPoints(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def putText(
     img: cv2.typing.MatLike,
@@ -9025,6 +9948,8 @@ def putText(
     lineType: int = ...,
     bottomLeftOrigin: bool = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def putText(
     img: UMat,
@@ -9037,6 +9962,8 @@ def putText(
     lineType: int = ...,
     bottomLeftOrigin: bool = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def pyrDown(
     src: cv2.typing.MatLike,
@@ -9046,6 +9973,8 @@ def pyrDown(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def pyrDown(src: UMat, dst: UMat | None = ..., dstsize: cv2.typing.Size = ..., borderType: int = ...) -> UMat: ...
+
+
 @typing.overload
 def pyrMeanShiftFiltering(
     src: cv2.typing.MatLike,
@@ -9055,6 +9984,8 @@ def pyrMeanShiftFiltering(
     maxLevel: int = ...,
     termcrit: cv2.typing.TermCriteria = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def pyrMeanShiftFiltering(
     src: UMat,
@@ -9064,6 +9995,8 @@ def pyrMeanShiftFiltering(
     maxLevel: int = ...,
     termcrit: cv2.typing.TermCriteria = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def pyrUp(
     src: cv2.typing.MatLike,
@@ -9086,6 +10019,8 @@ def randu(dst: cv2.typing.MatLike, low: cv2.typing.MatLike, high: cv2.typing.Mat
 @typing.overload
 def randu(dst: UMat, low: UMat, high: UMat) -> UMat: ...
 def readOpticalFlow(path: str) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def recoverPose(
     points1: cv2.typing.MatLike,
@@ -9108,6 +10043,8 @@ def recoverPose(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     points1: UMat,
@@ -9130,6 +10067,8 @@ def recoverPose(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: cv2.typing.MatLike,
@@ -9145,6 +10084,8 @@ def recoverPose(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: UMat,
@@ -9160,6 +10101,8 @@ def recoverPose(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: cv2.typing.MatLike,
@@ -9176,6 +10119,8 @@ def recoverPose(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: UMat,
@@ -9192,6 +10137,8 @@ def recoverPose(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: cv2.typing.MatLike,
@@ -9210,6 +10157,8 @@ def recoverPose(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def recoverPose(
     E: UMat,
@@ -9228,6 +10177,8 @@ def recoverPose(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def rectangle(
     img: cv2.typing.MatLike,
@@ -9238,6 +10189,8 @@ def rectangle(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def rectangle(
     img: UMat,
@@ -9248,6 +10201,8 @@ def rectangle(
     lineType: int = ...,
     shift: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def rectangle(
     img: cv2.typing.MatLike,
@@ -9257,6 +10212,8 @@ def rectangle(
     lineType: int = ...,
     shift: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def rectangle(
     img: UMat,
@@ -9267,6 +10224,8 @@ def rectangle(
     shift: int = ...,
 ) -> UMat: ...
 def rectangleIntersectionArea(a: cv2.typing.Rect2d, b: cv2.typing.Rect2d) -> float: ...
+
+
 @typing.overload
 def rectify3Collinear(
     cameraMatrix1: cv2.typing.MatLike,
@@ -9304,6 +10263,8 @@ def rectify3Collinear(
     cv2.typing.Rect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def rectify3Collinear(
     cameraMatrix1: UMat,
@@ -9341,6 +10302,8 @@ def rectify3Collinear(
     cv2.typing.Rect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def reduce(
     src: cv2.typing.MatLike,
@@ -9351,6 +10314,8 @@ def reduce(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def reduce(src: UMat, dim: int, rtype: int, dst: UMat | None = ..., dtype: int = ...) -> UMat: ...
+
+
 @typing.overload
 def reduceArgMax(
     src: cv2.typing.MatLike,
@@ -9360,6 +10325,8 @@ def reduceArgMax(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def reduceArgMax(src: UMat, axis: int, dst: UMat | None = ..., lastIndex: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def reduceArgMin(
     src: cv2.typing.MatLike,
@@ -9369,6 +10336,8 @@ def reduceArgMin(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def reduceArgMin(src: UMat, axis: int, dst: UMat | None = ..., lastIndex: bool = ...) -> UMat: ...
+
+
 @typing.overload
 def remap(
     src: cv2.typing.MatLike,
@@ -9379,6 +10348,8 @@ def remap(
     borderMode: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def remap(
     src: UMat,
@@ -9393,6 +10364,8 @@ def remap(
 def repeat(src: cv2.typing.MatLike, ny: int, nx: int, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def repeat(src: UMat, ny: int, nx: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def reprojectImageTo3D(
     disparity: cv2.typing.MatLike,
@@ -9401,6 +10374,8 @@ def reprojectImageTo3D(
     handleMissingValues: bool = ...,
     ddepth: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def reprojectImageTo3D(
     disparity: UMat,
@@ -9409,6 +10384,8 @@ def reprojectImageTo3D(
     handleMissingValues: bool = ...,
     ddepth: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def resize(
     src: cv2.typing.MatLike,
@@ -9418,6 +10395,8 @@ def resize(
     fy: float = ...,
     interpolation: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def resize(
     src: UMat,
@@ -9435,6 +10414,8 @@ def resizeWindow(winname: str, size: cv2.typing.Size) -> None: ...
 def rotate(src: cv2.typing.MatLike, rotateCode: int, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def rotate(src: UMat, rotateCode: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def rotatedRectangleIntersection(
     rect1: cv2.typing.RotatedRect,
@@ -9444,6 +10425,8 @@ def rotatedRectangleIntersection(
     int,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def rotatedRectangleIntersection(
     rect1: cv2.typing.RotatedRect,
@@ -9457,6 +10440,8 @@ def rotatedRectangleIntersection(
 def sampsonDistance(pt1: cv2.typing.MatLike, pt2: cv2.typing.MatLike, F: cv2.typing.MatLike) -> float: ...
 @typing.overload
 def sampsonDistance(pt1: UMat, pt2: UMat, F: UMat) -> float: ...
+
+
 @typing.overload
 def scaleAdd(
     src1: cv2.typing.MatLike,
@@ -9466,6 +10451,8 @@ def scaleAdd(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def scaleAdd(src1: UMat, alpha: float, src2: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def seamlessClone(
     src: cv2.typing.MatLike,
@@ -9475,6 +10462,8 @@ def seamlessClone(
     flags: int,
     blend: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def seamlessClone(
     src: UMat,
@@ -9484,6 +10473,8 @@ def seamlessClone(
     flags: int,
     blend: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def selectROI(
     windowName: str,
@@ -9492,6 +10483,8 @@ def selectROI(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> cv2.typing.Rect: ...
+
+
 @typing.overload
 def selectROI(
     windowName: str,
@@ -9500,6 +10493,8 @@ def selectROI(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> cv2.typing.Rect: ...
+
+
 @typing.overload
 def selectROI(
     img: cv2.typing.MatLike,
@@ -9507,6 +10502,8 @@ def selectROI(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> cv2.typing.Rect: ...
+
+
 @typing.overload
 def selectROI(
     img: UMat,
@@ -9514,6 +10511,8 @@ def selectROI(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> cv2.typing.Rect: ...
+
+
 @typing.overload
 def selectROIs(
     windowName: str,
@@ -9522,6 +10521,8 @@ def selectROIs(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> typing.Sequence[cv2.typing.Rect]: ...
+
+
 @typing.overload
 def selectROIs(
     windowName: str,
@@ -9530,6 +10531,8 @@ def selectROIs(
     fromCenter: bool = ...,
     printNotice: bool = ...,
 ) -> typing.Sequence[cv2.typing.Rect]: ...
+
+
 @typing.overload
 def sepFilter2D(
     src: cv2.typing.MatLike,
@@ -9541,6 +10544,8 @@ def sepFilter2D(
     delta: float = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def sepFilter2D(
     src: UMat,
@@ -9566,6 +10571,8 @@ def setUseOpenVX(flag: bool) -> None: ...
 def setUseOptimized(onoff: bool) -> None: ...
 def setWindowProperty(winname: str, prop_id: int, prop_value: float) -> None: ...
 def setWindowTitle(winname: str, title: str) -> None: ...
+
+
 @typing.overload
 def solve(
     src1: cv2.typing.MatLike,
@@ -9578,6 +10585,8 @@ def solve(
 ]: ...
 @typing.overload
 def solve(src1: UMat, src2: UMat, dst: UMat | None = ..., flags: int = ...) -> tuple[bool, UMat]: ...
+
+
 @typing.overload
 def solveCubic(
     coeffs: cv2.typing.MatLike,
@@ -9588,6 +10597,8 @@ def solveCubic(
 ]: ...
 @typing.overload
 def solveCubic(coeffs: UMat, roots: UMat | None = ...) -> tuple[int, UMat]: ...
+
+
 @typing.overload
 def solveLP(
     Func: cv2.typing.MatLike,
@@ -9600,6 +10611,8 @@ def solveLP(
 ]: ...
 @typing.overload
 def solveLP(Func: UMat, Constr: UMat, constr_eps: float, z: UMat | None = ...) -> tuple[int, UMat]: ...
+
+
 @typing.overload
 def solveLP(
     Func: cv2.typing.MatLike,
@@ -9611,6 +10624,8 @@ def solveLP(
 ]: ...
 @typing.overload
 def solveLP(Func: UMat, Constr: UMat, z: UMat | None = ...) -> tuple[int, UMat]: ...
+
+
 @typing.overload
 def solveP3P(
     objectPoints: cv2.typing.MatLike,
@@ -9625,6 +10640,8 @@ def solveP3P(
     typing.Sequence[cv2.typing.MatLike],
     typing.Sequence[cv2.typing.MatLike],
 ]: ...
+
+
 @typing.overload
 def solveP3P(
     objectPoints: UMat,
@@ -9639,6 +10656,8 @@ def solveP3P(
     typing.Sequence[UMat],
     typing.Sequence[UMat],
 ]: ...
+
+
 @typing.overload
 def solvePnP(
     objectPoints: cv2.typing.MatLike,
@@ -9654,6 +10673,8 @@ def solvePnP(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnP(
     objectPoints: UMat,
@@ -9669,6 +10690,8 @@ def solvePnP(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePnPGeneric(
     objectPoints: cv2.typing.MatLike,
@@ -9688,6 +10711,8 @@ def solvePnPGeneric(
     typing.Sequence[cv2.typing.MatLike],
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnPGeneric(
     objectPoints: UMat,
@@ -9707,6 +10732,8 @@ def solvePnPGeneric(
     typing.Sequence[UMat],
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePnPRansac(
     objectPoints: cv2.typing.MatLike,
@@ -9727,6 +10754,8 @@ def solvePnPRansac(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnPRansac(
     objectPoints: UMat,
@@ -9747,6 +10776,8 @@ def solvePnPRansac(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePnPRansac(
     objectPoints: cv2.typing.MatLike,
@@ -9764,6 +10795,8 @@ def solvePnPRansac(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnPRansac(
     objectPoints: UMat,
@@ -9781,6 +10814,8 @@ def solvePnPRansac(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePnPRefineLM(
     objectPoints: cv2.typing.MatLike,
@@ -9794,6 +10829,8 @@ def solvePnPRefineLM(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnPRefineLM(
     objectPoints: UMat,
@@ -9807,6 +10844,8 @@ def solvePnPRefineLM(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePnPRefineVVS(
     objectPoints: cv2.typing.MatLike,
@@ -9821,6 +10860,8 @@ def solvePnPRefineVVS(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def solvePnPRefineVVS(
     objectPoints: UMat,
@@ -9835,6 +10876,8 @@ def solvePnPRefineVVS(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def solvePoly(
     coeffs: cv2.typing.MatLike,
@@ -9854,6 +10897,8 @@ def sort(src: UMat, flags: int, dst: UMat | None = ...) -> UMat: ...
 def sortIdx(src: cv2.typing.MatLike, flags: int, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def sortIdx(src: UMat, flags: int, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def spatialGradient(
     src: cv2.typing.MatLike,
@@ -9865,6 +10910,8 @@ def spatialGradient(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def spatialGradient(
     src: UMat,
@@ -9876,6 +10923,8 @@ def spatialGradient(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def split(
     m: cv2.typing.MatLike,
@@ -9883,6 +10932,8 @@ def split(
 ) -> typing.Sequence[cv2.typing.MatLike]: ...
 @typing.overload
 def split(m: UMat, mv: typing.Sequence[UMat] | None = ...) -> typing.Sequence[UMat]: ...
+
+
 @typing.overload
 def sqrBoxFilter(
     src: cv2.typing.MatLike,
@@ -9893,6 +10944,8 @@ def sqrBoxFilter(
     normalize: bool = ...,
     borderType: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def sqrBoxFilter(
     src: UMat,
@@ -9907,6 +10960,8 @@ def sqrBoxFilter(
 def sqrt(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def sqrt(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def stackBlur(
     src: cv2.typing.MatLike,
@@ -9916,6 +10971,8 @@ def stackBlur(
 @typing.overload
 def stackBlur(src: UMat, ksize: cv2.typing.Size, dst: UMat | None = ...) -> UMat: ...
 def startWindowThread() -> int: ...
+
+
 @typing.overload
 def stereoCalibrate(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -9943,6 +11000,8 @@ def stereoCalibrate(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def stereoCalibrate(
     objectPoints: typing.Sequence[UMat],
@@ -9970,6 +11029,8 @@ def stereoCalibrate(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def stereoCalibrate(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -9999,6 +11060,8 @@ def stereoCalibrate(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def stereoCalibrate(
     objectPoints: typing.Sequence[UMat],
@@ -10028,6 +11091,8 @@ def stereoCalibrate(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def stereoCalibrateExtended(
     objectPoints: typing.Sequence[cv2.typing.MatLike],
@@ -10061,6 +11126,8 @@ def stereoCalibrateExtended(
     typing.Sequence[cv2.typing.MatLike],
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def stereoCalibrateExtended(
     objectPoints: typing.Sequence[UMat],
@@ -10094,6 +11161,8 @@ def stereoCalibrateExtended(
     typing.Sequence[UMat],
     UMat,
 ]: ...
+
+
 @typing.overload
 def stereoRectify(
     cameraMatrix1: cv2.typing.MatLike,
@@ -10120,6 +11189,8 @@ def stereoRectify(
     cv2.typing.Rect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def stereoRectify(
     cameraMatrix1: UMat,
@@ -10146,6 +11217,8 @@ def stereoRectify(
     cv2.typing.Rect,
     cv2.typing.Rect,
 ]: ...
+
+
 @typing.overload
 def stereoRectifyUncalibrated(
     points1: cv2.typing.MatLike,
@@ -10160,6 +11233,8 @@ def stereoRectifyUncalibrated(
     cv2.typing.MatLike,
     cv2.typing.MatLike,
 ]: ...
+
+
 @typing.overload
 def stereoRectifyUncalibrated(
     points1: UMat,
@@ -10174,6 +11249,8 @@ def stereoRectifyUncalibrated(
     UMat,
     UMat,
 ]: ...
+
+
 @typing.overload
 def stylization(
     src: cv2.typing.MatLike,
@@ -10183,6 +11260,8 @@ def stylization(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def stylization(src: UMat, dst: UMat | None = ..., sigma_s: float = ..., sigma_r: float = ...) -> UMat: ...
+
+
 @typing.overload
 def subtract(
     src1: cv2.typing.MatLike,
@@ -10197,6 +11276,8 @@ def subtract(src1: UMat, src2: UMat, dst: UMat | None = ..., mask: UMat | None =
 def sumElems(src: cv2.typing.MatLike) -> cv2.typing.Scalar: ...
 @typing.overload
 def sumElems(src: UMat) -> cv2.typing.Scalar: ...
+
+
 @typing.overload
 def textureFlattening(
     src: cv2.typing.MatLike,
@@ -10206,6 +11287,8 @@ def textureFlattening(
     high_threshold: float = ...,
     kernel_size: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def textureFlattening(
     src: UMat,
@@ -10215,6 +11298,8 @@ def textureFlattening(
     high_threshold: float = ...,
     kernel_size: int = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def threshold(
     src: cv2.typing.MatLike,
@@ -10232,6 +11317,8 @@ def threshold(src: UMat, thresh: float, maxval: float, type: int, dst: UMat | No
 def trace(mtx: cv2.typing.MatLike) -> cv2.typing.Scalar: ...
 @typing.overload
 def trace(mtx: UMat) -> cv2.typing.Scalar: ...
+
+
 @typing.overload
 def transform(
     src: cv2.typing.MatLike,
@@ -10244,6 +11331,8 @@ def transform(src: UMat, m: UMat, dst: UMat | None = ...) -> UMat: ...
 def transpose(src: cv2.typing.MatLike, dst: cv2.typing.MatLike | None = ...) -> cv2.typing.MatLike: ...
 @typing.overload
 def transpose(src: UMat, dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def transposeND(
     src: cv2.typing.MatLike,
@@ -10252,6 +11341,8 @@ def transposeND(
 ) -> cv2.typing.MatLike: ...
 @typing.overload
 def transposeND(src: UMat, order: typing.Sequence[int], dst: UMat | None = ...) -> UMat: ...
+
+
 @typing.overload
 def triangulatePoints(
     projMatr1: cv2.typing.MatLike,
@@ -10260,6 +11351,8 @@ def triangulatePoints(
     projPoints2: cv2.typing.MatLike,
     points4D: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def triangulatePoints(
     projMatr1: UMat,
@@ -10268,6 +11361,8 @@ def triangulatePoints(
     projPoints2: UMat,
     points4D: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def undistort(
     src: cv2.typing.MatLike,
@@ -10276,6 +11371,8 @@ def undistort(
     dst: cv2.typing.MatLike | None = ...,
     newCameraMatrix: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def undistort(
     src: UMat,
@@ -10284,6 +11381,8 @@ def undistort(
     dst: UMat | None = ...,
     newCameraMatrix: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def undistortImagePoints(
     src: cv2.typing.MatLike,
@@ -10292,6 +11391,8 @@ def undistortImagePoints(
     dst: cv2.typing.MatLike | None = ...,
     arg1: cv2.typing.TermCriteria = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def undistortImagePoints(
     src: UMat,
@@ -10300,6 +11401,8 @@ def undistortImagePoints(
     dst: UMat | None = ...,
     arg1: cv2.typing.TermCriteria = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def undistortPoints(
     src: cv2.typing.MatLike,
@@ -10309,6 +11412,8 @@ def undistortPoints(
     R: cv2.typing.MatLike | None = ...,
     P: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def undistortPoints(
     src: UMat,
@@ -10318,6 +11423,8 @@ def undistortPoints(
     R: UMat | None = ...,
     P: UMat | None = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def undistortPointsIter(
     src: cv2.typing.MatLike,
@@ -10328,6 +11435,8 @@ def undistortPointsIter(
     criteria: cv2.typing.TermCriteria,
     dst: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def undistortPointsIter(
     src: UMat,
@@ -10340,6 +11449,8 @@ def undistortPointsIter(
 ) -> UMat: ...
 def useOpenVX() -> bool: ...
 def useOptimized() -> bool: ...
+
+
 @typing.overload
 def validateDisparity(
     disparity: cv2.typing.MatLike,
@@ -10348,6 +11459,8 @@ def validateDisparity(
     numberOfDisparities: int,
     disp12MaxDisp: int = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def validateDisparity(
     disparity: UMat,
@@ -10362,6 +11475,8 @@ def vconcat(src: typing.Sequence[cv2.typing.MatLike], dst: cv2.typing.MatLike | 
 def vconcat(src: typing.Sequence[UMat], dst: UMat | None = ...) -> UMat: ...
 def waitKey(delay: int = ...) -> int: ...
 def waitKeyEx(delay: int = ...) -> int: ...
+
+
 @typing.overload
 def warpAffine(
     src: cv2.typing.MatLike,
@@ -10372,6 +11487,8 @@ def warpAffine(
     borderMode: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def warpAffine(
     src: UMat,
@@ -10382,6 +11499,8 @@ def warpAffine(
     borderMode: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def warpPerspective(
     src: cv2.typing.MatLike,
@@ -10392,6 +11511,8 @@ def warpPerspective(
     borderMode: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def warpPerspective(
     src: UMat,
@@ -10402,6 +11523,8 @@ def warpPerspective(
     borderMode: int = ...,
     borderValue: cv2.typing.Scalar = ...,
 ) -> UMat: ...
+
+
 @typing.overload
 def warpPolar(
     src: cv2.typing.MatLike,
@@ -10411,6 +11534,8 @@ def warpPolar(
     flags: int,
     dst: cv2.typing.MatLike | None = ...,
 ) -> cv2.typing.MatLike: ...
+
+
 @typing.overload
 def warpPolar(
     src: UMat,
