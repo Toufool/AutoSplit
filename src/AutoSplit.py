@@ -42,9 +42,9 @@ from utils import (
     AUTOSPLIT_VERSION,
     BGRA_CHANNEL_COUNT,
     FROZEN,
-    IS_WAYLAND,
     ONE_SECOND,
     QTIMER_FPS_LIMIT,
+    RUNNING_WAYLAND,
     auto_split_directory,
     decimal,
     flatten,
@@ -985,7 +985,7 @@ def main():
             error_messages.linux_groups()
         if KEYBOARD_UINPUT_ISSUE:
             error_messages.linux_uinput()
-        if IS_WAYLAND:
+        if RUNNING_WAYLAND:
             error_messages.linux_wayland()
 
         AutoSplit()

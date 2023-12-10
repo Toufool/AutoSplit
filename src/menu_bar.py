@@ -270,10 +270,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme"),
         )
         self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
-        # TODO: Check if this is still necessary now that fusion theme is used on both
-        # if sys.platform == "linux":
-        #     geometry = self.readme_link_button.geometry()
-        #     self.readme_link_button.setGeometry(QtCore.QRect(51, 225, geometry.width(), geometry.height()))
+        if sys.platform == "linux":
+            geometry = self.readme_link_button.geometry()
+            self.readme_link_button.setText("#DOC#")  # In-button font has different width so "README" doesn't fit -.-
+            self.readme_link_button.setGeometry(QtCore.QRect(116, 220, geometry.width(), geometry.height()))
 
     def __select_screenshot_directory(self):
         self._autosplit_ref.settings_dict["screenshot_directory"] = QFileDialog.getExistingDirectory(

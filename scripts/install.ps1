@@ -35,7 +35,7 @@ If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
     # python3-tk for splash screen, npm for pyright, the rest for PySide6
-    sudo apt-get install -y python3-pip python3-tk npm libegl1 libxkbcommon
+    sudo apt-get install -y python3-pip python3-tk npm libegl1 libxkbcommon0
   }
 }
 # Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.

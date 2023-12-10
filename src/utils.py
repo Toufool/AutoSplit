@@ -22,8 +22,14 @@ if sys.platform == "win32":
     from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
     from winsdk.windows.media.capture import MediaCapture
 
+RUNNING_WAYLAND: bool = False
 if sys.platform == "linux":
     import fcntl
+
+    from pyscreeze import (
+        RUNNING_WAYLAND as RUNNING_WAYLAND,  # pyright: ignore[reportConstantRedefinition, reportGeneralTypeIssues, reportUnknownVariableType]  # noqa: PLC0414
+    )
+
 
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
@@ -31,12 +37,12 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
+DWMWA_EXTENDED_FRAME_BOUNDS = 9
+MAXBYTE = 255
 ONE_SECOND = 1000
 """1000 milliseconds in 1 second"""
 QTIMER_FPS_LIMIT = 1000
 """QTimers are accurate to the millisecond"""
-DWMWA_EXTENDED_FRAME_BOUNDS = 9
-MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3
 """How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
@@ -213,7 +219,6 @@ FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
 auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
 """The directory of either the AutoSplit executable or AutoSplit.py"""
-IS_WAYLAND = bool(os.environ.get("WAYLAND_DISPLAY", False))
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number

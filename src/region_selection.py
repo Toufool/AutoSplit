@@ -33,6 +33,7 @@ if sys.platform == "win32":
 
 if sys.platform == "linux":
     from Xlib.display import Display
+
     # This variable may be missing in desktopless environment. x11 | wayland
     os.environ.setdefault("XDG_SESSION_TYPE", "x11")
 
@@ -66,6 +67,14 @@ IMREAD_EXT_FILTER = (
     + ");;"
     + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
 )
+
+
+def get_top_window_at(x: int, y: int):
+    """Give QWidget time to disappear to avoid Xlib.error.BadDrawable on Linux."""
+    if sys.platform == "linux":
+        # Tested in increments of 10ms on my Pop!_OS 22.04 VM
+        QTest.qWait(80)
+    return getTopWindowAt(x, y)
 
 
 # TODO: For later as a different picker option
@@ -113,7 +122,7 @@ def select_region(autosplit: "AutoSplit"):
         QTest.qWait(1)
     del selector
 
-    window = getTopWindowAt(x, y)
+    window = get_top_window_at(x, y)
     if not window:
         error_messages.region()
         return
@@ -133,9 +142,7 @@ def select_region(autosplit: "AutoSplit"):
         offset_x = window_x + left_bounds
         offset_y = window_y + top_bounds
     else:
-        xdisplay = Display()
-        root = xdisplay.screen().root
-        data = root.translate_coords(autosplit.hwnd, 0, 0)._data  # noqa: SLF001
+        data = window._xWin.translate_coords(autosplit.hwnd, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
         offset_x = data["x"]
         offset_y = data["y"]
 
@@ -162,7 +169,7 @@ def select_window(autosplit: "AutoSplit"):
         QTest.qWait(1)
     del selector
 
-    window = getTopWindowAt(x, y)
+    window = get_top_window_at(x, y)
     if not window:
         error_messages.region()
         return
@@ -351,7 +358,7 @@ class BaseSelectWidget(QtWidgets.QWidget):
                 data["width"],
                 data["height"],
             )
-        self.setWindowTitle(" ")
+        self.setWindowTitle(type(self).__name__)
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()

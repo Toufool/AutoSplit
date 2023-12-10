@@ -114,8 +114,8 @@ This program can be used to automatically start, split, and reset your preferred
 
 ##### Linux
 
-- **XDisplay** (fast, requires xcb)  
-    Uses X to take screenshots of the display.
+- **X11 XCB** (fast, requires XCB)  
+    Uses the XCB library to take screenshots of the X11 server.
 - **Scrot** (very slow, may leave files)  
     Uses Scrot (SCReenshOT) to take screenshots.  
     Leaves behind a screenshot file if interrupted.  
