@@ -6,9 +6,9 @@ pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 # These libraries install extra requirements we don't want
 # Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
 # PyAutoGUI: We only use it for hotkeys
-# ImageHash: uneeded + broken on Python 3.12 PyWavelets install
-# scipy: needed for ImageHash
-pip install PyAutoGUI ImageHash scipy --no-deps --upgrade
+# D3DShot: Will install Pillow, which we don't use on Windows.
+#          Even then, PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
+pip install PyAutoGUI "D3DShot>=0.1.5 ; sys_platform == 'win32'" --no-deps --upgrade
 
 # Patch libraries so we don't have to install from git
 
@@ -24,11 +24,11 @@ $libPath = python -c 'import pymonctl as _; print(_.__path__[0])'
 $libPath = python -c 'import pywinbox as _; print(_.__path__[0])'
 (Get-Content "$libPath/_pywinbox_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
   Set-Content "$libPath/_pywinbox_win.py"
-# Uninstall optional dependencies if PyAutoGUI was installed outside this script
+# Uninstall optional dependencies if PyAutoGUI or D3DShot was installed outside this script
 # pyscreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness
-# pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
+# Pillow, pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
 # (also --exclude from build script, but more consistent with unfrozen run)
-python -m pip uninstall pyscreeze pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y
+python -m pip uninstall pyscreeze pyscreenshot mss Pillow pygetwindow pymsgbox pytweening MouseInfo -y
 
 
 # Don't compile resources on the Build CI job as it'll do so in build script

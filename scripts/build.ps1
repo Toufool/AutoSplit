@@ -17,7 +17,7 @@ $arguments = @(
   '--exclude=pymsgbox',
   '--exclude=pytweening',
   '--exclude=mouseinfo',
-  # Used by imagehash.whash
-  '--exclude=pywt')
+  # Used by D3DShot
+  '--exclude=PIL')
 
 Start-Process -Wait -NoNewWindow pyinstaller -ArgumentList $arguments

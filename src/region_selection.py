@@ -79,7 +79,7 @@ def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUn
         autosplit.capture_method.reinitialize()
 
     picker = GraphicsCapturePicker()
-    initialize_with_window(picker, int(autosplit.effectiveWinId()))
+    initialize_with_window(picker, autosplit.effectiveWinId())
     async_operation = picker.pick_single_item_async()
     # None if the selection is canceled
     if async_operation:

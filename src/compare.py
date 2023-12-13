@@ -1,9 +1,11 @@
 from math import sqrt
+from typing import cast
 
 import cv2
-import imagehash
+import numpy as np
+import numpy._typing as npt
+import scipy.fft
 from cv2.typing import MatLike
-from PIL import Image
 
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
@@ -80,6 +82,28 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
     return 1 - (min_val / max_error)
 
 
+def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
+    """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
+    # OpenCV has its own pHash comparison implementation in `cv2.img_hash`, but it requires contrib/extra modules
+    # and is innacurate unless we precompute the size with a specific interpolation.
+    # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
+    #
+    # pHash = cv2.img_hash.PHash.create()
+    # source = cv2.resize(source, (8, 8), interpolation=cv2.INTER_AREA)
+    # capture = cv2.resize(capture, (8, 8), interpolation=cv2.INTER_AREA)
+    # source_hash = pHash.compute(source)
+    # capture_hash = pHash.compute(capture)
+    # hash_diff = pHash.compare(source_hash, capture_hash)
+
+    img_size = hash_size * highfreq_factor
+    image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_AREA)
+    dct = cast(npt.NDArray[np.float64], scipy.fft.dct(scipy.fft.dct(image, axis=0), axis=1))
+    dct_low_frequency = dct[:hash_size, :hash_size]
+    median = np.median(dct_low_frequency)
+    return dct_low_frequency > median
+
+
 def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
     Compares the Perceptual Hash of the two given images and returns the similarity between the two.
@@ -89,18 +113,18 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     @param mask: An image matching the dimensions of the source, but 1 channel grayscale
     @return: The similarity between the hashes of the image as a number 0 to 1.
     """
-    # Since imagehash doesn't have any masking itself, bitwise_and will allow us
-    # to apply the mask to the source and capture before calculating the pHash for
-    # each of the images. As a result of this, this function is not going to be very
-    # helpful for large masks as the images when shrinked down to 8x8 will mostly be
-    # the same
+    # Apply the mask to the source and capture before calculating the
+    # pHash for each of the images. As a result of this, this function
+    # is not going to be very helpful for large masks as the images
+    # when shrinked down to 8x8 will mostly be the same.
     if is_valid_image(mask):
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 
-    source_hash = imagehash.phash(Image.fromarray(source))
-    capture_hash = imagehash.phash(Image.fromarray(capture))
-    hash_diff = source_hash - capture_hash
+    source_hash = __cv2_phash(source)
+    capture_hash = __cv2_phash(capture)
+    hash_diff = np.count_nonzero(source_hash != capture_hash)
+
     return 1 - (hash_diff / 64.0)
 
 
