@@ -177,5 +177,5 @@ reportFunctionMemberAccess = "none"
 reportUnnecessaryComparison = "warning"
 # Using Flake8/Ruff instead
 reportUnusedImport = "none"
-# numpy has way too many complex types that triggers this
+# pywin32 has way too many Unknown parameters left
 reportUnknownMemberType = "none"

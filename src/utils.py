@@ -10,9 +10,9 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
+import win32gui
 import win32ui
 from cv2.typing import MatLike
-from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
 
