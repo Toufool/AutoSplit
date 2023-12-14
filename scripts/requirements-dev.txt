@@ -24,5 +24,4 @@ types-psutil
 types-PyAutoGUI
 types-pyinstaller
 types-pywin32 ; sys_platform == 'win32'
-types-requests
 types-toml

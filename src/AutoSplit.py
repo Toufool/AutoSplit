@@ -9,7 +9,6 @@ from time import time
 from types import FunctionType
 from typing import NoReturn
 
-import certifi
 import cv2
 from cv2.typing import MatLike
 from psutil import process_iter
@@ -52,8 +51,6 @@ from utils import (
 
 CHECK_FPS_ITERATIONS = 10
 
-# Needed when compiled, along with the custom hook-requests PyInstaller hook
-os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
