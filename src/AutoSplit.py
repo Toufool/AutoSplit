@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import ctypes
 import os
 import signal
 import sys
@@ -17,6 +16,7 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 from typing_extensions import override
+from win32comext.shell import shell as shell32
 
 import error_messages
 import user_profile
@@ -55,7 +55,7 @@ CHECK_FPS_ITERATIONS = 10
 # Needed when compiled, along with the custom hook-requests PyInstaller hook
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
