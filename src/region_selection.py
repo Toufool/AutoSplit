@@ -1,17 +1,16 @@
-import ctypes
-import ctypes.wintypes
 import os
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import cv2
 import numpy as np
+import win32api
+import win32gui
 from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
 from typing_extensions import override
-from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
@@ -28,9 +27,6 @@ from utils import (
     is_valid_hwnd,
     is_valid_image,
 )
-
-user32 = ctypes.windll.user32
-
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -298,10 +294,10 @@ class BaseSelectWidget(QtWidgets.QWidget):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        x = user32.GetSystemMetrics(SM_XVIRTUALSCREEN)
-        y = user32.GetSystemMetrics(SM_YVIRTUALSCREEN)
-        width = user32.GetSystemMetrics(SM_CXVIRTUALSCREEN)
-        height = user32.GetSystemMetrics(SM_CYVIRTUALSCREEN)
+        x = cast(int, win32api.GetSystemMetrics(SM_XVIRTUALSCREEN))
+        y = cast(int, win32api.GetSystemMetrics(SM_YVIRTUALSCREEN))
+        width = cast(int, win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN))
+        height = cast(int, win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN))
         self.setGeometry(x, y, width, height)
         self.setFixedSize(width, height)  # Prevent move/resizing on Linux
         self.setWindowTitle(type(self).__name__)
