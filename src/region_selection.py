@@ -1,6 +1,6 @@
 import os
 from math import ceil
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -294,10 +294,10 @@ class BaseSelectWidget(QtWidgets.QWidget):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        x = cast(int, win32api.GetSystemMetrics(SM_XVIRTUALSCREEN))
-        y = cast(int, win32api.GetSystemMetrics(SM_YVIRTUALSCREEN))
-        width = cast(int, win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN))
-        height = cast(int, win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN))
+        x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
+        y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
+        width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
+        height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
         self.setGeometry(x, y, width, height)
         self.setFixedSize(width, height)  # Prevent move/resizing on Linux
         self.setWindowTitle(type(self).__name__)

@@ -37,8 +37,9 @@ class BitBltCaptureMethod(CaptureMethodBase):
     @override
     def get_frame(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
+        width = selection["width"]
+        height = selection["height"]
         hwnd = self._autosplit_ref.hwnd
-        image: MatLike | None = None
 
         if not self.check_selected_region_exists():
             return None
@@ -57,11 +58,11 @@ class BitBltCaptureMethod(CaptureMethodBase):
 
             compatible_dc = dc_object.CreateCompatibleDC()
             bitmap = win32ui.CreateBitmap()
-            bitmap.CreateCompatibleBitmap(dc_object, selection["width"], selection["height"])
+            bitmap.CreateCompatibleBitmap(dc_object, width, height)
             compatible_dc.SelectObject(bitmap)
             compatible_dc.BitBlt(
                 (0, 0),
-                (selection["width"], selection["height"]),
+                (width, height),
                 dc_object,
                 (selection["x"] + left_bounds, selection["y"] + top_bounds),
                 win32con.SRCCOPY,
@@ -74,7 +75,7 @@ class BitBltCaptureMethod(CaptureMethodBase):
         if is_blank(image):
             image = None
         else:
-            image.shape = (selection["height"], selection["width"], BGRA_CHANNEL_COUNT)
+            image.shape = (height, width, BGRA_CHANNEL_COUNT)
 
         # Cleanup DC and handle
         try_delete_dc(dc_object)
