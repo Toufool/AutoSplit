@@ -10,6 +10,7 @@ import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
 from hotkeys import HOTKEYS, remove_all_hotkeys, set_hotkey
+from menu_bar import open_settings
 from utils import auto_split_directory
 
 if TYPE_CHECKING:
@@ -120,6 +121,14 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
     if load_settings_file_path.endswith(".pkl"):
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
+
+    # Allow seemlessly reloading the entire settings widget
+    settings_widget_was_open = False
+    settings_widget = cast(QtWidgets.QWidget | None, autosplit.SettingsWidget)
+    if settings_widget:
+        settings_widget_was_open = settings_widget.isVisible()
+        settings_widget.close()
+
     try:
         with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
@@ -155,6 +164,9 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
             + f"\n{autosplit.settings_dict['captured_window_title']!r}"
             + "\nto automatically load Capture Region",
         )
+
+    if settings_widget_was_open:
+        open_settings(autosplit)
 
     return True
 

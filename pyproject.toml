@@ -128,6 +128,7 @@ exclude = ".venv/*,src/gen/*"
 ignore = [
   "E124", # Closing bracket may not match multi-line method invocation style (enforced by add-trailing-comma)
   "E70", # Allow ... on same line as def
+  "E721", # Breaks when needing an exact type
   # Autofixed by Ruff
   # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
   "E2", # Whitespace
