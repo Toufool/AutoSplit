@@ -28,7 +28,7 @@ class Region(TypedDict):
     height: int
 
 
-class CaptureMethodMeta(EnumMeta):
+class CaptureMethodEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
     def __contains__(self, other: object):
@@ -41,7 +41,7 @@ class CaptureMethodMeta(EnumMeta):
 
 @unique
 # TODO: Try StrEnum in Python 3.11
-class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
+class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
     # Allow TOML to save as a simple string
     @override
     def __repr__(self):
