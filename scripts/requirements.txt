@@ -3,7 +3,6 @@
 # Read /docs/build%20instructions.md for more information on how to install, run and build the python code.
 #
 # Dependencies:
-certifi
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.26  # Python 3.12 support
 opencv-python-headless>=4.8.1.78  # Typing fixes
@@ -13,14 +12,12 @@ psutil>=5.9.6  # Python 3.12 fixes
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
 PySide6-Essentials>=6.6.0  # Python 3.12 support
-requests>=2.28.2  # charset_normalizer 3.x update
 scipy>=1.11.2 # Python 3.12 support
 toml
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
 pyinstaller>=5.13  # Python 3.12 support
-pyinstaller-hooks-contrib>=2022.15  # charset-normalizer fix https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/534
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #

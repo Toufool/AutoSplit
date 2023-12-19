@@ -1,14 +1,15 @@
 import asyncio
+import json
 import webbrowser
 from typing import TYPE_CHECKING, Any, cast
+from urllib.error import URLError
+from urllib.request import urlopen
 
-import requests
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QPalette
 from PySide6.QtWidgets import QFileDialog
-from requests.exceptions import RequestException
 from typing_extensions import override
 
 import error_messages
@@ -97,10 +98,11 @@ class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
     @override
     def run(self):
         try:
-            response = requests.get(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30)
-            latest_version = str(response.json()["name"]).split("v")[1]
+            with urlopen(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30) as response:  # noqa: S310
+                json_response: dict[str, str] = json.loads(response.read())
+                latest_version = json_response["name"].split("v")[1]
             self._autosplit_ref.update_checker_widget_signal.emit(latest_version, self.check_on_open)
-        except (RequestException, KeyError):
+        except (URLError, KeyError):
             if not self.check_on_open:
                 self._autosplit_ref.show_error_signal.emit(error_messages.check_for_updates)
 

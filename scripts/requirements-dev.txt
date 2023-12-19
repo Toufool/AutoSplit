@@ -22,6 +22,5 @@ types-keyboard
 types-psutil
 types-PyAutoGUI
 types-pyinstaller
-types-pywin32 ; sys_platform == 'win32'
-types-requests
+types-pywin32>=306.0.0.8 ; sys_platform == 'win32'
 types-toml

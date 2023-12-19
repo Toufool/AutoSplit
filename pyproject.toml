@@ -157,8 +157,6 @@ reportMissingTypeStubs = "warning"
 reportUnnecessaryComparison = "warning"
 # Using Flake8/Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
 reportUnusedImport = "none"
-# pywin32 has way too many Unknown parameters left
-reportUnknownMemberType = "none"
 
 ###
 # Off by default even in strict mode

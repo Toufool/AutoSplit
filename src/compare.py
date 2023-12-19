@@ -128,6 +128,10 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
+def __compare_dummy(*_: object):
+    return 0.0
+
+
 def get_comparison_method_by_index(comparison_method_index: int):
     match comparison_method_index:
         case 0:
@@ -138,10 +142,6 @@ def get_comparison_method_by_index(comparison_method_index: int):
             return compare_phash
         case _:
             return __compare_dummy
-
-
-def __compare_dummy(*_: object):
-    return 0.0
 
 
 def check_if_image_has_transparency(image: MatLike):
