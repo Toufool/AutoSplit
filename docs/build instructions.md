@@ -26,7 +26,7 @@
     - `python3 -m venv .venv`
     - `source .venv/bin/activate`
 - Run `./scripts/install.ps1` to install all dependencies.
-  - If you're having issues with the PySide generated code, you might want to first run `pip uninstall -y shiboken6 PySide PySide-Essentials`
+  - If you're having issues with the PySide generated code, you might want to first run `pip uninstall -y shiboken6 PySide6 PySide6-Essentials`
 - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
   - Or debug by pressing `F5` in VSCode.
   - The `--auto-controlled` flag is passed when AutoSplit is started by LiveSplit.
