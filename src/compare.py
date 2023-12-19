@@ -98,10 +98,14 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)
 
-    source_hash = imagehash.phash(Image.fromarray(source))
-    capture_hash = imagehash.phash(Image.fromarray(capture))
+    source_hash = imagehash.phash(Image.fromarray(source))  # pyright: ignore[reportUnknownMemberType]
+    capture_hash = imagehash.phash(Image.fromarray(capture))  # pyright: ignore[reportUnknownMemberType]
     hash_diff = source_hash - capture_hash
     return 1 - (hash_diff / 64.0)
+
+
+def __compare_dummy(*_: object):
+    return 0.0
 
 
 def get_comparison_method_by_index(comparison_method_index: int):
@@ -114,10 +118,6 @@ def get_comparison_method_by_index(comparison_method_index: int):
             return compare_phash
         case _:
             return __compare_dummy
-
-
-def __compare_dummy(*_: object):
-    return 0.0
 
 
 def check_if_image_has_transparency(image: MatLike):
