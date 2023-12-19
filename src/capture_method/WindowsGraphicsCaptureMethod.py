@@ -6,9 +6,9 @@ import asyncio
 from typing import TYPE_CHECKING, cast
 
 import numpy as np
+import win32gui
 from cv2.typing import MatLike
 from typing_extensions import override
-from win32 import win32gui
 from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winsdk.windows.graphics.capture.interop import create_for_window

@@ -15,12 +15,13 @@ $arguments = @(
   '--exclude=pygetwindow',
   '--exclude=pymsgbox',
   '--exclude=pytweening',
-  '--exclude=mouseinfo',
-  # Used by imagehash.whash
-  '--exclude=pywt')
+  '--exclude=mouseinfo')
 if ($IsWindows) {
-  # Installed by PyAutoGUI
-  $arguments += '--exclude=pyscreeze'
+  $arguments += @(
+    # Installed by PyAutoGUI, but used by linux
+    '--exclude=pyscreeze'
+    # Used by D3DShot
+    '--exclude=PIL')
 }
 if ($IsLinux) {
   $arguments += @(

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import ctypes
 import os
 import signal
 import sys
@@ -9,7 +8,6 @@ from time import time
 from types import FunctionType
 from typing import NoReturn
 
-import certifi
 import cv2
 from cv2.typing import MatLike
 from psutil import process_iter
@@ -52,11 +50,10 @@ from utils import (
     open_file,
 )
 
-# Needed when compiled, along with the custom hook-requests PyInstaller hook
-os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 if sys.platform == "win32":
+    from win32comext.shell import shell as shell32
     myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):

@@ -2,15 +2,15 @@ import sys
 
 if sys.platform != "win32":
     raise OSError
-import ctypes
 from typing import TYPE_CHECKING, cast
 
 import cv2
 import d3dshot
+import win32api
 import win32con
+import win32gui
 from cv2.typing import MatLike
 from typing_extensions import override
-from win32 import win32gui
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from utils import GITHUB_REPOSITORY, get_window_bounds
@@ -41,7 +41,7 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
     def _read_action(self):
         selection = self._autosplit_ref.settings_dict["capture_region"]
         hwnd = self._autosplit_ref.hwnd
-        hmonitor = ctypes.windll.user32.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+        hmonitor = win32api.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
         # if not hmonitor or not self.check_selected_region_exists():
         if not hmonitor:
             return None

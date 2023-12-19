@@ -130,14 +130,15 @@ ignore = [
   "E70", # Allow ... on same line as def
   # Autofixed by Ruff
   # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
-  "E20", # whitespace-after-* & whitespace-before-*
-  "E211", # whitespace-before-parameters
-  "E231", # missing-whitespace
-  "E401", # I001: unsorted-imports
-  "E71", # Comparisons
+  "E2", # Whitespace
+  "E703", #	useless-semicolon
+  "E71", # Statement (comparisons)
   "E731", # lambda-assignment
-  "W29", # Whitespaces
+  "W29", # Whitespace warning
   "W605", # invalid-escape-sequence
+  # Autofixed by other Ruff rules
+  "E401", # I001: unsorted-imports
+  "W690", # UP: pyupgrade
 ]
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
@@ -146,14 +147,35 @@ typeCheckingMode = "strict"
 pythonVersion = "3.10"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
-# Extra strict
+
+###
+# Downgraded diagnostics
+###
+# Type stubs may not be completable
+reportMissingTypeStubs = "warning"
+# Extra runtime safety
+reportUnnecessaryComparison = "warning"
+# Using Flake8/Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
+reportUnusedImport = "none"
+
+###
+# Off by default even in strict mode
+###
+deprecateTypingAliases = true
+enableExperimentalFeatures = true
+reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
-reportCallInDefaultInitializer = "error"
-reportMissingSuperCall = "none" # False positives on base classes
+# False positives with TYPE_CHECKING
+reportImportCycles = "information"
+# Too strict. False positives on base classes
+reportMissingSuperCall = "none"
 reportPropertyTypeMismatch = "error"
+reportShadowedImports = "error"
 reportUninitializedInstanceVariable = "error"
 reportUnnecessaryTypeIgnoreComment = "error"
+reportUnusedCallResult = "none"
+
 # Exclude from scanning when running pyright
 exclude = [
   ".venv/",
@@ -166,16 +188,3 @@ ignore = [
   # We expect stub files to be incomplete or contain useless statements
   "**/*.pyi",
 ]
-reportUnusedCallResult = "none"
-# Type stubs may not be completable
-reportMissingTypeStubs = "warning"
-# False positives with TYPE_CHECKING
-reportImportCycles = "information"
-# False positives with PySide .connect
-reportFunctionMemberAccess = "none"
-# Extra runtime safety
-reportUnnecessaryComparison = "warning"
-# Using Flake8/Ruff instead
-reportUnusedImport = "none"
-# numpy has way too many complex types that triggers this
-reportUnknownMemberType = "none"

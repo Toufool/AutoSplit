@@ -11,7 +11,8 @@ pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 $files = Get-ChildItem ./src/gen/ *.py
 foreach ($file in $files) {
     (Get-Content $file.PSPath) |
-    ForEach-Object { $_ -replace 'import resources_rc', 'from . import resources_rc' } |
+    ForEach-Object { $_.replace('import resources_rc', 'from . import resources_rc') } |
+    ForEach-Object { $_ -replace 'def (\w+?)\(self, (\w+?)\):', 'def $1(self, $2: QWidget):' } |
     Set-Content $file.PSPath
 }
 Write-Host 'Generated code from .ui files'
