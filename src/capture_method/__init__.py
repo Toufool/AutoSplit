@@ -143,12 +143,9 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
 
-    if selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-        autosplit.select_region_button.setDisabled(True)
-        autosplit.select_window_button.setDisabled(True)
-    else:
-        autosplit.select_region_button.setDisabled(False)
-        autosplit.select_window_button.setDisabled(False)
+    disable_selection_buttons = selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
+    autosplit.select_region_button.setDisabled(disable_selection_buttons)
+    autosplit.select_window_button.setDisabled(disable_selection_buttons)
 
 
 @dataclass

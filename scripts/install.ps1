@@ -25,7 +25,7 @@ $libPath = python -c 'import pywinbox as _; print(_.__path__[0])'
 (Get-Content "$libPath/_pywinbox_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
   Set-Content "$libPath/_pywinbox_win.py"
 # Uninstall optional dependencies if PyAutoGUI was installed outside this script
-# pyscreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness
+# pyscreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows
 # pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
 # (also --exclude from build script, but more consistent with unfrozen run)
 python -m pip uninstall pyscreeze pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y

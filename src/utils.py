@@ -24,10 +24,10 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
-ONE_SECOND = 1000
-"""1000 milliseconds in 1 second"""
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
+ONE_SECOND = 1000
+"""1000 milliseconds in 1 second"""
 BGR_CHANNEL_COUNT = 3
 """How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
