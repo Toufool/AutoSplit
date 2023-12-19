@@ -1,11 +1,9 @@
 from math import sqrt
-from typing import cast
 
 import cv2
 import numpy as np
-import numpy._typing as npt
-import scipy.fft
 from cv2.typing import MatLike
+from scipy import fft
 
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
@@ -98,7 +96,7 @@ def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
     img_size = hash_size * highfreq_factor
     image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
     image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_AREA)
-    dct = cast(npt.NDArray[np.float64], scipy.fft.dct(scipy.fft.dct(image, axis=0), axis=1))
+    dct = fft.dct(fft.dct(image, axis=0), axis=1)
     dct_low_frequency = dct[:hash_size, :hash_size]
     median = np.median(dct_low_frequency)
     return dct_low_frequency > median
