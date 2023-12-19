@@ -494,13 +494,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.start_auto_splitter_signal.emit()
 
-    def __check_for_reset_state_update_ui(self):
-        """Check if AutoSplit is started, if not then update the GUI."""
-        if not self.is_running:
-            self.gui_changes_on_reset(True)
-            return True
-        return False
-
     def __auto_splitter(self):  # noqa: PLR0912,PLR0915
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
             self.gui_changes_on_reset(True)
@@ -805,7 +798,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.table_reset_image_threshold_label.setText("N/A")
             self.table_reset_image_highest_label.setText("N/A")
 
-        return self.__check_for_reset_state_update_ui()
+        # Check if AutoSplit is still running after the above reset check, if not then update the GUI.
+        if not self.is_running:
+            self.gui_changes_on_reset(True)
+            return True
+        return False
 
     def __update_split_image(self, specific_image: AutoSplitImage | None = None):
         # Start image is expected to be out of range (index 0 of 0-length array)
