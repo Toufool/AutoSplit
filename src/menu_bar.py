@@ -23,7 +23,7 @@ from capture_method import (
 )
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
-from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
+from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -233,7 +233,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
     def __fps_limit_changed(self, value: int):
         value = self.fps_limit_spinbox.value()
         self._autosplit_ref.settings_dict["fps_limit"] = value
-        self._autosplit_ref.timer_live_image.setInterval(int(ONE_SECOND / value))
         self._autosplit_ref.capture_method.set_fps_limit(value)
 
     @fire_and_forget
@@ -319,7 +318,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # Capture Settings
         self.fps_limit_spinbox.valueChanged.connect(self.__fps_limit_changed)
         self.live_capture_region_checkbox.stateChanged.connect(
-            lambda: self.__set_value("live_capture_region", self.live_capture_region_checkbox.isChecked()),
+            lambda: user_profile.update_live_capture_region_setting(
+                self._autosplit_ref, self.live_capture_region_checkbox.isChecked(),
+            ),
         )
         self.capture_method_combobox.currentIndexChanged.connect(
             lambda: self.__set_value("capture_method", self.__capture_method_changed()),

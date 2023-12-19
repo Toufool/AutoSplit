@@ -241,3 +241,13 @@ def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bo
         "check_for_updates_on_open",
         value,
     )
+
+
+def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):
+    autosplit.settings_dict["live_capture_region"] = value
+    if value:
+        autosplit.capture_method.subscribe_to_new_frame(autosplit.update_live_image_details)
+    else:
+        autosplit.update_live_image_details(None)
+        autosplit.live_image.setText("Live Capture Region Hidden")
+        autosplit.capture_method.unsubscribe_from_new_frame(autosplit.update_live_image_details)

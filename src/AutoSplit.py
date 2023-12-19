@@ -71,12 +71,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Use this signal when trying to show an error from outside the main thread
     show_error_signal = QtCore.Signal(FunctionType)
 
-    # Timers
-    timer_live_image = QtCore.QTimer()
-    timer_live_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
-    timer_start_image = QtCore.QTimer()
-    timer_start_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
-
     # Widgets
     AboutWidget: about.Ui_AboutAutoSplitWidget | None = None
     UpdateCheckerWidget: update_checker.Ui_UpdateChecker | None = None
@@ -198,13 +192,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.undo_split_signal.connect(self.undo_split)
         self.pause_signal.connect(self.pause)
         self.screenshot_signal.connect(self.__take_screenshot)
-
-        # live image checkbox
-        self.timer_live_image.timeout.connect(lambda: self.__update_live_image_details(None, True))
-        self.timer_live_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
-
-        # Automatic timer start
-        self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
+        # Before loading settings since the default value of "Live Capture Region" is True
+        self.capture_method.subscribe_to_new_frame(self.update_live_image_details)
 
         self.show()
 
@@ -239,14 +228,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
             self.reload_start_image_signal.emit(False, True)
 
-    def __update_live_image_details(self, capture: MatLike | None, called_from_timer: bool = False):
-        # HACK: Since this is also called in __get_capture_for_comparison,
-        # we don't need to update anything if the app is running
-        if called_from_timer:
-            if self.is_running or self.start_image:
-                return
-            capture = self.capture_method.last_captured_image
-
+    def update_live_image_details(self, capture: MatLike | None):
         # Update title from target window or Capture Device name
         capture_region_window_label = (
             self.settings_dict["capture_device_name"]
@@ -255,12 +237,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         )
         self.capture_region_window_label.setText(capture_region_window_label)
 
-        # Simply clear if "live capture region" setting is off
-        if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
-            self.live_image.clear()
-        # Set live image in UI
-        else:
-            set_preview_image(self.live_image, capture)
+        set_preview_image(self.live_image, capture)
 
     def __reload_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
         """
@@ -277,7 +254,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if self.is_running:
             raise RuntimeError("Start Image should never be reloaded whilst running!")
 
-        self.timer_start_image.stop()
+        self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
         set_preview_image(self.current_split_image, None)
@@ -304,18 +281,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.reset_highest_similarity = 0.0
         self.split_below_threshold = False
-        self.timer_start_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
+        self.capture_method.subscribe_to_new_frame(self.__compare_capture_for_auto_start)
 
         QApplication.processEvents()
 
-    def __compare_capture_for_auto_start(self):
+    def __compare_capture_for_auto_start(self, capture: MatLike | None):
         if not self.start_image:
             raise ValueError("There are no Start Image. How did we even get here?")
 
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
 
@@ -341,7 +317,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))  # noqa: PLR0916 # See above TODO
             or (not below_flag and similarity_diff >= 0)
         ):
-            self.timer_start_image.stop()
+            self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
             self.split_below_threshold = False
 
             if not self.start_image.check_flag(DUMMY_FLAG):
@@ -654,7 +630,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         start = time()
         while True:
-            capture = self.__get_capture_for_comparison()
+            capture = self.capture_method.last_captured_image
 
             if self.__reset_if_should(capture):
                 return True
@@ -723,7 +699,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for Reset Image
-            if self.__reset_if_should(self.__get_capture_for_comparison()):
+            if self.__reset_if_should(self.capture_method.last_captured_image):
                 return True
 
             time_delta = time() - start_time
@@ -743,7 +719,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return False
 
     def gui_changes_on_start(self):
-        self.timer_start_image.stop()
+        self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
         self.start_auto_splitter_button.setText("Running...")
         self.split_image_folder_button.setEnabled(False)
         self.reload_start_image_button.setEnabled(False)
@@ -795,29 +771,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         QApplication.processEvents()
         if safe_to_reload_start_image:
             self.reload_start_image_signal.emit(False, False)
-
-    def __get_capture_for_comparison(self):
-        """Grab capture region and resize for comparison."""
-        capture = self.capture_method.last_captured_image
-
-        # This most likely means we lost capture
-        # (ie the captured window was closed, crashed, lost capture device, etc.)
-        if not is_valid_image(capture):
-            # Try to recover by using the window name
-            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-                self.live_image.setText("Waiting for capture device...")
-            else:
-                message = "Trying to recover window..."
-                if self.settings_dict["capture_method"] == CaptureMethodEnum.BITBLT:
-                    message += "\n(captured window may be incompatible with BitBlt)"
-                self.live_image.setText(message)
-                _recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
-                # TODO: Gotta wait next loop now
-                # if recovered:
-                #     capture = self.capture_method.last_captured_image
-
-        self.__update_live_image_details(capture)
-        return capture
 
     def __reset_if_should(self, capture: MatLike | None):
         """Checks if we should reset, resets if it's the case, and returns the result."""
