@@ -13,7 +13,6 @@ if sys.platform == "linux":
     import grp
     import os
 
-    # https://github.com/PyCQA/pylint/issues/7240
     groups = {grp.getgrgid(group).gr_name for group in os.getgroups()}
     KEYBOARD_GROUPS_ISSUE = not {"input", "tty"}.issubset(groups)
     KEYBOARD_UINPUT_ISSUE = not try_input_device_access()
