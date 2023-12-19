@@ -45,6 +45,7 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
 
         # The video capture device isn't accessible, don't bother with it.
         if not self.capture_device.isOpened():
+            self.close()
             return
 
         filter_graph = FilterGraph()

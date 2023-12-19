@@ -10,9 +10,9 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
+import win32gui
 import win32ui
 from cv2.typing import MatLike
-from win32 import win32gui
 from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
 from winsdk.windows.media.capture import MediaCapture
 
@@ -24,12 +24,12 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
+DWMWA_EXTENDED_FRAME_BOUNDS = 9
+MAXBYTE = 255
 ONE_SECOND = 1000
 """1000 milliseconds in 1 second"""
 QTIMER_FPS_LIMIT = 1000
 """QTimers are accurate to the millisecond"""
-DWMWA_EXTENDED_FRAME_BOUNDS = 9
-MAXBYTE = 255
 BGR_CHANNEL_COUNT = 3
 """How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
@@ -185,5 +185,5 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.2.1" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.2.2" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

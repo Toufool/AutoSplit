@@ -1,23 +1,23 @@
-import ctypes
-import ctypes.wintypes
 import os
 from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+import win32api
+import win32gui
 from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
 from typing_extensions import override
-from win32 import win32gui
 from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
 from winsdk._winrt import initialize_with_window
 from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
 from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
+from capture_method import Region
 from utils import (
     BGR_CHANNEL_COUNT,
     MAXBYTE,
@@ -27,9 +27,6 @@ from utils import (
     is_valid_hwnd,
     is_valid_image,
 )
-
-user32 = ctypes.windll.user32
-
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -79,7 +76,7 @@ def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUn
         autosplit.capture_method.reinitialize()
 
     picker = GraphicsCapturePicker()
-    initialize_with_window(picker, int(autosplit.effectiveWinId()))
+    initialize_with_window(picker, autosplit.effectiveWinId())
     async_operation = picker.pick_single_item_async()
     # None if the selection is canceled
     if async_operation:
@@ -92,17 +89,14 @@ def select_region(autosplit: "AutoSplit"):
 
     # Need to wait until the user has selected a region using the widget
     # before moving on with selecting the window settings
-    while True:
-        width = selector.width()
-        height = selector.height()
-        x = selector.x()
-        y = selector.y()
-        if width > 0 and height > 0:
-            break
+    while not selector.isHidden():
         QTest.qWait(1)
+    selection = selector.selection
     del selector
+    if selection is None:
+        return  # No selection done
 
-    window = getTopWindowAt(x, y)
+    window = getTopWindowAt(selection["x"], selection["y"])
     if not window:
         error_messages.region()
         return
@@ -122,10 +116,10 @@ def select_region(autosplit: "AutoSplit"):
     offset_y = window_y + top_bounds
     __set_region_values(
         autosplit,
-        left=x - offset_x,
-        top=y - offset_y,
-        width=width,
-        height=height,
+        x=selection["x"] - offset_x,
+        y=selection["y"] - offset_y,
+        width=selection["width"],
+        height=selection["height"],
     )
 
 
@@ -135,15 +129,14 @@ def select_window(autosplit: "AutoSplit"):
 
     # Need to wait until the user has selected a region using the widget before moving on with
     # selecting the window settings
-    while True:
-        x = selector.x()
-        y = selector.y()
-        if x and y:
-            break
+    while not selector.isHidden():
         QTest.qWait(1)
+    selection = selector.selection
     del selector
+    if selection is None:
+        return  # No selection done
 
-    window = getTopWindowAt(x, y)
+    window = getTopWindowAt(selection["x"], selection["y"])
     if not window:
         error_messages.region()
         return
@@ -165,8 +158,8 @@ def select_window(autosplit: "AutoSplit"):
 
     __set_region_values(
         autosplit,
-        left=border_width,
-        top=titlebar_with_border_height,
+        x=border_width,
+        y=titlebar_with_border_height,
         width=client_width,
         height=client_height - border_width * 2,
     )
@@ -218,21 +211,21 @@ def align_region(autosplit: "AutoSplit"):
     # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
     __set_region_values(
         autosplit,
-        left=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
-        top=autosplit.settings_dict["capture_region"]["y"] + best_loc[1],
+        x=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
+        y=autosplit.settings_dict["capture_region"]["y"] + best_loc[1],
         width=best_width,
         height=best_height,
     )
 
 
-def __set_region_values(autosplit: "AutoSplit", left: int, top: int, width: int, height: int):
-    autosplit.settings_dict["capture_region"]["x"] = left
-    autosplit.settings_dict["capture_region"]["y"] = top
+def __set_region_values(autosplit: "AutoSplit", x: int, y: int, width: int, height: int):
+    autosplit.settings_dict["capture_region"]["x"] = x
+    autosplit.settings_dict["capture_region"]["y"] = y
     autosplit.settings_dict["capture_region"]["width"] = width
     autosplit.settings_dict["capture_region"]["height"] = height
 
-    autosplit.x_spinbox.setValue(left)
-    autosplit.y_spinbox.setValue(top)
+    autosplit.x_spinbox.setValue(x)
+    autosplit.y_spinbox.setValue(y)
     autosplit.width_spinbox.setValue(width)
     autosplit.height_spinbox.setValue(height)
 
@@ -295,28 +288,19 @@ def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, che
 
 
 class BaseSelectWidget(QtWidgets.QWidget):
-    _x = 0
-    _y = 0
-
-    @override
-    def x(self):
-        return self._x
-
-    @override
-    def y(self):
-        return self._y
+    selection: Region | None = None
 
     def __init__(self):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        self.setGeometry(
-            user32.GetSystemMetrics(SM_XVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_YVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_CXVIRTUALSCREEN),
-            user32.GetSystemMetrics(SM_CYVIRTUALSCREEN),
-        )
-        self.setWindowTitle(" ")
+        x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
+        y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
+        width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
+        height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
+        self.setGeometry(x, y, width, height)
+        self.setFixedSize(width, height)  # Prevent move/resizing on Linux
+        self.setWindowTitle(type(self).__name__)
         self.setWindowOpacity(0.5)
         self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         self.show()
@@ -332,8 +316,9 @@ class SelectWindowWidget(BaseSelectWidget):
 
     @override
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
-        self._x = int(event.position().x()) + self.geometry().x()
-        self._y = int(event.position().y()) + self.geometry().y()
+        x = int(event.position().x()) + self.geometry().x()
+        y = int(event.position().y()) + self.geometry().y()
+        self.selection = Region(x=x, y=y, width=0, height=0)
         self.close()
 
 
@@ -343,22 +328,12 @@ class SelectRegionWidget(BaseSelectWidget):
     Originated from https://github.com/harupy/snipping-tool .
     """
 
-    _right: int = 0
-    _bottom: int = 0
     __begin = QtCore.QPoint()
     __end = QtCore.QPoint()
 
     def __init__(self):
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CursorShape.CrossCursor))
         super().__init__()
-
-    @override
-    def height(self):
-        return self._bottom - self._y
-
-    @override
-    def width(self):
-        return self._right - self._x
 
     @override
     def paintEvent(self, event: QtGui.QPaintEvent):
@@ -384,11 +359,12 @@ class SelectRegionWidget(BaseSelectWidget):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
             # so the added virtual screen offsets convert them back to the virtual screen coordinates
-            self._x = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
-            self._y = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
-            self._right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()
-            self._bottom = max(self.__begin.y(), self.__end.y()) + self.geometry().y()
+            left = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
+            top = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
+            right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()
+            bottom = max(self.__begin.y(), self.__end.y()) + self.geometry().y()
 
+            self.selection = Region(x=left, y=top, width=right - left, height=bottom - top)
             self.close()
 
     @override

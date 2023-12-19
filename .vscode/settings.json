@@ -21,9 +21,9 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
+    "source.fixAll": "explicit",
     // Let dedicated linter (Ruff) organize imports
-    "source.organizeImports": false,
+    "source.organizeImports": "never"
   },
   "emeraldwalk.runonsave": {
     "commands": [
@@ -97,6 +97,8 @@
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
   "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.linux": "pwsh",
+  "terminal.integrated.defaultProfile.osx": "pwsh",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
   "xml.format.preserveSpace": [

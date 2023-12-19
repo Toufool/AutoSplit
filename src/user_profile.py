@@ -44,7 +44,8 @@ class UserProfileDict(TypedDict):
 
     @override  # pyright: ignore
     @deprecated("Use `copy.deepcopy` instead")
-    def copy(): return super().copy()
+    def copy():
+        return super().copy()
 
 
 DEFAULT_PROFILE = UserProfileDict(
