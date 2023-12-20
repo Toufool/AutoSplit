@@ -67,7 +67,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     screenshot_signal = QtCore.Signal()
     after_setting_hotkey_signal = QtCore.Signal()
     update_checker_widget_signal = QtCore.Signal(str, bool)
-    reload_images_signal = QtCore.Signal(bool, bool)
+    reload_images_signal = QtCore.Signal(bool)
     # Use this signal when trying to show an error from outside the main thread
     show_error_signal = QtCore.Signal(FunctionType)
 
@@ -168,7 +168,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.clicked.connect(lambda: self.undo_split(True))
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
-        self.reload_images_button.clicked.connect(lambda: self.__reload_images(True, True))
+        self.reload_images_button.clicked.connect(lambda: self.__reload_images(True))
         self.action_check_for_updates_on_open.changed.connect(
             lambda: user_profile.set_check_for_updates_on_open(self, self.action_check_for_updates_on_open.isChecked()),
         )
@@ -227,7 +227,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.settings_dict["split_image_directory"] = new_split_image_directory
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
-            self.reload_images_signal.emit(False, True)
+            self.reload_images_signal.emit(False)
 
     def update_live_image_details(self, capture: MatLike | None):
         # Update title from target window or Capture Device name
@@ -240,7 +240,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         set_preview_image(self.live_image, capture)
 
-    def __reload_images(self, started_by_button: bool = False, wait_for_delay: bool = True):
+    def __reload_images(self, started_by_button: bool = False):
         """
         Not thread safe (if triggered by LiveSplit for example). Use `reload_images_signal.emit` instead.
 
@@ -259,12 +259,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_reset)
 
         # Reset values that can be edited by __compare_capture_for_auto_start or __compare_capture_for_auto_reset
+        # Start related
         self.split_image_number = 0
         self.highest_similarity = 0.0
-        self.reset_highest_similarity = 0.0
         self.split_below_threshold = False
         self.current_image_file_label.setText("-")
+        self.table_current_image_live_label.setText("-")
+        self.table_current_image_highest_label.setText("-")
+        self.table_current_image_threshold_label.setText("-")
         self.start_image_status_value_label.setText("not found")
+        # Reset related
+        self.reset_highest_similarity = 0.0
         self.table_reset_image_live_label.setText("N/A")
         self.table_reset_image_threshold_label.setText("N/A")
         self.table_reset_image_highest_label.setText("N/A")
@@ -274,13 +279,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             parse_and_validate_images(self)
 
         if self.start_image:
-            if not wait_for_delay and self.start_image.get_pause_time(self) > 0:
-                self.start_image_status_value_label.setText("paused")
-                self.table_current_image_highest_label.setText("-")
-                self.table_current_image_threshold_label.setText("-")
-            else:
-                self.start_image_status_value_label.setText("ready")
-                self.__update_split_image(self.start_image)
+            self.table_current_image_threshold_label.setText(decimal(self.start_image.get_similarity_threshold(self)))
+            self.start_image_status_value_label.setText("ready")
             self.capture_method.subscribe_to_new_frame(self.__compare_capture_for_auto_start)
 
         if self.reset_image:
@@ -294,6 +294,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def __compare_capture_for_auto_start(self, capture: MatLike | None):
         if not self.start_image:
             raise ValueError("There are no Start Image. How did we even get here?")
+
+        # Note: Start Image pause time is actually done at the start of the splits loop
 
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
@@ -319,6 +321,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if below_flag and not self.split_below_threshold and similarity_diff >= 0:
             self.split_below_threshold = True
             return
+
         if (
             (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))  # noqa: PLR0916 # See above TODO
             or (not below_flag and similarity_diff >= 0)
@@ -756,7 +759,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         QApplication.processEvents()
         if safe_to_reload_start_image:
-            self.reload_images_signal.emit(False, False)
+            self.reload_images_signal.emit(False)
 
     def __is_reset_image_is_paused(self):
         if not self.reset_image:

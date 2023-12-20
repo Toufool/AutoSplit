@@ -154,14 +154,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
                 set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
-    if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-        autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"])
-    if not autosplit.capture_method.check_selected_region_exists():
-        autosplit.live_image.setText(
-            "Reload settings after opening"
-            + f"\n{autosplit.settings_dict['captured_window_title']!r}"
-            + "\nto automatically load Capture Region",
-        )
+    update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
 
     if settings_widget_was_open:
         open_settings(autosplit)
@@ -185,7 +178,7 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     # TODO: Should this check be in `__load_start_image` ?
     if not autosplit.is_running:
-        autosplit.reload_images_signal.emit(False, True)
+        autosplit.reload_images_signal.emit(False)
 
 
 def load_settings_on_open(autosplit: "AutoSplit"):

@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
-from typing import TYPE_CHECKING, final
+from typing import TYPE_CHECKING, ClassVar, final
 
 from cv2.typing import MatLike
 from PySide6 import QtCore
@@ -21,7 +21,7 @@ class CaptureMethodBase:
 
     last_captured_image: MatLike | None = None
     _autosplit_ref: "AutoSplit"
-    _subscriptions: set[Callable[[MatLike | None], object]] = set()  # FIXME: # noqa: RUF012
+    _subscriptions: ClassVar = set[Callable[[MatLike | None], object]]()
 
     def __init__(self, autosplit: "AutoSplit"):
         self._autosplit_ref = autosplit
@@ -59,15 +59,6 @@ class CaptureMethodBase:
         for subscription in self._subscriptions:
             subscription(frame)
 
-        # This most likely means we lost capture
-        # (ie the captured window was closed, crashed, lost capture device, etc.)
-        if not is_valid_image(frame):
-            # Try to recover by using the window name
-            self._autosplit_ref.live_image.setText(self.window_recovery_message)
-            self._autosplit_ref.capture_method.recover_window(
-                self._autosplit_ref.settings_dict["captured_window_title"],
-            )
-
 
 class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
     def __init__(self, autosplit: "AutoSplit"):
@@ -101,6 +92,7 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
             # optimisation on idle: no subscriber means no work needed
             return
         try:
+            captured_image = None
             if self.check_selected_region_exists():
                 captured_image = self._read_action()
                 # HACK: When WindowsGraphicsCaptureMethod tries to get images too quickly,
@@ -111,6 +103,17 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
             else:
                 self.last_captured_image = None
                 self._push_new_frame_to_subscribers(None)
+
+            # This most likely means we lost capture
+            # (ie the captured window was closed, crashed, lost capture device, etc.)
+            if not is_valid_image(captured_image):
+                # Try to recover by using the window name
+                self._autosplit_ref.live_image.setText(self.window_recovery_message)
+                recovered = self._autosplit_ref.capture_method.recover_window(
+                    self._autosplit_ref.settings_dict["captured_window_title"],
+                )
+                if recovered:
+                    self._autosplit_ref.live_image.setText("Live Capture Region hidden")
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self._autosplit_ref.show_error_signal.emit(
