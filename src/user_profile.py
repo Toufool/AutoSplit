@@ -35,7 +35,6 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
-    start_also_resets: bool
     enable_auto_reset: bool
     split_image_directory: str
     screenshot_directory: str
@@ -67,7 +66,6 @@ DEFAULT_PROFILE = UserProfileDict(
     default_delay_time=0,
     default_pause_time=10,
     loop_splits=False,
-    start_also_resets=False,
     enable_auto_reset=True,
     split_image_directory="",
     screenshot_directory="",
@@ -187,7 +185,7 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     # TODO: Should this check be in `__load_start_image` ?
     if not autosplit.is_running:
-        autosplit.reload_start_image_signal.emit(False, True)
+        autosplit.reload_images_signal.emit(False, True)
 
 
 def load_settings_on_open(autosplit: "AutoSplit"):

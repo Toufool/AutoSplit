@@ -86,10 +86,6 @@ def alignment_not_matched():
     set_text_message("No area in capture region matched reference image. Alignment failed.")
 
 
-def no_keyword_image(keyword: str):
-    set_text_message(f"Your split image folder does not contain an image with the keyword {keyword!r}.")
-
-
 def multiple_keyword_images(keyword: str):
     set_text_message(f"Only one image with the keyword {keyword!r} is allowed.")
 

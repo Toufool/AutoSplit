@@ -796,7 +796,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="reload_start_image_button">
+   <widget class="QPushButton" name="reload_images_button">
     <property name="geometry">
      <rect>
       <x>457</x>
@@ -809,7 +809,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="text">
-     <string>Reload Start Image</string>
+     <string>Reload Images</string>
     </property>
    </widget>
    <widget class="QLabel" name="start_image_status_label">
