@@ -719,12 +719,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.setEnabled(True)
         self.next_image_button.setEnabled(True)
 
-        # TODO: Do we actually need to disable setting new hotkeys once started?
-        # What does this achieve? (See below TODO)
-        if self.SettingsWidget:
-            for hotkey in HOTKEYS:
-                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
-
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
             self.reset_button.setEnabled(True)
@@ -748,12 +742,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.reload_start_image_button.setEnabled(True)
         self.previous_image_button.setEnabled(False)
         self.next_image_button.setEnabled(False)
-
-        # TODO: Do we actually need to disable setting new hotkeys once started?
-        # What does this achieve? (see above TODO)
-        if self.SettingsWidget and not self.is_auto_controlled:
-            for hotkey in HOTKEYS:
-                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(True)
