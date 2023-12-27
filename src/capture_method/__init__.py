@@ -1,12 +1,15 @@
 import asyncio
 from collections import OrderedDict
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
 from itertools import starmap
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 from _ctypes import COMError
+from cv2.typing import MatLike
 from pygrabber.dshow_graph import FilterGraph
+from PySide6 import QtCore
 from typing_extensions import Never, override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -28,7 +31,7 @@ class Region(TypedDict):
     height: int
 
 
-class CaptureMethodMeta(EnumMeta):
+class CaptureMethodEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
     def __contains__(self, other: object):
@@ -41,7 +44,7 @@ class CaptureMethodMeta(EnumMeta):
 
 @unique
 # TODO: Try StrEnum in Python 3.11
-class CaptureMethodEnum(Enum, metaclass=CaptureMethodMeta):
+class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
     # Allow TOML to save as a simple string
     @override
     def __repr__(self):
@@ -209,3 +212,27 @@ async def get_all_video_capture_devices():
         in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None
     ]
+
+
+class CaptureMethodSignal(QtCore.QObject):
+    """Made to look like a `QtCore.SignalInstance`, but with safe `connect`/`disconnect` methods."""
+
+    __frame_signal = QtCore.Signal(object)
+
+    @override
+    def connect(self, slot: Callable[[MatLike | None], object]):  # pyright: ignore[reportIncompatibleMethodOverride]
+        try:
+            return self.__frame_signal.connect(slot, QtCore.Qt.ConnectionType.UniqueConnection)
+        except RuntimeError:
+            pass
+
+    @override
+    def disconnect(self, slot: Callable[[MatLike | None], object]):  # pyright: ignore[reportIncompatibleMethodOverride]
+        try:
+            self.__frame_signal.disconnect(slot)
+        except RuntimeError:
+            pass
+
+    @override
+    def emit(self, __frame: MatLike | None):  # pyright: ignore[reportIncompatibleMethodOverride]
+        return self.__frame_signal.emit(__frame)
