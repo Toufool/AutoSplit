@@ -12,12 +12,12 @@ repos:
         args: [--fix=lf]
       - id: check-case-conflict
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.11.0
+    rev: v2.12.0
     hooks:
       - id: pretty-format-ini
         args: [--autofix]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.7" # Must match requirements-dev.txt
+    rev: "v0.1.9" # Must match requirements-dev.txt
     hooks:
       - id: ruff
         args: [--fix]
