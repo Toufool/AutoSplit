@@ -16,7 +16,6 @@ class CaptureMethodBase:
     _autosplit_ref: "AutoSplit"
 
     def __init__(self, autosplit: "AutoSplit"):
-        # Some capture methods don't need an initialization process
         self._autosplit_ref = autosplit
 
     def reinitialize(self):
@@ -24,7 +23,7 @@ class CaptureMethodBase:
         self.__init__(self._autosplit_ref)  # type: ignore[misc]
 
     def close(self):
-        # Some capture methods don't need an initialization process
+        # Some capture methods don't need any cleanup
         pass
 
     def get_frame(self) -> MatLike | None:  # noqa: PLR6301
