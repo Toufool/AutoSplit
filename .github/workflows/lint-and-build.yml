@@ -40,12 +40,17 @@ concurrency:
 
 jobs:
   ruff:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # Ruff is version and platform sensible
       matrix:
+        os: [windows-latest, ubuntu-22.04]
         python-version: ["3.10", "3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -59,12 +64,17 @@ jobs:
         shell: pwsh
       - run: ruff check .
   Pyright:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
+        os: [windows-latest, ubuntu-22.04]
         python-version: ["3.10", "3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -82,12 +92,17 @@ jobs:
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
+        os: [windows-latest, ubuntu-22.04]
         python-version: ["3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -104,13 +119,13 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: AutoSplit (Python ${{ matrix.python-version }})
+          name: AutoSplit for ${{ matrix.os }} (Python ${{ matrix.python-version }})
           path: dist/AutoSplit*
           if-no-files-found: error
       - name: Upload Build logs
         uses: actions/upload-artifact@v3
         with:
-          name: Build logs (Python ${{ matrix.python-version }})
+          name: Build logs for ${{ matrix.os }} (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt

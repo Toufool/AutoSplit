@@ -1,3 +1,7 @@
+import sys
+
+if sys.platform != "win32":
+    raise OSError
 import asyncio
 from typing import TYPE_CHECKING, cast
 
@@ -68,6 +72,7 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
 
     @override
     def close(self):
+        super().close()
         if self.frame_pool:
             self.frame_pool.close()
             self.frame_pool = None

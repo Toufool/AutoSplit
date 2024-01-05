@@ -1,20 +1,14 @@
 import os
+import sys
 from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-import win32api
-import win32gui
 from cv2.typing import MatLike
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
-from pywinctl import getTopWindowAt
 from typing_extensions import override
-from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-from winsdk._winrt import initialize_with_window
-from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 import error_messages
 from capture_method import Region
@@ -28,9 +22,27 @@ from utils import (
     is_valid_image,
 )
 
+if sys.platform == "win32":
+    import win32api
+    import win32gui
+    from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+    from winsdk._winrt import initialize_with_window
+    from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
+    from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+
+if sys.platform == "linux":
+    from Xlib.display import Display
+
+    # This variable may be missing in desktopless environment. x11 | wayland
+    os.environ.setdefault("XDG_SESSION_TYPE", "x11")
+
+# Must come after the linux XDG_SESSION_TYPE environment variable is set
+from pywinctl import getTopWindowAt
+
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
+GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
 SUPPORTED_IMREAD_FORMATS = [
@@ -56,9 +68,19 @@ IMREAD_EXT_FILTER = (
 )
 
 
+def get_top_window_at(x: int, y: int):
+    """Give QWidget time to disappear to avoid Xlib.error.BadDrawable on Linux."""
+    if sys.platform == "linux":
+        # Tested in increments of 10ms on my Pop!_OS 22.04 VM
+        QTest.qWait(80)
+    return getTopWindowAt(x, y)
+
+
 # TODO: For later as a different picker option
 def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
     """Uses the built-in GraphicsCapturePicker to select the Window."""
+    if sys.platform != "win32":
+        raise OSError
 
     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
         try:
@@ -96,7 +118,7 @@ def select_region(autosplit: "AutoSplit"):
     if selection is None:
         return  # No selection done
 
-    window = getTopWindowAt(selection["x"], selection["y"])
+    window = get_top_window_at(selection["x"], selection["y"])
     if not window:
         error_messages.region()
         return
@@ -110,10 +132,16 @@ def select_region(autosplit: "AutoSplit"):
     autosplit.settings_dict["captured_window_title"] = window_text
     autosplit.capture_method.reinitialize()
 
-    left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-    window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
-    offset_x = window_x + left_bounds
-    offset_y = window_y + top_bounds
+    if sys.platform == "win32":
+        left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
+        window_x, window_y, *_ = win32gui.GetWindowRect(hwnd)
+        offset_x = window_x + left_bounds
+        offset_y = window_y + top_bounds
+    else:
+        data = window._xWin.translate_coords(autosplit.hwnd, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        offset_x = data["x"]
+        offset_y = data["y"]
+
     __set_region_values(
         autosplit,
         x=selection["x"] - offset_x,
@@ -136,7 +164,7 @@ def select_window(autosplit: "AutoSplit"):
     if selection is None:
         return  # No selection done
 
-    window = getTopWindowAt(selection["x"], selection["y"])
+    window = get_top_window_at(selection["x"], selection["y"])
     if not window:
         error_messages.region()
         return
@@ -150,11 +178,18 @@ def select_window(autosplit: "AutoSplit"):
     autosplit.settings_dict["captured_window_title"] = window_text
     autosplit.capture_method.reinitialize()
 
-    # Exlude the borders and titlebar from the window selection. To only get the client area.
-    _, __, window_width, window_height = get_window_bounds(hwnd)
-    _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
-    border_width = ceil((window_width - client_width) / 2)
-    titlebar_with_border_height = window_height - client_height - border_width
+    if sys.platform == "win32":
+        # Exlude the borders and titlebar from the window selection. To only get the client area.
+        _, __, window_width, window_height = get_window_bounds(hwnd)
+        _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
+        border_width = ceil((window_width - client_width) / 2)
+        titlebar_with_border_height = window_height - client_height - border_width
+    else:
+        data = window._xWin.get_geometry()._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        client_height = data["height"]
+        client_width = data["width"]
+        border_width = data["border_width"]
+        titlebar_with_border_height = border_width
 
     __set_region_values(
         autosplit,
@@ -294,10 +329,17 @@ class BaseSelectWidget(QtWidgets.QWidget):
         super().__init__()
         # We need to pull the monitor information to correctly draw the geometry covering all portions
         # of the user's screen. These parameters create the bounding box with left, top, width, and height
-        x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
-        y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
-        width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
-        height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
+        if sys.platform == "win32":
+            x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
+            y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
+            width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
+            height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
+        else:
+            data = Display().screen().root.get_geometry()._data  # noqa: SLF001
+            x = data["x"]
+            y = data["y"]
+            width = data["width"]
+            height = data["height"]
         self.setGeometry(x, y, width, height)
         self.setFixedSize(width, height)  # Prevent move/resizing on Linux
         self.setWindowTitle(type(self).__name__)
