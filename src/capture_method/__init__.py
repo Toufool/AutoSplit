@@ -3,7 +3,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
 from itertools import starmap
-from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
 from _ctypes import COMError
 from pygrabber.dshow_graph import FilterGraph
@@ -99,7 +99,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         __key: Never,
-    ) -> NoReturn | type[CaptureMethodBase]:
+    ) -> type[CaptureMethodBase]:
         return super().__getitem__(__key)
 
     @override
