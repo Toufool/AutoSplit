@@ -15,7 +15,6 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
 from typing_extensions import override
-from win32comext.shell import shell as shell32
 
 import error_messages
 import user_profile
@@ -23,7 +22,7 @@ from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
-from hotkeys import HOTKEYS, after_setting_hotkey, send_command
+from hotkeys import HOTKEYS, KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
 from menu_bar import (
     about_qt,
     about_qt_for_python,
@@ -43,6 +42,7 @@ from utils import (
     FROZEN,
     ONE_SECOND,
     QTIMER_FPS_LIMIT,
+    RUNNING_WAYLAND,
     auto_split_directory,
     decimal,
     flatten,
@@ -50,8 +50,10 @@ from utils import (
     open_file,
 )
 
-myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+if sys.platform == "win32":
+    from win32comext.shell import shell as shell32
+    myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
+    shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -912,6 +914,7 @@ def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
+# TODO: Add Linux support
 def is_already_open():
     # When running directly in Python, any AutoSplit process means it's already open
     # When bundled, we must ignore itself and the splash screen
@@ -936,6 +939,12 @@ def main():
 
         if is_already_open():
             error_messages.already_open()
+        if KEYBOARD_GROUPS_ISSUE:
+            error_messages.linux_groups()
+        if KEYBOARD_UINPUT_ISSUE:
+            error_messages.linux_uinput()
+        if RUNNING_WAYLAND:
+            error_messages.linux_wayland()
 
         AutoSplit()
 

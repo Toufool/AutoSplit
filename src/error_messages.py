@@ -145,6 +145,40 @@ def already_open():
     )
 
 
+def linux_groups():
+    set_text_message(
+        "Linux users must ensure they are in the 'tty' and 'input' groups "
+        + "and have write access to '/dev/uinput'. You can run the following commands to do so:",
+        # Keep in sync with README.md and scripts/install.ps1
+        "sudo usermod -a -G tty,input $USER"
+        + "\nsudo touch /dev/uinput"
+        + "\nsudo chmod +0666 /dev/uinput"
+        + "\necho 'KERNEL==\"uinput\", TAG+=\"uaccess\"' | sudo tee /etc/udev/rules.d/50-uinput.rules"
+        + "\necho 'SUBSYSTEM==\"input\", MODE=\"0666\" GROUP=\"plugdev\"' | sudo tee /etc/udev/rules.d/12-input.rules"
+        + "\necho 'SUBSYSTEM==\"misc\", MODE=\"0666\" GROUP=\"plugdev\"' | sudo tee -a /etc/udev/rules.d/12-input.rules"
+        + "\necho 'SUBSYSTEM==\"tty\", MODE=\"0666\" GROUP=\"plugdev\"' | sudo tee -a /etc/udev/rules.d/12-input.rules"
+        + "\nloginctl terminate-user $USER",
+    )
+
+
+def linux_uinput():
+    set_text_message(
+        "Failed to create a device file using `uinput` module. "
+        + "This can happen when running Linux under WSL. "
+        + "Keyboard events have been disabled.",
+    )
+
+
+# Keep in sync with README.md#DOWNLOAD_AND_OPEN
+WAYLAND_WARNING = "All screen capture method are incompatible with Wayland. Follow this guide to disable it: " \
+    + '\n<a href="https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop">' \
+    + "https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop</a>"
+
+
+def linux_wayland():
+    set_text_message(WAYLAND_WARNING)
+
+
 def exception_traceback(exception: BaseException, message: str = ""):
     if not message:
         message = (

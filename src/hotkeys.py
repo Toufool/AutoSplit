@@ -1,3 +1,4 @@
+import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast
 
@@ -6,7 +7,18 @@ import pyautogui
 from PySide6 import QtWidgets
 
 import error_messages
-from utils import fire_and_forget, is_digit
+from utils import fire_and_forget, is_digit, try_input_device_access
+
+if sys.platform == "linux":
+    import grp
+    import os
+
+    groups = {grp.getgrgid(group).gr_name for group in os.getgroups()}
+    KEYBOARD_GROUPS_ISSUE = not {"input", "tty"}.issubset(groups)
+    KEYBOARD_UINPUT_ISSUE = not try_input_device_access()
+else:
+    KEYBOARD_GROUPS_ISSUE = False
+    KEYBOARD_UINPUT_ISSUE = False
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -23,7 +35,8 @@ HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", 
 
 
 def remove_all_hotkeys():
-    keyboard.unhook_all()
+    if not KEYBOARD_GROUPS_ISSUE and not KEYBOARD_UINPUT_ISSUE:
+        keyboard.unhook_all()
 
 
 def before_setting_hotkey(autosplit: "AutoSplit"):
@@ -239,6 +252,15 @@ def is_valid_hotkey_name(hotkey_name: str):
 
 
 def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: str = ""):
+    if KEYBOARD_GROUPS_ISSUE:
+        if not preselected_hotkey_name:
+            error_messages.linux_groups()
+        return
+    if KEYBOARD_UINPUT_ISSUE:
+        if not preselected_hotkey_name:
+            error_messages.linux_uinput()
+        return
+
     if autosplit.SettingsWidget:
         # Unfocus all fields
         cast(QtWidgets.QWidget, autosplit.SettingsWidget).setFocus()

@@ -1,7 +1,6 @@
 import asyncio
-import ctypes
-import ctypes.wintypes
 import os
+import subprocess
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
@@ -10,13 +9,27 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
 
-import win32gui
-import win32ui
 from cv2.typing import MatLike
-from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
+
+if sys.platform == "win32":
+    import ctypes
+    import ctypes.wintypes
+
+    import win32gui
+    import win32ui
+    from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
+    from winsdk.windows.media.capture import MediaCapture
+
+RUNNING_WAYLAND: bool = False
+if sys.platform == "linux":
+    import fcntl
+
+    from pyscreeze import (
+        RUNNING_WAYLAND as RUNNING_WAYLAND,  # pyright: ignore[reportConstantRedefinition, reportGeneralTypeIssues, reportUnknownVariableType]  # noqa: PLC0414
+    )
+
 
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
@@ -83,6 +96,8 @@ def first(iterable: Iterable[T]) -> T:
 
 
 def try_delete_dc(dc: "PyCDC"):
+    if sys.platform != "win32":
+        raise OSError
     try:
         dc.DeleteDC()
     except win32ui.error:
@@ -90,6 +105,9 @@ def try_delete_dc(dc: "PyCDC"):
 
 
 def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
+    if sys.platform != "win32":
+        raise OSError
+
     extended_frame_bounds = ctypes.wintypes.RECT()
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
         hwnd,
@@ -107,7 +125,11 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # noqa: S606
+    if sys.platform == "win32":
+        os.startfile(file_path)  # noqa: S606
+    else:
+        opener = "xdg-open" if sys.platform == "linux" else "open"
+        subprocess.call([opener, file_path])   # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -120,13 +142,15 @@ def get_or_create_eventloop():
 
 
 def get_direct3d_device():
+    if sys.platform != "win32":
+        raise OSError("Direct3D Device is only available on Windows")
+
     # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
     # OSError: The application called an interface that was marshalled for a different thread
     media_capture = MediaCapture()
 
     async def init_mediacapture():
         await media_capture.initialize_async()
-
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
     if not direct_3d_device:
@@ -146,6 +170,19 @@ def try_get_direct3d_device():
         return get_direct3d_device()
     except OSError:
         return None
+
+
+def try_input_device_access():
+    """Same as `make_uinput` in `keyboard/_nixcommon.py`."""
+    if sys.platform != "linux":
+        return False
+    try:
+        UI_SET_EVBIT = 0x40045564  # noqa: N806
+        with open("/dev/uinput", "wb") as uinput:
+            fcntl.ioctl(uinput, UI_SET_EVBIT)
+    except OSError:
+        return False
+    return True
 
 
 def fire_and_forget(func: Callable[..., Any]):
