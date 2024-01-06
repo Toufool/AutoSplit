@@ -5,7 +5,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
 from itertools import starmap
-from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
 from typing_extensions import Never, override
 
@@ -114,7 +114,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         __key: Never,
-    ) -> NoReturn | type[CaptureMethodBase]:
+    ) -> type[CaptureMethodBase]:
         return super().__getitem__(__key)
 
     @override
@@ -167,10 +167,10 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
     initialize the new one with transfered subscriptions
     and update UI as needed.
     """
-    subscriptions = autosplit.capture_method._subscriptions  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    # subscriptions = autosplit.capture_method._subscriptions
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
-    autosplit.capture_method._subscriptions = subscriptions  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    # autosplit.capture_method._subscriptions = subscriptions
 
     disable_selection_buttons = selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
     autosplit.select_region_button.setDisabled(disable_selection_buttons)

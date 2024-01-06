@@ -19,7 +19,7 @@ from typing_extensions import override
 import error_messages
 import user_profile
 from AutoControlledThread import AutoControlledThread
-from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
+from AutoSplitImage import AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from gen import about, design, settings, update_checker
 from hotkeys import HOTKEYS, KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
@@ -69,15 +69,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     screenshot_signal = QtCore.Signal()
     after_setting_hotkey_signal = QtCore.Signal()
     update_checker_widget_signal = QtCore.Signal(str, bool)
-    load_start_image_signal = QtCore.Signal(bool, bool)
+    reload_images_signal = QtCore.Signal(bool)
     # Use this signal when trying to show an error from outside the main thread
     show_error_signal = QtCore.Signal(FunctionType)
-
-    # Timers
-    timer_live_image = QtCore.QTimer()
-    timer_live_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
-    timer_start_image = QtCore.QTimer()
-    timer_start_image.setTimerType(QtCore.Qt.TimerType.PreciseTimer)
 
     # Widgets
     AboutWidget: about.Ui_AboutAutoSplitWidget | None = None
@@ -110,6 +104,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.waiting_for_split_delay = False
         self.split_below_threshold = False
         self.run_start_time = 0.0
+        self.last_reset_time = 0.0
         self.start_image: AutoSplitImage | None = None
         self.reset_image: AutoSplitImage | None = None
         self.split_images: list[AutoSplitImage] = []
@@ -175,7 +170,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.previous_image_button.clicked.connect(lambda: self.undo_split(True))
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
-        self.reload_start_image_button.clicked.connect(lambda: self.__load_start_image(True, True))
+        self.reload_images_button.clicked.connect(lambda: self.__reload_images(True))
         self.action_check_for_updates_on_open.changed.connect(
             lambda: user_profile.set_check_for_updates_on_open(self, self.action_check_for_updates_on_open.isChecked()),
         )
@@ -194,20 +189,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return open_update_checker(self, latest_version, check_on_open)
 
         self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
-
-        self.load_start_image_signal.connect(self.__load_start_image)
+        self.reload_images_signal.connect(self.__reload_images)
         self.reset_signal.connect(self.reset)
         self.skip_split_signal.connect(self.skip_split)
         self.undo_split_signal.connect(self.undo_split)
         self.pause_signal.connect(self.pause)
         self.screenshot_signal.connect(self.__take_screenshot)
-
-        # live image checkbox
-        self.timer_live_image.timeout.connect(lambda: self.__update_live_image_details(None, True))
-        self.timer_live_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
-
-        # Automatic timer start
-        self.timer_start_image.timeout.connect(self.__start_image_function)
+        # Before loading settings since the default value of "Live Capture Region" is True
+        self.capture_method.subscribe_to_new_frame(self.update_live_image_details)
 
         self.show()
 
@@ -240,16 +229,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # set the split image folder line to the directory text
             self.settings_dict["split_image_directory"] = new_split_image_directory
             self.split_image_folder_input.setText(f"{new_split_image_directory}/")
-            self.load_start_image_signal.emit(False, True)
+            self.reload_images_signal.emit(False)
 
-    def __update_live_image_details(self, capture: MatLike | None, called_from_timer: bool = False):
-        # HACK: Since this is also called in __get_capture_for_comparison,
-        # we don't need to update anything if the app is running
-        if called_from_timer:
-            if self.is_running or self.start_image:
-                return
-            capture = self.capture_method.last_captured_image
-
+    def update_live_image_details(self, capture: MatLike | None):
         # Update title from target window or Capture Device name
         capture_region_window_label = (
             self.settings_dict["capture_device_name"]
@@ -258,55 +240,68 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         )
         self.capture_region_window_label.setText(capture_region_window_label)
 
-        # Simply clear if "live capture region" setting is off
-        if not (self.settings_dict["live_capture_region"] and capture_region_window_label):
-            self.live_image.clear()
-        # Set live image in UI
-        else:
-            set_preview_image(self.live_image, capture)
+        set_preview_image(self.live_image, capture)
 
-    def __load_start_image(self, started_by_button: bool = False, wait_for_delay: bool = True):
-        """Not thread safe (if triggered by LiveSplit for example). Use `load_start_image_signal.emit` instead."""
-        self.timer_start_image.stop()
+    def __reload_images(self, started_by_button: bool = False):
+        """
+        Not thread safe (if triggered by LiveSplit for example). Use `reload_images_signal.emit` instead.
+
+        1. Stops the automated comparison checks and clear the current Split Image.
+        2. Re-initializes all values affected by the automated checks. Assume we may get completely different images.
+        Or even no image where there was one before.
+        3. If validation passed:
+        - - Updates the shown Split Image, Start Image text and Reset Image text.
+          - Restarts the automated checks.
+        """
+        if self.is_running:
+            raise RuntimeError("Images should never be reloaded whilst running!")
+
+        # Stop all async comparisons
+        self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
+        self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_reset)
+
+        # Reset values that can be edited by __compare_capture_for_auto_start or __compare_capture_for_auto_reset
+        # Start related
+        self.split_image_number = 0
+        self.highest_similarity = 0.0
+        self.split_below_threshold = False
         self.current_image_file_label.setText("-")
+        self.table_current_image_live_label.setText("-")
+        self.table_current_image_highest_label.setText("-")
+        self.table_current_image_threshold_label.setText("-")
         self.start_image_status_value_label.setText("not found")
+        # Reset related
+        self.reset_highest_similarity = 0.0
+        self.table_reset_image_live_label.setText("N/A")
+        self.table_reset_image_threshold_label.setText("N/A")
+        self.table_reset_image_highest_label.setText("N/A")
         set_preview_image(self.current_split_image, None)
 
-        if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
-            QApplication.processEvents()
-            return
+        if validate_before_parsing(self, started_by_button):
+            parse_and_validate_images(self)
 
-        if not self.start_image:
-            if started_by_button:
-                error_messages.no_keyword_image(START_KEYWORD)
-            QApplication.processEvents()
-            return
-
-        self.split_image_number = 0
-
-        if not wait_for_delay and self.start_image.get_pause_time(self) > 0:
-            self.start_image_status_value_label.setText("paused")
-            self.table_current_image_highest_label.setText("-")
-            self.table_current_image_threshold_label.setText("-")
-        else:
+        if self.start_image:
+            self.table_current_image_threshold_label.setText(decimal(self.start_image.get_similarity_threshold(self)))
             self.start_image_status_value_label.setText("ready")
-            self.__update_split_image(self.start_image)
+            self.capture_method.subscribe_to_new_frame(self.__compare_capture_for_auto_start)
 
-        self.highest_similarity = 0.0
-        self.reset_highest_similarity = 0.0
-        self.split_below_threshold = False
-        self.timer_start_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
+        if self.reset_image:
+            self.table_reset_image_live_label.setText("-")
+            self.table_reset_image_highest_label.setText("-")
+            self.table_reset_image_threshold_label.setText(decimal(self.reset_image.get_similarity_threshold(self)))
+            self.capture_method.subscribe_to_new_frame(self.__compare_capture_for_auto_reset)
 
         QApplication.processEvents()
 
-    def __start_image_function(self):
+    def __compare_capture_for_auto_start(self, capture: MatLike | None):
         if not self.start_image:
-            return
+            raise ValueError("There are no Start Image. How did we even get here?")
+
+        # Note: Start Image pause time is actually done at the start of the splits loop
 
         self.start_image_status_value_label.setText("ready")
         self.__update_split_image(self.start_image)
 
-        capture = self.__get_capture_for_comparison()
         start_image_threshold = self.start_image.get_similarity_threshold(self)
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
 
@@ -328,11 +323,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if below_flag and not self.split_below_threshold and similarity_diff >= 0:
             self.split_below_threshold = True
             return
+
         if (
             (below_flag and self.split_below_threshold and similarity_diff < 0 and is_valid_image(capture))  # noqa: PLR0916 # See above TODO
             or (not below_flag and similarity_diff >= 0)
         ):
-            self.timer_start_image.stop()
+            self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
             self.split_below_threshold = False
 
             if not self.start_image.check_flag(DUMMY_FLAG):
@@ -492,6 +488,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         When the reset button or hotkey is pressed, it will set `is_running` to False,
         which will trigger in the __auto_splitter function, if running, to abort and change GUI.
         """
+        self.last_reset_time = time()
+        self.reset_highest_similarity = 0.0
         self.is_running = False
 
     # Functions for the hotkeys to return to the main thread from signals and start their corresponding functions
@@ -509,13 +507,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.start_auto_splitter_signal.emit()
 
-    def __check_for_reset_state_update_ui(self):
-        """Check if AutoSplit is started, if not then update the GUI."""
-        if not self.is_running:
-            self.gui_changes_on_reset(True)
-            return True
-        return False
-
     def __auto_splitter(self):  # noqa: PLR0912,PLR0915
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
             self.gui_changes_on_reset(True)
@@ -526,7 +517,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.run_start_time = time()
 
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
-            # `safe_to_reload_start_image: bool = False` because __load_start_image also does this check,
+            # `safe_to_reload_start_image: bool = False` because __reload_start_and_reset_images also does this check,
             # we don't want to double a Start/Reset Image error message
             self.gui_changes_on_reset(False)
             return
@@ -630,7 +621,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 return
 
         # loop breaks to here when the last image splits
-        self.is_running = False
+        self.reset()
         self.gui_changes_on_reset(True)
 
     def __similarity_threshold_loop(self, number_of_split_images: int, dummy_splits_array: list[bool]):
@@ -645,9 +636,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         start = time()
         while True:
-            capture = self.__get_capture_for_comparison()
+            capture = self.capture_method.last_captured_image
 
-            if self.__reset_if_should(capture):
+            if self.__reset_gui_if_not_running():
                 return True
 
             similarity = self.split_image.compare_with_capture(self, capture)
@@ -714,7 +705,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         pause_split_image_number = self.split_image_number
         while True:
             # Calculate similarity for Reset Image
-            if self.__reset_if_should(self.__get_capture_for_comparison()):
+            if self.__reset_gui_if_not_running():
                 return True
 
             time_delta = time() - start_time
@@ -734,18 +725,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         return False
 
     def gui_changes_on_start(self):
-        self.timer_start_image.stop()
+        self.capture_method.unsubscribe_from_new_frame(self.__compare_capture_for_auto_start)
         self.start_auto_splitter_button.setText("Running...")
         self.split_image_folder_button.setEnabled(False)
-        self.reload_start_image_button.setEnabled(False)
+        self.reload_images_button.setEnabled(False)
         self.previous_image_button.setEnabled(True)
         self.next_image_button.setEnabled(True)
-
-        # TODO: Do we actually need to disable setting new hotkeys once started?
-        # What does this achieve? (See below TODO)
-        if self.SettingsWidget:
-            for hotkey in HOTKEYS:
-                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
@@ -763,19 +748,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.table_current_image_live_label.setText("-")
         self.table_current_image_highest_label.setText("-")
         self.table_current_image_threshold_label.setText("-")
-        self.table_reset_image_live_label.setText("-")
-        self.table_reset_image_highest_label.setText("-")
-        self.table_reset_image_threshold_label.setText("-")
         self.split_image_folder_button.setEnabled(True)
-        self.reload_start_image_button.setEnabled(True)
+        self.reload_images_button.setEnabled(True)
         self.previous_image_button.setEnabled(False)
         self.next_image_button.setEnabled(False)
-
-        # TODO: Do we actually need to disable setting new hotkeys once started?
-        # What does this achieve? (see above TODO)
-        if self.SettingsWidget and not self.is_auto_controlled:
-            for hotkey in HOTKEYS:
-                getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
         if not self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(True)
@@ -785,65 +761,50 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         QApplication.processEvents()
         if safe_to_reload_start_image:
-            self.load_start_image_signal.emit(False, False)
+            self.reload_images_signal.emit(False)
 
-    def __get_capture_for_comparison(self):
-        """Grab capture region and resize for comparison."""
-        capture = self.capture_method.last_captured_image
+    def __is_reset_image_is_paused(self):
+        if not self.reset_image:
+            raise ValueError("There are no Reset Image. How did we even get here?")
 
-        # This most likely means we lost capture
-        # (ie the captured window was closed, crashed, lost capture device, etc.)
-        if not is_valid_image(capture):
-            # Try to recover by using the window name
-            if self.settings_dict["capture_method"] == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-                self.live_image.setText("Waiting for capture device...")
-            else:
-                message = "Trying to recover window..."
-                if self.settings_dict["capture_method"] == CaptureMethodEnum.BITBLT:
-                    message += "\n(captured window may be incompatible with BitBlt)"
-                self.live_image.setText(message)
-                _recovered = self.capture_method.recover_window(self.settings_dict["captured_window_title"])
-                # TODO: Gotta wait next loop now
-                # if recovered:
-                #     capture = self.capture_method.last_captured_image
+        current_time = time()
+        # Check if Reset Image is paused because we recently resetted
+        paused = current_time - self.last_reset_time <= self.reset_image.get_pause_time(self)
+        # Check if Reset Image is paused because we are too close to just starting
+        # because the Reset Image being the same as the Start Image is a common use case.
+        if not paused and self.start_image:
+            paused = current_time - self.run_start_time <= self.start_image.get_pause_time(self)
+        return paused
 
-        self.__update_live_image_details(capture)
-        return capture
+    def __compare_capture_for_auto_reset(self, capture: MatLike | None):
+        if not self.reset_image:
+            raise ValueError("There are no Reset Image. How did we even get here?")
 
-    def __reset_if_should(self, capture: MatLike | None):
-        """Checks if we should reset, resets if it's the case, and returns the result."""
-        if self.reset_image:
-            if self.settings_dict["enable_auto_reset"]:
-                similarity = self.reset_image.compare_with_capture(self, capture)
-                threshold = self.reset_image.get_similarity_threshold(self)
+        if not self.settings_dict["enable_auto_reset"]:
+            self.table_reset_image_live_label.setText("disabled")
+            return
 
-                pause_times = [self.reset_image.get_pause_time(self)]
-                if self.start_image:
-                    pause_times.append(self.start_image.get_pause_time(self))
-                paused = time() - self.run_start_time <= max(pause_times)
-                if paused:
-                    should_reset = False
-                    self.table_reset_image_live_label.setText("paused")
-                else:
-                    should_reset = similarity >= threshold
-                    if similarity > self.reset_highest_similarity:
-                        self.reset_highest_similarity = similarity
-                    self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
-                    self.table_reset_image_live_label.setText(decimal(similarity))
+        if self.__is_reset_image_is_paused():
+            self.table_reset_image_live_label.setText("paused")
+            return
 
-                self.table_reset_image_threshold_label.setText(decimal(threshold))
+        similarity = self.reset_image.compare_with_capture(self, capture)
+        threshold = self.reset_image.get_similarity_threshold(self)
+        if similarity > self.reset_highest_similarity:
+            self.reset_highest_similarity = similarity
+            self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
+        self.table_reset_image_live_label.setText(decimal(similarity))
 
-                if should_reset:
-                    send_command(self, "reset")
-                    self.reset()
-            else:
-                self.table_reset_image_live_label.setText("disabled")
-        else:
-            self.table_reset_image_live_label.setText("N/A")
-            self.table_reset_image_threshold_label.setText("N/A")
-            self.table_reset_image_highest_label.setText("N/A")
+        if similarity >= threshold:
+            send_command(self, "reset")
+            self.reset()
 
-        return self.__check_for_reset_state_update_ui()
+    def __reset_gui_if_not_running(self):
+        """Checks if we are in a "not running" state, update GUI if it's the case, and returns the result."""
+        if not self.is_running:
+            self.gui_changes_on_reset(True)
+            return True
+        return False
 
     def __update_split_image(self, specific_image: AutoSplitImage | None = None):
         # Start image is expected to be out of range (index 0 of 0-length array)

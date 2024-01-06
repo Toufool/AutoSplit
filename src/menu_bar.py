@@ -24,7 +24,7 @@ from capture_method import (
 )
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, Hotkey, set_hotkey
-from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
+from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -192,7 +192,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self._autosplit_ref.table_reset_image_threshold_label.setText(
             decimal(self._autosplit_ref.reset_image.get_similarity_threshold(self._autosplit_ref))
             if self._autosplit_ref.reset_image
-            else "-",
+            else "N/A",
         )
 
     def __set_value(self, key: str, value: Any):
@@ -241,7 +241,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
     def __fps_limit_changed(self, value: int):
         value = self.fps_limit_spinbox.value()
         self._autosplit_ref.settings_dict["fps_limit"] = value
-        self._autosplit_ref.timer_live_image.setInterval(int(ONE_SECOND / value))
         self._autosplit_ref.capture_method.set_fps_limit(value)
 
     @fire_and_forget
@@ -324,14 +323,15 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.default_delay_time_spinbox.setValue(self._autosplit_ref.settings_dict["default_delay_time"])
         self.default_pause_time_spinbox.setValue(self._autosplit_ref.settings_dict["default_pause_time"])
         self.loop_splits_checkbox.setChecked(self._autosplit_ref.settings_dict["loop_splits"])
-        self.start_also_resets_checkbox.setChecked(self._autosplit_ref.settings_dict["start_also_resets"])
         self.enable_auto_reset_image_checkbox.setChecked(self._autosplit_ref.settings_dict["enable_auto_reset"])
 # endregion
 # region Binding
         # Capture Settings
         self.fps_limit_spinbox.valueChanged.connect(self.__fps_limit_changed)
         self.live_capture_region_checkbox.stateChanged.connect(
-            lambda: self.__set_value("live_capture_region", self.live_capture_region_checkbox.isChecked()),
+            lambda: user_profile.update_live_capture_region_setting(
+                self._autosplit_ref, self.live_capture_region_checkbox.isChecked(),
+            ),
         )
         self.capture_method_combobox.currentIndexChanged.connect(
             lambda: self.__set_value("capture_method", self.__capture_method_changed()),
@@ -360,9 +360,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         )
         self.loop_splits_checkbox.stateChanged.connect(
             lambda: self.__set_value("loop_splits", self.loop_splits_checkbox.isChecked()),
-        )
-        self.start_also_resets_checkbox.stateChanged.connect(
-            lambda: self.__set_value("start_also_resets", self.start_also_resets_checkbox.isChecked()),
         )
         self.enable_auto_reset_image_checkbox.stateChanged.connect(
             lambda: self.__set_value("enable_auto_reset", self.enable_auto_reset_image_checkbox.isChecked()),
@@ -399,7 +396,6 @@ def get_default_settings_from_ui(autosplit: "AutoSplit"):
         "default_delay_time": default_settings_dialog.default_delay_time_spinbox.value(),
         "default_pause_time": default_settings_dialog.default_pause_time_spinbox.value(),
         "loop_splits": default_settings_dialog.loop_splits_checkbox.isChecked(),
-        "start_also_resets": default_settings_dialog.start_also_resets_checkbox.isChecked(),
         "enable_auto_reset": default_settings_dialog.enable_auto_reset_image_checkbox.isChecked(),
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),

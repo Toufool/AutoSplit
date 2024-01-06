@@ -39,6 +39,7 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
         "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
         + "\nYou can select one below. "
     )
+    window_recovery_message = "Waiting for capture device..."
 
     capture_device: cv2.VideoCapture
 

@@ -1,13 +1,13 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, final
 
 from cv2.typing import MatLike
 from PySide6 import QtCore
 from typing_extensions import override
 
 import error_messages
-from utils import ONE_SECOND, QTIMER_FPS_LIMIT, is_valid_hwnd
+from utils import ONE_SECOND, QTIMER_FPS_LIMIT, is_valid_hwnd, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -17,10 +17,11 @@ class CaptureMethodBase:
     name = "None"
     short_description = ""
     description = ""
+    window_recovery_message = "Trying to recover window..."
 
     last_captured_image: MatLike | None = None
     _autosplit_ref: "AutoSplit"
-    _subscriptions: list[Callable[[MatLike | None], object]] = []  # FIXME: # noqa: RUF012
+    _subscriptions: ClassVar = set[Callable[[MatLike | None], object]]()
 
     def __init__(self, autosplit: "AutoSplit"):
         self._autosplit_ref = autosplit
@@ -38,17 +39,22 @@ class CaptureMethodBase:
         pass
 
     def recover_window(self, captured_window_title: str) -> bool:  # noqa: PLR6301
+        # Some capture methods can't "recover" and must simply wait
         return False
 
     def check_selected_region_exists(self) -> bool:
         return is_valid_hwnd(self._autosplit_ref.hwnd)
 
     def subscribe_to_new_frame(self, callback: Callable[[MatLike | None], object]):
-        self._subscriptions.append(callback)
+        self._subscriptions.add(callback)
 
     def unsubscribe_from_new_frame(self, callback: Callable[[MatLike | None], object]):
-        self._subscriptions.remove(callback)
+        try:
+            self._subscriptions.remove(callback)
+        except KeyError:
+            pass
 
+    @final
     def _push_new_frame_to_subscribers(self, frame: MatLike | None):
         for subscription in self._subscriptions:
             subscription(frame)
@@ -80,8 +86,13 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
         """The synchronous code that requests a new image from the operating system."""
         raise NotImplementedError
 
+    @final
     def __read_loop(self):
+        if len(self._subscriptions) == 0:
+            # optimisation on idle: no subscriber means no work needed
+            return
         try:
+            captured_image = None
             if self.check_selected_region_exists():
                 captured_image = self._read_action()
                 # HACK: When WindowsGraphicsCaptureMethod tries to get images too quickly,
@@ -92,6 +103,17 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
             else:
                 self.last_captured_image = None
                 self._push_new_frame_to_subscribers(None)
+
+            # This most likely means we lost capture
+            # (ie the captured window was closed, crashed, lost capture device, etc.)
+            if not is_valid_image(captured_image):
+                # Try to recover by using the window name
+                self._autosplit_ref.live_image.setText(self.window_recovery_message)
+                recovered = self._autosplit_ref.capture_method.recover_window(
+                    self._autosplit_ref.settings_dict["captured_window_title"],
+                )
+                if recovered:
+                    self._autosplit_ref.live_image.setText("Live Capture Region hidden")
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self._autosplit_ref.show_error_signal.emit(

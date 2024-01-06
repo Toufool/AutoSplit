@@ -10,6 +10,7 @@ import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
 from hotkeys import HOTKEYS, remove_all_hotkeys, set_hotkey
+from menu_bar import open_settings
 from utils import auto_split_directory
 
 if TYPE_CHECKING:
@@ -34,7 +35,6 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
-    start_also_resets: bool
     enable_auto_reset: bool
     split_image_directory: str
     screenshot_directory: str
@@ -66,7 +66,6 @@ DEFAULT_PROFILE = UserProfileDict(
     default_delay_time=0,
     default_pause_time=10,
     loop_splits=False,
-    start_also_resets=False,
     enable_auto_reset=True,
     split_image_directory="",
     screenshot_directory="",
@@ -120,6 +119,14 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
     if load_settings_file_path.endswith(".pkl"):
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
+
+    # Allow seemlessly reloading the entire settings widget
+    settings_widget_was_open = False
+    settings_widget = cast(QtWidgets.QWidget | None, autosplit.SettingsWidget)
+    if settings_widget:
+        settings_widget_was_open = settings_widget.isVisible()
+        settings_widget.close()
+
     try:
         with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
@@ -147,14 +154,10 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
                 set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
-    if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-        autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"])
-    if not autosplit.capture_method.check_selected_region_exists():
-        autosplit.live_image.setText(
-            "Reload settings after opening"
-            + f"\n{autosplit.settings_dict['captured_window_title']!r}"
-            + "\nto automatically load Capture Region",
-        )
+    update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
+
+    if settings_widget_was_open:
+        open_settings(autosplit)
 
     return True
 
@@ -175,7 +178,7 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     # TODO: Should this check be in `__load_start_image` ?
     if not autosplit.is_running:
-        autosplit.load_start_image_signal.emit(False, True)
+        autosplit.reload_images_signal.emit(False)
 
 
 def load_settings_on_open(autosplit: "AutoSplit"):
@@ -229,3 +232,13 @@ def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bo
         "check_for_updates_on_open",
         value,
     )
+
+
+def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):
+    autosplit.settings_dict["live_capture_region"] = value
+    if value:
+        autosplit.capture_method.subscribe_to_new_frame(autosplit.update_live_image_details)
+    else:
+        autosplit.update_live_image_details(None)
+        autosplit.live_image.setText("Live Capture Region Hidden")
+        autosplit.capture_method.unsubscribe_from_new_frame(autosplit.update_live_image_details)
