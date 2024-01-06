@@ -112,7 +112,7 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
                 recovered = self._autosplit_ref.capture_method.recover_window(
                     self._autosplit_ref.settings_dict["captured_window_title"],
                 )
-                if recovered:
+                if recovered and not self._autosplit_ref.settings_dict["live_capture_region"]:
                     self._autosplit_ref.live_image.setText("Live Capture Region hidden")
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception

@@ -155,6 +155,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
 
     change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
     update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
+    autosplit.update_live_image_details(None)
 
     if settings_widget_was_open:
         open_settings(autosplit)

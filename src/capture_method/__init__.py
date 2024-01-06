@@ -265,20 +265,20 @@ class CaptureMethodSignal(QtCore.QObject):
 
     __frame_signal = QtCore.Signal(object)
 
-    @override
-    def connect(self, slot: Callable[[MatLike | None], object]):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def subscribe_to_new_frame(self, slot: Callable[[MatLike | None], object]):
         try:
             return self.__frame_signal.connect(slot, QtCore.Qt.ConnectionType.UniqueConnection)
         except RuntimeError:
             pass
 
-    @override
-    def disconnect(self, slot: Callable[[MatLike | None], object]):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def unsubscribe_from_new_frame(self, slot: Callable[[MatLike | None], object]):
         try:
             self.__frame_signal.disconnect(slot)
         except RuntimeError:
             pass
 
-    @override
-    def emit(self, __frame: MatLike | None):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def _push_new_frame_to_subscribers(self, __frame: MatLike | None):
         return self.__frame_signal.emit(__frame)
+
+    def __init__(self):
+        super().__init__()
