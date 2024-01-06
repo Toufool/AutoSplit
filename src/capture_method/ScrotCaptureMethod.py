@@ -25,8 +25,8 @@ class ScrotCaptureMethod(ThreadedLoopCaptureMethod):
 
     @override
     def _read_action(self):
-        if not self.check_selected_region_exists():
-            return None
+        # if not self.check_selected_region_exists():
+        #     return None
         xdisplay = Display()
         root = xdisplay.screen().root
         try:

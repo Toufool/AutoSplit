@@ -20,7 +20,7 @@ if ($IsWindows) {
   $arguments += @(
     # Installed by PyAutoGUI, but used by linux
     '--exclude=pyscreeze'
-    # Used by D3DShot
+    # Installed by D3DShot
     '--exclude=PIL')
 }
 if ($IsLinux) {

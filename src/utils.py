@@ -4,6 +4,7 @@ import subprocess
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
+from functools import partial
 from itertools import chain
 from platform import version
 from threading import Thread
@@ -22,13 +23,13 @@ if sys.platform == "win32":
     from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
     from winsdk.windows.media.capture import MediaCapture
 
-RUNNING_WAYLAND: bool = False
 if sys.platform == "linux":
     import fcntl
 
-    from pyscreeze import (
-        RUNNING_WAYLAND as RUNNING_WAYLAND,  # pyright: ignore[reportConstantRedefinition, reportGeneralTypeIssues, reportUnknownVariableType]  # noqa: PLC0414
-    )
+    from pyscreeze import RUNNING_WAYLAND as RUNNING_WAYLAND  # noqa: PLC0414
+
+else:
+    RUNNING_WAYLAND = False
 
 
 if TYPE_CHECKING:
@@ -200,7 +201,7 @@ def fire_and_forget(func: Callable[..., Any]):
             thread = Thread(target=func, args=args, kwargs=kwargs)
             thread.start()
             return thread
-        return get_or_create_eventloop().run_in_executor(None, func, *args, *kwargs)
+        return get_or_create_eventloop().run_in_executor(None, partial(func, *args, **kwargs))
 
     return wrapped
 

@@ -159,6 +159,9 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
     if settings_widget_was_open:
         open_settings(autosplit)
 
+    if settings_widget_was_open:
+        open_settings(autosplit)
+
     return True
 
 

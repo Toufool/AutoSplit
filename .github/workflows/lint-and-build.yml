@@ -47,6 +47,10 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-22.04]
         python-version: ["3.10", "3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -67,6 +71,10 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-22.04]
         python-version: ["3.10", "3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3
@@ -90,7 +98,11 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11"]
+        python-version: ["3.11", "3.12"]
+        # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+        exclude:
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v3

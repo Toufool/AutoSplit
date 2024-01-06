@@ -1,3 +1,5 @@
+# pyright: reportUnknownMemberType=false
+# Complete type for PIL.features.check_feature upstream
 import asyncio
 import os
 import sys
