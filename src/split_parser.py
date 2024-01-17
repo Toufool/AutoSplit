@@ -235,7 +235,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     else:
         for image in split_images:
             # Test for image without transparency
-            if image.text is None and not is_valid_image(image.byte_array):
+            if not image.text and not is_valid_image(image.byte_array):
 
                 def image_validity(filename: str):
                     return lambda: error_messages.image_validity(filename)
