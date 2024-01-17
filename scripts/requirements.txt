@@ -8,7 +8,6 @@ Levenshtein
 numpy>=1.26  # Python 3.12 support
 opencv-python-headless>=4.9.0.80  # Typing fixes
 packaging
-Pillow>=10.0  # Python 3.12 support
 psutil>=5.9.6  # Python 3.12 fixes
 # PyAutoGUI # See install.ps1
 PyWinCtl>=0.0.42  # py.typed

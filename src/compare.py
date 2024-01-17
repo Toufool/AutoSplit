@@ -150,7 +150,7 @@ def extract_and_compare_text(capture: MatLike, text: str):
     # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
     # TODO: easyocr vs. pytesseract?
     # image_string = " ".join(reader.readtext(capture, detail=0)).lower().strip()
-    image_string = pytesseract.image_to_string(Image.fromarray(capture), config="--oem 1 --psm 6").lower().strip()
+    image_string = str(pytesseract.image_to_string(Image.fromarray(capture), config="--oem 1 --psm 6")).lower().strip()
 
     ratio = 1.0 if text in image_string else Levenshtein.ratio(text, image_string)
     # TODO: debug: remove me

@@ -40,8 +40,8 @@ class AutoSplitImage:
     fps: int
     image_type: ImageType
     byte_array: MatLike | None = None
-    text: str | None = None
     mask: MatLike | None = None
+    text: str
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -95,6 +95,11 @@ class AutoSplitImage:
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
+        self.__x = 0
+        self.__xx = 0
+        self.__y = 0
+        self.__yy = 0
+        self.text = ""
         if path.endswith("txt"):
             self.fps = fps_from_filename(self.filename)
             self.__read_text(path)

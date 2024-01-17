@@ -63,10 +63,7 @@ def region_from_filename(filename: str):
     """
     # Check to make sure there is a valid region string between
     # plus signs of the filename
-    value = __value_from_filename(filename, "++", "")
-
-    # Check to make sure if it is a valid threshold
-    return value if value else None
+    return __value_from_filename(filename, "++", "")
 
 
 def fps_from_filename(filename: str):
