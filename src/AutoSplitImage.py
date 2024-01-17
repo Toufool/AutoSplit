@@ -1,6 +1,7 @@
 import os
 from enum import IntEnum, auto
 from math import sqrt
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import cv2
@@ -124,8 +125,7 @@ class AutoSplitImage:
         self.__yy = int(r[3])
 
     def __read_text(self, path: str):
-        with open(path, encoding="utf-8") as f:
-            self.text = f.read().lower().strip()
+        self.text = Path(path).read_text(encoding="utf-8").lower().strip()
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
