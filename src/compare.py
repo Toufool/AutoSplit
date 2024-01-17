@@ -5,6 +5,16 @@ import numpy as np
 from cv2.typing import MatLike
 from scipy import fft
 
+from PIL import Image
+# TODO: easyocr vs. pytesseract?
+# tesseract seems to cause less overall CPU load
+#from easyocr import Reader
+#reader = Reader(["en"], gpu=False, verbose=False, download_enabled=False)
+import pytesseract
+# TODO: make me configureable
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+import Levenshtein as levenshtein
+
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
@@ -125,6 +135,29 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
 
     return 1 - (hash_diff / 64.0)
 
+def extract_and_compare_text(capture: MatLike, text: str):
+    """
+    Compares the extracted text of the given image and returns the similarity between the two texts.
+
+    @param capture: Image of any given shape as a numpy array
+    @param text: a string to match for
+    @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
+    """
+    # if the string is found 1:1 in the string extracted from the image a 1 is returned.
+    # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
+    ratio = 0.0
+    # TODO: easyocr vs. pytesseract?
+    #image_string = " ".join(reader.readtext(capture, detail=0)).lower().strip()
+    image_string = pytesseract.image_to_string(Image.fromarray(capture), config='--oem 1 --psm 6').lower().strip()
+
+    if text in image_string:
+        ratio = 1.0
+    else:
+        ratio = levenshtein.ratio(text, image_string)
+    # TODO: debug: remove me
+    if ratio > 0.9:
+        print(f'text from image ({ratio:,.2f}): {image_string}')
+    return ratio
 
 def __compare_dummy(*_: object):
     return 0.0

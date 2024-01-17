@@ -51,6 +51,7 @@ This program can be used to automatically start, split, and reset your preferred
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Tesseract-OCR (optional; requierd for text recognition as an alternative comparison method). See https://github.com/UB-Mannheim/tesseract/wiki for installation instructions.
 
 ## OPTIONS
 
@@ -193,6 +194,8 @@ This option is mainly meant to be toggled with the `Toggle auto Reset Image` hot
 - **Custom thresholds** are place between parenthesis `()` in the filename. This value will override the default threshold.
 - **Custom pause times** are placed between square brackets `[]` in the filename. This value will override the default pause time.
 - **Custom delay times** are placed between hash signs `##` in the filename. Note that these are in milliseconds. For example, a 10 second split delay would be `#10000#`. You cannot skip or undo splits during split delays.
+- **Custom comparison FPS** is placed between exclamation marks `!!` in the filename. This value will override the default FPS for the given image or text file and does also apply to the reset image.
+- **Custom rectangle position** is placed between plus signs `++` in the filename. Note that these will only apply for text files when using text recognition (.txt). The scheme looks like this: `+740-1180-60-150+`. These are the X and Y coordinates in the image to draw a rectangle. They are seperated by the minus sign `-` and follow the form `+X-X-Y-Y+`. The second X and Y values need to be bigger then the first ones. You will need to adjust these values depending on your capture resolution.
 - A different **comparison method** can be specified with their 0-base index between carets `^^`:
   - `^0^`: L2 Norm
   - `^1^`: Histogram
@@ -225,6 +228,23 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 ### Start Image
 
 The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
+
+### Text Recognition (OCR)
+
+You can use text recognition as an alternative comparison method.
+To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
+Place the expected text in the text file that should be looked for.
+
+An example file name and content could look like this:
+
+Filename: `001_start_auto_splitter+275-540-70-95+.txt`
+
+Content: `complete any 2 encounters`
+
+This will look for the text `complete any 2 encounters` at the capture position `+275-540-70-95+`.
+
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the limit option `!1!` in the file name.
+The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
 
 ### Profiles
 

@@ -283,7 +283,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
-        set_preview_image(self.current_split_image, None)
+        if self.current_split_image.text == None:
+            set_preview_image(self.current_split_image, None)
 
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
             QApplication.processEvents()
@@ -307,7 +308,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.reset_highest_similarity = 0.0
         self.split_below_threshold = False
-        self.timer_start_image.start(int(ONE_SECOND / self.settings_dict["fps_limit"]))
+        start_image_fps = self.settings_dict["fps_limit"]
+        if self.start_image.fps != 0:
+            start_image_fps = self.start_image.fps
+        self.timer_start_image.start(int(ONE_SECOND / start_image_fps))
 
         QApplication.processEvents()
 
@@ -682,8 +686,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.undo_split_button.setEnabled(self.split_image_number != 0)
             QApplication.processEvents()
 
+            fps = self.settings_dict["fps_limit"]
+            if self.split_image.fps != 0:
+                fps = self.split_image.fps
+
             # Limit the number of time the comparison runs to reduce cpu usage
-            frame_interval = 1 / self.settings_dict["fps_limit"]
+            frame_interval = 1 / fps
             # Use a time delta to have a consistant check interval
             wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * ONE_SECOND)
 
@@ -867,7 +875,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if is_valid_image(self.split_image.byte_array):
+        if self.split_image.text == None and is_valid_image(self.split_image.byte_array):
             set_preview_image(self.current_split_image, self.split_image.byte_array)
 
         self.current_image_file_label.setText(self.split_image.filename)

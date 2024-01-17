@@ -37,8 +37,10 @@ class AutoSplitImage:
     filename: str
     flags: int
     loops: int
+    fps: int
     image_type: ImageType
     byte_array: MatLike | None = None
+    text: str | None = None
     mask: MatLike | None = None
     # This value is internal, check for mask instead
     _has_transparency = False
@@ -47,6 +49,10 @@ class AutoSplitImage:
     __comparison_method: int | None = None
     __pause_time: float | None = None
     __similarity_threshold: float | None = None
+    __x: int
+    __xx: int
+    __y: int
+    __yy: int
 
     def get_delay_time(self, default: "AutoSplit | int"):
         """Get image's delay time or fallback to the default value from spinbox."""
@@ -89,7 +95,12 @@ class AutoSplitImage:
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
-        self.__read_image_bytes(path)
+        if path.endswith("txt"):
+            self.fps = fps_from_filename(self.filename)
+            self.__read_text(path)
+            self.__region(region_from_filename(self.filename))
+        else:
+            self.__read_image_bytes(path)
 
         if START_KEYWORD in self.filename:
             self.image_type = ImageType.START
@@ -97,6 +108,20 @@ class AutoSplitImage:
             self.image_type = ImageType.RESET
         else:
             self.image_type = ImageType.SPLIT
+
+    def __region(self, region: str):
+        r = region.split("-")
+        if len(r) != 4:
+            return
+        self.__x = int(r[0])
+        self.__xx = int(r[1])
+        self.__y = int(r[2])
+        self.__yy = int(r[3])
+
+    def __read_text(self, path: str):
+        f = open(path, "r")
+        self.text = f.read().lower().strip()
+        f.close()
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -140,6 +165,10 @@ class AutoSplitImage:
         default: "AutoSplit | int",
         capture: MatLike | None,
     ):
+        """Extract image text from rectangle position and compare it with the expected string."""
+        if self.text != None:
+            return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.text)
+
         """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
@@ -162,4 +191,9 @@ if True:
         loop_from_filename,
         pause_from_filename,
         threshold_from_filename,
+        region_from_filename,
+        fps_from_filename,
+    )
+    from compare import (
+        extract_and_compare_text,
     )
