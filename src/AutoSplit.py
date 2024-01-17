@@ -283,7 +283,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.stop()
         self.current_image_file_label.setText("-")
         self.start_image_status_value_label.setText("not found")
-        if self.current_split_image.text == None:
+        if self.current_split_image.text is None:
             set_preview_image(self.current_split_image, None)
 
         if not (validate_before_parsing(self, started_by_button) and parse_and_validate_images(self)):
@@ -875,7 +875,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if self.split_image.text == None and is_valid_image(self.split_image.byte_array):
+        if self.split_image.text is None and is_valid_image(self.split_image.byte_array):
             set_preview_image(self.current_split_image, self.split_image.byte_array)
 
         self.current_image_file_label.setText(self.split_image.filename)

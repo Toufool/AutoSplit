@@ -111,7 +111,7 @@ class AutoSplitImage:
 
     def __region(self, region: str):
         r = region.split("-")
-        if len(r) != 4:
+        if len(r) != 4:  # noqa: PLR2004
             return
         self.__x = int(r[0])
         self.__xx = int(r[1])
@@ -119,9 +119,8 @@ class AutoSplitImage:
         self.__yy = int(r[3])
 
     def __read_text(self, path: str):
-        f = open(path)
-        self.text = f.read().lower().strip()
-        f.close()
+        with open(path, mode="r", encoding="utf-8") as f:
+            self.text = f.read().lower().strip()
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -166,7 +165,7 @@ class AutoSplitImage:
         capture: MatLike | None,
     ):
         """Extract image text from rectangle position and compare it with the expected string."""
-        if self.text != None:
+        if self.text is not None:
             return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.text)
 
         """Compare image with capture using image's comparison method. Falls back to combobox."""

@@ -1,5 +1,5 @@
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
-import Levenshtein as levenshtein
+import Levenshtein
 from math import sqrt
 
 import cv2
@@ -147,17 +147,13 @@ def extract_and_compare_text(capture: MatLike, text: str):
     """
     # if the string is found 1:1 in the string extracted from the image a 1 is returned.
     # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
-    ratio = 0.0
     # TODO: easyocr vs. pytesseract?
     # image_string = " ".join(reader.readtext(capture, detail=0)).lower().strip()
     image_string = pytesseract.image_to_string(Image.fromarray(capture), config="--oem 1 --psm 6").lower().strip()
 
-    if text in image_string:
-        ratio = 1.0
-    else:
-        ratio = levenshtein.ratio(text, image_string)
+    ratio = 1.0 if text in image_string else Levenshtein.ratio(text, image_string)
     # TODO: debug: remove me
-    if ratio > 0.9:
+    if ratio > 0.9:  # noqa: PLR2004
         print(f"text from image ({ratio:,.2f}): {image_string}")
     return ratio
 
