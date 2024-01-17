@@ -1,8 +1,7 @@
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
-import Levenshtein
 from math import sqrt
 
 import cv2
+import Levenshtein
 import numpy as np
 
 # TODO: easyocr vs. pytesseract?
@@ -13,6 +12,8 @@ import pytesseract
 from cv2.typing import MatLike
 from PIL import Image
 from scipy import fft
+
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 # TODO: make me configureable
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract"

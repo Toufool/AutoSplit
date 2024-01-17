@@ -119,7 +119,7 @@ class AutoSplitImage:
         self.__yy = int(r[3])
 
     def __read_text(self, path: str):
-        with open(path, mode="r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             self.text = f.read().lower().strip()
 
     def __read_image_bytes(self, path: str):
