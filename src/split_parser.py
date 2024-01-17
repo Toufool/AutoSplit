@@ -53,6 +53,7 @@ def threshold_from_filename(filename: str):
     # Check to make sure if it is a valid threshold
     return value if 0 <= value <= 1 else None
 
+
 def region_from_filename(filename: str):
     """
     Retrieve the capture region from the filename
@@ -67,6 +68,7 @@ def region_from_filename(filename: str):
     # Check to make sure if it is a valid threshold
     return value if value != "" else None
 
+
 def fps_from_filename(filename: str):
     """
     Retrieve the FPS specifix to the split file
@@ -80,6 +82,7 @@ def fps_from_filename(filename: str):
 
     # Check to make sure if it is a valid threshold
     return value if value >= 0 and value <= 60 else 0
+
 
 def pause_from_filename(filename: str):
     """

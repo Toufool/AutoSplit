@@ -119,7 +119,7 @@ class AutoSplitImage:
         self.__yy = int(r[3])
 
     def __read_text(self, path: str):
-        f = open(path, "r")
+        f = open(path)
         self.text = f.read().lower().strip()
         f.close()
 
@@ -184,16 +184,14 @@ class AutoSplitImage:
 
 
 if True:
+    from compare import extract_and_compare_text
     from split_parser import (
         comparison_method_from_filename,
         delay_time_from_filename,
         flags_from_filename,
+        fps_from_filename,
         loop_from_filename,
         pause_from_filename,
-        threshold_from_filename,
         region_from_filename,
-        fps_from_filename,
-    )
-    from compare import (
-        extract_and_compare_text,
+        threshold_from_filename,
     )
