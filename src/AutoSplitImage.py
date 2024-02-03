@@ -1,11 +1,11 @@
 import os
+import tomllib
 from enum import IntEnum, auto
 from math import sqrt
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-import tomllib
 from cv2.typing import MatLike
 
 import error_messages
@@ -42,7 +42,7 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    texts: []
+    texts: list[str]
     ocr: bool
     # This value is internal, check for mask instead
     _has_transparency = False
@@ -101,7 +101,7 @@ class AutoSplitImage:
         self.__xx = 0
         self.__y = 0
         self.__yy = 0
-        self.texts = []
+        self.texts = list[str]()
         self.fps = 0
         self.ocr = False
         if path.endswith("txt"):

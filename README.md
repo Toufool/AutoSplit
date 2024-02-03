@@ -51,6 +51,7 @@ This program can be used to automatically start, split, and reset your preferred
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Tesseract-OCR (optional; requierd for text recognition as an alternative comparison method). See https://github.com/UB-Mannheim/tesseract/wiki for installation instructions.
 
 ## OPTIONS
 

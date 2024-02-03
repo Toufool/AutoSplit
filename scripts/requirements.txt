@@ -3,7 +3,6 @@
 # Read /docs/build%20instructions.md for more information on how to install, run and build the python code.
 #
 # Dependencies:
-easyocr
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 Levenshtein
 numpy>=1.26  # Python 3.12 support
@@ -17,8 +16,6 @@ PySide6-Essentials>=6.6.0 ; sys_platform == 'win32' # Python 3.12 support
 PySide6-Essentials<6.5.1 ; sys_platform == 'linux' # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
 scipy>=1.11.2 # Python 3.12 support
 toml
-torch
-torchvision
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources

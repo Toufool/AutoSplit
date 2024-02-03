@@ -1,15 +1,16 @@
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
-from scipy import fft
-from cv2.typing import MatLike
 from math import sqrt
 
 import cv2
 import Levenshtein
 import numpy as np
-from easyocr import Reader
 
-OCR = Reader(["en"], gpu=False, verbose=False, download_enabled=False)
+import subprocess
+from os import environ
 
+from cv2.typing import MatLike
+from scipy import fft
+
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
@@ -17,6 +18,9 @@ HISTOGRAM_SIZE = [8, 8, 8]
 RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
 
+# TODO: use PATH variable
+TESSERACT_CMD = [r'C:\Program Files\Tesseract-OCR\tesseract', '-', '-', '--oem', '1', '--psm', '6']
+DEFAULT_ENCODING = "utf-8"
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
@@ -130,7 +134,35 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-def extract_and_compare_text(capture: MatLike, texts):
+# copied from https://github.com/madmaze/pytesseract
+def subprocess_args():
+    # See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
+    # for reference and comments.
+
+    kwargs = {
+        'stdin': subprocess.PIPE,
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.DEVNULL,
+        'startupinfo': None,
+        'env': environ,
+    }
+
+    if hasattr(subprocess, 'STARTUPINFO'):
+        kwargs['startupinfo'] = subprocess.STARTUPINFO()
+        kwargs['startupinfo'].dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        kwargs['startupinfo'].wShowWindow = subprocess.SW_HIDE
+
+    return kwargs
+
+
+def run_tesseract(capture: MatLike):
+    png = np.array(cv2.imencode('.png', capture)[1]).tobytes()
+    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())
+    output = p.communicate(input=png)[0]
+    return output.decode(DEFAULT_ENCODING)
+
+
+def extract_and_compare_text(capture: MatLike, texts: list[str]):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
     The best match of all texts is returned.
@@ -141,7 +173,7 @@ def extract_and_compare_text(capture: MatLike, texts):
     """
     # if the string is found 1:1 in the string extracted from the image a 1 is returned.
     # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
-    image_string = "".join(OCR.readtext(capture, detail=0)).lower().strip()
+    image_string = run_tesseract(capture).lower().strip()
 
     ratio = 0.0
     for text in texts:
