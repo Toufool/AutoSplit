@@ -1,6 +1,5 @@
 import asyncio
 import os
-import subprocess
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
@@ -127,8 +126,10 @@ def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
     if sys.platform == "win32":
         os.startfile(file_path)  # noqa: S606
     else:
+        import subprocess  # noqa: PLC0415, S404
+
         opener = "xdg-open" if sys.platform == "linux" else "open"
-        subprocess.call([opener, file_path])   # noqa: S603
+        subprocess.call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():

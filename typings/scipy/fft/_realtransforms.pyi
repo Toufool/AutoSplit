@@ -2,7 +2,7 @@ from _typeshed import Incomplete
 from numpy import float64, generic
 from numpy.typing import NDArray
 
-__all__ = ["dct", "idct", "dst", "idst", "dctn", "idctn", "dstn", "idstn"]
+__all__ = ["dct", "dctn", "dst", "dstn", "idct", "idctn", "idst", "idstn"]
 
 
 def dctn(

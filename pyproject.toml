@@ -73,6 +73,7 @@ ignore = [
   "A", # Shadowing builtin names
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
+  "PLC2701", # Private name import
   "PLR0904", # Too many public methods
   "PLR0913", # Argument count
   "PLR0917", # Too many positional arguments

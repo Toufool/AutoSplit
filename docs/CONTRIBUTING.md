@@ -8,8 +8,9 @@ Refer to the [build instructions](/docs/build%20instructions.md) if you're inter
 
 ## Linting and formatting
 
-The project is setup to automatically configure VSCode witht he proper extensions and settings. Linters and formatters will be run on save.  
+The project is setup to automatically configure VSCode with the proper extensions and settings. Fixers and formatters will be run on save.  
 If you use a different IDE or for some reason cannot / don't want to use the recommended extensions, you can run `scripts/lint.ps1`.
+Project configurations for other IDEs are welcome.
 
 If you like to use pre-commit hooks, `.pre-commit-config.yaml` is setup for such uses.
 
@@ -28,6 +29,16 @@ Your Pull Request has to pass all checks ot be accepted. If it is still a work-i
 Most coding standards will be enforced by automated tooling.
 As time goes on, project-specific standards and "gotchas" in the frameworks we use will be listed here.
 
+### Keep shipped dependencies and bundle size low
+
+The bigger the bundle, the longer it takes to boot single-file executables. That is because we need to ship everything and the bootloader basically has to extract it all.
+Our main use case is a single-file that is as easy to use as possible for the end user.
+Keeping install time, build time and bandwith as low as possible is also a nice-to-have.
+
+You should also consider whether the work the dependency is doing is simple enough that you could implement it yourself.
+
+For these reasons, it's important to consider the impacts of adding any new dependency bundled with AutoSplit.
+
 ### Magic numbers
 
 Please avoid using magic numbers and prefer constants and enums that have a meaningful name when possible.
@@ -38,6 +49,10 @@ For image shape and channels, please use `utils.ImageShape` and `utils.ColorChan
 
 To avoid image shape mismatch issues, and to keep code simpler, we standardize the image color format to BGRA. This should always be done early in the pipeline, so whatever functionality takes care of obtaining an image should also ensure its color format. You can do so with `cv2.cvtColor` (ie: `cv2.cvtColor(image, cv2.COLOR_RGBA2BGRA)` or `cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)`).
 
+### Split-specific setting overrides
+
+Whenever a split image overrides a default global setting, we add a getter that handles the logic of checking for a split-specific override, then falling back to globals. This avoids repeating the fallback logic in multiple places. See `AutoSpitImage.get_*` methods for examples.
+
 ## Testing
 
-None 😦 Please help us create test suites, we lack the time, but we really want (need!) them. <https://github.com/Toufool/AutoSplit/issues/216>
+None 😦 Please help us create test suites, we lack the time, but we really want (*need!*) them. <https://github.com/Toufool/AutoSplit/issues/216>
