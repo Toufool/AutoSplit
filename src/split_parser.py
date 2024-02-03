@@ -175,7 +175,7 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
 def parse_and_validate_images(autosplit: "AutoSplit"):
     # Get split images
     all_images = [
-        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
+        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))  # fmt: skip
         for image_name in os.listdir(autosplit.settings_dict["split_image_directory"])
     ]
 
@@ -187,11 +187,19 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     error_message: Callable[[], object] | None = None
 
     # If there is no start hotkey set but a Start Image is present, and is not auto controlled, throw an error.
-    if start_image and not autosplit.settings_dict["split_hotkey"] and not autosplit.is_auto_controlled:
+    if (
+        start_image  # fmt: skip
+        and not autosplit.settings_dict["split_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
         error_message = error_messages.load_start_image
 
     # If there is no reset hotkey set but a Reset Image is present, and is not auto controlled, throw an error.
-    elif reset_image and not autosplit.settings_dict["reset_hotkey"] and not autosplit.is_auto_controlled:
+    elif (
+        reset_image  # fmt: skip
+        and not autosplit.settings_dict["reset_hotkey"]
+        and not autosplit.is_auto_controlled
+    ):
         error_message = error_messages.reset_hotkey
 
     # Make sure that each of the images follows the guidelines for correct format
