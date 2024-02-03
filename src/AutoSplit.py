@@ -53,6 +53,7 @@ CHECK_FPS_ITERATIONS = 10
 
 if sys.platform == "win32":
     from win32comext.shell import shell as shell32
+
     myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
     shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 

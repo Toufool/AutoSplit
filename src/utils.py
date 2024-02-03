@@ -129,7 +129,7 @@ def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         import subprocess  # noqa: PLC0415, S404
 
         opener = "xdg-open" if sys.platform == "linux" else "open"
-        subprocess.call([opener, file_path])   # noqa: S603
+        subprocess.call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -151,6 +151,7 @@ def get_direct3d_device():
 
     async def init_mediacapture():
         await media_capture.initialize_async()
+
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
     if not direct_3d_device:
