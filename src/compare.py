@@ -1,16 +1,15 @@
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+from scipy import fft
+from cv2.typing import MatLike
 from math import sqrt
 
 import cv2
 import Levenshtein
 import numpy as np
-
 from easyocr import Reader
+
 OCR = Reader(["en"], gpu=False, verbose=False, download_enabled=False)
 
-from cv2.typing import MatLike
-from scipy import fft
-
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]

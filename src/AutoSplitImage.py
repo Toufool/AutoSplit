@@ -1,12 +1,11 @@
 import os
-import tomllib
 from enum import IntEnum, auto
 from math import sqrt
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
+import tomllib
 from cv2.typing import MatLike
 
 import error_messages
