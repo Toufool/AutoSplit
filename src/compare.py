@@ -1,12 +1,10 @@
+import subprocess
 from math import sqrt
+from os import environ
 
 import cv2
 import Levenshtein
 import numpy as np
-
-import subprocess
-from os import environ
-
 from cv2.typing import MatLike
 from scipy import fft
 
@@ -19,8 +17,9 @@ RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
 
 # TODO: use PATH variable
-TESSERACT_CMD = [r'C:\Program Files\Tesseract-OCR\tesseract', '-', '-', '--oem', '1', '--psm', '6']
+TESSERACT_CMD = [r"C:\Program Files\Tesseract-OCR\tesseract", "-", "-", "--oem", "1", "--psm", "6"]
 DEFAULT_ENCODING = "utf-8"
+
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
     """
@@ -140,23 +139,23 @@ def subprocess_args():
     # for reference and comments.
 
     kwargs = {
-        'stdin': subprocess.PIPE,
-        'stdout': subprocess.PIPE,
-        'stderr': subprocess.DEVNULL,
-        'startupinfo': None,
-        'env': environ,
+        "stdin": subprocess.PIPE,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.DEVNULL,
+        "startupinfo": None,
+        "env": environ,
     }
 
-    if hasattr(subprocess, 'STARTUPINFO'):
-        kwargs['startupinfo'] = subprocess.STARTUPINFO()
-        kwargs['startupinfo'].dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        kwargs['startupinfo'].wShowWindow = subprocess.SW_HIDE
+    if hasattr(subprocess, "STARTUPINFO"):
+        kwargs["startupinfo"] = subprocess.STARTUPINFO()
+        kwargs["startupinfo"].dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        kwargs["startupinfo"].wShowWindow = subprocess.SW_HIDE
 
     return kwargs
 
 
 def run_tesseract(capture: MatLike):
-    png = np.array(cv2.imencode('.png', capture)[1]).tobytes()
+    png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
     p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())
     output = p.communicate(input=png)[0]
     return output.decode(DEFAULT_ENCODING)
