@@ -241,15 +241,10 @@ async def get_all_video_capture_devices():
         #     video_capture.release()
 
         resolution = get_input_device_resolution(index)
-        return (
-            CameraInfo(index, device_name, False, backend, resolution)
-            if resolution is not None
-            else None
-        )
+        return CameraInfo(index, device_name, False, backend, resolution) if resolution is not None else None
 
     return [
         camera_info
-        for camera_info
-        in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
+        for camera_info in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None
     ]
