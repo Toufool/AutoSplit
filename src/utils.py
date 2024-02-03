@@ -129,7 +129,7 @@ def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         import subprocess  # noqa: PLC0415, S404
 
         opener = "xdg-open" if sys.platform == "linux" else "open"
-        subprocess.call([opener, file_path])   # noqa: S603
+        subprocess.call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():
