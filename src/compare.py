@@ -4,20 +4,13 @@ import cv2
 import Levenshtein
 import numpy as np
 
-# TODO: easyocr vs. pytesseract?
-# tesseract seems to cause less overall CPU load
-# from easyocr import Reader
-# reader = Reader(["en"], gpu=False, verbose=False, download_enabled=False)
-import pytesseract
+from easyocr import Reader
+OCR = Reader(["en"], gpu=False, verbose=False, download_enabled=False)
+
 from cv2.typing import MatLike
-from PIL import Image
 from scipy import fft
 
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
-
-# TODO: make me configureable
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract"
-
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
@@ -138,21 +131,25 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-def extract_and_compare_text(capture: MatLike, text: str):
+def extract_and_compare_text(capture: MatLike, texts):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
+    The best match of all texts is returned.
 
     @param capture: Image of any given shape as a numpy array
-    @param text: a string to match for
+    @param texts: a list of strings to match for
     @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
     """
     # if the string is found 1:1 in the string extracted from the image a 1 is returned.
     # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
-    # TODO: easyocr vs. pytesseract?
-    # image_string = " ".join(reader.readtext(capture, detail=0)).lower().strip()
-    image_string = str(pytesseract.image_to_string(Image.fromarray(capture), config="--oem 1 --psm 6")).lower().strip()
+    image_string = "".join(OCR.readtext(capture, detail=0)).lower().strip()
 
-    ratio = 1.0 if text in image_string else Levenshtein.ratio(text, image_string)
+    ratio = 0.0
+    for text in texts:
+        if text in image_string:
+            ratio = 1.0
+            break
+        ratio = max(ratio, Levenshtein.ratio(text, image_string))
     # TODO: debug: remove me
     if ratio > 0.9:  # noqa: PLR2004
         print(f"text from image ({ratio:,.2f}): {image_string}")

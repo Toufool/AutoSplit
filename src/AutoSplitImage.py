@@ -1,4 +1,5 @@
 import os
+import tomllib
 from enum import IntEnum, auto
 from math import sqrt
 from pathlib import Path
@@ -42,7 +43,8 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    text: str
+    texts: []
+    ocr: bool
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -100,11 +102,12 @@ class AutoSplitImage:
         self.__xx = 0
         self.__y = 0
         self.__yy = 0
-        self.text = ""
+        self.texts = []
+        self.fps = 0
+        self.ocr = False
         if path.endswith("txt"):
-            self.fps = fps_from_filename(self.filename)
-            self.__read_text(path)
-            self.__region(region_from_filename(self.filename))
+            self.ocr = True
+            self.__parse_text_file(path)
         else:
             self.__read_image_bytes(path)
 
@@ -115,17 +118,17 @@ class AutoSplitImage:
         else:
             self.image_type = ImageType.SPLIT
 
-    def __region(self, region: str):
-        r = region.split("-")
-        if len(r) != 4:  # noqa: PLR2004
-            return
-        self.__x = int(r[0])
-        self.__xx = int(r[1])
-        self.__y = int(r[2])
-        self.__yy = int(r[3])
-
-    def __read_text(self, path: str):
-        self.text = Path(path).read_text(encoding="utf-8").lower().strip()
+    def __parse_text_file(self, path: str):
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+            self.texts = data["texts"]
+            self.__x = data["top_left"]
+            self.__xx = data["top_right"]
+            self.__y = data["bottom_left"]
+            self.__yy = data["bottom_right"]
+            self.fps = 1
+            if "fps_limit" in data:
+                self.fps = data["fps_limit"]
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -169,11 +172,13 @@ class AutoSplitImage:
         default: "AutoSplit | int",
         capture: MatLike | None,
     ):
-        """Extract image text from rectangle position and compare it with the expected string."""
-        if self.text is not None:
-            return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.text)
+        """
+        Compare image with capture using image's comparison method. Falls back to combobox.
+        For OCR text files: extract image text from rectangle position and compare it with the expected string.
+        """
+        if self.ocr:
+            return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.texts)
 
-        """Compare image with capture using image's comparison method. Falls back to combobox."""
         if not is_valid_image(self.byte_array) or not is_valid_image(capture):
             return 0.0
         resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1])
@@ -193,9 +198,7 @@ if True:
         comparison_method_from_filename,
         delay_time_from_filename,
         flags_from_filename,
-        fps_from_filename,
         loop_from_filename,
         pause_from_filename,
-        region_from_filename,
         threshold_from_filename,
     )

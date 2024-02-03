@@ -54,33 +54,6 @@ def threshold_from_filename(filename: str):
     return value if 0 <= value <= 1 else None
 
 
-def region_from_filename(filename: str):
-    """
-    Retrieve the capture region from the filename.
-
-    @param filename: String containing the file's name
-    @return: A region string, if not then None
-    """
-    # Check to make sure there is a valid region string between
-    # plus signs of the filename
-    return __value_from_filename(filename, "++", "")
-
-
-def fps_from_filename(filename: str):
-    """
-    Retrieve the FPS specifix to the split file.
-
-    @param filename: String containing the file's name
-    @return: A FPS int value between 0 and 60. A value of 0 indictaes to use the global FPS value.
-    """
-    # Check to make sure there is a valid number between
-    # exclamation marks of the filename
-    value = __value_from_filename(filename, "!!", 0)
-
-    # Check to make sure if it is a valid threshold
-    return value if value >= 0 and value <= 60 else 0  # noqa: PLR2004
-
-
 def pause_from_filename(filename: str):
     """
     Retrieve the pause time from the filename, if there is no pause time or the pause time
@@ -235,7 +208,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     else:
         for image in split_images:
             # Test for image without transparency
-            if not image.text and not is_valid_image(image.byte_array):
+            if not image.ocr and not is_valid_image(image.byte_array):
 
                 def image_validity(filename: str):
                     return lambda: error_messages.image_validity(filename)

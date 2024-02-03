@@ -76,7 +76,7 @@ If ($IsLinux) {
 # Pillow, pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
 # (also --exclude from build script, but more consistent with unfrozen run)
 &"$python" -m pip uninstall pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y
-If ($IsWindows) { &"$python" -m pip uninstall pyscreeze -y }
+If ($IsWindows) { &"$python" -m pip uninstall pyscreeze Pillow -y }
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 If ($dev) {
