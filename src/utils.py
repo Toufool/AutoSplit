@@ -220,7 +220,6 @@ def subprocess_args():
 
     This code snippet was copied from https://github.com/madmaze/pytesseract
     """
-
     kwargs = {
         "stdin": subprocess.PIPE,
         "stdout": subprocess.PIPE,
@@ -244,7 +243,7 @@ def run_tesseract(png: bytes):
     @param capture: PNG encoded image
     @return: The recognized output string from tesseract
     """
-    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())  # noqa: S603
+    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())
     output = p.communicate(input=png)[0]
     return output.decode(DEFAULT_ENCODING)
 

@@ -139,7 +139,8 @@ def extract_and_compare_text(capture: MatLike, texts: list[str]):
     png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
     # If the string is found 1:1 in the string extracted from the image a 1 is returned.
     # Otherwise the levenshtein ratio is calculated between the two strings and gets returned.
-    # Especially with stylised characters, OCR could conceivably get the right letter, but mix up the casing (m/M, o/O, t/T, etc.)
+    # Especially with stylised characters, OCR could conceivably get the right
+    # letter, but mix up the casing (m/M, o/O, t/T, etc.)
     image_string = run_tesseract(png).lower().strip()
 
     ratio = 0.0
