@@ -239,7 +239,7 @@ def run_tesseract(png: bytes):
     """
     Executes the tesseract CLI and pipes a PNG encoded image to it.
 
-    @param capture: PNG encoded image
+    @param png: PNG encoded image as byte array
     @return: The recognized output string from tesseract
     """
     p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())  # noqa: S603
