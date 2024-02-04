@@ -1,6 +1,6 @@
 import asyncio
 import os
-import subprocess  # noqa: PLC0415, S404
+import subprocess  # noqa: S404
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
