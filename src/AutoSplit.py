@@ -307,10 +307,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.highest_similarity = 0.0
         self.reset_highest_similarity = 0.0
         self.split_below_threshold = False
-        start_image_fps = self.settings_dict["fps_limit"]
-        if self.start_image.fps != 0:
-            start_image_fps = self.start_image.fps
-        self.timer_start_image.start(int(ONE_SECOND / start_image_fps))
+
+        self.timer_start_image.start(int(ONE_SECOND / self.start_image.get_fps_limit(self)))
 
         QApplication.processEvents()
 
@@ -685,12 +683,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                 self.undo_split_button.setEnabled(self.split_image_number != 0)
             QApplication.processEvents()
 
-            fps = self.settings_dict["fps_limit"]
-            if self.split_image.fps != 0:
-                fps = self.split_image.fps
-
             # Limit the number of time the comparison runs to reduce cpu usage
-            frame_interval = 1 / fps
+            frame_interval = 1 / self.split_image.get_fps_limit(self)
             # Use a time delta to have a consistant check interval
             wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * ONE_SECOND)
 
@@ -874,7 +868,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
-        if self.split_image.ocr:
+        if self.split_image.is_ocr:
+            # TODO: test if setText clears a set image
             text = "\nor\n".join(self.split_image.texts)
             self.current_split_image.setText(f"Looking for OCR text:\n{text}")
         elif is_valid_image(self.split_image.byte_array):

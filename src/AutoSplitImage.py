@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-import tomllib
+import toml
 from cv2.typing import MatLike
 
 import error_messages
-from compare import check_if_image_has_transparency, get_comparison_method_by_index
+from compare import check_if_image_has_transparency, extract_and_compare_text, get_comparison_method_by_index
 from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
@@ -38,12 +38,10 @@ class AutoSplitImage:
     filename: str
     flags: int
     loops: int
-    fps: int
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
     texts: list[str]
-    ocr: bool
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -55,6 +53,15 @@ class AutoSplitImage:
     __xx: int
     __y: int
     __yy: int
+    __fps_limit: int
+
+    @property
+    def is_ocr(self):
+        """
+        Whether a "split image" is actually for Optical Text Recognition
+        based on whether there's any text strings to search for.
+        """
+        return bool(self.texts)
 
     def get_delay_time(self, default: "AutoSplit | int"):
         """Get image's delay time or fallback to the default value from spinbox."""
@@ -88,11 +95,18 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_similarity_threshold"]
 
+    def get_fps_limit(self, default: "AutoSplit"):
+        """Get image's fps limit or fallback to the default value from spinbox."""
+        if self.__fps_limit != 0:
+            return self.__fps_limit
+        return default.settings_dict["fps_limit"]
+
     def __init__(self, path: str):
         self.path = path
         self.filename = os.path.split(path)[-1].lower()
         self.flags = flags_from_filename(self.filename)
         self.loops = loop_from_filename(self.filename)
+        self.texts = list[str]()
         self.__delay_time = delay_time_from_filename(self.filename)
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
@@ -101,11 +115,8 @@ class AutoSplitImage:
         self.__xx = 0
         self.__y = 0
         self.__yy = 0
-        self.texts = list[str]()
-        self.fps = 0
-        self.ocr = False
+        self.__fps_limit = 0
         if path.endswith("txt"):
-            self.ocr = True
             self.__parse_text_file(path)
         else:
             self.__read_image_bytes(path)
@@ -118,16 +129,16 @@ class AutoSplitImage:
             self.image_type = ImageType.SPLIT
 
     def __parse_text_file(self, path: str):
-        with open(path, "rb") as f:
-            data = tomllib.load(f)
+        with open(path, "r") as f:
+            data = toml.load(f)
             self.texts = data["texts"]
             self.__x = data["top_left"]
             self.__xx = data["top_right"]
             self.__y = data["bottom_left"]
             self.__yy = data["bottom_right"]
-            self.fps = 1
+            self.__fps_limit = 1
             if "fps_limit" in data:
-                self.fps = data["fps_limit"]
+                self.fps_limit = data["fps_limit"]
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -175,10 +186,13 @@ class AutoSplitImage:
         Compare image with capture using image's comparison method. Falls back to combobox.
         For OCR text files: extract image text from rectangle position and compare it with the expected string.
         """
-        if self.ocr:
+        if not is_valid_image(capture):
+            return 0.0
+
+        if self.is_ocr:
             return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.texts)
 
-        if not is_valid_image(self.byte_array) or not is_valid_image(capture):
+        if not is_valid_image(self.byte_array):
             return 0.0
         resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1])
 
@@ -192,7 +206,6 @@ class AutoSplitImage:
 
 
 if True:
-    from compare import extract_and_compare_text
     from split_parser import (
         comparison_method_from_filename,
         delay_time_from_filename,

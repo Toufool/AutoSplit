@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable
 from enum import IntEnum
 from functools import partial
 from itertools import chain
+from os import environ
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
@@ -36,6 +37,9 @@ if TYPE_CHECKING:
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
 
 T = TypeVar("T")
+
+TESSERACT_CMD = ["tesseract", "-", "-", "--oem", "1", "--psm", "6"]
+DEFAULT_ENCODING = "utf-8"
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
@@ -207,6 +211,42 @@ def fire_and_forget(func: Callable[..., Any]):
 
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
+
+
+def subprocess_args():
+    """
+    See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
+    for reference and comments.
+
+    This code snippet was copied from https://github.com/madmaze/pytesseract
+    """
+
+    kwargs = {
+        "stdin": subprocess.PIPE,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.DEVNULL,
+        "startupinfo": None,
+        "env": environ,
+    }
+
+    if hasattr(subprocess, "STARTUPINFO"):
+        kwargs["startupinfo"] = subprocess.STARTUPINFO()
+        kwargs["startupinfo"].dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        kwargs["startupinfo"].wShowWindow = subprocess.SW_HIDE
+
+    return kwargs
+
+
+def run_tesseract(png: bytes):
+    """
+    Executes the tesseract CLI and pipes a PNG encoded image to it.
+
+    @param capture: PNG encoded image
+    @return: The recognized output string from tesseract
+    """
+    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())  # noqa: S603
+    output = p.communicate(input=png)[0]
+    return output.decode(DEFAULT_ENCODING)
 
 
 # Environment specifics

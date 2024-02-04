@@ -230,8 +230,19 @@ The Start Image is similar to the Reset Image. You can only have one Start Image
 ### Text Recognition (OCR)
 
 You can use text recognition as an alternative comparison method.
+First you need to install tesseract and include it in your PATH variable. See [Compatibility](#Compatibility) above.
+
+To include tesseract in your PATH variable you can use this powershell snippet.
+
+Note: change the `$tesseract_path` variable to the location where tesseract is installed.
+
+```
+$path = [System.Environment]::GetEnvironmentVariable("Path", "User")
+$tesseract_path = "C:\Program Files\Tesseract-OCR"
+[System.Environment]::SetEnvironmentVariable("Path", "$path;$tesseract_path", "User")
+```
+
 To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
-Place the expected text in the text file that should be looked for.
 
 An example file name and content could look like this:
 

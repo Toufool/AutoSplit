@@ -1,6 +1,4 @@
-import subprocess
 from math import sqrt
-from os import environ
 
 import cv2
 import Levenshtein
@@ -8,17 +6,13 @@ import numpy as np
 from cv2.typing import MatLike
 from scipy import fft
 
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image, run_tesseract
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
 HISTOGRAM_SIZE = [8, 8, 8]
 RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
-
-# TODO: use PATH variable
-TESSERACT_CMD = [r"C:\Program Files\Tesseract-OCR\tesseract", "-", "-", "--oem", "1", "--psm", "6"]
-DEFAULT_ENCODING = "utf-8"
 
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
@@ -133,34 +127,6 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-# copied from https://github.com/madmaze/pytesseract
-def subprocess_args():
-    # See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
-    # for reference and comments.
-
-    kwargs = {
-        "stdin": subprocess.PIPE,
-        "stdout": subprocess.PIPE,
-        "stderr": subprocess.DEVNULL,
-        "startupinfo": None,
-        "env": environ,
-    }
-
-    if hasattr(subprocess, "STARTUPINFO"):
-        kwargs["startupinfo"] = subprocess.STARTUPINFO()
-        kwargs["startupinfo"].dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        kwargs["startupinfo"].wShowWindow = subprocess.SW_HIDE
-
-    return kwargs
-
-
-def run_tesseract(capture: MatLike):
-    png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
-    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())
-    output = p.communicate(input=png)[0]
-    return output.decode(DEFAULT_ENCODING)
-
-
 def extract_and_compare_text(capture: MatLike, texts: list[str]):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
@@ -170,12 +136,17 @@ def extract_and_compare_text(capture: MatLike, texts: list[str]):
     @param texts: a list of strings to match for
     @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
     """
-    # if the string is found 1:1 in the string extracted from the image a 1 is returned.
-    # otherwise the levenshtein ratio is calculated between the two strings and gets returned.
-    image_string = run_tesseract(capture).lower().strip()
+    png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
+    # If the string is found 1:1 in the string extracted from the image a 1 is returned.
+    # Otherwise the levenshtein ratio is calculated between the two strings and gets returned.
+    # Especially with stylised characters, OCR could conceivably get the right letter, but mix up the casing (m/M, o/O, t/T, etc.)
+    image_string = run_tesseract(png).lower().strip()
 
     ratio = 0.0
     for text in texts:
+        # TODO: this 1:1 matching could lead to false positives
+        # maybe remove it and only rely on fuzzy matching?
+        # discussion: https://github.com/Toufool/AutoSplit/pull/272#discussion_r1477120477
         if text in image_string:
             ratio = 1.0
             break
