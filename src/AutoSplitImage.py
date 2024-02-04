@@ -129,7 +129,7 @@ class AutoSplitImage:
             self.image_type = ImageType.SPLIT
 
     def __parse_text_file(self, path: str):
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             data = toml.load(f)
             self.texts = data["texts"]
             self.__x = data["top_left"]

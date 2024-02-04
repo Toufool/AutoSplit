@@ -242,7 +242,7 @@ def run_tesseract(png: bytes):
     @param capture: PNG encoded image
     @return: The recognized output string from tesseract
     """
-    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())
+    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())  # noqa: S603
     output = p.communicate(input=png)[0]
     return output.decode(DEFAULT_ENCODING)
 
