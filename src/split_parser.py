@@ -10,12 +10,12 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-[
+(
     DUMMY_FLAG,
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-] = [1 << i for i in range(31)]  # 32 bits of flags
+) = tuple(1 << i for i in range(31))  # 32 bits of flags
 
 T = TypeVar("T", str, int, float)
 
