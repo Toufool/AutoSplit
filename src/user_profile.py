@@ -96,8 +96,7 @@ def save_settings_as(autosplit: "AutoSplit"):
     save_settings_file_path = QtWidgets.QFileDialog.getSaveFileName(
         autosplit,
         "Save Settings As",
-        autosplit.last_successfully_loaded_settings_file_path
-        or os.path.join(auto_split_directory, "settings.toml"),
+        autosplit.last_successfully_loaded_settings_file_path or os.path.join(auto_split_directory, "settings.toml"),
         "TOML (*.toml)",
     )[0]
 
@@ -192,8 +191,8 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
 
 def load_settings_on_open(autosplit: "AutoSplit"):
     settings_files = [
-        file for file
-        in os.listdir(auto_split_directory)
+        file  # fmt: skip
+        for file in os.listdir(auto_split_directory)
         if file.endswith(".toml")
     ]
 

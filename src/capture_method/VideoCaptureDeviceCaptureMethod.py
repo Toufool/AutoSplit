@@ -38,7 +38,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     name = "Video Capture Device"
     short_description = "see below"
     description = (
-        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
+        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "  # fmt: skip
         + "\nYou can select one below. "
     )
 

@@ -151,6 +151,7 @@ def get_direct3d_device():
 
     async def init_mediacapture():
         await media_capture.initialize_async()
+
     asyncio.run(init_mediacapture())
     direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
     if not direct_3d_device:

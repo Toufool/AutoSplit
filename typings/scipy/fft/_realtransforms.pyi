@@ -4,7 +4,6 @@ from numpy.typing import NDArray
 
 __all__ = ["dct", "dctn", "dst", "dstn", "idct", "idctn", "idst", "idstn"]
 
-
 def dctn(
     x,
     type=2,
@@ -16,8 +15,6 @@ def dctn(
     *,
     orthogonalize=None,
 ): ...
-
-
 def idctn(
     x,
     type=2,
@@ -28,8 +25,6 @@ def idctn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dstn(
     x,
     type=2,
@@ -40,8 +35,6 @@ def dstn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def idstn(
     x,
     type=2,
@@ -52,8 +45,6 @@ def idstn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dct(
     x: NDArray[generic],
     type: int = 2,
@@ -64,8 +55,6 @@ def dct(
     workers: Incomplete | None = None,
     orthogonalize: Incomplete | None = None,
 ) -> NDArray[float64]: ...
-
-
 def idct(
     x,
     type=2,
@@ -76,8 +65,6 @@ def idct(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dst(
     x,
     type=2,
@@ -88,8 +75,6 @@ def dst(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def idst(
     x,
     type=2,

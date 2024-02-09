@@ -53,6 +53,7 @@ CHECK_FPS_ITERATIONS = 10
 
 if sys.platform == "win32":
     from win32comext.shell import shell as shell32
+
     myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
     shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
@@ -126,8 +127,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.setupUi(self)
         self.setWindowTitle(
-            f"AutoSplit v{AUTOSPLIT_VERSION}" +
-            (" (externally controlled)" if self.is_auto_controlled else ""),
+            f"AutoSplit v{AUTOSPLIT_VERSION}"  # fmt: skip
+            + (" (externally controlled)" if self.is_auto_controlled else ""),
         )
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
@@ -441,7 +442,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __is_current_split_out_of_range(self):
         return (
-            self.split_image_number < 0
+            self.split_image_number < 0  # fmt: skip
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
         )
 
@@ -508,7 +509,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def start_auto_splitter(self):
         # If the auto splitter is already running or the button is disabled, don't emit the signal to start it.
         if (
-            self.is_running
+            self.is_running  # fmt: skip
             or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled)
         ):
             return
@@ -544,9 +545,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Construct a list of images + loop count tuples.
         self.split_images_and_loop_number = list(
             flatten(
-                ((split_image, i + 1) for i in range(split_image.loops))
-                for split_image
-                in self.split_images
+                ((split_image, i + 1) for i in range(split_image.loops))  # fmt: skip
+                for split_image in self.split_images
             ),
         )
 
