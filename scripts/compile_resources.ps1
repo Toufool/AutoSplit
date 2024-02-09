@@ -29,7 +29,10 @@ Else {
 $GITHUB_REPOSITORY = $Env:GITHUB_HEAD_REPOSITORY
 If (-not $GITHUB_REPOSITORY) {
   $repo_url = git config --get remote.origin.url
-  $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
+  # Validate in case the repo was downloaded rather than cloned
+  If ($repo_url) {
+    $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
+  }
 }
 If (-not $GITHUB_REPOSITORY) {
   $GITHUB_REPOSITORY = 'Toufool/AutoSplit'
