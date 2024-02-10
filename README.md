@@ -25,6 +25,7 @@ This program can be used to automatically start, split, and reset your preferred
 - Download the [latest version](/../../releases/latest)
 - You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
   (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev))
+- Tesseract-OCR (optional; required for text recognition as an alternative comparison method). See [Tesseract install](#tesseract-install) below for installation instructions.
 
 - Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
 
@@ -225,6 +226,57 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 ### Start Image
 
 The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
+
+### Text Recognition (OCR)
+
+You can use text recognition as an alternative comparison method.
+
+#### Tesseract install
+
+First you need to install tesseract and include it in your system or user environment variables.
+- See <https://tesseract-ocr.github.io/tessdoc/Installation.html> for installation instruction on all platforms.
+- For Windows:
+  1. You can go directly to <https://github.com/UB-Mannheim/tesseract/wiki> to find the installer.
+  2. If you change the "Destination Folder" during install, then you'll also need to add it to your `PATH` environment variable.
+
+#### Usage
+
+To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
+
+An example file name and content could look like this:
+
+Filename: `001_start_auto_splitter.txt`
+
+Content:
+
+```toml
+texts = ["complete any 2 encounters"]
+top_left = 275
+top_right = 540
+bottom_left = 70
+bottom_right = 95
+method = 0
+fps_limit = 1
+```
+
+The `texts` field is an array and can take more than one text to look for:
+
+```toml
+texts = ["look for me", "or this text"]
+```
+
+Note: for now we only use lowercase letters in the comparison. All uppercase letters are converted to lowercase before the comparison.
+
+The `top_left` and `top_right` (both X-axis) and `bottom_left` and `bottom_right` (both Y-axis) options define a rectangle where the text you are looking for is expected to appear in the image.
+
+Currently there are three comparison methods:
+
+* `0` - uses the Levenshtein distance (the default)
+* `1` - checks if the OCR text contains the searched text
+* `2` - looks for a perfect 1:1 match
+
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.
+The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
 
 ### Profiles
 
