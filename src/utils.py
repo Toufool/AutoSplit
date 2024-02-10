@@ -241,7 +241,7 @@ def subprocess_kwargs():
     Originally found in https://github.com/madmaze/pytesseract/blob/master/pytesseract/pytesseract.py
     Recipe from https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
     which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
-    """
+    """  # noqa: D415,D400
     # The following is true only on Windows.
     if hasattr(subprocess, "STARTUPINFO"):
         # On Windows, subprocess calls will pop up a command window by default when run from

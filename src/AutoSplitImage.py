@@ -1,7 +1,7 @@
 import os
 from enum import IntEnum, auto
 from math import sqrt
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import cv2
 import numpy as np
@@ -41,7 +41,7 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    texts: list[str] = []
+    texts: ClassVar[list[str]] = []
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
