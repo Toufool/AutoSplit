@@ -13,6 +13,7 @@ CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.
 HISTOGRAM_SIZE = [8, 8, 8]
 RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
+MAX_VALUE = 1.0
 
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
@@ -127,39 +128,63 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-def extract_and_compare_text(capture: MatLike, texts: list[str]):
+def extract_and_compare_text(capture: MatLike, texts: list[str], method_index: int):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
     The best match of all texts is returned.
 
     @param capture: Image of any given shape as a numpy array
     @param texts: a list of strings to match for
+    @param method_index: the comparison method index to use
     @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
     """
+    method = get_ocr_comparison_method_by_index(method_index)
     png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
-    # If the string is found 1:1 in the string extracted from the image a 1 is returned.
-    # Otherwise the levenshtein ratio is calculated between the two strings and gets returned.
     # Especially with stylised characters, OCR could conceivably get the right
     # letter, but mix up the casing (m/M, o/O, t/T, etc.)
     image_string = run_tesseract(png).lower().strip()
 
     ratio = 0.0
     for text in texts:
-        # TODO: this 1:1 matching could lead to false positives
-        # maybe remove it and only rely on fuzzy matching?
-        # discussion: https://github.com/Toufool/AutoSplit/pull/272#discussion_r1477120477
-        if text in image_string:
-            ratio = 1.0
+        ratio = max(ratio, method(text, image_string))
+        if ratio == MAX_VALUE:
             break
-        ratio = max(ratio, Levenshtein.ratio(text, image_string))
     # TODO: debug: remove me
     if ratio > 0.9:  # noqa: PLR2004
         print(f"text from image ({ratio:,.2f}): {image_string}")
     return ratio
 
 
+def compare_levenshtein(a: str, b: str):
+    return Levenshtein.ratio(a, b)  # pyright: ignore [reportUnknownMemberType]
+
+
+def compare_submatch(a: str, b: str):
+    if a in b:
+        return MAX_VALUE
+    return 0.0
+
+
+def compare_one_to_one(a: str, b: str):
+    if a == b:
+        return MAX_VALUE
+    return 0.0
+
+
 def __compare_dummy(*_: object):
     return 0.0
+
+
+def get_ocr_comparison_method_by_index(comparison_method_index: int):
+    match comparison_method_index:
+        case 0:
+            return compare_levenshtein
+        case 1:
+            return compare_submatch
+        case 2:
+            return compare_one_to_one
+        case _:
+            return __compare_dummy
 
 
 def get_comparison_method_by_index(comparison_method_index: int):

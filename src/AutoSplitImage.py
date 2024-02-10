@@ -10,7 +10,7 @@ from cv2.typing import MatLike
 
 import error_messages
 from compare import check_if_image_has_transparency, extract_and_compare_text, get_comparison_method_by_index
-from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, TESSERACT_PATH, ColorChannel, ImageShape, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -41,7 +41,7 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    texts: list[str]
+    texts: list[str] = []
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -49,11 +49,12 @@ class AutoSplitImage:
     __comparison_method: int | None = None
     __pause_time: float | None = None
     __similarity_threshold: float | None = None
-    __x: int
-    __xx: int
-    __y: int
-    __yy: int
-    __fps_limit: int
+    __x: int = 0
+    __xx: int = 0
+    __y: int = 0
+    __yy: int = 0
+    __ocr_comparison_method: int = 0
+    __fps_limit: int = 0
 
     @property
     def is_ocr(self):
@@ -106,16 +107,10 @@ class AutoSplitImage:
         self.filename = os.path.split(path)[-1].lower()
         self.flags = flags_from_filename(self.filename)
         self.loops = loop_from_filename(self.filename)
-        self.texts = list[str]()
         self.__delay_time = delay_time_from_filename(self.filename)
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
-        self.__x = 0
-        self.__xx = 0
-        self.__y = 0
-        self.__yy = 0
-        self.__fps_limit = 0
         if path.endswith("txt"):
             self.__parse_text_file(path)
         else:
@@ -129,16 +124,26 @@ class AutoSplitImage:
             self.image_type = ImageType.SPLIT
 
     def __parse_text_file(self, path: str):
+        if not TESSERACT_PATH:
+            error_messages.tesseract_missing(path)
+            return
+
         with open(path, encoding="utf-8") as f:
             data = toml.load(f)
-            self.texts = data["texts"]
-            self.__x = data["top_left"]
-            self.__xx = data["top_right"]
-            self.__y = data["bottom_left"]
-            self.__yy = data["bottom_right"]
+            self.texts = [text.lower().strip() for text in data["texts"]]
+            self.__x = abs(data["top_left"])
+            self.__xx = abs(data["top_right"])
+            self.__y = abs(data["bottom_left"])
+            self.__yy = abs(data["bottom_right"])
+            if "method" in data:
+                self.__ocr_comparison_method = abs(data["method"])
             self.__fps_limit = 1
             if "fps_limit" in data:
-                self.fps_limit = data["fps_limit"]
+                self.__fps_limit = abs(data["fps_limit"])
+
+        if self.__xx <= self.__x or self.__yy <= self.__y:
+            error_messages.wrong_ocr_coordinates(path)
+            return
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -190,7 +195,9 @@ class AutoSplitImage:
             return 0.0
 
         if self.is_ocr:
-            return extract_and_compare_text(capture[self.__y:self.__yy, self.__x:self.__xx], self.texts)
+            return extract_and_compare_text(
+                capture[self.__y:self.__yy, self.__x:self.__xx], self.texts, self.__ocr_comparison_method,
+            )
 
         if not is_valid_image(self.byte_array):
             return 0.0

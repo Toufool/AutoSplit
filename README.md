@@ -25,6 +25,7 @@ This program can be used to automatically start, split, and reset your preferred
 - Download the [latest version](/../../releases/latest)
 - You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
   (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev))
+- Tesseract-OCR (optional; required for text recognition as an alternative comparison method). See [Tesseract install](#tesseract-install) below for installation instructions.
 
 - Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
 
@@ -51,7 +52,6 @@ This program can be used to automatically start, split, and reset your preferred
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
-- Tesseract-OCR (optional; requierd for text recognition as an alternative comparison method). See https://github.com/UB-Mannheim/tesseract/wiki for installation instructions.
 
 ## OPTIONS
 
@@ -230,17 +230,16 @@ The Start Image is similar to the Reset Image. You can only have one Start Image
 ### Text Recognition (OCR)
 
 You can use text recognition as an alternative comparison method.
-First you need to install tesseract and include it in your PATH variable. See [Compatibility](#Compatibility) above.
 
-To include tesseract in your PATH variable you can use this powershell snippet.
+#### Tesseract install
 
-Note: change the `$tesseract_path` variable to the location where tesseract is installed.
+First you need to install tesseract and include it in your system or user environment variables.
+- See <https://tesseract-ocr.github.io/tessdoc/Installation.html> for installation instruction on all platforms.
+- For Windows:
+  1. You can go directly to <https://github.com/UB-Mannheim/tesseract/wiki> to find the installer.
+  2. If you change the "Destination Folder" during install, then you'll also need to add it to your `PATH` environment variable.
 
-```
-$path = [System.Environment]::GetEnvironmentVariable("Path", "User")
-$tesseract_path = "C:\Program Files\Tesseract-OCR"
-[System.Environment]::SetEnvironmentVariable("Path", "$path;$tesseract_path", "User")
-```
+#### Usage
 
 To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
 
@@ -250,22 +249,31 @@ Filename: `001_start_auto_splitter.txt`
 
 Content:
 
-```
+```toml
 texts = ["complete any 2 encounters"]
 top_left = 275
 top_right = 540
 bottom_left = 70
 bottom_right = 95
+method = 0
 fps_limit = 1
 ```
 
 The `texts` field is an array and can take more than one text to look for:
 
-```
+```toml
 texts = ["look for me", "or this text"]
 ```
 
-The `top`, `bottom`, `left` and `right` options define a rectangle where the text you are looking for is expected to appear in the image.
+Note: for now we only use lowercase letters in the comparison. All uppercase letters are converted to lowercase before the comparison.
+
+The `top_left` and `top_right` (both X-axis) and `bottom_left` and `bottom_right` (both Y-axis) options define a rectangle where the text you are looking for is expected to appear in the image.
+
+Currently there are three comparison methods:
+
+* `0` - uses the Levenshtein distance (the default)
+* `1` - checks if the OCR text contains the searched text
+* `2` - looks for a perfect 1:1 match
 
 Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.
 The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).

@@ -1,15 +1,15 @@
 import asyncio
 import os
+import shutil
 import subprocess  # noqa: S404
 import sys
 from collections.abc import Callable, Iterable
 from enum import IntEnum
 from functools import partial
 from itertools import chain
-from os import environ
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
+from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 
 from cv2.typing import MatLike
 
@@ -39,7 +39,17 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
-TESSERACT_CMD = ["tesseract", "-", "-", "--oem", "1", "--psm", "6"]
+
+def find_tesseract_path():
+    search_path = str(os.environ.get("PATH"))
+    if sys.platform == "win32":
+        search_path += r";C:\Program Files\Tesseract-OCR;C:\Program Files (x86)\Tesseract-OCR"
+    return shutil.which(TESSERACT_EXE, path=search_path)
+
+
+TESSERACT_EXE = "tesseract"
+TESSERACT_PATH = find_tesseract_path()
+TESSERACT_CMD = (TESSERACT_PATH or TESSERACT_EXE, "-", "-", "--oem", "1", "--psm", "6")
 DEFAULT_ENCODING = "utf-8"
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
@@ -63,6 +73,14 @@ class ColorChannel(IntEnum):
     Green = 1
     Red = 2
     Alpha = 3
+
+
+class SubprocessKWArgs(TypedDict):
+    stdin: int
+    stdout: int
+    stderr: int
+    startupinfo: subprocess.STARTUPINFO | None
+    env: os._Environ[str] | None  # pyright: ignore[reportPrivateUsage]
 
 
 def decimal(value: float):
@@ -212,39 +230,56 @@ def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
 
 
-def subprocess_args():
+def subprocess_kwargs():
     """
-    See https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
-    for reference and comments.
-
-    This code snippet was copied from https://github.com/madmaze/pytesseract
+    Create a set of arguments which make a ``subprocess.Popen`` (and
+    variants) call work with or without Pyinstaller, ``--noconsole`` or
+    not, on Windows and Linux.
+    Typical use:
+      subprocess.call(['program_to_run', 'arg_1'], **subprocess_args())
+    ---
+    Originally found in https://github.com/madmaze/pytesseract/blob/master/pytesseract/pytesseract.py
+    Recipe from https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
+    which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
     """
-    kwargs = {
-        "stdin": subprocess.PIPE,
-        "stdout": subprocess.PIPE,
-        "stderr": subprocess.DEVNULL,
-        "startupinfo": None,
-        "env": environ,
-    }
-
+    # The following is true only on Windows.
     if hasattr(subprocess, "STARTUPINFO"):
-        kwargs["startupinfo"] = subprocess.STARTUPINFO()
-        kwargs["startupinfo"].dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        kwargs["startupinfo"].wShowWindow = subprocess.SW_HIDE
-
-    return kwargs
+        # On Windows, subprocess calls will pop up a command window by default when run from
+        # Pyinstaller with the ``--noconsole`` option. Avoid this distraction.
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        # https://github.com/madmaze/pytesseract/blob/88839f03590578a10e806a5244704437c9d477da/pytesseract/pytesseract.py#L236
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        # Windows doesn't search the path by default. Pass it an environment so it will.
+        env = os.environ
+    else:
+        startupinfo = None
+        env = None
+    # On Windows, running this from the binary produced by Pyinstaller
+    # with the ``--noconsole`` option requires redirecting everything
+    # (stdin, stdout, stderr) to avoid an OSError exception
+    # "[Error 6] the handle is invalid."
+    return SubprocessKWArgs(
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        startupinfo=startupinfo,
+        env=env,
+    )
 
 
 def run_tesseract(png: bytes):
     """
     Executes the tesseract CLI and pipes a PNG encoded image to it.
-
     @param png: PNG encoded image as byte array
-    @return: The recognized output string from tesseract
+    @return: The recognized output string from tesseract.
     """
-    p = subprocess.Popen(TESSERACT_CMD, **subprocess_args())  # noqa: S603
-    output = p.communicate(input=png)[0]
-    return output.decode(DEFAULT_ENCODING)
+    return (
+        subprocess
+        .Popen(TESSERACT_CMD, **subprocess_kwargs())  # noqa: S603 # Only using known literal strings
+        .communicate(input=png)[0]
+        .decode()
+    )
 
 
 # Environment specifics
