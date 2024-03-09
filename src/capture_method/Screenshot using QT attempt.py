@@ -9,18 +9,15 @@ import numpy as np
 from cv2.typing import MatLike
 from PySide6.QtCore import QBuffer, QIODeviceBase
 from PySide6.QtGui import QGuiApplication
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from typing_extensions import override
 
 
-class QtCaptureMethod(CaptureMethodBase):
+class QtCaptureMethod(ThreadedLoopCaptureMethod):
     _render_full_content = False
 
     @override
-    def get_frame(self):
-        if not self.check_selected_region_exists():
-            return None
-
+    def _read_action(self):
         buffer = QBuffer()
         buffer.open(QIODeviceBase.OpenModeFlag.ReadWrite)
         winid = self._autosplit_ref.winId()
