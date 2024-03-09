@@ -185,7 +185,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.after_setting_hotkey_signal.connect(lambda: after_setting_hotkey(self))
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
 
-        def _update_checker_widget_signal_slot(latest_version: str, *, check_on_open: bool):
+        def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):  # noqa: FBT001
             return open_update_checker(self, latest_version, check_on_open=check_on_open)
 
         self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
