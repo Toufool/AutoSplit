@@ -224,7 +224,7 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
-def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
+def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):  # noqa: FBT001
     """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
     design_window.action_check_for_updates_on_open.setChecked(value)
     QtCore.QSettings(
@@ -236,7 +236,7 @@ def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bo
     )
 
 
-def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):
+def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):  # noqa: FBT001
     autosplit.settings_dict["live_capture_region"] = value
     if value:
         autosplit.capture_method.subscribe_to_new_frame(autosplit.update_live_image_details)

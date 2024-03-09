@@ -225,9 +225,9 @@ def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
-        return lambda: autosplit.skip_split(True)
+        return lambda: autosplit.skip_split(navigate_image_only=True)
     if hotkey == "undo_split":
-        return lambda: autosplit.undo_split(True)
+        return lambda: autosplit.undo_split(navigate_image_only=True)
     if hotkey == "toggle_auto_reset_image":
 
         def toggle_auto_reset_image():

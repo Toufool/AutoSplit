@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from cv2.typing import MatLike
+from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from typing_extensions import override
@@ -277,7 +277,7 @@ def __test_alignment(capture: MatLike, template: MatLike):
     best_match = 0.0
     best_height = 0
     best_width = 0
-    best_loc = (0, 0)
+    best_loc: Point = (0, 0)
 
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):

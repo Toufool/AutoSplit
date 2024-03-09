@@ -47,7 +47,7 @@ def split_image_directory():
 
 
 def invalid_directory(directory: str):
-    set_text_message(f"Folder {directory} is invalid or does not exist.")
+    set_text_message(f"Folder {directory!r} is invalid or does not exist.")
 
 
 def split_image_directory_empty():

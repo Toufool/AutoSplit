@@ -166,11 +166,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.reset_button.clicked.connect(self.reset)
         self.skip_split_button.clicked.connect(self.skip_split)
         self.undo_split_button.clicked.connect(self.undo_split)
-        self.next_image_button.clicked.connect(lambda: self.skip_split(True))
-        self.previous_image_button.clicked.connect(lambda: self.undo_split(True))
+        self.next_image_button.clicked.connect(lambda: self.skip_split(navigate_image_only=True))
+        self.previous_image_button.clicked.connect(lambda: self.undo_split(navigate_image_only=True))
         self.align_region_button.clicked.connect(lambda: align_region(self))
         self.select_window_button.clicked.connect(lambda: select_window(self))
-        self.reload_images_button.clicked.connect(lambda: self.__reload_images(True))
+        self.reload_images_button.clicked.connect(lambda: self.__reload_images(started_by_button=True))
         self.action_check_for_updates_on_open.changed.connect(
             lambda: user_profile.set_check_for_updates_on_open(self, self.action_check_for_updates_on_open.isChecked()),
         )
@@ -185,8 +185,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.after_setting_hotkey_signal.connect(lambda: after_setting_hotkey(self))
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
 
-        def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):
-            return open_update_checker(self, latest_version, check_on_open)
+        def _update_checker_widget_signal_slot(latest_version: str, *, check_on_open: bool):
+            return open_update_checker(self, latest_version, check_on_open=check_on_open)
 
         self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
         self.reload_images_signal.connect(self.__reload_images)
@@ -242,7 +242,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         set_preview_image(self.live_image, capture)
 
-    def __reload_images(self, started_by_button: bool = False):
+    def __reload_images(self, *, started_by_button: bool = False):
         """
         Not thread safe (if triggered by LiveSplit for example). Use `reload_images_signal.emit` instead.
 
@@ -437,7 +437,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             or self.split_image_number > len(self.split_images_and_loop_number) - 1
         )
 
-    def undo_split(self, navigate_image_only: bool = False):
+    def undo_split(self, *, navigate_image_only: bool = False):
         """Undo Split" and "Prev. Img." buttons connect to here."""
         # Can't undo until timer is started
         # or Undoing past the first image
@@ -461,7 +461,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if not navigate_image_only:
             send_command(self, "undo")
 
-    def skip_split(self, navigate_image_only: bool = False):
+    def skip_split(self, *, navigate_image_only: bool = False):
         """Skip Split" and "Next Img." buttons connect to here."""
         # Can't skip or split until timer is started
         # or Splitting/skipping when there are no images left
@@ -515,7 +515,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __auto_splitter(self):  # noqa: PLR0912,PLR0915
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
-            self.gui_changes_on_reset(True)
+            self.gui_changes_on_reset(safe_to_reload_start_image=True)
             error_messages.split_hotkey()
             return
 
@@ -525,7 +525,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
             # `safe_to_reload_start_image: bool = False` because __reload_start_and_reset_images also does this check,
             # we don't want to double a Start/Reset Image error message
-            self.gui_changes_on_reset(False)
+            self.gui_changes_on_reset()
             return
 
         # Construct a list of images + loop count tuples.
@@ -628,7 +628,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # loop breaks to here when the last image splits
         self.reset()
-        self.gui_changes_on_reset(True)
+        self.gui_changes_on_reset(safe_to_reload_start_image=True)
 
     def __similarity_threshold_loop(self, number_of_split_images: int, dummy_splits_array: list[bool]):
         """
@@ -746,7 +746,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         QApplication.processEvents()
 
-    def gui_changes_on_reset(self, safe_to_reload_start_image: bool = False):
+    def gui_changes_on_reset(self, *, safe_to_reload_start_image: bool = False):
         self.start_auto_splitter_button.setText("Start Auto Splitter")
         self.image_loop_value_label.setText("N/A")
         self.current_split_image.clear()
@@ -808,7 +808,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def __reset_gui_if_not_running(self):
         """Checks if we are in a "not running" state, update GUI if it's the case, and returns the result."""
         if not self.is_running:
-            self.gui_changes_on_reset(True)
+            self.gui_changes_on_reset(safe_to_reload_start_image=True)
             return True
         return False
 
