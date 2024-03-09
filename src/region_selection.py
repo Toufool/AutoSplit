@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
-SUPPORTED_IMREAD_FORMATS = [
+SUPPORTED_IMREAD_FORMATS = (
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
     ("JPEG 2000 files", "*.jp2"),
@@ -58,7 +58,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("TIFF files", "*.tiff *.tif"),
     ("OpenEXR Image files", "*.exr"),
     ("Radiance HDR", "*.hdr *.pic"),
-]
+)
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("
@@ -305,21 +305,6 @@ def __test_alignment(capture: MatLike, template: MatLike):
             best_height = height
             best_loc = min_loc
     return best_match, best_height, best_width, best_loc
-
-
-def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, check_empty_directory: bool = True):
-    error = None
-    if not autosplit.settings_dict["split_image_directory"]:
-        error = error_messages.split_image_directory
-    elif not os.path.isdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_not_found
-    elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_empty
-    elif not autosplit.capture_method.check_selected_region_exists():
-        error = error_messages.region
-    if error and show_error:
-        error()
-    return not error
 
 
 class BaseSelectWidget(QtWidgets.QWidget):
