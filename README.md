@@ -1,11 +1,6 @@
 <!-- markdownlint-disable-next-line MD033 -->
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
 
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=security_rating)](https://sonarcloud.io/dashboard?id=Avasam_AutoSplit)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Avasam_AutoSplit&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Avasam_AutoSplit)  
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![autopep8](https://badgen.net/badge/code%20style/autopep8/blue)](https://github.com/hhatto/autopep8)
@@ -104,6 +99,10 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
+  - <https://github.com/python/mypy/issues/6700>
+  - <https://github.com/python/mypy/issues/15146>
+  - <https://github.com/python/mypy/issues/4409>
+  - <https://github.com/python/mypy/issues/10149>
   - <https://github.com/boppreh/keyboard/issues/171>
   - <https://github.com/boppreh/keyboard/issues/516>
   - <https://github.com/boppreh/keyboard/issues/216>
