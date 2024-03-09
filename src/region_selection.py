@@ -26,7 +26,7 @@ if sys.platform == "win32":
     import win32api
     import win32gui
     from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-    from winsdk._winrt import initialize_with_window
+    from winsdk._winrt import initialize_with_window  # noqa: PLC2701
     from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
     from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
-SUPPORTED_IMREAD_FORMATS = [
+SUPPORTED_IMREAD_FORMATS = (
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
     ("JPEG 2000 files", "*.jp2"),
@@ -58,7 +58,7 @@ SUPPORTED_IMREAD_FORMATS = [
     ("TIFF files", "*.tiff *.tif"),
     ("OpenEXR Image files", "*.exr"),
     ("Radiance HDR", "*.hdr *.pic"),
-]
+)
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("

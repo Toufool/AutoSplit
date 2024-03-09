@@ -1,5 +1,6 @@
 import os
 from collections.abc import Callable
+from functools import partial
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
@@ -9,12 +10,12 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-[
+(
     DUMMY_FLAG,
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-] = [1 << i for i in range(31)]  # 32 bits of flags
+) = tuple(1 << i for i in range(31))  # 32 bits of flags
 
 T = TypeVar("T", str, int, float)
 
@@ -209,11 +210,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
         for image in split_images:
             # Test for image without transparency
             if not is_valid_image(image.byte_array):
-
-                def image_validity(filename: str):
-                    return lambda: error_messages.image_validity(filename)
-
-                error_message = image_validity(image.filename)
+                error_message = partial(error_messages.image_validity, image.filename)
                 break
 
             # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.

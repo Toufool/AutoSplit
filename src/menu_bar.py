@@ -2,6 +2,7 @@ import asyncio
 import json
 import sys
 import webbrowser
+from functools import partial
 from typing import TYPE_CHECKING, Any, cast
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -23,7 +24,7 @@ from capture_method import (
     get_all_video_capture_devices,
 )
 from gen import about, design, settings as settings_ui, update_checker
-from hotkeys import HOTKEYS, Hotkey, set_hotkey
+from hotkeys import HOTKEYS, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, decimal, fire_and_forget
 
 if TYPE_CHECKING:
@@ -286,16 +287,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.screenshot_directory_input.setText(self._autosplit_ref.settings_dict["screenshot_directory"])
 
     def __setup_bindings(self):
-        # Hotkey initial values and bindings
-        def hotkey_connect(hotkey: Hotkey):
-            return lambda: set_hotkey(self._autosplit_ref, hotkey)
-
+        """Hotkey initial values and bindings."""
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
             hotkey_input.setText(self._autosplit_ref.settings_dict.get(f"{hotkey}_hotkey", ""))
 
-            set_hotkey_hotkey_button.clicked.connect(hotkey_connect(hotkey))
+            set_hotkey_hotkey_button.clicked.connect(partial(set_hotkey, hotkey=hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
             if self._autosplit_ref.is_auto_controlled and hotkey != "toggle_auto_reset_image":
                 set_hotkey_hotkey_button.setEnabled(False)

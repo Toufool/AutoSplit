@@ -29,7 +29,7 @@ class CaptureMethodBase:
 
     def reinitialize(self):
         self.close()
-        self.__init__(self._autosplit_ref)  # type: ignore[misc]
+        self.__init__(self._autosplit_ref)  # type: ignore[misc]  # noqa: PLC2801
 
     def close(self):
         # Some capture methods don't need any cleanup

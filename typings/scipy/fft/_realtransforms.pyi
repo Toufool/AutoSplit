@@ -2,8 +2,7 @@ from _typeshed import Incomplete
 from numpy import float64, generic
 from numpy.typing import NDArray
 
-__all__ = ["dct", "idct", "dst", "idst", "dctn", "idctn", "dstn", "idstn"]
-
+__all__ = ["dct", "dctn", "dst", "dstn", "idct", "idctn", "idst", "idstn"]
 
 def dctn(
     x,
@@ -17,7 +16,6 @@ def dctn(
     orthogonalize=None,
 ): ...
 
-
 def idctn(
     x,
     type=2,
@@ -28,7 +26,6 @@ def idctn(
     workers=None,
     orthogonalize=None,
 ): ...
-
 
 def dstn(
     x,
@@ -41,7 +38,6 @@ def dstn(
     orthogonalize=None,
 ): ...
 
-
 def idstn(
     x,
     type=2,
@@ -52,7 +48,6 @@ def idstn(
     workers=None,
     orthogonalize=None,
 ): ...
-
 
 def dct(
     x: NDArray[generic],
@@ -65,7 +60,6 @@ def dct(
     orthogonalize: Incomplete | None = None,
 ) -> NDArray[float64]: ...
 
-
 def idct(
     x,
     type=2,
@@ -77,7 +71,6 @@ def idct(
     orthogonalize=None,
 ): ...
 
-
 def dst(
     x,
     type=2,
@@ -88,7 +81,6 @@ def dst(
     workers=None,
     orthogonalize=None,
 ): ...
-
 
 def idst(
     x,

@@ -5,7 +5,7 @@
 # Dependencies:
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 numpy>=1.26  # Python 3.12 support
-opencv-python-headless>=4.8.1.78  # Typing fixes
+opencv-python-headless>=4.9.0.80  # Typing fixes
 packaging
 psutil>=5.9.6  # Python 3.12 fixes
 # PyAutoGUI # See install.ps1
@@ -29,5 +29,5 @@ winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 # D3DShot # See install.ps1
 #
 # Linux-only dependencies
-pyscreeze ; sys_platform == 'linux'
+PyScreeze ; sys_platform == 'linux'
 python-xlib ; sys_platform == 'linux'

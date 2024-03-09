@@ -1,5 +1,3 @@
-# pyright: reportUnknownMemberType=false
-# Complete type for PIL.features.check_feature upstream
 import asyncio
 import os
 import sys
@@ -16,7 +14,7 @@ from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCap
 from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
 
 if sys.platform == "win32":
-    from _ctypes import COMError
+    from _ctypes import COMError  # noqa: PLC2701
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -120,7 +118,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
         return super().__getitem__(__key)
 
     @override
-    def get(self, key: CaptureMethodEnum, __default: object = None):
+    def get(self, key: CaptureMethodEnum, default: object = None, /):
         """
         Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.

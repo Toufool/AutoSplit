@@ -8,9 +8,9 @@ from scipy import fft
 from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 MAXRANGE = MAXBYTE + 1
-CHANNELS = [ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value]
-HISTOGRAM_SIZE = [8, 8, 8]
-RANGES = [0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE]
+CHANNELS = (ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value)
+HISTOGRAM_SIZE = (8, 8, 8)
+RANGES = (0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE)
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
 
 
