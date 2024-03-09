@@ -295,6 +295,10 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/pywinrt/python-winsdk/issues/11>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
+  - <https://github.com/python/mypy/issues/6700>
+  - <https://github.com/python/mypy/issues/15146>
+  - <https://github.com/python/mypy/issues/4409>
+  - <https://github.com/python/mypy/issues/10149>
   - <https://github.com/boppreh/keyboard/issues/171>
   - <https://github.com/boppreh/keyboard/issues/516>
   - <https://github.com/boppreh/keyboard/issues/216>
