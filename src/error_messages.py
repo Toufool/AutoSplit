@@ -43,11 +43,11 @@ def set_text_message(message: str, details: str = "", kill_button: str = "", acc
 
 
 def split_image_directory():
-    set_text_message("No split image folder is selected.")
+    set_text_message("No Split Image Folder is selected.")
 
 
-def split_image_directory_not_found():
-    set_text_message("The Split Image Folder does not exist.")
+def invalid_directory(directory: str):
+    set_text_message(f"Folder {directory} is invalid or does not exist.")
 
 
 def split_image_directory_empty():

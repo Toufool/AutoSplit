@@ -33,8 +33,8 @@ from menu_bar import (
     open_update_checker,
     view_help,
 )
-from region_selection import align_region, select_region, select_window, validate_before_parsing
-from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images
+from region_selection import align_region, select_region, select_window
+from split_parser import BELOW_FLAG, DUMMY_FLAG, PAUSE_FLAG, parse_and_validate_images, validate_before_parsing
 from user_profile import DEFAULT_PROFILE
 from utils import (
     AUTOSPLIT_VERSION,
@@ -277,7 +277,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.table_reset_image_highest_label.setText("N/A")
         set_preview_image(self.current_split_image, None)
 
-        if validate_before_parsing(self, started_by_button):
+        if validate_before_parsing(self, show_error=started_by_button, check_region_exists=False):
             parse_and_validate_images(self)
 
         if self.start_image:
@@ -365,7 +365,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.settings_dict["capture_region"]["height"] = self.height_spinbox.value()
 
     def __take_screenshot(self):
-        if not validate_before_parsing(self, check_empty_directory=False):
+        if not self.capture_method.check_selected_region_exists():
+            error_messages.region()
+            return
+
+        screenshot_directory = self.settings_dict["screenshot_directory"] or self.settings_dict["split_image_directory"]
+        if not screenshot_directory:
+            error_messages.split_image_directory()
+            return
+        if not os.path.exists(screenshot_directory):
+            error_messages.invalid_directory(screenshot_directory)
             return
 
         # Check if file exists and rename it if it does.
@@ -373,10 +382,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # which is a problem, but I doubt anyone will get to 1000 split images...
         screenshot_index = 1
         while True:
-            screenshot_path = os.path.join(
-                self.settings_dict["screenshot_directory"] or self.settings_dict["split_image_directory"],
-                f"{screenshot_index:03}_SplitImage.png",
-            )
+            screenshot_path = os.path.join(screenshot_directory, f"{screenshot_index:03}_SplitImage.png")
             if not os.path.exists(screenshot_path):
                 break
             screenshot_index += 1
