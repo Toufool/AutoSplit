@@ -289,8 +289,8 @@ Not a developer? You can still help through the following methods:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://bugreports.qt.io/browse/QTBUG-114635>
   - <https://bugreports.qt.io/browse/PYSIDE-2542>
-  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam>
-  - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam>
+  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
+  - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
   - <https://github.com/microsoft/vscode/issues/40239>
