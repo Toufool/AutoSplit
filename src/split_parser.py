@@ -173,7 +173,7 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     return None
 
 
-def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True):
+def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
     error = None
     split_image_directory = autosplit.settings_dict["split_image_directory"]
     if not split_image_directory:
