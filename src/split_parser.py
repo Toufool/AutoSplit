@@ -173,6 +173,22 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     return None
 
 
+def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True):
+    error = None
+    split_image_directory = autosplit.settings_dict["split_image_directory"]
+    if not split_image_directory:
+        error = error_messages.split_image_directory
+    elif not os.path.isdir(split_image_directory):
+        error = partial(error_messages.invalid_directory, split_image_directory)
+    elif not os.listdir(split_image_directory):
+        error = error_messages.split_image_directory_empty
+    elif not autosplit.capture_method.check_selected_region_exists():
+        error = error_messages.region
+    if error and show_error:
+        error()
+    return not error
+
+
 def parse_and_validate_images(autosplit: "AutoSplit"):
     # Get split images
     all_images = [

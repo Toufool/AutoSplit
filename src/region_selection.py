@@ -307,21 +307,6 @@ def __test_alignment(capture: MatLike, template: MatLike):
     return best_match, best_height, best_width, best_loc
 
 
-def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, check_empty_directory: bool = True):
-    error = None
-    if not autosplit.settings_dict["split_image_directory"]:
-        error = error_messages.split_image_directory
-    elif not os.path.isdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_not_found
-    elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_empty
-    elif not autosplit.capture_method.check_selected_region_exists():
-        error = error_messages.region
-    if error and show_error:
-        error()
-    return not error
-
-
 class BaseSelectWidget(QtWidgets.QWidget):
     selection: Region | None = None
 
