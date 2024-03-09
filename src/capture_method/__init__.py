@@ -4,14 +4,11 @@ import asyncio
 import os
 import sys
 from collections import OrderedDict
-from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, EnumMeta, auto, unique
 from itertools import starmap
 from typing import TYPE_CHECKING, TypedDict, cast
 
-from cv2.typing import MatLike
-from PySide6 import QtCore
 from typing_extensions import Never, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -168,14 +165,12 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCapt
 
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     """
-    Seemlessly change the current capture method,
-    initialize the new one with transfered subscriptions
+    Seamlessly change the current capture method,
+    initialize the new one with transferred subscriptions
     and update UI as needed.
     """
-    # subscriptions = autosplit.capture_method._subscriptions
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
-    # autosplit.capture_method._subscriptions = subscriptions
 
     disable_selection_buttons = selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
     autosplit.select_region_button.setDisabled(disable_selection_buttons)
@@ -258,27 +253,3 @@ async def get_all_video_capture_devices():
         in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
         if camera_info is not None
     ]
-
-
-class CaptureMethodSignal(QtCore.QObject):
-    """Made to look like a `QtCore.SignalInstance`, but with safe `connect`/`disconnect` methods."""
-
-    __frame_signal = QtCore.Signal(object)
-
-    def subscribe_to_new_frame(self, slot: Callable[[MatLike | None], object]):
-        try:
-            return self.__frame_signal.connect(slot, QtCore.Qt.ConnectionType.UniqueConnection)
-        except RuntimeError:
-            pass
-
-    def unsubscribe_from_new_frame(self, slot: Callable[[MatLike | None], object]):
-        try:
-            self.__frame_signal.disconnect(slot)
-        except RuntimeError:
-            pass
-
-    def _push_new_frame_to_subscribers(self, __frame: MatLike | None):
-        return self.__frame_signal.emit(__frame)
-
-    def __init__(self):
-        super().__init__()

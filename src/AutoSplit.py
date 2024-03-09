@@ -768,7 +768,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             raise ValueError("There are no Reset Image. How did we even get here?")
 
         current_time = time()
-        # Check if Reset Image is paused because we recently resetted
+        # Check if Reset Image is paused because we recently reset
         paused = current_time - self.last_reset_time <= self.reset_image.get_pause_time(self)
         # Check if Reset Image is paused because we are too close to just starting
         # because the Reset Image being the same as the Start Image is a common use case.

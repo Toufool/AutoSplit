@@ -42,7 +42,6 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
         selection = self._autosplit_ref.settings_dict["capture_region"]
         hwnd = self._autosplit_ref.hwnd
         hmonitor = win32api.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-        # if not hmonitor or not self.check_selected_region_exists():
         if not hmonitor:
             return None
 

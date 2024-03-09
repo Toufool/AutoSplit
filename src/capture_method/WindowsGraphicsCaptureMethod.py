@@ -90,7 +90,7 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     @override
     def set_fps_limit(self, fps: int):
         """
-        There's an issue in the interraction between QTimer and WGC API where setting the interval to even 1 ms
+        There's an issue in the interaction between QTimer and WGC API where setting the interval to even 1 ms
         causes twice as many "called `try_get_next_frame` to fast.
         So for FPS target above 30, we unlock interval speed.
         """
@@ -99,12 +99,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     @override
     def _read_action(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
-        # We still need to check the hwnd because WGC will return a blank black image
-        if not (
-            # self.check_selected_region_exists() and
-            # Only needed for the type-checker
-            self.frame_pool
-        ):
+        # Only needed for the type-checker
+        if not self.frame_pool:
             return None
 
         try:

@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import TYPE_CHECKING, ClassVar, final
 
@@ -21,6 +21,7 @@ class CaptureMethodBase:
 
     last_captured_image: MatLike | None = None
     _autosplit_ref: "AutoSplit"
+    # Making _subscriptions a ClassVar ensures the state will be shared across Methods
     _subscriptions: ClassVar = set[Callable[[MatLike | None], object]]()
 
     def __init__(self, autosplit: "AutoSplit"):
@@ -60,7 +61,7 @@ class CaptureMethodBase:
             subscription(frame)
 
 
-class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
+class ThreadedLoopCaptureMethod(CaptureMethodBase, ABC):
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
         self.__capture_timer = QtCore.QTimer()
@@ -88,6 +89,8 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, metaclass=ABCMeta):
 
     @final
     def __read_loop(self):
+        # Very useful debug print
+        # print("subscriptions:", len(self._subscriptions), [x.__name__ for x in self._subscriptions])
         if len(self._subscriptions) == 0:
             # optimisation on idle: no subscriber means no work needed
             return

@@ -73,8 +73,6 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
 
     @override
     def _read_action(self):
-        # if not self.check_selected_region_exists():
-        #     return None, False
         try:
             result, image = self.capture_device.read()
         except cv2.error as cv2_error:
@@ -99,8 +97,8 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
         y = min(selection["y"], image.shape[ImageShape.Y] - 1)
         x = min(selection["x"], image.shape[ImageShape.X] - 1)
         image = image[
-            y: y + selection["height"],
-            x: x + selection["width"],
+            y : y + selection["height"],
+            x : x + selection["width"],
         ]
         return cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 

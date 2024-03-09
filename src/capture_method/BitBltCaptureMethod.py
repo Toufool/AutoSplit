@@ -52,9 +52,6 @@ class BitBltCaptureMethod(ThreadedLoopCaptureMethod):
         height = selection["height"]
         hwnd = self._autosplit_ref.hwnd
 
-        # if not self.check_selected_region_exists():
-        #     return None
-
         # If the window closes while it's being manipulated, it could cause a crash
         try:
             window_dc = win32gui.GetWindowDC(hwnd)
