@@ -95,7 +95,7 @@ def open_update_checker(autosplit: "AutoSplit", latest_version: str, *, check_on
 
 
 def view_help():
-    webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#tutorial")
+    webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}/blob/master/docs/tutorial.md")
 
 
 class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
