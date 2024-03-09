@@ -58,7 +58,7 @@ def open_about(autosplit: "AutoSplit"):
 
 
 class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):  # noqa: N801 # Private class
-    def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, check_on_open: bool = False):
+    def __init__(self, latest_version: str, design_window: design.Ui_MainWindow, *, check_on_open: bool = False):
         super().__init__()
         self.setupUi(self)
         self.current_version_number_label.setText(AUTOSPLIT_VERSION)
@@ -89,9 +89,9 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         )
 
 
-def open_update_checker(autosplit: "AutoSplit", latest_version: str, check_on_open: bool):
+def open_update_checker(autosplit: "AutoSplit", latest_version: str, *, check_on_open: bool):
     if not autosplit.UpdateCheckerWidget or cast(QtWidgets.QWidget, autosplit.UpdateCheckerWidget).isHidden():
-        autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(latest_version, autosplit, check_on_open)
+        autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(latest_version, autosplit, check_on_open=check_on_open)
 
 
 def view_help():
@@ -99,7 +99,7 @@ def view_help():
 
 
 class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
-    def __init__(self, autosplit: "AutoSplit", check_on_open: bool):
+    def __init__(self, autosplit: "AutoSplit", *, check_on_open: bool):
         super().__init__()
         self._autosplit_ref = autosplit
         self.check_on_open = check_on_open
@@ -124,8 +124,8 @@ def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
 
 
-def check_for_updates(autosplit: "AutoSplit", check_on_open: bool = False):
-    autosplit.CheckForUpdatesThread = __CheckForUpdatesThread(autosplit, check_on_open)
+def check_for_updates(autosplit: "AutoSplit", *, check_on_open: bool = False):
+    autosplit.CheckForUpdatesThread = __CheckForUpdatesThread(autosplit, check_on_open=check_on_open)
     autosplit.CheckForUpdatesThread.start()
 
 

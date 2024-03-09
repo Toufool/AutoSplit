@@ -14,7 +14,9 @@ ignore = [
   "D1", # pydocstyle Missing doctring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
-  "FBT", # flake8-boolean-trap
+  # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
+  # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
+  "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call
   "INP", # flake8-no-pep420
   "ISC003", # flake8-implicit-str-concat: explicit-string-concatenation
   # Short messages are still considered "long" messages
@@ -74,6 +76,7 @@ ignore = [
   "F821", # https://github.com/astral-sh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "A", # Shadowing builtin names
+  "FBT", # flake8-boolean-trap
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
   "PLC2701", # Private name import
