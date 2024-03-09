@@ -943,8 +943,7 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             capture = image
 
         qimage = QtGui.QImage(
-            # https://bugreports.qt.io/browse/PYSIDE-2476
-            capture.data,  # pyright: ignore[reportCallIssue, reportArgumentType]
+            capture.data,
             width,
             height,
             width * channels,

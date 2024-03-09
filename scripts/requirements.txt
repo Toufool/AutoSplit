@@ -29,5 +29,5 @@ winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 # D3DShot # See install.ps1
 #
 # Linux-only dependencies
-pyscreeze ; sys_platform == 'linux'
+PyScreeze ; sys_platform == 'linux'
 python-xlib ; sys_platform == 'linux'

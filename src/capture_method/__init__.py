@@ -1,5 +1,3 @@
-# pyright: reportUnknownMemberType=false
-# Complete type for PIL.features.check_feature upstream
 import asyncio
 import os
 import sys
@@ -120,7 +118,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
         return super().__getitem__(__key)
 
     @override
-    def get(self, key: CaptureMethodEnum, __default: object = None):
+    def get(self, key: CaptureMethodEnum, default: object = None, /):
         """
         Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
@@ -165,8 +163,8 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCapt
 
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     """
-    Seemlessly change the current capture method,
-    initialize the new one with transfered subscriptions
+    Seamlessly change the current capture method,
+    initialize the new one with transferred subscriptions
     and update UI as needed.
     """
     autosplit.capture_method.close()
