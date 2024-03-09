@@ -13,6 +13,7 @@ from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
@@ -26,6 +27,10 @@ LEARNING_MODE_DEVICE_BUILD = 17763
 """https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 WGC_QTIMER_LIMIT = 30
+
+
+async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
+    return await SoftwareBitmap.create_copy_from_surface_async(surface)
 
 
 class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
@@ -113,11 +118,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
         if not frame:
             return self.last_captured_image
 
-        async def coroutine():
-            return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
-
         try:
-            software_bitmap = asyncio.run(coroutine())
+            software_bitmap = asyncio.run(convert_d3d_surface_to_software_bitmap(frame.surface))
         except SystemError as exception:
             # HACK: can happen when closing the GraphicsCapturePicker
             if str(exception).endswith("returned a result with an error set"):
@@ -128,7 +130,7 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
             # HACK: Can happen when starting the region selector
             # TODO: Validate if this is still true
             return self.last_captured_image
-            # raise ValueError("Unable to convert Direct3D11CaptureFrame to SoftwareBitmap.")
+            # raise ValueError("Unable to convert IDirect3DSurface to SoftwareBitmap.")
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
         if not bitmap_buffer:
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
@@ -145,6 +147,13 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
         hwnd = win32gui.FindWindow(None, captured_window_title)
         if not is_valid_hwnd(hwnd):
             return False
+
+        # Because of async image obtention and capture initialization,
+        # AutoSplit could ask for an image too soon after having called recover_window() last iteration.
+        # WGC *would* have returned an image, but it's asked to reinitialize over again.
+        if self._autosplit_ref.hwnd == hwnd and self.check_selected_region_exists():
+            return True
+
         self._autosplit_ref.hwnd = hwnd
         try:
             self.reinitialize()
