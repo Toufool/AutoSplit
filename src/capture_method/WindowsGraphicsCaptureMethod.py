@@ -13,6 +13,7 @@ from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -24,6 +25,10 @@ if TYPE_CHECKING:
 WGC_NO_BORDER_MIN_BUILD = 20348
 LEARNING_MODE_DEVICE_BUILD = 17763
 """https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
+
+
+async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
+    return await SoftwareBitmap.create_copy_from_surface_async(surface)
 
 
 class WindowsGraphicsCaptureMethod(CaptureMethodBase):
@@ -107,11 +112,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         if not frame:
             return self.last_converted_frame
 
-        async def coroutine():
-            return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
-
         try:
-            software_bitmap = asyncio.run(coroutine())
+            software_bitmap = asyncio.run(convert_d3d_surface_to_software_bitmap(frame.surface))
         except SystemError as exception:
             # HACK: can happen when closing the GraphicsCapturePicker
             if str(exception).endswith("returned a result with an error set"):

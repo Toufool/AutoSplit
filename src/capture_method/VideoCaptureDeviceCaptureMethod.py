@@ -18,7 +18,7 @@ if sys.platform == "win32":
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
+OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = (127, 129, 128)
 
 
 def is_blank(image: MatLike):

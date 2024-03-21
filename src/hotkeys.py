@@ -31,7 +31,7 @@ PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
-HOTKEYS: list[Hotkey] = ["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
+HOTKEYS = ("split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image")
 
 
 def remove_all_hotkeys():
@@ -232,9 +232,9 @@ def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
-        return lambda: autosplit.skip_split(True)
+        return lambda: autosplit.skip_split(navigate_image_only=True)
     if hotkey == "undo_split":
-        return lambda: autosplit.undo_split(True)
+        return lambda: autosplit.undo_split(navigate_image_only=True)
     if hotkey == "toggle_auto_reset_image":
 
         def toggle_auto_reset_image():

@@ -10,12 +10,12 @@ from utils import is_valid_image
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-[
+(
     DUMMY_FLAG,
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-] = [1 << i for i in range(31)]  # 32 bits of flags
+) = tuple(1 << i for i in range(31))  # 32 bits of flags
 
 T = TypeVar("T", str, int, float)
 
@@ -171,6 +171,22 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
             return image
 
     return None
+
+
+def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
+    error = None
+    split_image_directory = autosplit.settings_dict["split_image_directory"]
+    if not split_image_directory:
+        error = error_messages.split_image_directory
+    elif not os.path.isdir(split_image_directory):
+        error = partial(error_messages.invalid_directory, split_image_directory)
+    elif not os.listdir(split_image_directory):
+        error = error_messages.split_image_directory_empty
+    elif not autosplit.capture_method.check_selected_region_exists():
+        error = error_messages.region
+    if error and show_error:
+        error()
+    return not error
 
 
 def parse_and_validate_images(autosplit: "AutoSplit"):

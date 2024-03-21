@@ -2,8 +2,10 @@
 [tool.ruff]
 target-version = "py310"
 line-length = 120
-select = ["ALL"]
 preview = true
+
+[tool.ruff.lint]
+select = ["ALL"]
 # https://docs.astral.sh/ruff/rules/
 ignore = [
   ###
@@ -12,7 +14,9 @@ ignore = [
   "D1", # pydocstyle Missing doctring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
-  "FBT", # flake8-boolean-trap
+  # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
+  # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
+  "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call
   "INP", # flake8-no-pep420
   "ISC003", # flake8-implicit-str-concat: explicit-string-concatenation
   # Short messages are still considered "long" messages
@@ -58,19 +62,21 @@ ignore = [
   # Python 3.11, introduced "zero cost" exception handling
   "PERF203", # try-except-in-loop
 
-  ### FIXME/TODO (no warnings in Ruff yet: https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
+  ### FIXME/TODO: I'd normally set them as temporarily warnings, but no warnings in Ruff yet:
+  ### https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
   "CPY001", # flake8-copyright
   "PTH", # flake8-use-pathlib
   # Ignore until linux support
   "EXE", # flake8-executable
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "typings/**/*.pyi" = [
   "F811", # Re-exports false positives
   "F821", # https://github.com/astral-sh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "A", # Shadowing builtin names
+  "FBT", # flake8-boolean-trap
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
   "PLC2701", # Private name import
@@ -82,11 +88,11 @@ ignore = [
 ]
 
 # https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
-[tool.ruff.flake8-implicit-str-concat]
+[tool.ruff.lint.flake8-implicit-str-concat]
 allow-multiline = false
 
 # https://docs.astral.sh/ruff/settings/#isort
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
 # Unlike isort, Ruff only counts relative imports as local-folder by default for know.
@@ -108,13 +114,13 @@ known-local-folder = [
 ]
 
 # https://docs.astral.sh/ruff/settings/#mccabe
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Hard limit, arbitrary to 4 bytes
 max-complexity = 31
 # Arbitrary to 2 bytes, same as SonarLint
 # max-complexity = 15
 
-[tool.ruff.pylint]
+[tool.ruff.lint.pylint]
 # Arbitrary to 1 byte, same as SonarLint
 max-args = 7
 # At least same as max-complexity
@@ -133,6 +139,7 @@ ignore = [
   # Autofixed by Ruff
   # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
   "E2", # Whitespace
+  "E3", # Blank lines
   "E703", #	useless-semicolon
   "E71", # Statement (comparisons)
   "E731", # lambda-assignment
