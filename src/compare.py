@@ -128,17 +128,17 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-def extract_and_compare_text(capture: MatLike, texts: list[str], method_index: int):
+def extract_and_compare_text(capture: MatLike, texts: list[str], methods_index: list[int]):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
-    The best match of all texts is returned.
+    The best match of all texts and methods is returned.
 
     @param capture: Image of any given shape as a numpy array
     @param texts: a list of strings to match for
-    @param method_index: the comparison method index to use
+    @param methods_index: a list of comparison methods to use in order
     @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
     """
-    method = get_ocr_comparison_method_by_index(method_index)
+    methods = [get_ocr_comparison_method_by_index(i) for i in methods_index]
     png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
     # Especially with stylised characters, OCR could conceivably get the right
     # letter, but mix up the casing (m/M, o/O, t/T, etc.)
@@ -146,23 +146,15 @@ def extract_and_compare_text(capture: MatLike, texts: list[str], method_index: i
 
     ratio = 0.0
     for text in texts:
-        ratio = max(ratio, method(text, image_string))
-        if ratio == MAX_VALUE:
-            break
-    # TODO: debug: remove me
-    if ratio > 0.9:  # noqa: PLR2004
-        print(f"text from image ({ratio:,.2f}): {image_string}")
+        for method in methods:
+            ratio = max(ratio, method(text, image_string))
+            if ratio == MAX_VALUE:
+                return ratio  # we found the best match; try to return early
     return ratio
 
 
-def compare_levenshtein(a: str, b: str):
-    return Levenshtein.ratio(a, b)  # pyright: ignore [reportUnknownMemberType]
-
-
 def compare_submatch(a: str, b: str):
-    if a in b:
-        return MAX_VALUE
-    return 0.0
+    return float(a in b)
 
 
 def compare_one_to_one(a: str, b: str):
@@ -178,7 +170,7 @@ def __compare_dummy(*_: object):
 def get_ocr_comparison_method_by_index(comparison_method_index: int):
     match comparison_method_index:
         case 0:
-            return compare_levenshtein
+            return Levenshtein.ratio
         case 1:
             return compare_submatch
         case 2:

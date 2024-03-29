@@ -1,7 +1,7 @@
 import os
 from enum import IntEnum, auto
 from math import sqrt
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -41,7 +41,7 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    texts: ClassVar[list[str]] = []
+    texts: list[str]
     # This value is internal, check for mask instead
     _has_transparency = False
     # These values should be overriden by some Defaults if None. Use getters instead
@@ -49,11 +49,8 @@ class AutoSplitImage:
     __comparison_method: int | None = None
     __pause_time: float | None = None
     __similarity_threshold: float | None = None
-    __x: int = 0
-    __xx: int = 0
-    __y: int = 0
-    __yy: int = 0
-    __ocr_comparison_method: int = 0
+    __rect: list[int]
+    __ocr_comparison_methods: list[int]
     __fps_limit: int = 0
 
     @property
@@ -111,6 +108,7 @@ class AutoSplitImage:
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
+        self.texts = []
         if path.endswith("txt"):
             self.__parse_text_file(path)
         else:
@@ -130,20 +128,31 @@ class AutoSplitImage:
 
         with open(path, encoding="utf-8") as f:
             data = toml.load(f)
-            self.texts = [text.lower().strip() for text in data["texts"]]
-            self.__x = abs(data["top_left"])
-            self.__xx = abs(data["top_right"])
-            self.__y = abs(data["bottom_left"])
-            self.__yy = abs(data["bottom_right"])
-            if "method" in data:
-                self.__ocr_comparison_method = abs(data["method"])
-            self.__fps_limit = 1
-            if "fps_limit" in data:
-                self.__fps_limit = abs(data["fps_limit"])
 
-        if self.__xx <= self.__x or self.__yy <= self.__y:
-            error_messages.wrong_ocr_coordinates(path)
+        self.texts = [text.lower().strip() for text in data["texts"]]
+        self.__rect = [
+            data["top_left"][0],
+            data["bottom_right"][0],
+            data["top_left"][1],
+            data["bottom_right"][1],
+        ]
+        self.__ocr_comparison_methods = data.get("methods", [0])
+        self.__fps_limit = data.get("fps_limit", 0)
+
+        if self.__validate_ocr():
+            error_messages.wrong_ocr_values(path)
             return
+
+    def __validate_ocr(self):
+        values = self.__rect + self.__ocr_comparison_methods
+        values.append(self.__fps_limit)
+        return (
+            any(  # Check for invalid negative values
+                value < 0 for value in values
+            )
+            or self.__rect[1] <= self.__rect[0]
+            or self.__rect[3] <= self.__rect[2]
+        )
 
     def __read_image_bytes(self, path: str):
         image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -196,7 +205,12 @@ class AutoSplitImage:
 
         if self.is_ocr:
             return extract_and_compare_text(
-                capture[self.__y:self.__yy, self.__x:self.__xx], self.texts, self.__ocr_comparison_method,
+                capture[
+                    self.__rect[2]:self.__rect[3],
+                    self.__rect[0]:self.__rect[1],
+                ],
+                self.texts,
+                self.__ocr_comparison_methods,
             )
 
         if not is_valid_image(self.byte_array):

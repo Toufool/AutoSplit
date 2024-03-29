@@ -41,7 +41,7 @@ T = TypeVar("T")
 
 
 def find_tesseract_path():
-    search_path = str(os.environ.get("PATH"))
+    search_path = os.environ.get("PATH", os.defpath)
     if sys.platform == "win32":
         search_path += r";C:\Program Files\Tesseract-OCR;C:\Program Files (x86)\Tesseract-OCR"
     return shutil.which(TESSERACT_EXE, path=search_path)
@@ -49,8 +49,8 @@ def find_tesseract_path():
 
 TESSERACT_EXE = "tesseract"
 TESSERACT_PATH = find_tesseract_path()
+"""The path to execute tesseract. `None` if it can't be found."""
 TESSERACT_CMD = (TESSERACT_PATH or TESSERACT_EXE, "-", "-", "--oem", "1", "--psm", "6")
-DEFAULT_ENCODING = "utf-8"
 
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
@@ -236,12 +236,14 @@ def subprocess_kwargs():
     variants) call work with or without Pyinstaller, ``--noconsole`` or
     not, on Windows and Linux.
     Typical use:
-      subprocess.call(['program_to_run', 'arg_1'], **subprocess_args())
+    ```python
+    subprocess.call(['program_to_run', 'arg_1'], **subprocess_args())
+    ```
     ---
     Originally found in https://github.com/madmaze/pytesseract/blob/master/pytesseract/pytesseract.py
     Recipe from https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
     which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
-    """  # noqa: D415,D400
+    """
     # The following is true only on Windows.
     if hasattr(subprocess, "STARTUPINFO"):
         # On Windows, subprocess calls will pop up a command window by default when run from

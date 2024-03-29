@@ -174,6 +174,70 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 
 The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
 
+### Text Recognition (OCR)
+
+You can use text recognition as an alternative comparison method.
+
+#### Tesseract install
+
+First you need to install tesseract and include it in your system or user environment variables.
+- See <https://tesseract-ocr.github.io/tessdoc/Installation.html> for installation instruction on all platforms.
+- For Windows:
+  1. You can go directly to <https://github.com/UB-Mannheim/tesseract/wiki> to find the installer.
+  2. If you change the "Destination Folder" during install, then you'll also need to add it to your `PATH` environment variable.
+
+#### Usage
+
+To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
+
+An example file name and content could look like this:
+
+Filename: `001_start_auto_splitter.txt`
+
+Content:
+
+```toml
+texts = ["complete any 2 encounters"]
+top_left = [275, 70]
+bottom_right = [540, 95]
+methods = [0]
+fps_limit = 1
+```
+
+The `texts` field is an array and can take more than one text to look for:
+
+```toml
+texts = ["look for me", "or this text"]
+```
+
+Note: for now we only use lowercase letters in the comparison. All uppercase letters are converted to lowercase before the comparison.
+
+The rectangle coordinates where the text you are looking for is expected to appear in the image are configured as follows:
+
+```toml
+top_left = [X, Y]
+bottom_right = [X, Y]
+```
+
+`top_left` is the top left and `bottom_right` is the bottom right corner of the rectangle.
+
+Currently there are three comparison methods:
+
+* `0` - uses the Levenshtein distance (the default)
+* `1` - checks if the OCR text contains the searched text
+* `2` - looks for a perfect 1:1 match
+
+You can also chain multiple comparison methods using the array notation:
+
+```toml
+methods = [1, 0]
+```
+
+The methods are then checked in the order you defined and the best match apon them wins.
+
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.
+The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
+
 ### Profiles
 
 <!-- TODO: Profiles are saved under `%appdata%\AutoSplit\profiles` and -->

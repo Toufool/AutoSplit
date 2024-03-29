@@ -238,9 +238,9 @@ def tesseract_missing(ocr_split_file_path: str):
     )
 
 
-def wrong_ocr_coordinates(ocr_split_file_path: str):
+def wrong_ocr_values(ocr_split_file_path: str):
     set_text_message(
-        f"{ocr_split_file_path!r} has invalid coordinates."
-        + "\nPlease make sure that the 'top_right' and 'bottom_right' coordinates are not euqal to or lower then the "
-        + "'top_left' and 'bottom_left' coordinates.",
+        f"{ocr_split_file_path!r} has invalid values."
+        + "\nPlease make sure that the X and Y coordinates of 'bottom_right' are not euqal to or lower then the "
+        + "X and Y coordinates of 'top_left'. Also check for negative values in the 'methods' or 'fps_limit' settings",
     )
