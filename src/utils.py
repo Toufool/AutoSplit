@@ -235,6 +235,7 @@ def subprocess_kwargs():
     Create a set of arguments which make a ``subprocess.Popen`` (and
     variants) call work with or without Pyinstaller, ``--noconsole`` or
     not, on Windows and Linux.
+
     Typical use:
     ```python
     subprocess.call(['program_to_run', 'arg_1'], **subprocess_args())
