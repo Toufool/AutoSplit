@@ -14,6 +14,7 @@ from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_d
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701
+
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
