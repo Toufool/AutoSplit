@@ -1,4 +1,3 @@
-import asyncio
 import json
 import sys
 import webbrowser
@@ -135,7 +134,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         self.__video_capture_devices: list[CameraInfo] = []
         """
         Used to temporarily store the existing cameras,
-        we don't want to call `get_all_video_capture_devices` agains and possibly have a different result
+        we don't want to call `get_all_video_capture_devices` again and possibly have a different result
         """
 
         self.setupUi(self)
@@ -246,7 +245,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
 
     @fire_and_forget
     def __set_all_capture_devices(self):
-        self.__video_capture_devices = asyncio.run(get_all_video_capture_devices())
+        self.__video_capture_devices = get_all_video_capture_devices()
         if len(self.__video_capture_devices) > 0:
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)

@@ -323,8 +323,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         start_image_similarity = self.start_image.compare_with_capture(self, capture)
 
         # If the similarity becomes higher than highest similarity, set it as such.
-        if start_image_similarity > self.highest_similarity:
-            self.highest_similarity = start_image_similarity
+        self.highest_similarity = max(start_image_similarity, self.highest_similarity)
 
         self.table_current_image_live_label.setText(decimal(start_image_similarity))
         self.table_current_image_highest_label.setText(decimal(self.highest_similarity))
@@ -672,8 +671,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.table_current_image_live_label.setText(decimal(similarity))
 
             # if the similarity becomes higher than highest similarity, set it as such.
-            if similarity > self.highest_similarity:
-                self.highest_similarity = similarity
+            self.highest_similarity = max(similarity, self.highest_similarity)
 
             # show live highest similarity if the checkbox is checked
             self.table_current_image_highest_label.setText(decimal(self.highest_similarity))
@@ -841,8 +839,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     self.table_reset_image_live_label.setText("paused")
                 else:
                     should_reset = similarity >= threshold
-                    if similarity > self.reset_highest_similarity:
-                        self.reset_highest_similarity = similarity
+                    self.reset_highest_similarity = max(similarity, self.reset_highest_similarity)
                     self.table_reset_image_highest_label.setText(decimal(self.reset_highest_similarity))
                     self.table_reset_image_live_label.setText(decimal(similarity))
 
