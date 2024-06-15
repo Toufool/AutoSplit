@@ -6,7 +6,7 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import NoReturn
+from typing import NoReturn, cast
 
 import cv2
 from cv2.typing import MatLike
@@ -946,7 +946,8 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             capture = image
 
         qimage = QtGui.QImage(
-            capture.data,
+            # Try to update PySide6, see https://bugreports.qt.io/browse/QTBUG-114635
+            cast(bytes, capture.data) if sys.platform == "linux" else capture.data,
             width,
             height,
             width * channels,

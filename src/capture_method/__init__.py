@@ -14,6 +14,7 @@ from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_d
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701
+
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -148,7 +149,7 @@ if sys.platform == "win32":
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
 elif sys.platform == "linux":
-    if features.check_feature(feature="xcb"):
+    if features.check_feature(feature="xcb"):  # pyright: ignore[reportUnknownMemberType] # TODO: Fix upstream
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
     try:
         pyscreeze.screenshot()
