@@ -181,6 +181,7 @@ You can use text recognition as an alternative comparison method.
 #### Tesseract install
 
 First you need to install tesseract and include it in your system or user environment variables.
+
 - See <https://tesseract-ocr.github.io/tessdoc/Installation.html> for installation instruction on all platforms.
 - For Windows:
   1. You can go directly to <https://github.com/UB-Mannheim/tesseract/wiki> to find the installer.
@@ -198,8 +199,10 @@ Content:
 
 ```toml
 texts = ["complete any 2 encounters"]
-top_left = [275, 70]
-bottom_right = [540, 95]
+left = 275
+right = 540
+top = 70
+bottom = 95
 methods = [0]
 fps_limit = 1
 ```
@@ -215,17 +218,20 @@ Note: for now we only use lowercase letters in the comparison. All uppercase let
 The rectangle coordinates where the text you are looking for is expected to appear in the image are configured as follows:
 
 ```toml
-top_left = [X, Y]
-bottom_right = [X, Y]
+left = 275
+right = 540
+top = 70
+bottom = 95
 ```
 
-`top_left` is the top left and `bottom_right` is the bottom right corner of the rectangle.
+If you're used to working in corner coordinates, you can think of `top_left = [left, top]` and `bottom_right = [right, bottom]`.
 
-Currently there are three comparison methods:
+Currently there are two comparison methods:
 
-* `0` - uses the Levenshtein distance (the default)
-* `1` - checks if the OCR text contains the searched text
-* `2` - looks for a perfect 1:1 match
+- `0` - uses the Levenshtein distance (the default)
+- `1` - checks if the OCR text contains the searched text (`0.0` or `1.0`)
+
+If you only want a perfect full match, use "Levenshtein" with a threshold of `(1.0)` on your file name.
 
 You can also chain multiple comparison methods using the array notation:
 
@@ -233,7 +239,7 @@ You can also chain multiple comparison methods using the array notation:
 methods = [1, 0]
 ```
 
-The methods are then checked in the order you defined and the best match apon them wins.
+The methods are then checked in the order you defined and the best match upon them wins.
 
 Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.
 The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).

@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from math import sqrt
 
 import cv2
@@ -128,7 +129,7 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
-def extract_and_compare_text(capture: MatLike, texts: list[str], methods_index: list[int]):
+def extract_and_compare_text(capture: MatLike, texts: Iterable[str], methods_index: Iterable[int]):
     """
     Compares the extracted text of the given image and returns the similarity between the two texts.
     The best match of all texts and methods is returned.
@@ -157,12 +158,6 @@ def compare_submatch(a: str, b: str):
     return float(a in b)
 
 
-def compare_one_to_one(a: str, b: str):
-    if a == b:
-        return MAX_VALUE
-    return 0.0
-
-
 def __compare_dummy(*_: object):
     return 0.0
 
@@ -173,8 +168,6 @@ def get_ocr_comparison_method_by_index(comparison_method_index: int):
             return Levenshtein.ratio
         case 1:
             return compare_submatch
-        case 2:
-            return compare_one_to_one
         case _:
             return __compare_dummy
 

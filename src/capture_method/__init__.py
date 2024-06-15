@@ -1,4 +1,3 @@
-import asyncio
 import os
 import sys
 from collections import OrderedDict
@@ -15,6 +14,7 @@ from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_d
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701
+
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -76,7 +76,12 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
 
     @override
     @staticmethod
-    def _generate_next_value_(name: "str | CaptureMethodEnum", *_):
+    def _generate_next_value_(
+        name: "str | CaptureMethodEnum",
+        start: int,
+        count: int,
+        last_values: list["str | CaptureMethodEnum"],
+    ):
         return name
 
     NONE = ""
@@ -112,10 +117,11 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     # Disallow unsafe get w/o breaking it at runtime
     @override
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        __key: Never,
+            self,
+            key: Never,
+            /,
     ) -> type[CaptureMethodBase]:
-        return super().__getitem__(__key)
+        return super().__getitem__(key)
 
     @override
     def get(self, key: CaptureMethodEnum, default: object = None, /):
@@ -215,10 +221,10 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     return resolution
 
 
-async def get_all_video_capture_devices():
+def get_all_video_capture_devices():
     named_video_inputs = get_input_devices()
 
-    async def get_camera_info(index: int, device_name: str):
+    def get_camera_info(index: int, device_name: str):
         backend = ""
         # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use. See #169
         # FIXME: Maybe offer the option to the user to obtain more info about their devices?
@@ -245,9 +251,4 @@ async def get_all_video_capture_devices():
             else None
         )
 
-    return [
-        camera_info
-        for camera_info
-        in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))
-        if camera_info is not None
-    ]
+    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))

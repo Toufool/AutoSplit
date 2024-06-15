@@ -34,24 +34,18 @@ class ImageType(IntEnum):
 
 
 class AutoSplitImage:
-    path: str
-    filename: str
-    flags: int
-    loops: int
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    texts: list[str]
     # This value is internal, check for mask instead
     _has_transparency = False
-    # These values should be overriden by some Defaults if None. Use getters instead
+    # These values should be overridden by some Defaults if None. Use getters instead
     __delay_time: float | None = None
     __comparison_method: int | None = None
     __pause_time: float | None = None
     __similarity_threshold: float | None = None
-    __rect: list[int]
-    __ocr_comparison_methods: list[int]
-    __fps_limit: int = 0
+    __rect = (0, 0, 1, 1)
+    __fps_limit = 0
 
     @property
     def is_ocr(self):
@@ -108,7 +102,8 @@ class AutoSplitImage:
         self.__comparison_method = comparison_method_from_filename(self.filename)
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
-        self.texts = []
+        self.texts: list[str] = []
+        self. __ocr_comparison_methods: list[int] = []
         if path.endswith("txt"):
             self.__parse_text_file(path)
         else:
@@ -130,12 +125,7 @@ class AutoSplitImage:
             data = toml.load(f)
 
         self.texts = [text.lower().strip() for text in data["texts"]]
-        self.__rect = [
-            data["top_left"][0],
-            data["bottom_right"][0],
-            data["top_left"][1],
-            data["bottom_right"][1],
-        ]
+        self.__rect = (data["left"], data["right"], data["top"], data["bottom"])
         self.__ocr_comparison_methods = data.get("methods", [0])
         self.__fps_limit = data.get("fps_limit", 0)
 
@@ -144,14 +134,11 @@ class AutoSplitImage:
             return
 
     def __validate_ocr(self):
-        values = self.__rect + self.__ocr_comparison_methods
-        values.append(self.__fps_limit)
+        values = [*self.__rect, *self.__ocr_comparison_methods, self.__fps_limit]
         return (
-            any(  # Check for invalid negative values
-                value < 0 for value in values
-            )
-            or self.__rect[1] <= self.__rect[0]
-            or self.__rect[3] <= self.__rect[2]
+            all(value >= 0 for value in values)  # Check for invalid negative values
+            and self.__rect[1] > self.__rect[0]
+            and self.__rect[3] > self.__rect[2]
         )
 
     def __read_image_bytes(self, path: str):
