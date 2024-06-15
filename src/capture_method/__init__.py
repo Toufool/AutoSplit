@@ -210,8 +210,15 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     # https://github.com/Toufool/AutoSplit/issues/238
     except COMError:
         return None
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
+
+    try:
+        resolution = filter_graph.get_input_device().get_current_format()
+    # For unknown reasons, some devices can raise "ValueError: NULL pointer access".
+    # For instance, Oh_DeeR's AVerMedia HD Capture C985 Bus 12
+    except ValueError:
+        return None
+    finally:
+        filter_graph.remove_filters()
     return resolution
 
 
