@@ -1,5 +1,4 @@
 # ruff: noqa: RET504
-
 import sys
 
 if sys.platform != "linux":

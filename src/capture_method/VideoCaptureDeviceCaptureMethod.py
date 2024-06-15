@@ -1,4 +1,3 @@
-import sys
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
@@ -8,12 +7,10 @@ import numpy as np
 from cv2.typing import MatLike
 from typing_extensions import override
 
+from capture_method import get_input_device_resolution
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, is_valid_image
-
-if sys.platform == "win32":
-    from pygrabber.dshow_graph import FilterGraph
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -101,14 +98,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             return
 
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        if sys.platform == "win32":
-            filter_graph = FilterGraph()
-            filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-            width, height = filter_graph.get_input_device().get_current_format()
-            filter_graph.remove_filters()
+        resolution = get_input_device_resolution(autosplit.settings_dict["capture_device_id"])
+        if resolution is not None:
             try:
-                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
             except cv2.error:
                 # Some cameras don't allow changing the resolution
                 pass

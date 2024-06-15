@@ -14,6 +14,7 @@ from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_d
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701
+
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -153,7 +154,7 @@ if sys.platform == "win32":
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
 elif sys.platform == "linux":
-    if features.check_feature(feature="xcb"):
+    if features.check_feature(feature="xcb"):  # pyright: ignore[reportUnknownMemberType] # TODO: Fix upstream
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
     try:
         pyscreeze.screenshot()
@@ -215,8 +216,15 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     # https://github.com/Toufool/AutoSplit/issues/238
     except COMError:
         return None
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
+
+    try:
+        resolution = filter_graph.get_input_device().get_current_format()
+    # For unknown reasons, some devices can raise "ValueError: NULL pointer access".
+    # For instance, Oh_DeeR's AVerMedia HD Capture C985 Bus 12
+    except ValueError:
+        return None
+    finally:
+        filter_graph.remove_filters()
     return resolution
 
 
