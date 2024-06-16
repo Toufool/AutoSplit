@@ -12,8 +12,7 @@ psutil>=5.9.6  # Python 3.12 fixes
 # PyAutoGUI # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials>=6.6.0 ; sys_platform == 'win32' # Python 3.12 support
-PySide6-Essentials<6.5.1 ; sys_platform == 'linux' # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+PySide6-Essentials>=6.6.0 # Python 3.12 support
 scipy>=1.11.2 # Python 3.12 support
 toml
 typing-extensions>=4.4.0  # @override decorator support
