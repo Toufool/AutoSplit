@@ -31,4 +31,5 @@ winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
+pillow ; sys_platform == 'linux' # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
 python-xlib ; sys_platform == 'linux'
