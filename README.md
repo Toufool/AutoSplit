@@ -85,14 +85,17 @@ See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.
 Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
 
 Not a developer? You can still help through the following methods:
-<!-- open enhancements sorted by reactions -->
+
 - Donating (see link below)
-- [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in
+- [Upvoting 👍 feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in <!-- open enhancements sorted by reactions -->
 - Sharing AutoSplit with other speedrunners
-- Upvoting the following upstream issues in libraries and tools we use:
+- Upvoting 👍 the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://bugreports.qt.io/browse/QTBUG-114635>
+  - <https://bugreports.qt.io/browse/PYSIDE-2541>
   - <https://bugreports.qt.io/browse/PYSIDE-2542>
+  - <https://github.com/pypa/pip/issues/9948>
+  - <https://github.com/pypa/pip/pull/10837>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
