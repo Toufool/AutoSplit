@@ -52,22 +52,6 @@ If ($IsLinux) {
 #          Even then, PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
 &"$python" -m pip install PyAutoGUI "D3DShot>=0.1.5 ; sys_platform == 'win32'" --no-deps --upgrade
 
-# Patch libraries so we don't have to install from git
-
-If ($IsWindows) {
-  # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness, which Qt tries to do then throws warnings about it.
-  # The unittest workaround significantly increases build time, boot time and build size with PyInstaller.
-  # https://github.com/asweigart/pyautogui/issues/663#issuecomment-1296719464
-  $libPath = &"$python" -c 'import pyautogui as _; print(_.__path__[0])'
-  (Get-Content "$libPath/_pyautogui_win.py").replace('ctypes.windll.user32.SetProcessDPIAware()', 'pass') |
-    Set-Content "$libPath/_pyautogui_win.py"
-  $libPath = &"$python" -c 'import pymonctl as _; print(_.__path__[0])'
-  (Get-Content "$libPath/_pymonctl_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
-    Set-Content "$libPath/_pymonctl_win.py"
-  $libPath = &"$python" -c 'import pywinbox as _; print(_.__path__[0])'
-  (Get-Content "$libPath/_pywinbox_win.py").replace('ctypes.windll.shcore.SetProcessDpiAwareness(2)', 'pass') |
-    Set-Content "$libPath/_pywinbox_win.py"
-}
 # Because Ubuntu 22.04 is forced to use an older version of PySide6, we do a dirty typing patch
 # https://bugreports.qt.io/browse/QTBUG-114635
 If ($IsLinux) {
