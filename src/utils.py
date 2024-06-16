@@ -85,7 +85,7 @@ class SubprocessKWArgs(TypedDict):
     stdin: int
     stdout: int
     stderr: int
-    startupinfo: STARTUPINFO | None
+    startupinfo: "STARTUPINFO | None"
     env: os._Environ[str] | None  # pyright: ignore[reportPrivateUsage]
 
 
