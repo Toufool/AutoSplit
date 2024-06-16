@@ -34,8 +34,9 @@ $dev = If ($Env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
 If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
-    # python3-tk for splash screen, npm for pyright, the rest for PySide6
-    sudo apt-get install -y python3-pip python3-tk npm libegl1 libxkbcommon0
+    # python3-tk for splash screen the rest for PySide6
+    sudo apt-get install -y python3-pip python3-tk libegl1 libxkbcommon0
+    # having issues with npm for pyright, maybe let users take care of it themselves? (pyright from pip)
   }
 }
 # Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
