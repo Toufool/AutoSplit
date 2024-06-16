@@ -4,6 +4,7 @@
 #
 # Dependencies:
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
+Levenshtein>=0.25
 numpy>=1.26  # Python 3.12 support
 opencv-python-headless>=4.9.0.80  # Typing fixes
 packaging

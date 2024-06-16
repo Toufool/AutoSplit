@@ -228,3 +228,19 @@ def handle_top_level_exceptions(exception: Exception) -> NoReturn:
     else:
         traceback.print_exception(type(exception), exception, exception.__traceback__)
     sys.exit(1)
+
+
+def tesseract_missing(ocr_split_file_path: str):
+    set_text_message(
+        f"{ocr_split_file_path!r} is an Optical Character Recognition split file but tesseract couldn't be found."
+        + f'\nPlease read <a href="https://github.com/{GITHUB_REPOSITORY}#install-tesseract">'
+        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions.",
+    )
+
+
+def wrong_ocr_values(ocr_split_file_path: str):
+    set_text_message(
+        f"{ocr_split_file_path!r} has invalid values." +
+        "\nPlease make sure that `left < right` and `top < bottom`. " +
+        "Also check for negative values in the 'methods' or 'fps_limit' settings",
+    )

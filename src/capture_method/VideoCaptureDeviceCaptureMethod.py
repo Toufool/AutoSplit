@@ -7,10 +7,9 @@ import numpy as np
 from cv2.typing import MatLike
 from typing_extensions import override
 
-from capture_method import get_input_device_resolution
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
-from utils import ImageShape, is_valid_image
+from utils import ImageShape, get_input_device_resolution, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit

@@ -225,7 +225,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     else:
         for image in split_images:
             # Test for image without transparency
-            if not is_valid_image(image.byte_array):
+            if not image.is_ocr and not is_valid_image(image.byte_array):
                 error_message = partial(error_messages.image_validity, image.filename)
                 break
 
