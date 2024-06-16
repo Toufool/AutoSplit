@@ -292,7 +292,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
             hotkey_input.setText(self._autosplit_ref.settings_dict.get(f"{hotkey}_hotkey", ""))
 
-            set_hotkey_hotkey_button.clicked.connect(partial(set_hotkey, hotkey=hotkey))
+            set_hotkey_hotkey_button.clicked.connect(partial(set_hotkey, self._autosplit_ref, hotkey=hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
             if self._autosplit_ref.is_auto_controlled and hotkey != "toggle_auto_reset_image":
                 set_hotkey_hotkey_button.setEnabled(False)
