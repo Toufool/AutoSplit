@@ -9,7 +9,7 @@ from functools import partial
 from itertools import chain
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
+from typing import TYPE_CHECKING, Any, TypeAlias, TypedDict, TypeGuard, TypeVar
 
 from cv2.typing import MatLike
 
@@ -36,6 +36,12 @@ else:
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
+    if sys.platform == "win32":
+        STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
+    else:
+        STARTUPINFO: TypeAlias = None
+else:
+    STARTUPINFO = getattr(subprocess, "STARTUPINFO", None)
 
 T = TypeVar("T")
 
@@ -79,7 +85,7 @@ class SubprocessKWArgs(TypedDict):
     stdin: int
     stdout: int
     stderr: int
-    startupinfo: subprocess.STARTUPINFO | None
+    startupinfo: STARTUPINFO | None
     env: os._Environ[str] | None  # pyright: ignore[reportPrivateUsage]
 
 
@@ -246,10 +252,10 @@ def subprocess_kwargs():
     which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
     """
     # The following is true only on Windows.
-    if hasattr(subprocess, "STARTUPINFO"):
+    if STARTUPINFO:
         # On Windows, subprocess calls will pop up a command window by default when run from
         # Pyinstaller with the ``--noconsole`` option. Avoid this distraction.
-        startupinfo = subprocess.STARTUPINFO()
+        startupinfo = STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         # https://github.com/madmaze/pytesseract/blob/88839f03590578a10e806a5244704437c9d477da/pytesseract/pytesseract.py#L236
         startupinfo.wShowWindow = subprocess.SW_HIDE
