@@ -23,6 +23,9 @@ if sys.platform == "win32":
     import win32ui
     from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
     from winsdk.windows.media.capture import MediaCapture
+    STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
+else:
+    STARTUPINFO: TypeAlias = None
 
 if sys.platform == "linux":
     import fcntl
@@ -36,12 +39,6 @@ else:
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
-    if sys.platform == "win32":
-        STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
-    else:
-        STARTUPINFO: TypeAlias = None
-else:
-    STARTUPINFO = getattr(subprocess, "STARTUPINFO", None)
 
 T = TypeVar("T")
 
@@ -252,7 +249,7 @@ def subprocess_kwargs():
     which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
     """
     # The following is true only on Windows.
-    if STARTUPINFO:
+    if sys.platform == "win32":
         # On Windows, subprocess calls will pop up a command window by default when run from
         # Pyinstaller with the ``--noconsole`` option. Avoid this distraction.
         startupinfo = STARTUPINFO()
