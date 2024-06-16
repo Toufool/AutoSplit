@@ -174,7 +174,7 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 
 The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
 
-### Text Recognition (OCR)
+### Text Recognition / Optical Character Recognition (OCR) ⚠️EXPERIMENTAL⚠️
 
 You can use text recognition as an alternative comparison method.
 
@@ -189,7 +189,7 @@ First you need to install tesseract and include it in your system or user enviro
 
 #### Usage
 
-To use this feature you need to place a text file (.txt) in your splits folder instead of an image file.
+To use this feature you need to place a text file (`.txt`) in your splits folder instead of an image file.
 
 An example file name and content could look like this:
 
@@ -229,7 +229,7 @@ If you're used to working in corner coordinates, you can think of `top_left = [l
 Currently there are two comparison methods:
 
 - `0` - uses the Levenshtein distance (the default)
-- `1` - checks if the OCR text contains the searched text (`0.0` or `1.0`)
+- `1` - checks if the OCR text contains the searched text (results in matches of either `0.0` or `1.0`)
 
 If you only want a perfect full match, use "Levenshtein" with a threshold of `(1.0)` on your file name.
 
@@ -241,7 +241,7 @@ methods = [1, 0]
 
 The methods are then checked in the order you defined and the best match upon them wins.
 
-Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.  
 The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
 
 ### Profiles

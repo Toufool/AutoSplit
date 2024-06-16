@@ -18,11 +18,14 @@ from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 if sys.platform == "win32":
     import ctypes
     import ctypes.wintypes
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
     import win32gui
     import win32ui
+    from pygrabber.dshow_graph import FilterGraph
     from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
     from winsdk.windows.media.capture import MediaCapture
+
     STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
 else:
     STARTUPINFO: TypeAlias = None
@@ -146,6 +149,30 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     window_width = extended_frame_bounds.right - extended_frame_bounds.left
     window_height = extended_frame_bounds.bottom - extended_frame_bounds.top
     return window_left_bounds, window_top_bounds, window_width, window_height
+
+
+# Note: maybe reorganize capture_method module to have different helper modules and a methods submodule
+def get_input_device_resolution(index: int) -> tuple[int, int] | None:
+    if sys.platform != "win32":
+        return (0, 0)
+    filter_graph = FilterGraph()
+    try:
+        filter_graph.add_video_input_device(index)
+    # This can happen with virtual cameras throwing errors.
+    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
+    # https://github.com/Toufool/AutoSplit/issues/238
+    except COMError:
+        return None
+
+    try:
+        resolution = filter_graph.get_input_device().get_current_format()
+    # For unknown reasons, some devices can raise "ValueError: NULL pointer access".
+    # For instance, Oh_DeeR's AVerMedia HD Capture C985 Bus 12
+    except ValueError:
+        return None
+    finally:
+        filter_graph.remove_filters()
+    return resolution
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):

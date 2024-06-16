@@ -10,10 +10,10 @@ from typing_extensions import Never, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution, try_get_direct3d_device
 
 if sys.platform == "win32":
-    from _ctypes import COMError  # noqa: PLC2701
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
     from pygrabber.dshow_graph import FilterGraph
 
@@ -203,29 +203,6 @@ def get_input_devices():
         except FileNotFoundError:
             pass
     return cameras
-
-
-def get_input_device_resolution(index: int) -> tuple[int, int] | None:
-    if sys.platform != "win32":
-        return (0, 0)
-    filter_graph = FilterGraph()
-    try:
-        filter_graph.add_video_input_device(index)
-    # This can happen with virtual cameras throwing errors.
-    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
-    # https://github.com/Toufool/AutoSplit/issues/238
-    except COMError:
-        return None
-
-    try:
-        resolution = filter_graph.get_input_device().get_current_format()
-    # For unknown reasons, some devices can raise "ValueError: NULL pointer access".
-    # For instance, Oh_DeeR's AVerMedia HD Capture C985 Bus 12
-    except ValueError:
-        return None
-    finally:
-        filter_graph.remove_filters()
-    return resolution
 
 
 def get_all_video_capture_devices():
