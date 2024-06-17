@@ -34,8 +34,8 @@ $dev = If ($Env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
 If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
-    # python3-tk for splash screen the rest for PySide6
-    sudo apt-get install -y python3-pip python3-tk libegl1 libxkbcommon0
+    # python3-tk for splash screen, libxcb-cursor-dev for QT_QPA_PLATFORM=xcb, the rest for PySide6
+    sudo apt-get install -y python3-pip python3-tk libxcb-cursor-dev libegl1 libxkbcommon0
     # having issues with npm for pyright, maybe let users take care of it themselves? (pyright from pip)
   }
 }
@@ -52,13 +52,6 @@ If ($IsLinux) {
 #          Even then, PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
 &"$python" -m pip install PyAutoGUI "D3DShot>=0.1.5 ; sys_platform == 'win32'" --no-deps --upgrade
 
-# Because Ubuntu 22.04 is forced to use an older version of PySide6, we do a dirty typing patch
-# https://bugreports.qt.io/browse/QTBUG-114635
-If ($IsLinux) {
-  $libPath = &"$python" -c 'import PySide6 as _; print(_.__path__[0])'
-  (Get-Content "$libPath/QtWidgets.pyi").replace('-> Tuple:', '-> Tuple[str, ...]:') |
-    Set-Content "$libPath/QtWidgets.pyi"
-}
 # Uninstall optional dependencies if PyAutoGUI or D3DShot was installed outside this script
 # PyScreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows
 # Pillow, pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6

@@ -43,7 +43,8 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
-- Linux (still in early development) <!-- (Only tested on Ubuntu 22.04) -->
+- Linux (still in early development)
+  - Should work on Ubuntu 20.04+ (Only tested on Ubuntu 22.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).

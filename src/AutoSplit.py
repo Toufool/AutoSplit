@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import sys
 
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness, which Qt tries to do then throws warnings about it.
@@ -15,14 +16,16 @@ if sys.platform == "win32":
     ctypes.windll.shcore.SetProcessDpiAwareness = (  # pyright: ignore[reportAttributeAccessIssue]
         lambda _: None  # pyright: ignore[reportUnknownLambdaType]
     )
+if sys.platform == "linux":
+    # Fixes "undefined symbol: wl_proxy_marshal_flags": https://bugreports.qt.io/browse/QTBUG-114635
+    os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
-import os
 import signal
 from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import NoReturn, cast
+from typing import NoReturn
 
 import cv2
 from cv2.typing import MatLike
@@ -967,8 +970,7 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             capture = image
 
         qimage = QtGui.QImage(
-            # Try to update PySide6, see https://bugreports.qt.io/browse/QTBUG-114635
-            cast(bytes, capture.data) if sys.platform == "linux" else capture.data,
+            capture.data,
             width,
             height,
             width * channels,

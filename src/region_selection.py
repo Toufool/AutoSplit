@@ -1,4 +1,3 @@
-import os
 import sys
 from math import ceil
 from typing import TYPE_CHECKING
@@ -8,6 +7,7 @@ import numpy as np
 from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
+from pywinctl import getTopWindowAt
 from typing_extensions import override
 
 import error_messages
@@ -32,12 +32,6 @@ if sys.platform == "win32":
 
 if sys.platform == "linux":
     from Xlib.display import Display
-
-    # This variable may be missing in desktopless environment. x11 | wayland
-    os.environ.setdefault("XDG_SESSION_TYPE", "x11")
-
-# Must come after the linux XDG_SESSION_TYPE environment variable is set
-from pywinctl import getTopWindowAt
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
