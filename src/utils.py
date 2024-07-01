@@ -309,7 +309,7 @@ def run_tesseract(png: bytes):
     """
     return (
         subprocess
-        .Popen(TESSERACT_CMD, **subprocess_kwargs())  # noqa: S603 # Only using known literal strings
+        .Popen(TESSERACT_CMD, **subprocess_kwargs())  # Only using known literal strings
         .communicate(input=png)[0]
         .decode()
     )
