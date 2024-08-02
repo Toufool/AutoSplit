@@ -9,7 +9,7 @@
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
-This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), and can be integrated with LiveSplit.
+This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
 
 ![Example](/docs/2.0.0_gif.gif)
 
@@ -98,9 +98,9 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/pypa/pip/issues/9948>
   - <https://github.com/pypa/pip/pull/10837>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
+  - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
-  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
   - <https://github.com/python/mypy/issues/6700>
@@ -112,6 +112,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/boppreh/keyboard/issues/216>
   - <https://github.com/boppreh/keyboard/issues/161>
   - <https://github.com/asweigart/pyautogui/issues/663>
+  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
 
 ## Credits
 

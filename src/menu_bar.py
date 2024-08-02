@@ -23,7 +23,7 @@ from capture_method import (
     get_all_video_capture_devices,
 )
 from gen import about, design, settings as settings_ui, update_checker
-from hotkeys import HOTKEYS, set_hotkey
+from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
 if TYPE_CHECKING:
@@ -292,11 +292,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(self, f"set_{hotkey}_hotkey_button")
             hotkey_input.setText(self._autosplit_ref.settings_dict.get(f"{hotkey}_hotkey", ""))
 
-            set_hotkey_hotkey_button.clicked.connect(partial(set_hotkey, self._autosplit_ref, hotkey=hotkey))
             # Make it very clear that hotkeys are not used when auto-controlled
-            if self._autosplit_ref.is_auto_controlled and hotkey != "toggle_auto_reset_image":
+            if self._autosplit_ref.is_auto_controlled and hotkey not in HOTKEYS_WHEN_AUTOCONTROLLED:
                 set_hotkey_hotkey_button.setEnabled(False)
                 hotkey_input.setEnabled(False)
+            else:
+                set_hotkey_hotkey_button.clicked.connect(partial(set_hotkey, self._autosplit_ref, hotkey=hotkey))
 
 # region Set initial values
         # Capture Settings
