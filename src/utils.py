@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess  # noqa: S404
 import sys
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from enum import IntEnum
 from functools import partial
 from itertools import chain
@@ -11,6 +11,8 @@ from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypeAlias, TypedDict, TypeGuard, TypeVar
 
+import cv2
+import numpy as np
 from cv2.typing import MatLike
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
@@ -258,6 +260,17 @@ def fire_and_forget(func: Callable[..., Any]):
 
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
+
+
+def imread(filename: str, flags: int = cv2.IMREAD_COLOR):
+    return cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)
+
+
+def imwrite(filename: str, img: MatLike, params: Sequence[int] = ()):
+    success, encoded_img = cv2.imencode(os.path.splitext(filename)[1], img, params)
+    if not success:
+        raise OSError(f"cv2 could not write to path {filename}")
+    encoded_img.tofile(filename)
 
 
 def subprocess_kwargs():

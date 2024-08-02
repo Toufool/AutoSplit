@@ -10,7 +10,7 @@ from cv2.typing import MatLike
 
 import error_messages
 from compare import check_if_image_has_transparency, extract_and_compare_text, get_comparison_method_by_index
-from utils import BGR_CHANNEL_COUNT, MAXBYTE, TESSERACT_PATH, ColorChannel, ImageShape, is_valid_image
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, TESSERACT_PATH, ColorChannel, ImageShape, imread, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -142,7 +142,7 @@ class AutoSplitImage:
         )
 
     def __read_image_bytes(self, path: str):
-        image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        image = imread(path, cv2.IMREAD_UNCHANGED)
         if not is_valid_image(image):
             self.byte_array = None
             error_messages.image_type(path)

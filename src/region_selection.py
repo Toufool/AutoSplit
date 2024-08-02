@@ -18,6 +18,7 @@ from utils import (
     ImageShape,
     auto_split_directory,
     get_window_bounds,
+    imread,
     is_valid_hwnd,
     is_valid_image,
 )
@@ -211,7 +212,7 @@ def align_region(autosplit: "AutoSplit"):
     if not template_filename:
         return
 
-    template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
+    template = imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Add alpha channel to template if it's missing.
     if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)

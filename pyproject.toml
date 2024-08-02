@@ -126,6 +126,14 @@ max-args = 7
 # At least same as max-complexity
 max-branches = 15
 
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"cv2.imread".msg = """\
+it doesn't support special characters. Use `utils.imread` instead.
+https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
+"cv2.imwrite".msg = """\
+it doesn't support special characters. . Use `utils.imwrite` instead.
+https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
+
 # https://github.com/hhatto/autopep8#usage
 # https://github.com/hhatto/autopep8#more-advanced-usage
 [tool.autopep8]

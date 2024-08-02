@@ -64,6 +64,7 @@ from utils import (
     auto_split_directory,
     decimal,
     flatten,
+    imwrite,
     is_valid_image,
     open_file,
 )
@@ -429,7 +430,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
 
         # Save and open image
-        cv2.imwrite(screenshot_path, capture)
+        imwrite(screenshot_path, capture)
         if self.settings_dict["open_screenshot"]:
             open_file(screenshot_path)
 
