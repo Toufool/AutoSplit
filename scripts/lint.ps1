@@ -16,7 +16,7 @@ else {
   Write-Host "`Ruff passed" -ForegroundColor Green
 }
 
-$pyrightVersion = '1.1.364' # Change this if latest has issues
+$pyrightVersion = 'latest' # Change this if latest has issues
 Write-Host "`nRunning Pyright $pyrightVersion ..."
 $Env:PYRIGHT_PYTHON_FORCE_VERSION = $pyrightVersion
 npx -y pyright@$pyrightVersion src/

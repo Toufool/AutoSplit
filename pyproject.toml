@@ -53,6 +53,9 @@ ignore = [
   # Specific to this project
   ###
   "D205", # Not all docstrings have a short description + desrciption
+  # TODO: Consider for more complete doc
+  "DOC201", # docstring-extraneous-returns
+  "DOC501", # docstring-missing-exception
   # We have some Pascal case module names
   "N999", # pep8-naming: Invalid module name
   # Print are used as debug logs

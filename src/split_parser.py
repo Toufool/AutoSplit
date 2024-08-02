@@ -167,7 +167,7 @@ def flags_from_filename(filename: str):
 def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     for image in split_image:
         if image.image_type == image_type:
-            split_image.remove(image)
+            split_image.remove(image)  # noqa: B909 # False-positive: https://github.com/astral-sh/ruff/issues/12640
             return image
 
     return None

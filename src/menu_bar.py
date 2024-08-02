@@ -106,7 +106,7 @@ class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
     @override
     def run(self):
         try:
-            with urlopen(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30) as response:  # noqa: S310
+            with urlopen(f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest", timeout=30) as response:
                 json_response: dict[str, str] = json.loads(response.read())
                 latest_version = json_response["name"].split("v")[1]
             self._autosplit_ref.update_checker_widget_signal.emit(latest_version, self.check_on_open)
