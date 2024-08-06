@@ -39,7 +39,7 @@ class XcbCaptureMethod(CaptureMethodBase):
         selection = self._autosplit_ref.settings_dict["capture_region"]
         x = selection["x"] + offset_x
         y = selection["y"] + offset_y
-        image = ImageGrab.grab(  # pyright: ignore[reportUnknownMemberType] # TODO: Fix upstream
+        image = ImageGrab.grab(
             (
                 x,
                 y,

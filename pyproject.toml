@@ -134,7 +134,7 @@ max-branches = 15
 it doesn't support special characters. Use `utils.imread` instead.
 https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
 "cv2.imwrite".msg = """\
-it doesn't support special characters. . Use `utils.imwrite` instead.
+it doesn't support special characters. Use `utils.imwrite` instead.
 https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
 
 # https://github.com/hhatto/autopep8#usage
