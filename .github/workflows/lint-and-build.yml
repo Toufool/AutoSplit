@@ -78,10 +78,20 @@ jobs:
           cache-dependency-path: "scripts/requirements*.txt"
       - run: scripts/install.ps1
         shell: pwsh
+      - name: Get pyright version
+        id: pyright_version
+        run: |
+          PYRIGHT_VERSION=$(grep '$pyrightVersion = ' 'scripts/lint.ps1' | cut -d "#" -f 1 | cut -d = -f 2 | tr -d ' ')
+          echo pyright version: "${PYRIGHT_VERSION}"
+          if [ "$PYRIGHT_VERSION" = "'latest'" ]; then
+            PYRIGHT_VERSION=
+          fi
+          echo PYRIGHT_VERSION="${PYRIGHT_VERSION}" >> "${GITHUB_OUTPUT}"
+        shell: bash
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v2
         with:
-          version: "1.1.364"
+          version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:

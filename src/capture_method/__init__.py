@@ -154,7 +154,7 @@ if sys.platform == "win32":
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
 elif sys.platform == "linux":
-    if features.check_feature(feature="xcb"):  # pyright: ignore[reportUnknownMemberType] # TODO: Fix upstream
+    if features.check_feature(feature="xcb"):
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
     try:
         pyscreeze.screenshot()
