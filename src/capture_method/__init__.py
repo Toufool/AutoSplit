@@ -10,7 +10,13 @@ from typing_extensions import Never, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution, try_get_direct3d_device
+from utils import (
+    WGC_MIN_BUILD,
+    WINDOWS_BUILD_NUMBER,
+    first,
+    get_input_device_resolution,
+    try_get_direct3d_device,
+)
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
@@ -19,7 +25,9 @@ if sys.platform == "win32":
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
-    from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
+    from capture_method.ForceFullContentRenderingCaptureMethod import (
+        ForceFullContentRenderingCaptureMethod,
+    )
     from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 
 if sys.platform == "linux":
@@ -126,7 +134,8 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     @override
     def get(self, key: CaptureMethodEnum, default: object = None, /):
         """
-        Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
+        Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum`
+        if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
         Returns `CaptureMethodBase` directly if there's no capture methods.
         """
@@ -139,7 +148,8 @@ CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     if (  # Windows Graphics Capture requires a minimum Windows Build
         WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
-        # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
+        # Our current implementation of Windows Graphics Capture
+        # does not ensure we can get an ID3DDevice
         and try_get_direct3d_device()
     ):
         CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
@@ -152,7 +162,9 @@ if sys.platform == "win32":
         pass
     else:
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
-    CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
+    CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = (
+        ForceFullContentRenderingCaptureMethod
+    )
 elif sys.platform == "linux":
     if features.check_feature(feature="xcb"):
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod

@@ -9,8 +9,20 @@ import toml
 from cv2.typing import MatLike
 
 import error_messages
-from compare import check_if_image_has_transparency, extract_and_compare_text, get_comparison_method_by_index
-from utils import BGR_CHANNEL_COUNT, MAXBYTE, TESSERACT_PATH, ColorChannel, ImageShape, imread, is_valid_image
+from compare import (
+    check_if_image_has_transparency,
+    extract_and_compare_text,
+    get_comparison_method_by_index,
+)
+from utils import (
+    BGR_CHANNEL_COUNT,
+    MAXBYTE,
+    TESSERACT_PATH,
+    ColorChannel,
+    ImageShape,
+    imread,
+    is_valid_image,
+)
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -153,9 +165,12 @@ class AutoSplitImage:
         if self._has_transparency:
             # Adaptively determine the target size according to
             # the number of nonzero elements in the alpha channel of the split image.
-            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency.
+            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # noqa: E501
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])))
+            scale = min(
+                1,
+                sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])),
+            )
 
             image = cv2.resize(
                 image,
@@ -185,7 +200,9 @@ class AutoSplitImage:
     ):
         """
         Compare image with capture using image's comparison method. Falls back to combobox.
-        For OCR text files: extract image text from rectangle position and compare it with the expected string.
+
+        For OCR text files:
+            extract image text from rectangle position and compare it with the expected string.
         """
         if not is_valid_image(capture):
             return 0.0

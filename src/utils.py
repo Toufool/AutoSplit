@@ -111,7 +111,10 @@ def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
 
 
 def is_valid_hwnd(hwnd: int):
-    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
+    """
+    Validate the hwnd points to a valid window
+    and not the desktop or whatever window obtained with `""`.
+    """
     if not hwnd:
         return False
     if sys.platform == "win32":
@@ -153,7 +156,8 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
-# Note: maybe reorganize capture_method module to have different helper modules and a methods submodule
+# Note: maybe reorganize capture_method module to have
+# different helper modules and a methods submodule
 def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
         return (0, 0)
@@ -198,18 +202,25 @@ def get_direct3d_device():
     if sys.platform != "win32":
         raise OSError("Direct3D Device is only available on Windows")
 
-    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
+    # Note: Must create in the same thread (can't use a global)
+    # otherwise when ran from LiveSplit it will raise:
     # OSError: The application called an interface that was marshalled for a different thread
     media_capture = MediaCapture()
 
     async def init_mediacapture():
         await media_capture.initialize_async()
     asyncio.run(init_mediacapture())
-    direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
+    direct_3d_device = (
+        media_capture.media_capture_settings
+        and media_capture.media_capture_settings.direct3_d11_device
+    )
     if not direct_3d_device:
         try:
-            # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
-            direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
+            # May be problematic?
+            # https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
+            direct_3d_device = LearningModelDevice(
+                LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE,
+            ).direct3_d11_device
         # TODO: Unknown potential error, I don't have an older Win10 machine to test.
         except BaseException:  # noqa: S110,BLE001
             pass
@@ -242,8 +253,9 @@ def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because ~~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
-    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
+    Uses threads on Windows because
+    ~~`RuntimeError: There is no current event loop in thread 'MainThread'`~~
+    maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
