@@ -30,8 +30,10 @@ SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
-Hotkey = Literal["split", "reset", "skip_split", "undo_split",
-                 "pause", "screenshot", "toggle_auto_reset_image"]
+Hotkey = Literal[
+    "split", "reset", "skip_split", "undo_split",
+    "pause", "screenshot", "toggle_auto_reset_image",
+]
 HOTKEYS = (
     "split",
     "reset",
@@ -39,7 +41,8 @@ HOTKEYS = (
     "undo_split",
     "pause",
     "screenshot",
-    "toggle_auto_reset_image")
+    "toggle_auto_reset_image",
+)
 HOTKEYS_WHEN_AUTOCONTROLLED = {"screenshot", "toggle_auto_reset_image"}
 
 
@@ -165,15 +168,18 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     return not is_digit(expected_key[-1])
 
 
-def _hotkey_action(keyboard_event: keyboard.KeyboardEvent,
-                   key_name: str, action: Callable[[], None]):
+def _hotkey_action(
+    keyboard_event: keyboard.KeyboardEvent,
+    key_name: str, action: Callable[[], None],
+):
     """
     We're doing the check here instead of saving the key code because
     the non-keypad shared keys are localized while the keypad ones aren't.
     They also share scan codes on Windows.
     """
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(
-            key_name, keyboard_event):
+            key_name, keyboard_event,
+    ):
         action()
 
 
@@ -305,7 +311,8 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: 
             if hotkey_name == "esc":
                 _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
                 autosplit.settings_dict[f"{hotkey}_hotkey"] = (  # pyright: ignore[reportGeneralTypeIssues]
-                    "")
+                    ""
+                )
                 if autosplit.SettingsWidget:
                     getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
                 return
@@ -346,7 +353,8 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: 
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
             autosplit.settings_dict[f"{hotkey}_hotkey"] = (  # pyright: ignore[reportGeneralTypeIssues]
-                hotkey_name)
+                hotkey_name
+            )
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
