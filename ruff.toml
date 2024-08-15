@@ -1,7 +1,35 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2024 Beslogic Inc.
+
+# The source skeleton for this configuration can be found at
+# https://github.com/BesLogic/shared-configs/blob/main/ruff.toml
+# Modifications to this file that are not project-specific should also be done upstream.
+# These configs are incompatible with ruff<0.5.7
+
 # https://docs.astral.sh/ruff/configuration/
-target-version = "py310"
-line-length = 120
+target-version = "py310" # Change this to the oldest supported version by your application
+line-length = 100
 preview = true
+
+# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
+[lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+# https://docs.astral.sh/ruff/settings/#isort
+[lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+
+# https://docs.astral.sh/ruff/settings/#mccabe
+[lint.mccabe]
+# Arbitrary to 2 bytes, same as SonarLint
+max-complexity = 15
+
+[lint.pylint]
+# Arbitrary to 1 byte, same as SonarLint
+max-args = 7
+# At least same as max-complexity
+max-branches = 15
 
 [lint]
 select = ["ALL"]
@@ -13,6 +41,7 @@ ignore = [
   "D1", # pydocstyle Missing doctring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
+  "EXE", # flake8-executable
   # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
   # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
   "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call
@@ -24,9 +53,11 @@ ignore = [
   "ERA001", # eradicate: commented-out-code
   # contextlib.suppress is roughly 3x slower than try/except
   "SIM105", # flake8-simplify: use-contextlib-suppress
-  # Slower and more verbose https://github.com/astral-sh/ruff/issues/7871
+  # Negative performance impact and more verbose https://github.com/astral-sh/ruff/issues/7871
   "UP038", # non-pep604-isinstance
-  # Checked by type-checker (pyright)
+  # deprecated and is actually slower for cases relevant to unpacking: https://github.com/astral-sh/ruff/issues/12754
+  "UP027", # unpacked-list-comprehension
+  # Checked by type-checker (pyright/mypy)
   "ANN", # flake-annotations
   "PGH003", # blanket-type-ignore
   "TCH", # flake8-type-checking
@@ -47,6 +78,21 @@ ignore = [
 
   # False-positives
   "TCH004", # https://github.com/astral-sh/ruff/issues/3821
+
+  ###
+  # Conflict with formatter (you can remove this section if you don't use Ruff as a formatter)
+  ###
+  # "COM812", # missing-trailing-comma
+  # "ISC001", # single-line-implicit-string-concatenation
+
+  ###
+  # Rules about missing special documentation. Up to you if you wanna enable these, you must also disable D406, D407
+  ###
+  "DOC201", #	docstring-missing-returns
+  "DOC402", #	docstring-missing-yields
+  "DOC501", #	docstring-missing-exception
+  # "D406", # new-line-after-section-name, conflicts with DOC
+  # "D407", # dashed-underline-after-section, conflicts with DOC
 
   ###
   # Specific to this project
@@ -73,11 +119,12 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
-"typings/**/*.pyi" = [
+"**/typings/**/*.pyi" = [
   "F811", # Re-exports false positives
-  "F821", # https://github.com/astral-sh/ruff/issues/3011
   # The following can't be controlled for external libraries:
   "A", # Shadowing builtin names
+  "E741", # ambiguous variable name
+  "F403", # `from . import *` used; unable to detect undefined names
   "FBT", # flake8-boolean-trap
   "ICN001", # unconventional-import-alias
   "N8", # Naming conventions
@@ -87,51 +134,17 @@ ignore = [
   "PLR0917", # Too many positional arguments
   "PLW3201", # misspelled dunder method name
   "PYI042", # CamelCase TypeAlias
+  # Stubs can sometimes re-export entire modules.
+  # Issues with using a star-imported name will be caught by type-checkers.
+  "F405", # may be undefined, or defined from star imports
 ]
-
-# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
-[lint.flake8-implicit-str-concat]
-allow-multiline = false
-
-# https://docs.astral.sh/ruff/settings/#isort
-[lint.isort]
-combine-as-imports = true
-split-on-trailing-comma = false
-# Unlike isort, Ruff only counts relative imports as local-folder by default for know.
-# https://github.com/astral-sh/ruff/issues/3115
-known-local-folder = [
-  "AutoControlledThread",
-  "AutoSplit",
-  "AutoSplitImage",
-  "capture_method",
-  "compare",
-  "error_messages",
-  "gen",
-  "hotkeys",
-  "menu_bar",
-  "region_selection",
-  "split_parser",
-  "user_profile",
-  "utils",
-]
-
-# https://docs.astral.sh/ruff/settings/#mccabe
-[lint.mccabe]
-# Hard limit, arbitrary to 4 bytes
-max-complexity = 31
-# Arbitrary to 2 bytes, same as SonarLint
-# max-complexity = 15
-
-[lint.pylint]
-# Arbitrary to 1 byte, same as SonarLint
-max-args = 7
-# At least same as max-complexity
-max-branches = 15
 
 [lint.flake8-tidy-imports.banned-api]
 "cv2.imread".msg = """\
-it doesn't support special characters. Use `utils.imread` instead.
+it doesn't support special characters. \
+Use `cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)` instead.
 https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
 "cv2.imwrite".msg = """\
-it doesn't support special characters. Use `utils.imwrite` instead.
+it doesn't support special characters. \
+Use `cv2.imencode(os.path.splitext(filename)[1], img)[1].tofile(filename)` instead.
 https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
