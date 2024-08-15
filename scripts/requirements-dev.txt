@@ -14,7 +14,7 @@
 # Linters & Formatters
 add-trailing-comma>=3.1.0 # Must match .pre-commit-config.yaml
 autopep8>=2.3.1 # Must match .pre-commit-config.yaml
-ruff>=0.5.6 # New checks # Must match .pre-commit-config.yaml
+ruff>=0.6.0 # New checks # Must match .pre-commit-config.yaml
 #
 # Types
 types-D3DShot ; sys_platform == 'win32'
