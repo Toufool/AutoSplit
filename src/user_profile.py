@@ -3,12 +3,12 @@ from copy import deepcopy
 from typing import TYPE_CHECKING, TypedDict, cast
 
 import toml
-from gen import design
 from PySide6 import QtCore, QtWidgets
 from typing_extensions import deprecated, override
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
+from gen import design
 from hotkeys import HOTKEYS, Hotkey, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
