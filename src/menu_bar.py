@@ -31,16 +31,12 @@ if TYPE_CHECKING:
 
 HALF_BRIGHTNESS = 128
 LINUX_SCREENSHOT_SUPPORT = (
-    (
-        "\n\n----------------------------------------------------\n\n"
-        + error_messages.WAYLAND_WARNING
-        # Keep in sync with README.md#Capture_Method_Linux
-        + '\n"scrot" must be installed to use SCReenshOT. '
-        + "\nRun: sudo apt-get install scrot"
-    )
-    if sys.platform == "linux"
-    else ""
-)
+    "\n\n----------------------------------------------------\n\n"
+    + error_messages.WAYLAND_WARNING
+    # Keep in sync with README.md#Capture_Method_Linux
+    + '\n"scrot" must be installed to use SCReenshOT. '
+    + "\nRun: sudo apt-get install scrot"
+) if sys.platform == "linux" else ""  # fmt: skip
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
@@ -182,7 +178,8 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         # Don't autofocus any particular field
         self.setFocus()
 
-        # region Build the Capture method combobox
+        # region Build the Capture method combobox  # fmt: skip
+
         capture_method_values = CAPTURE_METHODS.values()
         self.__set_all_capture_devices()
 
@@ -199,9 +196,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             f"- {method.name} ({method.short_description})" for method in capture_method_values
         ])
         self.capture_method_combobox.setToolTip(
-            "\n\n".join([
+            "\n\n".join(
                 f"{method.name} :\n{method.description}" for method in capture_method_values
-            ])
+            )
             + LINUX_SCREENSHOT_SUPPORT
         )
         # endregion
@@ -229,9 +226,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
     def get_capture_device_index(self, capture_device_id: int):
         """Returns 0 if the capture_device_id is invalid."""
         try:
-            return [device.device_id for device in self.__video_capture_devices].index(
-                capture_device_id
-            )
+            return [
+                device.device_id  # fmt: skip
+                for device in self.__video_capture_devices
+            ].index(capture_device_id)
         except ValueError:
             return 0
 
@@ -385,6 +383,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
             self._autosplit_ref.settings_dict["enable_auto_reset"]
         )
         # endregion
+
         # region Binding
         # Capture Settings
         self.fps_limit_spinbox.valueChanged.connect(self.__fps_limit_changed)
@@ -436,9 +435,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
                 self.enable_auto_reset_image_checkbox.isChecked(),
             )
         )
-
-
-# endregion
+        # endregion
 
 
 def open_settings(autosplit: "AutoSplit"):

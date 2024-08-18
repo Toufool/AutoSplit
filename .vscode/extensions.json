@@ -4,7 +4,6 @@
     "charliermarsh.ruff",
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
-    "emeraldwalk.runonsave",
     "github.vscode-github-actions",
     "ms-python.python",
     "ms-python.vscode-pylance",

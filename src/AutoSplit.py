@@ -548,7 +548,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             not self.is_running
             or "Delayed Split" in self.current_split_image.text()
             or not (
-                self.skip_split_button.isEnabled() or self.is_auto_controlled or navigate_image_only
+                self.skip_split_button.isEnabled()  # fmt: skip
+                or self.is_auto_controlled
+                or navigate_image_only
             )
             or self.__is_current_split_out_of_range()
         ):
@@ -582,8 +584,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def start_auto_splitter(self):
         # If the auto splitter is already running or the button is disabled,
         # don't emit the signal to start it.
-        if self.is_running or (
-            not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled
+        if (  # fmt: skip
+            self.is_running
+            or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled)
         ):
             return
 
@@ -957,7 +960,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get split image
         self.split_image = (
-            specific_image or self.split_images_and_loop_number[0 + self.split_image_number][0]
+            specific_image  # fmt: skip
+            or self.split_images_and_loop_number[0 + self.split_image_number][0]
         )
         if self.split_image.is_ocr:
             # TODO: test if setText clears a set image

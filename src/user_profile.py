@@ -187,7 +187,8 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
         )[0]
     )
     if not (
-        load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)
+        load_settings_file_path  # fmt: skip
+        and __load_settings_from_file(autosplit, load_settings_file_path)
     ):
         return
 
@@ -198,7 +199,11 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
 
 
 def load_settings_on_open(autosplit: "AutoSplit"):
-    settings_files = [file for file in os.listdir(auto_split_directory) if file.endswith(".toml")]
+    settings_files = [
+        file  # fmt: skip
+        for file in os.listdir(auto_split_directory)
+        if file.endswith(".toml")
+    ]
 
     # Find all .tomls in AutoSplit folder, error if there is not exactly 1
     error = None

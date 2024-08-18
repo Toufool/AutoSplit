@@ -121,8 +121,9 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
 
     # Deal with regular inputs
     # If an int or does not contain the following strings
-    if isinstance(hotkey_or_scan_code, int) or not any(
-        key in hotkey_or_scan_code for key in ("num ", "decimal", "+")
+    if (  # fmt: skip
+        isinstance(hotkey_or_scan_code, int)
+        or not any(key in hotkey_or_scan_code for key in ("num ", "decimal", "+"))
     ):
         keyboard.send(hotkey_or_scan_code)
         return
@@ -133,7 +134,8 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
     # keyboard also has issues with capitalization modifier (shift+A)
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
     pyautogui.hotkey(*[
-        "+" if key == "plus" else key for key in hotkey_or_scan_code.replace(" ", "").split("+")
+        "+" if key == "plus" else key  # fmt: skip
+        for key in hotkey_or_scan_code.replace(" ", "").split("+")
     ])
 
 
