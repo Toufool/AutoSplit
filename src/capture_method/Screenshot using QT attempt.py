@@ -1,16 +1,17 @@
-# flake8: noqa
+# ruff: noqa: RET504
 import sys
 
 if sys.platform != "linux":
-    raise OSError()
+    raise OSError
 from typing import cast
 
 import numpy as np
 from cv2.typing import MatLike
 from PySide6.QtCore import QBuffer, QIODeviceBase
 from PySide6.QtGui import QGuiApplication
-from capture_method.CaptureMethodBase import CaptureMethodBase
 from typing_extensions import override
+
+from capture_method.CaptureMethodBase import CaptureMethodBase
 
 
 class QtCaptureMethod(CaptureMethodBase):

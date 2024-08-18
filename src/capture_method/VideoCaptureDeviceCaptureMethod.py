@@ -1,4 +1,3 @@
-import sys
 from threading import Event, Thread
 from typing import TYPE_CHECKING
 
@@ -10,15 +9,12 @@ from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
-from utils import ImageShape, is_valid_image
-
-if sys.platform == "win32":
-    from pygrabber.dshow_graph import FilterGraph
+from utils import ImageShape, get_input_device_resolution, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
+OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = (127, 129, 128)
 
 
 def is_blank(image: MatLike):
@@ -58,7 +54,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     if not (
                         cv2_error.code == cv2.Error.STS_ERROR
                         and (
-                            # Likely means the camera is occupied OR the camera index is out of range (like -1)
+                            # Likely means the camera is occupied
+                            # OR the camera index is out of range (like -1)
                             cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539
@@ -101,14 +98,11 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
             return
 
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        if sys.platform == "win32":
-            filter_graph = FilterGraph()
-            filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-            width, height = filter_graph.get_input_device().get_current_format()
-            filter_graph.remove_filters()
+        resolution = get_input_device_resolution(autosplit.settings_dict["capture_device_id"])
+        if resolution is not None:
             try:
-                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
             except cv2.error:
                 # Some cameras don't allow changing the resolution
                 pass

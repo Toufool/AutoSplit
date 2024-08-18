@@ -13,10 +13,17 @@ from winsdk.windows.graphics import SizeInt32
 from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winsdk.windows.graphics.capture.interop import create_for_window
 from winsdk.windows.graphics.directx import DirectXPixelFormat
+from winsdk.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
+from utils import (
+    BGRA_CHANNEL_COUNT,
+    WGC_MIN_BUILD,
+    WINDOWS_BUILD_NUMBER,
+    get_direct3d_device,
+    is_valid_hwnd,
+)
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -26,17 +33,20 @@ LEARNING_MODE_DEVICE_BUILD = 17763
 """https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 
+async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
+    return await SoftwareBitmap.create_copy_from_surface_async(surface)
+
+
 class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     name = "Windows Graphics Capture"
     short_description = "fast, most compatible, capped at 60fps"
-    description = (
-        f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-        + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
-        + "\nrequire having at least one audio or video Capture Device connected and enabled."
-        + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
-        + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
-        + "\nCaps at around 60 FPS. "
-    )
+    description = f"""
+Only available in Windows 10.0.{WGC_MIN_BUILD} and up.
+Due to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}
+require having at least one audio or video Capture Device connected and enabled.
+Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.
+Adds a yellow border on Windows 10 (not on Windows 11).
+Caps at around 60 FPS."""
 
     size: SizeInt32
     frame_pool: Direct3D11CaptureFramePool | None = None
@@ -80,8 +90,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
             try:
                 self.session.close()
             except OSError:
-                # OSError: The application called an interface that was marshalled for a different thread
-                # This still seems to close the session and prevent the following hard crash in LiveSplit
+                # OSError: The application called an interface that was marshalled for a different thread # noqa: E501
+                # This still seems to close the session and prevent the following hard crash in LiveSplit # noqa: E501
                 # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # noqa: E501
                 pass
             self.session = None
@@ -107,11 +117,8 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
         if not frame:
             return self.last_converted_frame
 
-        async def coroutine():
-            return await SoftwareBitmap.create_copy_from_surface_async(frame.surface)
-
         try:
-            software_bitmap = asyncio.run(coroutine())
+            software_bitmap = asyncio.run(convert_d3d_surface_to_software_bitmap(frame.surface))
         except SystemError as exception:
             # HACK: can happen when closing the GraphicsCapturePicker
             if str(exception).endswith("returned a result with an error set"):

@@ -1,6 +1,3 @@
-# pyright: reportUnknownMemberType=false
-# Complete type for PIL.features.check_feature upstream
-import asyncio
 import os
 import sys
 from collections import OrderedDict
@@ -13,15 +10,24 @@ from typing_extensions import Never, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+from utils import (
+    WGC_MIN_BUILD,
+    WINDOWS_BUILD_NUMBER,
+    first,
+    get_input_device_resolution,
+    try_get_direct3d_device,
+)
 
 if sys.platform == "win32":
-    from _ctypes import COMError  # noqa: PLC2701
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
+
     from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
-    from capture_method.ForceFullContentRenderingCaptureMethod import ForceFullContentRenderingCaptureMethod
+    from capture_method.ForceFullContentRenderingCaptureMethod import (
+        ForceFullContentRenderingCaptureMethod,
+    )
     from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 
 if sys.platform == "linux":
@@ -46,9 +52,9 @@ class Region(TypedDict):
 class CaptureMethodEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
-    def __contains__(self, other: object):
+    def __contains__(cls, other: object):
         try:
-            self(other)
+            cls(other)
         except ValueError:
             return False
         return True
@@ -78,7 +84,12 @@ class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
 
     @override
     @staticmethod
-    def _generate_next_value_(name: "str | CaptureMethodEnum", *_):
+    def _generate_next_value_(
+        name: "str | CaptureMethodEnum",
+        start: int,
+        count: int,
+        last_values: list["str | CaptureMethodEnum"],
+    ):
         return name
 
     NONE = ""
@@ -115,14 +126,16 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     @override
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
         self,
-        __key: Never,
+        key: Never,
+        /,
     ) -> type[CaptureMethodBase]:
-        return super().__getitem__(__key)
+        return super().__getitem__(key)
 
     @override
-    def get(self, key: CaptureMethodEnum, __default: object = None):
+    def get(self, key: CaptureMethodEnum, default: object = None, /):
         """
-        Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum` if `CaptureMethodEnum` is available,
+        Returns the `CaptureMethodBase` subclass for `CaptureMethodEnum`
+        if `CaptureMethodEnum` is available,
         else defaults to the first available `CaptureMethodEnum`.
         Returns `CaptureMethodBase` directly if there's no capture methods.
         """
@@ -135,7 +148,8 @@ CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     if (  # Windows Graphics Capture requires a minimum Windows Build
         WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
-        # Our current implementation of Windows Graphics Capture does not ensure we can get an ID3DDevice
+        # Our current implementation of Windows Graphics Capture
+        # does not ensure we can get an ID3DDevice
         and try_get_direct3d_device()
     ):
         CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
@@ -148,7 +162,9 @@ if sys.platform == "win32":
         pass
     else:
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
-    CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = ForceFullContentRenderingCaptureMethod
+    CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = (
+        ForceFullContentRenderingCaptureMethod
+    )
 elif sys.platform == "linux":
     if features.check_feature(feature="xcb"):
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
@@ -165,8 +181,8 @@ CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCapt
 
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     """
-    Seemlessly change the current capture method,
-    initialize the new one with transfered subscriptions
+    Seamlessly change the current capture method,
+    initialize the new one with transferred subscriptions
     and update UI as needed.
     """
     autosplit.capture_method.close()
@@ -201,26 +217,10 @@ def get_input_devices():
     return cameras
 
 
-def get_input_device_resolution(index: int) -> tuple[int, int] | None:
-    if sys.platform != "win32":
-        return (0, 0)
-    filter_graph = FilterGraph()
-    try:
-        filter_graph.add_video_input_device(index)
-    # This can happen with virtual cameras throwing errors.
-    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
-    # https://github.com/Toufool/AutoSplit/issues/238
-    except COMError:
-        return None
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
-    return resolution
-
-
-async def get_all_video_capture_devices():
+def get_all_video_capture_devices():
     named_video_inputs = get_input_devices()
 
-    async def get_camera_info(index: int, device_name: str):
+    def get_camera_info(index: int, device_name: str):
         backend = ""
         # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use. See #169
         # FIXME: Maybe offer the option to the user to obtain more info about their devices?
@@ -247,8 +247,4 @@ async def get_all_video_capture_devices():
             else None
         )
 
-    return [
-        camera_info
-        for camera_info in await asyncio.gather(*starmap(get_camera_info, enumerate(named_video_inputs)))  # fmt: skip
-        if camera_info is not None
-    ]
+    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))

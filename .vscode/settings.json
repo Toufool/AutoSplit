@@ -1,7 +1,7 @@
 {
   "editor.rulers": [
     80,
-    120
+    100
   ],
   "[git-commit]": {
     "editor.rulers": [
@@ -62,6 +62,10 @@
   "[json][jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "yaml.format.printWidth": 100,
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,
@@ -70,7 +74,7 @@
       // 79, // PEP8-17 default max
       // 88, // Black default
       // 99, // PEP8-17 acceptable max
-      120, // Our hard rule
+      100, // Our hard rule
     ],
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",

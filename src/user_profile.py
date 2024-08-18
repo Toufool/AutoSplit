@@ -9,7 +9,7 @@ from typing_extensions import deprecated, override
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
-from hotkeys import HOTKEYS, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, Hotkey, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -131,7 +131,8 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
     try:
         with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
-            # Fallback to default settings if some are missing from the file. This happens when new settings are added.
+            # Fallback to default settings if some are missing from the file.
+            # This happens when new settings are added.
             loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
 
         # TODO: Data Validation / fallbacks ?
@@ -149,12 +150,16 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
 
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
-        for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
+        for hotkey, hotkey_name in ((hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS):
             hotkey_value = autosplit.settings_dict.get(hotkey_name)
             if hotkey_value:
-                set_hotkey(autosplit, hotkey, hotkey_value)
+                # cast caused by a regression in pyright 1.1.365
+                set_hotkey(autosplit, cast(Hotkey, hotkey), hotkey_value)
 
-    change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
+    change_capture_method(
+        cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
+        autosplit,
+    )
     if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
         autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"])
     if not autosplit.capture_method.check_selected_region_exists():
@@ -180,7 +185,10 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
             "TOML (*.toml)",
         )[0]
     )
-    if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
+    if not (
+        load_settings_file_path
+        and __load_settings_from_file(autosplit, load_settings_file_path)
+    ):
         return
 
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
@@ -230,7 +238,7 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
-def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
+def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):  # noqa: FBT001
     """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
     design_window.action_check_for_updates_on_open.setChecked(value)
     QtCore.QSettings(
