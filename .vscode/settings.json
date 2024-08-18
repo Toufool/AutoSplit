@@ -1,7 +1,7 @@
 {
   "editor.rulers": [
     80,
-    120
+    100
   ],
   "[git-commit]": {
     "editor.rulers": [
@@ -75,7 +75,7 @@
       // 79, // PEP8-17 default max
       // 88, // Black default
       // 99, // PEP8-17 acceptable max
-      120, // Our hard rule
+      100, // Our hard rule
     ],
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",

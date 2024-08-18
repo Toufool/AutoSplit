@@ -54,7 +54,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     if not (
                         cv2_error.code == cv2.Error.STS_ERROR
                         and (
-                            # Likely means the camera is occupied OR the camera index is out of range (like -1)
+                            # Likely means the camera is occupied
+                            # OR the camera index is out of range (like -1)
                             cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539

@@ -22,15 +22,14 @@ if TYPE_CHECKING:
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
     name = "Direct3D Desktop Duplication"
     short_description = "slower, bound to display"
-    description = (
-        "\nDuplicates the desktop using Direct3D. "
-        + "\nIt can record OpenGL and Hardware Accelerated windows. "
-        + "\nAbout 10-15x slower than BitBlt. Not affected by window size. "
-        + "\nOverlapping windows will show up and can't record across displays. "
-        + "\nThis option may not be available for hybrid GPU laptops, "
-        + "\nsee D3DDD-Note-Laptops.md for a solution. "
-        + f"\nhttps://www.github.com/{GITHUB_REPOSITORY}#capture-method "
-    )
+    description = f"""
+Duplicates the desktop using Direct3D.
+It can record OpenGL and Hardware Accelerated windows.
+About 10-15x slower than BitBlt. Not affected by window size.
+Overlapping windows will show up and can't record across displays.
+This option may not be available for hybrid GPU laptops,
+see D3DDD-Note-Laptops.md for a solution.
+https://www.github.com/{GITHUB_REPOSITORY}#capture-method"""
 
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)
