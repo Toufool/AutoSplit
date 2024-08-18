@@ -46,9 +46,9 @@ https://www.github.com/{GITHUB_REPOSITORY}#capture-method"""
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
         self.desktop_duplication.display = next(
-            display for display
-            in self.desktop_duplication.displays
-            if display.hmonitor == hmonitor
+            display
+            for display in self.desktop_duplication.displays
+            if display.hmonitor == hmonitor  # fmt: skip
         )
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
         offset_x -= self.desktop_duplication.display.position["left"]

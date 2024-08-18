@@ -62,13 +62,11 @@ SUPPORTED_IMREAD_FORMATS = (
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("
-    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
+    + " ".join(f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS)
     + ");;"
-    + ";;".join([
-        f"{imread_format} ({extensions})"
-        for imread_format, extensions
-        in SUPPORTED_IMREAD_FORMATS
-    ])
+    + ";;".join(
+        f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
+    )
 )
 
 

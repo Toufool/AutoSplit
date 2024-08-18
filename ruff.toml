@@ -11,6 +11,9 @@ target-version = "py310" # Change this to the oldest supported version by your a
 line-length = 100
 preview = true
 
+[format]
+docstring-code-format = true
+
 [lint]
 select = ["ALL"]
 # https://docs.astral.sh/ruff/rules/
@@ -62,8 +65,9 @@ ignore = [
   ###
   # Conflict with formatter (you can remove this section if you don't use Ruff as a formatter)
   ###
-  # "COM812", # missing-trailing-comma
-  # "ISC001", # single-line-implicit-string-concatenation
+  "COM812", # missing-trailing-comma
+  "ISC001", # single-line-implicit-string-concatenation
+  "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
 
   ###
   # Rules about missing special documentation. Up to you if you wanna enable these, you must also disable D406, D407
@@ -77,7 +81,7 @@ ignore = [
   ###
   # Specific to this project
   ###
-  "D205", # Not all docstrings have a short description + desrciption
+  "D205", # Not all docstrings have a short description + description
   # TODO: Consider for more complete doc
   "DOC201", # docstring-extraneous-returns
   "DOC501", # docstring-missing-exception

@@ -209,6 +209,7 @@ def get_direct3d_device():
 
     async def init_mediacapture():
         await media_capture.initialize_async()
+
     asyncio.run(init_mediacapture())
     direct_3d_device = (
         media_capture.media_capture_settings
@@ -219,7 +220,7 @@ def get_direct3d_device():
             # May be problematic?
             # https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
             direct_3d_device = LearningModelDevice(
-                LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE,
+                LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE
             ).direct3_d11_device
         # TODO: Unknown potential error, I don't have an older Win10 machine to test.
         except BaseException:  # noqa: S110,BLE001
@@ -293,7 +294,7 @@ def subprocess_kwargs():
 
     Typical use:
     ```python
-    subprocess.call(['program_to_run', 'arg_1'], **subprocess_args())
+    subprocess.call(["program_to_run", "arg_1"], **subprocess_args())
     ```
     ---
     Originally found in https://github.com/madmaze/pytesseract/blob/master/pytesseract/pytesseract.py
@@ -333,8 +334,9 @@ def run_tesseract(png: bytes):
     @return: The recognized output string from tesseract.
     """
     return (
-        subprocess  # noqa: S603 # Only using known literal strings
-        .Popen(TESSERACT_CMD, **subprocess_kwargs())
+        subprocess.Popen(  # noqa: S603 # Only using known literal strings
+            TESSERACT_CMD, **subprocess_kwargs()
+        )
         .communicate(input=png)[0]
         .decode()
     )

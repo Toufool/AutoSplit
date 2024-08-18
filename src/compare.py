@@ -82,7 +82,7 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = (
-        source.size * MAXBYTE * MAXBYTE
+        source.size * MAXBYTE * MAXBYTE  # fmt: skip
         if not is_valid_image(mask)
         else cv2.countNonZero(mask)
     )

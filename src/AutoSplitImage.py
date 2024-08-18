@@ -115,7 +115,7 @@ class AutoSplitImage:
         self.__pause_time = pause_from_filename(self.filename)
         self.__similarity_threshold = threshold_from_filename(self.filename)
         self.texts: list[str] = []
-        self. __ocr_comparison_methods: list[int] = []
+        self.__ocr_comparison_methods: list[int] = []
         if path.endswith("txt"):
             self.__parse_text_file(path)
         else:
@@ -193,11 +193,7 @@ class AutoSplitImage:
     def check_flag(self, flag: int):
         return self.flags & flag == flag
 
-    def compare_with_capture(
-        self,
-        default: "AutoSplit | int",
-        capture: MatLike | None,
-    ):
+    def compare_with_capture(self, default: "AutoSplit | int", capture: MatLike | None):
         """
         Compare image with capture using image's comparison method. Falls back to combobox.
 
@@ -210,8 +206,8 @@ class AutoSplitImage:
         if self.is_ocr:
             return extract_and_compare_text(
                 capture[
-                    self.__rect[2]:self.__rect[3],
-                    self.__rect[0]:self.__rect[1],
+                    self.__rect[2] : self.__rect[3],
+                    self.__rect[0] : self.__rect[1],
                 ],
                 self.texts,
                 self.__ocr_comparison_methods,

@@ -125,9 +125,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     # Disallow unsafe get w/o breaking it at runtime
     @override
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-            self,
-            key: Never,
-            /,
+        self, key: Never, /
     ) -> type[CaptureMethodBase]:
         return super().__getitem__(key)
 

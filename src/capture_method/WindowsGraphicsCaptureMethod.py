@@ -161,7 +161,7 @@ Caps at around 60 FPS."""
     @override
     def check_selected_region_exists(self):
         return bool(
-            is_valid_hwnd(self._autosplit_ref.hwnd)
+            is_valid_hwnd(self._autosplit_ref.hwnd)  # fmt: skip
             and self.frame_pool
-            and self.session,
+            and self.session
         )

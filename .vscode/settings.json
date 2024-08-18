@@ -25,14 +25,6 @@
     // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": "never"
   },
-  "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "match": "\\.pyi?",
-        "cmd": "add-trailing-comma ${file}"
-      },
-    ]
-  },
   "files.associations": {
     ".flake8": "properties",
     "*.qrc": "xml",
@@ -67,8 +59,7 @@
   },
   "yaml.format.printWidth": 100,
   "[python]": {
-    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
-    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
@@ -91,6 +82,9 @@
   ],
   "python.analysis.diagnosticMode": "workspace",
   "ruff.importStrategy": "fromEnvironment",
+  "ruff.enable": true,
+  "ruff.fixAll": true,
+  "ruff.organizeImports": true,
   // Use the Ruff extension instead
   "isort.check": false,
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
