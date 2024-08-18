@@ -125,9 +125,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     # Disallow unsafe get w/o breaking it at runtime
     @override
     def __getitem__(  # type:ignore[override] # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        key: Never,
-        /,
+        self, key: Never, /
     ) -> type[CaptureMethodBase]:
         return super().__getitem__(key)
 
@@ -242,7 +240,7 @@ def get_all_video_capture_devices():
 
         resolution = get_input_device_resolution(index)
         return (
-            CameraInfo(index, device_name, False, backend, resolution)  # fmt: skip
+            CameraInfo(index, device_name, False, backend, resolution)
             if resolution is not None
             else None
         )

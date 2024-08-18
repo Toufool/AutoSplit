@@ -26,7 +26,7 @@ def is_blank(image: MatLike):
             :: image.shape[ImageShape.Y] - 1,
             :: image.shape[ImageShape.X] - 1,
         ]
-        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL
     )
 
 
@@ -34,7 +34,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     name = "Video Capture Device"
     short_description = "see below"
     description = (
-        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "  # fmt: skip
+        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
         + "\nYou can select one below. "
     )
 
@@ -83,7 +83,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     "AutoSplit encountered an unhandled exception while "
                     + "trying to grab a frame and has stopped capture. "
                     + CREATE_NEW_ISSUE_MESSAGE,
-                ),
+                )
             )
 
     def __init__(self, autosplit: "AutoSplit"):

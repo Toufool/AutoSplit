@@ -65,14 +65,14 @@ def split_image_directory_empty():
 def image_type(image: str):
     set_text_message(
         f"{image!r} is not a valid image file, does not exist, "
-        + "or the full image file path contains a special character.",
+        + "or the full image file path contains a special character."
     )
 
 
 def region():
     set_text_message(
         "No region is selected or the Capture Region window is not open. "
-        + "Select a region or load settings while the Capture Region window is open.",
+        + "Select a region or load settings while the Capture Region window is open."
     )
 
 
@@ -83,7 +83,7 @@ def split_hotkey():
 def pause_hotkey():
     set_text_message(
         "Your split image folder contains an image filename with a pause flag {p}, "
-        + "but no pause hotkey is set.",
+        + "but no pause hotkey is set."
     )
 
 
@@ -97,7 +97,7 @@ def alignment_not_matched():
 
 def no_keyword_image(keyword: str):
     set_text_message(
-        f"Your split image folder does not contain an image with the keyword {keyword!r}.",
+        f"Your split image folder does not contain an image with the keyword {keyword!r}."
     )
 
 
@@ -113,7 +113,7 @@ def old_version_settings_file():
     set_text_message(
         "Old version settings file detected. "
         + "This version allows settings files in .toml format. "
-        + "Starting from v2.0.",
+        + "Starting from v2.0."
     )
 
 
@@ -128,33 +128,33 @@ def invalid_hotkey(hotkey_name: str):
 def no_settings_file_on_open():
     set_text_message(
         "No settings file found. "
-        + "One can be loaded on open if placed in the same folder as the AutoSplit executable.",
+        + "One can be loaded on open if placed in the same folder as the AutoSplit executable."
     )
 
 
 def too_many_settings_files_on_open():
     set_text_message(
         "Too many settings files found. "
-        + "Only one can be loaded on open if placed in the same folder as the AutoSplit executable.",
+        + "Only one can be loaded on open if placed in the same folder as the AutoSplit executable."
     )
 
 
 def check_for_updates():
     set_text_message(
-        "An error occurred while attempting to check for updates. Please check your connection.",
+        "An error occurred while attempting to check for updates. Please check your connection."
     )
 
 
 def load_start_image():
     set_text_message(
         "Start Image found, but cannot be loaded unless Start hotkey is set. "
-        + "Please set the hotkey, and then click the Reload Start Image button.",
+        + "Please set the hotkey, and then click the Reload Start Image button."
     )
 
 
 def stdin_lost():
     set_text_message(
-        "stdin not supported or lost, external control like LiveSplit integration will not work.",
+        "stdin not supported or lost, external control like LiveSplit integration will not work."
     )
 
 
@@ -189,7 +189,7 @@ def linux_uinput():
     set_text_message(
         "Failed to create a device file using `uinput` module. "
         + "This can happen when running Linux under WSL. "
-        + "Keyboard events have been disabled.",
+        + "Keyboard events have been disabled."
     )
 
 
@@ -263,7 +263,7 @@ def tesseract_missing(ocr_split_file_path: str):
         f"{ocr_split_file_path!r} is an Optical Character Recognition split file "
         + "but tesseract couldn't be found."
         + f'\nPlease read <a href="https://github.com/{GITHUB_REPOSITORY}#install-tesseract">'
-        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions.",
+        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions."
     )
 
 
@@ -271,5 +271,5 @@ def wrong_ocr_values(ocr_split_file_path: str):
     set_text_message(
         f"{ocr_split_file_path!r} has invalid values."
         + "\nPlease make sure that `left < right` and `top < bottom`. "
-        + "Also check for negative values in the 'methods' or 'fps_limit' settings",
+        + "Also check for negative values in the 'methods' or 'fps_limit' settings"
     )

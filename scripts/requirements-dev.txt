@@ -12,7 +12,6 @@
 -r requirements.txt
 #
 # Linters & Formatters
-add-trailing-comma>=3.1.0 # Must match .pre-commit-config.yaml
 ruff>=0.6.1 # Pre-commit fix # Must match .pre-commit-config.yaml
 #
 # Types

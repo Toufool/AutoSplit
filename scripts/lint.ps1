@@ -3,11 +3,10 @@ Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
 
 Write-Host "`nRunning formatting..."
-ruff format .
-add-trailing-comma $(git ls-files '**.py*')
+ruff format
 
 Write-Host "`nRunning Ruff ..."
-ruff check . --fix
+ruff check --fix
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Ruff failed ($LastExitCode)" -ForegroundColor Red

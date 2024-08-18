@@ -196,7 +196,7 @@ def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
 def parse_and_validate_images(autosplit: "AutoSplit"):
     # Get split images
     all_images = [
-        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))  # fmt: skip
+        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
         for image_name in os.listdir(autosplit.settings_dict["split_image_directory"])
     ]
 
@@ -210,7 +210,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     # If there is no start hotkey set but a Start Image is present,
     # and is not auto controlled, throw an error.
     if (
-        start_image  # fmt: skip
+        start_image
         and not autosplit.settings_dict["split_hotkey"]
         and not autosplit.is_auto_controlled
     ):
@@ -219,7 +219,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     # If there is no reset hotkey set but a Reset Image is present,
     # and is not auto controlled, throw an error.
     elif (
-        reset_image  # fmt: skip
+        reset_image
         and not autosplit.settings_dict["reset_hotkey"]
         and not autosplit.is_auto_controlled
     ):

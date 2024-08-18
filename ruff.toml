@@ -65,8 +65,8 @@ ignore = [
   ###
   # Conflict with formatter (you can remove this section if you don't use Ruff as a formatter)
   ###
-  # "COM812", # missing-trailing-comma
-  # "ISC001", # single-line-implicit-string-concatenation
+  "COM812", # missing-trailing-comma
+  "ISC001", # single-line-implicit-string-concatenation
 
   ###
   # Rules about missing special documentation. Up to you if you wanna enable these, you must also disable D406, D407

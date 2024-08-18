@@ -19,7 +19,7 @@ class ScrotCaptureMethod(CaptureMethodBase):
     name = "Scrot"
     short_description = "very slow, may leave files"
     description = (
-        "\nUses Scrot (SCReenshOT) to take screenshots. "  # fmt: skip
+        "\nUses Scrot (SCReenshOT) to take screenshots. "
         + "\nLeaves behind a screenshot file if interrupted. "
     )
 

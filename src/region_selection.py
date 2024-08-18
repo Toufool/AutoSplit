@@ -65,9 +65,7 @@ IMREAD_EXT_FILTER = (
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
     + ");;"
     + ";;".join([
-        f"{imread_format} ({extensions})"
-        for imread_format, extensions
-        in SUPPORTED_IMREAD_FORMATS
+        f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
     ])
 )
 

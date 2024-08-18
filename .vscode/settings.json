@@ -25,14 +25,6 @@
     // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": "never"
   },
-  "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "match": "\\.pyi?",
-        "cmd": "add-trailing-comma ${file}"
-      },
-    ]
-  },
   "files.associations": {
     ".flake8": "properties",
     "*.qrc": "xml",

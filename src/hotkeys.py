@@ -31,8 +31,13 @@ PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkey = Literal[
-    "split", "reset", "skip_split", "undo_split",
-    "pause", "screenshot", "toggle_auto_reset_image",
+    "split",
+    "reset",
+    "skip_split",
+    "undo_split",
+    "pause",
+    "screenshot",
+    "toggle_auto_reset_image",
 ]
 HOTKEYS = (
     "split",
@@ -116,9 +121,8 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
 
     # Deal with regular inputs
     # If an int or does not contain the following strings
-    if (
-        isinstance(hotkey_or_scan_code, int)  # fmt: skip
-        or not any(key in hotkey_or_scan_code for key in ("num ", "decimal", "+"))
+    if isinstance(hotkey_or_scan_code, int) or not any(
+        key in hotkey_or_scan_code for key in ("num ", "decimal", "+")
     ):
         keyboard.send(hotkey_or_scan_code)
         return
@@ -128,12 +132,9 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
     # Even by sending specific scan code "keyboard" still sends the default (wrong) key
     # keyboard also has issues with capitalization modifier (shift+A)
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
-    pyautogui.hotkey(
-        *[
-            "+" if key == "plus" else key  # fmt: skip
-            for key in hotkey_or_scan_code.replace(" ", "").split("+")
-        ],
-    )
+    pyautogui.hotkey(*[
+        "+" if key == "plus" else key for key in hotkey_or_scan_code.replace(" ", "").split("+")
+    ])
 
 
 def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent) -> bool:
@@ -157,9 +158,9 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     if keyboard_event.name and is_digit(keyboard_event.name[-1]):
         # Prevent "regular numbers" and "keypad numbers" from activating each other
         return bool(
-            keyboard_event.is_keypad  # fmt: skip
+            keyboard_event.is_keypad
             if expected_key.startswith("num ")
-            else not keyboard_event.is_keypad,
+            else not keyboard_event.is_keypad
         )
 
     # Prevent "keypad action keys" from triggering "regular numbers" and "keypad numbers"
@@ -169,7 +170,8 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
 
 def _hotkey_action(
     keyboard_event: keyboard.KeyboardEvent,
-    key_name: str, action: Callable[[], None],
+    key_name: str,
+    action: Callable[[], None],
 ):
     """
     We're doing the check here instead of saving the key code because
@@ -177,7 +179,8 @@ def _hotkey_action(
     They also share scan codes on Windows.
     """
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(
-            key_name, keyboard_event,
+        key_name,
+        keyboard_event,
     ):
         action()
 
@@ -189,7 +192,7 @@ def __get_key_name(keyboard_event: keyboard.KeyboardEvent):
     if event_name == "+":
         return "plus"
     return (
-        f"num {keyboard_event.name}"  # fmt: skip
+        f"num {keyboard_event.name}"
         if keyboard_event.is_keypad and is_digit(keyboard_event.name)
         else event_name
     )
@@ -272,7 +275,7 @@ def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
 
 def is_valid_hotkey_name(hotkey_name: str):
     return any(
-        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])  # fmt: skip
+        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
         for key in hotkey_name.split("+")
     )
 
