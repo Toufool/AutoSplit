@@ -12,7 +12,7 @@ ignore = [
   # Check for the "Fix" flag https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
   "E2", # Whitespace
   "E3", # Blank lines
-  "E703", #	useless-semicolon
+  "E703", # useless-semicolon
   "E71", # Statement (comparisons)
   "E731", # lambda-assignment
   "W29", # Whitespace warning

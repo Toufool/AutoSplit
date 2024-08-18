@@ -11,26 +11,6 @@ target-version = "py310" # Change this to the oldest supported version by your a
 line-length = 100
 preview = true
 
-# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
-[lint.flake8-implicit-str-concat]
-allow-multiline = false
-
-# https://docs.astral.sh/ruff/settings/#isort
-[lint.isort]
-combine-as-imports = true
-split-on-trailing-comma = false
-
-# https://docs.astral.sh/ruff/settings/#mccabe
-[lint.mccabe]
-# Arbitrary to 2 bytes, same as SonarLint
-max-complexity = 15
-
-[lint.pylint]
-# Arbitrary to 1 byte, same as SonarLint
-max-args = 7
-# At least same as max-complexity
-max-branches = 15
-
 [lint]
 select = ["ALL"]
 # https://docs.astral.sh/ruff/rules/
@@ -88,9 +68,9 @@ ignore = [
   ###
   # Rules about missing special documentation. Up to you if you wanna enable these, you must also disable D406, D407
   ###
-  "DOC201", #	docstring-missing-returns
-  "DOC402", #	docstring-missing-yields
-  "DOC501", #	docstring-missing-exception
+  "DOC201", # docstring-missing-returns
+  "DOC402", # docstring-missing-yields
+  "DOC501", # docstring-missing-exception
   # "D406", # new-line-after-section-name, conflicts with DOC
   # "D407", # dashed-underline-after-section, conflicts with DOC
 
@@ -110,13 +90,37 @@ ignore = [
   # Python 3.11, introduced "zero cost" exception handling
   "PERF203", # try-except-in-loop
 
-  ### FIXME/TODO: I'd normally set them as temporarily warnings, but no warnings in Ruff yet:
-  ### https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
+  ###
+  # FIXME/TODO: I'd normally set them as temporarily warnings, but no warnings in Ruff yet:
+  # https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
+  ###
   "CPY001", # flake8-copyright
   "PTH", # flake8-use-pathlib
   # Ignore until linux support
   "EXE", # flake8-executable
 ]
+
+# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
+[lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+# https://docs.astral.sh/ruff/settings/#isort
+[lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+# This should be automatically detected in src layout, but somehow pre-commit messes it up
+known-first-party = ["gen"]
+
+# https://docs.astral.sh/ruff/settings/#mccabe
+[lint.mccabe]
+# Arbitrary to 2 bytes, same as SonarLint
+max-complexity = 15
+
+[lint.pylint]
+# Arbitrary to 1 byte, same as SonarLint
+max-args = 7
+# At least same as max-complexity
+max-branches = 15
 
 [lint.per-file-ignores]
 "**/typings/**/*.pyi" = [
