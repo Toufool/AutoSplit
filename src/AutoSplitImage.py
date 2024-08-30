@@ -215,7 +215,7 @@ class AutoSplitImage:
 
         if not is_valid_image(self.byte_array):
             return 0.0
-        resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1])
+        resized_capture = cv2.resize(capture, self.byte_array.shape[1::-1], interpolation=cv2.INTER_NEAREST)
 
         return get_comparison_method_by_index(
             self.__get_comparison_method_index(default),
