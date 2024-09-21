@@ -101,6 +101,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
+  - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
   - <https://github.com/python/mypy/issues/6700>
