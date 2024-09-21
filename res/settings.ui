@@ -63,6 +63,9 @@
      <property name="readOnly">
       <bool>true</bool>
      </property>
+     <property name="placeholderText">
+      <string>(Defaults to Split Image Folder)</string>
+     </property>
     </widget>
     <widget class="QLabel" name="fps_limit_label">
      <property name="geometry">
