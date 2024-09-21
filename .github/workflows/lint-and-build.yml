@@ -86,7 +86,7 @@ jobs:
           echo PYRIGHT_VERSION="${PYRIGHT_VERSION}" >> "${GITHUB_OUTPUT}"
         shell: bash
       - name: Analysing the code with Pyright
-        uses: jakebailey/pyright-action@v2
+        uses: jakebailey/pyright-action@v2.3.2
         with:
           version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
           working-directory: src/
