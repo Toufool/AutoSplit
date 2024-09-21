@@ -81,7 +81,7 @@ jobs:
       - name: Get pyright version
         id: pyright_version
         run: |
-          PYRIGHT_VERSION=$(grep '$pyrightVersion = ' 'scripts/lint.ps1' | cut -d "#" -f 1 | cut -d = -f 2 | tr -d ' ')
+          PYRIGHT_VERSION=$(grep '$pyrightVersion = ' 'scripts/lint.ps1' | cut -d "#" -f 1 | cut -d = -f 2 | tr -d " '")
           echo pyright version: "${PYRIGHT_VERSION}"
           echo PYRIGHT_VERSION="${PYRIGHT_VERSION}" >> "${GITHUB_OUTPUT}"
         shell: bash
