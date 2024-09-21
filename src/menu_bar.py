@@ -2,7 +2,7 @@ import json
 import sys
 import webbrowser
 from functools import partial
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -23,7 +23,7 @@ from capture_method import (
     get_all_video_capture_devices,
 )
 from gen import about, design, settings as settings_ui, update_checker
-from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, set_hotkey
+from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
 if TYPE_CHECKING:
@@ -37,6 +37,15 @@ LINUX_SCREENSHOT_SUPPORT = (
     + '\n"scrot" must be installed to use SCReenshOT. '
     + "\nRun: sudo apt-get install scrot"
 ) if sys.platform == "linux" else ""  # fmt: skip
+
+_DEBUG_SCREENSHOT_COMMANDS: tuple[CommandStr, ...] = (
+    "split",
+    "start",
+    "reset",
+    "undo",
+    "skip",
+    "pause",
+)
 
 
 class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
@@ -326,7 +335,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
         )
 
     def __setup_bindings(self):
-        """Hotkey initial values and bindings."""
+        # Hotkey initial values and bindings
         for hotkey in HOTKEYS:
             hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(
@@ -343,6 +352,21 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
                 set_hotkey_hotkey_button.clicked.connect(
                     partial(set_hotkey, self._autosplit_ref, hotkey=hotkey)
                 )
+
+        # Debug screenshot selection checkboxes initial values and bindings
+        _screenshot_on_setting = self._autosplit_ref.settings_dict["screenshot_on"]
+        for command in _DEBUG_SCREENSHOT_COMMANDS:
+            checkbox: QtWidgets.QCheckBox = getattr(self, f"screenshot_on_{command}_checkbox")
+
+            checkbox.setChecked(command in _screenshot_on_setting)
+
+            def add_or_del(checked: Literal[0, 2], command: CommandStr = command):
+                if checked:
+                    _screenshot_on_setting.add(command)
+                else:
+                    _screenshot_on_setting.remove(command)
+
+            checkbox.stateChanged.connect(add_or_del)
 
         # region Set initial values
         # Capture Settings
@@ -478,6 +502,10 @@ def get_default_settings_from_ui(autosplit: "AutoSplit"):
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),
         "open_screenshot": default_settings_dialog.open_screenshot_checkbox.isChecked(),
+        "screenshot_on": {
+            getattr(default_settings_dialog, f"screenshot_on_{command}_checkbox").isChecked()
+            for command in _DEBUG_SCREENSHOT_COMMANDS
+        },
         "captured_window_title": "",
         "capture_region": {
             "x": autosplit.x_spinbox.value(),

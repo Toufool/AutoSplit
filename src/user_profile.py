@@ -9,7 +9,7 @@ from typing_extensions import deprecated, override
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
-from hotkeys import HOTKEYS, Hotkey, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, CommandStr, Hotkey, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -40,6 +40,7 @@ class UserProfileDict(TypedDict):
     split_image_directory: str
     screenshot_directory: str
     open_screenshot: bool
+    screenshot_on: set[CommandStr]
     captured_window_title: str
     capture_region: Region
 
@@ -72,6 +73,7 @@ DEFAULT_PROFILE = UserProfileDict(
     split_image_directory="",
     screenshot_directory="",
     open_screenshot=True,
+    screenshot_on=set(),
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )
@@ -122,7 +124,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
 
-    # Allow seemlessly reloading the entire settings widget
+    # Allow seamlessly reloading the entire settings widget
     settings_widget_was_open = False
     settings_widget = cast(QtWidgets.QWidget | None, autosplit.SettingsWidget)
     if settings_widget:
@@ -137,6 +139,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
             loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
 
         # TODO: Data Validation / fallbacks ?
+        loaded_settings["screenshot_on"] = set(loaded_settings["screenshot_on"])
         autosplit.settings_dict = UserProfileDict(**loaded_settings)
         autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
 
