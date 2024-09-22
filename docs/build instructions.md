@@ -13,7 +13,7 @@
 
 ### All platforms
 
-- [Python](https://www.python.org/downloads/) 3.10+.
+- [Python](https://www.python.org/downloads/) 3.11+.
 - [Node](https://nodejs.org) is optional, but required for complete linting.
   - Alternatively you can install the [pyright python wrapper](https://pypi.org/project/pyright/) which has a bit of an overhead delay.
 - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) is used to run all the scripts

@@ -1,8 +1,9 @@
 import os
+import tomllib
 from copy import deepcopy
 from typing import TYPE_CHECKING, TypedDict, cast
 
-import toml
+import tomli_w
 from PySide6 import QtCore, QtWidgets
 from typing_extensions import deprecated, override
 
@@ -40,7 +41,7 @@ class UserProfileDict(TypedDict):
     split_image_directory: str
     screenshot_directory: str
     open_screenshot: bool
-    screenshot_on: set[CommandStr]
+    screenshot_on: list[CommandStr]
     captured_window_title: str
     capture_region: Region
 
@@ -73,7 +74,7 @@ DEFAULT_PROFILE = UserProfileDict(
     split_image_directory="",
     screenshot_directory="",
     open_screenshot=True,
-    screenshot_on=set(),
+    screenshot_on=[],
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )
@@ -112,8 +113,9 @@ def save_settings_as(autosplit: "AutoSplit"):
 
 def __save_settings_to_file(autosplit: "AutoSplit", save_settings_file_path: str):
     # Save settings to a .toml file
-    with open(save_settings_file_path, "w", encoding="utf-8") as file:
-        toml.dump(autosplit.settings_dict, file)
+    with open(save_settings_file_path, "wb") as file:
+        # https://github.com/hukkin/tomli-w/pull/46
+        tomli_w.dump(autosplit.settings_dict, file)  # pyright: ignore[reportArgumentType]
     autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
@@ -132,14 +134,14 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         settings_widget.close()
 
     try:
-        with open(load_settings_file_path, encoding="utf-8") as file:
+        with open(load_settings_file_path, mode="rb") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file.
             # This happens when new settings are added.
-            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
+            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, tomllib.load(file))
 
         # TODO: Data Validation / fallbacks ?
-        loaded_settings["screenshot_on"] = set(loaded_settings["screenshot_on"])
+        loaded_settings["screenshot_on"] = list(set(loaded_settings["screenshot_on"]))
         autosplit.settings_dict = UserProfileDict(**loaded_settings)
         autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
 
@@ -148,7 +150,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         autosplit.width_spinbox.setValue(autosplit.settings_dict["capture_region"]["width"])
         autosplit.height_spinbox.setValue(autosplit.settings_dict["capture_region"]["height"])
         autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
-    except (FileNotFoundError, MemoryError, TypeError, toml.TomlDecodeError):
+    except (FileNotFoundError, MemoryError, TypeError, tomllib.TOMLDecodeError):
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 

@@ -7,7 +7,7 @@
 # These configs are incompatible with ruff<0.5.7
 
 # https://docs.astral.sh/ruff/configuration/
-target-version = "py310" # Change this to the oldest supported version by your application
+target-version = "py311" # Change this to the oldest supported version by your application
 line-length = 100
 preview = true
 

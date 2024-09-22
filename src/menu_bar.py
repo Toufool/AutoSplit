@@ -362,7 +362,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
 
             def add_or_del(checked: Literal[0, 2], command: CommandStr = command):
                 if checked:
-                    _screenshot_on_setting.add(command)
+                    _screenshot_on_setting.append(command)
                 else:
                     _screenshot_on_setting.remove(command)
 
