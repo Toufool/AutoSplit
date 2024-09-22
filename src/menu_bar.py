@@ -502,10 +502,10 @@ def get_default_settings_from_ui(autosplit: "AutoSplit"):
         "split_image_directory": autosplit.split_image_folder_input.text(),
         "screenshot_directory": default_settings_dialog.screenshot_directory_input.text(),
         "open_screenshot": default_settings_dialog.open_screenshot_checkbox.isChecked(),
-        "screenshot_on": {
+        "screenshot_on": [
             getattr(default_settings_dialog, f"screenshot_on_{command}_checkbox").isChecked()
             for command in _DEBUG_SCREENSHOT_COMMANDS
-        },
+        ],
         "captured_window_title": "",
         "capture_region": {
             "x": autosplit.x_spinbox.value(),
