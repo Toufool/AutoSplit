@@ -61,17 +61,16 @@ class ContainerEnumMeta(EnumMeta):
 
 
 @unique
-# TODO: Try StrEnum in Python 3.11
 class CaptureMethodEnum(StrEnum, metaclass=ContainerEnumMeta):
     # Capitalize the string value from auto()
     @override
     @staticmethod
     def _generate_next_value_(
-        name: "str | CaptureMethodEnum",
+        name: str,
         start: int,
         count: int,
-        last_values: list["str | CaptureMethodEnum"],
-    ):
+        last_values: list[str],
+    ) -> str:
         return name
 
     NONE = ""
