@@ -2,12 +2,16 @@ import os
 import sys
 from collections.abc import Callable
 from functools import partial
-from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM, UF_HIDDEN
+from stat import UF_HIDDEN
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
 from utils import is_valid_image
+
+if sys.platform == "win32":
+    from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
+
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
