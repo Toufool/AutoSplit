@@ -27,4 +27,4 @@ repos:
 
 ci:
   autoupdate_branch: dev
-  autoupdate_schedule: monthly
+  autoupdate_schedule: quarterly

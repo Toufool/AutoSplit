@@ -16,7 +16,8 @@
 - [Python](https://www.python.org/downloads/) 3.10+.
 - [Node](https://nodejs.org) is optional, but required for complete linting.
   - Alternatively you can install the [pyright python wrapper](https://pypi.org/project/pyright/) which has a bit of an overhead delay.
-- [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) is used to run all the scripts
+- [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) is used to run all the scripts.
+  - This is needed even for Windows, as the bundled PowerShell 5.1 is too old.
 - [VSCode](https://code.visualstudio.com/Download) is not required, but highly recommended.
   - Everything already configured in the workspace, including Run (F5) and Build (Ctrl+Shift+B) commands, default shell, and recommended extensions.
   - [PyCharm](https://www.jetbrains.com/pycharm/) is also a good Python IDE, but nothing is configured. If you are a PyCharm user, feel free to open a PR with all necessary workspace configurations!
