@@ -1,13 +1,21 @@
 import os
+import sys
 from collections.abc import Callable
 from functools import partial
+from stat import UF_HIDDEN
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
 from utils import is_valid_image
 
+if sys.platform == "win32":
+    from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
+
+
 if TYPE_CHECKING:
+    from _typeshed import StrPath
+
     from AutoSplit import AutoSplit
 
 (
@@ -193,13 +201,40 @@ def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
     return not error
 
 
-def parse_and_validate_images(autosplit: "AutoSplit"):
-    # Get split images
-    all_images = [
-        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
-        for image_name in os.listdir(autosplit.settings_dict["split_image_directory"])
-    ]
+def is_user_file(path: StrPath):
+    """Returns False for hidden files, system files and folders."""
+    if os.path.isdir(path) or os.path.basename(path).startswith("."):
+        return False
+    stat_result = os.stat(path)
+    if stat_result.st_mode & UF_HIDDEN:
+        return False
+    if sys.platform == "win32":
+        return not (
+            (stat_result.st_file_attributes & FILE_ATTRIBUTE_SYSTEM)
+            | (stat_result.st_file_attributes & FILE_ATTRIBUTE_HIDDEN)
+        )
+    return True
 
+
+def __get_images_from_directory(directory: StrPath):
+    """
+    Returns a list of AutoSplitImage parsed from a directory.
+    Hidden files, system files and folders are silently ignored.
+    """
+    file_paths = (
+        os.path.join(directory, filename)  # format: skip
+        for filename in os.listdir(directory)
+    )
+    filtered_image_paths = (
+        image_path  # format: skip
+        for image_path in file_paths
+        if is_user_file(image_path)
+    )
+    return [AutoSplitImage(image_path) for image_path in filtered_image_paths]
+
+
+def parse_and_validate_images(autosplit: "AutoSplit"):
+    all_images = __get_images_from_directory(autosplit.settings_dict["split_image_directory"])
     # Find non-split images and then remove them from the list
     start_image = __pop_image_type(all_images, ImageType.START)
     reset_image = __pop_image_type(all_images, ImageType.RESET)
