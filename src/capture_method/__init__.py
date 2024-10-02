@@ -2,11 +2,11 @@ import os
 import sys
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum, EnumMeta, auto, unique
+from enum import EnumMeta, StrEnum, auto, unique
 from itertools import starmap
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, Never, TypedDict, cast
 
-from typing_extensions import Never, override
+from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
@@ -49,7 +49,7 @@ class Region(TypedDict):
     height: int
 
 
-class CaptureMethodEnumMeta(EnumMeta):
+class ContainerEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
     def __contains__(cls, other: object):
@@ -61,35 +61,16 @@ class CaptureMethodEnumMeta(EnumMeta):
 
 
 @unique
-# TODO: Try StrEnum in Python 3.11
-class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
-    # Allow TOML to save as a simple string
-    @override
-    def __repr__(self):
-        return self.value
-
-    # Allow direct comparison with strings
-    @override
-    def __eq__(self, other: object):
-        if isinstance(other, str):
-            return self.value == other
-        if isinstance(other, Enum):
-            return self.value == other.value
-        return other == self
-
-    # Restore hashing functionality for use in Maps
-    @override
-    def __hash__(self):
-        return self.value.__hash__()
-
+class CaptureMethodEnum(StrEnum, metaclass=ContainerEnumMeta):
+    # Capitalize the string value from auto()
     @override
     @staticmethod
     def _generate_next_value_(
-        name: "str | CaptureMethodEnum",
+        name: str,
         start: int,
         count: int,
-        last_values: list["str | CaptureMethodEnum"],
-    ):
+        last_values: list[str],
+    ) -> str:
         return name
 
     NONE = ""

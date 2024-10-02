@@ -47,7 +47,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
   - Should work on Ubuntu 20.04+ (Only tested on Ubuntu 22.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
-- Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Python 3.11+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## Timer Integration
 
@@ -102,6 +102,8 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/python-winsdk/issues/11>
   - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
+  - <https://github.com/hukkin/tomli-w/pull/46>
+  - <https://github.com/uiri/toml/issues/270>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
   - <https://github.com/python/mypy/issues/6700>

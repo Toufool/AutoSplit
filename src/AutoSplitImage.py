@@ -1,11 +1,11 @@
 import os
+import tomllib
 from enum import IntEnum, auto
 from math import sqrt
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-import toml
 from cv2.typing import MatLike
 
 import error_messages
@@ -133,8 +133,8 @@ class AutoSplitImage:
             error_messages.tesseract_missing(path)
             return
 
-        with open(path, encoding="utf-8") as f:
-            data = toml.load(f)
+        with open(path, mode="rb") as f:
+            data = tomllib.load(f)
 
         self.texts = [text.lower().strip() for text in data["texts"]]
         self.__rect = (data["left"], data["right"], data["top"], data["bottom"])
