@@ -201,7 +201,7 @@ def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
     return not error
 
 
-def is_user_file(path: StrPath):
+def is_user_file(path: "StrPath"):
     """Returns False for hidden files, system files and folders."""
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
         return False
@@ -216,7 +216,7 @@ def is_user_file(path: StrPath):
     return True
 
 
-def __get_images_from_directory(directory: StrPath):
+def __get_images_from_directory(directory: "StrPath"):
     """
     Returns a list of AutoSplitImage parsed from a directory.
     Hidden files, system files and folders are silently ignored.
