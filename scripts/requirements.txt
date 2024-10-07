@@ -26,6 +26,7 @@ pyinstaller>=6.10.0  # Python 3.13 support
 #
 # Windows-only dependencies:
 comtypes<1.4.5 ; sys_platform == 'win32'  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807
+git+https://github.com/Avasam/typed-D3DShot.git@typed-D3DShot ; sys_platform == 'win32'
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=307 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.AI.MachineLearning>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support

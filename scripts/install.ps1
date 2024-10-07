@@ -45,12 +45,15 @@ If ($IsLinux) {
 # https://bugreports.qt.io/browse/PYSIDE-2616?focusedId=777285&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-777285
 &"$python" -m pip uninstall shiboken6 -y
 &"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
+# Temporary hack to test install for Python 3.13
+&"$python" -m pip install `
+  "https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/PySide6_Essentials-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'" `
+  "https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/shiboken6-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'" `
+  --ignore-requires-python
 # These libraries install extra requirements we don't want
 # Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
 # PyAutoGUI: We only use it for hotkeys
-# D3DShot: Will install Pillow, which we don't use on Windows.
-#          Even then, PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
-&"$python" -m pip install PyAutoGUI "D3DShot>=0.1.5 ; sys_platform == 'win32'" --no-deps --upgrade
+&"$python" -m pip install PyAutoGUI --no-deps --upgrade
 
 # Uninstall optional dependencies if PyAutoGUI or D3DShot was installed outside this script
 # PyScreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows
