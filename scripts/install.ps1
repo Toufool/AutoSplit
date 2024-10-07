@@ -43,7 +43,8 @@ If ($IsLinux) {
 &"$python" -m pip install wheel pip setuptools --upgrade
 # Upgrading QT to 6.6.2 w/o first uninstalling shiboken6 can lead to issues
 # https://bugreports.qt.io/browse/PYSIDE-2616?focusedId=777285&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-777285
-&"$python" -m pip uninstall shiboken6 -y
+# Updating from D3DShot to typed-D3DShot w/o uninstalling can cause issues (keep until version bump on PyPI)
+&"$python" -m pip uninstall shiboken6 d3dshot types-D3DShot -y
 &"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 # Temporary hack to test install for Python 3.13
 &"$python" -m pip install `

@@ -15,7 +15,6 @@
 ruff>=0.6.8 # Pre-commit fix # Must match .pre-commit-config.yaml
 #
 # Types
-types-D3DShot ; sys_platform == 'win32'
 types-keyboard
 types-psutil
 types-PyAutoGUI
