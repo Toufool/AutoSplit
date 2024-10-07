@@ -5,32 +5,33 @@
 # Dependencies:
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 Levenshtein>=0.25
-# Some modules used by OpenCV are not compiled for Numpy 2 yet on Linux. Error happens on import at runtime
-numpy>=1.26,<2.0  # Python 3.12 support
-opencv-python-headless>=4.9.0.80  # Typing fixes
+numpy>=2.1  # Python 3.13 support
+opencv-python-headless>=4.10  # NumPy 2 support
 packaging
-psutil>=5.9.6  # Python 3.12 fixes
+psutil>=6.0.0  # Python 3.13 support
 # PyAutoGUI # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials>=6.6.0 # Python 3.12 support
-scipy>=1.11.2 # Python 3.12 support
+PySide6-Essentials>=6.6.0 ; python_version <= '3.12'  # Python 3.12 support
+https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/PySide6_Essentials-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
+https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/shiboken6-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
+scipy>=1.14.1 # Python 3.13 support
 tomli-w
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
-pyinstaller>=5.13  # Python 3.12 support
+pyinstaller>=6.10.0  # Python 3.13 support
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #
 # Windows-only dependencies:
 comtypes<1.4.5 ; sys_platform == 'win32'  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
-pywin32>=301 ; sys_platform == 'win32'
+pywin32>=307 ; sys_platform == 'win32'  # Python 3.13 support
 winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
 # D3DShot # See install.ps1
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
-pillow ; sys_platform == 'linux' # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
+pillow>=11.0 ; sys_platform == 'linux' # Python 3.13 support # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
 python-xlib ; sys_platform == 'linux'
