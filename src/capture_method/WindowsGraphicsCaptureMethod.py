@@ -9,12 +9,12 @@ import numpy as np
 import win32gui
 from cv2.typing import MatLike
 from typing_extensions import override
-from winsdk.windows.graphics import SizeInt32
-from winsdk.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
-from winsdk.windows.graphics.capture.interop import create_for_window
-from winsdk.windows.graphics.directx import DirectXPixelFormat
-from winsdk.windows.graphics.directx.direct3d11 import IDirect3DSurface
-from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
+from winrt.windows.graphics import SizeInt32
+from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
+from winrt.windows.graphics.capture.interop import create_for_window
+from winrt.windows.graphics.directx import DirectXPixelFormat
+from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
+from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import (

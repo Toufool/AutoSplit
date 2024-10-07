@@ -25,8 +25,8 @@ if sys.platform == "win32":
     import win32gui
     import win32ui
     from pygrabber.dshow_graph import FilterGraph
-    from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-    from winsdk.windows.media.capture import MediaCapture
+    from winrt.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
+    from winrt.windows.media.capture import MediaCapture
 
     STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
 else:

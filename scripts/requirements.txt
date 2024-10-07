@@ -13,8 +13,8 @@ psutil>=6.0.0  # Python 3.13 support
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
 PySide6-Essentials>=6.6.0 ; python_version <= '3.12'  # Python 3.12 support
-https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/PySide6_Essentials-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
-https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/shiboken6-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
+# https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/PySide6_Essentials-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
+# https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/shiboken6-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
 scipy>=1.14.1 # Python 3.13 support
 tomli-w
 typing-extensions>=4.4.0  # @override decorator support
@@ -28,7 +28,15 @@ pyinstaller>=6.10.0  # Python 3.13 support
 comtypes<1.4.5 ; sys_platform == 'win32'  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=307 ; sys_platform == 'win32'  # Python 3.13 support
-winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
+winrt-Windows.AI.MachineLearning>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Foundation>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture.Interop>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Imaging>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 # D3DShot # See install.ps1
 #
 # Linux-only dependencies
