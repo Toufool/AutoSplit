@@ -42,5 +42,6 @@ winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 supp
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
-pillow>=11.0 ; sys_platform == 'linux' # Python 3.13 support # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
+# pillow>=11.0 ; sys_platform == 'linux' # Python 3.13 support # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
+git+https://github.com/python-pillow/Pillow.git ; sys_platform == 'linux'
 python-xlib ; sys_platform == 'linux'
