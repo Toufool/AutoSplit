@@ -206,14 +206,13 @@ def is_user_file(path: "StrPath"):
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
         return False
     stat_result = os.stat(path)
-    if stat_result.st_mode & UF_HIDDEN:
-        return False
     if sys.platform == "win32":
         return not (
             (stat_result.st_file_attributes & FILE_ATTRIBUTE_SYSTEM)
             | (stat_result.st_file_attributes & FILE_ATTRIBUTE_HIDDEN)
         )
-    return True
+    # UF_HIDDEN is present on regular Windows files
+    return not stat_result.st_mode & UF_HIDDEN
 
 
 def __get_images_from_directory(directory: "StrPath"):
