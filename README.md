@@ -100,7 +100,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>
-  - <https://github.com/pywinrt/python-winsdk/issues/11>
+  - <https://github.com/pywinrt/pywinrt/issues/78>
   - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
   - <https://github.com/hukkin/tomli-w/pull/46>
   - <https://github.com/uiri/toml/issues/270>
