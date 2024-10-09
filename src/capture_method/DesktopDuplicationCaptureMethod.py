@@ -2,14 +2,13 @@ import sys
 
 if sys.platform != "win32":
     raise OSError
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import cv2
 import d3dshot
 import win32api
 import win32con
 import win32gui
-from cv2.typing import MatLike
 from typing_extensions import override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -25,7 +24,8 @@ class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):
     description = f"""
 Duplicates the desktop using Direct3D.
 It can record OpenGL and Hardware Accelerated windows.
-About 10-15x slower than BitBlt. Not affected by window size.
+Up to 15x slower than BitBlt for tiny regions. Not affected by window size.
+Limited by the target window and monitor's refresh rate.
 Overlapping windows will show up and can't record across displays.
 This option may not be available for hybrid GPU laptops,
 see D3DDD-Note-Laptops.md for a solution.
@@ -57,10 +57,7 @@ https://www.github.com/{GITHUB_REPOSITORY}#capture-method"""
         top = selection["y"] + offset_y + top_bounds
         right = selection["width"] + left
         bottom = selection["height"] + top
-        screenshot = cast(
-            MatLike | None,
-            self.desktop_duplication.screenshot((left, top, right, bottom)),
-        )
+        screenshot = self.desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None
         return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
