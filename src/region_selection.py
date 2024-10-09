@@ -32,9 +32,9 @@ if sys.platform == "win32":
         SM_XVIRTUALSCREEN,
         SM_YVIRTUALSCREEN,
     )
-    from winsdk._winrt import initialize_with_window  # noqa: PLC2701
-    from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-    from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+    from winrt._winrt import initialize_with_window  # noqa: PLC2701
+    from winrt.windows.foundation import AsyncStatus, IAsyncOperation
+    from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 if sys.platform == "linux":
     from Xlib.display import Display
