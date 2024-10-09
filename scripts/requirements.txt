@@ -16,7 +16,7 @@ PySide6-Essentials>=6.6.0 ; python_version <= '3.12'  # Python 3.12 support
 # https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/PySide6_Essentials-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
 # https://download.qt.io/snapshots/ci/pyside/dev/c512b506b565578770c671b11afb78427ca8d012/pyside6/shiboken6-6.8.0a1.dev1727870855-cp39-abi3-win_amd64.whl ; python_version >= '3.13'
 scipy>=1.14.1 # Python 3.13 support
-tomli-w
+tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
@@ -38,7 +38,7 @@ winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Py
 winrt-Windows.Graphics.Imaging>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-# D3DShot # See install.ps1
+typed-D3DShot[numpy]>=1.0.1 ; sys_platform == 'win32'
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'

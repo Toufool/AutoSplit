@@ -114,8 +114,7 @@ def save_settings_as(autosplit: "AutoSplit"):
 def __save_settings_to_file(autosplit: "AutoSplit", save_settings_file_path: str):
     # Save settings to a .toml file
     with open(save_settings_file_path, "wb") as file:
-        # https://github.com/hukkin/tomli-w/pull/46
-        tomli_w.dump(autosplit.settings_dict, file)  # pyright: ignore[reportArgumentType]
+        tomli_w.dump(autosplit.settings_dict, file)
     autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
