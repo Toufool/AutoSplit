@@ -15,14 +15,11 @@ $arguments = @(
   '--exclude=pygetwindow',
   '--exclude=pymsgbox',
   '--exclude=pytweening',
-  '--exclude=mouseinfo')
-if ($IsWindows) {
-  $arguments += @(
-    # Installed by PyAutoGUI, but used by linux
-    '--exclude=pyscreeze'
-    # Installed by D3DShot
-    '--exclude=PIL')
-}
+  '--exclude=mouseinfo',
+  # Installed by PyAutoGUI, but used by linux
+  '--exclude=pyscreeze',
+  # Installed by D3DShot
+  '--exclude=PIL')
 if ($IsLinux) {
   $arguments += @(
     # Required on the CI for PyWinCtl

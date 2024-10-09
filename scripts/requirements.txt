@@ -36,7 +36,7 @@ winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Py
 winrt-Windows.Graphics.Imaging>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-# D3DShot # See install.ps1
+typed-D3DShot[numpy]>=1.0.1 ; sys_platform == 'win32'
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
