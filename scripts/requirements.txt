@@ -15,7 +15,7 @@ PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
 PySide6-Essentials>=6.6.0 # Python 3.12 support
 scipy>=1.11.2 # Python 3.12 support
-tomli-w
+tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
 #
 # Build and compile resources
