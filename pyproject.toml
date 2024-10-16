@@ -1,6 +1,6 @@
 [project]
 name = "AutoSplit"
-version = "0"
+dynamic = ["version"]
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
