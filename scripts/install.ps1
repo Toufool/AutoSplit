@@ -43,8 +43,14 @@ If ($IsLinux) {
 &"$python" -m pip install wheel pip setuptools --upgrade
 # Upgrading QT to 6.6.2 w/o first uninstalling shiboken6 can lead to issues
 # https://bugreports.qt.io/browse/PYSIDE-2616?focusedId=777285&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-777285
-&"$python" -m pip uninstall shiboken6 -y
+# Updating from D3DShot to typed-D3DShot w/o uninstalling can cause issues (keep until version bump on PyPI)
+&"$python" -m pip uninstall shiboken6 d3dshot types-D3DShot -y
 &"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
+# Temporary hack to test install for Python 3.13
+&"$python" -m pip install `
+  "PySide6-Essentials>=6.8.0.1 ; python_version >= '3.13'" `
+  "shiboken6>=6.8.0.1 ; python_version >= '3.13'" `
+  --ignore-requires-python
 # These libraries install extra requirements we don't want
 # Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
 # PyAutoGUI: We only use it for hotkeys

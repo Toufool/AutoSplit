@@ -12,6 +12,7 @@ env/
 build/
 dist/
 *.prof
+*.lock
 # Generated
 **/gen/*.py
 !**/gen/*.pyi
