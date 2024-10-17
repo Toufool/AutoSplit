@@ -48,8 +48,8 @@ If ($IsLinux) {
 &"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 # Temporary hack to test install for Python 3.13
 &"$python" -m pip install `
-  PySide6-Essentials>=6.8.0.1 ; python_version >= '3.13'" `
-  shiboken6>=6.8.0.1 ; python_version >= '3.13'" `
+  "PySide6-Essentials>=6.8.0.1 ; python_version >= '3.13'" `
+  "shiboken6>=6.8.0.1 ; python_version >= '3.13'" `
   --ignore-requires-python
 # These libraries install extra requirements we don't want
 # Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
