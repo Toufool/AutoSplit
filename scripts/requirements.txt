@@ -12,8 +12,7 @@ psutil>=6.0.0  # Python 3.13 support
 # PyAutoGUI # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials>=6.8.0.1  # Python 3.13 support
-shiboken6>=6.8.0.1  # Help stay in sync with PySide6, especially for dev builds and re-installs
+PySide6-Essentials>=6.8.0.1 ; python_version <= '3.12'  # Python 3.13 support
 scipy>=1.14.1 # Python 3.13 support
 tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
