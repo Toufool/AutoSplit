@@ -137,8 +137,7 @@ if sys.platform == "win32":
         import d3dshot
 
         d3dshot.create(capture_output="numpy")
-    except (ModuleNotFoundError, COMError, NameError):
-        # NameError: https://github.com/enthought/comtypes/issues/618
+    except (ModuleNotFoundError, COMError):
         pass
     else:
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
