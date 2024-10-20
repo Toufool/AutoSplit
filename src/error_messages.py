@@ -36,7 +36,8 @@ def set_text_message(
         message_box.addButton(accept_button, QtWidgets.QMessageBox.ButtonRole.AcceptRole)
     if kill_button:
         force_quit_button = message_box.addButton(
-            kill_button, QtWidgets.QMessageBox.ButtonRole.ResetRole
+            kill_button,
+            QtWidgets.QMessageBox.ButtonRole.ResetRole,
         )
         force_quit_button.clicked.connect(__exit_program)
     if details:
@@ -64,14 +65,14 @@ def split_image_directory_empty():
 def image_type(image: str):
     set_text_message(
         f"{image!r} is not a valid image file, does not exist, "
-        + "or the full image file path contains a special character.",
+        + "or the full image file path contains a special character."
     )
 
 
 def region():
     set_text_message(
         "No region is selected or the Capture Region window is not open. "
-        + "Select a region or load settings while the Capture Region window is open.",
+        + "Select a region or load settings while the Capture Region window is open."
     )
 
 
@@ -141,7 +142,7 @@ def check_for_updates():
 def load_start_image():
     set_text_message(
         "Start Image found, but cannot be loaded unless Start hotkey is set. "
-        + "Please set the hotkey, and then click the Reload Start Image button.",
+        + "Please set the hotkey, and then click the Reload Start Image button."
     )
 
 
@@ -182,16 +183,15 @@ def linux_uinput():
     set_text_message(
         "Failed to create a device file using `uinput` module. "
         + "This can happen when running Linux under WSL. "
-        + "Keyboard events have been disabled.",
+        + "Keyboard events have been disabled."
     )
 
 
 # Keep in sync with README.md#DOWNLOAD_AND_OPEN
-WAYLAND_WARNING = (
-    "All screen capture method are incompatible with Wayland. Follow this guide to disable it: "
-    + '\n<a href="https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop">'
-    + "https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop</a>"
-)
+WAYLAND_WARNING = """\
+All screen capture method are incompatible with Wayland. Follow this guide to disable it:
+<a href="https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop"> \
+https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop</a>"""
 
 
 def linux_wayland():
@@ -235,7 +235,7 @@ def make_excepthook(autosplit: "AutoSplit"):
             == "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):
             return
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        # Within LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
 
     return excepthook
@@ -252,3 +252,20 @@ def handle_top_level_exceptions(exception: Exception) -> NoReturn:
     else:
         traceback.print_exception(type(exception), exception, exception.__traceback__)
     sys.exit(1)
+
+
+def tesseract_missing(ocr_split_file_path: str):
+    set_text_message(
+        f"{ocr_split_file_path!r} is an Optical Character Recognition split file "
+        + "but tesseract couldn't be found."
+        + f'\nPlease read <a href="https://github.com/{GITHUB_REPOSITORY}#install-tesseract">'
+        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions."
+    )
+
+
+def wrong_ocr_values(ocr_split_file_path: str):
+    set_text_message(
+        f"{ocr_split_file_path!r} has invalid values."
+        + "\nPlease make sure that `left < right` and `top < bottom`. "
+        + "Also check for negative values in the 'methods' or 'fps_limit' settings"
+    )

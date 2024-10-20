@@ -1,7 +1,31 @@
 #!/usr/bin/python3
+
 import os
-import signal
 import sys
+
+# Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
+# which Qt tries to do then throws warnings about it.
+# The unittest workaround significantly increases
+# build time, boot time and build size with PyInstaller.
+# https://github.com/asweigart/pyautogui/issues/663#issuecomment-1296719464
+# QT doesn't call those from Python/ctypes, meaning we can stop other programs from setting it.
+if sys.platform == "win32":
+    import ctypes
+
+    # pyautogui._pyautogui_win.py
+    ctypes.windll.user32.SetProcessDPIAware = (  # pyright: ignore[reportAttributeAccessIssue]
+        lambda: None
+    )
+    # pymonctl._pymonctl_win.py
+    # pywinbox._pywinbox_win.py
+    ctypes.windll.shcore.SetProcessDpiAwareness = (  # pyright: ignore[reportAttributeAccessIssue]
+        lambda _: None  # pyright: ignore[reportUnknownLambdaType]
+    )
+if sys.platform == "linux":
+    # Fixes "undefined symbol: wl_proxy_marshal_flags": https://bugreports.qt.io/browse/QTBUG-114635
+    os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
+
+import signal
 from collections.abc import Callable
 from copy import deepcopy
 from time import time
@@ -58,6 +82,7 @@ from utils import (
     auto_split_directory,
     decimal,
     flatten,
+    imwrite,
     is_valid_image,
     open_file,
 )
@@ -134,7 +159,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle(
             f"AutoSplit v{AUTOSPLIT_VERSION}"
-            + (" (externally controlled)" if self.is_auto_controlled else ""),
+            + (" (externally controlled)" if self.is_auto_controlled else "")
         )
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
@@ -190,7 +215,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         )
         self.action_check_for_updates_on_open.changed.connect(
             lambda: user_profile.set_check_for_updates_on_open(
-                self, self.action_check_for_updates_on_open.isChecked()
+                self,
+                self.action_check_for_updates_on_open.isChecked(),
             ),
         )
 
@@ -344,7 +370,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # TODO: Abstract with similar check in split image
         below_flag = self.start_image.check_flag(BELOW_FLAG)
 
-        # Negative means belove threshold, positive means above
+        # Negative means below threshold, positive means above
         similarity_diff = start_image_similarity - start_image_threshold
         if below_flag and not self.split_below_threshold and similarity_diff >= 0:
             self.split_below_threshold = True
@@ -369,7 +395,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
                     while time_delta < start_delay:
                         delay_time_left = start_delay - time_delta
                         self.current_split_image.setText(
-                            f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}",
+                            f"Delayed Before Starting:\n {seconds_remaining_text(delay_time_left)}"
                         )
                         # Wait 0.1s. Doesn't need to be shorter as we only show 1 decimal
                         QTest.qWait(100)
@@ -414,7 +440,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         screenshot_index = 1
         while True:
             screenshot_path = os.path.join(
-                screenshot_directory, f"{screenshot_index:03}_SplitImage.png"
+                screenshot_directory,
+                f"{screenshot_index:03}_SplitImage.png",
             )
             if not os.path.exists(screenshot_path):
                 break
@@ -427,7 +454,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
 
         # Save and open image
-        cv2.imwrite(screenshot_path, capture)
+        imwrite(screenshot_path, capture)
         if self.settings_dict["open_screenshot"]:
             open_file(screenshot_path)
 
@@ -540,8 +567,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def start_auto_splitter(self):
         # If the auto splitter is already running or the button is disabled,
         # don't emit the signal to start it.
-        if (
-            self.is_running  # fmt: skip
+        if (  # fmt: skip
+            self.is_running
             or (not self.start_auto_splitter_button.isEnabled() and not self.is_auto_controlled)
         ):
             return
@@ -573,7 +600,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             flatten(
                 ((split_image, i + 1) for i in range(split_image.loops))
                 for split_image in self.split_images
-            ),
+            )
         )
 
         # Construct groups of splits
@@ -675,7 +702,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.gui_changes_on_reset(safe_to_reload_start_image=True)
 
     def __similarity_threshold_loop(
-        self, number_of_split_images: int, dummy_splits_array: list[bool]
+        self,
+        number_of_split_images: int,
+        dummy_splits_array: list[bool],
     ):
         """
         Wait until the similarity threshold is met.
@@ -718,7 +747,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             QApplication.processEvents()
 
             # Limit the number of time the comparison runs to reduce cpu usage
-            frame_interval = 1 / self.settings_dict["fps_limit"]
+            frame_interval = 1 / self.split_image.get_fps_limit(self)
             # Use a time delta to have a consistant check interval
             wait_delta_ms = int((frame_interval - (time() - start) % frame_interval) * ONE_SECOND)
 
@@ -881,7 +910,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             specific_image  # fmt: skip
             or self.split_images_and_loop_number[0 + self.split_image_number][0]
         )
-        if is_valid_image(self.split_image.byte_array):
+        if self.split_image.is_ocr:
+            # TODO: test if setText clears a set image
+            text = "\nor\n".join(self.split_image.texts)
+            self.current_split_image.setText(f"Looking for OCR text:\n{text}")
+        elif is_valid_image(self.split_image.byte_array):
             set_preview_image(self.current_split_image, self.split_image.byte_array)
 
         self.current_image_file_label.setText(self.split_image.filename)
@@ -960,19 +993,13 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             image_format = QtGui.QImage.Format.Format_BGR888
             capture = image
 
-        qimage = QtGui.QImage(
-            capture.data,
-            width,
-            height,
-            width * channels,
-            image_format,
-        )
+        qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
         qlabel.setPixmap(
             QtGui.QPixmap(qimage).scaled(
                 qlabel.size(),
                 QtCore.Qt.AspectRatioMode.IgnoreAspectRatio,
                 QtCore.Qt.TransformationMode.SmoothTransformation,
-            ),
+            )
         )
 
 

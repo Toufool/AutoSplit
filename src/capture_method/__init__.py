@@ -2,7 +2,7 @@ import os
 import sys
 from collections import OrderedDict
 from dataclasses import dataclass
-from enum import Enum, EnumMeta, auto, unique
+from enum import EnumMeta, StrEnum, auto, unique
 from itertools import starmap
 from typing import TYPE_CHECKING, Never, TypedDict, cast
 
@@ -10,10 +10,10 @@ from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, try_get_direct3d_device
+from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
 
 if sys.platform == "win32":
-    from _ctypes import COMError  # noqa: PLC2701
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
     from pygrabber.dshow_graph import FilterGraph
 
@@ -43,7 +43,7 @@ class Region(TypedDict):
     height: int
 
 
-class CaptureMethodEnumMeta(EnumMeta):
+class ContainerEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
     def __contains__(cls, other: object):
@@ -55,30 +55,16 @@ class CaptureMethodEnumMeta(EnumMeta):
 
 
 @unique
-# TODO: Try StrEnum in Python 3.11
-class CaptureMethodEnum(Enum, metaclass=CaptureMethodEnumMeta):
-    # Allow TOML to save as a simple string
-    @override
-    def __repr__(self):
-        return self.value
-
-    # Allow direct comparison with strings
-    @override
-    def __eq__(self, other: object):
-        if isinstance(other, str):
-            return self.value == other
-        if isinstance(other, Enum):
-            return self.value == other.value
-        return other == self
-
-    # Restore hashing functionality for use in Maps
-    @override
-    def __hash__(self):
-        return self.value.__hash__()
-
+class CaptureMethodEnum(StrEnum, metaclass=ContainerEnumMeta):
+    # Capitalize the string value from auto()
     @override
     @staticmethod
-    def _generate_next_value_(name: "str | CaptureMethodEnum", *_):
+    def _generate_next_value_(
+        name: str,
+        start: int,
+        count: int,
+        last_values: list[str],
+    ) -> str:
         return name
 
     NONE = ""
@@ -133,12 +119,8 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
 
 CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
-    if (  # Windows Graphics Capture requires a minimum Windows Build
-        WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
-        # Our current implementation of Windows Graphics Capture
-        # does not ensure we can get an ID3DDevice
-        and try_get_direct3d_device()
-    ):
+    # Windows Graphics Capture requires a minimum Windows Build
+    if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
         CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     try:  # Test for laptop cross-GPU Desktop Duplication issue
@@ -202,22 +184,6 @@ def get_input_devices():
         except FileNotFoundError:
             pass
     return cameras
-
-
-def get_input_device_resolution(index: int) -> tuple[int, int] | None:
-    if sys.platform != "win32":
-        return (0, 0)
-    filter_graph = FilterGraph()
-    try:
-        filter_graph.add_video_input_device(index)
-    # This can happen with virtual cameras throwing errors.
-    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
-    # https://github.com/Toufool/AutoSplit/issues/238
-    except COMError:
-        return None
-    resolution = filter_graph.get_input_device().get_current_format()
-    filter_graph.remove_filters()
-    return resolution
 
 
 def get_all_video_capture_devices():

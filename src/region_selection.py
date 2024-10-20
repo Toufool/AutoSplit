@@ -1,4 +1,3 @@
-import os
 import sys
 from math import ceil
 from typing import TYPE_CHECKING
@@ -8,6 +7,7 @@ import numpy as np
 from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
+from pywinctl import getTopWindowAt
 from typing_extensions import override
 
 import error_messages
@@ -18,6 +18,7 @@ from utils import (
     ImageShape,
     auto_split_directory,
     get_window_bounds,
+    imread,
     is_valid_hwnd,
     is_valid_image,
 )
@@ -31,18 +32,9 @@ if sys.platform == "win32":
         SM_XVIRTUALSCREEN,
         SM_YVIRTUALSCREEN,
     )
-    from winsdk._winrt import initialize_with_window  # noqa: PLC2701
-    from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-    from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 if sys.platform == "linux":
     from Xlib.display import Display
-
-    # This variable may be missing in desktopless environment. x11 | wayland
-    os.environ.setdefault("XDG_SESSION_TYPE", "x11")
-
-# Must come after the linux XDG_SESSION_TYPE environment variable is set
-from pywinctl import getTopWindowAt
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -67,11 +59,11 @@ SUPPORTED_IMREAD_FORMATS = (
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("
-    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
+    + " ".join(f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS)
     + ");;"
-    + ";;".join([
+    + ";;".join(
         f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
-    ])
+    )
 )
 
 
@@ -84,32 +76,38 @@ def get_top_window_at(x: int, y: int):
 
 
 # TODO: For later as a different picker option
-def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
-    """Uses the built-in GraphicsCapturePicker to select the Window."""
-    if sys.platform != "win32":
-        raise OSError
-
-    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
-        try:
-            if async_status != AsyncStatus.COMPLETED:
-                return
-        except SystemError as exception:
-            # HACK: can happen when closing the GraphicsCapturePicker
-            if str(exception).endswith("returned a result with an error set"):
-                return
-            raise
-        item = async_operation.get_results()
-        if not item:
-            return
-        autosplit.settings_dict["captured_window_title"] = item.display_name
-        autosplit.capture_method.reinitialize()
-
-    picker = GraphicsCapturePicker()
-    initialize_with_window(picker, autosplit.effectiveWinId())
-    async_operation = picker.pick_single_item_async()
-    # None if the selection is canceled
-    if async_operation:
-        async_operation.completed = callback
+# def __select_graphics_item(autosplit: "AutoSplit"):
+#     """Uses the built-in GraphicsCapturePicker to select the Window."""
+#     if sys.platform != "win32":
+#         raise OSError
+#     from winrt._winrt import initialize_with_window
+#     from winrt.windows.foundation import AsyncStatus, IAsyncOperation
+#     from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+#
+#     def callback(
+#         async_operation: IAsyncOperation[GraphicsCaptureItem],
+#         async_status: AsyncStatus,
+#     ):
+#         try:
+#             if async_status != AsyncStatus.COMPLETED:
+#                 return
+#         except SystemError as exception:
+#             # HACK: can happen when closing the GraphicsCapturePicker
+#             if str(exception).endswith("returned a result with an error set"):
+#                 return
+#             raise
+#         item = async_operation.get_results()
+#         if not item:
+#             return
+#         autosplit.settings_dict["captured_window_title"] = item.display_name
+#         autosplit.capture_method.reinitialize()
+#
+#     picker = GraphicsCapturePicker()
+#     initialize_with_window(picker, autosplit.effectiveWinId())
+#     async_operation = picker.pick_single_item_async()
+#     # None if the selection is canceled
+#     if async_operation:
+#         async_operation.completed = callback
 
 
 def select_region(autosplit: "AutoSplit"):
@@ -224,7 +222,7 @@ def align_region(autosplit: "AutoSplit"):
     if not template_filename:
         return
 
-    template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
+    template = imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Add alpha channel to template if it's missing.
     if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)

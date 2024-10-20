@@ -30,11 +30,10 @@ def is_blank(image: MatLike):
 class BitBltCaptureMethod(ThreadedLoopCaptureMethod):
     name = "BitBlt"
     short_description = "fastest, least compatible"
-    description = (
-        "\nThe best option when compatible. But it cannot properly record "
-        + "\nOpenGL, Hardware Accelerated or Exclusive Fullscreen windows. "
-        + "\nThe smaller the selected region, the more efficient it is. "
-    )
+    description = """
+The best option when compatible. But it cannot properly record
+OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.
+The smaller the selected region, the more efficient it is."""
 
     @property
     @override

@@ -1,17 +1,27 @@
+from collections.abc import Iterable
 from math import sqrt
 
 import cv2
+import Levenshtein
 import numpy as np
 from cv2.typing import MatLike
 from scipy import fft
 
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+from utils import (
+    BGRA_CHANNEL_COUNT,
+    MAXBYTE,
+    ColorChannel,
+    ImageShape,
+    is_valid_image,
+    run_tesseract,
+)
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = (ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value)
 HISTOGRAM_SIZE = (8, 8, 8)
 RANGES = (0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE)
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
+MAX_VALUE = 1.0
 
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
@@ -84,7 +94,7 @@ def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
     """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
     # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
     # but it requires contrib/extra modules
-    # and is innacurate unless we precompute the size with a specific interpolation.
+    # and is inaccurate unless we precompute the size with a specific interpolation.
     # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
     #
     # pHash = cv2.img_hash.PHash.create()
@@ -127,8 +137,47 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     return 1 - (hash_diff / 64.0)
 
 
+def extract_and_compare_text(capture: MatLike, texts: Iterable[str], methods_index: Iterable[int]):
+    """
+    Compares the extracted text of the given image and returns the similarity between the two texts.
+    The best match of all texts and methods is returned.
+
+    @param capture: Image of any given shape as a numpy array
+    @param texts: a list of strings to match for
+    @param methods_index: a list of comparison methods to use in order
+    @return: The similarity between the text in the image and the text supplied as a number 0 to 1.
+    """
+    methods = [get_ocr_comparison_method_by_index(i) for i in methods_index]
+    png = np.array(cv2.imencode(".png", capture)[1]).tobytes()
+    # Especially with stylised characters, OCR could conceivably get the right
+    # letter, but mix up the casing (m/M, o/O, t/T, etc.)
+    image_string = run_tesseract(png).lower().strip()
+
+    ratio = 0.0
+    for text in texts:
+        for method in methods:
+            ratio = max(ratio, method(text, image_string))
+            if ratio == MAX_VALUE:
+                return ratio  # we found the best match; try to return early
+    return ratio
+
+
+def compare_submatch(a: str, b: str):
+    return float(a in b)
+
+
 def __compare_dummy(*_: object):
     return 0.0
+
+
+def get_ocr_comparison_method_by_index(comparison_method_index: int):
+    match comparison_method_index:
+        case 0:
+            return Levenshtein.ratio
+        case 1:
+            return compare_submatch
+        case _:
+            return __compare_dummy
 
 
 def get_comparison_method_by_index(comparison_method_index: int):

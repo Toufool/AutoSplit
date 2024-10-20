@@ -1,13 +1,21 @@
 import os
+import sys
 from collections.abc import Callable
 from functools import partial
+from stat import UF_HIDDEN
 from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
 from utils import is_valid_image
 
+if sys.platform == "win32":
+    from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
+
+
 if TYPE_CHECKING:
+    from _typeshed import StrPath
+
     from AutoSplit import AutoSplit
 
 (
@@ -41,8 +49,9 @@ def __value_from_filename(
 
 def threshold_from_filename(filename: str):
     """
-    Retrieve the threshold from the filename, if there is no threshold or the threshold
-    doesn't meet the requirements of being [0, 1], then None is returned.
+    Retrieve the threshold from the filename.
+    If there is no threshold or the threshold doesn't meet the requirements of being [0, 1],
+    then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid threshold, if not then None
@@ -57,8 +66,9 @@ def threshold_from_filename(filename: str):
 
 def pause_from_filename(filename: str):
     """
-    Retrieve the pause time from the filename, if there is no pause time or the pause time
-    isn't a valid positive number or 0, then None is returned.
+    Retrieve the pause time from the filename,
+    if there is no pause time or the pause time isn't a valid positive number or 0,
+    then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid pause time, if not then None
@@ -73,8 +83,9 @@ def pause_from_filename(filename: str):
 
 def delay_time_from_filename(filename: str):
     """
-    Retrieve the delay time from the filename, if there is no delay time or the delay time
-    isn't a valid positive number or 0 number, then None is returned.
+    Retrieve the delay time from the filename.
+    If there is no delay time or the delay time isn't a valid positive number or 0 number,
+    then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid delay time, if not then none
@@ -121,7 +132,8 @@ def comparison_method_from_filename(filename: str):
 
 def flags_from_filename(filename: str):
     """
-    Retrieve the flags from the filename, if there are no flags then 0 is returned.
+    Retrieve the flags from the filename.
+    If there are no flags, then 0 is returned.
 
     @param filename: String containing the file's name
     @return: The flags as an integer, if invalid flags are found it returns 0
@@ -194,13 +206,39 @@ def validate_before_parsing(
     return not error
 
 
-def parse_and_validate_images(autosplit: "AutoSplit"):
-    # Get split images
-    all_images = [
-        AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
-        for image_name in os.listdir(autosplit.settings_dict["split_image_directory"])
-    ]
+def is_user_file(path: "StrPath"):
+    """Returns False for hidden files, system files and folders."""
+    if os.path.isdir(path) or os.path.basename(path).startswith("."):
+        return False
+    stat_result = os.stat(path)
+    if sys.platform == "win32":
+        return not (
+            (stat_result.st_file_attributes & FILE_ATTRIBUTE_SYSTEM)
+            | (stat_result.st_file_attributes & FILE_ATTRIBUTE_HIDDEN)
+        )
+    # UF_HIDDEN is present on regular Windows files
+    return not stat_result.st_mode & UF_HIDDEN
 
+
+def __get_images_from_directory(directory: "StrPath"):
+    """
+    Returns a list of AutoSplitImage parsed from a directory.
+    Hidden files, system files and folders are silently ignored.
+    """
+    file_paths = (
+        os.path.join(directory, filename)  # format: skip
+        for filename in os.listdir(directory)
+    )
+    filtered_image_paths = (
+        image_path  # format: skip
+        for image_path in file_paths
+        if is_user_file(image_path)
+    )
+    return [AutoSplitImage(image_path) for image_path in filtered_image_paths]
+
+
+def parse_and_validate_images(autosplit: "AutoSplit"):
+    all_images = __get_images_from_directory(autosplit.settings_dict["split_image_directory"])
     # Find non-split images and then remove them from the list
     start_image = __pop_image_type(all_images, ImageType.START)
     reset_image = __pop_image_type(all_images, ImageType.RESET)
@@ -231,7 +269,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     else:
         for image in split_images:
             # Test for image without transparency
-            if not is_valid_image(image.byte_array):
+            if not image.is_ocr and not is_valid_image(image.byte_array):
                 error_message = partial(error_messages.image_validity, image.filename)
                 break
 

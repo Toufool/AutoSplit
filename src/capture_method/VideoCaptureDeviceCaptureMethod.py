@@ -1,4 +1,3 @@
-import sys
 from typing import TYPE_CHECKING
 
 import cv2
@@ -8,10 +7,7 @@ from cv2.typing import MatLike
 from typing_extensions import override
 
 from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
-from utils import ImageShape, is_valid_image
-
-if sys.platform == "win32":
-    from pygrabber.dshow_graph import FilterGraph
+from utils import ImageShape, get_input_device_resolution, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -28,7 +24,7 @@ def is_blank(image: MatLike):
             :: image.shape[ImageShape.Y] - 1,
             :: image.shape[ImageShape.X] - 1,
         ]
-        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL
     )
 
 
@@ -54,14 +50,11 @@ class VideoCaptureDeviceCaptureMethod(ThreadedLoopCaptureMethod):
             return
 
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        if sys.platform == "win32":
-            filter_graph = FilterGraph()
-            filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-            width, height = filter_graph.get_input_device().get_current_format()
-            filter_graph.remove_filters()
+        resolution = get_input_device_resolution(autosplit.settings_dict["capture_device_id"])
+        if resolution is not None:
             try:
-                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
             except cv2.error:
                 # Some cameras don't allow changing the resolution
                 pass

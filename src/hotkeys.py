@@ -29,7 +29,7 @@ pyautogui.FAILSAFE = False
 SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
-Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
+CommandStr = Literal["split", "start", "pause", "reset", "skip", "undo"]
 Hotkey = Literal[
     "split",
     "reset",
@@ -48,6 +48,7 @@ HOTKEYS = (
     "screenshot",
     "toggle_auto_reset_image",
 )
+HOTKEYS_WHEN_AUTOCONTROLLED = {"screenshot", "toggle_auto_reset_image"}
 
 
 def remove_all_hotkeys():
@@ -79,7 +80,9 @@ def after_setting_hotkey(autosplit: "AutoSplit"):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
-def send_command(autosplit: "AutoSplit", command: Commands):
+def send_command(autosplit: "AutoSplit", command: CommandStr):
+    if command in autosplit.settings_dict["screenshot_on"]:
+        autosplit.screenshot_signal.emit()
     match command:
         case _ if autosplit.is_auto_controlled:
             print(command, flush=True)
@@ -153,7 +156,7 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
         return bool(
             keyboard_event.is_keypad
             if expected_key.startswith("num ")
-            else not keyboard_event.is_keypad,
+            else not keyboard_event.is_keypad
         )
 
     # Prevent "keypad action keys" from triggering "regular numbers" and "keypad numbers"
@@ -162,7 +165,9 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
 
 
 def _hotkey_action(
-    keyboard_event: keyboard.KeyboardEvent, key_name: str, action: Callable[[], None]
+    keyboard_event: keyboard.KeyboardEvent,
+    key_name: str,
+    action: Callable[[], None],
 ):
     """
     We're doing the check here instead of saving the key code because
@@ -170,7 +175,8 @@ def _hotkey_action(
     They also share scan codes on Windows.
     """
     if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(
-        key_name, keyboard_event
+        key_name,
+        keyboard_event,
     ):
         action()
 
@@ -302,7 +308,9 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: 
             # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit
             if hotkey_name == "esc":
                 _unhook(getattr(autosplit, f"{hotkey}_hotkey"))
-                autosplit.settings_dict[f"{hotkey}_hotkey"] = ""  # pyright: ignore[reportGeneralTypeIssues]
+                autosplit.settings_dict[f"{hotkey}_hotkey"] = (  # pyright: ignore[reportGeneralTypeIssues]
+                    ""
+                )
                 if autosplit.SettingsWidget:
                     getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
                 return
@@ -342,7 +350,9 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: 
 
             if autosplit.SettingsWidget:
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText(hotkey_name)
-            autosplit.settings_dict[f"{hotkey}_hotkey"] = hotkey_name  # pyright: ignore[reportGeneralTypeIssues]
+            autosplit.settings_dict[f"{hotkey}_hotkey"] = (  # pyright: ignore[reportGeneralTypeIssues]
+                hotkey_name
+            )
         except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
