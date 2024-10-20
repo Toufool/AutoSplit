@@ -23,3 +23,7 @@ types-pyinstaller
 types-python-xlib ; sys_platform == 'linux'
 types-pywin32>=306.0.0.20240130 ; sys_platform == 'win32'
 types-toml
+# Type references not used at runtime
+winrt-Windows.Foundation>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support

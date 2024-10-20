@@ -32,9 +32,6 @@ if sys.platform == "win32":
         SM_XVIRTUALSCREEN,
         SM_YVIRTUALSCREEN,
     )
-    from winrt._winrt import initialize_with_window  # noqa: PLC2701
-    from winrt.windows.foundation import AsyncStatus, IAsyncOperation
-    from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 
 if sys.platform == "linux":
     from Xlib.display import Display
@@ -79,32 +76,35 @@ def get_top_window_at(x: int, y: int):
 
 
 # TODO: For later as a different picker option
-def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
-    """Uses the built-in GraphicsCapturePicker to select the Window."""
-    if sys.platform != "win32":
-        raise OSError
-
-    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
-        try:
-            if async_status != AsyncStatus.COMPLETED:
-                return
-        except SystemError as exception:
-            # HACK: can happen when closing the GraphicsCapturePicker
-            if str(exception).endswith("returned a result with an error set"):
-                return
-            raise
-        item = async_operation.get_results()
-        if not item:
-            return
-        autosplit.settings_dict["captured_window_title"] = item.display_name
-        autosplit.capture_method.reinitialize()
-
-    picker = GraphicsCapturePicker()
-    initialize_with_window(picker, autosplit.effectiveWinId())
-    async_operation = picker.pick_single_item_async()
-    # None if the selection is canceled
-    if async_operation:
-        async_operation.completed = callback
+# def __select_graphics_item(autosplit: "AutoSplit"):
+#     """Uses the built-in GraphicsCapturePicker to select the Window."""
+#     if sys.platform != "win32":
+#         raise OSError
+#     from winrt._winrt import initialize_with_window
+#     from winrt.windows.foundation import AsyncStatus, IAsyncOperation
+#     from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+#
+#     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+#         try:
+#             if async_status != AsyncStatus.COMPLETED:
+#                 return
+#         except SystemError as exception:
+#             # HACK: can happen when closing the GraphicsCapturePicker
+#             if str(exception).endswith("returned a result with an error set"):
+#                 return
+#             raise
+#         item = async_operation.get_results()
+#         if not item:
+#             return
+#         autosplit.settings_dict["captured_window_title"] = item.display_name
+#         autosplit.capture_method.reinitialize()
+#
+#     picker = GraphicsCapturePicker()
+#     initialize_with_window(picker, autosplit.effectiveWinId())
+#     async_operation = picker.pick_single_item_async()
+#     # None if the selection is canceled
+#     if async_operation:
+#         async_operation.completed = callback
 
 
 def select_region(autosplit: "AutoSplit"):
