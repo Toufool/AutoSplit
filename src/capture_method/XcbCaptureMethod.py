@@ -32,7 +32,14 @@ class XcbCaptureMethod(ThreadedLoopCaptureMethod):
             return None
         offset_x = data["x"]
         offset_y = data["y"]
-        # image = window.get_image(selection["x"], selection["y"], selection["width"], selection["height"], 1, 0)
+        # image = window.get_image(
+        #     selection["x"],
+        #     selection["y"],
+        #     selection["width"],
+        #     selection["height"],
+        #     1,
+        #     0,
+        # )
 
         selection = self._autosplit_ref.settings_dict["capture_region"]
         x = selection["x"] + offset_x

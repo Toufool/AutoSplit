@@ -1,9 +1,9 @@
-from _typeshed import Incomplete
+from typing import Literal
+
 from numpy import float64, generic
 from numpy.typing import NDArray
 
-__all__ = ["dct", "idct", "dst", "idst", "dctn", "idctn", "dstn", "idstn"]
-
+__all__ = ["dct", "dctn", "dst", "dstn", "idct", "idctn", "idst", "idstn"]
 
 def dctn(
     x,
@@ -16,8 +16,6 @@ def dctn(
     *,
     orthogonalize=None,
 ): ...
-
-
 def idctn(
     x,
     type=2,
@@ -28,8 +26,6 @@ def idctn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dstn(
     x,
     type=2,
@@ -40,8 +36,6 @@ def dstn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def idstn(
     x,
     type=2,
@@ -52,20 +46,16 @@ def idstn(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dct(
     x: NDArray[generic],
-    type: int = 2,
-    n: Incomplete | None = None,
+    type: Literal[1, 2, 3, 4] = 2,
+    n: int | None = None,
     axis: int = -1,
-    norm: Incomplete | None = None,
+    norm: Literal["backward", "ortho", "forward"] | None = None,
     overwrite_x: bool = False,
-    workers: Incomplete | None = None,
-    orthogonalize: Incomplete | None = None,
+    workers: int | None = None,
+    orthogonalize: bool | None = None,
 ) -> NDArray[float64]: ...
-
-
 def idct(
     x,
     type=2,
@@ -76,8 +66,6 @@ def idct(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def dst(
     x,
     type=2,
@@ -88,8 +76,6 @@ def dst(
     workers=None,
     orthogonalize=None,
 ): ...
-
-
 def idst(
     x,
     type=2,

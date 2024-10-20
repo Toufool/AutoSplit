@@ -24,6 +24,8 @@ class AutoControlledThread(QtCore.QThread):
                 break
             except EOFError:
                 continue
+            if line in self._autosplit_ref.settings_dict["screenshot_on"]:
+                self._autosplit_ref.screenshot_signal.emit()
             match line:
                 # This is for use in a Development environment
                 case "kill":

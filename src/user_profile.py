@@ -1,15 +1,16 @@
 import os
+import tomllib
 from copy import deepcopy
 from typing import TYPE_CHECKING, TypedDict, cast
 
-import toml
+import tomli_w
 from PySide6 import QtCore, QtWidgets
 from typing_extensions import deprecated, override
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
-from hotkeys import HOTKEYS, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, CommandStr, Hotkey, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -39,6 +40,7 @@ class UserProfileDict(TypedDict):
     split_image_directory: str
     screenshot_directory: str
     open_screenshot: bool
+    screenshot_on: list[CommandStr]
     captured_window_title: str
     capture_region: Region
 
@@ -70,6 +72,7 @@ DEFAULT_PROFILE = UserProfileDict(
     split_image_directory="",
     screenshot_directory="",
     open_screenshot=True,
+    screenshot_on=[],
     captured_window_title="",
     capture_region=Region(x=0, y=0, width=1, height=1),
 )
@@ -108,8 +111,8 @@ def save_settings_as(autosplit: "AutoSplit"):
 
 def __save_settings_to_file(autosplit: "AutoSplit", save_settings_file_path: str):
     # Save settings to a .toml file
-    with open(save_settings_file_path, "w", encoding="utf-8") as file:
-        toml.dump(autosplit.settings_dict, file)
+    with open(save_settings_file_path, "wb") as file:
+        tomli_w.dump(autosplit.settings_dict, file)
     autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
     autosplit.last_successfully_loaded_settings_file_path = save_settings_file_path
     return save_settings_file_path
@@ -120,7 +123,7 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         autosplit.show_error_signal.emit(error_messages.old_version_settings_file)
         return False
 
-    # Allow seemlessly reloading the entire settings widget
+    # Allow seamlessly reloading the entire settings widget
     settings_widget_was_open = False
     settings_widget = cast(QtWidgets.QWidget | None, autosplit.SettingsWidget)
     if settings_widget:
@@ -128,12 +131,14 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         settings_widget.close()
 
     try:
-        with open(load_settings_file_path, encoding="utf-8") as file:
+        with open(load_settings_file_path, mode="rb") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
-            # Fallback to default settings if some are missing from the file. This happens when new settings are added.
-            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
+            # Fallback to default settings if some are missing from the file.
+            # This happens when new settings are added.
+            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, tomllib.load(file))
 
         # TODO: Data Validation / fallbacks ?
+        loaded_settings["screenshot_on"] = list(set(loaded_settings["screenshot_on"]))
         autosplit.settings_dict = UserProfileDict(**loaded_settings)
         autosplit.last_saved_settings = deepcopy(autosplit.settings_dict)
 
@@ -142,23 +147,25 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         autosplit.width_spinbox.setValue(autosplit.settings_dict["capture_region"]["width"])
         autosplit.height_spinbox.setValue(autosplit.settings_dict["capture_region"]["height"])
         autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
-    except (FileNotFoundError, MemoryError, TypeError, toml.TomlDecodeError):
+    except (FileNotFoundError, MemoryError, TypeError, tomllib.TOMLDecodeError):
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
-        for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
+        for hotkey, hotkey_name in ((hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS):
             hotkey_value = autosplit.settings_dict.get(hotkey_name)
             if hotkey_value:
-                set_hotkey(autosplit, hotkey, hotkey_value)
+                # cast caused by a regression in pyright 1.1.365
+                set_hotkey(autosplit, cast(Hotkey, hotkey), hotkey_value)
 
-    change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
+    change_capture_method(
+        cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
+        autosplit,
+    )
     update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
     autosplit.update_live_image_details(None)
-
-    if settings_widget_was_open:
-        open_settings(autosplit)
+    autosplit.reload_images_signal.emit(False)
 
     if settings_widget_was_open:
         open_settings(autosplit)
@@ -176,7 +183,10 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
             "TOML (*.toml)",
         )[0]
     )
-    if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
+    if not (
+        load_settings_file_path  # fmt: skip
+        and __load_settings_from_file(autosplit, load_settings_file_path)
+    ):
         return
 
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
@@ -187,8 +197,8 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
 
 def load_settings_on_open(autosplit: "AutoSplit"):
     settings_files = [
-        file for file
-        in os.listdir(auto_split_directory)
+        file  # fmt: skip
+        for file in os.listdir(auto_split_directory)
         if file.endswith(".toml")
     ]
 
@@ -226,7 +236,7 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     autosplit.action_check_for_updates_on_open.setChecked(value)
 
 
-def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):
+def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):  # noqa: FBT001
     """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
     design_window.action_check_for_updates_on_open.setChecked(value)
     QtCore.QSettings(
@@ -238,7 +248,7 @@ def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bo
     )
 
 
-def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):
+def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):  # noqa: FBT001
     autosplit.settings_dict["live_capture_region"] = value
     if value:
         autosplit.capture_method.subscribe_to_new_frame(autosplit.update_live_image_details)

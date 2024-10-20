@@ -1,13 +1,13 @@
-import os
 import sys
 from math import ceil
 from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from cv2.typing import MatLike
+from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
+from pywinctl import getTopWindowAt
 from typing_extensions import override
 
 import error_messages
@@ -18,6 +18,7 @@ from utils import (
     ImageShape,
     auto_split_directory,
     get_window_bounds,
+    imread,
     is_valid_hwnd,
     is_valid_image,
 )
@@ -25,19 +26,15 @@ from utils import (
 if sys.platform == "win32":
     import win32api
     import win32gui
-    from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
-    from winsdk._winrt import initialize_with_window
-    from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
-    from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+    from win32con import (
+        SM_CXVIRTUALSCREEN,
+        SM_CYVIRTUALSCREEN,
+        SM_XVIRTUALSCREEN,
+        SM_YVIRTUALSCREEN,
+    )
 
 if sys.platform == "linux":
     from Xlib.display import Display
-
-    # This variable may be missing in desktopless environment. x11 | wayland
-    os.environ.setdefault("XDG_SESSION_TYPE", "x11")
-
-# Must come after the linux XDG_SESSION_TYPE environment variable is set
-from pywinctl import getTopWindowAt
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -45,7 +42,7 @@ if TYPE_CHECKING:
 GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
-SUPPORTED_IMREAD_FORMATS = [
+SUPPORTED_IMREAD_FORMATS = (
     ("Windows bitmaps", "*.bmp *.dib"),
     ("JPEG files", "*.jpeg *.jpg *.jpe"),
     ("JPEG 2000 files", "*.jp2"),
@@ -58,13 +55,15 @@ SUPPORTED_IMREAD_FORMATS = [
     ("TIFF files", "*.tiff *.tif"),
     ("OpenEXR Image files", "*.exr"),
     ("Radiance HDR", "*.hdr *.pic"),
-]
+)
 """https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("
-    + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
+    + " ".join(f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS)
     + ");;"
-    + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
+    + ";;".join(
+        f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
+    )
 )
 
 
@@ -77,32 +76,38 @@ def get_top_window_at(x: int, y: int):
 
 
 # TODO: For later as a different picker option
-def __select_graphics_item(autosplit: "AutoSplit"):  # pyright: ignore [reportUnusedFunction]
-    """Uses the built-in GraphicsCapturePicker to select the Window."""
-    if sys.platform != "win32":
-        raise OSError
-
-    def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
-        try:
-            if async_status != AsyncStatus.COMPLETED:
-                return
-        except SystemError as exception:
-            # HACK: can happen when closing the GraphicsCapturePicker
-            if str(exception).endswith("returned a result with an error set"):
-                return
-            raise
-        item = async_operation.get_results()
-        if not item:
-            return
-        autosplit.settings_dict["captured_window_title"] = item.display_name
-        autosplit.capture_method.reinitialize()
-
-    picker = GraphicsCapturePicker()
-    initialize_with_window(picker, autosplit.effectiveWinId())
-    async_operation = picker.pick_single_item_async()
-    # None if the selection is canceled
-    if async_operation:
-        async_operation.completed = callback
+# def __select_graphics_item(autosplit: "AutoSplit"):
+#     """Uses the built-in GraphicsCapturePicker to select the Window."""
+#     if sys.platform != "win32":
+#         raise OSError
+#     from winrt._winrt import initialize_with_window
+#     from winrt.windows.foundation import AsyncStatus, IAsyncOperation
+#     from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
+#
+#     def callback(
+#         async_operation: IAsyncOperation[GraphicsCaptureItem],
+#         async_status: AsyncStatus,
+#     ):
+#         try:
+#             if async_status != AsyncStatus.COMPLETED:
+#                 return
+#         except SystemError as exception:
+#             # HACK: can happen when closing the GraphicsCapturePicker
+#             if str(exception).endswith("returned a result with an error set"):
+#                 return
+#             raise
+#         item = async_operation.get_results()
+#         if not item:
+#             return
+#         autosplit.settings_dict["captured_window_title"] = item.display_name
+#         autosplit.capture_method.reinitialize()
+#
+#     picker = GraphicsCapturePicker()
+#     initialize_with_window(picker, autosplit.effectiveWinId())
+#     async_operation = picker.pick_single_item_async()
+#     # None if the selection is canceled
+#     if async_operation:
+#         async_operation.completed = callback
 
 
 def select_region(autosplit: "AutoSplit"):
@@ -217,7 +222,7 @@ def align_region(autosplit: "AutoSplit"):
     if not template_filename:
         return
 
-    template = cv2.imread(template_filename, cv2.IMREAD_UNCHANGED)
+    template = imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Add alpha channel to template if it's missing.
     if template.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGR2BGRA)
@@ -243,7 +248,8 @@ def align_region(autosplit: "AutoSplit"):
         error_messages.alignment_not_matched()
         return
 
-    # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
+    # The new region can be defined by using the min_loc point
+    # and the best_height and best_width of the template.
     __set_region_values(
         autosplit,
         x=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
@@ -277,7 +283,7 @@ def __test_alignment(capture: MatLike, template: MatLike):
     best_match = 0.0
     best_height = 0
     best_width = 0
-    best_loc = (0, 0)
+    best_loc: Point = (0, 0)
 
     # This tests 50 images scaled from 20% to 300% of the original template size
     for scale in np.linspace(0.2, 3, num=56):
@@ -307,28 +313,14 @@ def __test_alignment(capture: MatLike, template: MatLike):
     return best_match, best_height, best_width, best_loc
 
 
-def validate_before_parsing(autosplit: "AutoSplit", show_error: bool = True, check_empty_directory: bool = True):
-    error = None
-    if not autosplit.settings_dict["split_image_directory"]:
-        error = error_messages.split_image_directory
-    elif not os.path.isdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_not_found
-    elif check_empty_directory and not os.listdir(autosplit.settings_dict["split_image_directory"]):
-        error = error_messages.split_image_directory_empty
-    elif not autosplit.capture_method.check_selected_region_exists():
-        error = error_messages.region
-    if error and show_error:
-        error()
-    return not error
-
-
 class BaseSelectWidget(QtWidgets.QWidget):
     selection: Region | None = None
 
     def __init__(self):
         super().__init__()
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
+        # We need to pull the monitor information to correctly draw
+        # the geometry covering all portions of the user's screen.
+        # These parameters create the bounding box with left, top, width, and height
         if sys.platform == "win32":
             x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
             y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
@@ -400,7 +392,8 @@ class SelectRegionWidget(BaseSelectWidget):
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
-            # so the added virtual screen offsets convert them back to the virtual screen coordinates
+            # so the added virtual screen offsets convert them back to the virtual
+            # screen coordinates
             left = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
             top = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
             right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()

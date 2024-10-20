@@ -29,7 +29,7 @@ class CaptureMethodBase:
 
     def reinitialize(self):
         self.close()
-        self.__init__(self._autosplit_ref)  # type: ignore[misc]
+        self.__init__(self._autosplit_ref)  # type: ignore[misc]  # noqa: PLC2801
 
     def close(self):
         # Some capture methods don't need any cleanup
@@ -90,7 +90,11 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, ABC):
     @final
     def __read_loop(self):
         # Very useful debug print
-        # print("subscriptions:", len(self._subscriptions), [x.__name__ for x in self._subscriptions])
+        # print(
+        #     "subscriptions:",
+        #     len(self._subscriptions),
+        #     [x.__name__ for x in self._subscriptions],
+        # )
         if len(self._subscriptions) == 0:
             # optimisation on idle: no subscriber means no work needed
             return
