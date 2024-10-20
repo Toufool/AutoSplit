@@ -25,8 +25,6 @@ if sys.platform == "win32":
     import win32gui
     import win32ui
     from pygrabber.dshow_graph import FilterGraph
-    from winrt.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-    from winrt.windows.media.capture import MediaCapture
 
     STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
 else:
@@ -196,45 +194,6 @@ def get_or_create_eventloop():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         return asyncio.get_event_loop()
-
-
-def get_direct3d_device():
-    if sys.platform != "win32":
-        raise OSError("Direct3D Device is only available on Windows")
-
-    # Note: Must create in the same thread (can't use a global)
-    # otherwise when ran from LiveSplit it will raise:
-    # OSError: The application called an interface that was marshalled for a different thread
-    media_capture = MediaCapture()
-
-    async def init_mediacapture():
-        await media_capture.initialize_async()
-
-    asyncio.run(init_mediacapture())
-    direct_3d_device = (
-        media_capture.media_capture_settings
-        and media_capture.media_capture_settings.direct3_d11_device
-    )
-    if not direct_3d_device:
-        try:
-            # May be problematic?
-            # https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
-            direct_3d_device = LearningModelDevice(
-                LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE
-            ).direct3_d11_device
-        # TODO: Unknown potential error, I don't have an older Win10 machine to test.
-        except BaseException:  # noqa: S110,BLE001
-            pass
-    if not direct_3d_device:
-        raise OSError("Unable to initialize a Direct3D Device.")
-    return direct_3d_device
-
-
-def try_get_direct3d_device():
-    try:
-        return get_direct3d_device()
-    except OSError:
-        return None
 
 
 def try_input_device_access():

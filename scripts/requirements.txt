@@ -17,9 +17,11 @@ PySide6-Essentials>=6.6.0 # Python 3.12 support
 scipy>=1.11.2 # Python 3.12 support
 tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
+
 #
 # Build and compile resources
 pyinstaller>=5.13  # Python 3.12 support
+
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #
@@ -27,16 +29,16 @@ pyinstaller>=5.13  # Python 3.12 support
 comtypes<1.4.5 ; sys_platform == 'win32'  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=301 ; sys_platform == 'win32'
-winrt-Windows.AI.MachineLearning>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Foundation>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics.Capture.Interop>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics.DirectX>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics.Imaging>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 typed-D3DShot[numpy]>=1.0.1 ; sys_platform == 'win32'
+winrt-Windows.Foundation>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture.Interop>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11.Interop>=2.3.0 ; sys_platform == 'win32'
+winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Imaging>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
