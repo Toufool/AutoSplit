@@ -25,7 +25,12 @@ from utils import (
 if sys.platform == "win32":
     import win32api
     import win32gui
-    from win32con import SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN
+    from win32con import (
+        SM_CXVIRTUALSCREEN,
+        SM_CYVIRTUALSCREEN,
+        SM_XVIRTUALSCREEN,
+        SM_YVIRTUALSCREEN,
+    )
     from winsdk._winrt import initialize_with_window  # noqa: PLC2701
     from winsdk.windows.foundation import AsyncStatus, IAsyncOperation
     from winsdk.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
@@ -64,7 +69,9 @@ IMREAD_EXT_FILTER = (
     "All Files ("
     + " ".join([f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS])
     + ");;"
-    + ";;".join([f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS])
+    + ";;".join([
+        f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
+    ])
 )
 
 
@@ -243,7 +250,8 @@ def align_region(autosplit: "AutoSplit"):
         error_messages.alignment_not_matched()
         return
 
-    # The new region can be defined by using the min_loc point and the best_height and best_width of the template.
+    # The new region can be defined by using the min_loc point
+    # and the best_height and best_width of the template.
     __set_region_values(
         autosplit,
         x=autosplit.settings_dict["capture_region"]["x"] + best_loc[0],
@@ -312,8 +320,9 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        # We need to pull the monitor information to correctly draw the geometry covering all portions
-        # of the user's screen. These parameters create the bounding box with left, top, width, and height
+        # We need to pull the monitor information to correctly draw
+        # the geometry covering all portions of the user's screen.
+        # These parameters create the bounding box with left, top, width, and height
         if sys.platform == "win32":
             x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
             y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
@@ -385,7 +394,8 @@ class SelectRegionWidget(BaseSelectWidget):
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
         if self.__begin != self.__end:
             # The coordinates are pulled relative to the top left of the set geometry,
-            # so the added virtual screen offsets convert them back to the virtual screen coordinates
+            # so the added virtual screen offsets convert them back to the virtual
+            # screen coordinates
             left = min(self.__begin.x(), self.__end.x()) + self.geometry().x()
             top = min(self.__begin.y(), self.__end.y()) + self.geometry().y()
             right = max(self.__begin.x(), self.__end.x()) + self.geometry().x()

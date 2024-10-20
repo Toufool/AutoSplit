@@ -30,8 +30,24 @@ SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
 Commands = Literal["split", "start", "pause", "reset", "skip", "undo"]
-Hotkey = Literal["split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image"]
-HOTKEYS = ("split", "reset", "skip_split", "undo_split", "pause", "screenshot", "toggle_auto_reset_image")
+Hotkey = Literal[
+    "split",
+    "reset",
+    "skip_split",
+    "undo_split",
+    "pause",
+    "screenshot",
+    "toggle_auto_reset_image",
+]
+HOTKEYS = (
+    "split",
+    "reset",
+    "skip_split",
+    "undo_split",
+    "pause",
+    "screenshot",
+    "toggle_auto_reset_image",
+)
 
 
 def remove_all_hotkeys():
@@ -56,7 +72,10 @@ def after_setting_hotkey(autosplit: "AutoSplit"):
         autosplit.start_auto_splitter_button.setEnabled(True)
     if autosplit.SettingsWidget:
         for hotkey in HOTKEYS:
-            getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(SET_HOTKEY_TEXT)
+            getattr(
+                autosplit.SettingsWidget,
+                f"set_{hotkey}_hotkey_button",
+            ).setText(SET_HOTKEY_TEXT)
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
@@ -93,7 +112,7 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
 
     # Deal with regular inputs
     # If an int or does not contain the following strings
-    if (
+    if (  # fmt: skip
         isinstance(hotkey_or_scan_code, int)
         or not any(key in hotkey_or_scan_code for key in ("num ", "decimal", "+"))
     ):
@@ -101,16 +120,14 @@ def _send_hotkey(hotkey_or_scan_code: int | str | None):
         return
 
     # FIXME: Localized keys won't work here
-    # Deal with problematic keys. Even by sending specific scan code "keyboard" still sends the default (wrong) key
+    # Deal with problematic keys.
+    # Even by sending specific scan code "keyboard" still sends the default (wrong) key
     # keyboard also has issues with capitalization modifier (shift+A)
     # keyboard.send(keyboard.key_to_scan_codes(key_or_scan_code)[1])
-    pyautogui.hotkey(
-        *[
-            "+" if key == "plus" else key
-            for key
-            in hotkey_or_scan_code.replace(" ", "").split("+")
-        ],
-    )
+    pyautogui.hotkey(*[
+        "+" if key == "plus" else key  # fmt: skip
+        for key in hotkey_or_scan_code.replace(" ", "").split("+")
+    ])
 
 
 def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent) -> bool:
@@ -120,13 +137,15 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     For example, "Home", "Num Home" and "Num 7" are all `71`.
     See: https://github.com/boppreh/keyboard/issues/171#issuecomment-390437684 .
 
-    Since we reuse the key string we set to send to LiveSplit, we can't use fake names like "num home".
+    Since we reuse the key string we set to send to LiveSplit,
+    we can't use fake names like "num home".
     We're also trying to achieve the same hotkey behaviour as LiveSplit has.
     """
     # Prevent "(keypad)delete", "(keypad)./decimal" and "del" from triggering each other
     # as well as "." and "(keypad)./decimal"
     if keyboard_event.scan_code in {83, 52}:
-        # TODO: "del" won't work with "(keypad)delete" if localized in non-english (ie: "suppr" in french)
+        # TODO: "del" won't work with "(keypad)delete" if localized in non-english
+        # (ie: "suppr" in french)
         return expected_key == keyboard_event.name
     # Prevent "action keys" from triggering "keypad keys"
     if keyboard_event.name and is_digit(keyboard_event.name[-1]):
@@ -142,13 +161,17 @@ def __validate_keypad(expected_key: str, keyboard_event: keyboard.KeyboardEvent)
     return not is_digit(expected_key[-1])
 
 
-def _hotkey_action(keyboard_event: keyboard.KeyboardEvent, key_name: str, action: Callable[[], None]):
+def _hotkey_action(
+    keyboard_event: keyboard.KeyboardEvent, key_name: str, action: Callable[[], None]
+):
     """
     We're doing the check here instead of saving the key code because
     the non-keypad shared keys are localized while the keypad ones aren't.
     They also share scan codes on Windows.
     """
-    if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(key_name, keyboard_event):
+    if keyboard_event.event_type == keyboard.KEY_DOWN and __validate_keypad(
+        key_name, keyboard_event
+    ):
         action()
 
 
@@ -243,9 +266,9 @@ def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
 def is_valid_hotkey_name(hotkey_name: str):
     return any(
         key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
-        for key
-        in hotkey_name.split("+")
+        for key in hotkey_name.split("+")
     )
+
 
 # TODO: using getattr/setattr is NOT a good way to go about this. It was only temporarily done to
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
@@ -298,13 +321,16 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: 
             setattr(
                 autosplit,
                 f"{hotkey}_hotkey",
-                # keyboard.add_hotkey doesn't give the last keyboard event, so we can't __validate_keypad.
+                # keyboard.add_hotkey doesn't give the last keyboard event,
+                # so we can't __validate_keypad.
                 # This means "ctrl + num 5" and "ctrl + 5" will both be registered.
                 # For that reason, we still prefer keyboard.hook_key for single keys.
-                # keyboard module allows you to hit multiple keys for a hotkey. they are joined together by +.
+                # keyboard module allows you to hit multiple keys for a hotkey.
+                # They are joined together by + .
                 keyboard.add_hotkey(hotkey_name, action)
                 if "+" in hotkey_name
-                # We need to inspect the event to know if it comes from numpad because of _canonial_names.
+                # We need to inspect the event to know if it comes from numpad
+                # because of _canonial_names.
                 # See: https://github.com/boppreh/keyboard/issues/161#issuecomment-386825737
                 # The best way to achieve this is make our own hotkey handling on top of hook
                 # See: https://github.com/boppreh/keyboard/issues/216#issuecomment-431999553

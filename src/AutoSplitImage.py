@@ -110,9 +110,12 @@ class AutoSplitImage:
         if self._has_transparency:
             # Adaptively determine the target size according to
             # the number of nonzero elements in the alpha channel of the split image.
-            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency.
+            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # noqa: E501
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])))
+            scale = min(
+                1,
+                sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])),
+            )
 
             image = cv2.resize(
                 image,

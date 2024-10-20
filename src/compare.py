@@ -72,7 +72,7 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
     # matchTemplate returns the sum of square differences, this is the max
     # that the value can be. Used for normalizing from 0 to 1.
     max_error = (
-        source.size * MAXBYTE * MAXBYTE
+        source.size * MAXBYTE * MAXBYTE  # fmt: skip
         if not is_valid_image(mask)
         else cv2.countNonZero(mask)
     )
@@ -82,7 +82,8 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
 
 def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
     """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
-    # OpenCV has its own pHash comparison implementation in `cv2.img_hash`, but it requires contrib/extra modules
+    # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
+    # but it requires contrib/extra modules
     # and is innacurate unless we precompute the size with a specific interpolation.
     # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
     #
@@ -143,7 +144,8 @@ def get_comparison_method_by_index(comparison_method_index: int):
 
 
 def check_if_image_has_transparency(image: MatLike):
-    # Check if there's a transparency channel (4th channel) and if at least one pixel is transparent (< 255)
+    # Check if there's a transparency channel (4th channel)
+    # and if at least one pixel is transparent (< 255)
     if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
         return False
     mean: float = image[:, :, ColorChannel.Alpha].mean()
@@ -151,6 +153,7 @@ def check_if_image_has_transparency(image: MatLike):
         # Non-transparent images code path is usually faster and simpler, so let's return that
         return False
         # TODO: error message if all pixels are transparent
-        # (the image appears as all black in windows, so it's not obvious for the user what they did wrong)
+        # (the image appears as all black in windows,
+        # so it's not obvious for the user what they did wrong)
 
     return mean != MAXBYTE

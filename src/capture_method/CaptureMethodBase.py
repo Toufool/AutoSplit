@@ -90,7 +90,11 @@ class ThreadedLoopCaptureMethod(CaptureMethodBase, ABC):
     @final
     def __read_loop(self):
         # Very useful debug print
-        # print("subscriptions:", len(self._subscriptions), [x.__name__ for x in self._subscriptions])
+        # print(
+        #     "subscriptions:",
+        #     len(self._subscriptions),
+        #     [x.__name__ for x in self._subscriptions],
+        # )
         if len(self._subscriptions) == 0:
             # optimisation on idle: no subscriber means no work needed
             return

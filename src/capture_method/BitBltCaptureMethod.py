@@ -40,7 +40,10 @@ class BitBltCaptureMethod(ThreadedLoopCaptureMethod):
     @override
     def window_recovery_message(self):
         if type(self) is BitBltCaptureMethod:
-            return super().window_recovery_message + "\n(captured window may be incompatible with BitBlt)"
+            return (
+                super().window_recovery_message
+                + "\n(captured window may be incompatible with BitBlt)"
+            )
         return super().window_recovery_message
 
     _render_full_content = False

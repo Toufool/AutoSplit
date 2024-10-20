@@ -89,8 +89,8 @@ def delay_time_from_filename(filename: str):
 
 def loop_from_filename(filename: str):
     """
-    Retrieve the number of loops from filename, if there is no loop number or the loop number isn't valid,
-    then 1 is returned.
+    Retrieve the number of loops from filename.
+    If there is no loop number or the loop number isn't valid, then 1 is returned.
 
     @param filename: String containing the file's name
     @return: A valid loop number, if not then 1
@@ -105,8 +105,8 @@ def loop_from_filename(filename: str):
 
 def comparison_method_from_filename(filename: str):
     """
-    Retrieve the comparison method index from filename, if there is no comparison method or the index isn't valid,
-    then None is returned.
+    Retrieve the comparison method index from filename.
+    If there is no comparison method or the index isn't valid, then None is returned.
 
     @param filename: String containing the file's name
     @return: A valid comparison method index, if not then none
@@ -174,10 +174,10 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
 
 
 def validate_before_parsing(
-        autosplit: "AutoSplit",
-        *,
-        show_error: bool = True,
-        check_region_exists: bool = True,
+    autosplit: "AutoSplit",
+    *,
+    show_error: bool = True,
+    check_region_exists: bool = True,
 ):
     error = None
     split_image_directory = autosplit.settings_dict["split_image_directory"]
@@ -198,8 +198,7 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     # Get split images
     all_images = [
         AutoSplitImage(os.path.join(autosplit.settings_dict["split_image_directory"], image_name))
-        for image_name
-        in os.listdir(autosplit.settings_dict["split_image_directory"])
+        for image_name in os.listdir(autosplit.settings_dict["split_image_directory"])
     ]
 
     # Find non-split images and then remove them from the list
@@ -209,7 +208,8 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
 
     error_message: Callable[[], object] | None = None
 
-    # If there is no start hotkey set but a Start Image is present, and is not auto controlled, throw an error.
+    # If there is no start hotkey set but a Start Image is present,
+    # and is not auto controlled, throw an error.
     if (
         start_image
         and not autosplit.settings_dict["split_hotkey"]
@@ -217,7 +217,8 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
     ):
         error_message = error_messages.load_start_image
 
-    # If there is no reset hotkey set but a Reset Image is present, and is not auto controlled, throw an error.
+    # If there is no reset hotkey set but a Reset Image is present,
+    # and is not auto controlled, throw an error.
     elif (
         reset_image
         and not autosplit.settings_dict["reset_hotkey"]

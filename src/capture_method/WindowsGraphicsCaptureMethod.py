@@ -17,14 +17,18 @@ from winsdk.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winsdk.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
-from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, get_direct3d_device, is_valid_hwnd
+from utils import (
+    BGRA_CHANNEL_COUNT,
+    WGC_MIN_BUILD,
+    WINDOWS_BUILD_NUMBER,
+    get_direct3d_device,
+    is_valid_hwnd,
+)
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
-LEARNING_MODE_DEVICE_BUILD = 17763
-"""https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 WGC_QTIMER_LIMIT = 30
 
@@ -38,8 +42,6 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     short_description = "fast, most compatible, capped at 60fps"
     description = (
         f"\nOnly available in Windows 10.0.{WGC_MIN_BUILD} and up. "
-        + f"\nDue to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}"
-        + "\nrequire having at least one audio or video Capture Device connected and enabled."
         + "\nAllows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows. "
         + "\nAdds a yellow border on Windows 10 (not on Windows 11)."
         + "\nCaps at around 60 FPS. "
@@ -86,8 +88,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
             try:
                 self.session.close()
             except OSError:
-                # OSError: The application called an interface that was marshalled for a different thread
-                # This still seems to close the session and prevent the following hard crash in LiveSplit
+                # OSError: The application called an interface that was marshalled for a different thread # noqa: E501
+                # This still seems to close the session and prevent the following hard crash in LiveSplit # noqa: E501
                 # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # noqa: E501
                 pass
             self.session = None
@@ -95,8 +97,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     @override
     def set_fps_limit(self, fps: int):
         """
-        There's an issue in the interaction between QTimer and WGC API where setting the interval to even 1 ms
-        causes twice as many "called `try_get_next_frame` to fast.
+        There's an issue in the interaction between QTimer and WGC API where setting the interval to
+        even 1 ms causes twice as many "called `try_get_next_frame` too fast".
         So for FPS target above 30, we unlock interval speed.
         """
         super().set_fps_limit(fps if fps <= WGC_QTIMER_LIMIT else 0)
@@ -138,8 +140,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
         image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
         return image[
-            selection["y"]: selection["y"] + selection["height"],
-            selection["x"]: selection["x"] + selection["width"],
+            selection["y"] : selection["y"] + selection["height"],
+            selection["x"] : selection["x"] + selection["width"],
         ]
 
     @override
@@ -148,8 +150,8 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
         if not is_valid_hwnd(hwnd):
             return False
 
-        # Because of async image obtention and capture initialization,
-        # AutoSplit could ask for an image too soon after having called recover_window() last iteration.
+        # Because of async image obtention and capture initialization, AutoSplit
+        # could ask for an image too soon after having called recover_window() last iteration.
         # WGC *would* have returned an image, but it's asked to reinitialize over again.
         if self._autosplit_ref.hwnd == hwnd and self.check_selected_region_exists():
             return True
@@ -167,7 +169,7 @@ class WindowsGraphicsCaptureMethod(ThreadedLoopCaptureMethod):
     @override
     def check_selected_region_exists(self):
         return bool(
-            is_valid_hwnd(self._autosplit_ref.hwnd)
+            is_valid_hwnd(self._autosplit_ref.hwnd)  # fmt: skip
             and self.frame_pool
             and self.session,
         )

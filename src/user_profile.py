@@ -9,7 +9,7 @@ from typing_extensions import deprecated, override
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
 from gen import design
-from hotkeys import HOTKEYS, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, Hotkey, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -130,7 +130,8 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
     try:
         with open(load_settings_file_path, encoding="utf-8") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
-            # Fallback to default settings if some are missing from the file. This happens when new settings are added.
+            # Fallback to default settings if some are missing from the file.
+            # This happens when new settings are added.
             loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, toml.load(file))
 
         # TODO: Data Validation / fallbacks ?
@@ -151,9 +152,13 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         for hotkey, hotkey_name in [(hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS]:
             hotkey_value = autosplit.settings_dict.get(hotkey_name)
             if hotkey_value:
-                set_hotkey(autosplit, hotkey, hotkey_value)
+                # cast caused by a regression in pyright 1.1.365
+                set_hotkey(autosplit, cast(Hotkey, hotkey), hotkey_value)
 
-    change_capture_method(cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]), autosplit)
+    change_capture_method(
+        cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
+        autosplit,
+    )
     update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
     autosplit.update_live_image_details(None)
     autosplit.reload_images_signal.emit(False)
@@ -174,7 +179,10 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
             "TOML (*.toml)",
         )[0]
     )
-    if not (load_settings_file_path and __load_settings_from_file(autosplit, load_settings_file_path)):
+    if not (
+        load_settings_file_path  # fmt: skip
+        and __load_settings_from_file(autosplit, load_settings_file_path)
+    ):
         return
 
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
@@ -185,8 +193,8 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
 
 def load_settings_on_open(autosplit: "AutoSplit"):
     settings_files = [
-        file for file
-        in os.listdir(auto_split_directory)
+        file  # fmt: skip
+        for file in os.listdir(auto_split_directory)
         if file.endswith(".toml")
     ]
 
