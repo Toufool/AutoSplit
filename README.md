@@ -2,14 +2,14 @@
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
 
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![autopep8](https://badgen.net/badge/code%20style/autopep8/blue)](https://github.com/hhatto/autopep8)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://docs.astral.sh/ruff/linter/)
+[![Ruff format](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/format.json)](https://docs.astral.sh/ruff/formatter/)
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
-This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, wsplit, etc.), and can be integrated with LiveSplit.
+This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
 
 ![Example](/docs/2.0.0_gif.gif)
 
@@ -43,10 +43,11 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
-- Linux (still in early development) <!-- (Only tested on Ubuntu 22.04) -->
+- Linux (still in early development)
+  - Should work on Ubuntu 20.04+ (Only tested on Ubuntu 22.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
-- Python 3.10+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- Python 3.11+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
 
 ## Timer Integration
 
@@ -85,18 +86,24 @@ See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.
 Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
 
 Not a developer? You can still help through the following methods:
-<!-- open enhancements sorted by reactions -->
+
 - Donating (see link below)
-- [Upvoting feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in
+- [Upvoting 👍 feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in <!-- open enhancements sorted by reactions -->
 - Sharing AutoSplit with other speedrunners
-- Upvoting the following upstream issues in libraries and tools we use:
+- Upvoting 👍 the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://bugreports.qt.io/browse/QTBUG-114635>
+  - <https://bugreports.qt.io/browse/PYSIDE-2541>
   - <https://bugreports.qt.io/browse/PYSIDE-2542>
+  - <https://github.com/pypa/pip/issues/9948>
+  - <https://github.com/pypa/pip/pull/10837>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
+  - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>
-  - <https://github.com/pywinrt/python-winsdk/issues/11>
-  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
+  - <https://github.com/pywinrt/pywinrt/issues/78>
+  - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
+  - <https://github.com/hukkin/tomli-w/pull/46>
+  - <https://github.com/uiri/toml/issues/270>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
   - <https://github.com/python/mypy/issues/6700>
@@ -108,6 +115,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/boppreh/keyboard/issues/216>
   - <https://github.com/boppreh/keyboard/issues/161>
   - <https://github.com/asweigart/pyautogui/issues/663>
+  - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
 
 ## Credits
 

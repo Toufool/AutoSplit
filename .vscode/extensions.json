@@ -1,11 +1,10 @@
 // Keep in alphabetical order
 {
   "recommendations": [
+    "charliermarsh.ruff",
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
-    "emeraldwalk.runonsave",
     "github.vscode-github-actions",
-    "ms-python.autopep8",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "ms-vscode.powershell",
@@ -32,11 +31,11 @@
     // Don't recommend to autoinstall //
     //
     // Use Ruff instead
+    "ms-python.autopep8",
+    "ms-python.black-formatter",
     "ms-python.flake8",
     "ms-python.isort",
     "ms-python.pylint",
-    // We use autopep8
-    "ms-python.black-formatter",
     // This is a Git project
     "johnstoncode.svn-scm",
     // Prefer using VSCode itself as a text editor

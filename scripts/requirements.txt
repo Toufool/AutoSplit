@@ -4,30 +4,43 @@
 #
 # Dependencies:
 git+https://github.com/boppreh/keyboard.git#egg=keyboard  # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
-numpy>=1.26  # Python 3.12 support
+Levenshtein>=0.25
+# Some modules used by OpenCV are not compiled for Numpy 2 yet on Linux. Error happens on import at runtime
+numpy>=1.26,<2.0  # Python 3.12 support
 opencv-python-headless>=4.9.0.80  # Typing fixes
 packaging
 psutil>=5.9.6  # Python 3.12 fixes
 # PyAutoGUI # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials>=6.6.0 ; sys_platform == 'win32' # Python 3.12 support
-PySide6-Essentials<6.5.1 ; sys_platform == 'linux' # Wayland issue on Ubuntu 22.04 https://bugreports.qt.io/browse/QTBUG-114635
+PySide6-Essentials>=6.6.0 # Python 3.12 support
 scipy>=1.11.2 # Python 3.12 support
-toml
+tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
+
 #
 # Build and compile resources
 pyinstaller>=5.13  # Python 3.12 support
+
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #
 # Windows-only dependencies:
+comtypes<1.4.5 ; sys_platform == 'win32'  # https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=301 ; sys_platform == 'win32'
-winsdk>=1.0.0b10 ; sys_platform == 'win32'  # Python 3.12 support
-# D3DShot # See install.ps1
+typed-D3DShot[numpy]>=1.0.1 ; sys_platform == 'win32'
+winrt-Windows.Foundation>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Capture.Interop>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.DirectX.Direct3D11.Interop>=2.3.0 ; sys_platform == 'win32'
+winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
+winrt-Windows.Graphics.Imaging>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 support
+
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
+pillow ; sys_platform == 'linux' # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
 python-xlib ; sys_platform == 'linux'

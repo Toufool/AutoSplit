@@ -43,7 +43,6 @@
 
 - **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
     Only available in Windows 10.0.17134 and up.  
-    Due to current technical limitations, Windows versions below 10.0.0.17763 require having at least one audio or video Capture Device connected and enabled.
     Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
     Adds a yellow border on Windows 10 (not on Windows 11).
     Caps at around 60 FPS.  
@@ -53,7 +52,8 @@
 - **Direct3D Desktop Duplication** (slower, bound to display)  
     Duplicates the desktop using Direct3D.  
     It can record OpenGL and Hardware Accelerated windows.  
-    About 10-15x slower than BitBlt. Not affected by window size.  
+    Up to 15x slower than BitBlt for tiny regions. Not affected by window size.
+    Limited by the target window and monitor's refresh rate.
     Overlapping windows will show up and can't record across displays.  
     This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
 - **Force Full Content Rendering** (very slow, can affect rendering)  
@@ -167,6 +167,76 @@ You can have one (and only one) image with the keyword `reset` in its name. Auto
 ### Start Image
 
 The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
+
+### Text Recognition / Optical Character Recognition (OCR) ⚠️EXPERIMENTAL⚠️
+
+You can use text recognition as an alternative comparison method.
+
+#### Tesseract install
+
+First you need to install tesseract and include it in your system or user environment variables.
+
+- See <https://tesseract-ocr.github.io/tessdoc/Installation.html> for installation instruction on all platforms.
+- For Windows:
+  1. You can go directly to <https://github.com/UB-Mannheim/tesseract/wiki> to find the installer.
+  2. If you change the "Destination Folder" during install, then you'll also need to add it to your `PATH` environment variable.
+
+#### Usage
+
+To use this feature you need to place a text file (`.txt`) in your splits folder instead of an image file.
+
+An example file name and content could look like this:
+
+Filename: `001_start_auto_splitter.txt`
+
+Content:
+
+```toml
+texts = ["complete any 2 encounters"]
+left = 275
+right = 540
+top = 70
+bottom = 95
+methods = [0]
+fps_limit = 1
+```
+
+The `texts` field is an array and can take more than one text to look for:
+
+```toml
+texts = ["look for me", "or this text"]
+```
+
+Note: for now we only use lowercase letters in the comparison. All uppercase letters are converted to lowercase before the comparison.
+
+The rectangle coordinates where the text you are looking for is expected to appear in the image are configured as follows:
+
+```toml
+left = 275
+right = 540
+top = 70
+bottom = 95
+```
+
+If you're used to working in corner coordinates, you can think of `top_left = [left, top]` and `bottom_right = [right, bottom]`.
+
+Currently there are two comparison methods:
+
+- `0` - uses the Levenshtein distance (the default)
+- `1` - checks if the OCR text contains the searched text (results in matches of either `0.0` or `1.0`)
+
+If you only want a perfect full match, use "Levenshtein" with a threshold of `(1.0)` on your file name.
+
+You can also chain multiple comparison methods using the array notation:
+
+```toml
+methods = [1, 0]
+```
+
+The methods are then checked in the order you defined and the best match upon them wins.
+
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.  
+The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
 
 ### Profiles
 
