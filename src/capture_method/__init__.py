@@ -243,8 +243,8 @@ class CaptureMethodSignal(QtCore.QObject):
         except RuntimeError:
             pass
 
-    def _push_new_frame_to_subscribers(self, __frame: MatLike | None):
-        return self.__frame_signal.emit(__frame)
+    def _push_new_frame_to_subscribers(self, frame: MatLike | None, /):
+        return self.__frame_signal.emit(frame)
 
     def __init__(self):
         super().__init__()
