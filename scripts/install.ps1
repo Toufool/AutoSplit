@@ -48,9 +48,7 @@ If ($IsLinux) {
 # These libraries install extra requirements we don't want
 # Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
 # PyAutoGUI: We only use it for hotkeys
-# D3DShot: Will install Pillow, which we don't use on Windows.
-#          Even then, PyPI with Pillow>=7.2.0 will install 0.1.3 instead of 0.1.5
-&"$python" -m pip install PyAutoGUI "D3DShot>=0.1.5 ; sys_platform == 'win32'" --no-deps --upgrade
+&"$python" -m pip install PyAutoGUI --no-deps --upgrade
 
 # Uninstall optional dependencies if PyAutoGUI or D3DShot was installed outside this script
 # PyScreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows

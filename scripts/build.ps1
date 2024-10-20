@@ -17,8 +17,9 @@ $arguments = @(
   '--exclude=pytweening',
   '--exclude=mouseinfo')
 if ($IsWindows) {
+  # These are used on Linux
   $arguments += @(
-    # Installed by PyAutoGUI, but used by linux
+    # Installed by PyAutoGUI
     '--exclude=pyscreeze'
     # Installed by D3DShot
     '--exclude=PIL')
