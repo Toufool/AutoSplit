@@ -9,9 +9,11 @@ import numpy as np
 import win32gui
 from cv2.typing import MatLike
 from typing_extensions import override
+from winrt.windows.graphics import SizeInt32
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winrt.windows.graphics.capture.interop import create_for_window
 from winrt.windows.graphics.directx import DirectXPixelFormat
+from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winrt.windows.graphics.directx.direct3d11.interop import (
     create_direct3d11_device_from_dxgi_device,
 )
@@ -22,15 +24,12 @@ from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
-    from winrt.windows.graphics import SizeInt32
-    from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
-
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
 
 
-async def convert_d3d_surface_to_software_bitmap(surface: "IDirect3DSurface | None"):
+async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
     return await SoftwareBitmap.create_copy_from_surface_async(surface)
 
 
