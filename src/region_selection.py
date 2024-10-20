@@ -84,7 +84,10 @@ def get_top_window_at(x: int, y: int):
 #     from winrt.windows.foundation import AsyncStatus, IAsyncOperation
 #     from winrt.windows.graphics.capture import GraphicsCaptureItem, GraphicsCapturePicker
 #
-#     def callback(async_operation: IAsyncOperation[GraphicsCaptureItem], async_status: AsyncStatus):
+#     def callback(
+#         async_operation: IAsyncOperation[GraphicsCaptureItem],
+#         async_status: AsyncStatus,
+#     ):
 #         try:
 #             if async_status != AsyncStatus.COMPLETED:
 #                 return
