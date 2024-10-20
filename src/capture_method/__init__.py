@@ -21,15 +21,14 @@ from utils import (
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
+    from pygrabber.dshow_graph import FilterGraph
+
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
+    from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
     from capture_method.ForceFullContentRenderingCaptureMethod import (
         ForceFullContentRenderingCaptureMethod,
     )
     from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
-
-    if sys.version_info < (3, 13):
-        # https://github.com/enthought/comtypes/issues/618
-        from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
 
 if sys.platform == "linux":
     import pyscreeze
@@ -184,10 +183,7 @@ class CameraInfo:
 
 
 def get_input_devices():
-    if sys.platform == "win32" and sys.version_info < (3, 13):
-        # https://github.com/enthought/comtypes/issues/618
-        from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
-
+    if sys.platform == "win32":
         return FilterGraph().get_input_devices()
 
     cameras: list[str] = []

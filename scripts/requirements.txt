@@ -16,13 +16,16 @@ PySide6-Essentials>=6.8.0.1 ; python_version <= '3.12'  # Python 3.13 support
 scipy>=1.14.1 # Python 3.13 support
 tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
+
 #
 # Build and compile resources
 pyinstaller>=6.10.0  # Python 3.13 support
+
 #
 # https://peps.python.org/pep-0508/#environment-markers
 #
 # Windows-only dependencies:
+git+https://github.com/enthought/comtypes#egg=comtypes  # Python 3.13 support # We don't use directly, just remove once 1.4.8 releases
 typed-D3DShot[numpy] >= 1.0.1; sys_platform == 'win32'
 pygrabber>=0.2 ; sys_platform == 'win32'  # Completed types
 pywin32>=307 ; sys_platform == 'win32'  # Python 3.13 support
@@ -35,7 +38,7 @@ winrt-Windows.Graphics.DirectX.Direct3D11>=2.2.0 ; sys_platform == 'win32'  # Py
 winrt-Windows.Graphics.Imaging>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Graphics>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
 winrt-Windows.Media.Capture>=2.2.0 ; sys_platform == 'win32'  # Python 3.13 support
-typed-D3DShot[numpy]>=1.0.1 ; sys_platform == 'win32'
+
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'

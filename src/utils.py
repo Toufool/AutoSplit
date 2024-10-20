@@ -158,7 +158,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 # Note: maybe reorganize capture_method module to have
 # different helper modules and a methods submodule
 def get_input_device_resolution(index: int) -> tuple[int, int] | None:
-    if sys.platform != "win32" or sys.version_info >= (3, 13):
+    if sys.platform != "win32":
         return (0, 0)
 
     # https://github.com/enthought/comtypes/issues/618
