@@ -10,13 +10,7 @@ from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import (
-    WGC_MIN_BUILD,
-    WINDOWS_BUILD_NUMBER,
-    first,
-    get_input_device_resolution,
-    try_get_direct3d_device,
-)
+from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
@@ -125,12 +119,8 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
 
 CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
-    if (  # Windows Graphics Capture requires a minimum Windows Build
-        WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD
-        # Our current implementation of Windows Graphics Capture
-        # does not ensure we can get an ID3DDevice
-        and try_get_direct3d_device()
-    ):
+    # Windows Graphics Capture requires a minimum Windows Build
+    if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
         CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     try:  # Test for laptop cross-GPU Desktop Duplication issue

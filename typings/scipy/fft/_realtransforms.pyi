@@ -1,4 +1,5 @@
-from _typeshed import Incomplete
+from typing import Literal
+
 from numpy import float64, generic
 from numpy.typing import NDArray
 
@@ -47,13 +48,13 @@ def idstn(
 ): ...
 def dct(
     x: NDArray[generic],
-    type: int = 2,
-    n: Incomplete | None = None,
+    type: Literal[1, 2, 3, 4] = 2,
+    n: int | None = None,
     axis: int = -1,
-    norm: Incomplete | None = None,
+    norm: Literal["backward", "ortho", "forward"] | None = None,
     overwrite_x: bool = False,
-    workers: Incomplete | None = None,
-    orthogonalize: Incomplete | None = None,
+    workers: int | None = None,
+    orthogonalize: bool | None = None,
 ) -> NDArray[float64]: ...
 def idct(
     x,

@@ -14,23 +14,19 @@ from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsC
 from winrt.windows.graphics.capture.interop import create_for_window
 from winrt.windows.graphics.directx import DirectXPixelFormat
 from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
+from winrt.windows.graphics.directx.direct3d11.interop import (
+    create_direct3d11_device_from_dxgi_device,
+)
 from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import (
-    BGRA_CHANNEL_COUNT,
-    WGC_MIN_BUILD,
-    WINDOWS_BUILD_NUMBER,
-    get_direct3d_device,
-    is_valid_hwnd,
-)
+from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
+from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
-LEARNING_MODE_DEVICE_BUILD = 17763
-"""https://learn.microsoft.com/en-us/uwp/api/windows.ai.machinelearning.learningmodeldevice"""
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
@@ -42,13 +38,11 @@ class WindowsGraphicsCaptureMethod(CaptureMethodBase):
     short_description = "fast, most compatible, capped at 60fps"
     description = f"""
 Only available in Windows 10.0.{WGC_MIN_BUILD} and up.
-Due to current technical limitations, Windows versions below 10.0.0.{LEARNING_MODE_DEVICE_BUILD}
-require having at least one audio or video Capture Device connected and enabled.
 Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.
 Adds a yellow border on Windows 10 (not on Windows 11).
 Caps at around 60 FPS."""
 
-    size: SizeInt32
+    size: "SizeInt32"
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
@@ -59,11 +53,16 @@ Caps at around 60 FPS."""
         if not is_valid_hwnd(autosplit.hwnd):
             return
 
+        dxgi, *_ = D3D11CreateDevice(
+            DriverType=D3D_DRIVER_TYPE.HARDWARE,
+            Flags=D3D11_CREATE_DEVICE_FLAG.BGRA_SUPPORT,
+        )
+        direct3d_device = create_direct3d11_device_from_dxgi_device(dxgi.value)
         item = create_for_window(autosplit.hwnd)
         frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
-            get_direct3d_device(),
+            direct3d_device,
             DirectXPixelFormat.B8_G8_R8_A8_UINT_NORMALIZED,
-            1,
+            1,  # number_of_buffers
             item.size,
         )
         if not frame_pool:
@@ -114,6 +113,8 @@ Caps at around 60 FPS."""
             return None
 
         # We were too fast and the next frame wasn't ready yet
+        # TODO: Consider "add_frame_arrive" instead !
+        # https://github.com/pywinrt/pywinrt/blob/5bf1ac5ff4a77cf343e11d7c841c368fa9235d81/samples/screen_capture/__main__.py#L67-L78
         if not frame:
             return self.last_converted_frame
 

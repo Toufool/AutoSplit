@@ -146,6 +146,10 @@ max-branches = 15
   # Issues with using a star-imported name will be caught by type-checkers.
   "F405", # may be undefined, or defined from star imports
 ]
+"src/d3d11.py" = [
+  # Following windows API/ctypes like naming conventions
+  "N801", # invalid-class-name
+]
 
 [lint.flake8-tidy-imports.banned-api]
 "cv2.imread".msg = """\
