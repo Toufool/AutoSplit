@@ -24,6 +24,7 @@ if sys.platform == "win32":
 
     import win32gui
     import win32ui
+    from pygrabber.dshow_graph import FilterGraph
     from winrt.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
     from winrt.windows.media.capture import MediaCapture
 
@@ -160,10 +161,6 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
         return (0, 0)
-
-    # https://github.com/enthought/comtypes/issues/618
-    from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
-
     filter_graph = FilterGraph()
     try:
         filter_graph.add_video_input_device(index)
