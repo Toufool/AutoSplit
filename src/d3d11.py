@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2024 David Lechner <david@pybricks.com>
+import sys
+
+if sys.platform != "win32":
+    raise OSError
+
 import ctypes
 import enum
 import uuid
