@@ -36,7 +36,6 @@ class UserProfileDict(TypedDict):
     default_delay_time: int
     default_pause_time: float
     loop_splits: bool
-    start_also_resets: bool
     enable_auto_reset: bool
     split_image_directory: str
     screenshot_directory: str
@@ -69,7 +68,6 @@ DEFAULT_PROFILE = UserProfileDict(
     default_delay_time=0,
     default_pause_time=10,
     loop_splits=False,
-    start_also_resets=False,
     enable_auto_reset=True,
     split_image_directory="",
     screenshot_directory="",
@@ -165,14 +163,9 @@ def __load_settings_from_file(autosplit: "AutoSplit", load_settings_file_path: s
         cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
         autosplit,
     )
-    if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
-        autosplit.capture_method.recover_window(autosplit.settings_dict["captured_window_title"])
-    if not autosplit.capture_method.check_selected_region_exists():
-        autosplit.live_image.setText(
-            "Reload settings after opening"
-            + f"\n{autosplit.settings_dict['captured_window_title']!r}"
-            + "\nto automatically load Capture Region"
-        )
+    update_live_capture_region_setting(autosplit, autosplit.settings_dict["live_capture_region"])
+    autosplit.update_live_image_details(None)
+    autosplit.reload_images_signal.emit(False)
 
     if settings_widget_was_open:
         open_settings(autosplit)
@@ -199,7 +192,7 @@ def load_settings(autosplit: "AutoSplit", from_path: str = ""):
     autosplit.last_successfully_loaded_settings_file_path = load_settings_file_path
     # TODO: Should this check be in `__load_start_image` ?
     if not autosplit.is_running:
-        autosplit.reload_start_image_signal.emit(False, True)
+        autosplit.reload_images_signal.emit(False)
 
 
 def load_settings_on_open(autosplit: "AutoSplit"):
@@ -253,3 +246,13 @@ def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bo
         "check_for_updates_on_open",
         value,
     )
+
+
+def update_live_capture_region_setting(autosplit: "AutoSplit", value: bool):  # noqa: FBT001
+    autosplit.settings_dict["live_capture_region"] = value
+    if value:
+        autosplit.capture_method.subscribe_to_new_frame(autosplit.update_live_image_details)
+    else:
+        autosplit.update_live_image_details(None)
+        autosplit.live_image.setText("Live Capture Region Hidden")
+        autosplit.capture_method.unsubscribe_from_new_frame(autosplit.update_live_image_details)

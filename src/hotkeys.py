@@ -85,15 +85,7 @@ def send_command(autosplit: "AutoSplit", command: CommandStr):
         autosplit.screenshot_signal.emit()
     match command:
         case _ if autosplit.is_auto_controlled:
-            if command == "start" and autosplit.settings_dict["start_also_resets"]:
-                print("reset", flush=True)
             print(command, flush=True)
-        # Note: Rather than having the start image able to also reset the timer, having
-        # the reset image check be active at all time would be a better, more organic solution.
-        # But that is dependent on migrating to an observer pattern (#219) and
-        # being able to reload all images.
-        case "start" if autosplit.settings_dict["start_also_resets"]:
-            _send_hotkey(autosplit.settings_dict["reset_hotkey"])
         case "reset":
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
         case "start" | "split":

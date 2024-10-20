@@ -12,7 +12,7 @@ import win32ui
 from cv2.typing import MatLike
 from typing_extensions import override
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 # This is an undocumented nFlag value for PrintWindow
@@ -27,7 +27,7 @@ def is_blank(image: MatLike):
     return not image.any()
 
 
-class BitBltCaptureMethod(CaptureMethodBase):
+class BitBltCaptureMethod(ThreadedLoopCaptureMethod):
     name = "BitBlt"
     short_description = "fastest, least compatible"
     description = """
@@ -35,17 +35,24 @@ The best option when compatible. But it cannot properly record
 OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.
 The smaller the selected region, the more efficient it is."""
 
+    @property
+    @override
+    def window_recovery_message(self):
+        if type(self) is BitBltCaptureMethod:
+            return (
+                super().window_recovery_message
+                + "\n(captured window may be incompatible with BitBlt)"
+            )
+        return super().window_recovery_message
+
     _render_full_content = False
 
     @override
-    def get_frame(self) -> MatLike | None:
+    def _read_action(self) -> MatLike | None:
         selection = self._autosplit_ref.settings_dict["capture_region"]
         width = selection["width"]
         height = selection["height"]
         hwnd = self._autosplit_ref.hwnd
-
-        if not self.check_selected_region_exists():
-            return None
 
         # If the window closes while it's being manipulated, it could cause a crash
         try:

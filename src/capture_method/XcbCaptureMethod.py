@@ -11,11 +11,11 @@ from typing_extensions import override
 from Xlib.display import Display
 from Xlib.error import BadWindow
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import is_valid_image
 
 
-class XcbCaptureMethod(CaptureMethodBase):
+class XcbCaptureMethod(ThreadedLoopCaptureMethod):
     name = "X11 XCB"
     short_description = "fast, requires XCB"
     description = "\nUses the XCB library to take screenshots of the X11 server."
@@ -23,9 +23,7 @@ class XcbCaptureMethod(CaptureMethodBase):
     _xdisplay: str | None = ""  # ":0"
 
     @override
-    def get_frame(self):
-        if not self.check_selected_region_exists():
-            return None
+    def _read_action(self):
         xdisplay = Display()
         root = xdisplay.screen().root
         try:
