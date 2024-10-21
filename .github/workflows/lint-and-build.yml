@@ -46,7 +46,7 @@ jobs:
       # Ruff is version and platform sensible
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
       # Pyright is version and platform sensible
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
@@ -99,7 +99,10 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.12", "3.13"]
+        include:
+          - os: ubuntu-22.04
+            python-version: "3.11" # I had some Qt Wayland issues on 3.12 for ubuntu-22.04 iirc. TODO: test it
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
