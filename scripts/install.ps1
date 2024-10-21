@@ -43,8 +43,7 @@ If ($IsLinux) {
 &"$python" -m pip install wheel pip setuptools --upgrade
 # Upgrading QT to 6.6.2 w/o first uninstalling shiboken6 can lead to issues
 # https://bugreports.qt.io/browse/PYSIDE-2616?focusedId=777285&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-777285
-# Updating from D3DShot to typed-D3DShot w/o uninstalling can cause issues (keep until version bump on PyPI)
-&"$python" -m pip uninstall shiboken6 d3dshot types-D3DShot -y
+&"$python" -m pip uninstall shiboken6 -y
 &"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
 # Temporary hack to test install for Python 3.13
 &"$python" -m pip install `
@@ -56,12 +55,12 @@ If ($IsLinux) {
 # PyAutoGUI: We only use it for hotkeys
 &"$python" -m pip install PyAutoGUI --no-deps --upgrade
 
-# Uninstall optional dependencies if PyAutoGUI or D3DShot was installed outside this script
+# Uninstall optional dependencies if PyAutoGUI was installed outside this script
 # PyScreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows
-# Pillow, pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PySide6
+# pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PyInstaller
 # (also --exclude from build script, but more consistent with unfrozen run)
 &"$python" -m pip uninstall pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y
-If ($IsWindows) { &"$python" -m pip uninstall PyScreeze Pillow -y }
+If ($IsWindows) { &"$python" -m pip uninstall PyScreeze -y }
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 If ($dev) {
