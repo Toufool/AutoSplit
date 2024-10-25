@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Python: AutoSplit (debug non-user code)",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
@@ -15,7 +15,7 @@
     },
     {
       "name": "Python: AutoSplit",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
@@ -24,7 +24,7 @@
     },
     {
       "name": "Python: AutoSplit --auto-controlled",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
