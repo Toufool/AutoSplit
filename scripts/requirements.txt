@@ -9,11 +9,11 @@ numpy>=2.1  # Python 3.13 support
 opencv-python-headless>=4.10  # NumPy 2 support
 packaging
 psutil>=6.0.0  # Python 3.13 support
-# PyAutoGUI # See install.ps1
+# PyAutoGUI  # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials>=6.8.0.1 ; python_version <= '3.12'  # Python 3.13 support
-scipy>=1.14.1 # Python 3.13 support
+PySide6-Essentials>=6.8.0.2 # Python 3.13 support
+scipy>=1.14.1  # Python 3.13 support
 tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
 
@@ -40,5 +40,5 @@ winrt-Windows.Graphics.Imaging>=2.3.0 ; sys_platform == 'win32'  # Python 3.13 s
 #
 # Linux-only dependencies
 PyScreeze ; sys_platform == 'linux'
-pillow>=11.0 ; sys_platform == 'linux' # Python 3.13 support # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
+pillow>=11.0 ; sys_platform == 'linux'  # Python 3.13 support # Necessary for PyScreeze. For unknown reasons it's not pulled in on CI
 python-xlib ; sys_platform == 'linux'
