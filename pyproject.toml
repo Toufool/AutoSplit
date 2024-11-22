@@ -12,7 +12,7 @@ enableTypeIgnoreComments = false
 reportMissingTypeStubs = "warning"
 # Extra runtime safety
 reportUnnecessaryComparison = "warning"
-# Using Flake8/Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
+# Using Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
 reportUnusedImport = "none"
 
 ###
