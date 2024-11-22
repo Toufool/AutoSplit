@@ -21,7 +21,8 @@ if ($IsWindows) {
   $arguments += @(
     # Installed by PyAutoGUI
     '--exclude=pyscreeze'
-    # Installed by D3DShot
+    # Sometimes installed by other automation/image libraries.
+    # Keep this exclusion even if nothing currently installs it, to stay future-proof.
     '--exclude=PIL')
 }
 if ($IsLinux) {

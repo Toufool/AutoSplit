@@ -15,6 +15,7 @@
 ruff>=0.8.0 # Pre-commit fix # Must match .pre-commit-config.yaml
 #
 # Types
+scipy-stubs>=1.14.1.1
 types-keyboard
 types-psutil
 types-PyAutoGUI
