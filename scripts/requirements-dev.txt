@@ -12,7 +12,7 @@
 -r requirements.txt
 #
 # Linters & Formatters
-ruff>=0.8.0 # Pre-commit fix # Must match .pre-commit-config.yaml
+ruff>=0.8.0
 #
 # Types
 scipy-stubs>=1.14.1.1
