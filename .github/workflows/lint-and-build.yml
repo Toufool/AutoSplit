@@ -40,25 +40,20 @@ concurrency:
 
 jobs:
   ruff:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      # Ruff is version and platform sensible
-      matrix:
-        os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements*.txt"
-      - run: scripts/install.ps1
+      - name: Get Ruff version
+        id: ruff_version
+        run: |
+          $Env:RUFF_VERSION=Select-String -path scripts/requirements-dev.txt -pattern 'ruff ?([=<>~]?= ?[\d\.]+)' | %{ $_.Matches[0].Groups[1].Value }
+          echo $Env:RUFF_VERSION
+          echo "RUFF_VERSION=$Env:RUFF_VERSION" >> $Env:GITHUB_OUTPUT
         shell: pwsh
-      - run: ruff check .
+      - uses: astral-sh/ruff-action@v2
+        with:
+          version: ${{ steps.ruff_version.outputs.RUFF_VERSION }}
   Pyright:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -89,7 +84,6 @@ jobs:
         uses: jakebailey/pyright-action@v2
         with:
           version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
-          extra-args: --threads
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:
