@@ -84,7 +84,6 @@ jobs:
         uses: jakebailey/pyright-action@v2
         with:
           version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
-          extra-args: --threads
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:
