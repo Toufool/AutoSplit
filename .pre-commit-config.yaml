@@ -26,5 +26,5 @@ repos:
       - id: ruff-format
 
 ci:
-  autoupdate_branch: dev
+  autoupdate_branch: main
   autoupdate_schedule: quarterly

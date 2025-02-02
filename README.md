@@ -23,7 +23,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 
 - Download the [latest version](/../../releases/latest)
 - You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
-  (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/dev))
+  (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/main))
 - Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
 
   <!-- https://github.com/boppreh/keyboard/issues/312#issuecomment-1189734564 -->

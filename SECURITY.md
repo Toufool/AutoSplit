@@ -5,7 +5,6 @@
 | Version | Supported |
 | ------- | :-------: |
 | main | :white_check_mark: |
-| dev* | :white_check_mark: |
 | everything else | WIP branches, security support may be lacking |
 
 ## Reporting a Vulnerability
