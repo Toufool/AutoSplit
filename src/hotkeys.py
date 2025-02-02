@@ -104,7 +104,7 @@ def send_command(autosplit: "AutoSplit", command: CommandStr):
             _send_hotkey(autosplit.settings_dict["skip_split_hotkey"])
         case "undo":
             _send_hotkey(autosplit.settings_dict["undo_split_hotkey"])
-        case _:  # pyright: ignore[reportUnnecessaryComparison]
+        case _:
             raise KeyError(f"{command!r} is not a valid command")
 
 

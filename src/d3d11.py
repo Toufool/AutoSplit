@@ -44,8 +44,8 @@ class IUnknown(ctypes.c_void_p):
             iid = uuid.UUID(iid)
 
         ppv = wintypes.LPVOID()
-        _iid = GUID.from_buffer_copy(iid.bytes_le)
-        ret = self.QueryInterface(self, ctypes.byref(_iid), ctypes.byref(ppv))
+        riid = GUID.from_buffer_copy(iid.bytes_le)
+        ret = self.QueryInterface(self, ctypes.byref(riid), ctypes.byref(ppv))
 
         if ret:
             raise ctypes.WinError(ret)

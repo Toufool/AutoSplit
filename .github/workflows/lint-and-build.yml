@@ -49,9 +49,10 @@ jobs:
           echo $Env:RUFF_VERSION
           echo "RUFF_VERSION=$Env:RUFF_VERSION" >> $Env:GITHUB_OUTPUT
         shell: pwsh
-      - uses: astral-sh/ruff-action@v2
+      - uses: astral-sh/ruff-action@v3
         with:
           version: ${{ steps.ruff_version.outputs.RUFF_VERSION }}
+      - run: ruff format --check
   Pyright:
     runs-on: ${{ matrix.os }}
     strategy:
