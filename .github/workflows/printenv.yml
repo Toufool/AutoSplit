@@ -10,7 +10,7 @@ on:
         type: boolean
   push:
     branches:
-      - master
+      - main
       - dev
 
 env:

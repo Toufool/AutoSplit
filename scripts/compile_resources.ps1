@@ -19,7 +19,7 @@ Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
 If ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true -or (
-    $Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'master')
+    $Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'main')
 ) {
   $BUILD_NUMBER = ''
 }
