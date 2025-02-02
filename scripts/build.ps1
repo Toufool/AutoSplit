@@ -12,12 +12,33 @@ $arguments = @(
   # if requirements.txt was used directly to help ensure consistency when building locally.
   #
   # Installed by PyAutoGUI
-  '--exclude=pyscreeze',
   '--exclude=pygetwindow',
   '--exclude=pymsgbox',
   '--exclude=pytweening',
-  '--exclude=mouseinfo',
-  # Used by imagehash.whash
-  '--exclude=pywt')
+  '--exclude=mouseinfo')
+if ($IsWindows) {
+  # These are used on Linux
+  $arguments += @(
+    # Installed by PyAutoGUI
+    '--exclude=pyscreeze'
+    # Sometimes installed by other automation/image libraries.
+    # Keep this exclusion even if nothing currently installs it, to stay future-proof.
+    '--exclude=PIL')
+}
+if ($IsLinux) {
+  $arguments += @(
+    # Required on the CI for PyWinCtl
+    '--hidden-import pynput.keyboard._xorg',
+    '--hidden-import pynput.mouse._xorg')
+}
 
 Start-Process -Wait -NoNewWindow pyinstaller -ArgumentList $arguments
+
+If ($IsLinux) {
+  Move-Item -Force $PSScriptRoot/../dist/AutoSplit $PSScriptRoot/../dist/AutoSplit.elf
+  If ($?) {
+    Write-Host 'Added .elf extension'
+  }
+  chmod +x $PSScriptRoot/../dist/AutoSplit.elf
+  Write-Host 'Added execute permission'
+}

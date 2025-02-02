@@ -11,14 +11,15 @@ pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 $files = Get-ChildItem ./src/gen/ *.py
 foreach ($file in $files) {
     (Get-Content $file.PSPath) |
-    ForEach-Object { $_ -replace 'import resources_rc', 'from . import resources_rc' } |
+    ForEach-Object { $_.replace('import resources_rc', 'from . import resources_rc') } |
+    ForEach-Object { $_ -replace 'def (\w+?)\(self, (\w+?)\):', 'def $1(self, $2: QWidget):' } |
     Set-Content $file.PSPath
 }
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
 If ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true -or (
-    $Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'master')
+    $Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'main')
 ) {
   $BUILD_NUMBER = ''
 }
@@ -28,7 +29,10 @@ Else {
 $GITHUB_REPOSITORY = $Env:GITHUB_HEAD_REPOSITORY
 If (-not $GITHUB_REPOSITORY) {
   $repo_url = git config --get remote.origin.url
-  $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
+  # Validate in case the repo was downloaded rather than cloned
+  If ($repo_url) {
+    $GITHUB_REPOSITORY = $repo_url.substring(19, $repo_url.length - 19) -replace '\.git', ''
+  }
 }
 If (-not $GITHUB_REPOSITORY) {
   $GITHUB_REPOSITORY = 'Toufool/AutoSplit'

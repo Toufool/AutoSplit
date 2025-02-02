@@ -1,0 +1,159 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2024 Beslogic Inc.
+
+# The source skeleton for this configuration can be found at
+# https://github.com/BesLogic/shared-configs/blob/main/ruff.toml
+# Modifications to this file that are not project-specific should also be done upstream.
+# These configs are incompatible with ruff<0.5.7
+
+# https://docs.astral.sh/ruff/configuration/
+target-version = "py311" # Change this to the oldest supported version by your application
+line-length = 100
+preview = true
+
+[format]
+docstring-code-format = true
+
+[lint]
+select = ["ALL"]
+# https://docs.astral.sh/ruff/rules/
+ignore = [
+  ###
+  # Not needed or wanted
+  ###
+  "D1", # pydocstyle Missing doctring
+  "D401", # pydocstyle: non-imperative-mood
+  "EM", # flake8-errmsg
+  "EXE", # flake8-executable
+  # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
+  # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
+  "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call
+  "INP", # flake8-no-pep420
+  "ISC003", # flake8-implicit-str-concat: explicit-string-concatenation
+  # Short messages are still considered "long" messages
+  "TRY003", # tryceratops : raise-vanilla-args
+  # Don't remove commented code, also too inconsistant
+  "ERA001", # eradicate: commented-out-code
+  # contextlib.suppress is roughly 3x slower than try/except
+  "SIM105", # flake8-simplify: use-contextlib-suppress
+  # Negative performance impact and more verbose https://github.com/astral-sh/ruff/issues/7871
+  "UP038", # non-pep604-isinstance
+  # Checked by type-checker (pyright/mypy)
+  "ANN", # flake-annotations
+  "PGH003", # blanket-type-ignore
+  "TC", # flake8-type-checking
+  # Already shown by Pylance, checked by pyright, and can be caused by overloads.
+  "ARG002", # Unused method argument
+  # We want D213: multi-line-summary-second-line and D211: no-blank-line-before-class
+  "D203", # pydocstyle: one-blank-line-before-class
+  "D212", # pydocstyle: multi-line-summary-first-line
+  # Allow differentiating between broken (FIXME) and to be done/added/completed (TODO)
+  "TD001", # flake8-todos: invalid-todo-tag
+
+  ###
+  # These should be warnings (https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774)
+  ###
+  "FIX", # flake8-fixme
+  # Not all TODOs are worth an issue, this would be better as a warning
+  "TD003", # flake8-todos: missing-todo-link
+
+  # False-positives
+  "TC004", # https://github.com/astral-sh/ruff/issues/3821
+
+  ###
+  # Conflict with formatter (you can remove this section if you don't use Ruff as a formatter)
+  ###
+  "COM812", # missing-trailing-comma
+  "ISC001", # single-line-implicit-string-concatenation
+  "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
+
+  ###
+  # Rules about missing special documentation. Up to you if you wanna enable these, you must also disable D406, D407
+  ###
+  "DOC201", # docstring-missing-returns
+  "DOC402", # docstring-missing-yields
+  "DOC501", # docstring-missing-exception
+  # "D406", # new-line-after-section-name, conflicts with DOC
+  # "D407", # dashed-underline-after-section, conflicts with DOC
+
+  ###
+  # Specific to this project
+  ###
+  "D205", # Not all docstrings have a short description + description
+  # TODO: Consider for more complete doc
+  "DOC201", # docstring-extraneous-returns
+  "DOC501", # docstring-missing-exception
+  # We have some Pascal case module names
+  "N999", # pep8-naming: Invalid module name
+  # Print are used as debug logs
+  "T20", # flake8-print
+  # This is a relatively small, low contributors project. Git blame suffice.
+  "TD002", # missing-todo-author
+  # Python 3.11, introduced "zero cost" exception handling
+  "PERF203", # try-except-in-loop
+
+  ###
+  # FIXME/TODO: I'd normally set them as temporarily warnings, but no warnings in Ruff yet:
+  # https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774):
+  ###
+  "CPY001", # flake8-copyright
+  "PTH", # flake8-use-pathlib
+  # Ignore until linux support
+  "EXE", # flake8-executable
+]
+
+# https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat
+[lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+# https://docs.astral.sh/ruff/settings/#isort
+[lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = false
+# This should be automatically detected in src layout, but somehow pre-commit messes it up
+known-first-party = ["gen"]
+
+# https://docs.astral.sh/ruff/settings/#mccabe
+[lint.mccabe]
+# Arbitrary to 2 bytes, same as SonarLint
+max-complexity = 15
+
+[lint.pylint]
+# Arbitrary to 1 byte, same as SonarLint
+max-args = 7
+# At least same as max-complexity
+max-branches = 15
+
+[lint.per-file-ignores]
+"**/typings/**/*.pyi" = [
+  "F811", # Re-exports false positives
+  # The following can't be controlled for external libraries:
+  "A", # Shadowing builtin names
+  "F403", # `from . import *` used; unable to detect undefined names
+  "FBT", # flake8-boolean-trap
+  "ICN001", # unconventional-import-alias
+  "N8", # Naming conventions
+  "PLC2701", # Private name import
+  "PLR0904", # Too many public methods
+  "PLR0913", # Argument count
+  "PLR0917", # Too many positional arguments
+  "PLW3201", # misspelled dunder method name
+  "PYI042", # CamelCase TypeAlias
+  # Stubs can sometimes re-export entire modules.
+  # Issues with using a star-imported name will be caught by type-checkers.
+  "F405", # may be undefined, or defined from star imports
+]
+"src/d3d11.py" = [
+  # Following windows API/ctypes like naming conventions
+  "N801", # invalid-class-name
+]
+
+[lint.flake8-tidy-imports.banned-api]
+"cv2.imread".msg = """\
+it doesn't support special characters. \
+Use `cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)` instead.
+https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
+"cv2.imwrite".msg = """\
+it doesn't support special characters. \
+Use `cv2.imencode(os.path.splitext(filename)[1], img)[1].tofile(filename)` instead.
+https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""

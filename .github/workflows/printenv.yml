@@ -10,7 +10,7 @@ on:
         type: boolean
   push:
     branches:
-      - master
+      - main
       - dev
 
 env:
@@ -22,5 +22,5 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: printenv

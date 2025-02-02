@@ -11,7 +11,6 @@ on:
   push:
     branches:
       - main
-      - master
       - dev*
     paths:
       - "**.py"
@@ -21,7 +20,6 @@ on:
   pull_request:
     branches:
       - main
-      - master
       - dev*
     paths:
       - "**.py"
@@ -40,59 +38,69 @@ concurrency:
 
 jobs:
   ruff:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      # Ruff is version and platform sensible
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements*.txt"
-      - run: scripts/install.ps1
+        uses: actions/checkout@v4
+      - name: Get Ruff version
+        id: ruff_version
+        run: |
+          $Env:RUFF_VERSION=Select-String -path scripts/requirements-dev.txt -pattern 'ruff ?([=<>~]?= ?[\d\.]+)' | %{ $_.Matches[0].Groups[1].Value }
+          echo $Env:RUFF_VERSION
+          echo "RUFF_VERSION=$Env:RUFF_VERSION" >> $Env:GITHUB_OUTPUT
         shell: pwsh
-      - run: ruff check .
+      - uses: astral-sh/ruff-action@v3
+        with:
+          version: ${{ steps.ruff_version.outputs.RUFF_VERSION }}
+      - run: ruff format --check
   Pyright:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        os: [windows-latest, ubuntu-22.04]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
           cache-dependency-path: "scripts/requirements*.txt"
       - run: scripts/install.ps1
         shell: pwsh
+      - name: Get pyright version
+        id: pyright_version
+        run: |
+          PYRIGHT_VERSION=$(grep '$pyrightVersion = ' 'scripts/lint.ps1' | cut -d "#" -f 1 | cut -d = -f 2 | tr -d " '")
+          echo pyright version: "${PYRIGHT_VERSION}"
+          echo PYRIGHT_VERSION="${PYRIGHT_VERSION}" >> "${GITHUB_OUTPUT}"
+        shell: bash
       - name: Analysing the code with Pyright
-        uses: jakebailey/pyright-action@v1
+        uses: jakebailey/pyright-action@v2
         with:
+          version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        python-version: ["3.11", "3.12"]
+        os: [windows-latest, ubuntu-22.04]
+        python-version: ["3.12", "3.13"]
+        include:
+          - os: ubuntu-22.04
+            python-version: "3.11" # I had some Qt Wayland issues on 3.12 for ubuntu-22.04 iirc. TODO: test it
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -102,15 +110,15 @@ jobs:
       - run: scripts/build.ps1
         shell: pwsh
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: AutoSplit (Python ${{ matrix.python-version }})
+          name: AutoSplit for ${{ matrix.os }} (Python ${{ matrix.python-version }})
           path: dist/AutoSplit*
           if-no-files-found: error
       - name: Upload Build logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Build logs (Python ${{ matrix.python-version }})
+          name: Build logs for ${{ matrix.os }} (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt

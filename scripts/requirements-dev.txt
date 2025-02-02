@@ -12,17 +12,14 @@
 -r requirements.txt
 #
 # Linters & Formatters
-add-trailing-comma>=3.1.0 # Must match .pre-commit-config.yaml
-autopep8>=2.0.4 # Must match .pre-commit-config.yaml
-ruff>=0.1.7 # New checks # Must match .pre-commit-config.yaml
+ruff>=0.8.5
 #
 # Types
-types-D3DShot ; sys_platform == 'win32'
+scipy-stubs>=1.14.1.1
 types-keyboard
-types-Pillow
 types-psutil
 types-PyAutoGUI
 types-pyinstaller
-types-pywin32 ; sys_platform == 'win32'
-types-requests
+types-python-xlib ; sys_platform == 'linux'
+types-pywin32>=306.0.0.20240130 ; sys_platform == 'win32'
 types-toml

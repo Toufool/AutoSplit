@@ -1,7 +1,7 @@
 {
   "editor.rulers": [
     80,
-    120
+    100
   ],
   "[git-commit]": {
     "editor.rulers": [
@@ -24,14 +24,6 @@
     "source.fixAll": "explicit",
     // Let dedicated linter (Ruff) organize imports
     "source.organizeImports": "never"
-  },
-  "emeraldwalk.runonsave": {
-    "commands": [
-      {
-        "match": "\\.pyi?",
-        "cmd": "add-trailing-comma ${file}"
-      },
-    ]
   },
   "files.associations": {
     ".flake8": "properties",
@@ -62,16 +54,19 @@
   "[json][jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "yaml.format.printWidth": 100,
   "[python]": {
-    // Ruff as a formatter doesn't fully satisfy our needs yet: https://github.com/astral-sh/ruff/discussions/7310
-    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
       // 79, // PEP8-17 default max
       // 88, // Black default
       // 99, // PEP8-17 acceptable max
-      120, // Our hard rule
+      100, // Our hard rule
     ],
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",
@@ -87,6 +82,9 @@
   ],
   "python.analysis.diagnosticMode": "workspace",
   "ruff.importStrategy": "fromEnvironment",
+  "ruff.enable": true,
+  "ruff.fixAll": true,
+  "ruff.organizeImports": true,
   // Use the Ruff extension instead
   "isort.check": false,
   "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
@@ -97,6 +95,8 @@
   "powershell.codeFormatting.whitespaceBetweenParameters": true,
   "powershell.integratedConsole.showOnStartup": false,
   "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.linux": "pwsh",
+  "terminal.integrated.defaultProfile.osx": "pwsh",
   "xml.codeLens.enabled": true,
   "xml.format.spaceBeforeEmptyCloseTag": false,
   "xml.format.preserveSpace": [

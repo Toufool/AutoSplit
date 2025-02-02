@@ -1,22 +1,43 @@
 import asyncio
-import ctypes
-import ctypes.wintypes
 import os
+import shutil
+import subprocess  # noqa: S404
 import sys
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from enum import IntEnum
+from functools import partial
 from itertools import chain
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeGuard, TypeVar
+from typing import TYPE_CHECKING, Any, TypeAlias, TypedDict, TypeGuard, TypeVar
 
-import win32gui
-import win32ui
+import cv2
+import numpy as np
 from cv2.typing import MatLike
-from winsdk.windows.ai.machinelearning import LearningModelDevice, LearningModelDeviceKind
-from winsdk.windows.media.capture import MediaCapture
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
+
+if sys.platform == "win32":
+    import ctypes
+    import ctypes.wintypes
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
+
+    import win32gui
+    import win32ui
+    from pygrabber.dshow_graph import FilterGraph
+
+    STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
+else:
+    STARTUPINFO: TypeAlias = None
+
+if sys.platform == "linux":
+    import fcntl
+
+    from pyscreeze import RUNNING_WAYLAND as RUNNING_WAYLAND  # noqa: PLC0414
+
+else:
+    RUNNING_WAYLAND = False
+
 
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
@@ -24,10 +45,23 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
-ONE_SECOND = 1000
-"""1000 milliseconds in 1 second"""
+
+def find_tesseract_path():
+    search_path = os.environ.get("PATH", os.defpath)
+    if sys.platform == "win32":
+        search_path += r";C:\Program Files\Tesseract-OCR;C:\Program Files (x86)\Tesseract-OCR"
+    return shutil.which(TESSERACT_EXE, path=search_path)
+
+
+TESSERACT_EXE = "tesseract"
+TESSERACT_PATH = find_tesseract_path()
+"""The path to execute tesseract. `None` if it can't be found."""
+TESSERACT_CMD = (TESSERACT_PATH or TESSERACT_EXE, "-", "-", "--oem", "1", "--psm", "6")
+
 DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
+ONE_SECOND = 1000
+"""1000 milliseconds in 1 second"""
 BGR_CHANNEL_COUNT = 3
 """How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
@@ -45,6 +79,14 @@ class ColorChannel(IntEnum):
     Green = 1
     Red = 2
     Alpha = 3
+
+
+class SubprocessKWArgs(TypedDict):
+    stdin: int
+    stdout: int
+    stderr: int
+    startupinfo: "STARTUPINFO | None"
+    env: os._Environ[str] | None  # pyright: ignore[reportPrivateUsage]
 
 
 def decimal(value: float):
@@ -67,7 +109,10 @@ def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
 
 
 def is_valid_hwnd(hwnd: int):
-    """Validate the hwnd points to a valid window and not the desktop or whatever window obtained with `""`."""
+    """
+    Validate the hwnd points to a valid window
+    and not the desktop or whatever window obtained with `""`.
+    """
     if not hwnd:
         return False
     if sys.platform == "win32":
@@ -81,6 +126,8 @@ def first(iterable: Iterable[T]) -> T:
 
 
 def try_delete_dc(dc: "PyCDC"):
+    if sys.platform != "win32":
+        raise OSError
     try:
         dc.DeleteDC()
     except win32ui.error:
@@ -88,6 +135,9 @@ def try_delete_dc(dc: "PyCDC"):
 
 
 def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
+    if sys.platform != "win32":
+        raise OSError
+
     extended_frame_bounds = ctypes.wintypes.RECT()
     ctypes.windll.dwmapi.DwmGetWindowAttribute(
         hwnd,
@@ -104,8 +154,37 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
     return window_left_bounds, window_top_bounds, window_width, window_height
 
 
+# Note: maybe reorganize capture_method module to have
+# different helper modules and a methods submodule
+def get_input_device_resolution(index: int) -> tuple[int, int] | None:
+    if sys.platform != "win32":
+        return (0, 0)
+    filter_graph = FilterGraph()
+    try:
+        filter_graph.add_video_input_device(index)
+    # This can happen with virtual cameras throwing errors.
+    # For example since OBS 29.1 updated FFMPEG breaking VirtualCam 3.0
+    # https://github.com/Toufool/AutoSplit/issues/238
+    except COMError:
+        return None
+
+    try:
+        resolution = filter_graph.get_input_device().get_current_format()
+    # For unknown reasons, some devices can raise "ValueError: NULL pointer access".
+    # For instance, Oh_DeeR's AVerMedia HD Capture C985 Bus 12
+    except ValueError:
+        return None
+    finally:
+        filter_graph.remove_filters()
+    return resolution
+
+
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    os.startfile(file_path)  # noqa: S606
+    if sys.platform == "win32":
+        os.startfile(file_path)  # noqa: S606
+    else:
+        opener = "xdg-open" if sys.platform == "linux" else "open"
+        subprocess.call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -117,41 +196,26 @@ def get_or_create_eventloop():
         return asyncio.get_event_loop()
 
 
-def get_direct3d_device():
-    # Note: Must create in the same thread (can't use a global) otherwise when ran from LiveSplit it will raise:
-    # OSError: The application called an interface that was marshalled for a different thread
-    media_capture = MediaCapture()
-
-    async def init_mediacapture():
-        await media_capture.initialize_async()
-
-    asyncio.run(init_mediacapture())
-    direct_3d_device = media_capture.media_capture_settings and media_capture.media_capture_settings.direct3_d11_device
-    if not direct_3d_device:
-        try:
-            # May be problematic? https://github.com/pywinrt/python-winsdk/issues/11#issuecomment-1315345318
-            direct_3d_device = LearningModelDevice(LearningModelDeviceKind.DIRECT_X_HIGH_PERFORMANCE).direct3_d11_device
-        # TODO: Unknown potential error, I don't have an older Win10 machine to test.
-        except BaseException:  # noqa: S110,BLE001
-            pass
-    if not direct_3d_device:
-        raise OSError("Unable to initialize a Direct3D Device.")
-    return direct_3d_device
-
-
-def try_get_direct3d_device():
+def try_input_device_access():
+    """Same as `make_uinput` in `keyboard/_nixcommon.py`."""
+    if sys.platform != "linux":
+        return False
     try:
-        return get_direct3d_device()
+        UI_SET_EVBIT = 0x40045564  # noqa: N806
+        with open("/dev/uinput", "wb") as uinput:
+            fcntl.ioctl(uinput, UI_SET_EVBIT)
     except OSError:
-        return None
+        return False
+    return True
 
 
 def fire_and_forget(func: Callable[..., Any]):
     """
     Runs synchronous function asynchronously without waiting for a response.
 
-    Uses threads on Windows because ~~`RuntimeError: There is no current event loop in thread 'MainThread'.`~~
-    Because maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
+    Uses threads on Windows because
+    ~~`RuntimeError: There is no current event loop in thread 'MainThread'`~~
+    maybe asyncio has issues. Unsure. See alpha.5 and https://github.com/Avasam/AutoSplit/issues/36
 
     Uses asyncio on Linux because of a `Segmentation fault (core dumped)`
     """
@@ -161,13 +225,80 @@ def fire_and_forget(func: Callable[..., Any]):
             thread = Thread(target=func, args=args, kwargs=kwargs)
             thread.start()
             return thread
-        return get_or_create_eventloop().run_in_executor(None, func, *args, *kwargs)
+        return get_or_create_eventloop().run_in_executor(None, partial(func, *args, **kwargs))
 
     return wrapped
 
 
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
+
+
+def imread(filename: str, flags: int = cv2.IMREAD_COLOR):
+    return cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)
+
+
+def imwrite(filename: str, img: MatLike, params: Sequence[int] = ()):
+    success, encoded_img = cv2.imencode(os.path.splitext(filename)[1], img, params)
+    if not success:
+        raise OSError(f"cv2 could not write to path {filename}")
+    encoded_img.tofile(filename)
+
+
+def subprocess_kwargs():
+    """
+    Create a set of arguments which make a ``subprocess.Popen`` (and
+    variants) call work with or without Pyinstaller, ``--noconsole`` or
+    not, on Windows and Linux.
+
+    Typical use:
+    ```python
+    subprocess.call(["program_to_run", "arg_1"], **subprocess_args())
+    ```
+    ---
+    Originally found in https://github.com/madmaze/pytesseract/blob/master/pytesseract/pytesseract.py
+    Recipe from https://github.com/pyinstaller/pyinstaller/wiki/Recipe-subprocess
+    which itself is taken from https://github.com/bjones1/enki/blob/master/enki/lib/get_console_output.py
+    """
+    # The following is true only on Windows.
+    if sys.platform == "win32":
+        # On Windows, subprocess calls will pop up a command window by default when run from
+        # Pyinstaller with the ``--noconsole`` option. Avoid this distraction.
+        startupinfo = STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        # https://github.com/madmaze/pytesseract/blob/88839f03590578a10e806a5244704437c9d477da/pytesseract/pytesseract.py#L236
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        # Windows doesn't search the path by default. Pass it an environment so it will.
+        env = os.environ
+    else:
+        startupinfo = None
+        env = None
+    # On Windows, running this from the binary produced by Pyinstaller
+    # with the ``--noconsole`` option requires redirecting everything
+    # (stdin, stdout, stderr) to avoid an OSError exception
+    # "[Error 6] the handle is invalid."
+    return SubprocessKWArgs(
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        startupinfo=startupinfo,
+        env=env,
+    )
+
+
+def run_tesseract(png: bytes):
+    """
+    Executes the tesseract CLI and pipes a PNG encoded image to it.
+    @param png: PNG encoded image as byte array
+    @return: The recognized output string from tesseract.
+    """
+    return (
+        subprocess.Popen(  # noqa: S603 # Only using known literal strings
+            TESSERACT_CMD, **subprocess_kwargs()
+        )
+        .communicate(input=png)[0]
+        .decode()
+    )
 
 
 # Environment specifics
@@ -183,5 +314,5 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.2.2" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+AUTOSPLIT_VERSION = "2.3" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

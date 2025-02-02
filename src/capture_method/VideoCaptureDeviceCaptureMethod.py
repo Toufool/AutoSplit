@@ -5,17 +5,16 @@ import cv2
 import cv2.Error
 import numpy as np
 from cv2.typing import MatLike
-from pygrabber.dshow_graph import FilterGraph
 from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
-from utils import ImageShape, is_valid_image
+from utils import ImageShape, get_input_device_resolution, is_valid_image
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = [127, 129, 128]
+OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = (127, 129, 128)
 
 
 def is_blank(image: MatLike):
@@ -27,7 +26,7 @@ def is_blank(image: MatLike):
             :: image.shape[ImageShape.Y] - 1,
             :: image.shape[ImageShape.X] - 1,
         ]
-        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL,
+        == OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL
     )
 
 
@@ -55,7 +54,8 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     if not (
                         cv2_error.code == cv2.Error.STS_ERROR
                         and (
-                            # Likely means the camera is occupied OR the camera index is out of range (like -1)
+                            # Likely means the camera is occupied
+                            # OR the camera index is out of range (like -1)
                             cv2_error.msg.endswith("in function 'cv::VideoCapture::grab'\n")
                             # Some capture cards we cannot use directly
                             # https://github.com/opencv/opencv/issues/23539
@@ -83,7 +83,7 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
                     "AutoSplit encountered an unhandled exception while "
                     + "trying to grab a frame and has stopped capture. "
                     + CREATE_NEW_ISSUE_MESSAGE,
-                ),
+                )
             )
 
     def __init__(self, autosplit: "AutoSplit"):
@@ -94,20 +94,19 @@ class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
 
         # The video capture device isn't accessible, don't bother with it.
         if not self.capture_device.isOpened():
+            self.close()
             return
 
-        filter_graph = FilterGraph()
-        filter_graph.add_video_input_device(autosplit.settings_dict["capture_device_id"])
-        width, height = filter_graph.get_input_device().get_current_format()
-        filter_graph.remove_filters()
-
         # Ensure we're using the right camera size. And not OpenCV's default 640x480
-        try:
-            self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        except cv2.error:
-            # Some cameras don't allow changing the resolution
-            pass
+        resolution = get_input_device_resolution(autosplit.settings_dict["capture_device_id"])
+        if resolution is not None:
+            try:
+                self.capture_device.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+                self.capture_device.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+            except cv2.error:
+                # Some cameras don't allow changing the resolution
+                pass
+
         self.capture_thread = Thread(target=self.__read_loop)
         self.capture_thread.start()
 
