@@ -90,10 +90,13 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.13"]
         include:
+          # I had some Qt Wayland issues on 3.12 for ubuntu-22.04 iirc. TODO: test it
           - os: ubuntu-22.04
-            python-version: "3.11" # I had some Qt Wayland issues on 3.12 for ubuntu-22.04 iirc. TODO: test it
+            python-version: "3.11"
+          - os: ubuntu-22.04
+            python-version: "3.12"
     steps:
       - name: Checkout ${{ github.repository }}/${{ github.ref }}
         uses: actions/checkout@v4
