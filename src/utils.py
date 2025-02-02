@@ -304,7 +304,6 @@ def run_tesseract(png: bytes):
 # Environment specifics
 WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
-"""AutoSplit Version number"""
 WGC_MIN_BUILD = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
 FROZEN = hasattr(sys, "frozen")
@@ -315,4 +314,5 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 # Shared strings
 # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
 AUTOSPLIT_VERSION = "2.3.0" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
+"""AutoSplit Version number"""
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY

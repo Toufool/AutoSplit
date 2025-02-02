@@ -14,7 +14,7 @@ on:
     paths:
       - "**.py"
       - "**.ui"
-      - ".github/workflows/lint-and-build.yml"
+      - ".github/workflows/lint-and-build.yaml"
       - "**/requirements.txt"
   pull_request:
     branches:
@@ -23,7 +23,7 @@ on:
       - "**.py"
       - "**.pyi"
       - "**.ui"
-      - ".github/workflows/lint-and-build.yml"
+      - ".github/workflows/lint-and-build.yaml"
       - "**/requirements*.txt"
 
 env:
