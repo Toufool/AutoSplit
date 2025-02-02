@@ -107,11 +107,15 @@ jobs:
         shell: pwsh
       - run: scripts/build.ps1
         shell: pwsh
+      - name: Add empty profile
+        run: echo "" > dist/settings.toml
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AutoSplit for ${{ matrix.os }} (Python ${{ matrix.python-version }})
-          path: dist/AutoSplit*
+          path: |
+            dist/AutoSplit*
+            dist/settings.toml
           if-no-files-found: error
       - name: Upload Build logs
         uses: actions/upload-artifact@v4
