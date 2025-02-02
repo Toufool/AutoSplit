@@ -354,17 +354,17 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noq
                 )
 
         # Debug screenshot selection checkboxes initial values and bindings
-        _screenshot_on_setting = self._autosplit_ref.settings_dict["screenshot_on"]
+        screenshot_on_setting = self._autosplit_ref.settings_dict["screenshot_on"]
         for command in _DEBUG_SCREENSHOT_COMMANDS:
             checkbox: QtWidgets.QCheckBox = getattr(self, f"screenshot_on_{command}_checkbox")
 
-            checkbox.setChecked(command in _screenshot_on_setting)
+            checkbox.setChecked(command in screenshot_on_setting)
 
             def add_or_del(checked: Literal[0, 2], command: CommandStr = command):
                 if checked:
-                    _screenshot_on_setting.append(command)
+                    screenshot_on_setting.append(command)
                 else:
-                    _screenshot_on_setting.remove(command)
+                    screenshot_on_setting.remove(command)
 
             checkbox.stateChanged.connect(add_or_del)
 

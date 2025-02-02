@@ -2,9 +2,6 @@ $originalDirectory = $pwd
 Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
 
-Write-Host "`nRunning formatting..."
-ruff format
-
 Write-Host "`nRunning Ruff ..."
 ruff check --fix
 $exitCodes += $LastExitCode
@@ -14,6 +11,9 @@ if ($LastExitCode -gt 0) {
 else {
   Write-Host "`Ruff passed" -ForegroundColor Green
 }
+
+Write-Host "`nRunning formatting..."
+ruff format
 
 $pyrightVersion = 'latest' # Change this if latest has issues
 Write-Host "`nRunning Pyright $pyrightVersion ..."

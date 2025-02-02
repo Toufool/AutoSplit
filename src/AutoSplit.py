@@ -658,7 +658,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         while self.split_image_number < number_of_split_images:
             # Check if we are not waiting for the split delay to send the key press
             if self.waiting_for_split_delay:
-                time_millis = int(round(time() * ONE_SECOND))
+                time_millis = round(time() * ONE_SECOND)
                 if time_millis < split_time:
                     QApplication.processEvents()
                     continue

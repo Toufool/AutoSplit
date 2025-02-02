@@ -12,7 +12,7 @@ psutil>=6.0.0  # Python 3.13 support
 # PyAutoGUI  # See install.ps1
 PyWinCtl>=0.0.42  # py.typed
 # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-PySide6-Essentials<6.8.1 # Has typing issue with QMessageBox.warning https://bugreports.qt.io/browse/PYSIDE-2939
+PySide6-Essentials>=6.8.2 # Fixed typing issue with QMessageBox.warning
 scipy>=1.14.1  # Python 3.13 support
 tomli-w>=1.1.0  # Typing fixes
 typing-extensions>=4.4.0  # @override decorator support
