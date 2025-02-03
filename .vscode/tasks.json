@@ -3,7 +3,7 @@
   "windows": {
     "options": {
       "shell": {
-        "executable": "powershell",
+        "executable": "pwsh",
         "args": [
           "-NoProfile",
           "-ExecutionPolicy",

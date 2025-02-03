@@ -60,6 +60,9 @@
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
   "yaml.format.printWidth": 100,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml"
+  },
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,

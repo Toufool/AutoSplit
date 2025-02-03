@@ -20,10 +20,12 @@ if ($IsWindows) {
   # These are used on Linux
   $arguments += @(
     # Installed by PyAutoGUI
-    '--exclude=pyscreeze'
+    '--exclude=pyscreeze',
     # Sometimes installed by other automation/image libraries.
     # Keep this exclusion even if nothing currently installs it, to stay future-proof.
-    '--exclude=PIL')
+    '--exclude=PIL',
+    # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
+    '--hidden-import=winrt.windows.foundation')
 }
 if ($IsLinux) {
   $arguments += @(
@@ -31,7 +33,6 @@ if ($IsLinux) {
     '--hidden-import pynput.keyboard._xorg',
     '--hidden-import pynput.mouse._xorg')
 }
-
 Start-Process -Wait -NoNewWindow pyinstaller -ArgumentList $arguments
 
 If ($IsLinux) {
