@@ -12,6 +12,7 @@ env/
 build/
 dist/
 *.prof
+*.egg-info
 # Generated
 **/gen/*.py
 !**/gen/*.pyi
@@ -23,5 +24,4 @@ dist/
 *.spec
 
 # Dev settings
-*.pkl
 settings.toml

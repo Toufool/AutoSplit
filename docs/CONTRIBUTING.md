@@ -16,6 +16,11 @@ If you like to use pre-commit hooks, `.pre-commit-config.yaml` is setup for such
 
 The CI will automatically fix and commit any autofixable issue your changes may have.
 
+## Visual Designer
+
+If you need to make visual changes, run `./scripts/designer.ps1` to quickly open the bundled Qt Designer.
+(Can also be downloaded externally as a non-python package)
+
 ## Pull Request Guidelines
 
 If your pull request is meant to address an open issue, please link it as part of your Pull Request description. If it would close said issue, please use a [closing keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword).
