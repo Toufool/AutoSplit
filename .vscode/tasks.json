@@ -39,12 +39,12 @@
     {
       "label": "Compile resources",
       "type": "shell",
-      "command": ".venv/Scripts/Activate.ps1; scripts/compile_resources.ps1"
+      "command": "scripts/compile_resources.ps1"
     },
     {
       "label": "Build AutoSplit",
       "type": "shell",
-      "command": ".venv/Scripts/Activate.ps1; scripts/build.ps1",
+      "command": "scripts/build.ps1",
       "group": {
         "kind": "build",
         "isDefault": true
