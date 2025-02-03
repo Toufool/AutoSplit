@@ -3,7 +3,7 @@ Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
 
 Write-Host "`nRunning Ruff check ..."
-ruff check --fix
+uv run ruff check --fix
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Ruff failed ($LastExitCode)" -ForegroundColor Red
@@ -13,18 +13,15 @@ else {
 }
 
 Write-Host "`nRunning Ruff format ..."
-ruff format
+uv run ruff format
 
-$pyrightVersion = 'latest' # Change this if latest has issues
+$pyrightVersion = $(uv run pyright --version).replace("pyright ", "")
 Write-Host "`nRunning Pyright $pyrightVersion ..."
 $Env:PYRIGHT_PYTHON_FORCE_VERSION = $pyrightVersion
-npx -y pyright@$pyrightVersion src/
+uv run pyright src/
 $exitCodes += $LastExitCode
 if ($LastExitCode -gt 0) {
   Write-Host "`Pyright failed ($LastExitCode)" -ForegroundColor Red
-  if ($pyrightVersion -eq 'latest') {
-    npx pyright@latest --version
-  }
 }
 else {
   Write-Host "`Pyright passed" -ForegroundColor Green

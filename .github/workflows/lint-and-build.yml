@@ -38,18 +38,10 @@ jobs:
   ruff:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-      - name: Get Ruff version
-        id: ruff_version
-        run: |
-          $Env:RUFF_VERSION=Select-String -path scripts/requirements-dev.txt -pattern 'ruff ?([=<>~]?= ?[\d\.]+)' | %{ $_.Matches[0].Groups[1].Value }
-          echo $Env:RUFF_VERSION
-          echo "RUFF_VERSION=$Env:RUFF_VERSION" >> $Env:GITHUB_OUTPUT
-        shell: pwsh
+      - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
         with:
-          version: ${{ steps.ruff_version.outputs.RUFF_VERSION }}
+          version-file: "pyproject.toml"
       - run: ruff format --check
   Pyright:
     runs-on: ${{ matrix.os }}
@@ -60,27 +52,20 @@ jobs:
         os: [windows-latest, ubuntu-22.04]
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - name: Set up uv for Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements*.txt"
       - run: scripts/install.ps1
         shell: pwsh
-      - name: Get pyright version
-        id: pyright_version
-        run: |
-          PYRIGHT_VERSION=$(grep '$pyrightVersion = ' 'scripts/lint.ps1' | cut -d "#" -f 1 | cut -d = -f 2 | tr -d " '")
-          echo pyright version: "${PYRIGHT_VERSION}"
-          echo PYRIGHT_VERSION="${PYRIGHT_VERSION}" >> "${GITHUB_OUTPUT}"
-        shell: bash
+      - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v2
         with:
-          version: ${{ steps.pyright_version.outputs.PYRIGHT_VERSION }}
+          version: PATH
           working-directory: src/
           python-version: ${{ matrix.python-version }}
   Build:
@@ -98,14 +83,26 @@ jobs:
           - os: ubuntu-22.04
             python-version: "3.12"
     steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
+      - name: Set up uv for Python ${{ matrix.python-version }}
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: ${{ matrix.python-version }}
+      # https://github.com/pyinstaller/pyinstaller/issues/9012
+      - name: Set up uv for Python ${{ matrix.python-version }}
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python for PyInstaller tk issue
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: "scripts/requirements.txt"
       - run: scripts/install.ps1
         shell: pwsh
       - run: scripts/build.ps1

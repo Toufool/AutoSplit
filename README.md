@@ -99,8 +99,8 @@ Not a developer? You can still help through the following methods:
   - <https://bugreports.qt.io/browse/QTBUG-114635>
   - <https://bugreports.qt.io/browse/PYSIDE-2541>
   - <https://bugreports.qt.io/browse/PYSIDE-2542>
-  - <https://github.com/pypa/pip/issues/9948>
-  - <https://github.com/pypa/pip/pull/10837>
+  - <https://github.com/pyinstaller/pyinstaller/issues/9012>
+  - <https://github.com/astral-sh/uv/issues/1495>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>

@@ -1,5 +1,3 @@
-$python = $IsWindows ? 'python' : 'python3'
-
 # Validating user groups on Linux
 If ($IsLinux) {
   $groups = groups
@@ -30,34 +28,20 @@ If ($IsLinux) {
 }
 
 # Installing Python dependencies
-$dev = If ($Env:GITHUB_JOB -eq 'Build') { '' } Else { '-dev' }
 If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
     # python3-tk for splash screen, libxcb-cursor-dev for QT_QPA_PLATFORM=xcb, the rest for PySide6
-    sudo apt-get install -y python3-pip python3-tk libxcb-cursor-dev libegl1 libxkbcommon0
-    # having issues with npm for pyright, maybe let users take care of it themselves? (pyright from pip)
+    sudo apt-get install -y python3-tk libxcb-cursor-dev libegl1 libxkbcommon0
   }
 }
-# Ensures installation tools are up to date. This also aliases pip to pip3 on MacOS.
-&"$python" -m pip install wheel pip setuptools --upgrade
-# Upgrading QT to 6.6.2 w/o first uninstalling shiboken6 can lead to issues
-# https://bugreports.qt.io/browse/PYSIDE-2616?focusedId=777285&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-777285
-&"$python" -m pip uninstall shiboken6 -y
-&"$python" -m pip install -r "$PSScriptRoot/requirements$dev.txt" --upgrade
-# These libraries install extra requirements we don't want
-# Open suggestion for support in requirements files: https://github.com/pypa/pip/issues/9948 & https://github.com/pypa/pip/pull/10837
-# PyAutoGUI: We only use it for hotkeys
-&"$python" -m pip install PyAutoGUI --no-deps --upgrade
 
-# Uninstall optional dependencies if PyAutoGUI was installed outside this script
-# PyScreeze -> pyscreenshot -> mss deps call SetProcessDpiAwareness, used to be installed on Windows
-# pygetwindow, pymsgbox, pytweening, MouseInfo are picked up by PyInstaller
-# (also --exclude from build script, but more consistent with unfrozen run)
-&"$python" -m pip uninstall pyscreenshot mss pygetwindow pymsgbox pytweening MouseInfo -y
-If ($IsWindows) { &"$python" -m pip uninstall PyScreeze -y }
+$prod = If ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } Else { }
+$lock = If ($Env:GITHUB_JOB) { '--locked' } Else { '--upgrade' }
+Write-Output "Installing Python dependencies with: uv sync $prod $lock"
+uv sync $prod $lock
 
 # Don't compile resources on the Build CI job as it'll do so in build script
-If ($dev) {
+If (-not $prod) {
   & "$PSScriptRoot/compile_resources.ps1"
 }
