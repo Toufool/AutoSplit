@@ -20,6 +20,5 @@ jobs:
   printenv:
     runs-on: windows-latest
     steps:
-      - name: Checkout ${{ github.repository }}/${{ github.ref }}
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - run: printenv

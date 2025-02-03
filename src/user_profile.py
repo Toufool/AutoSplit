@@ -1,7 +1,7 @@
 import os
 import tomllib
 from copy import deepcopy
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
 
 import tomli_w
 from PySide6 import QtCore, QtWidgets
@@ -45,10 +45,10 @@ class UserProfileDict(TypedDict):
     captured_window_title: str
     capture_region: Region
 
-    @override  # pyright: ignore
+    @override
     @deprecated("Use `copy.deepcopy` instead")
-    def copy():
-        return super().copy()
+    def copy() -> NoReturn:
+        return super().copy()  # pyright: ignore[reportGeneralTypeIssues]
 
 
 DEFAULT_PROFILE = UserProfileDict(

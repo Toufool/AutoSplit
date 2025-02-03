@@ -28,7 +28,9 @@
   "files.associations": {
     ".flake8": "properties",
     "*.qrc": "xml",
-    "*.ui": "xml"
+    "*.ui": "xml",
+    "**/.github/workflows/*.yml": "github-actions-workflow",
+    "*.yaml": "yaml",
   },
   "files.exclude": {
     "**/.git": true,
