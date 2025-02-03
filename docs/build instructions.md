@@ -11,11 +11,19 @@
 - You need to be part of the `input` and `tty` groups, as well as have permissions on a few files and folders.  
   If you are missing from either groups, the install script will take care of it on its first run, but you'll need to restart your session.  
 
+### WSL
+
+If using WSL to test on Windows, you might need to tell uv to point to a different environment than `.venv`. You can point to your system environment by running:
+
+```shell
+export UV_PROJECT_ENVIRONMENT=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('prefix'))")
+```
+
+Read more: <https://docs.astral.sh/uv/concepts/projects/config/#project-environment-path>
+
 ### All platforms
 
-- [Python](https://www.python.org/downloads/) 3.11+.
-- [Node](https://nodejs.org) is optional, but required for complete linting.
-  - Alternatively you can install the [pyright python wrapper](https://pypi.org/project/pyright/) which has a bit of an overhead delay.
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) is used to run all the scripts.
   - This is needed even for Windows, as the bundled PowerShell 5.1 is too old.
 - [VSCode](https://code.visualstudio.com/Download) is not required, but highly recommended.
@@ -24,15 +32,7 @@
 
 ## Install and Build steps
 
-- Create and activate a virtual environment:
-  - Windows / PowerShell:
-    - `python -m venv .venv`
-    - `& ./.venv/Scripts/Activate.ps1`
-  - Unix / Bash:
-    - `python3 -m venv .venv`
-    - `source .venv/bin/activate`
-- Run `./scripts/install.ps1` to install all dependencies.
-  - If you're having issues with the PySide generated code, you might want to first run `pip uninstall -y shiboken6 PySide6 PySide6-Essentials`
+- Run `./scripts/install.ps1` to create/update a virtual environment and install all dependencies.
 - Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
   - Or debug by pressing `F5` in VSCode.
   - The `--auto-controlled` flag is passed when AutoSplit is started by LiveSplit.
