@@ -7,6 +7,8 @@ $arguments = @(
   '--additional-hooks-dir=Pyinstaller/hooks',
   '--icon=res/icon.ico',
   '--splash=res/splash.png',
+  '--exclude=pkg_resources',
+  '--exclude=setuptools',
   # The install script should ensure that these are not installed
   # But we'll still include unused dependencies that would be picked up by PyInstaller
   # if requirements.txt was used directly to help ensure consistency when building locally.
