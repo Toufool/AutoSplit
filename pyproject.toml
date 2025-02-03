@@ -1,3 +1,80 @@
+[project]
+name = "AutoSplit"
+dynamic = ["version"]
+requires-python = " >=3.11"
+dependencies = [
+  # Dependencies:
+  "Levenshtein >=0.25",
+  "PyAutoGUI >=0.9.52",
+  "PyWinCtl >=0.0.42", # py.typed
+  "keyboard",
+  "numpy >=2.1", # Python 3.13 support
+  "opencv-python-headless >=4.10", # NumPy 2 support
+  "packaging >=20.0", # py.typed
+  "psutil >=6.0.0", # Python 3.13 support
+  # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
+  "PySide6-Essentials <6.8.1", # Has typing issue with QMessageBox.warning https://bugreports.qt.io/browse/PYSIDE-2939
+  # "PySide6-Essentials >=6.8.2", # Fixed typing issue with QMessageBox.warning
+  "scipy >=1.14.1", # Python 3.13 support
+  "tomli-w >=1.1.0", # Typing fixes
+  "typing-extensions >=4.4.0", # @override decorator support
+
+  #
+  # Build and compile resources
+  "pyinstaller >=6.10.0", # Python 3.13 support
+
+  #
+  # https://peps.python.org/pep-0508/#environment-markers
+  #
+  # Windows-only dependencies:
+  "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
+  "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
+  "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
+  "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.Capture >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=2.3.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.Imaging >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  #
+  # Linux-only dependencies
+  "PyScreeze >=1.0.0; sys_platform == 'linux'",
+  "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
+  "python-xlib >=0.33; sys_platform == 'linux'",
+]
+[dependency-groups]
+dev = [
+  #
+  # Visual Designer
+  "qt6-applications >=6.5.0",
+  #
+  # Linters & Formatters
+  "mypy >=1.14",
+  "pyright[nodejs] >=1.1",
+  "ruff >=0.8.5",
+  #
+  # Types (pins based on implementation version)
+  "scipy-stubs >=1.14.1.1",
+  "types-PyAutoGUI >=0.9.3",
+  "types-PyScreeze >=1.0.0; sys_platform == 'linux'",
+  "types-keyboard >=0.13.2",
+  "types-psutil >=6.0.0",
+  "types-pyinstaller >=6.10.0",
+  "types-python-xlib >=0.33; sys_platform == 'linux'",
+  "types-pywin32 >=307; sys_platform == 'win32'",
+]
+[tool.uv]
+dependency-metadata = [
+  # PyAutoGUI installs extra libraries we don't want. We only use it for hotkeys
+  # PyScreeze -> pyscreenshot -> mss deps calls SetProcessDpiAwareness on Windows
+  { name = "PyAutoGUI", requires-dist = [] },
+  { name = "types-PyAutoGUI", requires-dist = [] },
+]
+[tool.uv.sources]
+keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
+
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
