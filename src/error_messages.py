@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-def __exit_program():
+def __exit_program() -> NoReturn:
     # stop main thread (which is probably blocked reading input) via an interrupt signal
     os.kill(os.getpid(), signal.SIGINT)
     sys.exit(1)
@@ -93,12 +93,6 @@ def image_validity(image: str = "File"):
 
 def alignment_not_matched():
     set_text_message("No area in capture region matched reference image. Alignment failed.")
-
-
-def no_keyword_image(keyword: str):
-    set_text_message(
-        f"Your split image folder does not contain an image with the keyword {keyword!r}."
-    )
 
 
 def multiple_keyword_images(keyword: str):
@@ -235,11 +229,13 @@ def make_excepthook(autosplit: "AutoSplit"):
         if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
             sys.exit(0)
         # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture # noqa: E501
-        if exception_type is SystemError and str(exception) == (
-            "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
+        if (
+            exception_type is SystemError
+            and str(exception)
+            == "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):
             return
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        # Within LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
 
     return excepthook

@@ -93,8 +93,8 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
 def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
     """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
     # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
-    # but it requires contrib/extra modules and is inaccurate
-    # unless we precompute the size with a specific interpolation.
+    # but it requires contrib/extra modules
+    # and is inaccurate unless we precompute the size with a specific interpolation.
     # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
     #
     # pHash = cv2.img_hash.PHash.create()

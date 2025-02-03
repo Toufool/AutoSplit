@@ -11,17 +11,14 @@ from PySide6.QtCore import QBuffer, QIODeviceBase
 from PySide6.QtGui import QGuiApplication
 from typing_extensions import override
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 
 
-class QtCaptureMethod(CaptureMethodBase):
+class QtCaptureMethod(ThreadedLoopCaptureMethod):
     _render_full_content = False
 
     @override
-    def get_frame(self):
-        if not self.check_selected_region_exists():
-            return None
-
+    def _read_action(self):
         buffer = QBuffer()
         buffer.open(QIODeviceBase.OpenModeFlag.ReadWrite)
         winid = self._autosplit_ref.winId()

@@ -11,11 +11,11 @@ from typing_extensions import override
 from Xlib.display import Display
 from Xlib.error import BadWindow
 
-from capture_method.CaptureMethodBase import CaptureMethodBase
+from capture_method.CaptureMethodBase import ThreadedLoopCaptureMethod
 from utils import is_valid_image
 
 
-class ScrotCaptureMethod(CaptureMethodBase):
+class ScrotCaptureMethod(ThreadedLoopCaptureMethod):
     name = "Scrot"
     short_description = "very slow, may leave files"
     description = (
@@ -24,9 +24,7 @@ class ScrotCaptureMethod(CaptureMethodBase):
     )
 
     @override
-    def get_frame(self):
-        if not self.check_selected_region_exists():
-            return None
+    def _read_action(self):
         xdisplay = Display()
         root = xdisplay.screen().root
         try:

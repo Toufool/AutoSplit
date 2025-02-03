@@ -124,12 +124,6 @@ If this option is enabled, when the last split meets the threshold and splits, A
 If this option is disabled, when the last split meets the threshold and splits, AutoSplit will stop running comparisons.
 This option does not loop single, specific images. See the Custom Split Image Settings section above for this feature.
 
-#### Start also Resets
-
-If this option is enabled, a "Start" command (ie: from the Start Image) will also send the "Reset" command. This is useful if you want to automatically restart your timer using the Start Image. Since AutoSplit won't be running and won't be checking for the Reset Image.
-
-Having the reset image check be active at all time would be a better, more organic solution in the future. But that is dependent on migrating to an observer pattern (<https://github.com/Toufool/AutoSplit/issues/219>) and being able to reload all images.
-
 #### Enable auto Reset Image
 
 This option is mainly meant to be toggled with the `Toggle auto Reset Image` hotkey. You can enable it to temporarily disable the Reset Image if you make a mistake in your run that would cause the Reset Image to trigger. Like exiting back to the game's menu (aka Save&Quit).

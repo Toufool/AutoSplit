@@ -579,25 +579,6 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <string>Default Delay Time (ms):</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="start_also_resets_checkbox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>150</y>
-       <width>261</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Start also Resets</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <property name="tristate">
-      <bool>false</bool>
-     </property>
-    </widget>
     <zorder>custom_image_settings_info_label</zorder>
     <zorder>default_delay_time_spinbox</zorder>
     <zorder>enable_auto_reset_image_checkbox</zorder>
@@ -610,7 +591,6 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <zorder>default_pause_time_label</zorder>
     <zorder>default_delay_time_label</zorder>
     <zorder>readme_link_button</zorder>
-    <zorder>start_also_resets_checkbox</zorder>
    </widget>
    <widget class="QWidget" name="hotkeys_tab">
     <attribute name="title">
