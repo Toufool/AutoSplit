@@ -77,11 +77,10 @@ jobs:
         os: [windows-latest, ubuntu-22.04]
         python-version: ["3.13"]
         include:
-          # I had some Qt Wayland issues on 3.12 for ubuntu-22.04 iirc. TODO: test it
+          # I had some Qt Wayland issues on 3.12 for ubuntu-22.04
+          # This should be fixed with QT_QPA_PLATFORM=xcb, but keeping it until next major upgrade
           - os: ubuntu-22.04
             python-version: "3.11"
-          - os: ubuntu-22.04
-            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -109,10 +108,19 @@ jobs:
         shell: pwsh
       - name: Add empty profile
         run: echo "" > dist/settings.toml
+      - name: Extract AutoSplit version
+        id: autosplit_version
+        working-directory: src
+        run: |
+          $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
+          echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
+        shell: pwsh
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AutoSplit for ${{ matrix.os }} (Python ${{ matrix.python-version }})
+          name: >
+            AutoSplit v${{ steps.autosplit_version.outputs.AUTOSPLIT_VERSION }}
+            for ${{ matrix.os }} (Python ${{ matrix.python-version }})
           path: |
             dist/AutoSplit*
             dist/settings.toml
