@@ -203,14 +203,17 @@ def is_user_file(path: "StrPath"):
     """Returns False for hidden files, system files and folders."""
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
         return False
+    if sys.platform == "linux":
+        return True
     stat_result = os.stat(path)
     if sys.platform == "win32":
         return not (
             (stat_result.st_file_attributes & FILE_ATTRIBUTE_SYSTEM)
             | (stat_result.st_file_attributes & FILE_ATTRIBUTE_HIDDEN)
         )
-    # UF_HIDDEN is present on regular Windows files
-    return not stat_result.st_mode & UF_HIDDEN
+    if sys.platform == "darwin":
+        return not (stat_result.st_mode & UF_HIDDEN)
+    return True
 
 
 def __get_images_from_directory(directory: "StrPath"):
