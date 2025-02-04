@@ -58,8 +58,8 @@ def invalid_directory(directory: str):
     set_text_message(f"Folder {directory!r} is invalid or does not exist.")
 
 
-def split_image_directory_empty():
-    set_text_message("The Split Image Folder is empty.")
+def no_split_image():
+    set_text_message("Your Split Image Folder should contain at least one Split Image.")
 
 
 def image_type(image: str):
@@ -82,7 +82,7 @@ def split_hotkey():
 
 def pause_hotkey():
     set_text_message(
-        "Your split image folder contains an image filename with a pause flag {p}, "
+        "Your Split Image Folder contains an image filename with a pause flag {p}, "
         + "but no pause hotkey is set."
     )
 
@@ -97,7 +97,7 @@ def alignment_not_matched():
 
 def no_keyword_image(keyword: str):
     set_text_message(
-        f"Your split image folder does not contain an image with the keyword {keyword!r}."
+        f"Your Split Image Folder does not contain an image with the keyword {keyword!r}."
     )
 
 
@@ -106,7 +106,7 @@ def multiple_keyword_images(keyword: str):
 
 
 def reset_hotkey():
-    set_text_message("Your split image folder contains a Reset Image, but no reset hotkey is set.")
+    set_text_message("Your Split Image Folder contains a Reset Image, but no reset hotkey is set.")
 
 
 def old_version_settings_file():

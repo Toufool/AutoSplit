@@ -192,8 +192,6 @@ def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
         error = error_messages.split_image_directory
     elif not os.path.isdir(split_image_directory):
         error = partial(error_messages.invalid_directory, split_image_directory)
-    elif not os.listdir(split_image_directory):
-        error = error_messages.split_image_directory_empty
     elif not autosplit.capture_method.check_selected_region_exists():
         error = error_messages.region
     if error and show_error:
@@ -241,9 +239,12 @@ def parse_and_validate_images(autosplit: "AutoSplit"):
 
     error_message: Callable[[], object] | None = None
 
+    if not split_images:
+        error_message = error_messages.no_split_image
+
     # If there is no start hotkey set but a Start Image is present,
     # and is not auto controlled, throw an error.
-    if (
+    elif (
         start_image
         and not autosplit.settings_dict["split_hotkey"]
         and not autosplit.is_auto_controlled
