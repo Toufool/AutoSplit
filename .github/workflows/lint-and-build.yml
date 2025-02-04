@@ -92,7 +92,7 @@ jobs:
           cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
       # https://github.com/pyinstaller/pyinstaller/issues/9012
-      - name: Set up uv for Python ${{ matrix.python-version }}
+      - name: Set up uv
         if: ${{ matrix.os == 'ubuntu-22.04' }}
         uses: astral-sh/setup-uv@v5
         with:

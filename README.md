@@ -12,10 +12,7 @@ Easy to use image comparison based auto splitter for speedrunning on console or 
 This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
 
 <!-- markdownlint-disable-next-line MD033 -->
-<p align="center">
-  <!-- markdownlint-disable-next-line MD033 -->
-  <img src="/docs/2.2.2.gif" alt="Example" />
-</p>
+<p align="center"><img src="./docs/2.2.2.gif" alt="Example" /></p>
 
 ## Tutorial
 
@@ -94,6 +91,7 @@ Not a developer? You can still help through the following methods:
 - Donating (see link below)
 - [Upvoting 👍 feature requests](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3Aenhancement) you are interested in <!-- open enhancements sorted by reactions -->
 - Sharing AutoSplit with other speedrunners
+- Starring the repository <img style="vertical-align: sub" src="./docs/repo_star.png" alt="Example" />
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://bugreports.qt.io/browse/QTBUG-114635>
@@ -106,7 +104,6 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/opencv/opencv/issues/23906>
   - <https://github.com/pywinrt/pywinrt/issues/78>
   - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
-  - <https://github.com/hukkin/tomli-w/pull/46>
   - <https://github.com/uiri/toml/issues/270>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
