@@ -102,11 +102,11 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/opencv/opencv/issues/18305>
   - <https://github.com/opencv/opencv/issues/23906>
-  - <https://github.com/pywinrt/pywinrt/issues/78>
-  - <https://github.com/pyinstaller/pyinstaller-hooks-contrib/issues/807>
+  - <https://github.com/mypyc/mypyc/issues?q=sort%3Areactions-%2B1%20is%3Aissue%20is%3Aopen%20%20involves%3AAvasam%20>
   - <https://github.com/uiri/toml/issues/270>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
+  - <https://github.com/ronaldoussoren/altgraph/pull/25>
   - <https://github.com/python/mypy/issues/6700>
   - <https://github.com/python/mypy/issues/15146>
   - <https://github.com/python/mypy/issues/4409>
@@ -116,6 +116,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/boppreh/keyboard/issues/216>
   - <https://github.com/boppreh/keyboard/issues/161>
   - <https://github.com/asweigart/pyautogui/issues/663>
+  - <https://github.com/asweigart/pyautogui/pull/911>
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
 
 ## Credits
