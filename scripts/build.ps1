@@ -1,16 +1,19 @@
 & "$PSScriptRoot/compile_resources.ps1"
 
+$SupportsSplashScreen = [System.Convert]::ToBoolean($(uv run python -c "import _tkinter; print(hasattr(_tkinter, '__file__'))"))
+
 $arguments = @(
   "$PSScriptRoot/../src/AutoSplit.py",
   '--onefile',
   '--windowed',
   '--additional-hooks-dir=Pyinstaller/hooks',
   '--icon=res/icon.ico')
+if ($SupportsSplashScreen) {
+  # https://github.com/pyinstaller/pyinstaller/issues/9022
+  $arguments += @('--splash=res/splash.png')
+}
 if ($IsWindows) {
   $arguments += @(
-    # For now this is broken on Linux because we can't know if the target machine will support it or not
-    # https://github.com/pyinstaller/pyinstaller/issues/9022
-    '--splash=res/splash.png'
     # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
     '--hidden-import=winrt.windows.foundation')
 }
