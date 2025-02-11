@@ -12,19 +12,20 @@ on:
     branches:
       - main
     paths:
-      - "**.py"
-      - "**.ui"
       - ".github/workflows/lint-and-build.yml"
-      - "**/requirements.txt"
+      - "src/**"
+      - "scripts/**"
+      - "*.toml"
+      - "uv.lock"
   pull_request:
     branches:
       - main
     paths:
-      - "**.py"
-      - "**.pyi"
-      - "**.ui"
       - ".github/workflows/lint-and-build.yml"
-      - "**/requirements*.txt"
+      - "src/**"
+      - "scripts/**"
+      - "*.toml"
+      - "uv.lock"
 
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
