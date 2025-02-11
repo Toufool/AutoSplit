@@ -7,7 +7,7 @@ dependencies = [
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
-  "keyboard",
+  "keyboard", # [see tool.uv.sources]
   "numpy >=2.1", # Python 3.13 support
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
@@ -21,7 +21,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.10.0", # Python 3.13 support
+  "pyinstaller >=6.12.0", # Build fix for built-in _tkinter (splash screen)
 
   #
   # https://peps.python.org/pep-0508/#environment-markers
@@ -51,19 +51,19 @@ dev = [
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "mypy >=1.14",
+  "mypy[faster-cache] >=1.14",
   "pyright[nodejs] >=1.1",
   "ruff >=0.8.5",
   #
-  # Types (pins based on implementation version)
+  # Types
   "scipy-stubs >=1.14.1.1",
-  "types-PyAutoGUI >=0.9.3",
-  "types-PyScreeze >=1.0.0; sys_platform == 'linux'",
-  "types-keyboard >=0.13.2",
-  "types-psutil >=6.0.0",
-  "types-pyinstaller >=6.10.0",
-  "types-python-xlib >=0.33; sys_platform == 'linux'",
-  "types-pywin32 >=307; sys_platform == 'win32'",
+  "types-PyAutoGUI",
+  "types-PyScreeze; sys_platform == 'linux'",
+  "types-keyboard",
+  "types-psutil",
+  "types-pyinstaller",
+  "types-python-xlib; sys_platform == 'linux'",
+  "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
 ]
 [tool.uv]
 dependency-metadata = [
