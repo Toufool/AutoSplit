@@ -53,7 +53,7 @@ dev = [
   # Linters & Formatters
   "mypy[faster-cache] >=1.14",
   "pyright[nodejs] >=1.1",
-  "ruff >=0.8.5",
+  "ruff >=0.9.6",
   #
   # Types
   "scipy-stubs >=1.14.1.1",
