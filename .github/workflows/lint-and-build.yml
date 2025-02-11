@@ -84,12 +84,26 @@ jobs:
             python-version: "3.11"
     steps:
       - uses: actions/checkout@v4
+      # region https://github.com/pyinstaller/pyinstaller/issues/9012
       - name: Set up uv for Python ${{ matrix.python-version }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu') }}
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
+      - name: Set up uv
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python for PyInstaller tk issue #
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      # endregion
       - run: scripts/install.ps1
         shell: pwsh
       - run: scripts/build.ps1
