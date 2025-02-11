@@ -111,7 +111,7 @@ dev = [
     { name = "mypy", extras = ["faster-cache"], specifier = ">=1.14" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1" },
     { name = "qt6-applications", specifier = ">=6.5.0" },
-    { name = "ruff", specifier = ">=0.8.5" },
+    { name = "ruff", specifier = ">=0.9.6" },
     { name = "scipy-stubs", specifier = ">=1.14.1.1" },
     { name = "types-keyboard" },
     { name = "types-psutil" },
