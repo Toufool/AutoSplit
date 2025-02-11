@@ -12,19 +12,20 @@ on:
     branches:
       - main
     paths:
-      - "**.py"
-      - "**.ui"
       - ".github/workflows/lint-and-build.yml"
-      - "**/requirements.txt"
+      - "src/**"
+      - "scripts/**"
+      - "*.toml"
+      - "uv.lock"
   pull_request:
     branches:
       - main
     paths:
-      - "**.py"
-      - "**.pyi"
-      - "**.ui"
       - ".github/workflows/lint-and-build.yml"
-      - "**/requirements*.txt"
+      - "src/**"
+      - "scripts/**"
+      - "*.toml"
+      - "uv.lock"
 
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
@@ -35,7 +36,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ruff:
+  Ruff:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -83,25 +84,19 @@ jobs:
             python-version: "3.11"
     steps:
       - uses: actions/checkout@v4
+      # region https://github.com/pyinstaller/pyinstaller/issues/9012
       - name: Set up uv for Python ${{ matrix.python-version }}
-        if: ${{ matrix.os == 'windows-latest' }}
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-          python-version: ${{ matrix.python-version }}
-      # https://github.com/pyinstaller/pyinstaller/issues/9012
-      - name: Set up uv
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       - name: Set up Python for PyInstaller tk issue
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      # endregion
       - run: scripts/install.ps1
         shell: pwsh
       - run: scripts/build.ps1

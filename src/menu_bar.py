@@ -48,7 +48,7 @@ _DEBUG_SCREENSHOT_COMMANDS: tuple[CommandStr, ...] = (
 )
 
 
-class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):  # noqa: N801 # Private class
+class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
     """About Window."""
 
     def __init__(self):
@@ -65,7 +65,7 @@ def open_about(autosplit: "AutoSplit"):
         autosplit.AboutWidget = __AboutWidget()
 
 
-class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):  # noqa: N801 # Private class
+class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def __init__(
         self,
         latest_version: str,
@@ -119,7 +119,7 @@ def view_help():
     webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}/blob/main/docs/tutorial.md")
 
 
-class __CheckForUpdatesThread(QtCore.QThread):  # noqa: N801 # Private class
+class __CheckForUpdatesThread(QtCore.QThread):
     def __init__(self, autosplit: "AutoSplit", *, check_on_open: bool):
         super().__init__()
         self._autosplit_ref = autosplit
@@ -159,7 +159,7 @@ def check_for_updates(autosplit: "AutoSplit", *, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread.start()
 
 
-class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):  # noqa: N801 # Private class
+class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__()
         self.__video_capture_devices: list[CameraInfo] = []

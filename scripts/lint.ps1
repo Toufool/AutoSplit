@@ -15,7 +15,7 @@ else {
 Write-Host "`nRunning Ruff format ..."
 uv run ruff format
 
-$pyrightVersion = $(uv run pyright --version).replace("pyright ", "")
+$pyrightVersion = $(uv run pyright --version).replace('pyright ', '')
 Write-Host "`nRunning Pyright $pyrightVersion ..."
 $Env:PYRIGHT_PYTHON_FORCE_VERSION = $pyrightVersion
 uv run pyright src/
