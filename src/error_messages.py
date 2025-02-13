@@ -267,9 +267,13 @@ def tesseract_missing(ocr_split_file_path: str):
     )
 
 
+def ocr_missing_key(ocr_split_file_path: str, missing_key: str):
+    set_text_message(f"{ocr_split_file_path!r} is missing an entry for {missing_key!r}")
+
+
 def wrong_ocr_values(ocr_split_file_path: str):
     set_text_message(
         f"{ocr_split_file_path!r} has invalid values."
-        + "\nPlease make sure that `left < right` and `top < bottom`. "
+        + "\nPlease make sure that `left &lt; right` and `top &lt; bottom`. "
         + "Also check for negative values in the 'methods' or 'fps_limit' settings"
     )

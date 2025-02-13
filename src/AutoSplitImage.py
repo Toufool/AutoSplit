@@ -135,13 +135,17 @@ class AutoSplitImage:
 
         with open(path, mode="rb") as f:
             data = tomllib.load(f)
+        try:
+            self.texts = [text.lower().strip() for text in data["texts"]]
+            self.__rect = (data["left"], data["right"], data["top"], data["bottom"])
+        except KeyError as exception:
+            error_messages.ocr_missing_key(path, exception.args[0])
+            return
 
-        self.texts = [text.lower().strip() for text in data["texts"]]
-        self.__rect = (data["left"], data["right"], data["top"], data["bottom"])
         self.__ocr_comparison_methods = data.get("methods", [0])
         self.__fps_limit = data.get("fps_limit", 0)
 
-        if self.__validate_ocr():
+        if not self.__validate_ocr():
             error_messages.wrong_ocr_values(path)
             return
 
@@ -149,8 +153,8 @@ class AutoSplitImage:
         values = [*self.__rect, *self.__ocr_comparison_methods, self.__fps_limit]
         return (
             all(value >= 0 for value in values)  # Check for invalid negative values
-            and self.__rect[1] > self.__rect[0]
-            and self.__rect[3] > self.__rect[2]
+            and self.__rect[0] < self.__rect[1]
+            and self.__rect[2] < self.__rect[3]
         )
 
     def __read_image_bytes(self, path: str):
