@@ -301,6 +301,22 @@ def run_tesseract(png: bytes):
     )
 
 
+def list_processes():
+    if sys.platform == "win32":
+        return [
+            # The first row is the process name
+            line.split()[0]
+            for line in subprocess.check_output(  # noqa: S603 # Known input
+                "C:/Windows/System32/tasklist.exe", text=True
+            ).splitlines()[3:]  # Skip the table header lines
+            if line
+        ]
+
+    return subprocess.check_output(  # noqa: S603 # Known input
+        ("ps", "-eo", "comm"), text=True
+    ).splitlines()[1:]  # Skip the header line
+
+
 # Environment specifics
 WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000

@@ -11,7 +11,6 @@ dependencies = [
   "numpy >=2.1", # Python 3.13 support
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
-  "psutil >=6.0.0", # Python 3.13 support
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
   "PySide6-Essentials <6.8.1", # Has typing issue with QMessageBox.warning https://bugreports.qt.io/browse/PYSIDE-2939
   # "PySide6-Essentials >=6.8.2", # Fixed typing issue with QMessageBox.warning
@@ -60,7 +59,6 @@ dev = [
   "types-PyAutoGUI",
   "types-PyScreeze; sys_platform == 'linux'",
   "types-keyboard",
-  "types-psutil",
   "types-pyinstaller",
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",

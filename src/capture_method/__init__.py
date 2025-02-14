@@ -139,7 +139,9 @@ elif sys.platform == "linux":
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
     try:
         pyscreeze.screenshot()
-    except UnidentifiedImageError:
+    except (UnidentifiedImageError, pyscreeze.PyScreezeException):
+        # TODO: Should we show a specific warning for, or document:
+        # pyscreeze.PyScreezeException: Your computer uses the Wayland window system. Scrot works on the X11 window system but not Wayland. You must install gnome-screenshot by running `sudo apt install gnome-screenshot` # noqa: E501
         pass
     else:
         # TODO: Investigate solution for Slow Scrot:

@@ -23,6 +23,8 @@ if sys.platform == "win32":
 if sys.platform == "linux":
     # Fixes "undefined symbol: wl_proxy_marshal_flags": https://bugreports.qt.io/browse/QTBUG-114635
     os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
+    # Useful for debugging missing system packages
+    # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
 import signal
 from collections.abc import Callable
@@ -33,7 +35,6 @@ from typing import NoReturn
 
 import cv2
 from cv2.typing import MatLike
-from psutil import process_iter
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
@@ -82,6 +83,7 @@ from utils import (
     flatten,
     imwrite,
     is_valid_image,
+    list_processes,
     open_file,
 )
 
@@ -1061,18 +1063,12 @@ def seconds_remaining_text(seconds: float):
     return f"{seconds:.1f} second{'' if 0 < seconds <= 1 else 's'} remaining"
 
 
-# TODO: Add Linux support
 def is_already_open():
     # When running directly in Python, any AutoSplit process means it's already open
     # When bundled, we must ignore itself and the splash screen
     max_processes = 3 if FROZEN else 1
-    process_count = 0
-    for process in process_iter():
-        if process.name() == "AutoSplit.exe":
-            process_count += 1
-        if process_count >= max_processes:
-            return True
-    return False
+    process_name = "AutoSplit.exe" if sys.platform == "win32" else "AutoSplit.elf"
+    return list_processes().count(process_name) >= max_processes
 
 
 def main():
