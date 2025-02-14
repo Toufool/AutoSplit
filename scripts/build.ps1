@@ -1,6 +1,6 @@
 & "$PSScriptRoot/compile_resources.ps1"
 
-$SupportsSplashScreen = [System.Convert]::ToBoolean($(uv run python -c "import _tkinter; print(hasattr(_tkinter, '__file__'))"))
+$SupportsSplashScreen = [System.Convert]::ToBoolean($(uv run --active python -c "import _tkinter; print(hasattr(_tkinter, '__file__'))"))
 
 $arguments = @(
   "$PSScriptRoot/../src/AutoSplit.py",
@@ -18,7 +18,7 @@ if ($IsWindows) {
     '--hidden-import=winrt.windows.foundation')
 }
 
-Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', 'pyinstaller') + $arguments)
+Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
 
 If ($IsLinux) {
   Move-Item -Force $PSScriptRoot/../dist/AutoSplit $PSScriptRoot/../dist/AutoSplit.elf

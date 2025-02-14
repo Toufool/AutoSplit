@@ -3,11 +3,11 @@ Set-Location "$PSScriptRoot/.."
 
 New-Item ./src/gen -ItemType directory -Force | Out-Null
 New-Item ./src/gen/__init__.py -ItemType File -Force | Out-Null
-uv run pyside6-uic './res/about.ui' -o './src/gen/about.py'
-uv run pyside6-uic './res/design.ui' -o './src/gen/design.py'
-uv run pyside6-uic './res/settings.ui' -o './src/gen/settings.py'
-uv run pyside6-uic './res/update_checker.ui' -o './src/gen/update_checker.py'
-uv run pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
+uv run --active pyside6-uic './res/about.ui' -o './src/gen/about.py'
+uv run --active pyside6-uic './res/design.ui' -o './src/gen/design.py'
+uv run --active pyside6-uic './res/settings.ui' -o './src/gen/settings.py'
+uv run --active pyside6-uic './res/update_checker.ui' -o './src/gen/update_checker.py'
+uv run --active pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 $files = Get-ChildItem ./src/gen/ *.py
 foreach ($file in $files) {
     (Get-Content $file.PSPath) |

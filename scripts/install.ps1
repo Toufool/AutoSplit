@@ -32,14 +32,14 @@ If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
     # python3-tk for splash screen, libxcb-cursor-dev for QT_QPA_PLATFORM=xcb, the rest for PySide6
-    sudo apt-get install -y python3-tk libxcb-cursor-dev libegl1 libxkbcommon0
+    sudo apt-get install -y python3-tk libxcb-cursor-dev libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
   }
 }
 
 $prod = If ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } Else { }
 $lock = If ($Env:GITHUB_JOB) { '--locked' } Else { '--upgrade' }
 Write-Output "Installing Python dependencies with: uv sync $prod $lock"
-uv sync $prod $lock
+uv sync --active $prod $lock
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 If (-not $prod) {
