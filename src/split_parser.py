@@ -221,15 +221,18 @@ def __get_images_from_directory(directory: "StrPath"):
     Returns a list of AutoSplitImage parsed from a directory.
     Hidden files, system files and folders are silently ignored.
     """
-    file_paths = (
+    file_paths = [
         os.path.join(directory, filename)  # format: skip
         for filename in os.listdir(directory)
-    )
-    filtered_image_paths = (
+    ]
+    filtered_image_paths = [
         image_path  # format: skip
         for image_path in file_paths
         if is_user_file(image_path)
-    )
+    ]
+    # On Linux, os.listdir doesn't list files in alphanumerical order.
+    # On Windows, os.listdir is already alphanumerical, but let's ensure consistency across OSes.
+    filtered_image_paths.sort()
     return [AutoSplitImage(image_path) for image_path in filtered_image_paths]
 
 
