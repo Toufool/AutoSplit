@@ -7,6 +7,9 @@
 - Supported image file types: PNG, JPEG, bitmaps, WebP, and [more](https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread).
 - Images can be any size and ratio.
 - Images are matched in alphanumerical order.
+  - Note that this can lead to discrepancies between the order of file as seen in your file browser and the order of Split Images in AutoSplit.
+  - Windows Explorer displays files in [Natural sort order](https://en.wikipedia.org/wiki/Natural_sort_order).
+  - On UNIX-based systems, it depends on your file browser.
 - Recommended filenaming convention: `001_SplitName.png, 002_SplitName.png, 003_SplitName.png`...
 - Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
 - To create split images, it is recommended to use AutoSplit's Take Screenshot button for accuracy. However, images can be created using any method including Print Screen and [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot).
