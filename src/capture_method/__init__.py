@@ -150,11 +150,23 @@ elif sys.platform == "linux":
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 
 
+
+
+
+
+
+
+
+
 def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: "AutoSplit"):
     """
     Seamlessly change the current capture method,
     initialize the new one with transferred subscriptions
     and update UI as needed.
+
+
+
+    
     """
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
