@@ -43,7 +43,10 @@ jobs:
       - uses: astral-sh/ruff-action@v3
         with:
           version-file: "pyproject.toml"
-      - run: ruff format --check
+      - run: ruff format --check --diff
+        # Show formatting issues even if the "check" step failed
+        if: ${{ !cancelled() }}
+
   Pyright:
     runs-on: ${{ matrix.os }}
     strategy:
