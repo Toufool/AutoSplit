@@ -306,7 +306,7 @@ def list_processes():
         return [
             # The first row is the process name
             line.split()[0]
-            for line in subprocess.check_output(  # Known input
+            for line in subprocess.check_output(
                 "C:/Windows/System32/tasklist.exe", text=True
             ).splitlines()[3:]  # Skip the table header lines
             if line
