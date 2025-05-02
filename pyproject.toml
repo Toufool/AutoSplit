@@ -31,7 +31,7 @@ dependencies = [
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
   "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.Capture >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.Capture >=3.0.0; sys_platform == 'win32'", # Type hints are no longer typing.Optional by default.
   "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
