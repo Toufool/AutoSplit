@@ -155,10 +155,6 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
     Seamlessly change the current capture method,
     initialize the new one with transferred subscriptions
     and update UI as needed.
-
-
-
-
     """
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
