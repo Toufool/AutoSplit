@@ -31,7 +31,7 @@ dependencies = [
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
   "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.Capture >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.Capture >=3.0.0; sys_platform == 'win32'", # Type hints are no longer typing.Optional by default.
   "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
@@ -51,8 +51,8 @@ dev = [
   #
   # Linters & Formatters
   "mypy[faster-cache] >=1.14",
-  "pyright[nodejs] >=1.1",
-  "ruff >=0.9.6",
+  "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
+  "ruff >=0.11.8",
   #
   # Types
   "scipy-stubs >=1.14.1.1",
@@ -110,6 +110,8 @@ reportUnusedCallResult = "none"
 
 # Exclude from scanning when running pyright
 exclude = [
+  ".git/", # Avoid accidentally scanning branch names ending in .py
+  ".venv*/",
   ".venv/",
   # Auto generated, fails some strict pyright checks
   "build/",

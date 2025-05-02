@@ -293,7 +293,7 @@ def run_tesseract(png: bytes):
     @return: The recognized output string from tesseract.
     """
     return (
-        subprocess.Popen(  # noqa: S603 # Only using known literal strings
+        subprocess.Popen(  # noqa: S603 # Only using known literal strings or shutil.which result
             TESSERACT_CMD, **subprocess_kwargs()
         )
         .communicate(input=png)[0]
@@ -306,7 +306,7 @@ def list_processes():
         return [
             # The first row is the process name
             line.split()[0]
-            for line in subprocess.check_output(  # noqa: S603 # Known input
+            for line in subprocess.check_output(
                 "C:/Windows/System32/tasklist.exe", text=True
             ).splitlines()[3:]  # Skip the table header lines
             if line

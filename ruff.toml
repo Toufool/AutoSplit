@@ -6,10 +6,9 @@
 # Modifications to this file that are not project-specific should also be done upstream.
 
 # https://docs.astral.sh/ruff/configuration/
-target-version = "py311" # Change this to the oldest supported version by your application
 line-length = 100
 preview = true
-required-version = ">=0.9.0" # Removed ISC compatibility warning
+required-version = ">=0.11.0" # tool.ruff.target-version is infered from project.requires-python
 
 [format]
 docstring-code-format = true
@@ -24,7 +23,6 @@ ignore = [
   "D1", # pydocstyle Missing doctring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
-  "EXE", # flake8-executable
   # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
   # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
   "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call

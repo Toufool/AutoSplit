@@ -1,3 +1,5 @@
+#! /usr/bin/pwsh
+
 # Validating user groups on Linux
 If ($IsLinux) {
   $groups = groups
