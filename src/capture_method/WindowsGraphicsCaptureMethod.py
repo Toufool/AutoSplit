@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 WGC_NO_BORDER_MIN_BUILD = 20348
 
 
-async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface | None):
+async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):
     return await SoftwareBitmap.create_copy_from_surface_async(surface)
 
 
