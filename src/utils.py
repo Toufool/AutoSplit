@@ -41,7 +41,9 @@ else:
 
 if TYPE_CHECKING:
     # Source does not exist, keep this under TYPE_CHECKING
-    from _win32typing import PyCDC  # pyright: ignore[reportPrivateImportUsage, reportMissingModuleSource]
+    from _win32typing import (
+        PyCDC,  # pyright: ignore[reportPrivateImportUsage, reportMissingModuleSource]
+    )
 
 T = TypeVar("T")
 
