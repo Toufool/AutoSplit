@@ -6,7 +6,6 @@
 # Modifications to this file that are not project-specific should also be done upstream.
 
 # https://docs.astral.sh/ruff/configuration/
-target-version = "py311" # Change this to the oldest supported version by your application
 line-length = 100
 preview = true
 required-version = ">=0.9.0" # Removed ISC compatibility warning

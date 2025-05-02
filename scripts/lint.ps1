@@ -1,3 +1,5 @@
+#! /usr/bin/pwsh
+
 $originalDirectory = $pwd
 Set-Location "$PSScriptRoot/.."
 $exitCodes = 0
