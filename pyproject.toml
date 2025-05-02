@@ -110,6 +110,8 @@ reportUnusedCallResult = "none"
 
 # Exclude from scanning when running pyright
 exclude = [
+  ".git/", # Avoid accidentally scanning branch names ending in .py
+  ".venv*/",
   ".venv/",
   # Auto generated, fails some strict pyright checks
   "build/",
