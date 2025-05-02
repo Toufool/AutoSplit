@@ -23,7 +23,6 @@ ignore = [
   "D1", # pydocstyle Missing doctring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
-  "EXE", # flake8-executable
   # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
   # Also false-positive with positional-only arguments: https://github.com/astral-sh/ruff/issues/3247
   "FBT003", # flake8-boolean-trap: boolean-positional-value-in-call
