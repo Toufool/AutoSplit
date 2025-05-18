@@ -228,7 +228,7 @@ def load_check_for_updates_on_open(autosplit: "AutoSplit"):
     Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
     These are only global settings values. They are not *toml settings values.
     """
-    # Type not infered by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
+    # Type not inferred by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
     value = cast(
         bool,
         QtCore.QSettings(

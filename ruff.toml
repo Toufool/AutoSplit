@@ -8,7 +8,7 @@
 # https://docs.astral.sh/ruff/configuration/
 line-length = 100
 preview = true
-required-version = ">=0.11.0" # tool.ruff.target-version is infered from project.requires-python
+required-version = ">=0.11.0" # tool.ruff.target-version is inferred from project.requires-python
 
 [format]
 docstring-code-format = true
@@ -20,7 +20,7 @@ ignore = [
   ###
   # Not needed or wanted
   ###
-  "D1", # pydocstyle Missing doctring
+  "D1", # pydocstyle Missing docstring
   "D401", # pydocstyle: non-imperative-mood
   "EM", # flake8-errmsg
   # This is often something we can't control: https://github.com/astral-sh/ruff/issues/9497
@@ -47,6 +47,15 @@ ignore = [
   "D212", # pydocstyle: multi-line-summary-first-line
   # Allow differentiating between broken (FIXME) and to be done/added/completed (TODO)
   "TD001", # flake8-todos: invalid-todo-tag
+  # Often just leads to redundant more verbose code when needing an actual str
+  "PTH208", # Use `pathlib.Path.iterdir()` instead.
+  # Typeshed doesn't want complex or non-literal defaults for maintenance and testing reasons.
+  # This doesn't affect us, let's have more complete stubs.
+  # This doesn't affect us, let's have more complete stubs.
+  "PYI011", # typed-argument-default-in-stub
+  "PYI011", # typed-argument-default-in-stub
+  "PYI014", # argument-default-in-stub
+  "PYI053", # string-or-bytes-too-long
 
   ###
   # These should be warnings (https://github.com/astral-sh/ruff/issues/1256 & https://github.com/astral-sh/ruff/issues/1774)
@@ -57,6 +66,8 @@ ignore = [
 
   # False-positives
   "TC004", # https://github.com/astral-sh/ruff/issues/3821
+  # Too many magic number "2" that are preferable inline. https://github.com/astral-sh/ruff/issues/10009
+  "PLR2004", # magic-value-comparison
 
   ###
   # Conflict with formatter (you can remove this section if you don't use Ruff as a formatter)
@@ -107,8 +118,6 @@ allow-multiline = false
 [lint.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
-# This should be automatically detected in src layout, but somehow pre-commit messes it up
-known-first-party = ["gen"]
 
 # https://docs.astral.sh/ruff/settings/#mccabe
 [lint.mccabe]
@@ -149,8 +158,8 @@ max-branches = 15
 "cv2.imread".msg = """\
 it doesn't support special characters. \
 Use `cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)` instead.
-https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
+https://github.com/opencv/opencv/issues/18305#issuecomment-2847972863"""
 "cv2.imwrite".msg = """\
 it doesn't support special characters. \
 Use `cv2.imencode(os.path.splitext(filename)[1], img)[1].tofile(filename)` instead.
-https://github.com/opencv/opencv/issues/4292#issuecomment-2266019697"""
+https://github.com/opencv/opencv/issues/18305#issuecomment-2847972863"""
