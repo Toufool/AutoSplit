@@ -51,8 +51,6 @@ ignore = [
   "PTH208", # Use `pathlib.Path.iterdir()` instead.
   # Typeshed doesn't want complex or non-literal defaults for maintenance and testing reasons.
   # This doesn't affect us, let's have more complete stubs.
-  # This doesn't affect us, let's have more complete stubs.
-  "PYI011", # typed-argument-default-in-stub
   "PYI011", # typed-argument-default-in-stub
   "PYI014", # argument-default-in-stub
   "PYI053", # string-or-bytes-too-long
@@ -88,9 +86,6 @@ ignore = [
   # Specific to this project
   ###
   "D205", # Not all docstrings have a short description + description
-  # TODO: Consider for more complete doc
-  "DOC201", # docstring-extraneous-returns
-  "DOC501", # docstring-missing-exception
   # We have some Pascal case module names
   "N999", # pep8-naming: Invalid module name
   # Print are used as debug logs
