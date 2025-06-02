@@ -6,7 +6,7 @@ dependencies = [
   # Dependencies:
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
-  "PyWinCtl >=0.0.42", # py.typed
+  # "PyWinCtl >=0.0.42", # py.typed
   "keyboard", # [see tool.uv.sources]
   "numpy >=2.1", # Python 3.13 support
   "opencv-python-headless >=4.10", # NumPy 2 support
@@ -14,7 +14,7 @@ dependencies = [
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
   "PySide6-Essentials <6.8.1", # Has typing issue with QMessageBox.warning https://bugreports.qt.io/browse/PYSIDE-2939
   # "PySide6-Essentials >=6.8.2", # Fixed typing issue with QMessageBox.warning
-  "scipy >=1.14.1", # Python 3.13 support
+  # "scipy >=1.14.1", # Python 3.13 support
   "tomli-w >=1.1.0", # Typing fixes
   "typing-extensions >=4.4.0", # @override decorator support
 
@@ -27,16 +27,17 @@ dependencies = [
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
-  "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
+  "pywin32 >=307; sys_platform == 'win32' and python_version < '3.14'", # Python 3.13 support
+  # "pywin32 @ file://scripts/pywin32-310.1-cp314-cp314-win_amd64.whl; sys_platform == 'win32' and python_version == '3.14'", # Python 3.14 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
-  "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.Capture >=3.0.0; sys_platform == 'win32'", # Type hints are no longer typing.Optional by default.
-  "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
-  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=2.3.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Imaging >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Graphics.Capture >=3.0.0; sys_platform == 'win32'", # Type hints are no longer typing.Optional by default.
+  # "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  # "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=2.3.0; sys_platform == 'win32'",
+  # "winrt-Windows.Graphics.Imaging >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
@@ -50,7 +51,8 @@ dev = [
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "mypy[faster-cache] >=1.14",
+  "mypy >=1.14; python_version == '3.14'",
+  "mypy[faster-cache] >=1.14; python_version < '3.14'",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   "ruff >=0.11.8",
   #
@@ -71,6 +73,7 @@ dependency-metadata = [
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
 [tool.uv.sources]
+pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
 keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file

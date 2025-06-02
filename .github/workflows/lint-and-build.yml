@@ -54,7 +54,7 @@ jobs:
       # Pyright is version and platform sensible
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -79,7 +79,7 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
         include:
           # I had some Qt Wayland issues on 3.12 for ubuntu-22.04
           # This should be fixed with QT_QPA_PLATFORM=xcb, but keeping it until next major upgrade
@@ -98,6 +98,7 @@ jobs:
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
         with:
+          allow-prereleases: true
           python-version: ${{ matrix.python-version }}
       # endregion
       - run: scripts/install.ps1
