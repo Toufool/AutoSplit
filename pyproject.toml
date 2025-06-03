@@ -1,12 +1,12 @@
 [project]
 name = "AutoSplit"
-dynamic = ["version"]
-requires-python = " >=3.11"
+version = "0"
+requires-python = ">=3.11"
 dependencies = [
   # Dependencies:
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
-  # "PyWinCtl >=0.0.42", # py.typed
+  "PyWinCtl >=0.0.42", # py.typed
   "keyboard", # [see tool.uv.sources]
   "numpy >=2.1", # Python 3.13 support
   "opencv-python-headless >=4.10", # NumPy 2 support
@@ -27,8 +27,7 @@ dependencies = [
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
-  "pywin32 >=307; sys_platform == 'win32' and python_version < '3.14'", # Python 3.13 support
-  # "pywin32 @ file://scripts/pywin32-310.1-cp314-cp314-win_amd64.whl; sys_platform == 'win32' and python_version == '3.14'", # Python 3.14 support
+  "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
   # "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
   # "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
