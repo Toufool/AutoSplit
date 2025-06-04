@@ -40,6 +40,7 @@ dependencies = [
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
+  "dprint-py>=0.50.0.0",
   "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]

@@ -1,0 +1,28 @@
+# https://autofix.ci/setup#getting-started
+name: autofix.ci # needed to securely identify the workflow
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/ruff-action@v3
+        with:
+          version-file: "pyproject.toml"
+          args: "check --fix"
+      - run: ruff format
+        # Format even if the the previous step failed
+        if: ${{ !cancelled() }}
+
+      - run: npx dprint fmt
+        # Format even if the the previous step failed
+        if: ${{ !cancelled() }}
+
+      - uses: autofix-ci/action@551dded8c6cc8a1054039c8bc0b8b48c51dfc6ef
