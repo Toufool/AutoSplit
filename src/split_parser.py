@@ -36,7 +36,7 @@ def __value_from_filename(
     delimiters: str,
     default_value: T,
 ) -> T:
-    if len(delimiters) != 2:  # noqa: PLR2004
+    if len(delimiters) != 2:
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:
         string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1])[0]
