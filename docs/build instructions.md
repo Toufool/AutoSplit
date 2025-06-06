@@ -21,6 +21,15 @@ export UV_PROJECT_ENVIRONMENT=$(python3 -c "import sysconfig; print(sysconfig.ge
 
 Read more: <https://docs.astral.sh/uv/concepts/projects/config/#project-environment-path>
 
+Or you can create a separate environment then activate it:
+
+```shell
+uv venv .venv-linux
+source .venv-linux/bin/activate
+```
+
+All scripts pass the `--active` flag to make sure the active environment is used.
+
 ### All platforms
 
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)

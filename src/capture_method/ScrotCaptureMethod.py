@@ -3,11 +3,12 @@ import sys
 if sys.platform != "linux":
     raise OSError
 
+from typing import override
+
 import cv2
 import numpy as np
 import pyscreeze
 from pywinctl import getWindowsWithTitle
-from typing_extensions import override
 from Xlib.display import Display
 from Xlib.error import BadWindow
 

@@ -4,9 +4,7 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from enum import EnumMeta, StrEnum, auto, unique
 from itertools import starmap
-from typing import TYPE_CHECKING, Never, TypedDict, cast
-
-from typing_extensions import override
+from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
