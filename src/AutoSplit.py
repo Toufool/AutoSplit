@@ -35,6 +35,7 @@ from typing import NoReturn, override
 
 import cv2
 from cv2.typing import MatLike
+from gen import about, design, settings, update_checker
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
@@ -44,7 +45,6 @@ import user_profile
 from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
-from gen import about, design, settings, update_checker
 from hotkeys import (
     HOTKEYS,
     KEYBOARD_GROUPS_ISSUE,
