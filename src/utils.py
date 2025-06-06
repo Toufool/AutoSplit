@@ -25,9 +25,9 @@ if sys.platform == "win32":
     import win32ui
     from pygrabber.dshow_graph import FilterGraph
 
-    STARTUPINFO = subprocess.STARTUPINFO
+    type STARTUPINFO = subprocess.STARTUPINFO
 else:
-    STARTUPINFO: None = None
+    type STARTUPINFO = None
 
 if sys.platform == "linux":
     import fcntl
@@ -263,7 +263,7 @@ def subprocess_kwargs():
     if sys.platform == "win32":
         # On Windows, subprocess calls will pop up a command window by default when run from
         # Pyinstaller with the ``--noconsole`` option. Avoid this distraction.
-        startupinfo = STARTUPINFO()
+        startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         # https://github.com/madmaze/pytesseract/blob/88839f03590578a10e806a5244704437c9d477da/pytesseract/pytesseract.py#L236
         startupinfo.wShowWindow = subprocess.SW_HIDE
