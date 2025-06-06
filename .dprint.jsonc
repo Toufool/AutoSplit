@@ -1,0 +1,4 @@
+{
+  // https://dprint.dev/config/#extending-a-different-configuration-file
+  "extends": "https://raw.githubusercontent.com/BesLogic/shared-configs/main/.dprint.jsonc",
+}

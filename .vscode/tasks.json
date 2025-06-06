@@ -8,10 +8,10 @@
           "-NoProfile",
           "-ExecutionPolicy",
           "Bypass",
-          "-Command"
-        ]
-      }
-    }
+          "-Command",
+        ],
+      },
+    },
   },
   "linux": {
     "options": {
@@ -19,10 +19,10 @@
         "executable": "pwsh",
         "args": [
           "-NoProfile",
-          "-Command"
-        ]
-      }
-    }
+          "-Command",
+        ],
+      },
+    },
   },
   "osx": {
     "options": {
@@ -30,16 +30,16 @@
         "executable": "pwsh",
         "args": [
           "-NoProfile",
-          "-Command"
-        ]
-      }
-    }
+          "-Command",
+        ],
+      },
+    },
   },
   "tasks": [
     {
       "label": "Compile resources",
       "type": "shell",
-      "command": "scripts/compile_resources.ps1"
+      "command": "scripts/compile_resources.ps1",
     },
     {
       "label": "Build AutoSplit",
@@ -47,8 +47,8 @@
       "command": "scripts/build.ps1",
       "group": {
         "kind": "build",
-        "isDefault": true
-      }
-    }
-  ]
+        "isDefault": true,
+      },
+    },
+  ],
 }

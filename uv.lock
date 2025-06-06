@@ -33,6 +33,7 @@ name = "autosplit"
 version = "0"
 source = { virtual = "." }
 dependencies = [
+    { name = "dprint-py", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "levenshtein", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -77,6 +78,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "keyboard", git = "https://github.com/boppreh/keyboard.git" },
     { name = "levenshtein", specifier = ">=0.25" },
     { name = "numpy", specifier = ">=2.1" },
@@ -126,6 +128,16 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/07/7e/34f4941ab5ec7d1d4c496282b1944a5119fc52641c5770a78e6fa0ca32ec/comtypes-1.4.10.zip", hash = "sha256:b92372e76299836177b41aeda784225e18c5071c6bacdab88a7433224a4dc912", size = 267293, upload-time = "2025-02-09T23:50:54.176Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4c/44/72009bb0a0d8286f6408c9cb70552350e21e9c280bfa1ef30784b30dfc0f/comtypes-1.4.10-py3-none-any.whl", hash = "sha256:e078555721ee7ab40648a3363697d420b845b323e5944b55846e96aff97d2534", size = 241481, upload-time = "2025-02-09T23:50:52.125Z" },
+]
+
+[[package]]
+name = "dprint-py"
+version = "0.50.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/be/d4aef796fad5e4a34a621905c678d7fe0124795c1c8a65c96e71137c81b5/dprint_py-0.50.0.0-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:1dfe5b4d73aeadc10116f37341c4eac4651c85254a68e8693eb83e6928ae80de", size = 23866263, upload-time = "2025-05-19T01:26:50.035Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/2e/a82a2de42d057a0e9713a497fdefe9729ce5d79d523a826c4a150e68ecc4/dprint_py-0.50.0.0-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:19cd159462841442f6d7431e36d29911f6fb63702163ad5fb5bb438ad04f6863", size = 24582934, upload-time = "2025-05-19T01:26:54.347Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/3c/57941c239eef3fa74ff44fb1452e56b04cb08ae3af39669b8b7178ff80ad/dprint_py-0.50.0.0-py3-none-win_amd64.whl", hash = "sha256:90de7885d3c9d6b13949ed609f2f2256b4ea74bf1355adcdfda0c30f7e3f9d47", size = 20785813, upload-time = "2025-05-19T01:26:57.162Z" },
 ]
 
 [[package]]
