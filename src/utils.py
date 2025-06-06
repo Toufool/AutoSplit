@@ -28,7 +28,7 @@ if sys.platform == "win32":
 
     STARTUPINFO = subprocess.STARTUPINFO
 else:
-    STARTUPINFO = None
+    STARTUPINFO: None = None
 
 if sys.platform == "linux":
     import fcntl
