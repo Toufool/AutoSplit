@@ -11,7 +11,7 @@
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
       "console": "integratedTerminal",
-      "justMyCode": false
+      "justMyCode": false,
     },
     {
       "name": "Python: AutoSplit",
@@ -20,7 +20,7 @@
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
     },
     {
       "name": "Python: AutoSplit --auto-controlled",
@@ -29,10 +29,10 @@
       "preLaunchTask": "Compile resources",
       "program": "src/AutoSplit.py",
       "args": [
-        "--auto-controlled"
+        "--auto-controlled",
       ],
       "console": "integratedTerminal",
-      "justMyCode": true
-    }
-  ]
+      "justMyCode": true,
+    },
+  ],
 }
