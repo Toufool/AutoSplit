@@ -312,8 +312,9 @@ def list_processes():
             if line
         ]
 
-    return subprocess.check_output(  # noqa: S603 # Known input
-        ("ps", "-eo", "comm"), text=True
+    return subprocess.check_output(
+        ("ps", "-eo", "comm"),
+        text=True,
     ).splitlines()[1:]  # Skip the header line
 
 
