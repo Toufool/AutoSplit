@@ -2,7 +2,7 @@ import json
 import sys
 import webbrowser
 from functools import partial
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, cast, override
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -11,7 +11,6 @@ from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QPalette
 from PySide6.QtWidgets import QFileDialog
-from typing_extensions import override
 
 import error_messages
 import user_profile

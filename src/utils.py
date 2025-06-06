@@ -9,7 +9,7 @@ from functools import partial
 from itertools import chain
 from platform import version
 from threading import Thread
-from typing import TYPE_CHECKING, Any, TypeAlias, TypedDict, TypeGuard, TypeVar
+from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 
 import cv2
 import numpy as np
@@ -26,9 +26,9 @@ if sys.platform == "win32":
     import win32ui
     from pygrabber.dshow_graph import FilterGraph
 
-    STARTUPINFO: TypeAlias = subprocess.STARTUPINFO
+    STARTUPINFO = subprocess.STARTUPINFO
 else:
-    STARTUPINFO: TypeAlias = None
+    STARTUPINFO = None
 
 if sys.platform == "linux":
     import fcntl
@@ -99,7 +99,7 @@ def is_digit(value: str | int | None):
     if value is None:
         return False
     try:
-        return 0 <= int(value) <= 9  # noqa: PLR2004
+        return 0 <= int(value) <= 9
     except (ValueError, TypeError):
         return False
 

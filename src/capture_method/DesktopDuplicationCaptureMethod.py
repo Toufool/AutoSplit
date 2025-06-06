@@ -2,14 +2,13 @@ import sys
 
 if sys.platform != "win32":
     raise OSError
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import cv2
 import d3dshot
 import win32api
 import win32con
 import win32gui
-from typing_extensions import override
 
 from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
 from utils import GITHUB_REPOSITORY, get_window_bounds
