@@ -2,13 +2,13 @@ version = 1
 revision = 2
 requires-python = ">=3.13"
 resolution-markers = [
-    "sys_platform == 'win32'",
     "platform_machine == 'aarch64' and sys_platform == 'linux'",
     "platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "sys_platform == 'win32'",
 ]
 supported-markers = [
-    "sys_platform == 'win32'",
     "sys_platform == 'linux'",
+    "sys_platform == 'win32'",
 ]
 
 [manifest]

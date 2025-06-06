@@ -51,7 +51,7 @@ dev = [
   # Linters & Formatters
   "mypy[faster-cache] >=1.16",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff >=0.11.13",
+  "ruff >=0.11.13", # Must match .pre-commit-config.yaml
   #
   # Types
   "scipy-stubs >=1.14.1.1",
@@ -64,9 +64,9 @@ dev = [
 ]
 [tool.uv]
 environments = [
-    # AutoSplit does not currently support macOS
-    "sys_platform == 'win32'",
-    "sys_platform == 'linux'",
+  # AutoSplit does not currently support macOS
+  "sys_platform == 'linux'",
+  "sys_platform == 'win32'",
 ]
 dependency-metadata = [
   # PyAutoGUI installs extra libraries we don't want. We only use it for hotkeys

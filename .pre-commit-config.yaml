@@ -19,7 +19,7 @@ repos:
       - id: pretty-format-ini
         args: [--autofix]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.8 # Must match requirements-dev.txt
+    rev: v0.11.13 # Must match requirements-dev.txt
     hooks:
       - id: ruff
         args: [--fix]

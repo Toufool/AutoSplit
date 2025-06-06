@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 import cv2
 import numpy as np
 from cv2.typing import MatLike
+
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if sys.platform == "win32":
