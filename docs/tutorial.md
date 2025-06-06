@@ -75,7 +75,7 @@
 
 ##### All platforms
 
-- **Video Capture Device**
+- **Video Capture Device**  
     Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
 
 #### Capture Device
