@@ -1,44 +1,29 @@
+// SPDX-License-Identifier: MIT
+// Copyright 2024 Beslogic Inc.
+//
+// The source skeleton for this configuration can be found at
+// https://github.com/BesLogic/shared-configs/blob/main/.vscode/settings.json
+// Modifications to this file that are not project-specific should also be done upstream.
 {
-  "editor.rulers": [
-    80,
-    100
+  "json.schemas": [
+    {
+      // Not all .jsonc files have a pre-associated schema
+      "fileMatch": [
+        "*.jsonc",
+      ],
+      "schema": {
+        "allowTrailingCommas": true,
+      },
+    },
   ],
-  "[git-commit]": {
-    "editor.rulers": [
-      72
-    ]
-  },
-  "[markdown]": {
-    "files.trimTrailingWhitespace": false,
-  },
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  "files.eol": "\n",
-  "editor.comments.insertSpace": true,
-  "editor.insertSpaces": true,
-  "editor.detectIndentation": false,
-  "editor.tabSize": 2,
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    // Let dedicated linter (Ruff) organize imports
-    "source.organizeImports": "never"
-  },
   "files.associations": {
-    ".flake8": "properties",
+    // Qt Creator
     "*.qrc": "xml",
     "*.ui": "xml",
     "**/.github/workflows/*.yml": "github-actions-workflow",
     "*.yaml": "yaml",
   },
   "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
     "**/.*_cache": true, // mypy and Ruff cache
     "**/__pycache__": true,
     // Only show useful PyInstaller logs
@@ -49,29 +34,63 @@
     "build/**/*.{manifest,pkg,zip,tcl,res,pyz}": true,
   },
   "search.exclude": {
-    "**/*.code-search": true,
     "*.lock": true,
   },
-  // Set the default formatter to help avoid Prettier
-  "[json][jsonc]": {
+  "editor.rulers": [
+    80,
+    100,
+  ],
+  "[git-commit]": {
+    "editor.rulers": [
+      72,
+    ],
+  },
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.comments.insertSpace": true,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    // "source.*Imports": https://github.com/microsoft/TypeScript/pull/50931#issuecomment-1416288712
+    // Let dedicated imports tool deal with it
+    "source.organizeImports": "never",
+    "source.sortImports": "never",
+    // IDEM, but also it's annoying to remove imports because of commented code while testing
+    "source.removeUnusedImports": "never",
+  },
+  // NOTE: due to a bug in VSCode, we have to specify editor.defaultFormatter individually to ensure
+  // it overrides user settings. Please upvote: https://github.com/microsoft/vscode/issues/168411
+  /*
+  * Markdown
+  */
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+    "editor.defaultFormatter": "vscode.markdown-language-features",
+  },
+  /*
+  * JSON
+  */
+  "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
   },
-  "yaml.format.printWidth": 100,
-  "yaml.schemas": {
-    "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml"
-  },
+  /*
+  * Python
+  */
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.tabSize": 4,
     "editor.rulers": [
       72, // PEP8-17 docstrings
-      // 79, // PEP8-17 default max
-      // 88, // Black default
-      // 99, // PEP8-17 acceptable max
-      100, // Our hard rule
+      100, // Our formatting limit
     ],
   },
   "mypy-type-checker.importStrategy": "fromEnvironment",
@@ -82,7 +101,7 @@
   "python.terminal.activateEnvironment": true,
   // python.analysis is Pylance (pyright) configurations
   "python.analysis.fixAll": [
-    "source.convertImportFormat"
+    "source.convertImportFormat",
     // Explicitly omiting "source.unusedImports", can be annoying when commenting code for debugging
   ],
   "python.analysis.diagnosticMode": "workspace",
@@ -92,34 +111,11 @@
   "ruff.organizeImports": true,
   // Use the Ruff extension instead
   "isort.check": false,
-  "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
-  "powershell.codeFormatting.autoCorrectAliases": true,
-  "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
-  "powershell.codeFormatting.useConstantStrings": true,
-  "powershell.codeFormatting.useCorrectCasing": true,
-  "powershell.codeFormatting.whitespaceBetweenParameters": true,
-  "powershell.integratedConsole.showOnStartup": false,
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "terminal.integrated.defaultProfile.linux": "pwsh",
-  "terminal.integrated.defaultProfile.osx": "pwsh",
-  "xml.codeLens.enabled": true,
-  "xml.format.spaceBeforeEmptyCloseTag": false,
-  "xml.format.preserveSpace": [
-    // Default
-    "xsl:text",
-    "xsl:comment",
-    "xsl:processing-instruction",
-    "literallayout",
-    "programlisting",
-    "screen",
-    "synopsis",
-    "pre",
-    "xd:pre",
-    // Custom
-    "string"
-  ],
+  /*
+  * TOML
+  */
   "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
   },
   "evenBetterToml.formatter.alignComments": false,
   "evenBetterToml.formatter.alignEntries": false,
@@ -137,5 +133,54 @@
   "evenBetterToml.formatter.reorderArrays": true,
   "evenBetterToml.formatter.trailingNewline": true,
   // We like keeping TOML keys in a certain non-alphabetical order that feels more natural
-  "evenBetterToml.formatter.reorderKeys": false
+  "evenBetterToml.formatter.reorderKeys": false,
+  /*
+  * YAML
+  */
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml",
+  },
+  /*
+  * XML
+  */
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml",
+  },
+  "xml.codeLens.enabled": true,
+  "xml.format.maxLineWidth": 100,
+  // Reduce changes with how QT Creator outputs
+  "xml.format.spaceBeforeEmptyCloseTag": true,
+  "xml.format.preserveSpace": [
+    // Default
+    "xsl:text",
+    "xsl:comment",
+    "xsl:processing-instruction",
+    "literallayout",
+    "programlisting",
+    "screen",
+    "synopsis",
+    "pre",
+    "xd:pre",
+    // Custom
+    "string",
+  ],
+  /*
+  * Powershell
+  */
+  "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
+  "powershell.codeFormatting.autoCorrectAliases": true,
+  "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
+  "powershell.codeFormatting.useConstantStrings": true,
+  "powershell.codeFormatting.useCorrectCasing": true,
+  "powershell.codeFormatting.whitespaceBetweenParameters": true,
+  // Fixes a "unexpectedly closed" warning popup everytime this console is closed
+  "powershell.integratedConsole.startInBackground": true,
+  // Only start when openning a ps1 file
+  "powershell.integratedConsole.showOnStartup": false,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.linux": "pwsh",
+  "terminal.integrated.defaultProfile.osx": "pwsh",
 }
