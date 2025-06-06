@@ -115,6 +115,8 @@ allow-multiline = false
 [lint.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
+# When ran through pre-commit, the src-based layout detection differs
+known-third-party = ["gen"]
 
 # https://docs.astral.sh/ruff/settings/#mccabe
 [lint.mccabe]
