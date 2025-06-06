@@ -1,3 +1,4 @@
+import sys
 from collections.abc import Iterable
 from math import sqrt
 
@@ -5,7 +6,6 @@ import cv2
 import Levenshtein
 import numpy as np
 from cv2.typing import MatLike
-from scipy import fft
 
 from utils import (
     BGRA_CHANNEL_COUNT,
@@ -103,6 +103,12 @@ def __cv2_phash(image: MatLike, hash_size: int = 8, highfreq_factor: int = 4):
     # source_hash = pHash.compute(source)
     # capture_hash = pHash.compute(capture)
     # hash_diff = pHash.compare(source_hash, capture_hash)
+
+    if sys.version_info >= (3, 14):
+        raise RuntimeWarning(
+            "This comparison method is not available on the Python 3.14 preview build"
+        )
+    from scipy import fft  # noqa: PLC0415
 
     img_size = hash_size * highfreq_factor
     image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)

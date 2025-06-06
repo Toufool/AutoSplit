@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING, Any, TypeAlias, TypedDict, TypeGuard, TypeVar
 import cv2
 import numpy as np
 from cv2.typing import MatLike
-
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if sys.platform == "win32":
@@ -99,7 +98,7 @@ def is_digit(value: str | int | None):
     if value is None:
         return False
     try:
-        return 0 <= int(value) <= 9  # noqa: PLR2004
+        return 0 <= int(value) <= 9
     except (ValueError, TypeError):
         return False
 

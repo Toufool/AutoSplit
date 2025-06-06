@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 from urllib.error import URLError
 from urllib.request import urlopen
 
+from gen import about, design, settings as settings_ui, update_checker
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
@@ -22,7 +23,6 @@ from capture_method import (
     change_capture_method,
     get_all_video_capture_devices,
 )
-from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
