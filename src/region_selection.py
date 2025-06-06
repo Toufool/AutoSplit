@@ -1,6 +1,6 @@
 import sys
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
@@ -8,7 +8,6 @@ from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
-from typing_extensions import override
 
 import error_messages
 from capture_method import Region

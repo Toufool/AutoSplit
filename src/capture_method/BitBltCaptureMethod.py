@@ -3,6 +3,7 @@ import sys
 if sys.platform != "win32":
     raise OSError
 import ctypes
+from typing import override
 
 import numpy as np
 import pywintypes
@@ -10,7 +11,6 @@ import win32con
 import win32gui
 import win32ui
 from cv2.typing import MatLike
-from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc

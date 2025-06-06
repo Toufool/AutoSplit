@@ -36,6 +36,8 @@ ignore = [
   "SIM105", # flake8-simplify: use-contextlib-suppress
   # Negative performance impact and more verbose https://github.com/astral-sh/ruff/issues/7871
   "UP038", # non-pep604-isinstance
+  # Not colored correctly in Pylance https://github.com/microsoft/pylance-release/issues/6942
+  "UP047", # non-pep695-generic-function
   # Checked by type-checker (pyright/mypy)
   "ANN", # flake-annotations
   "PGH003", # blanket-type-ignore
@@ -113,6 +115,8 @@ allow-multiline = false
 [lint.isort]
 combine-as-imports = true
 split-on-trailing-comma = false
+# When ran through pre-commit, the src-based layout detection differs
+known-third-party = ["gen"]
 
 # https://docs.astral.sh/ruff/settings/#mccabe
 [lint.mccabe]
