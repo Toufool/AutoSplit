@@ -39,6 +39,7 @@ dependencies = [
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
+  "dprint-py>=0.50.0.0",
   "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
@@ -51,7 +52,7 @@ dev = [
   # Linters & Formatters
   "mypy[faster-cache] >=1.16",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff >=0.11.13", # Must match .pre-commit-config.yaml
+  "ruff >=0.11.13",
   "uv-secure",
   "uvloop; sys_platform != 'win32'",
   "winloop; sys_platform == 'win32'",
