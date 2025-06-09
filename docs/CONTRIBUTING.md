@@ -4,15 +4,13 @@
 
 ## Python Setup and Building
 
-Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
+Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.
 
 ## Linting and formatting
 
-The project is setup to automatically configure VSCode with the proper extensions and settings. Fixers and formatters will be run on save.  
+The project is setup to automatically configure VSCode with the proper extensions and settings. Fixers and formatters will be run on save.\
 If you use a different IDE or for some reason cannot / don't want to use the recommended extensions, you can run `scripts/lint.ps1`.
 Project configurations for other IDEs are welcome.
-
-If you like to use pre-commit hooks, `.pre-commit-config.yaml` is setup for such uses.
 
 The CI will automatically fix and commit any autofixable issue your changes may have.
 
@@ -60,4 +58,4 @@ Whenever a split image overrides a default global setting, we add a getter that 
 
 ## Testing
 
-None 😦 Please help us create test suites, we lack the time, but we really want (*need!*) them. <https://github.com/Toufool/AutoSplit/issues/216>
+None 😦 Please help us create test suites, we lack the time, but we really want (_need!_) them. <https://github.com/Toufool/AutoSplit/issues/216>

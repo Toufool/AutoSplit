@@ -10,6 +10,7 @@
   // Only keep those used by your specific project
   "recommendations": [
     // General
+    "dprint.dprint",
     "eamodio.gitlens",
     "editorconfig.editorconfig",
     "pkief.material-icon-theme",
