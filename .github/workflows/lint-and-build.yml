@@ -61,6 +61,18 @@ jobs:
           version: PATH
           working-directory: src/
           python-version: ${{ matrix.python-version }}
+
+  uv-secure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - run: uvx --with uvloop uv-secure
+
   Build:
     runs-on: ${{ matrix.os }}
     strategy:

@@ -53,6 +53,9 @@ dev = [
   "mypy[faster-cache] >=1.16",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   "ruff >=0.11.13",
+  "uv-secure",
+  "uvloop; sys_platform != 'win32'",
+  "winloop; sys_platform == 'win32'",
   #
   # Types
   "scipy-stubs >=1.14.1.1",
@@ -77,6 +80,9 @@ dependency-metadata = [
 ]
 [tool.uv.sources]
 keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
+
+[tool.uv-secure.maintainability_criteria]
+forbid_yanked = true
 
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
