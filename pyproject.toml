@@ -55,9 +55,6 @@ dev = [
   "mypy[faster-cache] >=1.16; python_version < '3.14'",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   "ruff >=0.11.13",
-  "uv-secure",
-  "uvloop; sys_platform != 'win32'",
-  "winloop; sys_platform == 'win32'",
   #
   # Types
   "scipy-stubs >=1.14.1.1",
@@ -81,7 +78,8 @@ dependency-metadata = [
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
 [tool.uv.sources]
-pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
+# pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
+pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.14'" }
 keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 
 [tool.uv-secure.maintainability_criteria]
