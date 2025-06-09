@@ -1,7 +1,7 @@
 [project]
 name = "AutoSplit"
 version = "0"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
   # Dependencies:
   "Levenshtein >=0.25",
@@ -16,7 +16,6 @@ dependencies = [
   # "PySide6-Essentials >=6.8.2", # Fixed typing issue with QMessageBox.warning
   "scipy >=1.14.1; python_version < '3.14'", # Python 3.13 support
   "tomli-w >=1.1.0", # Typing fixes
-  "typing-extensions >=4.4.0", # @override decorator support
 
   #
   # Build and compile resources
@@ -41,6 +40,7 @@ dependencies = [
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
+  "dprint-py>=0.50.0.0",
   "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
@@ -51,10 +51,13 @@ dev = [
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "mypy >=1.14; python_version == '3.14'",
-  "mypy[faster-cache] >=1.14; python_version < '3.14'",
+  "mypy >=1.16; python_version == '3.14'",
+  "mypy[faster-cache] >=1.16; python_version < '3.14'",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff >=0.11.8",
+  "ruff >=0.11.13",
+  "uv-secure",
+  "uvloop; sys_platform != 'win32'",
+  "winloop; sys_platform == 'win32'",
   #
   # Types
   "scipy-stubs >=1.14.1.1",
@@ -66,6 +69,11 @@ dev = [
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
 ]
 [tool.uv]
+environments = [
+  # AutoSplit does not currently support macOS
+  "sys_platform == 'linux'",
+  "sys_platform == 'win32'",
+]
 dependency-metadata = [
   # PyAutoGUI installs extra libraries we don't want. We only use it for hotkeys
   # PyScreeze -> pyscreenshot -> mss deps calls SetProcessDpiAwareness on Windows
@@ -76,10 +84,12 @@ dependency-metadata = [
 pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
 keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 
+[tool.uv-secure.maintainability_criteria]
+forbid_yanked = true
+
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"
-pythonVersion = "3.11"
 # Prefer `pyright: ignore`
 enableTypeIgnoreComments = false
 

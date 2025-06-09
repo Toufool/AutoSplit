@@ -1,12 +1,12 @@
 import os
 import tomllib
 from copy import deepcopy
-from typing import TYPE_CHECKING, NoReturn, TypedDict, cast
+from typing import TYPE_CHECKING, NoReturn, TypedDict, cast, override
+from warnings import deprecated
 
 import tomli_w
 from gen import design
 from PySide6 import QtCore, QtWidgets
-from typing_extensions import deprecated, override
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method

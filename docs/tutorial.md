@@ -40,47 +40,49 @@
   - Perceptual Hash: An explanation on pHash comparison can be found [here](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html). It is highly recommended to NOT use pHash if you use masked images, or it'll be very inaccurate.
 
 #### Capture Method
+
 <!-- Keep all descriptions in sync with in-code descriptions in src/capture_method/*CaptureMethod.py-->
 
 ##### Windows
 
-- **Windows Graphics Capture** (fast, most compatible, capped at 60fps)  
-    Only available in Windows 10.0.17134 and up.  
-    Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.  
-    Adds a yellow border on Windows 10 (not on Windows 11).
-    Caps at around 60 FPS.  
-- **BitBlt** (fastest, least compatible)  
-    The best option when compatible. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.  
-    The smaller the selected region, the more efficient it is.  
-- **Direct3D Desktop Duplication** (slower, bound to display)  
-    Duplicates the desktop using Direct3D.  
-    It can record OpenGL and Hardware Accelerated windows.  
-    Up to 15x slower than BitBlt for tiny regions. Not affected by window size.
-    Limited by the target window and monitor's refresh rate.
-    Overlapping windows will show up and can't record across displays.  
-    This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
-- **Force Full Content Rendering** (very slow, can affect rendering)  
-    Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.  
-    About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.  
+- **Windows Graphics Capture** (fast, most compatible, capped at 60fps)\
+  Only available in Windows 10.0.17134 and up.\
+  Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows.\
+  Adds a yellow border on Windows 10 (not on Windows 11).
+  Caps at around 60 FPS.
+- **BitBlt** (fastest, least compatible)\
+  The best option when compatible. But it cannot properly record OpenGL, Hardware Accelerated or Exclusive Fullscreen windows.\
+  The smaller the selected region, the more efficient it is.
+- **Direct3D Desktop Duplication** (slower, bound to display)\
+  Duplicates the desktop using Direct3D.\
+  It can record OpenGL and Hardware Accelerated windows.\
+  Up to 15x slower than BitBlt for tiny regions. Not affected by window size.
+  Limited by the target window and monitor's refresh rate.
+  Overlapping windows will show up and can't record across displays.\
+  This option may not be available for hybrid GPU laptops, see [D3DDD-Note-Laptops.md](/docs/D3DDD-Note-Laptops.md) for a solution.
+- **Force Full Content Rendering** (very slow, can affect rendering)\
+  Uses BitBlt behind the scene, but passes a special flag to PrintWindow to force rendering the entire desktop.\
+  About 10-15x slower than BitBlt based on original window size and can mess up some applications' rendering pipelines.
 
 ##### Linux
 
-- **X11 XCB** (fast, requires XCB)  
-    Uses the XCB library to take screenshots of the X11 server.
-- **Scrot** (very slow, may leave files)  
-    Uses Scrot (SCReenshOT) to take screenshots.  
-    Leaves behind a screenshot file if interrupted.  
-    <!-- Keep in sync with src/menu_bar.py -->
-    "scrot" must be installed: `sudo apt-get install scrot`  
+- **X11 XCB** (fast, requires XCB)\
+  Uses the XCB library to take screenshots of the X11 server.
+- **Scrot** (very slow, may leave files)\
+  Uses Scrot (SCReenshOT) to take screenshots.\
+  Leaves behind a screenshot file if interrupted.
+  <!-- Keep in sync with src/menu_bar.py -->
+  "scrot" must be installed: `sudo apt-get install scrot`
 
 ##### All platforms
 
-- **Video Capture Device**
-    Uses a Video Capture Device, like a webcam, virtual cam, or capture card.  
+- **Video Capture Device**\
+  Uses a Video Capture Device, like a webcam, virtual cam, or capture card.
 
 #### Capture Device
 
 Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.
+
 <!-- Will show `[occupied]` if a device is detected but can't be started. (feature currently disabled because poking at devices to turn turn them off freezes some like the GV-USB2)-->
 
 #### Show Live Similarity
@@ -244,12 +246,13 @@ methods = [1, 0]
 
 The methods are then checked in the order you defined and the best match upon them wins.
 
-Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.  
+Note: This method can cause high CPU usage at the standard comparison FPS. You should therefor limit the comparison FPS when you use this method to 1 or 2 FPS using the `fps_limit` option.\
 The size of the selected rectangle can also impact the CPU load (bigger = more CPU load).
 
 ### Profiles
 
 <!-- TODO: Profiles are saved under `%appdata%\AutoSplit\profiles` and -->
+
 - Profiles use the extension `.toml`. Profiles can be saved and loaded by using `File -> Save Profile As...` and `File -> Load Profile`.
 - The profile contains all of your settings, including information about the capture region.
 - You can save multiple profiles, which is useful if you speedrun multiple games.

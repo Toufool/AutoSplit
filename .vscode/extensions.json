@@ -1,17 +1,39 @@
-// Keep in alphabetical order
+// SPDX-License-Identifier: MIT
+// Copyright 2024 Beslogic Inc.
+//
+// The source skeleton for this configuration can be found at
+// https://github.com/BesLogic/shared-configs/blob/main/.vscode/extensions.json
+// Modifications to this file that are not project-specific should also be done upstream.
 {
+  // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+  // List of extensions which should be recommended for users of this workspace.
+  // Only keep those used by your specific project
   "recommendations": [
-    "charliermarsh.ruff",
-    "davidanson.vscode-markdownlint",
+    // General
+    "dprint.dprint",
     "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "pkief.material-icon-theme",
+    // GitHub
+    "bierner.github-markdown-preview",
     "github.vscode-github-actions",
+    // Dotenv
+    "dotenv.dotenv-vscode",
+    // Python/TOML
+    "charliermarsh.ruff",
+    "ms-python.mypy-type-checker",
     "ms-python.python",
     "ms-python.vscode-pylance",
-    "ms-vscode.powershell",
-    "pkief.material-icon-theme",
-    "redhat.vscode-xml",
-    "redhat.vscode-yaml",
     "tamasfe.even-better-toml",
+    // Markdown
+    "bierner.github-markdown-preview",
+    "davidanson.vscode-markdownlint",
+    // Powershell
+    "ms-vscode.powershell",
+    // XML / Qt
+    "redhat.vscode-xml",
+    // YAML
+    "redhat.vscode-yaml",
   ],
   "unwantedRecommendations": [
     // Must disable in this workspace //

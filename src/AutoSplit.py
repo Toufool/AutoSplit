@@ -31,7 +31,7 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import NoReturn
+from typing import NoReturn, override
 
 import cv2
 from cv2.typing import MatLike
@@ -39,7 +39,6 @@ from gen import about, design, settings, update_checker
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
-from typing_extensions import override
 
 import error_messages
 import user_profile

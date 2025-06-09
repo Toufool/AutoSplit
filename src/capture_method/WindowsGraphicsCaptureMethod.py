@@ -3,12 +3,11 @@ import sys
 if sys.platform != "win32":
     raise OSError
 import asyncio
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, cast, override
 
 import numpy as np
 import win32gui
 from cv2.typing import MatLike
-from typing_extensions import override
 from winrt.windows.graphics import SizeInt32
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winrt.windows.graphics.capture.interop import create_for_window

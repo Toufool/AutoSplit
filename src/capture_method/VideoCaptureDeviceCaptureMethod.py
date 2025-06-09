@@ -1,11 +1,10 @@
 from threading import Event, Thread
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import cv2
 import cv2.Error
 import numpy as np
 from cv2.typing import MatLike
-from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback

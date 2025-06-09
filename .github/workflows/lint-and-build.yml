@@ -36,17 +36,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Ruff:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/ruff-action@v3
-        with:
-          version-file: "pyproject.toml"
-      - run: ruff format --check --diff
-        # Show formatting issues even if the "check" step failed
-        if: ${{ !cancelled() }}
-
   Pyright:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -54,7 +43,7 @@ jobs:
       # Pyright is version and platform sensible
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -72,6 +61,18 @@ jobs:
           version: PATH
           working-directory: src/
           python-version: ${{ matrix.python-version }}
+
+  uv-secure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - run: uvx --with uvloop uv-secure
+
   Build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -80,11 +81,6 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-22.04]
         python-version: ["3.13", "3.14"]
-        include:
-          # I had some Qt Wayland issues on 3.12 for ubuntu-22.04
-          # This should be fixed with QT_QPA_PLATFORM=xcb, but keeping it until next major upgrade
-          - os: ubuntu-22.04
-            python-version: "3.11"
     steps:
       - uses: actions/checkout@v4
       # region https://github.com/pyinstaller/pyinstaller/issues/9012

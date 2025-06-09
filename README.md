@@ -1,4 +1,5 @@
 <!-- markdownlint-disable-next-line MD033 -->
+
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
 
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
@@ -21,7 +22,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ## Download and open
 
 - Download the [latest version](/../../releases/latest)
-- You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)  
+- You can also check out the [latest dev builds](/../../actions/workflows/lint-and-build.yml?query=event%3Apush+is%3Asuccess) (requires a GitHub account)\
   (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/main))
 - Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
 
@@ -48,7 +49,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
   - Should work on Ubuntu 20.04+ (Only tested on Ubuntu 22.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
-- Python 3.11+ (Not required for normal use. Refer to the [build instructions](/docs/build%20instructions.md) if you'd like run the application directly in Python).
+- If you'd like to run the project directly in Python from the source code, refer to the [build instructions](/docs/build%20instructions.md).
 
 ## Timer Integration
 
@@ -76,17 +77,19 @@ See the [installation instructions](https://github.com/Toufool/LiveSplit.AutoSpl
 ## Resources
 
 Still need help?
+
 <!-- open issues sorted by reactions -->
+
 - [Check if your issue already exists](../../issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc)
   - If it does, upvote it 👍
   - If it doesn't, create a new one
-- Join the [AutoSplit Discord  
-![AutoSplit Discord](https://badgen.net/discord/members/Qcbxv9y)](https://discord.gg/Qcbxv9y)
+- Join the [AutoSplit Discord\
+  ![AutoSplit Discord](https://badgen.net/discord/members/Qcbxv9y)](https://discord.gg/Qcbxv9y)
 
 ## Contributing
 
-See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.  
-Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.  
+See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for our contributing standards.\
+Refer to the [build instructions](/docs/build%20instructions.md) if you're interested in building the application yourself or running it in Python.
 
 Not a developer? You can still help through the following methods:
 
@@ -130,6 +133,6 @@ Not a developer? You can still help through the following methods:
 
 ## Donate
 
-If you enjoy using the program, please consider donating. Thank you!  
+If you enjoy using the program, please consider donating. Thank you!
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=BYRHQG69YRHBA&item_name=AutoSplit+development&currency_code=USD&source=url)

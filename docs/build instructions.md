@@ -4,12 +4,12 @@
 
 ### Windows
 
-- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).  
+- Microsoft Visual C++ 14.0 or greater may be required to build the executable. Get it with [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
 ### Linux
 
-- You need to be part of the `input` and `tty` groups, as well as have permissions on a few files and folders.  
-  If you are missing from either groups, the install script will take care of it on its first run, but you'll need to restart your session.  
+- You need to be part of the `input` and `tty` groups, as well as have permissions on a few files and folders.\
+  If you are missing from either groups, the install script will take care of it on its first run, but you'll need to restart your session.
 
 ### WSL
 
@@ -20,6 +20,15 @@ export UV_PROJECT_ENVIRONMENT=$(python3 -c "import sysconfig; print(sysconfig.ge
 ```
 
 Read more: <https://docs.astral.sh/uv/concepts/projects/config/#project-environment-path>
+
+Or you can create a separate environment then activate it:
+
+```shell
+uv venv .venv-linux
+source .venv-linux/bin/activate
+```
+
+All scripts pass the `--active` flag to make sure the active environment is used.
 
 ### All platforms
 

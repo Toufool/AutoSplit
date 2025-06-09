@@ -1,15 +1,13 @@
-# ruff: noqa: RET504
 import sys
 
 if sys.platform != "linux":
     raise OSError
-from typing import cast
+from typing import cast, override
 
 import numpy as np
 from cv2.typing import MatLike
 from PySide6.QtCore import QBuffer, QIODeviceBase
 from PySide6.QtGui import QGuiApplication
-from typing_extensions import override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 
@@ -33,4 +31,4 @@ class QtCaptureMethod(CaptureMethodBase):
         frame = np.frombuffer(cast(MatLike, b), np.uint8).reshape((200, 200, 3))
 
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return frame
+        return frame  # noqa: RET504
