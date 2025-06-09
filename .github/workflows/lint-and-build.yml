@@ -52,7 +52,8 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
-      - run: uv sync
+      - run: scripts/install.ps1
+        shell: pwsh
       - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v2
