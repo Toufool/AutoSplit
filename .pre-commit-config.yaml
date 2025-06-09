@@ -1,1 +1,1 @@
-repos: []
+repos: [] # TODO: Remove this file once pre-commit.ci is disabled
