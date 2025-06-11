@@ -9,6 +9,7 @@ $arguments = @(
   '--onefile',
   '--windowed',
   '--additional-hooks-dir=Pyinstaller/hooks',
+  '--optimize 2', # Remove asserts and docstrings for smaller build
   '--icon=res/icon.ico')
 if ($SupportsSplashScreen) {
   # https://github.com/pyinstaller/pyinstaller/issues/9022
