@@ -21,7 +21,7 @@ if ($IsWindows) {
     '--hidden-import=winrt.windows.foundation')
 }
 
-Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
+Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', '--no-sync', 'pyinstaller') + $arguments)
 
 If ($IsLinux) {
   Move-Item -Force $PSScriptRoot/../dist/AutoSplit $PSScriptRoot/../dist/AutoSplit.elf
