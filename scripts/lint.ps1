@@ -18,7 +18,7 @@ else {
 }
 
 Write-Host "`nRunning Ruff format ..."
-uv run --active --no-sync --no-sync ruff format
+uv run --active --no-sync ruff format
 
 $pyrightVersion = $(uv run --active --no-sync pyright --version).replace('pyright ', '')
 Write-Host "`nRunning Pyright $pyrightVersion ..."
