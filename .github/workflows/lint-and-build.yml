@@ -30,6 +30,7 @@ on:
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
+  UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -106,7 +107,7 @@ jobs:
         id: autosplit_version
         working-directory: src
         run: |
-          $Env:AUTOSPLIT_VERSION=uv run --no-sync python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
+          $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
         shell: pwsh
       - name: Upload Build Artifact

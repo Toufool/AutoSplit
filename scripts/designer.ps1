@@ -1,6 +1,6 @@
 #! /usr/bin/pwsh
 
-$qt6_applications_path = uv run --active --no-sync python -c 'import qt6_applications; print(qt6_applications.__path__[0])'
+$qt6_applications_path = uv run --active python -c 'import qt6_applications; print(qt6_applications.__path__[0])'
 
 & "$qt6_applications_path/Qt/bin/designer" `
   "$PSScriptRoot/../res/design.ui" `
