@@ -106,7 +106,7 @@ jobs:
         id: autosplit_version
         working-directory: src
         run: |
-          $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
+          $Env:AUTOSPLIT_VERSION=uv run --no-sync python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
         shell: pwsh
       - name: Upload Build Artifact
