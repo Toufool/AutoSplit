@@ -18,8 +18,8 @@ dependencies = [
   # scipy is used for pHash calculation as a smaller, but still fast implementation.
   # However, scipy is not available on all environments yet.
   # In those cases, we're falling back to opencv-contrib-python's cv2.img_hash
-  "opencv-contrib-python-headless; platform_machine == 'ARM64'",
-  "scipy >=1.14.1; platform_machine != 'ARM64'", # Python 3.13 support
+  "opencv-contrib-python-headless; platform_machine == 'ARM64' or platform_machine == 'aarch64'",
+  "scipy >=1.14.1; platform_machine != 'ARM64' and platform_machine != 'aarch64'", # Python 3.13 support
 
   #
   # Build and compile resources
