@@ -8,7 +8,7 @@ dependencies = [
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
-  "numpy >=2.1,<2.3", # Python 3.13 support # TODO: Bump when 3.14 wheels are released
+  "numpy ==2.2.4", # Python 3.13 support # TODO: Bump when 3.14 wheels are released
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
