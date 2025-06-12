@@ -13,15 +13,20 @@ dependencies = [
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
   "PySide6-Essentials >=6.9.0", # arm64 wheels
-  "scipy >=1.14.1", # Python 3.13 support
   "tomli-w >=1.1.0", # Typing fixes
+
+  # scipy is used for pHash calculation as a smaller, but still fast implementation.
+  # However, scipy is not available on all environments yet.
+  # In those cases, we're falling back to opencv-contrib-python's cv2.img_hash
+  "opencv-contrib-python-headless; platform_machine == 'ARM64'",
+  "scipy >=1.14.1; platform_machine != 'ARM64'", # Python 3.13 support
 
   #
   # Build and compile resources
   "pyinstaller >=6.14.0", # Mitigate issues with pkg_resources deprecation warning
 
   #
-  # https://peps.python.org/pep-0508/#environment-markers
+  # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
@@ -55,6 +60,7 @@ dev = [
   "uv-secure[faster-async] >=0.9.2",
   #
   # Types
+  "opencv-contrib-python-headless",
   "scipy-stubs >=1.14.1.1",
   "types-PyAutoGUI",
   "types-PyScreeze; sys_platform == 'linux'",
