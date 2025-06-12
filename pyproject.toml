@@ -18,7 +18,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.12.0", # Build fix for built-in _tkinter (splash screen)
+  "pyinstaller >=6.14.0", # Mitigate issues with pkg_resources deprecation warning
 
   #
   # https://peps.python.org/pep-0508/#environment-markers
