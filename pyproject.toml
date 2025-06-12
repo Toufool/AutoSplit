@@ -7,7 +7,7 @@ dependencies = [
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
-  "keyboard", # [see tool.uv.sources]
+  "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.1,<2.3", # Python 3.13 support # TODO: Bump when 3.14 wheels are released
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
@@ -81,7 +81,6 @@ dependency-metadata = [
 [tool.uv.sources]
 pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.14'" }
-keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 
 [tool.uv-secure.maintainability_criteria]
 forbid_yanked = true
