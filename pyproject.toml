@@ -8,7 +8,7 @@ dependencies = [
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
-  "numpy ==2.2.4", # Python 3.13 support # TODO: Bump when 3.14 wheels are released
+  "numpy >=2.4.0.dev0", # Python 3.14 support
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
@@ -41,7 +41,6 @@ dependencies = [
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
-  "dprint-py>=0.50.0.0",
   "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
@@ -52,6 +51,7 @@ dev = [
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
+  "dprint-py>=0.50.0.0",
   "mypy >=1.16; python_version == '3.14'",
   "mypy[faster-cache] >=1.16; python_version < '3.14'",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
@@ -81,6 +81,11 @@ dependency-metadata = [
 [tool.uv.sources]
 pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.14'" }
+numpy = { index = "scientific-python-nightly-wheels" }
+[[tool.uv.index]]
+name = "scientific-python-nightly-wheels"
+url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
+explicit = true
 
 [tool.uv-secure.maintainability_criteria]
 forbid_yanked = true

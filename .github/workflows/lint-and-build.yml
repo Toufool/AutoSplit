@@ -71,7 +71,7 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-      - run: uvx --with uvloop uv-secure
+      - run: uvx uv-secure[faster-async]
 
   Build:
     runs-on: ${{ matrix.os }}
