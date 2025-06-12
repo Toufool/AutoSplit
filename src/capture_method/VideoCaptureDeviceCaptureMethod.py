@@ -32,10 +32,11 @@ def is_blank(image: MatLike):
 class VideoCaptureDeviceCaptureMethod(CaptureMethodBase):
     name = "Video Capture Device"
     short_description = "see below"
-    description = (
-        "\nUses a Video Capture Device, like a webcam, virtual cam, or capture card. "
-        + "\nYou can select one below. "
-    )
+    description = """
+Uses a Video Capture Device, like a webcam, virtual cam, or capture card.
+You can select one from the Capture Device dropdown below.
+See this guide on using the OBS Virtual Camera.
+https://obsproject.com/kb/virtual-camera-guide"""
 
     capture_device: cv2.VideoCapture
     capture_thread: Thread | None = None
