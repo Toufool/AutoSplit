@@ -12,7 +12,7 @@ dependencies = [
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-  "PySide6-Essentials >=6.9.0", # Windows arm64 wheels
+  "PySide6-Essentials", # Let package resolution find the minimum for wheels (>=6.9.0 on Windows ARM64; <6.8.1 on ubuntu-22.04-arm (glibc 2.39))
   "tomli-w >=1.1.0", # Typing fixes
 
   # scipy is used for pHash calculation as a smaller, but still fast implementation.
