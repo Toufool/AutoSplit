@@ -39,6 +39,7 @@ If AutoSplit showed an exception traceback, please paste it here:
 ### Version (please complete the following information)
 
 - OS: [e.g. Windows 10.0.19045]
+- Architecture: [x64 or ARM64]
 - AutoSplit: [e.g. v2.0.0]
 
 ### AutoSplit Profile and Split Images

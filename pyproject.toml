@@ -8,7 +8,7 @@ dependencies = [
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard", # [see tool.uv.sources]
-  "numpy >=2.3", # Windows arm64 wheels
+  "numpy >=2.3", # Windows ARM64 wheels
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
@@ -18,7 +18,8 @@ dependencies = [
   # scipy is used for pHash calculation as a smaller, but still fast implementation.
   # However, scipy is not available on all environments yet.
   # In those cases, we're falling back to opencv-contrib-python's cv2.img_hash
-  "opencv-contrib-python-headless; platform_machine == 'ARM64' or platform_machine == 'aarch64'",
+  # In addition, OpenCV also isn't yet prebuilt for Windows ARM64
+  "opencv-contrib-python-headless; sys_platform == 'linux' and platform_machine == 'aarch64'",
   "scipy >=1.14.1; platform_machine != 'ARM64' and platform_machine != 'aarch64'", # Python 3.13 support
 
   #

@@ -85,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # region pyinstaller/pyinstaller#9012 + astral-sh/uv#12906
-      - name: Set up Python for PyInstaller tk and arm64 issue
+      - name: Set up Python for PyInstaller tk and ARM64 issue
         if: ${{ matrix.os != 'windows-latest' }}
         uses: actions/setup-python@v5
         with:
