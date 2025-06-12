@@ -67,7 +67,6 @@ name = "autosplit"
 version = "0"
 source = { virtual = "." }
 dependencies = [
-    { name = "dprint-py", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "levenshtein", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -97,6 +96,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "dprint-py", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "mypy", extra = ["faster-cache"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pyright", extra = ["nodejs"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "qt6-applications", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -108,14 +108,11 @@ dev = [
     { name = "types-pyscreeze", marker = "sys_platform == 'linux'" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'" },
-    { name = "uv-secure", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "uvloop", marker = "sys_platform == 'linux'" },
-    { name = "winloop", marker = "sys_platform == 'win32'" },
+    { name = "uv-secure", extra = ["faster-async"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "keyboard", git = "https://github.com/boppreh/keyboard.git" },
     { name = "levenshtein", specifier = ">=0.25" },
     { name = "numpy", specifier = ">=2.1" },
@@ -145,6 +142,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "mypy", extras = ["faster-cache"], specifier = ">=1.16" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
     { name = "qt6-applications", specifier = ">=6.5.0" },
@@ -156,9 +154,7 @@ dev = [
     { name = "types-pyscreeze", marker = "sys_platform == 'linux'" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
-    { name = "uv-secure" },
-    { name = "uvloop", marker = "sys_platform != 'win32'" },
-    { name = "winloop", marker = "sys_platform == 'win32'" },
+    { name = "uv-secure", extras = ["faster-async"], specifier = ">=0.9.2" },
 ]
 
 [[package]]
@@ -210,6 +206,16 @@ wheels = [
 ]
 
 [[package]]
+name = "dprint-py"
+version = "0.50.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/be/d4aef796fad5e4a34a621905c678d7fe0124795c1c8a65c96e71137c81b5/dprint_py-0.50.0.0-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:1dfe5b4d73aeadc10116f37341c4eac4651c85254a68e8693eb83e6928ae80de", size = 23866263, upload-time = "2025-05-19T01:26:50.035Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/2e/a82a2de42d057a0e9713a497fdefe9729ce5d79d523a826c4a150e68ecc4/dprint_py-0.50.0.0-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:19cd159462841442f6d7431e36d29911f6fb63702163ad5fb5bb438ad04f6863", size = 24582934, upload-time = "2025-05-19T01:26:54.347Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/3c/57941c239eef3fa74ff44fb1452e56b04cb08ae3af39669b8b7178ff80ad/dprint_py-0.50.0.0-py3-none-win_amd64.whl", hash = "sha256:90de7885d3c9d6b13949ed609f2f2256b4ea74bf1355adcdfda0c30f7e3f9d47", size = 20785813, upload-time = "2025-05-19T01:26:57.162Z" },
+]
+
+[[package]]
 name = "email-validator"
 version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -220,15 +226,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/48/ce/13508a1ec3f8bb981ae4ca79ea40384becc868bfae97fd1c942bb3a001b1/email_validator-2.2.0.tar.gz", hash = "sha256:cb690f344c617a714f22e66ae771445a1ceb46821152df8e165c5f9a364582b7", size = 48967, upload-time = "2024-06-20T11:30:30.034Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d7/ee/bf0adb559ad3c786f12bcbc9296b3f5675f529199bef03e2df281fa1fadb/email_validator-2.2.0-py3-none-any.whl", hash = "sha256:561977c2d73ce3611850a06fa56b414621e0c8faa9d66f2611407d87465da631", size = 33521, upload-time = "2024-06-20T11:30:28.248Z" },
-]
-[[package]]
-name = "dprint-py"
-version = "0.50.0.0"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/be/d4aef796fad5e4a34a621905c678d7fe0124795c1c8a65c96e71137c81b5/dprint_py-0.50.0.0-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:1dfe5b4d73aeadc10116f37341c4eac4651c85254a68e8693eb83e6928ae80de", size = 23866263, upload-time = "2025-05-19T01:26:50.035Z" },
-    { url = "https://files.pythonhosted.org/packages/7c/2e/a82a2de42d057a0e9713a497fdefe9729ce5d79d523a826c4a150e68ecc4/dprint_py-0.50.0.0-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:19cd159462841442f6d7431e36d29911f6fb63702163ad5fb5bb438ad04f6863", size = 24582934, upload-time = "2025-05-19T01:26:54.347Z" },
-    { url = "https://files.pythonhosted.org/packages/0c/3c/57941c239eef3fa74ff44fb1452e56b04cb08ae3af39669b8b7178ff80ad/dprint_py-0.50.0.0-py3-none-win_amd64.whl", hash = "sha256:90de7885d3c9d6b13949ed609f2f2256b4ea74bf1355adcdfda0c30f7e3f9d47", size = 20785813, upload-time = "2025-05-19T01:26:57.162Z" },
 ]
 
 [[package]]
@@ -1047,7 +1044,7 @@ wheels = [
 
 [[package]]
 name = "uv-secure"
-version = "0.9.1"
+version = "0.9.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -1060,9 +1057,15 @@ dependencies = [
     { name = "rich", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "typer", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/23/d3/31dd9e0371b7cb4d039730f25c170b142ecc022bf4d6311253904c08e5f4/uv_secure-0.9.1.tar.gz", hash = "sha256:78a173e1afa4ad0b38bfb9837eb8dde9c737f352b9d264dd64683353882aaa2a", size = 66815, upload-time = "2025-05-15T13:01:38.71Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/75/950bafd1835c41a331f51501022f735466e56bb5d0a3d2abf48cf3f10f7c/uv_secure-0.9.2.tar.gz", hash = "sha256:d71fc058e32713830a138258127d68c8dbdd7da5774cb943beb12a7eee00d996", size = 71552, upload-time = "2025-06-10T13:35:20.225Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/74/18585965cf1decad59602a1758b2f2dd1588d906160458725ee9e0042189/uv_secure-0.9.1-py3-none-any.whl", hash = "sha256:d0a8a6e9ffb35587ba23f2bdd3b44dfa0a5bdc1aadbc388b1c2a3413f5391a39", size = 21513, upload-time = "2025-05-15T13:01:37.257Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/07/f201883e16a14b71c848d63e58712021ff25f00ca2e6b0d16c502ae797ad/uv_secure-0.9.2-py3-none-any.whl", hash = "sha256:4713252d280dedb532ec3e138a78c331b690be02f69e35218e0c4aa482e73abb", size = 21768, upload-time = "2025-06-10T13:35:19.236Z" },
+]
+
+[package.optional-dependencies]
+faster-async = [
+    { name = "uvloop", marker = "sys_platform == 'linux'" },
+    { name = "winloop", marker = "sys_platform == 'win32'" },
 ]
 
 [[package]]
