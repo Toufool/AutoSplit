@@ -7,7 +7,7 @@ dependencies = [
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
-  "keyboard", # [see tool.uv.sources]
+  "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3", # Windows ARM64 wheels
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
@@ -82,8 +82,6 @@ dependency-metadata = [
   { name = "PyAutoGUI", requires-dist = [] },
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
-[tool.uv.sources]
-keyboard = { git = "https://github.com/boppreh/keyboard.git" } # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
 
 [tool.uv-secure.maintainability_criteria]
 forbid_yanked = true
