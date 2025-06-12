@@ -28,15 +28,15 @@ dependencies = [
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
   "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
-  # winrt: winrt-runtime didn't have a sdist until 3.1.0 (for Python 3.14 builds)
-  "winrt-Windows.Foundation >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Capture >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Capture.Interop >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX.Direct3D11 >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=3.1.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Imaging >=3.1.0; sys_platform == 'win32'",
+  # winrt: winrt-runtime didn't have a working sdist build until 3.2.0 (for Python 3.14 builds)
+  "winrt-Windows.Foundation >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.Capture >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.Capture.Interop >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.DirectX >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.DirectX.Direct3D11 >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.Imaging >=3.2.0; sys_platform == 'win32'",
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",
