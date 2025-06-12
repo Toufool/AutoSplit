@@ -8,11 +8,11 @@ dependencies = [
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard", # [see tool.uv.sources]
-  "numpy >=2.1", # Python 3.13 support
+  "numpy >=2.3", # Windows arm64 wheels
   "opencv-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   # When needed, dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-  "PySide6-Essentials >=6.9.0", # arm64 wheels
+  "PySide6-Essentials >=6.9.0", # Windows arm64 wheels
   "tomli-w >=1.1.0", # Typing fixes
 
   # scipy is used for pHash calculation as a smaller, but still fast implementation.
