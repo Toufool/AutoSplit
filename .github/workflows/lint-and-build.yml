@@ -84,9 +84,9 @@ jobs:
         python-version: ["3.13"]
     steps:
       - uses: actions/checkout@v4
-      # region pyinstaller/pyinstaller#9012 + astral-sh/uv#13342
-      - name: Set up Python for PyInstaller tk and Arm64 issue
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+      # region pyinstaller/pyinstaller#9012 + astral-sh/uv#12906
+      - name: Set up Python for PyInstaller tk and arm64 issue
+        if: ${{ matrix.os != 'windows-latest' }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
