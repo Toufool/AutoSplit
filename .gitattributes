@@ -4,6 +4,7 @@
 *.png eol=auto
 *.gif eol=auto
 *.ico eol=auto
+*.whl eol=auto
 # Set linguist-language to support comments syntax highlight
 pyrightconfig*.json linguist-language=jsonc
 .vscode/*.json linguist-language=jsonc

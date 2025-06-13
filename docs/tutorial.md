@@ -77,7 +77,9 @@
 ##### All platforms
 
 - **Video Capture Device**\
-  Uses a Video Capture Device, like a webcam, virtual cam, or capture card.
+  Uses a Video Capture Device, like a webcam, virtual cam, or capture card.\
+  You can select one from the `Capture Device` dropdown below.\
+  See [this guide](https://obsproject.com/kb/virtual-camera-guide) on using the OBS Virtual Camera.
 
 #### Capture Device
 
