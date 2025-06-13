@@ -17,8 +17,6 @@
     // GitHub
     "bierner.github-markdown-preview",
     "github.vscode-github-actions",
-    // Dotenv
-    "dotenv.dotenv-vscode",
     // Python/TOML
     "charliermarsh.ruff",
     "ms-python.mypy-type-checker",

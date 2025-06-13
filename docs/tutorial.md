@@ -33,7 +33,7 @@
 
 #### Comparison Method
 
-- There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (or pHash).
+- There are three comparison methods to choose from: L2 Norm, Histograms, and Perceptual Hash (aka pHash).
   - L2 Norm: This method should be fine to use for most cases. It finds the difference between each pixel, squares it, sums it over the entire image and takes the square root. This is very fast but is a problem if your image is high frequency. Any translational movement or rotation can cause similarity to be very different.
   - Histograms: An explanation on Histograms comparison can be found [here](https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html). This is a great method to use if you are using several masked images.
     > This algorithm is particular reliable when the colour is a strong predictor of the object identity. The histogram intersection [...] is robust to occluding objects in the foreground.
@@ -77,7 +77,9 @@
 ##### All platforms
 
 - **Video Capture Device**\
-  Uses a Video Capture Device, like a webcam, virtual cam, or capture card.
+  Uses a Video Capture Device, like a webcam, virtual cam, or capture card.\
+  You can select one from the `Capture Device` dropdown below.\
+  See [this guide](https://obsproject.com/kb/virtual-camera-guide) on using the OBS Virtual Camera.
 
 #### Capture Device
 

@@ -93,7 +93,7 @@ requires-dist = [
     { name = "pillow", marker = "sys_platform == 'linux'", specifier = ">=11.0" },
     { name = "pyautogui", specifier = ">=0.9.52" },
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
-    { name = "pyinstaller", specifier = ">=6.12.0" },
+    { name = "pyinstaller", specifier = ">=6.14.0" },
     { name = "pyscreeze", marker = "sys_platform == 'linux'", specifier = ">=1.0.0" },
     { name = "pyside6-essentials", specifier = "<6.8.1" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },

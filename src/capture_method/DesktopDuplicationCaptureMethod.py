@@ -28,7 +28,7 @@ Limited by the target window and monitor's refresh rate.
 Overlapping windows will show up and can't record across displays.
 This option may not be available for hybrid GPU laptops,
 see D3DDD-Note-Laptops.md for a solution.
-https://www.github.com/{GITHUB_REPOSITORY}#capture-method"""
+https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"""
 
     def __init__(self, autosplit: "AutoSplit"):
         super().__init__(autosplit)

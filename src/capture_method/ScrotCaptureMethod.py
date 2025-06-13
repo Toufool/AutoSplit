@@ -19,10 +19,9 @@ from utils import is_valid_image
 class ScrotCaptureMethod(CaptureMethodBase):
     name = "Scrot"
     short_description = "very slow, may leave files"
-    description = (
-        "\nUses Scrot (SCReenshOT) to take screenshots. "
-        + "\nLeaves behind a screenshot file if interrupted. "
-    )
+    description = """
+Uses Scrot (SCReenshOT) to take screenshots.
+Leaves behind a screenshot file if interrupted."""
 
     @override
     def get_frame(self):
