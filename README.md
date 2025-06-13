@@ -44,9 +44,10 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 
 ### Compatibility
 
-- Windows 10 and 11.
+- Windows 10 and 11. (x64 only)
 - Linux (still in early development)
-  - Should work on Ubuntu 20.04+ (Only tested on Ubuntu 22.04)
+  - Both x64 and ARM64 architectures \* (see [Known Limitations](#known-limitations) for ARM64)
+  - Should work on Ubuntu 22.04+
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - If you'd like to run the project directly in Python from the source code, refer to the [build instructions](/docs/build%20instructions.md).
@@ -73,6 +74,7 @@ See the [installation instructions](https://github.com/Toufool/LiveSplit.AutoSpl
 - Linux support is incomplete and we're [looking for contributors](../../issues?q=is%3Aissue+is%3Aopen+label%3A"help+wanted"+label%3ALinux+).
   - Incompatible with LiveSplitOne on Linux (see <https://github.com/LiveSplit/LiveSplitOne/issues/1025>)
 - Antivirus false positives. Please read <https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md>
+- The Perceptual Hash Comparison Method similarity may differ by 3.125% on ARM64. (this will be solved eventually, we have to use a fallback method for now)
 
 ## Resources
 

@@ -75,12 +75,13 @@ jobs:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        # OpenCV doesn't support windows-11-arm yet https://github.com/opencv/opencv-python/issues/806
+        os: [windows-latest, ubuntu-22.04, ubuntu-22.04-arm]
         python-version: ["3.13"]
     steps:
       - uses: actions/checkout@v4
-      # region https://github.com/pyinstaller/pyinstaller/issues/9012
-      - name: Set up Python for PyInstaller tk issue
+      # region pyinstaller/pyinstaller#9012 + astral-sh/uv#12906
+      - name: Set up Python for PyInstaller tk and ARM64 issue
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
         with:
