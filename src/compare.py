@@ -125,7 +125,7 @@ def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None
     # Apply the mask to the source and capture before calculating the
     # pHash for each of the images. As a result of this, this function
     # is not going to be very helpful for large masks as the images
-    # when shrinked down to 8x8 will mostly be the same.
+    # when shrunk down to 8x8 will mostly be the same.
     if is_valid_image(mask):
         source = cv2.bitwise_and(source, source, mask=mask)
         capture = cv2.bitwise_and(capture, capture, mask=mask)

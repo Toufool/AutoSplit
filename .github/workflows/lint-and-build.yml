@@ -30,6 +30,7 @@ on:
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
+  UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -47,14 +48,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
           python-version: ${{ matrix.python-version }}
+          activate-environment: true
       - run: scripts/install.ps1
         shell: pwsh
-      - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v2
         with:
@@ -67,11 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
-      - run: uvx --with uvloop uv-secure
+      - run: uvx uv-secure[faster-async]
 
   Build:
     runs-on: ${{ matrix.os }}
@@ -84,17 +83,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # region https://github.com/pyinstaller/pyinstaller/issues/9012
-      - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       - name: Set up Python for PyInstaller tk issue
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
         with:
+          allow-prereleases: true
           python-version: ${{ matrix.python-version }}
+      - name: Set up uv for Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       # endregion
       - run: scripts/install.ps1
         shell: pwsh
