@@ -109,27 +109,20 @@ try:
         return 1 - (hash_diff / 64.0)
 
 except ModuleNotFoundError:
-    try:
-        import cv2.img_hash
 
-        def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):  # pyright: ignore[reportRedeclaration]
-            # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
-            # but it requires contrib/extra modules and is inaccurate
-            # unless we precompute the size with a specific interpolation.
-            # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
-            #
-            phash = cv2.img_hash.PHash.create()
-            source = cv2.resize(source, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-            capture = cv2.resize(capture, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-            source_hash = phash.compute(source)
-            capture_hash = phash.compute(capture)
-            hash_diff = phash.compare(source_hash, capture_hash)
-            return 1 - (hash_diff / 64.0)
-
-    except ModuleNotFoundError:
-
-        def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):  # noqa: ARG001
-            raise RuntimeWarning("pHash comparison method is not available for Windows on ARM")
+    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
+        # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
+        # but it requires contrib/extra modules and is inaccurate
+        # unless we precompute the size with a specific interpolation.
+        # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
+        #
+        phash = cv2.img_hash.PHash.create()
+        source = cv2.resize(source, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+        capture = cv2.resize(capture, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+        source_hash = phash.compute(source)
+        capture_hash = phash.compute(capture)
+        hash_diff = phash.compare(source_hash, capture_hash)
+        return 1 - (hash_diff / 64.0)
 
 
 def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None):
