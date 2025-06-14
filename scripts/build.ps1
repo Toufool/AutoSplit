@@ -10,6 +10,7 @@ $arguments = @(
   '--windowed',
   '--additional-hooks-dir=Pyinstaller/hooks',
   '--optimize 2', # Remove asserts and docstrings for smaller build
+  "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
   '--icon=res/icon.ico')
 if ($SupportsSplashScreen) {
   # https://github.com/pyinstaller/pyinstaller/issues/9022

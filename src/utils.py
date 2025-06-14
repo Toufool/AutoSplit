@@ -3,10 +3,12 @@ import os
 import shutil
 import subprocess  # noqa: S404
 import sys
+import tomllib
 from collections.abc import Callable, Iterable, Sequence
 from enum import IntEnum
 from functools import partial
 from itertools import chain
+from pathlib import Path
 from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
@@ -39,10 +41,21 @@ else:
 
 
 if TYPE_CHECKING:
+    from _typeshed import StrPath
+
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
 
 T = TypeVar("T")
+
+
+def resource_path(relative_path: "StrPath"):
+    """
+    Get absolute path to resource, from the root of the repository.
+    Works both frozen and unfrozen.
+    """
+    base_path = getattr(sys, "_MEIPASS", Path(__file__).parent.parent)
+    return os.path.join(base_path, relative_path)
 
 
 def find_tesseract_path():
@@ -328,7 +341,9 @@ auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abs
 """The directory of either the AutoSplit executable or AutoSplit.py"""
 
 # Shared strings
-# Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
-AUTOSPLIT_VERSION = "2.3.2" + (f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else "")
-"""AutoSplit Version number"""
+with open(resource_path("pyproject.toml"), mode="rb") as pyproject:
+    # Check `excludeBuildNumber` during workflow dispatch build generate a clean version number
+    AUTOSPLIT_VERSION: str = tomllib.load(pyproject)["project"]["version"] + (
+        f"-{AUTOSPLIT_BUILD_NUMBER}" if AUTOSPLIT_BUILD_NUMBER else ""
+    )
 GITHUB_REPOSITORY = AUTOSPLIT_GITHUB_REPOSITORY
