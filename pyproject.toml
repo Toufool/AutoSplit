@@ -33,7 +33,7 @@ dependencies = [
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
   "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
-  # winrt: winrt-runtime didn't have a working sdist build until 3.2.0 (for Python 3.14 builds)
+  # winrt: winrt-runtime didn't have a working Python 3.14 sdist build until 3.2.0
   # TODO: Bump when 3.14 wheels are released
   "winrt-Windows.Foundation >=3.2.0; sys_platform == 'win32'",
   "winrt-Windows.Graphics >=3.2.0; sys_platform == 'win32'",
@@ -63,7 +63,6 @@ dev = [
   "ruff >=0.11.13",
   #
   # Types
-  "opencv-contrib-python-headless",
   "scipy-stubs >=1.14.1.1",
   "types-PyAutoGUI",
   "types-PyScreeze; sys_platform == 'linux'",
