@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from math import sqrt
+from typing import no_type_check
 
 import cv2
 import Levenshtein
@@ -110,6 +111,7 @@ try:
 
 except ModuleNotFoundError:
 
+    @no_type_check  # opencv-contrib-python-headless being installed is based on architecture
     def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
         # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
         # but it requires contrib/extra modules and is inaccurate
