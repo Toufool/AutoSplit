@@ -30,7 +30,7 @@ wheels = [
 
 [[package]]
 name = "autosplit"
-version = "0"
+version = "2.3.2"
 source = { virtual = "." }
 dependencies = [
     { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
