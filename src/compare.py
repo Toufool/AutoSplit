@@ -103,7 +103,7 @@ try:
         median = np.median(dct_low_frequency)
         return dct_low_frequency > median
 
-    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):  # pyright: ignore[reportRedeclaration]
+    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
         source_hash = __cv2_scipy_compute_phash(source, hash_size)
         capture_hash = __cv2_scipy_compute_phash(capture, hash_size)
         hash_diff = np.count_nonzero(source_hash != capture_hash)
