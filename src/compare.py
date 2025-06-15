@@ -21,6 +21,7 @@ HISTOGRAM_SIZE = (8, 8, 8)
 RANGES = (0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE)
 MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
 MAX_VALUE = 1.0
+CV2_PHASH_SIZE = 8
 
 
 def compare_histograms(source: MatLike, capture: MatLike, mask: MatLike | None = None):
@@ -89,40 +90,39 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
     return 1 - (min_val / max_error)
 
 
-try:
-    from scipy import fft
+# The old scipy-based implementation.
+# Turns out this cuases an extra 25 MB build compared to opencv-contrib-python-headless
+# # from scipy import fft
+# def __cv2_scipy_compute_phash(image: MatLike, hash_size: int, highfreq_factor: int = 4):
+#     """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
+#     img_size = hash_size * highfreq_factor
+#     image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+#     image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_AREA)
+#     dct = fft.dct(fft.dct(image, axis=0), axis=1)
+#     dct_low_frequency = dct[:hash_size, :hash_size]
+#     median = np.median(dct_low_frequency)
+#     return dct_low_frequency > median
+# def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
+#     source_hash = __cv2_scipy_compute_phash(source, hash_size)
+#     capture_hash = __cv2_scipy_compute_phash(capture, hash_size)
+#     hash_diff = np.count_nonzero(source_hash != capture_hash)
+#     return 1 - (hash_diff / 64.0)
 
-    def __cv2_scipy_compute_phash(image: MatLike, hash_size: int, highfreq_factor: int = 4):
-        """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
-        img_size = hash_size * highfreq_factor
-        image = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
-        image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_AREA)
-        dct = fft.dct(fft.dct(image, axis=0), axis=1)
-        dct_low_frequency = dct[:hash_size, :hash_size]
-        median = np.median(dct_low_frequency)
-        return dct_low_frequency > median
 
-    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):  # pyright: ignore[reportRedeclaration]
-        source_hash = __cv2_scipy_compute_phash(source, hash_size)
-        capture_hash = __cv2_scipy_compute_phash(capture, hash_size)
-        hash_diff = np.count_nonzero(source_hash != capture_hash)
-        return 1 - (hash_diff / 64.0)
+def __cv2_phash(source: MatLike, capture: MatLike):
+    """
+    OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
+    but is inaccurate unless we precompute the size with a specific interpolation.
 
-except ModuleNotFoundError:
-
-    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
-        # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
-        # but it requires contrib/extra modules and is inaccurate
-        # unless we precompute the size with a specific interpolation.
-        # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
-        #
-        phash = cv2.img_hash.PHash.create()
-        source = cv2.resize(source, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-        capture = cv2.resize(capture, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-        source_hash = phash.compute(source)
-        capture_hash = phash.compute(capture)
-        hash_diff = phash.compare(source_hash, capture_hash)
-        return 1 - (hash_diff / 64.0)
+    See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
+    """
+    phash = cv2.img_hash.PHash.create()
+    source = cv2.resize(source, (CV2_PHASH_SIZE, CV2_PHASH_SIZE), interpolation=cv2.INTER_AREA)
+    capture = cv2.resize(capture, (CV2_PHASH_SIZE, CV2_PHASH_SIZE), interpolation=cv2.INTER_AREA)
+    source_hash = phash.compute(source)
+    capture_hash = phash.compute(capture)
+    hash_diff = phash.compare(source_hash, capture_hash)
+    return 1 - (hash_diff / 64.0)
 
 
 def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None):
