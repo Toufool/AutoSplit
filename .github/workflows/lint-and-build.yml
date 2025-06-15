@@ -100,18 +100,19 @@ jobs:
       - name: Add empty profile
         run: echo "" > dist/settings.toml
       - name: Extract AutoSplit version
-        id: autosplit_version
+        id: artifact_vars
         working-directory: src
         run: |
           $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
+          echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
         shell: pwsh
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: >
-            AutoSplit v${{ steps.autosplit_version.outputs.AUTOSPLIT_VERSION }}
-            for ${{ matrix.os }} (Python ${{ matrix.python-version }})
+            AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
+            for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
           path: |
             dist/AutoSplit*
             dist/settings.toml
@@ -119,7 +120,7 @@ jobs:
       - name: Upload Build logs
         uses: actions/upload-artifact@v4
         with:
-          name: Build logs for ${{ matrix.os }} (Python ${{ matrix.python-version }})
+          name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt
