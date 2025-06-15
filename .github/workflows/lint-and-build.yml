@@ -31,8 +31,10 @@ env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
   UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
+  # https://github.com/opencv/opencv-python#source-distributions
+  # Allows building OpenCV on Windows ARM64
+  # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
   CMAKE_ARGS: "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF"
-# CMAKE_GENERATOR_TOOLSET: v143
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -103,7 +105,7 @@ jobs:
       - name: Extract AutoSplit version
         id: artifact_vars
         working-directory: src
-        run: |
+        run: | # This also serves as a sanity check for imports
           $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
           echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
