@@ -31,6 +31,7 @@ env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
   UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
+  CMAKE_ARGS: "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF"
 # CMAKE_GENERATOR_TOOLSET: v143
 
 concurrency:
