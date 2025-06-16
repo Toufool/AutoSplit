@@ -8,7 +8,8 @@ resolution-markers = [
     "python_full_version == '3.14.*' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine == 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version != '3.14.*' and sys_platform == 'win32'",
 ]
 supported-markers = [
@@ -52,7 +53,8 @@ dependencies = [
     { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
     { name = "pywin32", version = "310", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.14.*' and sys_platform == 'win32'" },
-    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
     { name = "pywinctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "tomli-w", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "typed-d3dshot", extra = ["numpy"], marker = "sys_platform == 'win32'" },
@@ -97,7 +99,8 @@ requires-dist = [
     { name = "pyside6-essentials" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
     { name = "pywin32", marker = "python_full_version != '3.14.*' and sys_platform == 'win32'", specifier = ">=307" },
-    { name = "pywin32", marker = "python_full_version == '3.14.*' and sys_platform == 'win32'", path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" },
+    { name = "pywin32", marker = "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'", path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" },
+    { name = "pywin32", marker = "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'", path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" },
     { name = "pywinctl", specifier = ">=0.0.42" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.0.1" },
@@ -434,7 +437,8 @@ dependencies = [
     { name = "ewmhlib", marker = "sys_platform == 'linux'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
     { name = "pywin32", version = "310", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.14.*' and sys_platform == 'win32'" },
-    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
     { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
@@ -489,7 +493,8 @@ resolution-markers = [
     "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version == '3.14.*' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version != '3.14.*' and sys_platform == 'win32'",
 ]
 dependencies = [
@@ -532,10 +537,21 @@ name = "pywin32"
 version = "310.1"
 source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }
 resolution-markers = [
-    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
 ]
 wheels = [
-    { filename = "pywin32-310.1-cp314-cp314-win_amd64.whl", hash = "sha256:0758e0f21e15dc14814c6b1e4daf72dcf21406371c8c8fa5e8878f968f2a94db" },
+    { filename = "pywin32-310.1-cp314-cp314-win_amd64.whl", hash = "sha256:c639da6d680826ebf61e8345d5ef9dc231514db590b6d58a152390164fc9c9bc" },
+]
+
+[[package]]
+name = "pywin32"
+version = "310.1"
+source = { path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" }
+resolution-markers = [
+    "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+]
+wheels = [
+    { filename = "pywin32-310.1-cp314-cp314-win_arm64.whl", hash = "sha256:4591f391cf0bbee4a8c15a5692d3f1021b4af88be64d5fbcaa39af741876e657" },
 ]
 
 [[package]]
@@ -555,7 +571,8 @@ dependencies = [
     { name = "ewmhlib", marker = "sys_platform == 'linux'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
     { name = "pywin32", version = "310", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.14.*' and sys_platform == 'win32'" },
-    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
     { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
@@ -571,7 +588,8 @@ dependencies = [
     { name = "pymonctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
     { name = "pywin32", version = "310", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.14.*' and sys_platform == 'win32'" },
-    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'" },
+    { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_arm64.whl" }, marker = "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
     { name = "pywinbox", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
@@ -662,7 +680,8 @@ resolution-markers = [
     "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version == '3.14.*' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version == '3.14.*' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.14.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version != '3.14.*' and sys_platform == 'win32'",
 ]
 wheels = [
