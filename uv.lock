@@ -41,8 +41,7 @@ dependencies = [
     { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "levenshtein", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "opencv-contrib-python-headless", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'win32')" },
-    { name = "opencv-python-headless", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'win32')" },
+    { name = "opencv-contrib-python-headless", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pillow", marker = "sys_platform == 'linux'" },
     { name = "pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -55,7 +54,6 @@ dependencies = [
     { name = "pywin32", version = "310", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.14.*' and sys_platform == 'win32'" },
     { name = "pywin32", version = "310.1", source = { path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" }, marker = "python_full_version == '3.14.*' and sys_platform == 'win32'" },
     { name = "pywinctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "scipy", marker = "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'win32')" },
     { name = "tomli-w", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "typed-d3dshot", extra = ["numpy"], marker = "sys_platform == 'win32'" },
     { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'" },
@@ -76,7 +74,6 @@ dev = [
     { name = "pyright", extra = ["nodejs"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "qt6-applications", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "scipy-stubs", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -90,8 +87,7 @@ requires-dist = [
     { name = "keyboard", git = "https://github.com/boppreh/keyboard.git" },
     { name = "levenshtein", specifier = ">=0.25" },
     { name = "numpy", specifier = ">=2.4.0.dev0", index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" },
-    { name = "opencv-contrib-python-headless", marker = "platform_machine == 'aarch64'", specifier = ">=4.10" },
-    { name = "opencv-python-headless", marker = "platform_machine != 'aarch64'", specifier = ">=4.10" },
+    { name = "opencv-contrib-python-headless", specifier = ">=4.10" },
     { name = "packaging", specifier = ">=20.0" },
     { name = "pillow", marker = "sys_platform == 'linux'", specifier = ">=11.0" },
     { name = "pyautogui", specifier = ">=0.9.52" },
@@ -103,7 +99,6 @@ requires-dist = [
     { name = "pywin32", marker = "python_full_version != '3.14.*' and sys_platform == 'win32'", specifier = ">=307" },
     { name = "pywin32", marker = "python_full_version == '3.14.*' and sys_platform == 'win32'", path = "scripts/pywin32-310.1-cp314-cp314-win_amd64.whl" },
     { name = "pywinctl", specifier = ">=0.0.42" },
-    { name = "scipy", marker = "python_full_version < '3.14' and platform_machine != 'aarch64'", specifier = ">=1.14.1" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.0.1" },
     { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
@@ -124,7 +119,6 @@ dev = [
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
     { name = "qt6-applications", specifier = ">=6.5.0" },
     { name = "ruff", specifier = ">=0.11.13" },
-    { name = "scipy-stubs", specifier = ">=1.14.1.1" },
     { name = "types-keyboard" },
     { name = "types-pyautogui" },
     { name = "types-pyinstaller" },
@@ -296,35 +290,14 @@ name = "opencv-contrib-python-headless"
 version = "4.11.0.86"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/53/cc/295e9a4e783ca71ba1b8fbd34e51bc603eba4611afcfc7de1b09b2d6ed8d/opencv-contrib-python-headless-4.11.0.86.tar.gz", hash = "sha256:839319098a73264c580c97cb1ca835f7fce3d30e4fa9fa6d4d0618fff551be0b", size = 150579288, upload-time = "2025-01-16T13:54:11.763Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/83/ec/b3fb322e8bac7b797f98676c34599827920b3972e4d664bbdf8de84d7fca/opencv_contrib_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a8dc2f4109904ffa55967bf9ceb1521ce46d66c333e2f6261dfa1f957a1dbde0", size = 35122073, upload-time = "2025-01-16T13:52:07.72Z" },
-]
-
-[[package]]
-name = "opencv-python-headless"
-version = "4.11.0.86"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/36/2f/5b2b3ba52c864848885ba988f24b7f105052f68da9ab0e693cc7c25b0b30/opencv-python-headless-4.11.0.86.tar.gz", hash = "sha256:996eb282ca4b43ec6a3972414de0e2331f5d9cda2b41091a49739c19fb843798", size = 95177929, upload-time = "2025-01-16T13:53:40.22Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/be/1438ce43ebe65317344a87e4b150865c5585f4c0db880a34cdae5ac46881/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6efabcaa9df731f29e5ea9051776715b1bdd1845d7c9530065c7951d2a2899eb", size = 29487060, upload-time = "2025-01-16T13:51:59.625Z" },
-    { url = "https://files.pythonhosted.org/packages/dd/5c/c139a7876099916879609372bfa513b7f1257f7f1a908b0bdc1c2328241b/opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0e0a27c19dd1f40ddff94976cfe43066fbbe9dfbb2ec1907d66c19caef42a57b", size = 49969856, upload-time = "2025-01-16T13:53:29.654Z" },
-    { url = "https://files.pythonhosted.org/packages/95/dd/ed1191c9dc91abcc9f752b499b7928aacabf10567bb2c2535944d848af18/opencv_python_headless-4.11.0.86-cp37-abi3-win32.whl", hash = "sha256:f447d8acbb0b6f2808da71fddd29c1cdd448d2bc98f72d9bb78a7a898fc9621b", size = 29324425, upload-time = "2025-01-16T13:52:49.048Z" },
-    { url = "https://files.pythonhosted.org/packages/86/8a/69176a64335aed183529207ba8bc3d329c2999d852b4f3818027203f50e6/opencv_python_headless-4.11.0.86-cp37-abi3-win_amd64.whl", hash = "sha256:6c304df9caa7a6a5710b91709dd4786bf20a74d57672b3c31f7033cc638174ca", size = 39402386, upload-time = "2025-01-16T13:52:56.418Z" },
-]
-
-[[package]]
-name = "optype"
-version = "0.10.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/11/11/5bc1ad8e4dd339783daec5299c9162eaa80ad072aaa1256561b336152981/optype-0.10.0.tar.gz", hash = "sha256:2b89a1b8b48f9d6dd8c4dd4f59e22557185c81823c6e2bfc43c4819776d5a7ca", size = 95630, upload-time = "2025-05-28T22:43:18.799Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2b/98/7f97864d5b6801bc63c24e72c45a58417c344c563ca58134a43249ce8afa/optype-0.10.0-py3-none-any.whl", hash = "sha256:7e9ccc329fb65c326c6bd62c30c2ba03b694c28c378a96c2bcdd18a084f2c96b", size = 83825, upload-time = "2025-05-28T22:43:16.772Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/80/26c4ad9459498fc9213dea7254c8d6cb7717b279306b070588a2781559d4/opencv_contrib_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3e7a86bf02e8157a2d9fce26d44eaafd31113fc21fc8b4f44ff56c28ab32fdba", size = 56078660, upload-time = "2025-01-16T13:53:56.436Z" },
+    { url = "https://files.pythonhosted.org/packages/c0/38/2ce4259eca6ca356e3757b596d7d583b4ab0be4a482c9f4dacaa3eb688d1/opencv_contrib_python_headless-4.11.0.86-cp37-abi3-win32.whl", hash = "sha256:d2c10564c01f6c308ded345a3b37359714e694361e593e515c148465eda09c2a", size = 35092082, upload-time = "2025-01-16T13:53:06.296Z" },
+    { url = "https://files.pythonhosted.org/packages/49/c1/c7600136283a2d4d3327968bdd895ba917a033d5a5498b6c7ffcd78c772c/opencv_contrib_python_headless-4.11.0.86-cp37-abi3-win_amd64.whl", hash = "sha256:2671a828e5c8ec9d237dd8506a9e0268487d37e07625725f1a6de5fa973ea7fa", size = 46095689, upload-time = "2025-01-16T13:53:12.934Z" },
 ]
 
 [[package]]
@@ -657,39 +630,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/91/263e33ab93ab09ca06ce4f8f8547a858cc198072f873ebc9be7466790bae/ruff-0.11.13-py3-none-win32.whl", hash = "sha256:96c27935418e4e8e77a26bb05962817f28b8ef3843a6c6cc49d8783b5507f250", size = 10474944, upload-time = "2025-06-05T21:00:08.459Z" },
     { url = "https://files.pythonhosted.org/packages/46/f4/7c27734ac2073aae8efb0119cae6931b6fb48017adf048fdf85c19337afc/ruff-0.11.13-py3-none-win_amd64.whl", hash = "sha256:29c3189895a8a6a657b7af4e97d330c8a3afd2c9c8f46c81e2fc5a31866517e3", size = 11548669, upload-time = "2025-06-05T21:00:11.147Z" },
     { url = "https://files.pythonhosted.org/packages/ec/bf/b273dd11673fed8a6bd46032c0ea2a04b2ac9bfa9c628756a5856ba113b0/ruff-0.11.13-py3-none-win_arm64.whl", hash = "sha256:b4385285e9179d608ff1d2fb9922062663c658605819a6876d8beef0c30b7f3b", size = 10683928, upload-time = "2025-06-05T21:00:13.758Z" },
-]
-
-[[package]]
-name = "scipy"
-version = "1.15.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy", marker = "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux') or (python_full_version != '3.14.*' and sys_platform == 'win32')" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/37/6964b830433e654ec7485e45a00fc9a27cf868d622838f6b6d9c5ec0d532/scipy-1.15.3.tar.gz", hash = "sha256:eae3cf522bc7df64b42cad3925c876e1b0b6c35c1337c93e12c0f366f55b0eaf", size = 59419214, upload-time = "2025-05-08T16:13:05.955Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/66/a9618b6a435a0f0c0b8a6d0a2efb32d4ec5a85f023c2b79d39512040355b/scipy-1.15.3-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:79167bba085c31f38603e11a267d862957cbb3ce018d8b38f79ac043bc92d825", size = 35174018, upload-time = "2025-05-08T16:07:19.427Z" },
-    { url = "https://files.pythonhosted.org/packages/b5/09/c5b6734a50ad4882432b6bb7c02baf757f5b2f256041da5df242e2d7e6b6/scipy-1.15.3-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c9deabd6d547aee2c9a81dee6cc96c6d7e9a9b1953f74850c179f91fdc729cb7", size = 37269716, upload-time = "2025-05-08T16:07:25.712Z" },
-    { url = "https://files.pythonhosted.org/packages/77/0a/eac00ff741f23bcabd352731ed9b8995a0a60ef57f5fd788d611d43d69a1/scipy-1.15.3-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:dde4fc32993071ac0c7dd2d82569e544f0bdaff66269cb475e0f369adad13f11", size = 36872342, upload-time = "2025-05-08T16:07:31.468Z" },
-    { url = "https://files.pythonhosted.org/packages/fe/54/4379be86dd74b6ad81551689107360d9a3e18f24d20767a2d5b9253a3f0a/scipy-1.15.3-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:f77f853d584e72e874d87357ad70f44b437331507d1c311457bed8ed2b956126", size = 39670869, upload-time = "2025-05-08T16:07:38.002Z" },
-    { url = "https://files.pythonhosted.org/packages/87/2e/892ad2862ba54f084ffe8cc4a22667eaf9c2bcec6d2bff1d15713c6c0703/scipy-1.15.3-cp313-cp313-win_amd64.whl", hash = "sha256:b90ab29d0c37ec9bf55424c064312930ca5f4bde15ee8619ee44e69319aab163", size = 40988851, upload-time = "2025-05-08T16:08:33.671Z" },
-    { url = "https://files.pythonhosted.org/packages/24/18/9e5374b617aba742a990581373cd6b68a2945d65cc588482749ef2e64467/scipy-1.15.3-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0a769105537aa07a69468a0eefcd121be52006db61cdd8cac8a0e68980bbb723", size = 34809045, upload-time = "2025-05-08T16:08:03.929Z" },
-    { url = "https://files.pythonhosted.org/packages/e1/fe/9c4361e7ba2927074360856db6135ef4904d505e9b3afbbcb073c4008328/scipy-1.15.3-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9db984639887e3dffb3928d118145ffe40eff2fa40cb241a306ec57c219ebbbb", size = 36703062, upload-time = "2025-05-08T16:08:09.558Z" },
-    { url = "https://files.pythonhosted.org/packages/b7/8e/038ccfe29d272b30086b25a4960f757f97122cb2ec42e62b460d02fe98e9/scipy-1.15.3-cp313-cp313t-musllinux_1_2_aarch64.whl", hash = "sha256:40e54d5c7e7ebf1aa596c374c49fa3135f04648a0caabcb66c52884b943f02b4", size = 36393132, upload-time = "2025-05-08T16:08:15.34Z" },
-    { url = "https://files.pythonhosted.org/packages/10/7e/5c12285452970be5bdbe8352c619250b97ebf7917d7a9a9e96b8a8140f17/scipy-1.15.3-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:5e721fed53187e71d0ccf382b6bf977644c533e506c4d33c3fb24de89f5c3ed5", size = 38979503, upload-time = "2025-05-08T16:08:21.513Z" },
-    { url = "https://files.pythonhosted.org/packages/81/06/0a5e5349474e1cbc5757975b21bd4fad0e72ebf138c5592f191646154e06/scipy-1.15.3-cp313-cp313t-win_amd64.whl", hash = "sha256:76ad1fb5f8752eabf0fa02e4cc0336b4e8f021e2d5f061ed37d6d264db35e3ca", size = 40308097, upload-time = "2025-05-08T16:08:27.627Z" },
-]
-
-[[package]]
-name = "scipy-stubs"
-version = "1.15.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "optype", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/5f/35c43bd7d412add4adcd68475702571b2489b50c40b6564f808b2355e452/scipy_stubs-1.15.3.0.tar.gz", hash = "sha256:e8f76c9887461cf9424c1e2ad78ea5dac71dd4cbb383dc85f91adfe8f74d1e17", size = 275699, upload-time = "2025-05-08T16:58:35.139Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/42/cd8dc81f8060de1f14960885ad5b2d2651f41de8b93d09f3f919d6567a5a/scipy_stubs-1.15.3.0-py3-none-any.whl", hash = "sha256:a251254cf4fd6e7fb87c55c1feee92d32ddbc1f542ecdf6a0159cdb81c2fb62d", size = 459062, upload-time = "2025-05-08T16:58:33.356Z" },
 ]
 
 [[package]]

@@ -9,19 +9,12 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.4.0.dev0", # Python 3.14 support
+  "opencv-contrib-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
   # When needed, PySide6 dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
   "PySide6-Essentials", # Let package resolution find the minimum for wheels (>=6.9.0 on Windows ARM64; <6.8.1 on ubuntu-22.04-arm (glibc 2.39))
-
-  # scipy is used for pHash calculation as a smaller, but still fast implementation.
-  # However, scipy is not available on all environments yet.
-  # In those cases, we're falling back to opencv-contrib-python's cv2.img_hash
-  "opencv-contrib-python-headless >=4.10; platform_machine == 'aarch64'", # NumPy 2 support
-  "opencv-python-headless >=4.10; platform_machine != 'aarch64'", # NumPy 2 support
-  "scipy >=1.14.1; platform_machine != 'aarch64' and python_version < '3.14'", # Python 3.13 support
-
   #
   # Build and compile resources
   "pyinstaller >=6.14.0", # Mitigate issues with pkg_resources deprecation warning
@@ -63,7 +56,6 @@ dev = [
   "ruff >=0.11.13",
   #
   # Types
-  "scipy-stubs >=1.14.1.1",
   "types-PyAutoGUI",
   "types-PyScreeze; sys_platform == 'linux'",
   "types-keyboard",
