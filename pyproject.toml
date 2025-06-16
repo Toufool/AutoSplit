@@ -32,16 +32,14 @@ dependencies = [
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
   "pywin32 >=307; sys_platform == 'win32'", # Python 3.13 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
-  # winrt: winrt-runtime didn't have a working Python 3.14 sdist build until 3.2.0
-  # TODO: Bump when 3.14 wheels are released
-  "winrt-Windows.Foundation >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Capture >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Capture.Interop >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX.Direct3D11 >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=3.2.0; sys_platform == 'win32'",
-  "winrt-Windows.Graphics.Imaging >=3.2.0; sys_platform == 'win32'",
+  "winrt-Windows.Foundation >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics >=2.2.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.Capture >=3.0.0; sys_platform == 'win32'", # Type hints are no longer typing.Optional by default.
+  "winrt-Windows.Graphics.Capture.Interop >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX.Direct3D11 >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
+  "winrt-Windows.Graphics.DirectX.Direct3D11.Interop >=2.3.0; sys_platform == 'win32'",
+  "winrt-Windows.Graphics.Imaging >=2.3.0; sys_platform == 'win32'", # Python 3.13 support
   #
   # Linux-only dependencies
   "PyScreeze >=1.0.0; sys_platform == 'linux'",

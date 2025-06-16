@@ -98,14 +98,14 @@ requires-dist = [
     { name = "scipy", marker = "platform_machine != 'ARM64' and platform_machine != 'aarch64'", specifier = ">=1.14.1" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.0.1" },
-    { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-capture", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-capture-interop", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-directx", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-directx-direct3d11", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-directx-direct3d11-interop", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
-    { name = "winrt-windows-graphics-imaging", marker = "sys_platform == 'win32'", specifier = ">=3.2.0" },
+    { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'", specifier = ">=2.2.0" },
+    { name = "winrt-windows-graphics", marker = "sys_platform == 'win32'", specifier = ">=2.2.0" },
+    { name = "winrt-windows-graphics-capture", marker = "sys_platform == 'win32'", specifier = ">=3.0.0" },
+    { name = "winrt-windows-graphics-capture-interop", marker = "sys_platform == 'win32'", specifier = ">=2.3.0" },
+    { name = "winrt-windows-graphics-directx", marker = "sys_platform == 'win32'", specifier = ">=2.3.0" },
+    { name = "winrt-windows-graphics-directx-direct3d11", marker = "sys_platform == 'win32'", specifier = ">=2.3.0" },
+    { name = "winrt-windows-graphics-directx-direct3d11-interop", marker = "sys_platform == 'win32'", specifier = ">=2.3.0" },
+    { name = "winrt-windows-graphics-imaging", marker = "sys_platform == 'win32'", specifier = ">=2.3.0" },
 ]
 
 [package.metadata.requires-dev]
