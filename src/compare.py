@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from math import sqrt
+from typing import TYPE_CHECKING
 
 import cv2
 import Levenshtein
@@ -102,27 +103,28 @@ try:
         median = np.median(dct_low_frequency)
         return dct_low_frequency > median
 
-    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):  # pyright: ignore[reportRedeclaration]
+    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
         source_hash = __cv2_scipy_compute_phash(source, hash_size)
         capture_hash = __cv2_scipy_compute_phash(capture, hash_size)
         hash_diff = np.count_nonzero(source_hash != capture_hash)
         return 1 - (hash_diff / 64.0)
 
 except ModuleNotFoundError:
+    if not TYPE_CHECKING:  # opencv-contrib-python-headless being installed is based on architecture
 
-    def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
-        # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
-        # but it requires contrib/extra modules and is inaccurate
-        # unless we precompute the size with a specific interpolation.
-        # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
-        #
-        phash = cv2.img_hash.PHash.create()
-        source = cv2.resize(source, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-        capture = cv2.resize(capture, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
-        source_hash = phash.compute(source)
-        capture_hash = phash.compute(capture)
-        hash_diff = phash.compare(source_hash, capture_hash)
-        return 1 - (hash_diff / 64.0)
+        def __cv2_phash(source: MatLike, capture: MatLike, hash_size: int = 8):
+            # OpenCV has its own pHash comparison implementation in `cv2.img_hash`,
+            # but it requires contrib/extra modules and is inaccurate
+            # unless we precompute the size with a specific interpolation.
+            # See: https://github.com/opencv/opencv_contrib/issues/3295#issuecomment-1172878684
+            #
+            phash = cv2.img_hash.PHash.create()
+            source = cv2.resize(source, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+            capture = cv2.resize(capture, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+            source_hash = phash.compute(source)
+            capture_hash = phash.compute(capture)
+            hash_diff = phash.compare(source_hash, capture_hash)
+            return 1 - (hash_diff / 64.0)
 
 
 def compare_phash(source: MatLike, capture: MatLike, mask: MatLike | None = None):
