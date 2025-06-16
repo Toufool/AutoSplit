@@ -77,7 +77,10 @@ dependency-metadata = [
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
 [tool.uv.sources]
-pywin32 = { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14'" }
+pywin32 = [
+  { path = "./scripts/pywin32-310.1-cp314-cp314-win_amd64.whl", marker = "python_version == '3.14' and platform_architecture != 'ARM64'" },
+  { path = "./scripts/pywin32-310.1-cp314-cp314-win_arm64.whl", marker = "python_version == '3.14' and platform_architecture == 'ARM64'" },
+]
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.14'" }
 numpy = { index = "scientific-python-nightly-wheels" }
 [[tool.uv.index]]
