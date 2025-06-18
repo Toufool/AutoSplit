@@ -29,7 +29,7 @@ If ($IsLinux) {
   }
 }
 
-# Installing Python dependencies
+# Installing system dependencies
 If ($IsLinux) {
   If (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     sudo apt-get update
@@ -38,8 +38,23 @@ If ($IsLinux) {
   }
 }
 
+# UPX is only used by PyInstaller on Windows
+If ($IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+  $UPXVersion = '5.0.1'
+  $UPXFolderName = "upx-$UPXVersion-win64"
+  Write-Output "Installing $UPXFolderName"
+  if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse }
+  Invoke-WebRequest `
+    -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXFolderName.zip `
+    -OutFile $Env:TEMP/$UPXFolderName.zip
+  # Automatically install in a local untracked folder. This makes it easy to version and replicate on CI
+  Expand-Archive $Env:TEMP/$UPXFolderName.zip $PSScriptRoot/.upx
+  Move-Item $PSScriptRoot/.upx/$UPXFolderName/* $PSScriptRoot/.upx
+  Remove-Item $PSScriptRoot/.upx/$UPXFolderName
+}
+
 $prod = If ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } Else { }
-$lock = If ($Env:GITHUB_JOB) { '--locked' } Else { '--upgrade' }
+$lock = If ($Env:GITHUB_JOB) { '--locked' } Else { }
 Write-Output "Installing Python dependencies with: uv sync $prod $lock"
 uv sync --active $prod $lock
 
