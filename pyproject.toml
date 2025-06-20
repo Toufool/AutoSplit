@@ -54,7 +54,7 @@ dev = [
   "mypy >=1.16; python_version == '3.14'",
   "mypy[faster-cache] >=1.16; python_version < '3.14'",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff >=0.11.13",
+  "ruff >=0.12.0",
   #
   # Types
   "types-PyAutoGUI",
