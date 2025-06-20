@@ -48,7 +48,7 @@ jobs:
       # Pyright is version and platform sensible
       matrix:
         os: [windows-latest, ubuntu-22.04]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -80,7 +80,7 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
-        python-version: ["3.13"]
+        python-version: ["3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       # region pyinstaller/pyinstaller#9012 + astral-sh/uv#12906
