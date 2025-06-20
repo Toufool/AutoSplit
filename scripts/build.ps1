@@ -9,7 +9,7 @@ $arguments = @(
   "$ProjectRoot/src/AutoSplit.py",
   '--onefile',
   '--windowed',
-  '--optimize 2', # Remove asserts and docstrings for smaller build
+  '--optimize=2', # Remove asserts and docstrings for smaller build
   "--additional-hooks-dir=$ProjectRoot/Pyinstaller/hooks",
   "--add-data=$ProjectRoot/pyproject.toml$([System.IO.Path]::PathSeparator).",
   "--upx-dir=$PSScriptRoot/.upx"
