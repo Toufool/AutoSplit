@@ -5,7 +5,8 @@ resolution-markers = [
     "platform_machine == 'ARM64' and sys_platform == 'linux'",
     "platform_machine == 'aarch64' and sys_platform == 'linux'",
     "platform_machine != 'ARM64' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "sys_platform == 'win32'",
+    "platform_machine == 'aarch64' and sys_platform == 'win32'",
+    "platform_machine != 'aarch64' and sys_platform == 'win32'",
 ]
 supported-markers = [
     "sys_platform == 'linux'",
@@ -44,8 +45,8 @@ dependencies = [
     { name = "pygrabber", marker = "sys_platform == 'win32'" },
     { name = "pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pyscreeze", marker = "sys_platform == 'linux'" },
-    { name = "pyside6-essentials", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'ARM64' and sys_platform == 'linux'" },
-    { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'ARM64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "pyside6-essentials", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'win32')" },
+    { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'win32')" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "pywinctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -88,8 +89,8 @@ requires-dist = [
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
     { name = "pyinstaller", specifier = ">=6.14.0" },
     { name = "pyscreeze", marker = "sys_platform == 'linux'", specifier = ">=1.0.0" },
-    { name = "pyside6-essentials", marker = "platform_machine != 'ARM64' or sys_platform != 'linux'", specifier = ">=6.9.0" },
-    { name = "pyside6-essentials", marker = "platform_machine == 'ARM64' and sys_platform == 'linux'", specifier = "<6.8.1" },
+    { name = "pyside6-essentials", marker = "platform_machine != 'aarch64'", specifier = ">=6.9.0" },
+    { name = "pyside6-essentials", marker = "platform_machine == 'aarch64'", specifier = "<6.8.1" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=311" },
     { name = "pywinctl", specifier = ">=0.0.42" },
@@ -474,10 +475,11 @@ name = "pyside6-essentials"
 version = "6.8.0.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "platform_machine == 'ARM64' and sys_platform == 'linux'",
+    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "platform_machine == 'aarch64' and sys_platform == 'win32'",
 ]
 dependencies = [
-    { name = "shiboken6", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'ARM64' and sys_platform == 'linux'" },
+    { name = "shiboken6", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6f/ee/9023d3851054db24c28312744de8bdb80dcf8de20bd583b6520da416484f/PySide6_Essentials-6.8.0.2-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:cf490145d18812a6cff48b0b0afb0bfaf7066744bfbd09eb071c3323f1d6d00d", size = 92322477, upload-time = "2024-10-24T12:07:53.078Z" },
@@ -488,12 +490,12 @@ name = "pyside6-essentials"
 version = "6.9.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "platform_machine == 'ARM64' and sys_platform == 'linux'",
     "platform_machine != 'ARM64' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "sys_platform == 'win32'",
+    "platform_machine != 'aarch64' and sys_platform == 'win32'",
 ]
 dependencies = [
-    { name = "shiboken6", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'ARM64' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "shiboken6", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/59/6a/ea0db68d40a1c487fd255634896f4e37b6560e3ef1f57ca5139bf6509b1f/PySide6_Essentials-6.9.1-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:e5da48883f006c6206ef85874db74ddebcdf69b0281bd4f1642b1c5ac1d54aea", size = 96416183, upload-time = "2025-06-03T13:12:48.945Z" },
@@ -633,7 +635,8 @@ name = "shiboken6"
 version = "6.8.0.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "platform_machine == 'ARM64' and sys_platform == 'linux'",
+    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "platform_machine == 'aarch64' and sys_platform == 'win32'",
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/13/cd/e9a6d0aa8794f777627a9fb3cffed0ac8449881b33e2325b5bcff10c36bc/shiboken6-6.8.0.2-cp39-abi3-manylinux_2_31_aarch64.whl", hash = "sha256:1aaa8b7f9138818322ef029b2c487d1c6e00dc3f53084e62e1d11bdea47e47c2", size = 189864, upload-time = "2024-10-24T12:06:56.563Z" },
@@ -644,9 +647,9 @@ name = "shiboken6"
 version = "6.9.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "platform_machine == 'ARM64' and sys_platform == 'linux'",
     "platform_machine != 'ARM64' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "sys_platform == 'win32'",
+    "platform_machine != 'aarch64' and sys_platform == 'win32'",
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/07/53b2532ecd42ff925feb06b7bb16917f5f99f9c3470f0815c256789d818b/shiboken6-6.9.1-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:efcdfa8655d34aaf8d7a0c7724def3440bd46db02f5ad3b1785db5f6ccb0a8ff", size = 206756, upload-time = "2025-06-03T13:16:46.528Z" },
