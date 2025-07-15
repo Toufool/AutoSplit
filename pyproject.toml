@@ -14,7 +14,8 @@ dependencies = [
   "tomli-w >=1.1.0", # Typing fixes
 
   # When needed, PySide6 dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-  "PySide6-Essentials", # Let package resolution find the minimum for wheels (>=6.9.0 on Windows ARM64; <6.8.1 on ubuntu-22.04-arm (glibc 2.39))
+  "PySide6-Essentials <6.8.1; sys_platform == 'linux' and platform_machine == 'ARM64'", # <6.8.1 on ubuntu-22.04-arm (glibc 2.39)
+  "PySide6-Essentials >=6.9.0; sys_platform != 'linux' or platform_machine != 'ARM64'", # >=6.9.0 on Windows ARM64; Use this for everything else that supports as well
 
   #
   # Build and compile resources
