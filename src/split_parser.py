@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     *_,
 ) = tuple(1 << i for i in range(31))  # 32 bits of flags
 
-T = TypeVar("T", str, int, float)
+FileFlagValueT = TypeVar("FileFlagValueT", str, int, float)
 
 # Note, the following symbols cannot be used in a filename:
 # / \ : * ? " < > |
@@ -34,8 +34,8 @@ T = TypeVar("T", str, int, float)
 def __value_from_filename(
     filename: str,
     delimiters: str,
-    default_value: T,
-) -> T:
+    default_value: FileFlagValueT,
+) -> FileFlagValueT:
     if len(delimiters) != 2:
         raise ValueError("delimiters parameter must contain exactly 2 characters")
     try:

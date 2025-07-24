@@ -11,15 +11,13 @@ import sys
 if sys.platform == "win32":
     import ctypes
 
+    def do_nothing(*_): ...
+
     # pyautogui._pyautogui_win.py
-    ctypes.windll.user32.SetProcessDPIAware = (  # pyright: ignore[reportAttributeAccessIssue]
-        lambda: None
-    )
+    ctypes.windll.user32.SetProcessDPIAware = do_nothing  # pyright: ignore[reportAttributeAccessIssue]
     # pymonctl._pymonctl_win.py
     # pywinbox._pywinbox_win.py
-    ctypes.windll.shcore.SetProcessDpiAwareness = (  # pyright: ignore[reportAttributeAccessIssue]
-        lambda _: None  # pyright: ignore[reportUnknownLambdaType]
-    )
+    ctypes.windll.shcore.SetProcessDpiAwareness = do_nothing  # pyright: ignore[reportAttributeAccessIssue]
 if sys.platform == "linux":
     # Fixes "undefined symbol: wl_proxy_marshal_flags": https://bugreports.qt.io/browse/QTBUG-114635
     os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
