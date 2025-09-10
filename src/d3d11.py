@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2024 David Lechner <david@pybricks.com>
+from __future__ import annotations
+
 import sys
 
 if sys.platform != "win32":
@@ -39,7 +41,7 @@ class IUnknown(ctypes.c_void_p):
     AddRef = ctypes.WINFUNCTYPE(wintypes.ULONG)(1, "AddRef")
     Release = ctypes.WINFUNCTYPE(wintypes.ULONG)(2, "Release")
 
-    def query_interface(self, iid: uuid.UUID | str) -> "IUnknown":
+    def query_interface(self, iid: uuid.UUID | str) -> IUnknown:
         if isinstance(iid, str):
             iid = uuid.UUID(iid)
 
@@ -174,7 +176,7 @@ D3D11_SDK_VERSION = 7
 
 def errcheck(
     result: int,
-    _func: "_FuncPointer",  # Actually WinFunctionType but that's an internal class
+    _func: _FuncPointer,  # Actually WinFunctionType but that's an internal class
     args: tuple[
         IUnknown | None,  # IDXGIAdapter
         D3D_DRIVER_TYPE,

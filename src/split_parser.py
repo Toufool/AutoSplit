@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import sys
 from collections.abc import Callable
@@ -185,7 +187,7 @@ def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
     return None
 
 
-def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
+def validate_before_parsing(autosplit: AutoSplit, *, show_error: bool = True):
     error = None
     split_image_directory = autosplit.settings_dict["split_image_directory"]
     if not split_image_directory:
@@ -199,7 +201,7 @@ def validate_before_parsing(autosplit: "AutoSplit", *, show_error: bool = True):
     return not error
 
 
-def is_user_file(path: "StrPath"):
+def is_user_file(path: StrPath):
     """Returns False for hidden files, system files and folders."""
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
         return False
@@ -216,7 +218,7 @@ def is_user_file(path: "StrPath"):
     return True
 
 
-def __get_images_from_directory(directory: "StrPath"):
+def __get_images_from_directory(directory: StrPath):
     """
     Returns a list of AutoSplitImage parsed from a directory.
     Hidden files, system files and folders are silently ignored.
@@ -236,7 +238,7 @@ def __get_images_from_directory(directory: "StrPath"):
     return [AutoSplitImage(image_path) for image_path in filtered_image_paths]
 
 
-def parse_and_validate_images(autosplit: "AutoSplit"):
+def parse_and_validate_images(autosplit: AutoSplit):
     all_images = __get_images_from_directory(autosplit.settings_dict["split_image_directory"])
     # Find non-split images and then remove them from the list
     start_image = __pop_image_type(all_images, ImageType.START)

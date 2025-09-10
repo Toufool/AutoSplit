@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import sys
 import webbrowser
@@ -59,7 +61,7 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
         self.show()
 
 
-def open_about(autosplit: "AutoSplit"):
+def open_about(autosplit: AutoSplit):
     if not autosplit.AboutWidget or cast(QtWidgets.QWidget, autosplit.AboutWidget).isHidden():
         autosplit.AboutWidget = __AboutWidget()
 
@@ -102,7 +104,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         )
 
 
-def open_update_checker(autosplit: "AutoSplit", latest_version: str, *, check_on_open: bool):
+def open_update_checker(autosplit: AutoSplit, latest_version: str, *, check_on_open: bool):
     if (
         not autosplit.UpdateCheckerWidget
         or cast(QtWidgets.QWidget, autosplit.UpdateCheckerWidget).isHidden()
@@ -119,7 +121,7 @@ def view_help():
 
 
 class __CheckForUpdatesThread(QtCore.QThread):
-    def __init__(self, autosplit: "AutoSplit", *, check_on_open: bool):
+    def __init__(self, autosplit: AutoSplit, *, check_on_open: bool):
         super().__init__()
         self._autosplit_ref = autosplit
         self.check_on_open = check_on_open
@@ -150,7 +152,7 @@ def about_qt_for_python():
     webbrowser.open("https://wiki.qt.io/Qt_for_Python")
 
 
-def check_for_updates(autosplit: "AutoSplit", *, check_on_open: bool = False):
+def check_for_updates(autosplit: AutoSplit, *, check_on_open: bool = False):
     autosplit.CheckForUpdatesThread = __CheckForUpdatesThread(
         autosplit,
         check_on_open=check_on_open,
@@ -159,7 +161,7 @@ def check_for_updates(autosplit: "AutoSplit", *, check_on_open: bool = False):
 
 
 class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         super().__init__()
         self.__video_capture_devices: list[CameraInfo] = []
         """
@@ -461,12 +463,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         # endregion
 
 
-def open_settings(autosplit: "AutoSplit"):
+def open_settings(autosplit: AutoSplit):
     if not autosplit.SettingsWidget or cast(QtWidgets.QWidget, autosplit.SettingsWidget).isHidden():
         autosplit.SettingsWidget = __SettingsWidget(autosplit)
 
 
-def get_default_settings_from_ui(autosplit: "AutoSplit"):
+def get_default_settings_from_ui(autosplit: AutoSplit):
     temp_dialog = QtWidgets.QWidget()
     default_settings_dialog = settings_ui.Ui_SettingsWidget()
     default_settings_dialog.setupUi(temp_dialog)

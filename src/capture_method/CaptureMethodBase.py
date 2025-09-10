@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from cv2.typing import MatLike
@@ -13,9 +15,9 @@ class CaptureMethodBase:
     short_description = ""
     description = ""
 
-    _autosplit_ref: "AutoSplit"
+    _autosplit_ref: AutoSplit
 
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         self._autosplit_ref = autosplit
 
     def reinitialize(self):

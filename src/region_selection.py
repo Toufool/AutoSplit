@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 from math import ceil
 from typing import TYPE_CHECKING, override
@@ -109,7 +111,7 @@ def get_top_window_at(x: int, y: int):
 #         async_operation.completed = callback
 
 
-def select_region(autosplit: "AutoSplit"):
+def select_region(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectRegionWidget()
 
@@ -155,7 +157,7 @@ def select_region(autosplit: "AutoSplit"):
     )
 
 
-def select_window(autosplit: "AutoSplit"):
+def select_window(autosplit: AutoSplit):
     # Create a screen selector widget
     selector = SelectWindowWidget()
 
@@ -204,7 +206,7 @@ def select_window(autosplit: "AutoSplit"):
     )
 
 
-def align_region(autosplit: "AutoSplit"):
+def align_region(autosplit: AutoSplit):
     # Check to see if a region has been set
     if not autosplit.capture_method.check_selected_region_exists():
         error_messages.region()
@@ -258,7 +260,7 @@ def align_region(autosplit: "AutoSplit"):
     )
 
 
-def __set_region_values(autosplit: "AutoSplit", x: int, y: int, width: int, height: int):
+def __set_region_values(autosplit: AutoSplit, x: int, y: int, width: int, height: int):
     autosplit.settings_dict["capture_region"]["x"] = x
     autosplit.settings_dict["capture_region"]["y"] = y
     autosplit.settings_dict["capture_region"]["width"] = width

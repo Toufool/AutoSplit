@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 
 if sys.platform != "win32":
@@ -41,13 +43,13 @@ Allows recording UWP apps, Hardware Accelerated and Exclusive Fullscreen windows
 Adds a yellow border on Windows 10 (not on Windows 11).
 Caps at around 60 FPS."""
 
-    size: "SizeInt32"
+    size: SizeInt32
     frame_pool: Direct3D11CaptureFramePool | None = None
     session: GraphicsCaptureSession | None = None
     """This is stored to prevent session from being garbage collected"""
     last_converted_frame: MatLike | None = None
 
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
         if not is_valid_hwnd(autosplit.hwnd):
             return

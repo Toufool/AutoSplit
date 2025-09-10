@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import tomllib
 from enum import IntEnum, auto
@@ -67,7 +69,7 @@ class AutoSplitImage:
         """
         return bool(self.texts)
 
-    def get_delay_time(self, default: "AutoSplit | int"):
+    def get_delay_time(self, default: AutoSplit | int):
         """Get image's delay time or fallback to the default value from spinbox."""
         if self.__delay_time is not None:
             return self.__delay_time
@@ -75,7 +77,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_delay_time"]
 
-    def __get_comparison_method_index(self, default: "AutoSplit | int"):
+    def __get_comparison_method_index(self, default: AutoSplit | int):
         """Get image's comparison or fallback to the default value from combobox."""
         if self.__comparison_method is not None:
             return self.__comparison_method
@@ -83,7 +85,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_comparison_method"]
 
-    def get_pause_time(self, default: "AutoSplit | float"):
+    def get_pause_time(self, default: AutoSplit | float):
         """Get image's pause time or fallback to the default value from spinbox."""
         if self.__pause_time is not None:
             return self.__pause_time
@@ -91,7 +93,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_pause_time"]
 
-    def get_similarity_threshold(self, default: "AutoSplit | float"):
+    def get_similarity_threshold(self, default: AutoSplit | float):
         """Get image's similarity threshold or fallback to the default value from spinbox."""
         if self.__similarity_threshold is not None:
             return self.__similarity_threshold
@@ -99,7 +101,7 @@ class AutoSplitImage:
             return default
         return default.settings_dict["default_similarity_threshold"]
 
-    def get_fps_limit(self, default: "AutoSplit"):
+    def get_fps_limit(self, default: AutoSplit):
         """Get image's fps limit or fallback to the default value from spinbox."""
         if self.__fps_limit != 0:
             return self.__fps_limit
@@ -197,7 +199,7 @@ class AutoSplitImage:
     def check_flag(self, flag: int):
         return self.flags & flag == flag
 
-    def compare_with_capture(self, default: "AutoSplit | int", capture: MatLike | None):
+    def compare_with_capture(self, default: AutoSplit | int, capture: MatLike | None):
         """
         Compare image with capture using image's comparison method. Falls back to combobox.
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import os
 import shutil
@@ -49,7 +51,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-def resource_path(relative_path: "StrPath"):
+def resource_path(relative_path: StrPath):
     """
     Get absolute path to resource, from the root of the repository.
     Works both frozen and unfrozen.
@@ -97,7 +99,7 @@ class SubprocessKWArgs(TypedDict):
     stdin: int
     stdout: int
     stderr: int
-    startupinfo: "STARTUPINFO | None"
+    startupinfo: STARTUPINFO | None
     env: os._Environ[str] | None  # pyright: ignore[reportPrivateUsage]
 
 
@@ -137,7 +139,7 @@ def first(iterable: Iterable[T]) -> T:
     return next(iter(iterable))
 
 
-def try_delete_dc(dc: "PyCDC"):
+def try_delete_dc(dc: PyCDC):
     if sys.platform != "win32":
         raise OSError
     try:

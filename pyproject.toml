@@ -54,7 +54,7 @@ dev = [
   "dprint-py>=0.50.0.0",
   "mypy[faster-cache] >=1.16",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff >=0.12.0",
+  "ruff >=0.13.0",
   #
   # Types
   "types-PyAutoGUI",

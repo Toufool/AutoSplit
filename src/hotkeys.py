@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast
@@ -56,7 +58,7 @@ def remove_all_hotkeys():
         keyboard.unhook_all()
 
 
-def before_setting_hotkey(autosplit: "AutoSplit"):
+def before_setting_hotkey(autosplit: AutoSplit):
     """Do all of these after you click "Set Hotkey" but before you type the hotkey."""
     autosplit.start_auto_splitter_button.setEnabled(False)
     if autosplit.SettingsWidget:
@@ -64,7 +66,7 @@ def before_setting_hotkey(autosplit: "AutoSplit"):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
 
-def after_setting_hotkey(autosplit: "AutoSplit"):
+def after_setting_hotkey(autosplit: AutoSplit):
     """
     Do all of these things after you set a hotkey.
     A signal connects to this because changing GUI stuff is only possible in the main thread.
@@ -80,7 +82,7 @@ def after_setting_hotkey(autosplit: "AutoSplit"):
             getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(True)
 
 
-def send_command(autosplit: "AutoSplit", command: CommandStr):
+def send_command(autosplit: AutoSplit, command: CommandStr):
     if command in autosplit.settings_dict["screenshot_on"]:
         autosplit.screenshot_signal.emit()
     match command:
@@ -248,7 +250,7 @@ def __read_hotkey():
     return __get_hotkey_name(names)
 
 
-def __remove_key_already_set(autosplit: "AutoSplit", key_name: str):
+def __remove_key_already_set(autosplit: AutoSplit, key_name: str):
     for hotkey in HOTKEYS:
         settings_key = f"{hotkey}_hotkey"
         if autosplit.settings_dict.get(settings_key) == key_name:
@@ -258,7 +260,7 @@ def __remove_key_already_set(autosplit: "AutoSplit", key_name: str):
                 getattr(autosplit.SettingsWidget, f"{hotkey}_input").setText("")
 
 
-def __get_hotkey_action(autosplit: "AutoSplit", hotkey: Hotkey):
+def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     if hotkey == "split":
         return autosplit.start_auto_splitter
     if hotkey == "skip_split":
@@ -288,7 +290,7 @@ def is_valid_hotkey_name(hotkey_name: str):
 # reduce duplicated code. We should use a dictionary of hotkey class or something.
 
 
-def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, preselected_hotkey_name: str = ""):
+def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: str = ""):
     if KEYBOARD_GROUPS_ISSUE:
         if not preselected_hotkey_name:
             error_messages.linux_groups()

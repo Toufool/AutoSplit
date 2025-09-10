@@ -8,12 +8,13 @@
 # https://docs.astral.sh/ruff/configuration/
 line-length = 100
 preview = true
-required-version = ">=0.11.0" # tool.ruff.target-version is inferred from project.requires-python
+required-version = ">=0.13.0" # tool.ruff.target-version is inferred from project.requires-python
 
 [format]
 docstring-code-format = true
 
 [lint]
+future-annotations = true
 select = ["ALL"]
 # https://docs.astral.sh/ruff/rules/
 ignore = [
@@ -34,8 +35,6 @@ ignore = [
   "ERA001", # eradicate: commented-out-code
   # contextlib.suppress is roughly 3x slower than try/except
   "SIM105", # flake8-simplify: use-contextlib-suppress
-  # Negative performance impact and more verbose https://github.com/astral-sh/ruff/issues/7871
-  "UP038", # non-pep604-isinstance
   # Not colored correctly in Pylance https://github.com/microsoft/pylance-release/issues/6942
   "UP047", # non-pep695-generic-function
   # Checked by type-checker (pyright/mypy)
@@ -103,8 +102,6 @@ ignore = [
   ###
   "CPY001", # flake8-copyright
   "PTH", # flake8-use-pathlib
-  # Ignore until linux support
-  "EXE", # flake8-executable
 ]
 
 # https://docs.astral.sh/ruff/settings/#flake8-implicit-str-concat

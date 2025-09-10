@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 
 if sys.platform != "win32":
@@ -30,7 +32,7 @@ This option may not be available for hybrid GPU laptops,
 see D3DDD-Note-Laptops.md for a solution.
 https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"""
 
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
         # Must not set statically as some laptops will throw an error
         self.desktop_duplication = d3dshot.create(capture_output="numpy")

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from PySide6 import QtCore
@@ -10,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class AutoControlledThread(QtCore.QThread):
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         self._autosplit_ref = autosplit
         super().__init__()
 

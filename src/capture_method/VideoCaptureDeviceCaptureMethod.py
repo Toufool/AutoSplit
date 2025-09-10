@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from threading import Event, Thread
 from typing import TYPE_CHECKING, override
 
@@ -86,7 +88,7 @@ https://obsproject.com/kb/virtual-camera-guide"""
                 )
             )
 
-    def __init__(self, autosplit: "AutoSplit"):
+    def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
         self.capture_device = cv2.VideoCapture(autosplit.settings_dict["capture_device_id"])
         self.capture_device.setExceptionMode(True)
