@@ -11,6 +11,8 @@ import sys
 if sys.platform == "win32":
     import ctypes
 
+    from win32comext.shell import shell as shell32
+
     def do_nothing(*_): ...
 
     # pyautogui._pyautogui_win.py
@@ -85,12 +87,6 @@ from utils import (
 )
 
 CHECK_FPS_ITERATIONS = 10
-
-if sys.platform == "win32":
-    from win32comext.shell import shell as shell32
-
-    myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-    shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -1075,6 +1071,10 @@ def main():
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:
+        if sys.platform == "win32":
+            myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
+            shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
 
         if is_already_open():
