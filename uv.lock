@@ -109,7 +109,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "dprint-py", specifier = ">=0.50.0.0" },
-    { name = "mypy", extras = ["faster-cache"], specifier = ">=1.16" },
+    { name = "mypy", extras = ["faster-cache"], specifier = ">=1.18" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
     { name = "qt6-applications", specifier = ">=6.5.0" },
     { name = "ruff", specifier = ">=0.13.0" },
@@ -183,20 +183,24 @@ wheels = [
 
 [[package]]
 name = "mypy"
-version = "1.17.0"
+version = "1.18.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mypy-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pathspec", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/e3/034322d5a779685218ed69286c32faa505247f1f096251ef66c8fd203b08/mypy-1.17.0.tar.gz", hash = "sha256:e5d7ccc08ba089c06e2f5629c660388ef1fee708444f1dee0b9203fa031dee03", size = 3352114, upload-time = "2025-07-14T20:34:30.181Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/14/a3/931e09fc02d7ba96da65266884da4e4a8806adcdb8a57faaacc6edf1d538/mypy-1.18.1.tar.gz", hash = "sha256:9e988c64ad3ac5987f43f5154f884747faf62141b7f842e87465b45299eea5a9", size = 3448447, upload-time = "2025-09-11T23:00:47.067Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/0c/fb3f9c939ad9beed3e328008b3fb90b20fda2cddc0f7e4c20dbefefc3b33/mypy-1.17.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:03ba330b76710f83d6ac500053f7727270b6b8553b0423348ffb3af6f2f7b889", size = 11857838, upload-time = "2025-07-14T20:33:14.462Z" },
-    { url = "https://files.pythonhosted.org/packages/4c/66/85607ab5137d65e4f54d9797b77d5a038ef34f714929cf8ad30b03f628df/mypy-1.17.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:037bc0f0b124ce46bfde955c647f3e395c6174476a968c0f22c95a8d2f589bba", size = 12731358, upload-time = "2025-07-14T20:32:25.579Z" },
-    { url = "https://files.pythonhosted.org/packages/73/d0/341dbbfb35ce53d01f8f2969facbb66486cee9804048bf6c01b048127501/mypy-1.17.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:c38876106cb6132259683632b287238858bd58de267d80defb6f418e9ee50658", size = 12917480, upload-time = "2025-07-14T20:34:21.868Z" },
-    { url = "https://files.pythonhosted.org/packages/64/63/70c8b7dbfc520089ac48d01367a97e8acd734f65bd07813081f508a8c94c/mypy-1.17.0-cp313-cp313-win_amd64.whl", hash = "sha256:d30ba01c0f151998f367506fab31c2ac4527e6a7b2690107c7a7f9e3cb419a9c", size = 9589666, upload-time = "2025-07-14T20:34:16.841Z" },
-    { url = "https://files.pythonhosted.org/packages/e3/fc/ee058cc4316f219078464555873e99d170bde1d9569abd833300dbeb484a/mypy-1.17.0-py3-none-any.whl", hash = "sha256:15d9d0018237ab058e5de3d8fce61b6fa72cc59cc78fd91f1b474bce12abf496", size = 2283195, upload-time = "2025-07-14T20:31:54.753Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/ef/5e2057e692c2690fc27b3ed0a4dbde4388330c32e2576a23f0302bc8358d/mypy-1.18.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:913f668ec50c3337b89df22f973c1c8f0b29ee9e290a8b7fe01cc1ef7446d42e", size = 12473355, upload-time = "2025-09-11T23:00:04.544Z" },
+    { url = "https://files.pythonhosted.org/packages/98/43/b7e429fc4be10e390a167b0cd1810d41cb4e4add4ae50bab96faff695a3b/mypy-1.18.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1a0e70b87eb27b33209fa4792b051c6947976f6ab829daa83819df5f58330c71", size = 13346944, upload-time = "2025-09-11T22:58:23.024Z" },
+    { url = "https://files.pythonhosted.org/packages/89/4e/899dba0bfe36bbd5b7c52e597de4cf47b5053d337b6d201a30e3798e77a6/mypy-1.18.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:c378d946e8a60be6b6ede48c878d145546fb42aad61df998c056ec151bf6c746", size = 13512574, upload-time = "2025-09-11T22:59:52.152Z" },
+    { url = "https://files.pythonhosted.org/packages/f5/f8/7661021a5b0e501b76440454d786b0f01bb05d5c4b125fcbda02023d0250/mypy-1.18.1-cp313-cp313-win_amd64.whl", hash = "sha256:2cd2c1e0f3a7465f22731987fff6fc427e3dcbb4ca5f7db5bbeaff2ff9a31f6d", size = 9837684, upload-time = "2025-09-11T22:58:44.454Z" },
+    { url = "https://files.pythonhosted.org/packages/39/d4/aeefa07c44d09f4c2102e525e2031bc066d12e5351f66b8a83719671004d/mypy-1.18.1-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:040ecc95e026f71a9ad7956fea2724466602b561e6a25c2e5584160d3833aaa8", size = 12472291, upload-time = "2025-09-11T22:59:43.425Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/07/711e78668ff8e365f8c19735594ea95938bff3639a4c46a905e3ed8ff2d6/mypy-1.18.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:937e3ed86cb731276706e46e03512547e43c391a13f363e08d0fee49a7c38a0d", size = 13318610, upload-time = "2025-09-11T23:00:17.604Z" },
+    { url = "https://files.pythonhosted.org/packages/ca/85/df3b2d39339c31d360ce299b418c55e8194ef3205284739b64962f6074e7/mypy-1.18.1-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:1f95cc4f01c0f1701ca3b0355792bccec13ecb2ec1c469e5b85a6ef398398b1d", size = 13513697, upload-time = "2025-09-11T22:58:59.534Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/df/462866163c99ea73bb28f0eb4d415c087e30de5d36ee0f5429d42e28689b/mypy-1.18.1-cp314-cp314-win_amd64.whl", hash = "sha256:e4f16c0019d48941220ac60b893615be2f63afedaba6a0801bdcd041b96991ce", size = 9985739, upload-time = "2025-09-11T22:58:51.644Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/1d/4b97d3089b48ef3d904c9ca69fab044475bd03245d878f5f0b3ea1daf7ce/mypy-1.18.1-py3-none-any.whl", hash = "sha256:b76a4de66a0ac01da1be14ecc8ae88ddea33b8380284a9e3eae39d57ebcbe26e", size = 2352212, upload-time = "2025-09-11T22:59:26.576Z" },
 ]
 
 [package.optional-dependencies]
