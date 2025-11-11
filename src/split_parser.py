@@ -142,7 +142,7 @@ def flags_from_filename(filename: str):
 
     list of flags:
     "d" = dummy, do nothing when this split is found
-    "b" = below threshold, after threshold is met, split when it goes below the threhsold.
+    "b" = below threshold, after threshold is met, split when it goes below the threshold.
     "p" = pause, hit pause key when this split is found
     """
     # Check to make sure there are flags between curly braces

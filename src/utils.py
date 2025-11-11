@@ -303,6 +303,7 @@ def subprocess_kwargs():
 def run_tesseract(png: bytes):
     """
     Executes the tesseract CLI and pipes a PNG encoded image to it.
+
     @param png: PNG encoded image as byte array
     @return: The recognized output string from tesseract.
     """
