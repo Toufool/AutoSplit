@@ -12,7 +12,7 @@ from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
-from hotkeys import HOTKEYS, CommandStr, Hotkey, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, CommandStr, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -157,11 +157,11 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
     remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
-        for hotkey, hotkey_name in ((hotkey, f"{hotkey}_hotkey") for hotkey in HOTKEYS):
+        for hotkey in HOTKEYS:
+            hotkey_name = f"{hotkey}_hotkey"
             hotkey_value = autosplit.settings_dict.get(hotkey_name)
             if hotkey_value:
-                # cast caused by a regression in pyright 1.1.365
-                set_hotkey(autosplit, cast(Hotkey, hotkey), hotkey_value)
+                set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(
         cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
