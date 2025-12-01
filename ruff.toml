@@ -3,7 +3,7 @@ extend = ".venv/Beslogic-Ruff-Config/ruff.toml"
 
 [lint]
 explicit-preview-rules = false # This project uses bleeding-edge behaviours
-ignore=[
+ignore = [
   "D205", # Not all docstrings have a short description + description
   # We have some Pascal case module names
   "N999", # pep8-naming: Invalid module name
