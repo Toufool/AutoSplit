@@ -86,7 +86,7 @@ jobs:
       - name: Set UV_PYTHON for ARM runners
         if: ${{ endsWith(matrix.os, 'arm') }}
         run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
-      # region pyinstaller/pyinstaller#9012
+      # region https://github.com/pyinstaller/pyinstaller/issues/9204
       - name: Set up Python for PyInstaller tk issue on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
