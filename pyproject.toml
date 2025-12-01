@@ -44,17 +44,20 @@ dependencies = [
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
+ruff = [
+  "beslogic-ruff-config",
+  "ruff", # Version should come from beslogic-ruff-config and the lock file
+]
 dev = [
   #
   # Visual Designer
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "beslogic-ruff-config",
   "dprint-py>=0.50.0.0",
   "mypy[faster-cache] >=1.18",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff", # Version should come from beslogic-ruff-config
+  { include-group = "ruff" },
   #
   # Types
   "types-PyAutoGUI",

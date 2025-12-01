@@ -36,11 +36,6 @@
     80,
     100,
   ],
-  "[git-commit]": {
-    "editor.rulers": [
-      72,
-    ],
-  },
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
@@ -51,6 +46,7 @@
   "files.trimTrailingWhitespace": true,
   "editor.bracketPairColorization.enabled": true,
   "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     // "source.*Imports": https://github.com/microsoft/TypeScript/pull/50931#issuecomment-1416288712
@@ -59,6 +55,15 @@
     "source.sortImports": "never",
     // IDEM, but also it's annoying to remove imports because of commented code while testing
     "source.removeUnusedImports": "never",
+  },
+
+  /*
+  * Git
+  */
+  "[git-commit]": {
+    "editor.rulers": [
+      72,
+    ],
   },
 
   // NOTE: due to a bug in VSCode, we have to specify editor.defaultFormatter individually to ensure
