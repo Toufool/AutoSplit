@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v4
       # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
       - name: Set UV_PYTHON for ARM runners
-        if: ${{ startsWith(matrix.os, 'arm') }}
+        if: ${{ endsWith(matrix.os, 'arm') }}
         run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
       # region pyinstaller/pyinstaller#9012
       - name: Set up Python for PyInstaller tk issue on Linux
