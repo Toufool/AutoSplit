@@ -19,7 +19,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.14.0", # Mitigate issues with pkg_resources deprecation warning
+  "pyinstaller >=6.15.0", #Python 3.14 support
 
   #
   # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
