@@ -10,13 +10,15 @@ permissions:
 jobs:
   autofix:
     runs-on: ubuntu-latest
+    env:
+      RUFF_OUTPUT_FORMAT: github
     steps:
       - uses: actions/checkout@v4
-
-      - uses: astral-sh/ruff-action@v3
+      - uses: astral-sh/setup-uv@v7
         with:
-          version-file: "pyproject.toml"
-          args: "check --fix"
+          activate-environment: true
+      - run: uv sync --locked --only-group=ruff
+      - run: ruff check --fix
       - run: ruff format
         # Format even if the the previous step failed
         if: ${{ !cancelled() }}

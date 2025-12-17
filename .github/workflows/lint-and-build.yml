@@ -52,9 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
-          enable-cache: true
           python-version: ${{ matrix.python-version }}
           activate-environment: true
       - run: scripts/install.ps1
@@ -70,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
       - run: uvx uv-secure[faster-async]
 
   Build:
@@ -83,18 +82,21 @@ jobs:
         python-version: ["3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
-      # region pyinstaller/pyinstaller#9012 + astral-sh/uv#12906
-      - name: Set up Python for PyInstaller tk and ARM64 issue
-        if: matrix.os != 'windows-latest'
+      # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
+      - name: Set UV_PYTHON for ARM runners
+        if: ${{ endsWith(matrix.os, 'arm') }}
+        run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
+      # region https://github.com/pyinstaller/pyinstaller/issues/9204
+      - name: Set up Python for PyInstaller tk issue on Linux
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         uses: actions/setup-python@v5
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
       - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
-          enable-cache: true
-          python-version: ${{ matrix.os == 'windows-latest' && matrix.python-version || null }}
+          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       # endregion
       - run: scripts/install.ps1
         shell: pwsh

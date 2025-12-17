@@ -3,7 +3,6 @@ name = "AutoSplit"
 version = "2.3.2"
 requires-python = ">=3.13"
 dependencies = [
-  # Dependencies:
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
@@ -19,7 +18,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.14.0", # Mitigate issues with pkg_resources deprecation warning
+  "pyinstaller >=6.15.0", # Python 3.14 support
 
   #
   # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
@@ -44,17 +43,20 @@ dependencies = [
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
+ruff = [
+  "beslogic-ruff-config",
+  "ruff", # Version should come from beslogic-ruff-config and the lock file
+]
 dev = [
   #
   # Visual Designer
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "beslogic-ruff-config",
   "dprint-py>=0.50.0.0",
   "mypy[faster-cache] >=1.18",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  "ruff", # Version should come from beslogic-ruff-config
+  { include-group = "ruff" },
   #
   # Types
   "types-PyAutoGUI",
