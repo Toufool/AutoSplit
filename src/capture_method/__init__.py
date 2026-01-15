@@ -46,9 +46,9 @@ class Region(TypedDict):
 class ContainerEnumMeta(EnumMeta):
     # Allow checking if simple string is enum
     @override
-    def __contains__(cls, other: object):
+    def __contains__(cls, value: object):
         try:
-            cls(other)
+            cls(value)
         except ValueError:
             return False
         return True

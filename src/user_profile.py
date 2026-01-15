@@ -49,7 +49,7 @@ class UserProfileDict(TypedDict):
 
     @override
     @deprecated("Use `copy.deepcopy` instead")
-    def copy() -> NoReturn:
+    def copy(self) -> NoReturn:
         return super().copy()  # pyright: ignore[reportGeneralTypeIssues]
 
 

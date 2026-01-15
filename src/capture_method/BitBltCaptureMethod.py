@@ -21,7 +21,7 @@ PW_RENDERFULLCONTENT = 0x00000002
 
 def is_blank(image: MatLike):
     """
-    BitBlt can return a balnk buffer. Either because the target is unsupported,
+    BitBlt can return a blank buffer. Either because the target is unsupported,
     or because there's two windows of the same name for the same executable.
     """
     return not image.any()
