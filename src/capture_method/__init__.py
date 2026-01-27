@@ -9,16 +9,23 @@ from itertools import starmap
 from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
+from capture_method.VideoCaptureDeviceCaptureMethod import (
+    VideoCaptureDeviceCaptureMethod,
+)
+from utils import (
+    WGC_MIN_BUILD,
+    WINDOWS_BUILD_NUMBER,
+    first,
+    get_input_device_resolution,
+)
 
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
-    from pygrabber.dshow_graph import FilterGraph
-
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
-    from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
+    from capture_method.DesktopDuplicationCaptureMethod import (
+        DesktopDuplicationCaptureMethod,
+    )
     from capture_method.ForceFullContentRenderingCaptureMethod import (
         ForceFullContentRenderingCaptureMethod,
     )
@@ -121,7 +128,9 @@ CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     # Windows Graphics Capture requires a minimum Windows Build
     if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
-        CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
+        CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = (
+            WindowsGraphicsCaptureMethod
+        )
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     try:  # Test for laptop cross-GPU Desktop Duplication issue
         import d3dshot
@@ -130,7 +139,9 @@ if sys.platform == "win32":
     except (ModuleNotFoundError, COMError):
         pass
     else:
-        CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
+        CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = (
+            DesktopDuplicationCaptureMethod
+        )
     CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = (
         ForceFullContentRenderingCaptureMethod
     )
@@ -147,10 +158,14 @@ elif sys.platform == "linux":
         # TODO: Investigate solution for Slow Scrot:
         # https://github.com/asweigart/pyscreeze/issues/68
         CAPTURE_METHODS[CaptureMethodEnum.SCROT] = ScrotCaptureMethod
-CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
+CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = (
+    VideoCaptureDeviceCaptureMethod
+)
 
 
-def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit):
+def change_capture_method(
+    selected_capture_method: CaptureMethodEnum, autosplit: AutoSplit
+):
     """
     Seamlessly change the current capture method,
     initialize the new one with transferred subscriptions
@@ -159,7 +174,9 @@ def change_capture_method(selected_capture_method: CaptureMethodEnum, autosplit:
     autosplit.capture_method.close()
     autosplit.capture_method = CAPTURE_METHODS.get(selected_capture_method)(autosplit)
 
-    disable_selection_buttons = selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
+    disable_selection_buttons = (
+        selected_capture_method == CaptureMethodEnum.VIDEO_CAPTURE_DEVICE
+    )
     autosplit.select_region_button.setDisabled(disable_selection_buttons)
     autosplit.select_window_button.setDisabled(disable_selection_buttons)
 
@@ -175,13 +192,25 @@ class CameraInfo:
 
 def get_input_devices():
     if sys.platform == "win32":
+        try:
+            from pygrabber.dshow_graph import FilterGraph
+        except OSError as exception:
+            # wine can choke on D3D Device Enumeration if missing directshow
+            # OSError: [WinError -2147312566] Windows Error 0x80029c4a
+            # TODO: Check the OS error number and only silence that one
+            print(exception)
+            print(getattr(exception, "errno"))
+            print(getattr(exception, "winerror"))
+            return []
         return FilterGraph().get_input_devices()
 
     cameras: list[str] = []
     if sys.platform == "linux":
         try:
             for index in range(len(os.listdir("/sys/class/video4linux"))):
-                with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
+                with open(
+                    f"/sys/class/video4linux/video{index}/name", encoding="utf-8"
+                ) as file:
                     cameras.append(file.readline()[:-2])
         except FileNotFoundError:
             pass
