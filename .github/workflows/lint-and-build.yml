@@ -120,13 +120,16 @@ jobs:
           $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
           echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
+          if "${{ matrix.python-version }}" -eq "3.12" {
+            echo "WINE_SUPPORT=, Wine support >> $Env:GITHUB_OUTPUT
+          }
         shell: pwsh
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: >
             AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
-            for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+            for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }}${{ steps.artifact_vars.outputs.WINE_SUPPORT }})
           path: |
             dist/AutoSplit*
             dist/settings.toml
