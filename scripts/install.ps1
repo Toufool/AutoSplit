@@ -38,8 +38,14 @@ if ($IsLinux) {
   }
 }
 
-# UPX is only used by PyInstaller on Windows
-if ($IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+# UPX is only used by PyInstaller on Windows,
+# Doesn't work on ARM64,
+# and we avoid using it on the "wine-compatible build" (it fails on 3.12 anyway)
+if (`
+    $IsWindows `
+    -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64'`
+    -and (&uv run python -c 'import sys; print(sys.version_info[:2] > (3, 12))') -eq 'True'
+) {
   $UPXVersion = '5.0.1'
   $UPXFolderName = "upx-$UPXVersion-win64"
   Write-Output "Installing $UPXFolderName"
