@@ -15,6 +15,9 @@ from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_r
 if sys.platform == "win32":
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
+    import win32api
+    import winerror
+
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
     from capture_method.ForceFullContentRenderingCaptureMethod import (
@@ -119,7 +122,19 @@ CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     # Windows Graphics Capture requires a minimum Windows Build
     if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
-        CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
+        try:
+            # Wine hasn't implemented yet (https://bugs.winehq.org/show_bug.cgi?id=52487)
+            # Keep this check for a while even after it's implemented
+            win32api.GetProcAddress(
+                win32api.LoadLibrary("d3d11.dll"), "CreateDirect3D11DeviceFromDXGIDevice"
+            )
+        except win32api.error as exception:
+            if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
+                raise
+        else:
+            CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = (
+                WindowsGraphicsCaptureMethod
+            )
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     try:  # Test for laptop cross-GPU Desktop Duplication issue
         import d3dshot
