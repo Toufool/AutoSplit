@@ -120,7 +120,7 @@ jobs:
           $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
           echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
-          if ()"${{ matrix.python-version }}" -eq "3.12") {
+          if ("${{ matrix.python-version }}" -eq "3.12") {
             echo "WINE_SUPPORT=, Wine support >> $Env:GITHUB_OUTPUT
           }
         shell: pwsh
