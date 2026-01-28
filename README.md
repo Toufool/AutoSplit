@@ -48,6 +48,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 - Linux (still in early development)
   - Should work on Ubuntu 22.04+
   - Wayland is not currently supported
+  - Running under Wine only supports the BitBlt Capture Method
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - x64 and ARM64 architectures \* (see [Known Limitations](#known-limitations) for ARM64)
 - If you'd like to run the project directly in Python from the source code, refer to the [build instructions](/docs/build%20instructions.md).
@@ -101,6 +102,7 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Starring the repository <img style="vertical-align: sub" src="./docs/repo_star.png" alt="Example" />
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
+  - <https://bugs.winehq.org/show_bug.cgi?id=52487>
   - <https://bugreports.qt.io/browse/QTBUG-114436>
   - <https://bugreports.qt.io/browse/QTBUG-114635>
   - <https://bugreports.qt.io/browse/PYSIDE-2541>
