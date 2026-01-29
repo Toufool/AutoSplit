@@ -45,7 +45,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
-- Wine 10.1+ (Only supports the BitBlt Capture Method)
+- Wine 10.1+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux (still in early development)
   - Should work on Ubuntu 22.04+
@@ -78,6 +78,13 @@ See the [installation instructions](https://github.com/Toufool/LiveSplit.AutoSpl
 - Antivirus false positives. Please read <https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md>
 - The Perceptual Hash Comparison Method similarity may differ by 3.125% on ARM64. (this will be solved eventually, we have to use a fallback method for now)
 - Native ARM64 builds go completely untested. There may be unforseen issues.
+
+### Wine Limitations
+
+- Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
+- No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
+- Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through Steam (add it as a non-Steam game) using the same Proton version as the target game.
+  - In practice, at the time of writing this, you can't even run AutoSplit through Proton yet, as even its Experimental version is still on Wine 10.0, and AutoSplit [requires Wine 10.1+](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf)
 
 ## Resources
 
