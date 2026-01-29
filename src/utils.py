@@ -116,7 +116,7 @@ def is_digit(value: str | int | None):
         return False
     try:
         return 0 <= int(value) <= 9
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         return False
 
 

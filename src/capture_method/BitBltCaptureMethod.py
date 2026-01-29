@@ -71,7 +71,7 @@ The smaller the selected region, the more efficient it is."""
                 win32con.SRCCOPY,
             )
             image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
-        except (win32ui.error, pywintypes.error):
+        except win32ui.error, pywintypes.error:
             # Invalid handle or the window was closed while it was being manipulated
             return None
 
