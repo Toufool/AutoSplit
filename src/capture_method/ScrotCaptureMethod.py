@@ -7,7 +7,7 @@ import os
 import shutil
 import subprocess  # noqa: S404
 import tempfile
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import cv2
 from pywinctl import getWindowsWithTitle
@@ -17,21 +17,26 @@ from Xlib.error import BadWindow
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import RUNNING_X11, imread, is_valid_image
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 IS_SCROT_SUPPORTED = RUNNING_X11 and bool(shutil.which("scrot"))
 
 
 def _scrot_screenshot(x: int, y: int, width: int, height: int):
     with tempfile.TemporaryDirectory() as tmp:
-        screenshot_file = os.path.join(tmp, "something")
-        # TODO: Investigate solution for Slow Scrot:
-        # https://github.com/asweigart/pyscreeze/issues/68
-        subprocess.check_output(("scrot", "-a", f"{x},{y},{width},{height}", "-z", screenshot_file))  # noqa: S603 # Not user input
-        # subprocess.check_output(("scrot", "-z", screenshot_file))  # Not user input
+        screenshot_file = os.path.join(tmp, "autosplit")
+        subprocess.check_call((  # noqa: S603 # Not user input
+            "scrot",
+            "-a",
+            f"{x},{y},{width},{height}",
+            "-z",
+            screenshot_file,
+        ))
+        return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
 
-        return imread(screenshot_file, cv2.IMREAD_UNCHANGED)
 
-
-# TODO: Consider maim and fireshot as alternatives to scrot
+# TODO: Consider maim and flameshot as alternatives to scrot
 # https://github.com/naelstrof/maim
 # https://github.com/asweigart/pyscreeze/commit/36b822aa54a22b9dafef9ce2d40f8e24f81a5d9e
 # https://flameshot.org/docs/installation/installation-linux/
@@ -46,12 +51,20 @@ class ScrotCaptureMethod(CaptureMethodBase):
 Uses Scrot (SCReenshOT) to take screenshots.
 Leaves behind a screenshot file if interrupted."""
 
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__(autosplit)
+        self._display = Display()
+
+    @override
+    def close(self):
+        self._display.close()
+
     @override
     def get_frame(self):
         if not self.check_selected_region_exists():
             return None
 
-        root = Display().screen().root
+        root = self._display.screen().root
         try:
             window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
         except BadWindow:

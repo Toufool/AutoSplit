@@ -3,7 +3,7 @@ import sys
 if sys.platform != "linux":
     raise OSError
 
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
@@ -15,6 +15,9 @@ from Xlib.error import BadWindow
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import is_valid_image
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 
 class XcbCaptureMethod(CaptureMethodBase):
     name = "X11 XCB"
@@ -22,6 +25,14 @@ class XcbCaptureMethod(CaptureMethodBase):
     description = "\nUses the XCB library to take screenshots of the X11 server."
 
     _xdisplay: str | None = ""  # ":0"
+
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__(autosplit)
+        self._display = Display()
+
+    @override
+    def close(self):
+        self._display.close()
 
     @override
     def get_frame(self):

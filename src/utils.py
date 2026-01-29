@@ -200,7 +200,7 @@ def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         os.startfile(file_path)  # noqa: S606
     else:
         opener = "xdg-open" if sys.platform == "linux" else "open"
-        subprocess.call([opener, file_path])  # noqa: S603
+        subprocess.check_call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():

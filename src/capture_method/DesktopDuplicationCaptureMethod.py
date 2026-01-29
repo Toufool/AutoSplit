@@ -45,7 +45,7 @@ https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
         # Must not set statically as some laptops will throw an error
-        self.desktop_duplication = d3dshot.create(capture_output="numpy")
+        self._desktop_duplication = d3dshot.create(capture_output="numpy")
 
     @override
     def get_frame(self):
@@ -56,19 +56,19 @@ https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"
             return None
 
         left_bounds, top_bounds, *_ = get_window_bounds(hwnd)
-        self.desktop_duplication.display = next(
+        self._desktop_duplication.display = next(
             display
-            for display in self.desktop_duplication.displays
+            for display in self._desktop_duplication.displays
             if display.hmonitor == hmonitor  # fmt: skip
         )
         offset_x, offset_y, *_ = win32gui.GetWindowRect(hwnd)
-        offset_x -= self.desktop_duplication.display.position["left"]
-        offset_y -= self.desktop_duplication.display.position["top"]
+        offset_x -= self._desktop_duplication.display.position["left"]
+        offset_y -= self._desktop_duplication.display.position["top"]
         left = selection["x"] + offset_x + left_bounds
         top = selection["y"] + offset_y + top_bounds
         right = selection["width"] + left
         bottom = selection["height"] + top
-        screenshot = self.desktop_duplication.screenshot((left, top, right, bottom))
+        screenshot = self._desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None
         return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)

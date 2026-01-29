@@ -328,7 +328,9 @@ class BaseSelectWidget(QtWidgets.QWidget):
             width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
             height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
         else:
-            display_geometry = Display().screen().root.get_geometry()._data  # noqa: SLF001
+            display = Display()
+            display_geometry = display.screen().root.get_geometry()._data  # noqa: SLF001
+            display.close()
             x = display_geometry["x"]
             y = display_geometry["y"]
             width = display_geometry["width"]
