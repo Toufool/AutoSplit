@@ -43,7 +43,7 @@ def __value_from_filename(
     try:
         string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1])[0]
         value = type(default_value)(string_value)
-    except (IndexError, ValueError):
+    except IndexError, ValueError:
         return default_value
     else:
         return value

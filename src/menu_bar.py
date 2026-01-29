@@ -139,7 +139,7 @@ class __CheckForUpdatesThread(QtCore.QThread):
                 latest_version,
                 self.check_on_open,
             )
-        except (URLError, KeyError):
+        except URLError, KeyError:
             if not self.check_on_open:
                 self._autosplit_ref.show_error_signal.emit(error_messages.check_for_updates)
 

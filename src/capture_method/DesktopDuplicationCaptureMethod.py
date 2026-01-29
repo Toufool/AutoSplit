@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 try:  # Test for laptop cross-GPU Desktop Duplication issue
     d3dshot.create(capture_output="numpy")
-except (ModuleNotFoundError, COMError):
+except ModuleNotFoundError, COMError:
     IS_DESKTOP_DUPLICATION_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
 else:
     IS_DESKTOP_DUPLICATION_SUPPORTED = True

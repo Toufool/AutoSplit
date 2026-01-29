@@ -114,7 +114,7 @@ def _unhook(hotkey_callback: Callable[[], None] | None):
     try:
         if hotkey_callback:
             keyboard.unhook_key(hotkey_callback)
-    except (AttributeError, KeyError, ValueError):
+    except AttributeError, KeyError, ValueError:
         pass
 
 

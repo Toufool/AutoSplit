@@ -151,7 +151,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.width_spinbox.setValue(autosplit.settings_dict["capture_region"]["width"])
         autosplit.height_spinbox.setValue(autosplit.settings_dict["capture_region"]["height"])
         autosplit.split_image_folder_input.setText(autosplit.settings_dict["split_image_directory"])
-    except (FileNotFoundError, MemoryError, TypeError, tomllib.TOMLDecodeError):
+    except FileNotFoundError, MemoryError, TypeError, tomllib.TOMLDecodeError:
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
