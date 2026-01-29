@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
+from utils import first, get_input_device_resolution
 
 if sys.platform == "win32":
-    from pygrabber.dshow_graph import FilterGraph
+    import winerror
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import (
@@ -23,7 +23,10 @@ if sys.platform == "win32":
     from capture_method.ForceFullContentRenderingCaptureMethod import (
         ForceFullContentRenderingCaptureMethod,
     )
-    from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
+    from capture_method.WindowsGraphicsCaptureMethod import (
+        IS_WGC_SUPPORTED,
+        WindowsGraphicsCaptureMethod,
+    )
 
 if sys.platform == "linux":
     from PIL import features
@@ -120,7 +123,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
 CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     # Windows Graphics Capture requires a minimum Windows Build
-    if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
+    if IS_WGC_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     if IS_DESKTOP_DUPLICATION_SUPPORTED:
@@ -161,6 +164,13 @@ class CameraInfo:
 
 def get_input_devices():
     if sys.platform == "win32":
+        try:
+            from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
+        except OSError as exception:
+            # wine can choke on D3D Device Enumeration if missing directshow
+            if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
+                raise
+            return list[str]()
         return FilterGraph().get_input_devices()
 
     cameras: list[str] = []

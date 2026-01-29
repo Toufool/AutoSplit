@@ -1,4 +1,5 @@
 #! /usr/bin/pwsh
+param([switch]$WineCompat)
 
 # Validating user groups on Linux
 if ($IsLinux) {
@@ -38,8 +39,14 @@ if ($IsLinux) {
   }
 }
 
-# UPX is only used by PyInstaller on Windows
-if ($IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+# UPX is only used by PyInstaller on Windows,
+# Doesn't work on ARM64,
+# and we avoid using it on the "wine-compatible build"
+if (`
+    $IsWindows `
+    -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
+    -and -not $WineCompat
+) {
   $UPXVersion = '5.0.1'
   $UPXFolderName = "upx-$UPXVersion-win64"
   Write-Output "Installing $UPXFolderName"

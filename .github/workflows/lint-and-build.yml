@@ -81,6 +81,11 @@ jobs:
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
         python-version: ["3.14"]
+        wine-compat: [""]
+        include:
+          - os: windows-latest
+            python-version: "3.14"
+            wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
       # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
@@ -99,9 +104,9 @@ jobs:
         with:
           python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       # endregion
-      - run: scripts/install.ps1
+      - run: scripts/install.ps1 ${{ matrix.wine-compat }}
         shell: pwsh
-      - run: scripts/build.ps1
+      - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
         shell: pwsh
       - name: Add empty profile
         run: echo "" > dist/settings.toml
@@ -118,7 +123,8 @@ jobs:
         with:
           name: >
             AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
-            for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+            for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
+            (Python ${{ matrix.python-version }})
           path: |
             dist/AutoSplit*
             dist/settings.toml
@@ -126,7 +132,9 @@ jobs:
       - name: Upload Build logs
         uses: actions/upload-artifact@v6
         with:
-          name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+          name: >
+            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
+            (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt
