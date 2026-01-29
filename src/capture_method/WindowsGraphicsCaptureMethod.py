@@ -37,7 +37,7 @@ try:
     # Keep this check for a while even after it's implemented
     # TODO: Fix these pywin32 types in typeshed
     IS_WGC_SUPPORTED = WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD and bool(
-        win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType]
+        win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
             win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
             "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
         )
