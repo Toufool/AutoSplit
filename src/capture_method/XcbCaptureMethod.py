@@ -27,14 +27,12 @@ class XcbCaptureMethod(CaptureMethodBase):
     def get_frame(self):
         if not self.check_selected_region_exists():
             return None
-        xdisplay = Display()
-        root = xdisplay.screen().root
+
+        root = Display().screen().root
         try:
-            data = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
+            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
         except BadWindow:
             return None
-        offset_x = data["x"]
-        offset_y = data["y"]
         # image = window.get_image(
         #     selection["x"],
         #     selection["y"],
@@ -45,8 +43,8 @@ class XcbCaptureMethod(CaptureMethodBase):
         # )
 
         selection = self._autosplit_ref.settings_dict["capture_region"]
-        x = selection["x"] + offset_x
-        y = selection["y"] + offset_y
+        x = selection["x"] + window_coords["x"]
+        y = selection["y"] + window_coords["y"]
         image = ImageGrab.grab(
             (
                 x,

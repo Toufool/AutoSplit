@@ -36,10 +36,12 @@ else:
 if sys.platform == "linux":
     import fcntl
 
-    from pyscreeze import RUNNING_WAYLAND as RUNNING_WAYLAND  # noqa: PLC0414
-
+    RUNNING_X11 = os.environ.get("XDG_SESSION_TYPE") == "x11"
+    RUNNING_WAYLAND = not RUNNING_X11 and (
+        os.environ.get("XDG_SESSION_TYPE") == "wayland" or "WAYLAND_DISPLAY" in os.environ
+    )
 else:
-    RUNNING_WAYLAND = False
+    RUNNING_X11 = RUNNING_WAYLAND = False  # pyright: ignore[reportConstantRedefinition]
 
 
 if TYPE_CHECKING:

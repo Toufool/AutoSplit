@@ -4,6 +4,8 @@ import sys
 
 if sys.platform != "win32":
     raise OSError
+
+from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 from typing import TYPE_CHECKING, override
 
 import cv2
@@ -17,6 +19,14 @@ from utils import GITHUB_REPOSITORY, get_window_bounds
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
+
+try:  # Test for laptop cross-GPU Desktop Duplication issue
+    d3dshot.create(capture_output="numpy")
+except (ModuleNotFoundError, COMError):
+    IS_DESKTOP_DUPLICATION_SUPPORTED = False
+else:
+    IS_DESKTOP_DUPLICATION_SUPPORTED = True
 
 
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):

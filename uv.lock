@@ -44,7 +44,6 @@ dependencies = [
     { name = "pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pygrabber", marker = "sys_platform == 'win32'" },
     { name = "pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pyscreeze", marker = "sys_platform == 'linux'" },
     { name = "pyside6-essentials", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'aarch64' and sys_platform == 'linux'" },
     { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
@@ -73,7 +72,6 @@ dev = [
     { name = "types-keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-pyscreeze", marker = "sys_platform == 'linux'" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'" },
 ]
@@ -93,7 +91,6 @@ requires-dist = [
     { name = "pyautogui", specifier = ">=0.9.52" },
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
     { name = "pyinstaller", specifier = ">=6.15.0" },
-    { name = "pyscreeze", marker = "sys_platform == 'linux'", specifier = ">=1.0.0" },
     { name = "pyside6-essentials", marker = "platform_machine != 'aarch64' or sys_platform != 'linux'", specifier = ">=6.9.0" },
     { name = "pyside6-essentials", marker = "platform_machine == 'aarch64' and sys_platform == 'linux'", specifier = "<6.8.1" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
@@ -122,7 +119,6 @@ dev = [
     { name = "types-keyboard" },
     { name = "types-pyautogui" },
     { name = "types-pyinstaller" },
-    { name = "types-pyscreeze", marker = "sys_platform == 'linux'" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
 ]
@@ -496,12 +492,6 @@ nodejs = [
 ]
 
 [[package]]
-name = "pyscreeze"
-version = "1.0.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ee/f0/cb456ac4f1a73723d5b866933b7986f02bacea27516629c00f8e7da94c2d/pyscreeze-1.0.1.tar.gz", hash = "sha256:cf1662710f1b46aa5ff229ee23f367da9e20af4a78e6e365bee973cad0ead4be", size = 27826, upload-time = "2024-08-20T23:03:07.291Z" }
-
-[[package]]
 name = "pyside6-essentials"
 version = "6.8.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -750,18 +740,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f2/75/a446ac68cf3fdf50cb0b797ef92a7c2fd67bb7d93b9b0b12c2a78b426ba2/types_pyinstaller-6.14.0.20250611.tar.gz", hash = "sha256:c0de65e2833e0fd4dfaaaa0e0ba357fa29294f4fe272faa366364db469a465a9", size = 19378, upload-time = "2025-06-11T03:11:37.184Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f5/36/fde3bdfc1fb9e92a0f213ea4135a065d582e8067cf1c8dabbf968e1dd6ed/types_pyinstaller-6.14.0.20250611-py3-none-any.whl", hash = "sha256:23cae367bc8adf81dc49983cdefeabd5f798791508c0bc00c8a2062a1aa58411", size = 22026, upload-time = "2025-06-11T03:11:36.224Z" },
-]
-
-[[package]]
-name = "types-pyscreeze"
-version = "1.0.1.20250425"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pillow", marker = "sys_platform == 'linux'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7e/67/3b99acf2a3a0d0aa300b8c6ee37d7779e0e08866a53823af0372f87814be/types_pyscreeze-1.0.1.20250425.tar.gz", hash = "sha256:3ad88c8b947f8945ea565de44a32a814dd791c6e1c7f25a3d584f18709d4baf6", size = 9104, upload-time = "2025-04-25T03:00:35.801Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/83/2e/196d82905b6eac0af838999759ad3c7eefb7b82e171d75f631a967f5d43c/types_pyscreeze-1.0.1.20250425-py3-none-any.whl", hash = "sha256:31ba1fc7edfa4903fa9b3e431f8a48f8ff7261ef62df10a0968a870115eb37ba", size = 8701, upload-time = "2025-04-25T03:00:34.993Z" },
 ]
 
 [[package]]
