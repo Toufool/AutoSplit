@@ -125,8 +125,10 @@ if sys.platform == "win32":
         try:
             # Wine hasn't implemented yet (https://bugs.winehq.org/show_bug.cgi?id=52487)
             # Keep this check for a while even after it's implemented
-            win32api.GetProcAddress(
-                win32api.LoadLibrary("d3d11.dll"), "CreateDirect3D11DeviceFromDXGIDevice"
+            # TODO: Fix these pywin32 types in typeshed
+            win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType]
+                win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
+                "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
             )
         except win32api.error as exception:
             if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
@@ -174,17 +176,12 @@ class CameraInfo:
 
 def get_input_devices():
     if sys.platform == "win32":
-        from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
-
         try:
             from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
         except OSError as exception:
             # wine can choke on D3D Device Enumeration if missing directshow
-            # OSError: [WinError -2147312566] Windows Error 0x80029c4a
-            # TODO: Check the OS error number and only silence that one
-            print(exception)
-            print(exception.errno)
-            print(exception.winerror)
+            if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
+                raise
             return list[str]()
         return FilterGraph().get_input_devices()
 
