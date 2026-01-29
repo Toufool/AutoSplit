@@ -8,9 +8,6 @@ on:
         required: true
         default: false
         type: boolean
-  push:
-    branches:
-      - main
 
 env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
@@ -18,7 +15,7 @@ env:
 
 jobs:
   printenv:
-    runs-on: windows-latest
+    runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: printenv

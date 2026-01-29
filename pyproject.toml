@@ -87,12 +87,6 @@ name = "scientific-python-nightly-wheels"
 url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
 explicit = true
 
-[tool.uv-secure.maintainability_criteria]
-forbid_yanked = true
-forbid_archived = true
-forbid_deprecated = true
-forbid_quarantined = true
-
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 typeCheckingMode = "strict"

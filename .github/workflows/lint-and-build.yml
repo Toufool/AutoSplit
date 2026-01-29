@@ -47,13 +47,14 @@ jobs:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        # arm runner slower as long as opencv doesn't provide arm64 wheels
+        os: [windows-latest, ubuntu-latest]
         python-version: ["3.14"]
         include:
           - os: windows-latest
             python-version: "3.12"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up uv for Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v7
         with:
@@ -68,12 +69,12 @@ jobs:
           working-directory: src/
           python-version: ${{ matrix.python-version }}
 
-  uv-secure:
-    runs-on: ubuntu-latest
+  PySentry:
+    runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uvx uv-secure[faster-async]
+      - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
 
   Build:
     runs-on: ${{ matrix.os }}
@@ -88,9 +89,8 @@ jobs:
             python-version: "3.12"
           - os: windows-11-arm
             python-version: "3.12"
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
       - name: Set UV_PYTHON for ARM runners
         if: ${{ endsWith(matrix.os, 'arm') }}
@@ -125,7 +125,7 @@ jobs:
           }
         shell: pwsh
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: >
             AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
@@ -135,7 +135,7 @@ jobs:
             dist/settings.toml
           if-no-files-found: error
       - name: Upload Build logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
           path: |
