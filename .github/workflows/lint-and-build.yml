@@ -84,7 +84,7 @@ jobs:
         wine-compat: [""]
         include:
           - os: windows-latest
-            python-version: ["3.14"]
+            python-version: "3.14"
             wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
