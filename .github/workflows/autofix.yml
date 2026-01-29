@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   autofix:
-    runs-on: ubuntu-slim # here
+    runs-on: ubuntu-24.04-arm
     env:
       RUFF_OUTPUT_FORMAT: github
     steps:

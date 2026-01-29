@@ -48,7 +48,7 @@ jobs:
       # Pyright is version and platform sensible
       matrix:
         # arm runner slower as long as opencv doesn't provide arm64 wheels
-        os: [windows-latest, ubuntu-slim] # here
+        os: [windows-latest, ubuntu-latest]
         python-version: ["3.14"]
     steps:
       - uses: actions/checkout@v6
@@ -67,68 +67,68 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
   PySentry:
-    runs-on: ubuntu-slim # here
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
       - run: uvx pysentry-rs --sources=pypa,pypi,osv
 
-  # Build:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     # Only the Python version we plan on shipping matters.
-  #     matrix:
-  #       os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
-  #       python-version: ["3.14"]
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
-  #     - name: Set UV_PYTHON for ARM runners
-  #       if: ${{ endsWith(matrix.os, 'arm') }}
-  #       run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
-  #     # region https://github.com/pyinstaller/pyinstaller/issues/9204
-  #     - name: Set up Python for PyInstaller tk issue on Linux
-  #       if: ${{ startsWith(matrix.os, 'ubuntu') }}
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         allow-prereleases: true
-  #         python-version: ${{ matrix.python-version }}
-  #     - name: Set up uv for Python ${{ matrix.python-version }}
-  #       uses: astral-sh/setup-uv@v7
-  #       with:
-  #         python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
-  #     # endregion
-  #     - run: scripts/install.ps1
-  #       shell: pwsh
-  #     - run: scripts/build.ps1
-  #       shell: pwsh
-  #     - name: Add empty profile
-  #       run: echo "" > dist/settings.toml
-  #     - name: Extract AutoSplit version
-  #       id: artifact_vars
-  #       working-directory: src
-  #       run: | # This also serves as a sanity check for imports
-  #         $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
-  #         echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
-  #         echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
-  #       shell: pwsh
-  #     - name: Upload Build Artifact
-  #       uses: actions/upload-artifact@v6
-  #       with:
-  #         name: >
-  #           AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
-  #           for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
-  #         path: |
-  #           dist/AutoSplit*
-  #           dist/settings.toml
-  #         if-no-files-found: error
-  #     - name: Upload Build logs
-  #       uses: actions/upload-artifact@v6
-  #       with:
-  #         name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
-  #         path: |
-  #           build/AutoSplit/*.toc
-  #           build/AutoSplit/*.txt
-  #           build/AutoSplit/*.html
-  #         if-no-files-found: error
+  Build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # Only the Python version we plan on shipping matters.
+      matrix:
+        os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
+        python-version: ["3.14"]
+    steps:
+      - uses: actions/checkout@v6
+      # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
+      - name: Set UV_PYTHON for ARM runners
+        if: ${{ endsWith(matrix.os, 'arm') }}
+        run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
+      # region https://github.com/pyinstaller/pyinstaller/issues/9204
+      - name: Set up Python for PyInstaller tk issue on Linux
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        uses: actions/setup-python@v5
+        with:
+          allow-prereleases: true
+          python-version: ${{ matrix.python-version }}
+      - name: Set up uv for Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
+      # endregion
+      - run: scripts/install.ps1
+        shell: pwsh
+      - run: scripts/build.ps1
+        shell: pwsh
+      - name: Add empty profile
+        run: echo "" > dist/settings.toml
+      - name: Extract AutoSplit version
+        id: artifact_vars
+        working-directory: src
+        run: | # This also serves as a sanity check for imports
+          $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
+          echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
+          echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
+        shell: pwsh
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: >
+            AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
+            for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+          path: |
+            dist/AutoSplit*
+            dist/settings.toml
+          if-no-files-found: error
+      - name: Upload Build logs
+        uses: actions/upload-artifact@v6
+        with:
+          name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+          path: |
+            build/AutoSplit/*.toc
+            build/AutoSplit/*.txt
+            build/AutoSplit/*.html
+          if-no-files-found: error
