@@ -45,10 +45,11 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
+- Wine 10.1+ (Only supports the BitBlt Capture Method)
+  - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux (still in early development)
   - Should work on Ubuntu 22.04+
   - Wayland is not currently supported
-  - Running under Wine only supports the BitBlt Capture Method
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - x64 and ARM64 architectures \* (see [Known Limitations](#known-limitations) for ARM64)
 - If you'd like to run the project directly in Python from the source code, refer to the [build instructions](/docs/build%20instructions.md).

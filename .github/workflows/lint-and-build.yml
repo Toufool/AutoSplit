@@ -132,7 +132,9 @@ jobs:
       - name: Upload Build logs
         uses: actions/upload-artifact@v6
         with:
-          name: Build logs for ${{ steps.artifact_vars.outputs.OS }} (Python ${{ matrix.python-version }})
+          name: >
+            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{matrix.wine-compat}}
+            (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt
