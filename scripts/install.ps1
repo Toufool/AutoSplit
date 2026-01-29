@@ -1,4 +1,5 @@
 #! /usr/bin/pwsh
+param([switch]$WineCompat)
 
 # Validating user groups on Linux
 if ($IsLinux) {
@@ -38,18 +39,13 @@ if ($IsLinux) {
   }
 }
 
-$prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
-$lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
-Write-Output "Installing Python dependencies with: uv sync $prod $lock"
-uv sync --active $prod $lock
-
 # UPX is only used by PyInstaller on Windows,
 # Doesn't work on ARM64,
 # and we avoid using it on the "wine-compatible build"
 if (`
     $IsWindows `
     -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
-    -and (&uv run --active python -c 'import sys; print(sys.version_info < (3, 14))') -eq 'True'
+    -and -not $WineCompat
 ) {
   $UPXVersion = '5.0.1'
   $UPXFolderName = "upx-$UPXVersion-win64"
@@ -63,6 +59,11 @@ if (`
   Move-Item $PSScriptRoot/.upx/$UPXFolderName/* $PSScriptRoot/.upx
   Remove-Item $PSScriptRoot/.upx/$UPXFolderName
 }
+
+$prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
+$lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
+Write-Output "Installing Python dependencies with: uv sync $prod $lock"
+uv sync --active $prod $lock
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 if (-not $prod) {

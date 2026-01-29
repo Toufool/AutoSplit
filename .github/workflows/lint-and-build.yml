@@ -104,7 +104,7 @@ jobs:
         with:
           python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       # endregion
-      - run: scripts/install.ps1
+      - run: scripts/install.ps1 ${{ matrix.wine-compat }}
         shell: pwsh
       - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
         shell: pwsh
@@ -123,7 +123,7 @@ jobs:
         with:
           name: >
             AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
-            for ${{ steps.artifact_vars.outputs.OS }}${{matrix.wine-compat}}
+            for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
             (Python ${{ matrix.python-version }})
           path: |
             dist/AutoSplit*
@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: >
-            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{matrix.wine-compat}}
+            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
             (Python ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
