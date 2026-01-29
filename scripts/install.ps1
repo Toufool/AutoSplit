@@ -44,7 +44,7 @@ if ($IsLinux) {
 if (`
     $IsWindows `
     -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
-    -and (&uv run python -c 'import sys; print(sys.version_info[:2] > (3, 12))') -eq 'True'
+    -and (&uv run python -c 'import sys; print(sys.version_info > (3, 12))') -eq 'True'
 ) {
   $UPXVersion = '5.0.1'
   $UPXFolderName = "upx-$UPXVersion-win64"

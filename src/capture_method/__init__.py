@@ -13,11 +13,8 @@ from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCap
 from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
 
 if sys.platform == "win32":
-    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
-
     import win32api
     import winerror
-    from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import (
@@ -177,6 +174,8 @@ class CameraInfo:
 
 def get_input_devices():
     if sys.platform == "win32":
+        from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
+
         try:
             from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
         except OSError as exception:
