@@ -1,7 +1,7 @@
 [project]
 name = "AutoSplit"
 version = "2.3.2"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
   "Levenshtein >=0.25",
   "PyAutoGUI >=0.9.52",

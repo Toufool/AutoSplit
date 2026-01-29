@@ -1,4 +1,5 @@
 #! /usr/bin/pwsh
+param([switch]$WineCompat)
 
 Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 
@@ -18,8 +19,10 @@ Splash._check_tcl_tk_compatibility()
     '--optimize=2', # Remove asserts and docstrings for smaller build
     '--additional-hooks-dir=Pyinstaller/hooks',
     "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
-    '--upx-dir=scripts/.upx'
     '--icon=res/icon.ico')
+  if (-not $WineCompat) {
+    $arguments += '--upx-dir=scripts/.upx'
+  }
   if ($SupportsSplashScreen) {
     # https://github.com/pyinstaller/pyinstaller/issues/9022
     $arguments += @('--splash=res/splash.png')
