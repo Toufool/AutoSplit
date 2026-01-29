@@ -3,49 +3,76 @@ import sys
 if sys.platform != "linux":
     raise OSError
 
-from typing import override
+import os
+import shutil
+import subprocess  # noqa: S404
+import tempfile
+from typing import TYPE_CHECKING, override
 
 import cv2
-import numpy as np
-import pyscreeze
 from pywinctl import getWindowsWithTitle
 from Xlib.display import Display
 from Xlib.error import BadWindow
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import is_valid_image
+from utils import RUNNING_X11, imread, is_valid_image
+
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
+IS_SCROT_SUPPORTED = RUNNING_X11 and bool(shutil.which("scrot"))
+
+
+def _scrot_screenshot(x: int, y: int, width: int, height: int):
+    with tempfile.TemporaryDirectory() as tmp:
+        screenshot_file = os.path.join(tmp, "autosplit")
+        try:
+            subprocess.check_call((  # noqa: S603 # Not user input
+                "scrot",
+                "-a",
+                f"{x},{y},{width},{height}",
+                "-z",
+                screenshot_file,
+            ))
+            return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
+        except subprocess.CalledProcessError:
+            # This can happen when trying to capture a region OOB
+            # scrot is rude and prints directly to TTY, no stderr :/
+            return None
 
 
 class ScrotCaptureMethod(CaptureMethodBase):
     name = "Scrot"
-    short_description = "very slow, may leave files"
+    short_description = "fast, may leave files in `/tmp`"
     description = """
 Uses Scrot (SCReenshOT) to take screenshots.
-Leaves behind a screenshot file if interrupted."""
+Leaves behind a screenshot file in `/tmp` if interrupted."""
+
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__(autosplit)
+        self._display = Display()
+
+    @override
+    def close(self):
+        self._display.close()
 
     @override
     def get_frame(self):
         if not self.check_selected_region_exists():
             return None
-        xdisplay = Display()
-        root = xdisplay.screen().root
+
+        root = self._display.screen().root
         try:
-            data = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
+            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
         except BadWindow:
             return None
-        offset_x = data["x"]
-        offset_y = data["y"]
         selection = self._autosplit_ref.settings_dict["capture_region"]
-        image = pyscreeze.screenshot(
-            None,
-            (
-                selection["x"] + offset_x,
-                selection["y"] + offset_y,
-                selection["width"],
-                selection["height"],
-            ),
+        image = _scrot_screenshot(
+            selection["x"] + window_coords["x"],
+            selection["y"] + window_coords["y"],
+            selection["width"],
+            selection["height"],
         )
-        image = np.array(image)
         if not is_valid_image(image):
             return None
         return cv2.cvtColor(image, cv2.COLOR_RGB2BGRA)

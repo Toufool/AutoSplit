@@ -17,19 +17,22 @@ if sys.platform == "win32":
 
     import win32api
     import winerror
+    from pygrabber.dshow_graph import FilterGraph
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
-    from capture_method.DesktopDuplicationCaptureMethod import DesktopDuplicationCaptureMethod
+    from capture_method.DesktopDuplicationCaptureMethod import (
+        IS_DESKTOP_DUPLICATION_SUPPORTED,
+        DesktopDuplicationCaptureMethod,
+    )
     from capture_method.ForceFullContentRenderingCaptureMethod import (
         ForceFullContentRenderingCaptureMethod,
     )
     from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
 
 if sys.platform == "linux":
-    import pyscreeze
-    from PIL import UnidentifiedImageError, features
+    from PIL import features
 
-    from capture_method.ScrotCaptureMethod import ScrotCaptureMethod
+    from capture_method.ScrotCaptureMethod import IS_SCROT_SUPPORTED, ScrotCaptureMethod
     from capture_method.XcbCaptureMethod import XcbCaptureMethod
 
 
@@ -136,13 +139,7 @@ if sys.platform == "win32":
                 WindowsGraphicsCaptureMethod
             )
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
-    try:  # Test for laptop cross-GPU Desktop Duplication issue
-        import d3dshot
-
-        d3dshot.create(capture_output="numpy")
-    except (ModuleNotFoundError, COMError):
-        pass
-    else:
+    if IS_DESKTOP_DUPLICATION_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.PRINTWINDOW_RENDERFULLCONTENT] = (
         ForceFullContentRenderingCaptureMethod
@@ -150,20 +147,7 @@ if sys.platform == "win32":
 elif sys.platform == "linux":
     if features.check_feature(feature="xcb"):
         CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
-    try:
-        pyscreeze.screenshot()
-    except (UnidentifiedImageError, pyscreeze.PyScreezeException):
-        # TODO: Should we show a specific warning for, or document:
-        # pyscreeze.PyScreezeException: Your computer uses the Wayland window system. Scrot works on the X11 window system but not Wayland. You must install gnome-screenshot by running `sudo apt install gnome-screenshot` # noqa: E501
-        pass
-    except Exception as exception:
-        # Ignore gnomes-screenshot not being available,
-        # as its screen-flashes make it unviable for screen-recording
-        if "gnome-screenshot" not in str(exception):
-            raise
-    else:
-        # TODO: Investigate solution for Slow Scrot:
-        # https://github.com/asweigart/pyscreeze/issues/68
+    if IS_SCROT_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.SCROT] = ScrotCaptureMethod
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
 

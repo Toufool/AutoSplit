@@ -3,7 +3,7 @@ import sys
 if sys.platform != "linux":
     raise OSError
 
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
@@ -15,26 +15,35 @@ from Xlib.error import BadWindow
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import is_valid_image
 
+if TYPE_CHECKING:
+    from AutoSplit import AutoSplit
+
 
 class XcbCaptureMethod(CaptureMethodBase):
     name = "X11 XCB"
-    short_description = "fast, requires XCB"
+    short_description = "slower, requires XCB"
     description = "\nUses the XCB library to take screenshots of the X11 server."
 
     _xdisplay: str | None = ""  # ":0"
+
+    def __init__(self, autosplit: AutoSplit):
+        super().__init__(autosplit)
+        self._display = Display()
+
+    @override
+    def close(self):
+        self._display.close()
 
     @override
     def get_frame(self):
         if not self.check_selected_region_exists():
             return None
-        xdisplay = Display()
-        root = xdisplay.screen().root
+
+        root = self._display.screen().root
         try:
-            data = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
+            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
         except BadWindow:
             return None
-        offset_x = data["x"]
-        offset_y = data["y"]
         # image = window.get_image(
         #     selection["x"],
         #     selection["y"],
@@ -45,8 +54,8 @@ class XcbCaptureMethod(CaptureMethodBase):
         # )
 
         selection = self._autosplit_ref.settings_dict["capture_region"]
-        x = selection["x"] + offset_x
-        y = selection["y"] + offset_y
+        x = selection["x"] + window_coords["x"]
+        y = selection["y"] + window_coords["y"]
         image = ImageGrab.grab(
             (
                 x,

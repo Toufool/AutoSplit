@@ -328,11 +328,13 @@ class BaseSelectWidget(QtWidgets.QWidget):
             width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
             height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
         else:
-            data = Display().screen().root.get_geometry()._data  # noqa: SLF001
-            x = data["x"]
-            y = data["y"]
-            width = data["width"]
-            height = data["height"]
+            display = Display()
+            display_geometry = display.screen().root.get_geometry()._data  # noqa: SLF001
+            display.close()
+            x = display_geometry["x"]
+            y = display_geometry["y"]
+            width = display_geometry["width"]
+            height = display_geometry["height"]
         self.setGeometry(x, y, width, height)
         self.setFixedSize(width, height)  # Prevent move/resizing on Linux
         self.setWindowTitle(type(self).__name__)
