@@ -127,7 +127,7 @@ if sys.platform == "win32":
             # Keep this check for a while even after it's implemented
             # TODO: Fix these pywin32 types in typeshed
             win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType]
-                win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
+                win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType]
                 "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
             )
         except win32api.error as exception:
