@@ -26,22 +26,19 @@ IS_SCROT_SUPPORTED = RUNNING_X11 and bool(shutil.which("scrot"))
 def _scrot_screenshot(x: int, y: int, width: int, height: int):
     with tempfile.TemporaryDirectory() as tmp:
         screenshot_file = os.path.join(tmp, "autosplit")
-        subprocess.check_call((  # noqa: S603 # Not user input
-            "scrot",
-            "-a",
-            f"{x},{y},{width},{height}",
-            "-z",
-            screenshot_file,
-        ))
-        return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
-
-
-# TODO: Consider maim and flameshot as alternatives to scrot
-# https://github.com/naelstrof/maim
-# https://github.com/asweigart/pyscreeze/commit/36b822aa54a22b9dafef9ce2d40f8e24f81a5d9e
-# https://flameshot.org/docs/installation/installation-linux/
-# Maybe even spectacle ?
-# https://manpages.debian.org/testing/kde-spectacle/spectacle.1.en.html
+        try:
+            subprocess.check_call((  # noqa: S603 # Not user input
+                "scrot",
+                "-a",
+                f"{x},{y},{width},{height}",
+                "-z",
+                screenshot_file,
+            ))
+            return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
+        except subprocess.CalledProcessError:
+            # This can happen when trying to capture a region OOB
+            # scrot is rude and prints directly to TTY, no stderr :/
+            return None
 
 
 class ScrotCaptureMethod(CaptureMethodBase):
