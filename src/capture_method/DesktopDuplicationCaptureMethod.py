@@ -26,7 +26,7 @@ try:  # Test for laptop cross-GPU Desktop Duplication issue
 except (ModuleNotFoundError, COMError):
     IS_DESKTOP_DUPLICATION_SUPPORTED = False
 else:
-    IS_DESKTOP_DUPLICATION_SUPPORTED = True
+    IS_DESKTOP_DUPLICATION_SUPPORTED = True  # pyright: ignore[reportConstantRedefinition]
 
 
 class DesktopDuplicationCaptureMethod(BitBltCaptureMethod):

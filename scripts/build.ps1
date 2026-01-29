@@ -7,8 +7,8 @@ try {
 
   $SupportsSplashScreen = [System.Convert]::ToBoolean(
     $(uv run --active python -c '
-      from PyInstaller.building.splash import Splash
-      Splash._check_tcl_tk_compatibility()
+from PyInstaller.building.splash import Splash
+Splash._check_tcl_tk_compatibility()
     '))
 
   $arguments = @(

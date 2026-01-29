@@ -41,7 +41,7 @@ if sys.platform == "linux":
         os.environ.get("XDG_SESSION_TYPE") == "wayland" or "WAYLAND_DISPLAY" in os.environ
     )
 else:
-    RUNNING_X11 = RUNNING_WAYLAND = False  # pyright: ignore[reportConstantRedefinition]
+    RUNNING_X11 = RUNNING_WAYLAND = False
 
 
 if TYPE_CHECKING:
