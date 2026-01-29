@@ -168,7 +168,7 @@ def get_input_devices():
         try:
             for index in range(len(os.listdir("/sys/class/video4linux"))):
                 with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
-                    cameras.append(file.readline()[:-2])
+                    cameras.append(file.readline().strip())
         except FileNotFoundError:
             pass
     return cameras
