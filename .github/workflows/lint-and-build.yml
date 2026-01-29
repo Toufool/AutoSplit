@@ -84,12 +84,12 @@ jobs:
       matrix:
         # os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
         os: [windows-latest]
-        python-version: ["3.14"]
-        include:
-          - os: windows-latest
-            python-version: "3.12"
-          - os: windows-11-arm
-            python-version: "3.12"
+        python-version: ["3.12", "3.13", "3.14"]
+        # include:
+        #   - os: windows-latest
+        #     python-version: "3.12"
+        #   - os: windows-11-arm
+        #     python-version: "3.12"
     steps:
       - uses: actions/checkout@v6
       # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179

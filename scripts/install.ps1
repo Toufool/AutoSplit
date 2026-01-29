@@ -41,23 +41,23 @@ if ($IsLinux) {
 # UPX is only used by PyInstaller on Windows,
 # Doesn't work on ARM64,
 # and we avoid using it on the "wine-compatible build"
-if (`
-    $IsWindows `
-    -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
-    -and (&uv run python -c 'import sys; print(sys.version_info > (3, 12))') -eq 'True'
-) {
-  $UPXVersion = '5.0.1'
-  $UPXFolderName = "upx-$UPXVersion-win64"
-  Write-Output "Installing $UPXFolderName"
-  if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse }
-  Invoke-WebRequest `
-    -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXFolderName.zip `
-    -OutFile $Env:TEMP/$UPXFolderName.zip
-  # Automatically install in a local untracked folder. This makes it easy to version and replicate on CI
-  Expand-Archive $Env:TEMP/$UPXFolderName.zip $PSScriptRoot/.upx
-  Move-Item $PSScriptRoot/.upx/$UPXFolderName/* $PSScriptRoot/.upx
-  Remove-Item $PSScriptRoot/.upx/$UPXFolderName
-}
+# if (`
+#     $IsWindows `
+#     -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
+#     -and (&uv run python -c 'import sys; print(sys.version_info > (3, 12))') -eq 'True'
+# ) {
+#   $UPXVersion = '5.0.1'
+#   $UPXFolderName = "upx-$UPXVersion-win64"
+#   Write-Output "Installing $UPXFolderName"
+#   if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse }
+#   Invoke-WebRequest `
+#     -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXFolderName.zip `
+#     -OutFile $Env:TEMP/$UPXFolderName.zip
+#   # Automatically install in a local untracked folder. This makes it easy to version and replicate on CI
+#   Expand-Archive $Env:TEMP/$UPXFolderName.zip $PSScriptRoot/.upx
+#   Move-Item $PSScriptRoot/.upx/$UPXFolderName/* $PSScriptRoot/.upx
+#   Remove-Item $PSScriptRoot/.upx/$UPXFolderName
+# }
 
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
