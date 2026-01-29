@@ -4,6 +4,7 @@ import os
 import tomllib
 from copy import deepcopy
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast, override
+from warnings import deprecated
 
 import tomli_w
 from gen import design
@@ -16,19 +17,7 @@ from menu_bar import open_settings
 from utils import auto_split_directory
 
 if TYPE_CHECKING:
-    from warnings import deprecated
-
     from AutoSplit import AutoSplit
-else:
-
-    def deprecated(
-        message: str,  # noqa: ARG001
-        /,
-        *,
-        category: type[Warning] | None = DeprecationWarning,  # noqa: ARG001
-        stacklevel: int = 1,  # noqa: ARG001
-    ):
-        return lambda x: x
 
 
 class UserProfileDict(TypedDict):
