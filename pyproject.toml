@@ -38,8 +38,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "PyScreeze >=1.0.0; sys_platform == 'linux'",
-  "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for PyScreeze/ImageGrab.
+  "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -60,7 +59,6 @@ dev = [
   #
   # Types
   "types-PyAutoGUI",
-  "types-PyScreeze; sys_platform == 'linux'",
   "types-keyboard",
   "types-pyinstaller",
   "types-python-xlib; sys_platform == 'linux'",
