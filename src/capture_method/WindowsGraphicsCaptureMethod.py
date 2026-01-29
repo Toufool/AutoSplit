@@ -45,7 +45,7 @@ try:
 except win32api.error as exception:
     if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
         raise
-    IS_WGC_SUPPORTED = False
+    IS_WGC_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):
