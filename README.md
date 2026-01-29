@@ -69,6 +69,8 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 
 See the [installation instructions](https://github.com/Toufool/LiveSplit.AutoSplitIntegration#installation).
 
+Linux users, note that LiveSplit Desktop, with additional components, is only available on Windows. Whilst it can work through Wine, support is [very limited](#wine-limitations). You should instead consider an [alternative timer](https://www.speedrun.com/forums/streaming_recording_equipment/7uyur#cnnqz).
+
 ## Known Limitations
 
 - For many games, it will be difficult to find a split image for the last split of the run.
