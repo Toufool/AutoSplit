@@ -101,10 +101,11 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Starring the repository <img style="vertical-align: sub" src="./docs/repo_star.png" alt="Example" />
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
-  - <https://bugreports.qt.io/browse/QTBUG-114436>
-  - <https://bugreports.qt.io/browse/QTBUG-114635>
-  - <https://bugreports.qt.io/browse/PYSIDE-2541>
-  - <https://bugreports.qt.io/browse/PYSIDE-2542>
+  - <https://bugs.winehq.org/show_bug.cgi?id=52487>
+  - <https://qt-project.atlassian.net/browse/QTBUG-114436>
+  - <https://qt-project.atlassian.net/browse/QTBUG-114635>
+  - <https://qt-project.atlassian.net/browse/PYSIDE-2541>
+  - <https://qt-project.atlassian.net/browse/PYSIDE-2542>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/mypyc/mypyc/issues?q=sort%3Areactions-%2B1%20is%3Aissue%20is%3Aopen%20%20involves%3AAvasam%20>
   - <https://github.com/uiri/toml/issues/270>
