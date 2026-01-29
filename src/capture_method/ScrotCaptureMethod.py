@@ -46,10 +46,10 @@ def _scrot_screenshot(x: int, y: int, width: int, height: int):
 
 class ScrotCaptureMethod(CaptureMethodBase):
     name = "Scrot"
-    short_description = "very slow, may leave files"
+    short_description = "fast, may leave files in `/tmp`"
     description = """
 Uses Scrot (SCReenshOT) to take screenshots.
-Leaves behind a screenshot file if interrupted."""
+Leaves behind a screenshot file in `/tmp` if interrupted."""
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)

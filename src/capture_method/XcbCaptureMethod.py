@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 class XcbCaptureMethod(CaptureMethodBase):
     name = "X11 XCB"
-    short_description = "fast, requires XCB"
+    short_description = "slower, requires XCB"
     description = "\nUses the XCB library to take screenshots of the X11 server."
 
     _xdisplay: str | None = ""  # ":0"
@@ -39,7 +39,7 @@ class XcbCaptureMethod(CaptureMethodBase):
         if not self.check_selected_region_exists():
             return None
 
-        root = Display().screen().root
+        root = self._display.screen().root
         try:
             window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
         except BadWindow:
