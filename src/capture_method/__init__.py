@@ -10,10 +10,9 @@ from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, first, get_input_device_resolution
+from utils import first, get_input_device_resolution
 
 if sys.platform == "win32":
-    import win32api
     import winerror
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
@@ -24,7 +23,10 @@ if sys.platform == "win32":
     from capture_method.ForceFullContentRenderingCaptureMethod import (
         ForceFullContentRenderingCaptureMethod,
     )
-    from capture_method.WindowsGraphicsCaptureMethod import WindowsGraphicsCaptureMethod
+    from capture_method.WindowsGraphicsCaptureMethod import (
+        IS_WGC_SUPPORTED,
+        WindowsGraphicsCaptureMethod,
+    )
 
 if sys.platform == "linux":
     from PIL import features
@@ -121,22 +123,8 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
 CAPTURE_METHODS = CaptureMethodDict()
 if sys.platform == "win32":
     # Windows Graphics Capture requires a minimum Windows Build
-    if WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD:
-        try:
-            # Wine hasn't implemented yet (https://bugs.winehq.org/show_bug.cgi?id=52487)
-            # Keep this check for a while even after it's implemented
-            # TODO: Fix these pywin32 types in typeshed
-            win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType]
-                win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-                "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
-            )
-        except win32api.error as exception:
-            if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
-                raise
-        else:
-            CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = (
-                WindowsGraphicsCaptureMethod
-            )
+    if IS_WGC_SUPPORTED:
+        CAPTURE_METHODS[CaptureMethodEnum.WINDOWS_GRAPHICS_CAPTURE] = WindowsGraphicsCaptureMethod
     CAPTURE_METHODS[CaptureMethodEnum.BITBLT] = BitBltCaptureMethod
     if IS_DESKTOP_DUPLICATION_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.DESKTOP_DUPLICATION] = DesktopDuplicationCaptureMethod

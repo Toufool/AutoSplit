@@ -8,7 +8,9 @@ import asyncio
 from typing import TYPE_CHECKING, cast, override
 
 import numpy as np
+import win32api
 import win32gui
+import winerror
 from cv2.typing import MatLike
 from winrt.windows.graphics import SizeInt32
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
@@ -28,6 +30,22 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
+
+try:
+    # Wine hasn't implemented CreateDirect3D11DeviceFromDXGIDevice yet
+    # https://bugs.winehq.org/show_bug.cgi?id=52487
+    # Keep this check for a while even after it's implemented
+    # TODO: Fix these pywin32 types in typeshed
+    IS_WGC_SUPPORTED = WINDOWS_BUILD_NUMBER >= WGC_MIN_BUILD and bool(
+        win32api.GetProcAddress(  # pyright: ignore[reportUnknownMemberType]
+            win32api.LoadLibrary("d3d11.dll"),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+            "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
+        )
+    )
+except win32api.error as exception:
+    if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
+        raise
+    IS_WGC_SUPPORTED = False
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):
