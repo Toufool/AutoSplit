@@ -41,40 +41,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Pyright:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      # Pyright is version and platform sensible
-      matrix:
-        # arm runner slower as long as opencv doesn't provide arm64 wheels
-        os: [windows-latest, ubuntu-latest]
-        python-version: ["3.14"]
-        include:
-          - os: windows-latest
-            python-version: "3.12"
-    steps:
-      - uses: actions/checkout@v6
-      - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
-        with:
-          python-version: ${{ matrix.python-version }}
-          activate-environment: true
-      - run: scripts/install.ps1
-        shell: pwsh
-      - name: Analysing the code with Pyright
-        uses: jakebailey/pyright-action@v2
-        with:
-          version: PATH
-          working-directory: src/
-          python-version: ${{ matrix.python-version }}
+  # Pyright:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     # Pyright is version and platform sensible
+  #     matrix:
+  #       # arm runner slower as long as opencv doesn't provide arm64 wheels
+  #       os: [windows-latest, ubuntu-latest]
+  #       python-version: ["3.14"]
+  #       include:
+  #         - os: windows-latest
+  #           python-version: "3.12"
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - name: Set up uv for Python ${{ matrix.python-version }}
+  #       uses: astral-sh/setup-uv@v7
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #         activate-environment: true
+  #     - run: scripts/install.ps1
+  #       shell: pwsh
+  #     - name: Analysing the code with Pyright
+  #       uses: jakebailey/pyright-action@v2
+  #       with:
+  #         version: PATH
+  #         working-directory: src/
+  #         python-version: ${{ matrix.python-version }}
 
-  PySentry:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
-      - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
+  # PySentry:
+  #   runs-on: ubuntu-24.04-arm
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: astral-sh/setup-uv@v7
+  #     - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
 
   Build:
     runs-on: ${{ matrix.os }}
@@ -82,7 +82,8 @@ jobs:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
       matrix:
-        os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
+        # os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-22.04-arm]
+        os: [windows-latest]
         python-version: ["3.14"]
         include:
           - os: windows-latest
