@@ -4,9 +4,8 @@ version = "2.3.2"
 requires-python = ">=3.14"
 dependencies = [
   "Levenshtein >=0.25",
-  "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
-  "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
+  "pynput >=1.8.1",
   "numpy >=2.3.2", # Python 3.14 support
   "opencv-contrib-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
@@ -58,8 +57,6 @@ dev = [
   { include-group = "ruff" },
   #
   # Types
-  "types-PyAutoGUI",
-  "types-keyboard",
   "types-pyinstaller",
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
@@ -70,12 +67,7 @@ environments = [
   "sys_platform == 'linux'",
   "sys_platform == 'win32'",
 ]
-dependency-metadata = [
-  # PyAutoGUI installs extra libraries we don't want. We only use it for hotkeys
-  # PyScreeze -> pyscreenshot -> mss deps calls SetProcessDpiAwareness on Windows
-  { name = "PyAutoGUI", requires-dist = [] },
-  { name = "types-PyAutoGUI", requires-dist = [] },
-]
+dependency-metadata = []
 
 [tool.uv.sources] # Development channels
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
