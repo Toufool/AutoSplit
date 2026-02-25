@@ -11,14 +11,6 @@ supported-markers = [
     "sys_platform == 'win32'",
 ]
 
-[manifest]
-
-[[manifest.dependency-metadata]]
-name = "pyautogui"
-
-[[manifest.dependency-metadata]]
-name = "types-pyautogui"
-
 [[package]]
 name = "altgraph"
 version = "0.17.4"
@@ -33,15 +25,14 @@ name = "autosplit"
 version = "2.3.2"
 source = { virtual = "." }
 dependencies = [
-    { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "levenshtein", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "opencv-contrib-python-headless", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pillow", marker = "sys_platform == 'linux'" },
-    { name = "pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pygrabber", marker = "sys_platform == 'win32'" },
     { name = "pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "pynput", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pyside6-essentials", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'aarch64' and sys_platform == 'linux'" },
     { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
@@ -67,8 +58,6 @@ dev = [
     { name = "pyright", extra = ["nodejs"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "qt6-applications", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'" },
@@ -80,15 +69,14 @@ ruff = [
 
 [package.metadata]
 requires-dist = [
-    { name = "keyboard", git = "https://github.com/boppreh/keyboard.git" },
     { name = "levenshtein", specifier = ">=0.25" },
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "opencv-contrib-python-headless", specifier = ">=4.10" },
     { name = "packaging", specifier = ">=20.0" },
     { name = "pillow", marker = "sys_platform == 'linux'", specifier = ">=12.1.1" },
-    { name = "pyautogui", specifier = ">=0.9.52" },
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
     { name = "pyinstaller", specifier = ">=6.15.0" },
+    { name = "pynput", specifier = ">=1.8.1" },
     { name = "pyside6-essentials", marker = "platform_machine != 'aarch64' or sys_platform != 'linux'", specifier = ">=6.9.0" },
     { name = "pyside6-essentials", marker = "platform_machine == 'aarch64' and sys_platform == 'linux'", specifier = "<6.8.1" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
@@ -114,8 +102,6 @@ dev = [
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
     { name = "qt6-applications", specifier = ">=6.5.0" },
     { name = "ruff" },
-    { name = "types-keyboard" },
-    { name = "types-pyautogui" },
     { name = "types-pyinstaller" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
@@ -153,6 +139,12 @@ wheels = [
 ]
 
 [[package]]
+name = "evdev"
+version = "1.9.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/f5/397b61091120a9ca5001041dd7bf76c385b3bfd67a0e5bcb74b852bd22a4/evdev-1.9.3.tar.gz", hash = "sha256:2c140e01ac8437758fa23fe5c871397412461f42d421aa20241dc8fe8cfccbc9", size = 32723, upload-time = "2026-02-05T21:54:24.987Z" }
+
+[[package]]
 name = "ewmhlib"
 version = "0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -163,11 +155,6 @@ dependencies = [
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/3a/46ca34abf0725a754bc44ef474ad34aedcc3ea23b052d97b18b76715a6a9/EWMHlib-0.2-py3-none-any.whl", hash = "sha256:f5b07d8cfd4c7734462ee744c32d490f2f3233fa7ab354240069344208d2f6f5", size = 46657, upload-time = "2024-04-17T08:15:56.338Z" },
 ]
-
-[[package]]
-name = "keyboard"
-version = "0.13.5"
-source = { git = "https://github.com/boppreh/keyboard.git#d232de09bda50ecb5211ebcc59b85bc6da6aaa24" }
 
 [[package]]
 name = "levenshtein"
@@ -347,12 +334,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyautogui"
-version = "0.9.54"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/65/ff/cdae0a8c2118a0de74b6cf4cbcdcaf8fd25857e6c3f205ce4b1794b27814/PyAutoGUI-0.9.54.tar.gz", hash = "sha256:dd1d29e8fd118941cb193f74df57e5c6ff8e9253b99c7b04f39cfc69f3ae04b2", size = 61236, upload-time = "2023-05-24T20:11:32.972Z" }
-
-[[package]]
 name = "pygrabber"
 version = "0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -419,6 +400,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pynput"
+version = "1.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "evdev", marker = "(sys_platform == 'linux' and 'linux' in sys_platform) or (sys_platform == 'win32' and 'linux' in sys_platform)" },
+    { name = "python-xlib", marker = "(sys_platform == 'linux' and 'linux' in sys_platform) or (sys_platform == 'win32' and 'linux' in sys_platform)" },
+    { name = "six", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f0/c3/dccf44c68225046df5324db0cc7d563a560635355b3e5f1d249468268a6f/pynput-1.8.1.tar.gz", hash = "sha256:70d7c8373ee98911004a7c938742242840a5628c004573d84ba849d4601df81e", size = 82289, upload-time = "2025-03-17T17:12:01.481Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/59/4f/ac3fa906ae8a375a536b12794128c5efacade9eaa917a35dfd27ce0c7400/pynput-1.8.1-py2.py3-none-any.whl", hash = "sha256:42dfcf27404459ca16ca889c8fb8ffe42a9fe54f722fd1a3e130728e59e768d2", size = 91693, upload-time = "2025-03-17T17:12:00.094Z" },
+]
+
+[[package]]
 name = "pyright"
 version = "1.1.408"
 source = { registry = "https://pypi.org/simple" }
@@ -473,7 +468,7 @@ name = "python-xlib"
 version = "0.33"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "sys_platform == 'linux'" },
+    { name = "six", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/86/f5/8c0653e5bb54e0cbdfe27bf32d41f27bc4e12faa8742778c17f2a71be2c0/python-xlib-0.33.tar.gz", hash = "sha256:55af7906a2c75ce6cb280a584776080602444f75815a7aff4d287bb2d7018b32", size = 269068, upload-time = "2022-12-25T18:53:00.824Z" }
 wheels = [

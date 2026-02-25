@@ -26,7 +26,6 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
   (If you don't have a GitHub account, you can try [nightly.link](https://nightly.link/Toufool/AutoSplit/workflows/lint-and-build/main))
 - Linux users must ensure they are in the `tty` and `input` groups and have write access to `/dev/uinput`. You can run the following commands to do so:
 
-  <!-- https://github.com/boppreh/keyboard/issues/312#issuecomment-1189734564 -->
   <!-- Keep in sync with scripts/install.ps1 and src/error_messages.py -->
   ```shell
   sudo usermod -a -G tty,input $USER
@@ -126,12 +125,6 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/python/mypy/issues/15146>
   - <https://github.com/python/mypy/issues/4409>
   - <https://github.com/python/mypy/issues/10149>
-  - <https://github.com/boppreh/keyboard/issues/171>
-  - <https://github.com/boppreh/keyboard/issues/516>
-  - <https://github.com/boppreh/keyboard/issues/216>
-  - <https://github.com/boppreh/keyboard/issues/161>
-  - <https://github.com/asweigart/pyautogui/issues/663>
-  - <https://github.com/asweigart/pyautogui/pull/911>
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
 
 ## Credits

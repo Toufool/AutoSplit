@@ -12,7 +12,8 @@ from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
-from hotkeys import HOTKEYS, CommandStr, remove_all_hotkeys, set_hotkey
+from hotkey_constants import HOTKEYS, CommandStr
+from hotkeys import set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -155,13 +156,13 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         autosplit.show_error_signal.emit(error_messages.invalid_settings)
         return False
 
-    remove_all_hotkeys()
+    autosplit.hotkey_thread.remove_all_hotkeys()
     if not autosplit.is_auto_controlled:
         for hotkey in HOTKEYS:
             hotkey_name = f"{hotkey}_hotkey"
             hotkey_value = autosplit.settings_dict.get(hotkey_name)
-            if hotkey_value:
-                set_hotkey(autosplit, hotkey, hotkey_value)
+            if hotkey_value is not None:
+                set_hotkey(autosplit, hotkey, hotkey_name=hotkey_value)
 
     change_capture_method(
         cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),

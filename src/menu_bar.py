@@ -10,7 +10,7 @@ from urllib.request import urlopen
 
 from gen import about, design, settings as settings_ui, update_checker
 from packaging.version import parse as version_parse
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QPalette
 from PySide6.QtWidgets import QFileDialog
@@ -24,7 +24,8 @@ from capture_method import (
     change_capture_method,
     get_all_video_capture_devices,
 )
-from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
+from hotkey_constants import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr
+from hotkeys import set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
 if TYPE_CHECKING:
@@ -335,24 +336,75 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
             self._autosplit_ref.settings_dict["screenshot_directory"]
         )
 
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent):
+        # catch enter and escape keys here, we can override more keys by adding more checks here!
+
+        for hotkey in HOTKEYS:
+            hotkey_input: QtWidgets.QKeySequenceEdit = getattr(self, f"{hotkey}_input")
+
+            # find the widget sending the event
+            if watched == hotkey_input:
+                clear_focus = False
+
+                if event.type() == QtCore.QEvent.Type.KeyPress:
+                    # clear the hotkey if escape is pressed
+                    if event.key() == QtCore.Qt.Key.Key_Escape:
+                        hotkey_input.clear()
+                        self._autosplit_ref.settings_dict[f"{hotkey}_hotkey"] = ""  # pyright: ignore[reportGeneralTypeIssues]
+
+                    if event.key() in {
+                        QtCore.Qt.Key.Key_Return,
+                        QtCore.Qt.Key.Key_Enter,
+                        QtCore.Qt.Key.Key_Escape,
+                    }:
+                        clear_focus = True
+                elif event.type() in {
+                    QtCore.QEvent.Type.MouseButtonPress,
+                    QtCore.QEvent.Type.MouseButtonDblClick,
+                    QtCore.QEvent.Type.MouseButtonRelease,
+                }:
+                    clear_focus = True
+
+                # clear the focus if either enter or escape are pressed (to confirm the input)
+                if clear_focus:
+                    hotkey_input.clearFocus()
+                    return True  # mark the event as cleared
+
+        # default behavior
+        return super().eventFilter(watched, event)
+
     def __setup_bindings(self):
         # Hotkey initial values and bindings
         for hotkey in HOTKEYS:
-            hotkey_input: QtWidgets.QLineEdit = getattr(self, f"{hotkey}_input")
+            hotkey_input: QtWidgets.QKeySequenceEdit = getattr(self, f"{hotkey}_input")
             set_hotkey_hotkey_button: QtWidgets.QPushButton = getattr(
                 self,
                 f"set_{hotkey}_hotkey_button",
             )
-            hotkey_input.setText(self._autosplit_ref.settings_dict.get(f"{hotkey}_hotkey", ""))
+
+            # if a hotkey exists set it, otherwise clear the sequence to make sure it's accurate to the settings
+            sequence_str: str | None = self._autosplit_ref.settings_dict.get(f"{hotkey}_hotkey")
+            if sequence_str is not None:
+                hotkey_input.setKeySequence(QtGui.QKeySequence(sequence_str))
+            else:
+                hotkey_input.clear()
 
             # Make it very clear that hotkeys are not used when auto-controlled
             if self._autosplit_ref.is_auto_controlled and hotkey not in HOTKEYS_WHEN_AUTOCONTROLLED:
                 set_hotkey_hotkey_button.setEnabled(False)
                 hotkey_input.setEnabled(False)
             else:
-                set_hotkey_hotkey_button.clicked.connect(
-                    partial(set_hotkey, self._autosplit_ref, hotkey=hotkey)
+                # this is necessary to use the `eventFilter` function above
+                # the alternative would be a custom widget
+                hotkey_input.installEventFilter(self)
+
+                # connect `set_hotkey` to the editing finished signal so it sets the hotkey when we're done typing
+                hotkey_input.editingFinished.connect(
+                    partial(set_hotkey, self._autosplit_ref, hotkey=hotkey, input_ref=hotkey_input)
                 )
+
+                # if "set hotkey" is pressed simply focus the key sequence widget so we can start typing
+                set_hotkey_hotkey_button.clicked.connect(partial(hotkey_input.setFocus))
 
         # Debug screenshot selection checkboxes initial values and bindings
         screenshot_on_setting = self._autosplit_ref.settings_dict["screenshot_on"]
@@ -473,15 +525,25 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
     default_settings_dialog = settings_ui.Ui_SettingsWidget()
     default_settings_dialog.setupUi(temp_dialog)
     default_settings: user_profile.UserProfileDict = {
-        "split_hotkey": default_settings_dialog.split_input.text(),
-        "reset_hotkey": default_settings_dialog.reset_input.text(),
-        "undo_split_hotkey": default_settings_dialog.undo_split_input.text(),
-        "skip_split_hotkey": default_settings_dialog.skip_split_input.text(),
-        "pause_hotkey": default_settings_dialog.pause_input.text(),
-        "screenshot_hotkey": default_settings_dialog.screenshot_input.text(),
-        "toggle_auto_reset_image_hotkey": (
-            default_settings_dialog.toggle_auto_reset_image_input.text()
-        ),
+        "split_hotkey": default_settings_dialog.split_input.keySequence().toString().lower(),
+        "reset_hotkey": default_settings_dialog.reset_input.keySequence().toString().lower(),
+        "undo_split_hotkey": default_settings_dialog.undo_split_input
+        .keySequence()
+        .toString()
+        .lower(),
+        "skip_split_hotkey": default_settings_dialog.skip_split_input
+        .keySequence()
+        .toString()
+        .lower(),
+        "pause_hotkey": default_settings_dialog.pause_input.keySequence().toString().lower(),
+        "screenshot_hotkey": default_settings_dialog.screenshot_input
+        .keySequence()
+        .toString()
+        .lower(),
+        "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input
+        .keySequence()
+        .toString()
+        .lower(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(

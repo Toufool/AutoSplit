@@ -2,11 +2,10 @@
 import os
 import sys
 
-# Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
+# Prevent pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
 # The unittest workaround significantly increases
 # build time, boot time and build size with PyInstaller.
-# https://github.com/asweigart/pyautogui/issues/663#issuecomment-1296719464
 # QT doesn't call those from Python/ctypes, meaning we can stop other programs from setting it.
 if sys.platform == "win32":
     import ctypes
@@ -15,7 +14,6 @@ if sys.platform == "win32":
 
     def do_nothing(*_): ...
 
-    # pyautogui._pyautogui_win.py
     ctypes.windll.user32.SetProcessDPIAware = do_nothing  # pyright: ignore[reportAttributeAccessIssue]
     # pymonctl._pymonctl_win.py
     # pywinbox._pywinbox_win.py
@@ -45,13 +43,9 @@ import user_profile
 from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
-from hotkeys import (
-    HOTKEYS,
-    KEYBOARD_GROUPS_ISSUE,
-    KEYBOARD_UINPUT_ISSUE,
-    after_setting_hotkey,
-    send_command,
-)
+from hotkey_constants import HOTKEYS
+from hotkeys import KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
+from hotkeys_thread import HotKeyThread
 from menu_bar import (
     about_qt,
     about_qt_for_python,
@@ -250,6 +244,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
 
+        # thread handling hotkeys, it required to be created before reading settings
+        self.hotkey_thread = HotKeyThread(self)
+
         self.show()
 
         try:
@@ -265,6 +262,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             user_profile.load_settings_on_open(self)
         if self.action_check_for_updates_on_open.isChecked():
             check_for_updates(self, check_on_open=True)
+
+        # requires to be started once everything else is ready
+        self.hotkey_thread.start()
 
     # FUNCTIONS
 
@@ -837,7 +837,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # TODO: Do we actually need to disable setting new hotkeys once started?
         # What does this achieve? (See below TODO)
-        if self.SettingsWidget:
+        if self.SettingsWidget is not None:
             for hotkey in HOTKEYS:
                 getattr(self.SettingsWidget, f"set_{hotkey}_hotkey_button").setEnabled(False)
 
