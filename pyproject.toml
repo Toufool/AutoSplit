@@ -5,10 +5,10 @@ requires-python = ">=3.14"
 dependencies = [
   "Levenshtein >=0.25",
   "PyWinCtl >=0.0.42", # py.typed
-  "pynput >=1.8.1",
   "numpy >=2.3.2", # Python 3.14 support
   "opencv-contrib-python-headless >=4.10", # NumPy 2 support
   "packaging >=20.0", # py.typed
+  "pynput >=1.8.1",
   "tomli-w >=1.1.0", # Typing fixes
 
   # When needed, PySide6 dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
@@ -67,7 +67,6 @@ environments = [
   "sys_platform == 'linux'",
   "sys_platform == 'win32'",
 ]
-dependency-metadata = []
 
 [tool.uv.sources] # Development channels
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
