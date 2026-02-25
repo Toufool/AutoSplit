@@ -27,4 +27,6 @@ jobs:
         # Format even if the the previous step failed
         if: ${{ !cancelled() }}
 
-      - uses: autofix-ci/action@551dded8c6cc8a1054039c8bc0b8b48c51dfc6ef
+      - uses: autofix-ci/action@7a166d7532b277f34e16238930461bf77f9d7ed8
+        # Apply fixes even if linting failed
+        if: ${{ !cancelled() }}
