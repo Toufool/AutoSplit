@@ -60,7 +60,7 @@ jobs:
       - run: scripts/install.ps1
         shell: pwsh
       - name: Analysing the code with Pyright
-        uses: jakebailey/pyright-action@v2
+        uses: jakebailey/pyright-action@v3
         with:
           version: PATH
           working-directory: src/
@@ -95,7 +95,7 @@ jobs:
       # region https://github.com/pyinstaller/pyinstaller/issues/9204
       - name: Set up Python for PyInstaller tk issue on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}

@@ -11,12 +11,16 @@ ignore = [
   "T20", # flake8-print
   # This is a relatively small, low contributors project. Git blame suffice.
   "TD002", # missing-todo-author
+  # We do work in __init__ modules
+  "RUF067", # non-empty-init-module
 
   ###
   # TODO
   ###
   "PTH", # flake8-use-pathlib
   "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
+  # Disabled until https://github.com/astral-sh/ruff/issues/23185 is fixed
+  "TC00",
 ]
 
 # https://docs.astral.sh/ruff/settings/#isort
