@@ -38,7 +38,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow >=11.0; sys_platform == 'linux'", # Python 3.13 support # Necessary for ImageGrab.
+  "pillow >=12.1.1; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -123,15 +123,17 @@ reportUnusedCallResult = "none"
 
 # Exclude from scanning when running pyright
 exclude = [
-  ".git/", # Avoid accidentally scanning branch names ending in .py
-  ".venv*/",
-  ".venv/",
   # mypyc build folder
   "build/",
   # PyInstaller dist folder
   "dist/",
   # Auto generated, fails some strict pyright checks
   "src/gen/",
+  # Defaults
+  "**/.*",
+  "**/__pycache__",
+  "**/node_modules",
+  ".venv",
 ]
 # Ignore must be specified for Pylance to stop displaying errors
 ignore = [
