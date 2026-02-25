@@ -3,10 +3,10 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, cast
 
-from PySide6 import QtWidgets, QtGui
-from hotkey_constants import CommandStr, Hotkey, SPECIAL_KEYS, HOTKEYS
+from PySide6 import QtGui, QtWidgets
 
 import error_messages
+from hotkey_constants import HOTKEYS, SPECIAL_KEYS, CommandStr, Hotkey
 from utils import try_input_device_access
 
 if sys.platform == "linux":
@@ -72,18 +72,15 @@ def send_command(autosplit: AutoSplit, command: CommandStr):
 
 
 def __is_valid_hotkey_name(hotkey_name: str):
-    return any(
-        key and key not in SPECIAL_KEYS
-        for key in hotkey_name.split("+")
-    )
+    return any(key and key not in SPECIAL_KEYS for key in hotkey_name.split("+"))
 
 
-def __pause_thread(autosplit: "AutoSplit"):
+def __pause_thread(autosplit: AutoSplit):
     autosplit.hotkey_thread.is_paused = True
     autosplit.hotkey_thread.stop_listener()
 
 
-def __resume_thread(autosplit: "AutoSplit"):
+def __resume_thread(autosplit: AutoSplit):
     autosplit.hotkey_thread.is_paused = False
     # the run function will set again the listener
 
@@ -93,7 +90,12 @@ def __resume_thread(autosplit: "AutoSplit"):
 
 
 # TODO: reimplement already existing checks
-def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, hotkey_name: str | None = None, input_ref: QtWidgets.QKeySequenceEdit | None = None):
+def set_hotkey(
+    autosplit: AutoSplit,
+    hotkey: Hotkey,
+    hotkey_name: str | None = None,
+    input_ref: QtWidgets.QKeySequenceEdit | None = None,
+):
     __pause_thread(autosplit)
 
     if KEYBOARD_GROUPS_ISSUE:
@@ -118,10 +120,14 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, hotkey_name: str | None =
     try:
         if hotkey_name is not None:
             if autosplit.SettingsWidget is not None and len(hotkey_name) > 0:
-                hotkey_input: QtWidgets.QKeySequenceEdit = getattr(autosplit.SettingsWidget, f"{hotkey}_input")
+                hotkey_input: QtWidgets.QKeySequenceEdit = getattr(
+                    autosplit.SettingsWidget, f"{hotkey}_input"
+                )
 
                 if not __is_valid_hotkey_name(hotkey_name):
-                    autosplit.show_error_signal.emit(lambda: error_messages.invalid_hotkey(hotkey_name))
+                    autosplit.show_error_signal.emit(
+                        lambda: error_messages.invalid_hotkey(hotkey_name)
+                    )
                     __resume_thread(autosplit)
                     return
 
@@ -132,7 +138,7 @@ def set_hotkey(autosplit: "AutoSplit", hotkey: Hotkey, hotkey_name: str | None =
             autosplit.hotkey_thread.set_sequence(hotkey, input_ref.keySequence().toString().lower())
         else:
             raise ValueError("set_hotkey: unexpected operating mode")
-    except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
+    except Exception:  # noqa: BLE001 # We really want to catch everything here
         autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(exception))
     finally:
         autosplit.after_setting_hotkey_signal.emit()

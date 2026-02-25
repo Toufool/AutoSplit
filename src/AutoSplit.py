@@ -44,12 +44,7 @@ from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodBase, CaptureMethodEnum
 from hotkey_constants import HOTKEYS
-from hotkeys import (
-    KEYBOARD_GROUPS_ISSUE,
-    KEYBOARD_UINPUT_ISSUE,
-    after_setting_hotkey,
-    send_command,
-)
+from hotkeys import KEYBOARD_GROUPS_ISSUE, KEYBOARD_UINPUT_ISSUE, after_setting_hotkey, send_command
 from hotkeys_thread import HotKeyThread
 from menu_bar import (
     about_qt,

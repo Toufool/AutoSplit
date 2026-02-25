@@ -12,7 +12,7 @@ from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
-from hotkey_constants import CommandStr, HOTKEYS
+from hotkey_constants import HOTKEYS, CommandStr
 from hotkeys import set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory

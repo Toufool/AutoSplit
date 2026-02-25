@@ -1,5 +1,6 @@
-from pynput.keyboard import Key, KeyCode
 from typing import Literal
+
+from pynput.keyboard import Key, KeyCode
 
 SPECIAL_KEYS = ["ctrl", "alt", "shift", "cmd", "stealth", "pause"]
 FUNC_KEYS = [f"f{i}" for i in range(1, 21)]
@@ -45,11 +46,11 @@ STR_TO_KEYS = {
     "left": Key.left.value,
     "right": Key.right.value,
     "numlock": Key.num_lock.value,
-    "decimal": KeyCode.from_char('.'),
-    "add": KeyCode.from_char('+'),
-    "subtract": KeyCode.from_char('-'),
-    "multiply": KeyCode.from_char('*'),
-    "divide": KeyCode.from_char('/'),
+    "decimal": KeyCode.from_char("."),
+    "add": KeyCode.from_char("+"),
+    "subtract": KeyCode.from_char("-"),
+    "multiply": KeyCode.from_char("*"),
+    "divide": KeyCode.from_char("/"),
     "printscreen": Key.print_screen.value,
     "prntscrn": Key.print_screen.value,
     "prtsc": Key.print_screen.value,
@@ -88,10 +89,8 @@ STR_TO_KEYS = {
     "x": KeyCode.from_char("x"),
     "y": KeyCode.from_char("y"),
     "z": KeyCode.from_char("z"),
-
     # F1, F2, ...
     **{f"f{i}": getattr(Key, f"f{i}").value for i in range(1, 21)},
-
     # 0, 1, ...
     **{f"num{i}": KeyCode.from_char(str(i)) for i in range(10)},
     **{f"{i}": KeyCode.from_char(str(i)) for i in range(10)},
