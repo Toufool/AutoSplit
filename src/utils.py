@@ -310,9 +310,8 @@ def run_tesseract(png: bytes):
     @return: The recognized output string from tesseract.
     """
     return (
-        subprocess.Popen(  # noqa: S603 # Only using known literal strings or shutil.which result
-            TESSERACT_CMD, **subprocess_kwargs()
-        )
+        subprocess  # noqa: S603 # Only using known literal strings or shutil.which result
+        .Popen(TESSERACT_CMD, **subprocess_kwargs())
         .communicate(input=png)[0]
         .decode()
     )

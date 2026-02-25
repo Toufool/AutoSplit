@@ -27,10 +27,10 @@ def assert_and_show_error(autosplit: AutoSplit, cond: bool, msg: str):
 
 
 class HotKeyDef:
-    """Hotkey Definition, common settings per-hotkey"""
+    """Hotkey Definition, common settings per-hotkey."""
 
     def __init__(self, autosplit: AutoSplit, name: Hotkey, action: Any):
-        """Sets the name, binds the action and declares empty sequence"""
+        """Sets the name, binds the action and declares empty sequence."""
         self.autosplit = autosplit
         self.name = name
         self.action = action
@@ -43,13 +43,13 @@ class HotKeyDef:
         self.send_keys: list[keyboard.KeyCode] = []
 
     def clear(self):
-        """Resets the hotkey definition, make sure to stop the listener when using this"""
+        """Resets the hotkey definition, make sure to stop the listener when using this."""
         self.sequence_str = None
         self.sequence = None
         self.send_keys.clear()
 
     def set_sequence(self, sequence_str: str):
-        """Sets a sequence of keys to read/write"""
+        """Sets a sequence of keys to read/write."""
         # don't process empty sequences
         if len(sequence_str) == 0:
             return
@@ -71,10 +71,10 @@ class HotKeyDef:
 
 
 class HotKeyThread(QThread):
-    """Hotkey thread, handles listening and sending inputs"""
+    """Hotkey thread, handles listening and sending inputs."""
 
     def __init__(self, autosplit: AutoSplit):
-        """Initializes the thread"""
+        """Initializes the thread."""
         super().__init__()
         self.autosplit = autosplit
         self.is_paused = False
@@ -85,7 +85,7 @@ class HotKeyThread(QThread):
             setattr(self, f"{name}_def", HotKeyDef(autosplit, name, self.get_hotkey_action(name)))
 
     def get_hotkey_action(self, hotkey: Hotkey):
-        """Fetch the action corresponding to the target hotkey"""
+        """Fetch the action corresponding to the target hotkey."""
         if hotkey == "split":
             return self.autosplit.start_auto_splitter
         if hotkey == "skip_split":
@@ -106,19 +106,19 @@ class HotKeyThread(QThread):
         return getattr(self.autosplit, f"{hotkey}_signal").emit
 
     def get_def(self, name: str | Hotkey) -> HotKeyDef:
-        """Returns the definition ref of the specific hotkey"""
+        """Returns the definition ref of the specific hotkey."""
         keydef: HotKeyDef | None = getattr(self, f"{name}_def")
         assert_and_show_error(self.autosplit, keydef is not None, "key def is none")
         return keydef
 
     def stop_listener(self):
-        """If the listener is running stop it and clear the reference"""
+        """If the listener is running stop it and clear the reference."""
         if self.listener is not None:
             self.listener.stop()
             self.listener = None
 
     def set_sequence(self, name: Hotkey, sequence_str: str):
-        """Sets a new key sequence (restarts the listener)"""
+        """Sets a new key sequence (restarts the listener)."""
         self.stop_listener()
 
         # clear any hotkey sharing the same sequence
@@ -133,14 +133,14 @@ class HotKeyThread(QThread):
         self.autosplit.settings_dict[f"{name}_hotkey"] = sequence_str  # pyright: ignore[reportGeneralTypeIssues]
 
     def remove_all_hotkeys(self):
-        """Clears all hotkeys (restarts the listener)"""
+        """Clears all hotkeys (restarts the listener)."""
         self.stop_listener()
 
         for name in HOTKEYS:
             self.get_def(name).clear()
 
     def get_gh_map(self):
-        """Generates the map to use in `keyboard.GlobalHotkeys`"""
+        """Generates the map to use in `keyboard.GlobalHotkeys`."""
         # sequence string: action callback
         gh_map: dict[str, Any] = {}
 
@@ -166,7 +166,7 @@ class HotKeyThread(QThread):
                     listener.join()
 
     def run_action_from_cmd(self, cmd: CommandStr):
-        """Run the corresponding action by sending the inputs if the command is valid"""
+        """Run the corresponding action by sending the inputs if the command is valid."""
         if cmd not in CommandToHotkey:
             raise KeyError(f"{cmd!r} is not a valid command")
 

@@ -527,17 +527,21 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
     default_settings: user_profile.UserProfileDict = {
         "split_hotkey": default_settings_dialog.split_input.keySequence().toString().lower(),
         "reset_hotkey": default_settings_dialog.reset_input.keySequence().toString().lower(),
-        "undo_split_hotkey": default_settings_dialog.undo_split_input.keySequence()
+        "undo_split_hotkey": default_settings_dialog.undo_split_input
+        .keySequence()
         .toString()
         .lower(),
-        "skip_split_hotkey": default_settings_dialog.skip_split_input.keySequence()
+        "skip_split_hotkey": default_settings_dialog.skip_split_input
+        .keySequence()
         .toString()
         .lower(),
         "pause_hotkey": default_settings_dialog.pause_input.keySequence().toString().lower(),
-        "screenshot_hotkey": default_settings_dialog.screenshot_input.keySequence()
+        "screenshot_hotkey": default_settings_dialog.screenshot_input
+        .keySequence()
         .toString()
         .lower(),
-        "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input.keySequence()
+        "toggle_auto_reset_image_hotkey": default_settings_dialog.toggle_auto_reset_image_input
+        .keySequence()
         .toString()
         .lower(),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
