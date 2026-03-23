@@ -171,14 +171,14 @@ def get_input_devices():
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
                 raise
             return list[str]()
-        return FilterGraph().get_input_devices()
+        return enumerate(FilterGraph().get_input_devices())
 
     cameras: list[str] = []
     if sys.platform == "linux":
         try:
-            for index in range(len(os.listdir("/sys/class/video4linux"))):
-                with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
-                    cameras.append(file.readline().strip())
+            for index in (os.listdir("/sys/class/video4linux")):
+                with open(f"/sys/class/video4linux/{index}/name", encoding="utf-8") as file:
+                    cameras.append((int(index.lstrip("video")), file.readline().strip()))
         except FileNotFoundError:
             pass
     return cameras
@@ -214,4 +214,4 @@ def get_all_video_capture_devices():
             else None
         )
 
-    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))
+    return list(filter(None, starmap(get_camera_info, named_video_inputs)))
