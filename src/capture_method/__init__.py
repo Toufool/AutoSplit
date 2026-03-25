@@ -178,14 +178,17 @@ def get_input_devices():
     cameras: list[str] = []
     if sys.platform == "linux":
         try:
-            fmt = '16s32s32sIII12x'
-            VIDIOC_QUERYCAP = 0x80685600 # as defined
+            # to properly filter, we need to ask for capabilities
+            # need to get every video devices, ask for VIDIOC_QUERYCAP ioctl and parse it to check for VIDEO_CAPTURE 
+            VIDIOC_QUERYCAP = 0x80685600 # ioctl ID, example here: https://github.com/jerome-pouiller/ioctl
+            fmt = '16s32s32sIII12x' # struct: https://www.kernel.org/doc/html/v4.9/media/uapi/v4l/vidioc-querycap.html
+            V4L2_CAP_VIDEO_CAPTURE = 0x00000001
             for index in (os.listdir("/dev/")):
                 if index.startswith("video"):
                     with open(f"/dev/{index}", "rb") as file:
                         buf = fcntl.ioctl(file, VIDIOC_QUERYCAP, b'\0' * struct.calcsize(fmt))
                         driver, card, bus_info, version, caps, device_caps = struct.unpack(fmt, buf)[:6]
-                        if device_caps & 0x00000001 == 1:
+                        if device_caps & V4L2_CAP_VIDEO_CAPTURE == 1:
                             cameras.append((int(index.lstrip("video")), card.decode("utf-8").strip("\x00")))
 
         except FileNotFoundError as e:
