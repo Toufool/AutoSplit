@@ -29,6 +29,8 @@ if sys.platform == "win32":
     )
 
 if sys.platform == "linux":
+    import fcntl
+    import struct
     from PIL import features
 
     from capture_method.ScrotCaptureMethod import IS_SCROT_SUPPORTED, ScrotCaptureMethod
@@ -176,10 +178,17 @@ def get_input_devices():
     cameras: list[str] = []
     if sys.platform == "linux":
         try:
-            for index in (os.listdir("/sys/class/video4linux")):
-                with open(f"/sys/class/video4linux/{index}/name", encoding="utf-8") as file:
-                    cameras.append((int(index.lstrip("video")), file.readline().strip()))
-        except FileNotFoundError:
+            fmt = '16s32s32sIII12x'
+            VIDIOC_QUERYCAP = 0x80685600 # as defined
+            for index in (os.listdir("/dev/")):
+                if index.startswith("video"):
+                    with open(f"/dev/{index}", "rb") as file:
+                        buf = fcntl.ioctl(file, VIDIOC_QUERYCAP, b'\0' * struct.calcsize(fmt))
+                        driver, card, bus_info, version, caps, device_caps = struct.unpack(fmt, buf)[:6]
+                        if device_caps & 0x00000001 == 1:
+                            cameras.append((int(index.lstrip("video")), card.decode("utf-8").strip("\x00")))
+
+        except FileNotFoundError as e:
             pass
     return cameras
 
