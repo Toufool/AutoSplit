@@ -29,6 +29,8 @@ if sys.platform == "win32":
     )
 
 if sys.platform == "linux":
+    import fcntl
+    import struct
     from PIL import features
 
     from capture_method.ScrotCaptureMethod import IS_SCROT_SUPPORTED, ScrotCaptureMethod
@@ -171,15 +173,25 @@ def get_input_devices():
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
                 raise
             return list[str]()
-        return FilterGraph().get_input_devices()
+        return enumerate(FilterGraph().get_input_devices())
 
     cameras: list[str] = []
     if sys.platform == "linux":
         try:
-            for index in range(len(os.listdir("/sys/class/video4linux"))):
-                with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
-                    cameras.append(file.readline().strip())
-        except FileNotFoundError:
+            # to properly filter, we need to ask for capabilities
+            # need to get every video devices, ask for VIDIOC_QUERYCAP ioctl and parse it to check for VIDEO_CAPTURE 
+            VIDIOC_QUERYCAP = 0x80685600 # ioctl ID, example here: https://github.com/jerome-pouiller/ioctl
+            fmt = '16s32s32sIII12x' # struct: https://www.kernel.org/doc/html/v4.9/media/uapi/v4l/vidioc-querycap.html
+            V4L2_CAP_VIDEO_CAPTURE = 0x00000001
+            for index in (os.listdir("/dev/")):
+                if index.startswith("video"):
+                    with open(f"/dev/{index}", "rb") as file:
+                        buf = fcntl.ioctl(file, VIDIOC_QUERYCAP, b'\0' * struct.calcsize(fmt))
+                        driver, card, bus_info, version, caps, device_caps = struct.unpack(fmt, buf)[:6]
+                        if device_caps & V4L2_CAP_VIDEO_CAPTURE == 1:
+                            cameras.append((int(index.lstrip("video")), card.decode("utf-8").strip("\x00")))
+
+        except FileNotFoundError as e:
             pass
     return cameras
 
@@ -214,4 +226,4 @@ def get_all_video_capture_devices():
             else None
         )
 
-    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))
+    return list(filter(None, starmap(get_camera_info, named_video_inputs)))
