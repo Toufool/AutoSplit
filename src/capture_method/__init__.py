@@ -29,10 +29,13 @@ if sys.platform == "win32":
     )
 
 if sys.platform == "linux":
+    import fcntl
+
     from PIL import features
 
     from capture_method.ScrotCaptureMethod import IS_SCROT_SUPPORTED, ScrotCaptureMethod
     from capture_method.XcbCaptureMethod import XcbCaptureMethod
+    from vidioc_querycap import V4L2_CAP_VIDEO_CAPTURE, VIDIOC_QUERYCAP, v4l2_capability
 
 
 if TYPE_CHECKING:
@@ -170,15 +173,27 @@ def get_input_devices():
             # wine can choke on D3D Device Enumeration if missing directshow
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
                 raise
-            return list[str]()
-        return FilterGraph().get_input_devices()
+            return list[tuple[int, str]]()
+        return list(enumerate(FilterGraph().get_input_devices()))
 
-    cameras: list[str] = []
+    cameras: list[tuple[int, str]] = []
     if sys.platform == "linux":
         try:
-            for index in range(len(os.listdir("/sys/class/video4linux"))):
-                with open(f"/sys/class/video4linux/video{index}/name", encoding="utf-8") as file:
-                    cameras.append(file.readline().strip())
+            # Iterating over /sys/class/video4linux will lead to duplicates, see
+            # https://askubuntu.com/questions/1123601/four-dev-video-entries-but-just-one-camera/1191209#1191209
+            # To properly filter and, we need to get every video devices,
+            # ask for capabilities using VIDIOC_QUERYCAP ioctl and check for V4L2_CAP_VIDEO_CAPTURE
+            for device_index in os.listdir("/dev/"):
+                if not device_index.startswith("video"):
+                    continue
+                with open(f"/dev/{device_index}", "rb") as file:
+                    cap = v4l2_capability()
+                    fcntl.ioctl(file, VIDIOC_QUERYCAP, cap)
+                    if cap.device_caps & V4L2_CAP_VIDEO_CAPTURE:
+                        cameras.append((
+                            int(device_index.removeprefix("video")),
+                            cap.card.decode("utf-8"),
+                        ))
         except FileNotFoundError:
             pass
     return cameras
@@ -214,4 +229,4 @@ def get_all_video_capture_devices():
             else None
         )
 
-    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))
+    return list(filter(None, starmap(get_camera_info, named_video_inputs)))
