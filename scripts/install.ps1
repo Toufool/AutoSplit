@@ -39,23 +39,38 @@ if ($IsLinux) {
   }
 }
 
-# UPX is only used by PyInstaller on Windows,
-# Doesn't work on ARM64,
+# UPX doesn't support macOS,
+# doesn't work on ARM64,
 # and we avoid using it on the "wine-compatible build"
 if (`
-    $IsWindows `
+    -not $IsMacOS `
     -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64' `
     -and -not $WineCompat
 ) {
-  $UPXVersion = '5.0.1'
-  $UPXFolderName = "upx-$UPXVersion-win64"
+  $UPXVersion = '5.1.1'
+  if ($IsLinux) {
+    $UPXFolderName = "upx-$UPXVersion-amd64_linux"
+    $UPXArchiveName = "$UPXFolderName.tar.xz"
+  }
+  else {
+    $UPXFolderName = "upx-$UPXVersion-win64"
+    $UPXArchiveName = "$UPXFolderName.zip"
+  }
+  $TempDownloadLocation = Join-Path ([System.IO.Path]::GetTempPath()) $UPXArchiveName
+
   Write-Output "Installing $UPXFolderName"
   if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse }
   Invoke-WebRequest `
-    -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXFolderName.zip `
-    -OutFile $Env:TEMP/$UPXFolderName.zip
+    -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXArchiveName `
+    -OutFile $TempDownloadLocation
   # Automatically install in a local untracked folder. This makes it easy to version and replicate on CI
-  Expand-Archive $Env:TEMP/$UPXFolderName.zip $PSScriptRoot/.upx
+  if ($IsLinux) {
+    New-Item -ItemType Directory -Force -Path $PSScriptRoot/.upx | Out-Null
+    tar -xJf $TempDownloadLocation -C $PSScriptRoot/.upx
+  }
+  else {
+    Expand-Archive $TempDownloadLocation $PSScriptRoot/.upx
+  }
   Move-Item $PSScriptRoot/.upx/$UPXFolderName/* $PSScriptRoot/.upx
   Remove-Item $PSScriptRoot/.upx/$UPXFolderName
 }

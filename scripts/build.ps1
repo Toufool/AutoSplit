@@ -14,7 +14,7 @@ Splash._check_tcl_tk_compatibility()
 
   $arguments = @(
     'src/AutoSplit.py',
-    '--onefile',
+    '--noconfirm',
     '--windowed',
     '--optimize=2', # Remove asserts and docstrings for smaller build
     '--additional-hooks-dir=Pyinstaller/hooks',
@@ -29,20 +29,36 @@ Splash._check_tcl_tk_compatibility()
   }
   if ($IsWindows) {
     $arguments += @(
+      '--onefile',
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
+  else {
+    $arguments += @(
+      # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
+      '--strip')
+  }
 
   Write-Output $arguments
-
   Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
 
   if ($IsLinux) {
-    Move-Item -Force dist/AutoSplit dist/AutoSplit.elf
-    if ($?) {
-      Write-Host 'Added .elf extension'
+    # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
+    # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
+    # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
+    $soFilesToCompress = Get-ChildItem -Path ./dist/AutoSplit -Recurse -File -Filter '*.so*'
+    | Where-Object {
+      -not (
+        # _internal/*.so* causes Segmentation fault
+        $_.Directory -like '*/AutoSplit/_internal' -or
+        # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
+        # _internal/PySide6/Qt/plugins/*/*.so* breaks style
+        $_.Directory -like '*/AutoSplit/_internal/PySide6/Qt/*'
+      )
     }
-    chmod +x dist/AutoSplit.elf
+    ./scripts/.upx/upx --lzma --best ./dist/AutoSplit/AutoSplit $soFilesToCompress
+
+    chmod +x dist/AutoSplit/AutoSplit
     Write-Host 'Added execute permission'
   }
 }
