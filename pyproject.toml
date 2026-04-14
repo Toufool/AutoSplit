@@ -38,7 +38,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow >=12.1.1; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab.
+  "pillow>=12.2.0; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
