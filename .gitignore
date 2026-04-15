@@ -22,7 +22,10 @@ dist/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+
+# Downloaded tooling
 .upx/
+*.AppImage
 
 # Dev settings
 settings.toml

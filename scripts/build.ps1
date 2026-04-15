@@ -35,6 +35,7 @@ Splash._check_tcl_tk_compatibility()
   }
   else {
     $arguments += @(
+      '--distpath=build/AppDir'
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
       '--strip')
   }
@@ -43,23 +44,44 @@ Splash._check_tcl_tk_compatibility()
   Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
 
   if ($IsLinux) {
+    # Hoist the onedir output so files sit directly in the AppDir root.
+    # The executable is renamed to AppRun here to avoid a naming conflict with the onedir directory.
+    Move-Item build/AppDir/AutoSplit/AutoSplit build/AppDir/AppRun
+    Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
+    Remove-Item build/AppDir/AutoSplit
+
     # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
     # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
     # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
-    $soFilesToCompress = Get-ChildItem -Path ./dist/AutoSplit -Recurse -File -Filter '*.so*'
+    $soFilesToCompress = Get-ChildItem -Path build/AppDir/_internal -Recurse -File -Filter '*.so*'
     | Where-Object {
       -not (
         # _internal/*.so* causes Segmentation fault
-        $_.Directory -like '*/AutoSplit/_internal' -or
+        $_.Directory -like '*/AppDir/_internal' -or
         # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
         # _internal/PySide6/Qt/plugins/*/*.so* breaks style
-        $_.Directory -like '*/AutoSplit/_internal/PySide6/Qt/*'
+        $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
       )
     }
-    ./scripts/.upx/upx --lzma --best ./dist/AutoSplit/AutoSplit $soFilesToCompress
+    & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
 
-    chmod +x dist/AutoSplit/AutoSplit
-    Write-Host 'Added execute permission'
+    chmod +x build/AppDir/AppRun
+
+    ###
+    # Create AppImage
+    ###
+    Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
+    Copy-Item res/splash.png build/AppDir/AutoSplit.png
+
+    if (Test-Path dist) { Remove-Item dist -Recurse -Force }
+    New-Item -ItemType Directory -Path dist | Out-Null
+
+    # APPIMAGE_EXTRACT_AND_RUN avoids needing libfuse2 on the build host
+    # $Env:APPIMAGE_EXTRACT_AND_RUN = '1'
+    & 'scripts/appimagetool.AppImage' --no-appstream build/AppDir dist/AutoSplit.AppImage
+    chmod +x dist/AutoSplit.AppImage
+
+    Write-Host 'Created dist/AutoSplit.AppImage'
   }
 }
 finally {

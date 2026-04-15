@@ -30,12 +30,18 @@ if ($IsLinux) {
   }
 }
 
-# Installing system dependencies
 if ($IsLinux) {
   if (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
+    # System dependencies
     sudo apt-get update
     # python3-tk for splash screen, libxcb-cursor-dev for QT_QPA_PLATFORM=xcb, the rest for PySide6
     sudo apt-get install -y python3-tk libxcb-cursor-dev libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
+
+    Write-Output 'Installing appimagetool'
+    Invoke-WebRequest `
+      -Uri "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$(uname -m).AppImage" `
+      -OutFile "$PSScriptRoot/appimagetool.AppImage"
+    chmod +x "$PSScriptRoot/appimagetool.AppImage"
   }
 }
 
@@ -59,7 +65,8 @@ if (`
   $TempDownloadLocation = Join-Path ([System.IO.Path]::GetTempPath()) $UPXArchiveName
 
   Write-Output "Installing $UPXFolderName"
-  if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse }
+
+  if (Test-Path "$PSScriptRoot/.upx") { Remove-Item $PSScriptRoot/.upx -Recurse -Force }
   Invoke-WebRequest `
     -Uri https://github.com/upx/upx/releases/download/v$UPXVersion/$UPXArchiveName `
     -OutFile $TempDownloadLocation
