@@ -72,7 +72,7 @@
   Uses Scrot (SCReenshOT) to take screenshots.\
   Leaves behind a screenshot file in `/tmp` if interrupted.
   <!-- Keep in sync with src/menu_bar.py -->
-  "scrot" must be installed: `sudo apt-get install scrot`
+  "scrot" must be installed: `sudo apt install scrot`
 
 ##### All platforms
 

@@ -36,7 +36,7 @@ LINUX_SCREENSHOT_SUPPORT = (
     + error_messages.WAYLAND_WARNING
     # Keep in sync with README.md#Capture_Method_Linux
     + '\n"scrot" must be installed to use SCReenshOT. '
-    + "\nRun: sudo apt-get install scrot"
+    + "\nRun: sudo apt install scrot"
 ) if sys.platform == "linux" else ""  # fmt: skip
 
 _DEBUG_SCREENSHOT_COMMANDS: tuple[CommandStr, ...] = (

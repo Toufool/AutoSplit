@@ -50,20 +50,23 @@ Splash._check_tcl_tk_compatibility()
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
 
-    # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
-    # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
-    # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
-    $soFilesToCompress = Get-ChildItem -Path build/AppDir/_internal -Recurse -File -Filter '*.so*'
+
+    if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+      # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
+      # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
+      # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
+      $soFilesToCompress = Get-ChildItem -Path build/AppDir/_internal -Recurse -File -Filter '*.so*'
     | Where-Object {
-      -not (
-        # _internal/*.so* causes Segmentation fault
-        $_.Directory -like '*/AppDir/_internal' -or
-        # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
-        # _internal/PySide6/Qt/plugins/*/*.so* breaks style
-        $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
-      )
+        -not (
+          # _internal/*.so* causes Segmentation fault
+          $_.Directory -like '*/AppDir/_internal' -or
+          # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
+          # _internal/PySide6/Qt/plugins/*/*.so* breaks style
+          $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
+        )
+      }
+      & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
     }
-    & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
 
     chmod +x build/AppDir/AppRun
 
