@@ -1,6 +1,18 @@
+# https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html
 [Desktop Entry]
-Name=AutoSplit
-Exec=AutoSplit
-Icon=AutoSplit
 Type=Application
-Categories=Utility;
+Name=AutoSplit
+GenericName=Speedrun Auto-Splitter
+# Same as https://github.com/Toufool/AutoSplit
+Comment=Image comparison based auto splitter for speedrunning
+Icon=AutoSplit
+Exec=AutoSplit
+# https://specifications.freedesktop.org/menu/latest/category-registry.html
+# https://specifications.freedesktop.org/menu/latest/additional-category-registry.html
+Categories=Utility;Graphics;GameTool;ImageProcessing;OCR;Qt
+# Not meant for display, and should not be redundant with the values of Name or GenericName
+# Linux LiveSplit alternatives: https://www.speedrun.com/forums/streaming_recording_equipment/7uyur#cnnqz
+Keywords=speedrunning;split;autosplitter;timer;image;comparison;console;pc;gaming;python;speedruncom;livesplit;livesplitone;molok;llanfai;urn;libresplit;chronode;seedsplit;opensplit;openspeedrun
+# Shows a loading indicator when launching
+StartupNotify=true
+StartupWMClass=AutoSplit
