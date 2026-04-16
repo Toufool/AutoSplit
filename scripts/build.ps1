@@ -79,8 +79,6 @@ Splash._check_tcl_tk_compatibility()
     if (Test-Path dist) { Remove-Item dist -Recurse -Force }
     New-Item -ItemType Directory -Path dist | Out-Null
 
-    # APPIMAGE_EXTRACT_AND_RUN avoids needing libfuse2 on the build host
-    # $Env:APPIMAGE_EXTRACT_AND_RUN = '1'
     & 'scripts/appimagetool.AppImage' --no-appstream build/AppDir dist/AutoSplit.AppImage
     chmod +x dist/AutoSplit.AppImage
 

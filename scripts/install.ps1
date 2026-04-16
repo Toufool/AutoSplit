@@ -33,13 +33,11 @@ if ($IsLinux) {
 if ($IsLinux) {
   if (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     # System dependencies
-    sudo apt update
-    # libfuse2t64 for building AppImage with FUSE
+    sudo apt-get update
     # python3-tk for splash screen
     # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
     # the rest for PySide6
-    sudo apt install -y `
-      libfuse2t64 `
+    sudo apt-get install -y `
       python3-tk `
       libxcb-cursor-dev `
       libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
