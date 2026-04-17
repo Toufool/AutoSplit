@@ -1,6 +1,6 @@
 [project]
 name = "AutoSplit"
-version = "2.3.2"
+version = "2.3.3"
 requires-python = ">=3.14"
 dependencies = [
   "Levenshtein >=0.25",
