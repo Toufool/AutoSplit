@@ -21,7 +21,8 @@ if sys.platform == "win32":
     # pywinbox._pywinbox_win.py
     ctypes.windll.shcore.SetProcessDpiAwareness = do_nothing  # pyright: ignore[reportAttributeAccessIssue]
 if sys.platform == "linux":
-    # Fixes "undefined symbol: wl_proxy_marshal_flags": https://bugreports.qt.io/browse/QTBUG-114635
+    # Fixes "undefined symbol: wl_proxy_marshal_flags" on some older Wayland based distros
+    # https://bugreports.qt.io/browse/QTBUG-114635
     os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
     # Useful for debugging missing system packages
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")

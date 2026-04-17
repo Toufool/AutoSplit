@@ -47,7 +47,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 - Windows 10 and 11.
 - Wine 10.1+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
-- Linux (still in early development)
+- Linux
   - Should work on Ubuntu 22.04+
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
@@ -78,8 +78,7 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Linux support is incomplete and we're [looking for contributors](../../issues?q=is%3Aissue+is%3Aopen+label%3A"help+wanted"+label%3ALinux+).
   - Incompatible with LiveSplitOne on Linux (see <https://github.com/LiveSplit/LiveSplitOne/issues/1025>)
 - Antivirus false positives. Please read <https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md>
-- The Perceptual Hash Comparison Method similarity may differ by 3.125% on ARM64. (this will be solved eventually, we have to use a fallback method for now)
-- Native ARM64 builds go completely untested. There may be unforseen issues.
+- Native ARM64 builds go completely untested. There may be unforeseen issues.
 
 ### Wine Limitations
 
@@ -114,16 +113,12 @@ Not a developer? You can still help through the following methods:
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
   - <https://bugs.winehq.org/show_bug.cgi?id=52487>
   - <https://qt-project.atlassian.net/browse/QTBUG-114436>
-  - <https://qt-project.atlassian.net/browse/QTBUG-114635>
   - <https://qt-project.atlassian.net/browse/PYSIDE-2541>
   - <https://qt-project.atlassian.net/browse/PYSIDE-2542>
   - <https://github.com/opencv/opencv/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
   - <https://github.com/mypyc/mypyc/issues?q=sort%3Areactions-%2B1%20is%3Aissue%20is%3Aopen%20%20involves%3AAvasam%20>
-  - <https://github.com/uiri/toml/issues/270>
   - <https://github.com/microsoft/vscode/issues/40239>
   - <https://github.com/microsoft/vscode/issues/168411>
-  - <https://github.com/ronaldoussoren/altgraph/pull/25>
-  - <https://github.com/python/mypy/issues/15146>
   - <https://github.com/python/mypy/issues/4409>
   - <https://github.com/python/mypy/issues/10149>
   - <https://github.com/boppreh/keyboard/issues/171>
