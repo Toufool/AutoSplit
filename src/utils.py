@@ -341,8 +341,14 @@ WGC_MIN_BUILD = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""
 FROZEN = hasattr(sys, "frozen")
 """Running from build made by PyInstaller"""
-auto_split_directory = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
-"""The directory of either the AutoSplit executable or AutoSplit.py"""
+auto_split_directory = os.path.dirname(
+    os.environ["APPIMAGE"]
+    if sys.platform != "win32" and "APPIMAGE" in os.environ
+    else sys.executable
+    if FROZEN
+    else os.path.abspath(__file__)
+)
+"""The directory of the AutoSplit executable or AutoSplit.py"""
 
 # Shared strings
 with open(resource_path("pyproject.toml"), mode="rb") as pyproject:

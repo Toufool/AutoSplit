@@ -37,7 +37,7 @@ Splash._check_tcl_tk_compatibility()
       '--hidden-import=winrt.windows.foundation')
   }
   else {
-    Remove-Item build/AppDir -Recurse -Force
+    if (Test-Path build/AppDir) { Remove-Item build/AppDir -Recurse -Force }
     $arguments += @(
       '--distpath=build/AppDir'
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
