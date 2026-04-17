@@ -85,12 +85,11 @@ Splash._check_tcl_tk_compatibility()
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
     Copy-Item res/splash.png build/AppDir/AutoSplit.png
     $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
-    $tagDate = git log -1 --format='%ad' --date=short "v$version"
-    if (-not $tagDate) { $tagDate = (Get-Date -Format 'yyyy-MM-dd') }
+    $date = Get-Date -Format 'yyyy-MM-dd'
 
     New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
     (Get-Content 'res/AutoSplit.metainfo.xml' -Raw) `
-      -replace '(<releases>)', "`$1`n    <release version=`"$version`" date=`"$tagDate`" />" |
+      -replace '(<releases>)', "`$1`n    <release version=`"$version`" date=`"$date`" />" |
       Set-Content 'build/AppDir/usr/share/metainfo/io.github.Toufool.AutoSplit.metainfo.xml' -NoNewline
 
     if (Test-Path dist) { Remove-Item dist -Recurse -Force }
