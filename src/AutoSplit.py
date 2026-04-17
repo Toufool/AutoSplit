@@ -822,6 +822,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
             self.current_split_image.setText(
                 f"{message} {seconds_remaining_text(stop_time - time_delta)}"
+                if self.settings_dict["display_pause_timer"]
+                else message
             )
 
             QTest.qWait(1)

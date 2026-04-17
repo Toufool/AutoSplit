@@ -375,6 +375,9 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.live_capture_region_checkbox.setChecked(
             self._autosplit_ref.settings_dict["live_capture_region"]
         )
+        self.display_pause_timer_checkbox.setChecked(
+            self._autosplit_ref.settings_dict["display_pause_timer"]
+        )
         self.capture_method_combobox.setCurrentIndex(
             CAPTURE_METHODS.get_index(self._autosplit_ref.settings_dict["capture_method"])
         )
@@ -414,8 +417,12 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.fps_limit_spinbox.valueChanged.connect(self.__fps_limit_changed)
         self.live_capture_region_checkbox.stateChanged.connect(
             lambda: self.__set_value(
-                "live_capture_region",
-                self.live_capture_region_checkbox.isChecked(),
+                "live_capture_region", self.live_capture_region_checkbox.isChecked()
+            )
+        )
+        self.display_pause_timer_checkbox.stateChanged.connect(
+            lambda: self.__set_value(
+                "display_pause_timer", self.display_pause_timer_checkbox.isChecked()
             )
         )
         self.capture_method_combobox.currentIndexChanged.connect(
@@ -484,6 +491,7 @@ def get_default_settings_from_ui(autosplit: AutoSplit):
         ),
         "fps_limit": default_settings_dialog.fps_limit_spinbox.value(),
         "live_capture_region": default_settings_dialog.live_capture_region_checkbox.isChecked(),
+        "display_pause_timer": default_settings_dialog.display_pause_timer_checkbox.isChecked(),
         "capture_method": CAPTURE_METHODS.get_method_by_index(
             default_settings_dialog.capture_method_combobox.currentIndex()
         ),
