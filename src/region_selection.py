@@ -317,6 +317,8 @@ class BaseSelectWidget(QtWidgets.QWidget):
         # Using QApplication to simplify multi-monitor setups, including negative coordinates,
         # in a type-safe, cross-platform manner.
         bounding_rect = QtWidgets.QApplication.primaryScreen().virtualGeometry()
+        self.setGeometry(bounding_rect)
+        self.setFixedSize(bounding_rect.size())  # Prevent move/resizing on Linux
         self.setWindowFlags(
             QtCore.Qt.WindowType.FramelessWindowHint
             | QtCore.Qt.WindowType.WindowStaysOnTopHint
@@ -324,11 +326,9 @@ class BaseSelectWidget(QtWidgets.QWidget):
             # the window position, which is needed for monitors at negative coordinates.
             | QtCore.Qt.WindowType.BypassWindowManagerHint
         )
+        self.show()
         self.setWindowTitle(type(self).__name__)
         self.setWindowOpacity(0.5)
-        self.setGeometry(bounding_rect)
-        self.setFixedSize(bounding_rect.size())  # Prevent move/resizing on Linux
-        self.show()
         self.activateWindow()  # BypassWindowManagerHint skips WM focus; request it explicitly
 
     @override
