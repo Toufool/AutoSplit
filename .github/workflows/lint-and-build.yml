@@ -1,7 +1,7 @@
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 name: Lint and build
 on:
-  workflow_dispatch: #  Allows manual builds
+  workflow_dispatch: # Allows manual builds
     inputs:
       excludeBuildNumber:
         description: "Exclude build number"
@@ -31,6 +31,7 @@ env:
   GITHUB_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
   UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
+  APPIMAGE_EXTRACT_AND_RUN: true # Avoid needing libfuse2
   # https://github.com/opencv/opencv-python#source-distributions
   # Allows building OpenCV on Windows ARM64
   # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
@@ -75,6 +76,8 @@ jobs:
 
   Build:
     runs-on: ${{ matrix.os }}
+    outputs:
+      AUTOSPLIT_VERSION: ${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
     strategy:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
@@ -122,9 +125,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: >
-            AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
-            for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
-            (Python ${{ matrix.python-version }})
+            AutoSplit v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }} for ${{
+            steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }} (Python ${{
+            matrix.python-version }})
           path: |
             dist/AutoSplit*
             dist/settings.toml
@@ -133,10 +136,28 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: >
-            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }}
-            (Python ${{ matrix.python-version }})
+            Build logs for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }} (Python
+            ${{ matrix.python-version }})
           path: |
             build/AutoSplit/*.toc
             build/AutoSplit/*.txt
             build/AutoSplit/*.html
           if-no-files-found: error
+
+  Release-Template:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Annotate release template URL
+        shell: pwsh
+        run: |
+          $version = "v${{ needs.Build.outputs.AUTOSPLIT_VERSION }}"
+          $body = [uri]::EscapeDataString(((@'
+          # Which Asset should I use?
+
+          - Python: This is the Python version bundled with AutoSplit. Try the newer version, it should be functionally identical, with a marginal performance boost. If you have any issue with it, please [report it here](https://github.com/Toufool/AutoSplit/issues) or on the Discord server and use an older Python version in the mean time.
+          - `Arm64` vs `x64`: [Check your Platform Architecture](https://www.checkadevice.com/tests/system/) (note that `x86_x64` and `x64` is the same). If you're still unsure, `x64` will work either way. `Arm64` should be more efficient.
+          - WineCompat: This is for running the Windows executable under Wine on Linux
+          '@).Trim() -replace "`n", ''))
+          # ^ Removing newline from template because GitHub will actually decode %0A
+          echo "::notice::${{ github.server_url }}/${{ github.repository }}/releases/new?target=main&tag=$version&title=$version&body=$body"

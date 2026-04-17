@@ -1,0 +1,18 @@
+# https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html
+[Desktop Entry]
+Type=Application
+Name=AutoSplit
+GenericName=Speedrun Auto Splitter
+Comment=Image comparison based auto splitter for speedrunning
+Icon=AutoSplit
+Exec=AutoSplit
+# https://specifications.freedesktop.org/menu/latest/category-registry.html
+# https://specifications.freedesktop.org/menu/latest/additional-category-registry.html
+# TODO: Remove X- once appimagetool is aware of GameTool: https://github.com/AppImage/appimagetool/issues/127
+Categories=Utility;Graphics;X-GameTool;ImageProcessing;OCR;Qt
+# Not meant for display, and should not be redundant with the values of Name or GenericName
+# Linux LiveSplit alternatives: https://www.speedrun.com/forums/streaming_recording_equipment/7uyur#cnnqz
+Keywords=speedrunning;split;autosplitter;timer;image;comparison;console;pc;gaming;python;speedruncom;livesplit;livesplitone;molok;llanfai;urn;libresplit;chronode;seedsplit;opensplit;openspeedrun
+# Shows a loading indicator when launching
+StartupNotify=true
+StartupWMClass=AutoSplit

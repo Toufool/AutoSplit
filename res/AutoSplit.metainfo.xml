@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://www.freedesktop.org/software/appstream/docs/chap-Metadata.html#spec-component-filespec -->
+<component type="desktop-application">
+  <id>io.github.Toufool.AutoSplit</id>
+  <metadata_license>CC-BY-4.0</metadata_license>
+  <name>AutoSplit</name>
+  <summary>Image comparison based auto splitter for speedrunning</summary>
+  <description>
+    <p>This program can be used to automatically start, split, and reset
+      your preferred speedrun timer by comparing images to a capture region.</p>
+    <p>This allows you to focus more on your speedrun and less on managing your timer.
+      It also improves the accuracy of your splits.</p>
+    <p>It can be used in tandem with any speedrun timer that accepts hotkeys
+      (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.</p>
+  </description>
+  <categories>
+    <category>Utility</category>
+    <category>Graphics</category>
+    <category>GameTool</category>
+    <category>ImageProcessing</category>
+    <category>OCR</category>
+    <category>Qt</category>
+  </categories>
+  <keywords>
+    <keyword>speedrunning</keyword>
+    <keyword>split</keyword>
+    <keyword>autosplitter</keyword>
+    <keyword>timer</keyword>
+    <keyword>image</keyword>
+    <keyword>comparison</keyword>
+    <keyword>console</keyword>
+    <keyword>pc</keyword>
+    <keyword>gaming</keyword>
+    <keyword>python</keyword>
+    <keyword>speedruncom</keyword>
+    <keyword>livesplit</keyword>
+    <keyword>livesplitone</keyword>
+    <keyword>molok</keyword>
+    <keyword>llanfai</keyword>
+    <keyword>urn</keyword>
+    <keyword>libresplit</keyword>
+    <keyword>chronode</keyword>
+    <keyword>seedsplit</keyword>
+    <keyword>opensplit</keyword>
+    <keyword>openspeedrun</keyword>
+  </keywords>
+  <url type="homepage">https://github.com/Toufool/AutoSplit</url>
+  <url type="bugtracker">https://github.com/Toufool/AutoSplit/issues</url>
+  <url type="help">https://github.com/Toufool/AutoSplit/blob/main/docs/tutorial.md</url>
+  <url type="donation">https://github.com/Toufool/AutoSplit/blob/main/.github/FUNDING.yml</url>
+  <url type="contact">https://discord.gg/Qcbxv9y</url>
+  <url type="vcs-browser">https://github.com/Toufool/AutoSplit</url>
+  <url type="contribute">https://github.com/Toufool/AutoSplit/blob/main/docs/CONTRIBUTING.md</url>
+  <launchable type="desktop-id">AutoSplit.desktop</launchable>
+  <releases>
+    <!--
+    https://www.freedesktop.org/software/appstream/docs/sect-Metadata-Releases.html#tag-release-url -->
+    <url type="details">https://github.com/Toufool/AutoSplit/releases</url>
+  </releases>
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
+  <supports>
+    <control>console</control>
+  </supports>
+  <project_license>GPL-3.0-only</project_license>
+  <developer id="io.github.Toufool">
+    <name>Toufool</name>
+  </developer>
+  <developer id="io.github.Faschz">
+    <name>Toufool</name>
+  </developer>
+  <developer id="io.github.Avasam">
+    <name>Avasam</name>
+  </developer>
+  <screenshots>
+    <screenshot type="default" environment="windows10:dark">
+      <image
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/example.gif" />
+    </screenshot>
+    <screenshot environment="windows10:light">
+      <image
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/mask_example_image.gif" />
+    </screenshot>
+  </screenshots>
+  <!-- https://hughsie.github.io/oars/ -->
+  <content_rating type="oars-1.1" />
+  <branding>
+    <!-- Using the medium emerald green from the icon -->
+    <color type="primary">#3cd38d</color>
+  </branding>
+</component>

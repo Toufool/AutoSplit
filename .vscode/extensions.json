@@ -32,6 +32,9 @@
     "redhat.vscode-xml",
     // YAML
     "redhat.vscode-yaml",
+    //
+    // Specific to this project
+    "nico-castell.linux-desktop-file",
   ],
   "unwantedRecommendations": [
     // Must disable in this workspace //

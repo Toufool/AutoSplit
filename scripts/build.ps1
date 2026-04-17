@@ -1,6 +1,9 @@
 #! /usr/bin/pwsh
 param([switch]$WineCompat)
 
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
+
 Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 
 try {
@@ -14,7 +17,7 @@ Splash._check_tcl_tk_compatibility()
 
   $arguments = @(
     'src/AutoSplit.py',
-    '--onefile',
+    '--noconfirm',
     '--windowed',
     '--optimize=2', # Remove asserts and docstrings for smaller build
     '--additional-hooks-dir=Pyinstaller/hooks',
@@ -29,21 +32,73 @@ Splash._check_tcl_tk_compatibility()
   }
   if ($IsWindows) {
     $arguments += @(
+      '--onefile',
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
+  else {
+    if (Test-Path build/AppDir) { Remove-Item build/AppDir -Recurse -Force }
+    $arguments += @(
+      '--distpath=build/AppDir'
+      # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
+      '--strip')
+  }
 
   Write-Output $arguments
-
-  Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
+  & uv run --active pyinstaller @arguments
 
   if ($IsLinux) {
-    Move-Item -Force dist/AutoSplit dist/AutoSplit.elf
-    if ($?) {
-      Write-Host 'Added .elf extension'
+    # Hoist the onedir output so files sit directly in the AppDir root.
+    # The executable is renamed to AppRun here to avoid a naming conflict with the onedir directory.
+    Move-Item build/AppDir/AutoSplit/AutoSplit build/AppDir/AppRun
+    Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
+    Remove-Item build/AppDir/AutoSplit
+
+    if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+      # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
+      # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
+      # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
+      $soFilesToCompress = Get-ChildItem -Path build/AppDir/_internal -Recurse -File -Filter '*.so*'
+    | Where-Object {
+        -not (
+          # _internal/*.so* causes Segmentation fault
+          $_.Directory -like '*/AppDir/_internal' -or
+          # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
+          # _internal/PySide6/Qt/plugins/*/*.so* breaks style
+          $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
+        )
+      }
+      try {
+        & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
+      }
+      catch {
+        # UPX exits 1 when a file was skipped (e.g. already compressed) - not fatal
+        if ($LASTEXITCODE -ne 1) { throw }
+      }
     }
-    chmod +x dist/AutoSplit.elf
-    Write-Host 'Added execute permission'
+
+    chmod +x build/AppDir/AppRun
+
+    ###
+    # Create AppImage
+    ###
+    Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
+    Copy-Item res/splash.png build/AppDir/AutoSplit.png
+    $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+    $date = Get-Date -Format 'yyyy-MM-dd'
+
+    New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
+    (Get-Content 'res/AutoSplit.metainfo.xml' -Raw) `
+      -replace '(<releases>)', "`$1`n    <release version=`"$version`" date=`"$date`" />" |
+      Set-Content 'build/AppDir/usr/share/metainfo/io.github.Toufool.AutoSplit.metainfo.xml' -NoNewline
+
+    if (Test-Path dist) { Remove-Item dist -Recurse -Force }
+    New-Item -ItemType Directory -Path dist | Out-Null
+
+    & 'scripts/appimagetool.AppImage' build/AppDir dist/AutoSplit.AppImage
+    chmod +x dist/AutoSplit.AppImage
+
+    Write-Host 'Created dist/AutoSplit.AppImage'
   }
 }
 finally {
