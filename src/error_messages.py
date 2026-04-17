@@ -279,3 +279,10 @@ def wrong_ocr_values(ocr_split_file_path: str):
         + "\nPlease make sure that `left &lt; right` and `top &lt; bottom`. "
         + "Also check for negative values in the 'methods' or 'fps_limit' settings"
     )
+
+
+def invalid_filename_delimiters(filename: str, delimiters: str):
+    set_text_message(
+        f"Split '{filename}' contains invalid parameters. "
+        + f"'{delimiters}' must not appear more than once."
+    )

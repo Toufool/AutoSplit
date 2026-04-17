@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 from collections.abc import Callable
 from functools import partial
@@ -40,9 +41,12 @@ def __value_from_filename(
 ) -> FileFlagValueT:
     if len(delimiters) != 2:
         raise ValueError("delimiters parameter must contain exactly 2 characters")
+    parts = re.split("|".join(map(re.escape, delimiters)), filename)
+    if len(parts) not in {1, 3}:
+        error_messages.invalid_filename_delimiters(filename, delimiters)
+        return default_value
     try:
-        string_value = filename.split(delimiters[0], 1)[1].split(delimiters[1], maxsplit=1)[0]
-        value = type(default_value)(string_value)
+        value = type(default_value)(parts[1])
     except IndexError, ValueError:
         return default_value
     else:
