@@ -144,6 +144,9 @@
   "[yaml]": {
     "editor.defaultFormatter": "dprint.dprint",
   },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "dprint.dprint",
+  },
   "yaml.schemas": {
     "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml",
   },
