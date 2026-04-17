@@ -58,7 +58,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://twitter.com/toufool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Maintained by &lt;a href=&quot;https://twitter.com/Avasam06&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Avasam&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Created by &lt;a href=&quot;https://bsky.app/profile/toufool.bsky.social&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Toufool&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/faschz&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Faschz&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;Maintained by &lt;a href=&quot;https://twitter.com/Avasam06&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Avasam&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="version_label">

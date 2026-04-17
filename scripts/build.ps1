@@ -1,6 +1,9 @@
 #! /usr/bin/pwsh
 param([switch]$WineCompat)
 
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
+
 Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 
 try {
@@ -34,6 +37,7 @@ Splash._check_tcl_tk_compatibility()
       '--hidden-import=winrt.windows.foundation')
   }
   else {
+    Remove-Item build/AppDir -Recurse -Force
     $arguments += @(
       '--distpath=build/AppDir'
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
@@ -41,7 +45,7 @@ Splash._check_tcl_tk_compatibility()
   }
 
   Write-Output $arguments
-  Start-Process -Wait -NoNewWindow uv -ArgumentList $(@('run', '--active', 'pyinstaller') + $arguments)
+  & uv run --active pyinstaller @arguments
 
   if ($IsLinux) {
     # Hoist the onedir output so files sit directly in the AppDir root.
@@ -49,7 +53,6 @@ Splash._check_tcl_tk_compatibility()
     Move-Item build/AppDir/AutoSplit/AutoSplit build/AppDir/AppRun
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
-
 
     if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
       # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
@@ -65,7 +68,13 @@ Splash._check_tcl_tk_compatibility()
           $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
         )
       }
-      & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
+      try {
+        & 'scripts/.upx/upx' --lzma --best build/AppDir/AppRun $soFilesToCompress
+      }
+      catch {
+        # UPX exits 1 when a file was skipped (e.g. already compressed) - not fatal
+        if ($LASTEXITCODE -ne 1) { throw }
+      }
     }
 
     chmod +x build/AppDir/AppRun
@@ -75,11 +84,19 @@ Splash._check_tcl_tk_compatibility()
     ###
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
     Copy-Item res/splash.png build/AppDir/AutoSplit.png
+    $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+    $tagDate = git log -1 --format='%ad' --date=short "v$version"
+    if (-not $tagDate) { $tagDate = (Get-Date -Format 'yyyy-MM-dd') }
+
+    New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
+    (Get-Content 'res/AutoSplit.metainfo.xml' -Raw) `
+      -replace '(<releases>)', "`$1`n    <release version=`"$version`" date=`"$tagDate`" />" |
+      Set-Content 'build/AppDir/usr/share/metainfo/io.github.Toufool.AutoSplit.metainfo.xml' -NoNewline
 
     if (Test-Path dist) { Remove-Item dist -Recurse -Force }
     New-Item -ItemType Directory -Path dist | Out-Null
 
-    & 'scripts/appimagetool.AppImage' --no-appstream build/AppDir dist/AutoSplit.AppImage
+    & 'scripts/appimagetool.AppImage' build/AppDir dist/AutoSplit.AppImage
     chmod +x dist/AutoSplit.AppImage
 
     Write-Host 'Created dist/AutoSplit.AppImage'

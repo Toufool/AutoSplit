@@ -13,7 +13,7 @@ Easy to use image comparison based auto splitter for speedrunning on console or 
 This program can be used to automatically start, split, and reset your preferred speedrun timer by comparing images to a capture region. This allows you to focus more on your speedrun and less on managing your timer. It also improves the accuracy of your splits. It can be used in tandem with any speedrun timer that accepts hotkeys (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
 
 <!-- markdownlint-disable-next-line MD033 -->
-<p align="center"><img src="./docs/2.2.2.gif" alt="Example" /></p>
+<p align="center"><img src="./docs/example.gif" alt="Example" /></p>
 
 ## Tutorial
 
@@ -136,7 +136,7 @@ Not a developer? You can still help through the following methods:
 
 ## Credits
 
-- Created by [Toufool](https://twitter.com/Toufool) and [Faschz](https://twitter.com/faschz).
+- Created by [Toufool](https://bsky.app/profile/toufool.bsky.social) and [Faschz](https://twitter.com/faschz).
 - [Harutaka Kawamura](https://github.com/harupy/) for the snipping tool code that I used to integrate into the autosplitter.
 - [amaringos](https://twitter.com/amaringos) for the icon.
 - [Zana_G](https://www.twitch.tv/zana_g) for motivating me to start this project back up and for all of the time spent testing and suggesting improvements.
