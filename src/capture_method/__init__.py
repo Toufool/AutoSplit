@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import os
 import sys
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import EnumMeta, StrEnum, auto, unique
 from itertools import starmap
+from pathlib import Path
 from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -183,15 +183,13 @@ def get_input_devices():
             # https://askubuntu.com/questions/1123601/four-dev-video-entries-but-just-one-camera/1191209#1191209
             # To properly filter and, we need to get every video devices,
             # ask for capabilities using VIDIOC_QUERYCAP ioctl and check for V4L2_CAP_VIDEO_CAPTURE
-            for device_index in os.listdir("/dev/"):
-                if not device_index.startswith("video"):
-                    continue
-                with open(f"/dev/{device_index}", "rb") as file:
+            for video_device in Path("/dev").glob("video*"):
+                with video_device.open("rb") as file:
                     cap = v4l2_capability()
                     fcntl.ioctl(file, VIDIOC_QUERYCAP, cap)
                     if cap.device_caps & V4L2_CAP_VIDEO_CAPTURE:
                         cameras.append((
-                            int(device_index.removeprefix("video")),
+                            int(video_device.name.removeprefix("video")),
                             cap.card.decode("utf-8"),
                         ))
         except FileNotFoundError:
