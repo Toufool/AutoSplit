@@ -144,7 +144,7 @@ jobs:
             build/AutoSplit/*.html
           if-no-files-found: error
 
-  Print-Release-Template:
+  Annotate-Release-Template:
     needs: Build
     runs-on: ubuntu-latest
     steps:
@@ -152,10 +152,10 @@ jobs:
         shell: pwsh
         run: |
           $version = "v${{ needs.Build.outputs.AUTOSPLIT_VERSION }}"
-          $body = [uri]::EscapeDataString((@'
+          $body = [uri]::EscapeDataString(((@'
           # Which Asset should I use?
 
           - Python: This is the Python version bundled with AutoSplit. Try the bigger number, it should be functionally identical, with a marginal performance boost. If you have any issue with it, please [report it here](https://github.com/Toufool/AutoSplit/issues) or on the Discord server and use an older Python version in the mean time.
           - Arm64 vs x64: [Check your Platform Architecture](https://www.checkadevice.com/tests/system/) (note that `x86_x64` and `x64` is the same). If you're still unsure, `x64` will work either way. `Arm64` should be more efficient.
-          '@).Trim() -replace "`n", '')
+          '@).Trim() -replace "`n", ''))
           echo "::notice::Release Template: ${{ github.server_url }}/${{ github.repository }}/releases/new?target=main&tag=$version&title=$version&body=$body"
