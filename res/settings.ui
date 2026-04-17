@@ -7,17 +7,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
+    <width>292</width>
     <height>334</height>
    </rect>
   </property>
   <property name="minimumSize">
-   <size>
-    <width>284</width>
-    <height>334</height>
-   </size>
-  </property>
-  <property name="maximumSize">
    <size>
     <width>284</width>
     <height>334</height>
@@ -40,7 +34,7 @@
     <rect>
      <x>-3</x>
      <y>-3</y>
-     <width>291</width>
+     <width>301</width>
      <height>341</height>
     </rect>
    </property>
@@ -56,7 +50,7 @@
       <rect>
        <x>10</x>
        <y>200</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -72,7 +66,7 @@
       <rect>
        <x>10</x>
        <y>13</y>
-       <width>141</width>
+       <width>131</width>
        <height>16</height>
       </rect>
      </property>
@@ -88,7 +82,7 @@
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>261</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -107,7 +101,7 @@
       <rect>
        <x>10</x>
        <y>70</y>
-       <width>261</width>
+       <width>271</width>
        <height>16</height>
       </rect>
      </property>
@@ -118,7 +112,7 @@
     <widget class="QSpinBox" name="fps_limit_spinbox">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>160</x>
        <y>10</y>
        <width>51</width>
        <height>24</height>
@@ -140,7 +134,7 @@
     <widget class="QPushButton" name="screenshot_directory_browse_button">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>210</x>
        <y>176</y>
        <width>71</width>
        <height>24</height>
@@ -158,7 +152,7 @@
       <rect>
        <x>10</x>
        <y>120</y>
-       <width>261</width>
+       <width>271</width>
        <height>16</height>
       </rect>
      </property>
@@ -171,7 +165,7 @@
       <rect>
        <x>10</x>
        <y>90</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -184,7 +178,7 @@
       <rect>
        <x>10</x>
        <y>140</y>
-       <width>261</width>
+       <width>271</width>
        <height>22</height>
       </rect>
      </property>
@@ -210,7 +204,7 @@
       <rect>
        <x>10</x>
        <y>220</y>
-       <width>261</width>
+       <width>271</width>
        <height>24</height>
       </rect>
      </property>
@@ -229,7 +223,7 @@
       <rect>
        <x>10</x>
        <y>280</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -245,7 +239,7 @@
       <rect>
        <x>10</x>
        <y>240</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -261,7 +255,7 @@
       <rect>
        <x>10</x>
        <y>260</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -275,9 +269,9 @@
     <widget class="QCheckBox" name="screenshot_on_skip_checkbox">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>150</x>
        <y>260</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -291,9 +285,9 @@
     <widget class="QCheckBox" name="screenshot_on_undo_checkbox">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>150</x>
        <y>240</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
@@ -307,14 +301,33 @@
     <widget class="QCheckBox" name="screenshot_on_pause_checkbox">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>150</x>
        <y>280</y>
-       <width>131</width>
+       <width>141</width>
        <height>24</height>
       </rect>
      </property>
      <property name="text">
       <string>Screenshot on Pause</string>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="display_pause_timer_checkbox">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>40</y>
+       <width>131</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show Pause Timer</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
      <property name="tristate">
       <bool>false</bool>
@@ -357,7 +370,7 @@
     <widget class="QSpinBox" name="default_delay_time_spinbox">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>190</x>
        <y>70</y>
        <width>91</width>
        <height>24</height>
@@ -378,7 +391,7 @@
       <rect>
        <x>10</x>
        <y>170</y>
-       <width>261</width>
+       <width>271</width>
        <height>24</height>
       </rect>
      </property>
@@ -392,7 +405,7 @@
     <widget class="QComboBox" name="default_comparison_method_combobox">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>190</x>
        <y>10</y>
        <width>91</width>
        <height>22</height>
@@ -438,7 +451,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>10</x>
        <y>13</y>
-       <width>161</width>
+       <width>171</width>
        <height>16</height>
       </rect>
      </property>
@@ -451,7 +464,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>10</x>
        <y>130</y>
-       <width>261</width>
+       <width>271</width>
        <height>24</height>
       </rect>
      </property>
@@ -503,7 +516,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QDoubleSpinBox" name="default_similarity_threshold_spinbox">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>190</x>
        <y>40</y>
        <width>51</width>
        <height>24</height>
@@ -528,7 +541,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QDoubleSpinBox" name="default_pause_time_spinbox">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>190</x>
        <y>100</y>
        <width>91</width>
        <height>24</height>
@@ -584,7 +597,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>10</x>
        <y>150</y>
-       <width>261</width>
+       <width>271</width>
        <height>24</height>
       </rect>
      </property>
@@ -619,7 +632,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_toggle_auto_reset_image_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>189</y>
        <width>81</width>
        <height>24</height>
@@ -637,7 +650,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>90</x>
        <y>10</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -666,7 +679,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>90</x>
        <y>70</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -680,7 +693,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_reset_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>39</y>
        <width>81</width>
        <height>24</height>
@@ -709,7 +722,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_undo_split_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>69</y>
        <width>81</width>
        <height>24</height>
@@ -727,7 +740,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>90</x>
        <y>40</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -754,7 +767,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_split_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>9</y>
        <width>81</width>
        <height>24</height>
@@ -770,7 +783,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_skip_split_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>99</y>
        <width>81</width>
        <height>24</height>
@@ -786,7 +799,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_screenshot_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>159</y>
        <width>81</width>
        <height>24</height>
@@ -804,7 +817,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>90</x>
        <y>190</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -818,7 +831,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <widget class="QPushButton" name="set_pause_hotkey_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>129</y>
        <width>81</width>
        <height>24</height>
@@ -849,7 +862,7 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
       <rect>
        <x>90</x>
        <y>130</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -892,7 +905,7 @@ reset image</string>
       <rect>
        <x>90</x>
        <y>160</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>
@@ -921,7 +934,7 @@ reset image</string>
       <rect>
        <x>90</x>
        <y>100</y>
-       <width>91</width>
+       <width>101</width>
        <height>22</height>
       </rect>
      </property>

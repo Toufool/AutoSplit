@@ -30,6 +30,7 @@ class UserProfileDict(TypedDict):
     toggle_auto_reset_image_hotkey: str
     fps_limit: int
     live_capture_region: bool
+    display_pause_timer: bool
     capture_method: str | CaptureMethodEnum
     capture_device_id: int
     capture_device_name: str
@@ -63,6 +64,7 @@ DEFAULT_PROFILE = UserProfileDict(
     toggle_auto_reset_image_hotkey="",
     fps_limit=60,
     live_capture_region=True,
+    display_pause_timer=True,
     capture_method=CAPTURE_METHODS.get_method_by_index(0),
     capture_device_id=0,
     capture_device_name="",
