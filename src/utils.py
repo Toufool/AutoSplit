@@ -27,7 +27,7 @@ if sys.platform == "win32":
 
     import win32gui
     import win32ui
-    from pygrabber.dshow_graph import FilterGraph
+    import winerror
 
     type STARTUPINFO = subprocess.STARTUPINFO
 else:
@@ -175,6 +175,13 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
         return (0, 0)
+    try:
+        from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
+    except OSError as exception:
+        # wine can choke on D3D Device Enumeration if missing directshow
+        if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
+            raise
+        return None
     filter_graph = FilterGraph()
     try:
         filter_graph.add_video_input_device(index)

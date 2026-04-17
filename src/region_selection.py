@@ -25,17 +25,10 @@ from utils import (
 )
 
 if sys.platform == "win32":
-    import win32api
     import win32gui
-    from win32con import (
-        SM_CXVIRTUALSCREEN,
-        SM_CYVIRTUALSCREEN,
-        SM_XVIRTUALSCREEN,
-        SM_YVIRTUALSCREEN,
-    )
 
 if sys.platform == "linux":
-    from Xlib.display import Display
+    from Xlib.xobject.drawable import Window
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
@@ -144,7 +137,8 @@ def select_region(autosplit: AutoSplit):
         offset_x = window_x + left_bounds
         offset_y = window_y + top_bounds
     else:
-        data = window._xWin.translate_coords(autosplit.hwnd, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        root: Window = window._xWin.query_tree().root  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        data = root.translate_coords(window._xWin.id, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
         offset_x = data["x"]
         offset_y = data["y"]
 
@@ -319,28 +313,23 @@ class BaseSelectWidget(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        # We need to pull the monitor information to correctly draw
-        # the geometry covering all portions of the user's screen.
-        # These parameters create the bounding box with left, top, width, and height
-        if sys.platform == "win32":
-            x = win32api.GetSystemMetrics(SM_XVIRTUALSCREEN)
-            y = win32api.GetSystemMetrics(SM_YVIRTUALSCREEN)
-            width = win32api.GetSystemMetrics(SM_CXVIRTUALSCREEN)
-            height = win32api.GetSystemMetrics(SM_CYVIRTUALSCREEN)
-        else:
-            display = Display()
-            display_geometry = display.screen().root.get_geometry()._data  # noqa: SLF001
-            display.close()
-            x = display_geometry["x"]
-            y = display_geometry["y"]
-            width = display_geometry["width"]
-            height = display_geometry["height"]
-        self.setGeometry(x, y, width, height)
-        self.setFixedSize(width, height)  # Prevent move/resizing on Linux
+        # Pull the full monitors geometry covering all portions of the user's screen.
+        # Using QApplication to simplify multi-monitor setups, including negative coordinates,
+        # in a type-safe, cross-platform manner.
+        bounding_rect = QtWidgets.QApplication.primaryScreen().virtualGeometry()
+        self.setGeometry(bounding_rect)
+        self.setFixedSize(bounding_rect.size())  # Prevent move/resizing on Linux
+        self.setWindowFlags(
+            QtCore.Qt.WindowType.FramelessWindowHint
+            | QtCore.Qt.WindowType.WindowStaysOnTopHint
+            # BypassWindowManagerHint (X11 override-redirect) prevents the WM from clamping
+            # the window position, which is needed for monitors at negative coordinates.
+            | QtCore.Qt.WindowType.BypassWindowManagerHint
+        )
+        self.show()
         self.setWindowTitle(type(self).__name__)
         self.setWindowOpacity(0.5)
-        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
-        self.show()
+        self.activateWindow()  # BypassWindowManagerHint skips WM focus; request it explicitly
 
     @override
     def keyPressEvent(self, event: QtGui.QKeyEvent):
