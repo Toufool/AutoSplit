@@ -76,6 +76,8 @@ jobs:
 
   Build:
     runs-on: ${{ matrix.os }}
+    outputs:
+      AUTOSPLIT_VERSION: ${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
     strategy:
       fail-fast: false
       # Only the Python version we plan on shipping matters.
@@ -141,10 +143,15 @@ jobs:
             build/AutoSplit/*.txt
             build/AutoSplit/*.html
           if-no-files-found: error
+
+  Print-Release-Template:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
       - name: Print release template URL
         shell: pwsh
         run: |
-          $version = "v${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}"
+          $version = "v${{ needs.Build.outputs.AUTOSPLIT_VERSION }}"
           $body = [uri]::EscapeDataString((@'
           # Which Asset should I use?
 
