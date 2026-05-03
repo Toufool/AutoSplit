@@ -69,7 +69,7 @@ The AutoSplit LiveSplit Component will directly connect AutoSplit with LiveSplit
 
 See the [installation instructions](https://github.com/Toufool/LiveSplit.AutoSplitIntegration#installation).
 
-Linux users, note that LiveSplit Desktop, with additional components, is only available on Windows. Whilst it can work through Wine, support is [very limited](#wine-limitations). You should instead consider an [alternative timer](https://www.speedrun.com/forums/streaming_recording_equipment/7uyur#cnnqz).
+Linux users, note that LiveSplit Desktop, with additional components, is only available on Windows. Whilst it can work through Wine, support is [very limited](#wine-limitations). You may want to consider an [alternative timer](https://www.speedrun.com/forums/streaming_recording_equipment/7uyur#cnnqz).
 
 ## Known Limitations
 
@@ -84,8 +84,10 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 
 - Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
 - No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
-- Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through Steam (add it as a non-Steam game) using the same Proton version as the target game.
-  - In practice, at the time of writing this, you can't even run AutoSplit through Proton yet, as even its Experimental version is still on Wine 10.0, and AutoSplit [requires Wine 10.1+](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf)
+- Requires Wine 10.1+ / Steam Proton 11+ (due to [added `crealf` implementation](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf))
+- Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through the same Proton version as the target game, targetting the game's Wine prefix.
+  - For steam games, this can be made a lot easier using [`protontricks`](https://protontricks.com/): `protontricks-launch --appid <YOUR_STEAM_GAME> </path/to/autosplit.exe>`
+  - For regular Wine it would look somethng like this: `WINEPREFIX="</path/to/game/prefix>" wine </path/to/autosplit.exe>`
 
 ## Resources
 
