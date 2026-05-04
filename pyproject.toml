@@ -1,6 +1,6 @@
 [project]
 name = "AutoSplit"
-version = "2.3.3"
+version = "2.3.3" # (remember to bump in uv.lock too)
 requires-python = ">=3.14"
 dependencies = [
   "Levenshtein >=0.25",
