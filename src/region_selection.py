@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
-from cv2.typing import MatLike, Point
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtTest import QTest
 from pywinctl import getTopWindowAt
@@ -27,11 +26,13 @@ from utils import (
 if sys.platform == "win32":
     import win32gui
 
-if sys.platform == "linux":
-    from Xlib.xobject.drawable import Window
-
 if TYPE_CHECKING:
+    from cv2.typing import MatLike, Point
+
     from AutoSplit import AutoSplit
+
+    if sys.platform == "linux":
+        from Xlib.xobject.drawable import Window
 
 GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9

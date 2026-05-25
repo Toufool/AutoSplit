@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 
 import cv2
 import numpy as np
-from cv2.typing import MatLike
+
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
 if sys.platform == "win32":
@@ -49,6 +49,7 @@ if TYPE_CHECKING:
 
     # Source does not exist, keep this under TYPE_CHECKING
     from _win32typing import PyCDC  # pyright: ignore[reportMissingModuleSource]
+    from cv2.typing import MatLike
 
 T = TypeVar("T")
 
@@ -336,7 +337,7 @@ def list_processes():
         ]
 
     return subprocess.check_output(
-        ("ps", "-eo", "comm"),
+        ("/usr/bin/ps", "-eo", "comm"),
         text=True,
     ).splitlines()[1:]  # Skip the header line
 

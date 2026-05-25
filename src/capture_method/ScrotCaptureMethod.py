@@ -28,7 +28,7 @@ def _scrot_screenshot(x: int, y: int, width: int, height: int):
         screenshot_file = os.path.join(tmp, "autosplit")
         try:
             subprocess.check_call((  # noqa: S603 # Not user input
-                "scrot",
+                "/usr/bin/scrot",
                 "-a",
                 f"{x},{y},{width},{height}",
                 "-z",

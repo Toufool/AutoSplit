@@ -6,13 +6,14 @@ from typing import TYPE_CHECKING, override
 import cv2
 import cv2.Error
 import numpy as np
-from cv2.typing import MatLike
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from error_messages import CREATE_NEW_ISSUE_MESSAGE, exception_traceback
 from utils import ImageShape, get_input_device_resolution, is_valid_image
 
 if TYPE_CHECKING:
+    from cv2.typing import MatLike
+
     from AutoSplit import AutoSplit
 
 OBS_VIRTUALCAM_PLUGIN_BLANK_PIXEL = (127, 129, 128)
@@ -48,7 +49,7 @@ https://obsproject.com/kb/virtual-camera-guide"""
     is_old_image = False
 
     def __read_loop(self):
-        try:
+        try:  # noqa: PLW0717 # We really want to catch everything here
             while not self.stop_thread.is_set():
                 try:
                     result, image = self.capture_device.read()

@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, NoReturn, TypedDict, cast, override
 from warnings import deprecated
 
 import tomli_w
-from gen import design
 from PySide6 import QtCore, QtWidgets
 
 import error_messages
@@ -18,6 +17,7 @@ from utils import auto_split_directory
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+    from gen import design
 
 
 class UserProfileDict(TypedDict):
@@ -131,17 +131,17 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
 
     # Allow seamlessly reloading the entire settings widget
     settings_widget_was_open = False
-    settings_widget = cast(QtWidgets.QWidget | None, autosplit.SettingsWidget)
+    settings_widget = cast("QtWidgets.QWidget | None", autosplit.SettingsWidget)
     if settings_widget:
         settings_widget_was_open = settings_widget.isVisible()
         settings_widget.close()
 
-    try:
+    try:  # noqa: PLW0717 # Generic "invalid settings". No need for granularity
         with open(load_settings_file_path, mode="rb") as file:
             # Casting here just so we can build an actual UserProfileDict once we're done validating
             # Fallback to default settings if some are missing from the file.
             # This happens when new settings are added.
-            loaded_settings = DEFAULT_PROFILE | cast(UserProfileDict, tomllib.load(file))
+            loaded_settings = DEFAULT_PROFILE | cast("UserProfileDict", tomllib.load(file))
 
         # TODO: Data Validation / fallbacks ?
         loaded_settings["screenshot_on"] = list(set(loaded_settings["screenshot_on"]))
@@ -166,7 +166,7 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
                 set_hotkey(autosplit, hotkey, hotkey_value)
 
     change_capture_method(
-        cast(CaptureMethodEnum, autosplit.settings_dict["capture_method"]),
+        cast("CaptureMethodEnum", autosplit.settings_dict["capture_method"]),
         autosplit,
     )
     if autosplit.settings_dict["capture_method"] != CaptureMethodEnum.VIDEO_CAPTURE_DEVICE:
@@ -234,7 +234,7 @@ def load_check_for_updates_on_open(autosplit: AutoSplit):
     """
     # Type not inferred by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
     value = cast(
-        bool,
+        "bool",
         QtCore.QSettings(
             "AutoSplit",
             "Check For Updates On Open",

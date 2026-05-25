@@ -11,12 +11,9 @@ import numpy as np
 import win32api
 import win32gui
 import winerror
-from cv2.typing import MatLike
-from winrt.windows.graphics import SizeInt32
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winrt.windows.graphics.capture.interop import create_for_window
 from winrt.windows.graphics.directx import DirectXPixelFormat
-from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
 from winrt.windows.graphics.directx.direct3d11.interop import (
     create_direct3d11_device_from_dxgi_device,
 )
@@ -27,6 +24,10 @@ from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
 from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
+    from cv2.typing import MatLike
+    from winrt.windows.graphics import SizeInt32
+    from winrt.windows.graphics.directx.direct3d11 import IDirect3DSurface
+
     from AutoSplit import AutoSplit
 
 WGC_NO_BORDER_MIN_BUILD = 20348
@@ -154,7 +155,7 @@ Caps at around 60 FPS."""
         if not bitmap_buffer:
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
-        image = np.frombuffer(cast(bytes, reference), dtype=np.uint8)
+        image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
         image.shape = (self.size.height, self.size.width, BGRA_CHANNEL_COUNT)
         image = image[
             selection["y"] : selection["y"] + selection["height"],

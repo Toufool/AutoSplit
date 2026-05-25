@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
-from cv2.typing import MatLike
 
 import error_messages
 from compare import (
@@ -27,6 +26,8 @@ from utils import (
 )
 
 if TYPE_CHECKING:
+    from cv2.typing import MatLike
+
     from AutoSplit import AutoSplit
 
 

@@ -87,7 +87,7 @@ class CaptureMethodDict(OrderedDict[CaptureMethodEnum, type[CaptureMethodBase]])
     def get_index(self, capture_method: str | CaptureMethodEnum):
         """Returns 0 if the capture_method is invalid or unsupported."""
         try:
-            return list(self.keys()).index(cast(CaptureMethodEnum, capture_method))
+            return list(self.keys()).index(cast("CaptureMethodEnum", capture_method))
         except ValueError:
             return 0
 

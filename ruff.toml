@@ -19,15 +19,7 @@ ignore = [
   ###
   "PTH", # flake8-use-pathlib
   "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
-  # Disabled until https://github.com/astral-sh/ruff/issues/23185 is fixed
-  "TC00",
 ]
-
-# https://docs.astral.sh/ruff/settings/#isort
-[lint.isort]
-# The src-based layout detection can differ on CI
-# TODO: Check if this has been fixed in Ruff 0.13
-known-third-party = ["gen"]
 
 [lint.per-file-ignores]
 "src/d3d11.py" = [

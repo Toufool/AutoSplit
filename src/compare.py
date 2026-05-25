@@ -1,10 +1,10 @@
 from collections.abc import Iterable
 from math import sqrt
+from typing import TYPE_CHECKING
 
 import cv2
 import Levenshtein
 import numpy as np
-from cv2.typing import MatLike
 
 from utils import (
     BGRA_CHANNEL_COUNT,
@@ -14,6 +14,9 @@ from utils import (
     is_valid_image,
     run_tesseract,
 )
+
+if TYPE_CHECKING:
+    from cv2.typing import MatLike
 
 MAXRANGE = MAXBYTE + 1
 CHANNELS = (ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value)

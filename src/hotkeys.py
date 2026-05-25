@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
-from PySide6 import QtWidgets
 
 import error_messages
 from utils import fire_and_forget, is_digit, try_input_device_access
@@ -23,6 +22,8 @@ else:
     KEYBOARD_UINPUT_ISSUE = False
 
 if TYPE_CHECKING:
+    from PySide6 import QtWidgets
+
     from AutoSplit import AutoSplit
 
 # While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
@@ -302,7 +303,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
 
     if autosplit.SettingsWidget:
         # Unfocus all fields
-        cast(QtWidgets.QWidget, autosplit.SettingsWidget).setFocus()
+        cast("QtWidgets.QWidget", autosplit.SettingsWidget).setFocus()
         getattr(autosplit.SettingsWidget, f"set_{hotkey}_hotkey_button").setText(PRESS_A_KEY_TEXT)
 
     # Disable some buttons
@@ -312,7 +313,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
     # while the program waits for user input on the hotkey
     @fire_and_forget
     def read_and_set_hotkey():
-        try:
+        try:  # noqa: PLW0717 # We really want to catch everything here
             hotkey_name = preselected_hotkey_name or __read_hotkey()
 
             # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit

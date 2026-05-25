@@ -3,17 +3,19 @@ import sys
 if sys.platform != "win32":
     raise OSError
 import ctypes
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import numpy as np
 import pywintypes
 import win32con
 import win32gui
 import win32ui
-from cv2.typing import MatLike
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
+
+if TYPE_CHECKING:
+    from cv2.typing import MatLike
 
 # This is an undocumented nFlag value for PrintWindow
 PW_RENDERFULLCONTENT = 0x00000002
@@ -48,7 +50,7 @@ The smaller the selected region, the more efficient it is."""
             return None
 
         # If the window closes while it's being manipulated, it could cause a crash
-        try:
+        try:  # noqa: PLW0717
             window_dc = win32gui.GetWindowDC(hwnd)
             dc_object = win32ui.CreateDCFromHandle(window_dc)
 

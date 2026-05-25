@@ -52,8 +52,8 @@ dev = [
   "qt6-applications >=6.5.0",
   #
   # Linters & Formatters
-  "dprint-py>=0.50.0.0",
-  "mypy >=1.19",
+  "dprint-py >=0.50.0.0",
+  "mypy >=2.1",
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   { include-group = "ruff" },
   #
@@ -76,6 +76,9 @@ dependency-metadata = [
   { name = "PyAutoGUI", requires-dist = [] },
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
+exclude-newer = "1 week"
+[tool.uv.exclude-newer-package]
+ruff = "4 days" # Needs 0.15.4
 
 [tool.uv.sources] # Development channels
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
@@ -111,8 +114,8 @@ enableExperimentalFeatures = true
 reportCallInDefaultInitializer = "error"
 reportImplicitOverride = "error"
 reportImplicitStringConcatenation = "error"
-# False positives with TYPE_CHECKING
-reportImportCycles = "information"
+# False positives with TYPE_CHECKING, mostly covered by Ruff TCH00
+reportImportCycles = "none"
 # Too strict. False positives on base classes
 reportMissingSuperCall = "none"
 reportPropertyTypeMismatch = "error"

@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any, Literal, cast, override
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from gen import about, design, settings as settings_ui, update_checker
 from packaging.version import parse as version_parse
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
@@ -24,6 +23,7 @@ from capture_method import (
     change_capture_method,
     get_all_video_capture_devices,
 )
+from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
@@ -62,7 +62,7 @@ class __AboutWidget(QtWidgets.QWidget, about.Ui_AboutAutoSplitWidget):
 
 
 def open_about(autosplit: AutoSplit):
-    if not autosplit.AboutWidget or cast(QtWidgets.QWidget, autosplit.AboutWidget).isHidden():
+    if not autosplit.AboutWidget or cast("QtWidgets.QWidget", autosplit.AboutWidget).isHidden():
         autosplit.AboutWidget = __AboutWidget()
 
 
@@ -107,7 +107,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
 def open_update_checker(autosplit: AutoSplit, latest_version: str, *, check_on_open: bool):
     if (
         not autosplit.UpdateCheckerWidget
-        or cast(QtWidgets.QWidget, autosplit.UpdateCheckerWidget).isHidden()
+        or cast("QtWidgets.QWidget", autosplit.UpdateCheckerWidget).isHidden()
     ):
         autosplit.UpdateCheckerWidget = __UpdateCheckerWidget(
             latest_version,
@@ -471,7 +471,10 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
 
 
 def open_settings(autosplit: AutoSplit):
-    if not autosplit.SettingsWidget or cast(QtWidgets.QWidget, autosplit.SettingsWidget).isHidden():
+    if (
+        not autosplit.SettingsWidget
+        or cast("QtWidgets.QWidget", autosplit.SettingsWidget).isHidden()
+    ):
         autosplit.SettingsWidget = __SettingsWidget(autosplit)
 
 

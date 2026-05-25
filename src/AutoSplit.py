@@ -32,11 +32,9 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import NoReturn, override
+from typing import TYPE_CHECKING, NoReturn, override
 
 import cv2
-from cv2.typing import MatLike
-from gen import about, design, settings, update_checker
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
@@ -45,7 +43,9 @@ import error_messages
 import user_profile
 from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
-from capture_method import CaptureMethodBase, CaptureMethodEnum
+from capture_method import CaptureMethodEnum
+from capture_method.CaptureMethodBase import CaptureMethodBase
+from gen import about, design, settings, update_checker
 from hotkeys import (
     HOTKEYS,
     KEYBOARD_GROUPS_ISSUE,
@@ -86,6 +86,9 @@ from utils import (
     list_processes,
     open_file,
 )
+
+if TYPE_CHECKING:
+    from cv2.typing import MatLike
 
 CHECK_FPS_ITERATIONS = 10
 
@@ -1073,7 +1076,7 @@ def main():
     QApplication.setStyle("fusion")
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
-    try:
+    try:  # noqa: PLW0717 # We really want to catch everything here
         if sys.platform == "win32":
             myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
             shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from cv2.typing import MatLike
-
 from utils import is_valid_hwnd
 
 if TYPE_CHECKING:
+    from cv2.typing import MatLike
+
     from AutoSplit import AutoSplit
 
 
