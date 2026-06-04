@@ -3,12 +3,12 @@ name = "AutoSplit"
 version = "2.3.3" # (remember to bump in uv.lock too)
 requires-python = ">=3.14"
 dependencies = [
-  "Levenshtein >=0.25",
+  "Levenshtein >=0.25", # TODO: Bump when 3.15 wheels
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
-  "numpy >=2.3.2", # Python 3.14 support
-  "opencv-contrib-python-headless >=4.10", # NumPy 2 support
+  "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
+  "opencv-contrib-python-headless >=4.10", # NumPy 2 support # TODO: Bump when 3.15 wheels
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
@@ -25,9 +25,9 @@ dependencies = [
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
-  "pywin32 >=311; sys_platform == 'win32'", # Python 3.14 support
+  "pywin32 >=311; sys_platform == 'win32'", # Python 3.15 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
-  # winrt: 3.14 wheels
+  # winrt: 3.14 wheels # TODO: Bump when 3.15 wheels
   "winrt-Windows.Foundation >=3.2.1; sys_platform == 'win32'",
   "winrt-Windows.Graphics >=3.2.1; sys_platform == 'win32'",
   "winrt-Windows.Graphics.Capture >=3.2.1; sys_platform == 'win32'",
@@ -53,7 +53,7 @@ dev = [
   #
   # Linters & Formatters
   "dprint-py >=0.50.0.0",
-  "mypy >=2.1",
+  "mypy >=2.1", # TODO: Bump when 3.15 wheels
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   { include-group = "ruff" },
   #
@@ -78,7 +78,7 @@ dependency-metadata = [
 ]
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
-ruff = "4 days" # Needs 0.15.4
+# package = "3 days" # Reason
 
 [tool.uv.sources] # Development channels
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
