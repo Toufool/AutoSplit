@@ -135,6 +135,8 @@ This option does not loop single, specific images. See the Custom Split Image Se
 
 If this option is enabled, a "Start" command (ie: from the Start Image) will also send the "Reset" command. This is useful if you want to automatically restart your timer using the Start Image. Since AutoSplit won't be running and won't be checking for the Reset Image.
 
+If _not_ using the LiveSplit Integration, a 601ms delay will be applied between the "Reset" and initial "Split" hotkeys to avoid any issue with the "Double Tap Prevention" feature of LiveSplit.
+
 Having the reset image check be active at all time would be a better, more organic solution in the future. But that is dependent on migrating to an observer pattern (<https://github.com/Toufool/AutoSplit/issues/219>) and being able to reload all images.
 
 #### Enable auto Reset Image
