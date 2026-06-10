@@ -3,7 +3,7 @@ name = "AutoSplit"
 version = "2.3.3" # (remember to bump in uv.lock too)
 requires-python = ">=3.14"
 dependencies = [
-  "Levenshtein >=0.25", # TODO: Bump when 3.15 wheels
+  "Levenshtein >=0.27.3", # free-threaded # TODO: Bump when 3.15 wheels
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
@@ -25,7 +25,7 @@ dependencies = [
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
-  "pywin32 >=311; sys_platform == 'win32'", # Python 3.15 support
+  "pywin32 >=312; sys_platform == 'win32'", # Python 3.15 support
   "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
   # winrt: 3.14 wheels # TODO: Bump when 3.15 wheels
   "winrt-Windows.Foundation >=3.2.1; sys_platform == 'win32'",
