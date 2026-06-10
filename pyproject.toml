@@ -38,7 +38,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow>=12.2.0; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab.
+  "pillow>=12.3.0.dev0; sys_platform == 'linux'", # Python 3.15 # Necessary for ImageGrab.
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -79,11 +79,13 @@ dependency-metadata = [
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 # package = "3 days" # Reason
+pillow = "" # Python 3.15
 
 [tool.uv.sources] # Development channels
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
-# pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.15'" }
+# pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.16'" }
 # numpy = { index = "scientific-python-nightly-wheels" }
+pillow = { index = "scientific-python-nightly-wheels" } # Python 3.15
 [[tool.uv.index]]
 # https://anaconda.org/scientific-python-nightly-wheels/
 name = "scientific-python-nightly-wheels"
