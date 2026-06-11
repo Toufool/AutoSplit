@@ -26,3 +26,7 @@ ignore = [
   # Following windows API/ctypes like naming conventions
   "N801", # invalid-class-name
 ]
+
+[lint.isort]
+# gen/ is fully generated and won't exist on CI so Ruff can't detect it as first-party
+known-first-party = ["gen"]
