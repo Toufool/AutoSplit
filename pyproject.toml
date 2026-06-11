@@ -76,18 +76,24 @@ dependency-metadata = [
   { name = "PyAutoGUI", requires-dist = [] },
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
+find-links = ["./scripts"] # Discover local wheels
+
 exclude-newer = "6 days"
 [tool.uv.exclude-newer-package]
 # package = "3 days" # Reason
 
-[tool.uv.sources] # Development channels
+###
+# Development channels
+###
+[tool.uv.sources]
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.16'" }
 # numpy = { index = "scientific-python-nightly-wheels" }
 pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
 # https://anaconda.org/scientific-python-nightly-wheels/
 name = "scientific-python-nightly-wheels"
 url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
-explicit = true
+explicit = true # Avoid index hijacking
