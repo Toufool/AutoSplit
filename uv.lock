@@ -172,8 +172,8 @@ ruff = [
 
 [[package]]
 name = "beslogic-ruff-config"
-version = "1.0.1"
-source = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config#dd94f26b1de7234195d1a52cc3f9e6ac65b8ca51" }
+version = "1.1.0"
+source = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config#312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
 dependencies = [
     { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]

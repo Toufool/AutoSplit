@@ -1,5 +1,23 @@
 from __future__ import annotations
 
+__lazy_modules__ = {
+    "PySide6.QtCore",
+    "PySide6.QtGui",
+    "PySide6.QtWidgets",
+    "capture_method",
+    "functools",
+    "hotkeys",
+    "json",
+    "packaging",
+    "packaging.version",
+    "urllib",
+    "urllib.error",
+    "urllib.request",
+    "user_profile",
+    "utils",
+    "webbrowser",
+}
+
 import json
 import sys
 import webbrowser

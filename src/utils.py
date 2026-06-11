@@ -1,5 +1,24 @@
 from __future__ import annotations
 
+__lazy_modules__ = {
+    "_ctypes",
+    "asyncio",
+    "collections",
+    "collections.abc",
+    "ctypes",
+    "ctypes.wintypes",
+    "fcntl",
+    "functools",
+    "itertools",
+    "numpy",
+    "pathlib",
+    "shutil",
+    "threading",
+    "win32gui",
+    "win32ui",
+    "winerror",
+}
+
 import asyncio
 import os
 import shutil

@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+__lazy_modules__ = {
+    "compare",
+    "cv2",
+    "error_messages",
+    "math",
+    "split_parser",
+    "tomllib",
+}
+
 import os
 import tomllib
 from enum import IntEnum, auto

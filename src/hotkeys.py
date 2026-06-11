@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__lazy_modules__ = {"collections", "collections.abc", "error_messages", "keyboard"}
+
 import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Literal, cast

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__lazy_modules__ = {"error_messages", "user_profile"}
+
 from typing import TYPE_CHECKING
 
 from PySide6 import QtCore

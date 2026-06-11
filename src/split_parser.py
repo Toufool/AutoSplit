@@ -1,5 +1,15 @@
 from __future__ import annotations
 
+__lazy_modules__ = {
+    "AutoSplitImage",
+    "collections",
+    "collections.abc",
+    "error_messages",
+    "functools",
+    "re",
+    "utils",
+}
+
 import os
 import re
 import sys

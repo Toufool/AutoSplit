@@ -1,3 +1,14 @@
+__lazy_modules__ = {
+    "PIL",
+    "Xlib",
+    "Xlib.display",
+    "Xlib.error",
+    "cv2",
+    "numpy",
+    "pywinctl",
+    "utils",
+}
+
 import sys
 
 if sys.platform != "linux":

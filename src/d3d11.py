@@ -2,6 +2,8 @@
 # Copyright (c) 2024 David Lechner <david@pybricks.com>
 from __future__ import annotations
 
+__lazy_modules__ = {"uuid"}
+
 import sys
 
 if sys.platform != "win32":

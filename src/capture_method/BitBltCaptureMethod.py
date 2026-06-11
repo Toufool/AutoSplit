@@ -1,3 +1,13 @@
+__lazy_modules__ = {
+    "ctypes",
+    "numpy",
+    "pywintypes",
+    "utils",
+    "win32con",
+    "win32gui",
+    "win32ui",
+}
+
 import sys
 
 if sys.platform != "win32":

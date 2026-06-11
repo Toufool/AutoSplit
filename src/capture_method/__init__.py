@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+__lazy_modules__ = {
+    "fcntl",
+    "itertools",
+    "pathlib",
+    "utils",
+    "vidioc_querycap",
+    "winerror",
+}
+
 import sys
 from collections import OrderedDict
 from dataclasses import dataclass

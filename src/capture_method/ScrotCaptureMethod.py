@@ -1,3 +1,13 @@
+__lazy_modules__ = {
+    "Xlib",
+    "Xlib.display",
+    "Xlib.error",
+    "cv2",
+    "pywinctl",
+    "subprocess",
+    "tempfile",
+}
+
 import sys
 
 if sys.platform != "linux":

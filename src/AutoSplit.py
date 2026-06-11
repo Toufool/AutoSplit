@@ -1,4 +1,29 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
+__lazy_modules__ = {
+    "AutoControlledThread",
+    "AutoSplitImage",
+    "PySide6",
+    "PySide6.QtTest",
+    "capture_method",
+    "capture_method.CaptureMethodBase",
+    "collections",
+    "collections.abc",
+    "copy",
+    "cv2",
+    "error_messages",
+    "hotkeys",
+    "menu_bar",
+    "region_selection",
+    "signal",
+    "split_parser",
+    "types",
+    "user_profile",
+    "utils",
+    "win32comext",
+    "win32comext.shell",
+}
+
 import os
 import sys
 

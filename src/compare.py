@@ -1,3 +1,12 @@
+__lazy_modules__ = {
+    "Levenshtein",
+    "collections",
+    "collections.abc",
+    "cv2",
+    "math",
+    "numpy",
+}
+
 from collections.abc import Iterable
 from math import sqrt
 from typing import TYPE_CHECKING

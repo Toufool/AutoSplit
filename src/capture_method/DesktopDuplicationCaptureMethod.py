@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__lazy_modules__ = {"cv2", "utils", "win32api", "win32con", "win32gui"}
+
 import sys
 
 if sys.platform != "win32":
