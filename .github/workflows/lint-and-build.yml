@@ -92,7 +92,7 @@ jobs:
           - os: ubuntu-22.04
             python-version: "3.15"
             wine-compat: [""]
-          - os: ubuntu-22.04-arm]
+          - os: ubuntu-22.04-arm
             python-version: "3.15"
             wine-compat: [""]
           - os: windows-latest
