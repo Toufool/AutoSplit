@@ -95,7 +95,8 @@ $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
 Write-Output "Installing Python dependencies with: uv sync $prod $lock"
-uv sync --active $prod $lock
+# Verbose to see sdist progression
+uv sync --verbose --active $prod $lock
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 if (-not $prod) {
