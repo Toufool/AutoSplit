@@ -60,6 +60,7 @@ from types import FunctionType
 from typing import TYPE_CHECKING, NoReturn, override
 
 import cv2
+from gen import about, design, settings, update_checker
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
@@ -70,7 +71,6 @@ from AutoControlledThread import AutoControlledThread
 from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from capture_method import CaptureMethodEnum
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from gen import about, design, settings, update_checker
 from hotkeys import (
     HOTKEYS,
     KEYBOARD_GROUPS_ISSUE,

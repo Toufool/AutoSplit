@@ -28,8 +28,9 @@ from menu_bar import open_settings
 from utils import auto_split_directory
 
 if TYPE_CHECKING:
-    from AutoSplit import AutoSplit
     from gen import design
+
+    from AutoSplit import AutoSplit
 
 
 class UserProfileDict(TypedDict):
