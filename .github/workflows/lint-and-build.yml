@@ -32,10 +32,6 @@ env:
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
   UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
   APPIMAGE_EXTRACT_AND_RUN: true # Avoid needing libfuse2
-  # https://github.com/opencv/opencv-python#source-distributions
-  # Allows building OpenCV on Windows ARM64
-  # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
-  CMAKE_ARGS: "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
