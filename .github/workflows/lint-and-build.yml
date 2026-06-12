@@ -37,6 +37,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
   Pyright:
     runs-on: ${{ matrix.os }}
@@ -55,7 +59,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
       - run: scripts/install.ps1
-        shell: pwsh
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v3
         with:
@@ -107,9 +110,12 @@ jobs:
               || null }}
       # endregion
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
-        shell: pwsh
       - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
-        shell: pwsh
+      - name: Run test suite
+        # pywinctl/pymonctl connect to the X display at import-time, hence xvfb
+        run: >-
+          ${{ startsWith(matrix.os, 'ubuntu') && 'xvfb-run --auto-servernum' || '' }}
+          uv run -m unittest discover --start-directory tests --verbose
       - name: Add empty profile
         run: echo "" > dist/settings.toml
       - name: Extract AutoSplit version
@@ -119,7 +125,6 @@ jobs:
           $Env:AUTOSPLIT_VERSION=uv run python -c "import utils; print(utils.AUTOSPLIT_VERSION)"
           echo "AUTOSPLIT_VERSION=$Env:AUTOSPLIT_VERSION" >> $Env:GITHUB_OUTPUT
           echo "OS=$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)" >> $Env:GITHUB_OUTPUT
-        shell: pwsh
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v6
         with:
@@ -148,7 +153,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Annotate release template URL
-        shell: pwsh
         run: |
           $version = "v${{ needs.Build.outputs.AUTOSPLIT_VERSION }}"
           $body = [uri]::EscapeDataString(((@'
