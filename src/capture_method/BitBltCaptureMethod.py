@@ -73,14 +73,13 @@ The smaller the selected region, the more efficient it is."""
                 win32con.SRCCOPY,
             )
             image = np.frombuffer(bitmap.GetBitmapBits(True), dtype=np.uint8)
+            image = image.reshape((height, width, BGRA_CHANNEL_COUNT))
         except win32ui.error, pywintypes.error:
             # Invalid handle or the window was closed while it was being manipulated
             return None
 
         if is_blank(image):
             image = None
-        else:
-            image.shape = (height, width, BGRA_CHANNEL_COUNT)
 
         # Cleanup DC and handle
         try_delete_dc(dc_object)
