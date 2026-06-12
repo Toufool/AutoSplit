@@ -3,7 +3,7 @@ import os
 import sys
 
 if sys.version_info >= (3, 15):
-    sys.set_lazy_imports("all")
+    sys.set_lazy_imports("all")  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue] # Not yet added to pyright
 
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
