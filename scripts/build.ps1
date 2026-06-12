@@ -17,6 +17,11 @@ from PyInstaller.building.splash import Splash
 try:
   if sys.version_info >= (3, 15):
     from PyInstaller.utils.hooks.tcl_tk import tcltk_info
+    if not tcltk_info.available:
+      raise SystemExit(
+          "ERROR: Your platform does not support the splash screen feature, since tkinter is not installed. "
+          "Please install tkinter and try again."
+      )
     Splash._check_tcl_tk_compatibility(tcltk_info)
   else:
     Splash._check_tcl_tk_compatibility()
