@@ -13,22 +13,7 @@ try {
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
   $SupportsSplashScreen = ($Env:UV_PYTHON -notlike '3.15*') -and (
     $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
-      $(uv run --active python -c '
-import sys
-from PyInstaller.building.splash import Splash
-try:
-  from PyInstaller.utils.hooks.tcl_tk import tcltk_info
-  if not tcltk_info.available:
-    raise SystemExit(
-        "ERROR: Your platform does not support the splash screen feature, since tkinter is not installed. "
-        "Please install tkinter and try again."
-    )
-  Splash._check_tcl_tk_compatibility(tcltk_info)
-  print(True)
-except SystemExit as e:
-  print(e, file=sys.stderr)
-  print(False)
-    ')))
+      $(uv run --active scripts/check_splash_support.py)))
 
   $arguments = @(
     'src/AutoSplit.py',
