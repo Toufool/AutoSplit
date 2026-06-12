@@ -18,7 +18,8 @@ try:
   if sys.version_info >= (3, 15):
     from PyInstaller.utils.hooks.tcl_tk import tcltk_info
     Splash._check_tcl_tk_compatibility(tcltk_info)
-  Splash._check_tcl_tk_compatibility()
+  else:
+    Splash._check_tcl_tk_compatibility()
   print(True)
 except SystemExit as e:
   print(e, file=sys.stderr)
