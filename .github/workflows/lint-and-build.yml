@@ -40,12 +40,19 @@ concurrency:
 jobs:
   Pyright:
     runs-on: ${{ matrix.os }}
+    env:
+      # Fail rather than accidentally compile C/binary extensions from sdist.
+      # Per-package no-binary overrides no-build, allowing
+      # known pure-Python source-only dependencies to still build.
+      # The Build job intentionally builds some binary packages from source.
+      UV_NO_BUILD: true
+      UV_NO_BINARY_PACKAGE: keyboard pyinstaller beslogic-ruff-config
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
         # arm runner slower as long as opencv doesn't provide arm64 wheels
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-24.04-arm]
         python-version: ["3.14"]
     steps:
       - uses: actions/checkout@v6
