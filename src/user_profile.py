@@ -1,17 +1,5 @@
 from __future__ import annotations
 
-__lazy_modules__ = {
-    "PySide6",
-    "copy",
-    "error_messages",
-    "hotkeys",
-    "menu_bar",
-    "tomli_w",
-    "tomllib",
-    "utils",
-    "warnings",
-}
-
 import os
 import tomllib
 from copy import deepcopy

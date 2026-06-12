@@ -1,5 +1,3 @@
-__lazy_modules__ = {"PySide6", "PySide6.QtCore", "PySide6.QtGui", "numpy"}
-
 import sys
 
 if sys.platform != "linux":

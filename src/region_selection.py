@@ -1,17 +1,5 @@
 from __future__ import annotations
 
-__lazy_modules__ = {
-    "PySide6.QtTest",
-    "capture_method",
-    "cv2",
-    "error_messages",
-    "math",
-    "numpy",
-    "pywinctl",
-    "utils",
-    "win32gui",
-}
-
 import sys
 from math import ceil
 from typing import TYPE_CHECKING, override

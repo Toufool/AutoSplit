@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-__lazy_modules__ = {"cv2", "cv2.Error", "error_messages", "numpy", "threading", "utils"}
-
 from threading import Event, Thread
 from typing import TYPE_CHECKING, override
 

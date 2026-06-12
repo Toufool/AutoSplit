@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-__lazy_modules__ = {"PySide6", "signal", "traceback", "types"}
-
 import os
 import signal
 import sys

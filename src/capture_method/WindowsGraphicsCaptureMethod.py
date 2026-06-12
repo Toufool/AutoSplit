@@ -1,19 +1,5 @@
 from __future__ import annotations
 
-__lazy_modules__ = {
-    "asyncio",
-    "d3d11",
-    "numpy",
-    "win32gui",
-    "winrt",
-    "winrt.windows",
-    "winrt.windows.graphics.capture",
-    "winrt.windows.graphics.capture.interop",
-    "winrt.windows.graphics.directx",
-    "winrt.windows.graphics.directx.direct3d11.interop",
-    "winrt.windows.graphics.imaging",
-}
-
 import sys
 
 if sys.platform != "win32":

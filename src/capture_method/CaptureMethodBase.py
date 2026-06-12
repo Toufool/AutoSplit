@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-__lazy_modules__ = {"utils"}
-
 from typing import TYPE_CHECKING
 
 from utils import is_valid_hwnd

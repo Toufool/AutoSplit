@@ -78,7 +78,7 @@ dependency-metadata = [
 ]
 find-links = ["./scripts"] # Discover local wheels
 
-exclude-newer = "6 days"
+exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 # package = "3 days" # Reason
 

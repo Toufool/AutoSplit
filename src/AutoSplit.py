@@ -1,31 +1,9 @@
 #!/usr/bin/env python3
-
-__lazy_modules__ = {
-    "AutoControlledThread",
-    "AutoSplitImage",
-    "PySide6",
-    "PySide6.QtTest",
-    "capture_method",
-    "capture_method.CaptureMethodBase",
-    "collections",
-    "collections.abc",
-    "copy",
-    "cv2",
-    "error_messages",
-    "hotkeys",
-    "menu_bar",
-    "region_selection",
-    "signal",
-    "split_parser",
-    "types",
-    "user_profile",
-    "utils",
-    "win32comext",
-    "win32comext.shell",
-}
-
 import os
 import sys
+
+if sys.version_info >= (3, 15):
+    sys.set_lazy_imports("all")
 
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
