@@ -13,21 +13,17 @@ try {
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
   $SupportsSplashScreen = ($Env:UV_PYTHON -notlike '3.15*') -and (
     $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
-      # TODO: Remove condition once using the same version across all python
       $(uv run --active python -c '
 import sys
 from PyInstaller.building.splash import Splash
 try:
-  if sys.version_info >= (3, 15):
-    from PyInstaller.utils.hooks.tcl_tk import tcltk_info
-    if not tcltk_info.available:
-      raise SystemExit(
-          "ERROR: Your platform does not support the splash screen feature, since tkinter is not installed. "
-          "Please install tkinter and try again."
-      )
-    Splash._check_tcl_tk_compatibility(tcltk_info)
-  else:
-    Splash._check_tcl_tk_compatibility()
+  from PyInstaller.utils.hooks.tcl_tk import tcltk_info
+  if not tcltk_info.available:
+    raise SystemExit(
+        "ERROR: Your platform does not support the splash screen feature, since tkinter is not installed. "
+        "Please install tkinter and try again."
+    )
+  Splash._check_tcl_tk_compatibility(tcltk_info)
   print(True)
 except SystemExit as e:
   print(e, file=sys.stderr)
