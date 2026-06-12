@@ -9,8 +9,9 @@ Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 try {
   & 'scripts/compile_resources.ps1'
 
-  # TODO: Remove condition once using the same version across all python
-  $SupportsSplashScreen = [System.Convert]::ToBoolean(
+  # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
+  $SupportsSplashScreen = $Env:CI -or [System.Convert]::ToBoolean(
+    # TODO: Remove condition once using the same version across all python
     $(uv run --active python -c '
 import sys
 from PyInstaller.building.splash import Splash
