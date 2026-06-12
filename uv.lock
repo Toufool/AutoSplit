@@ -85,7 +85,8 @@ dependencies = [
     { name = "pillow", version = "12.3.0.dev0", source = { registry = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }, marker = "python_full_version >= '3.15' and sys_platform == 'linux'" },
     { name = "pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pygrabber", marker = "sys_platform == 'win32'" },
-    { name = "pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "pyinstaller", version = "6.17.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
+    { name = "pyinstaller", version = "6.20.0", source = { git = "https://github.com/pyinstaller/pyinstaller?rev=9803892a21f84c695885ca85c14dbad47a283a32#9803892a21f84c695885ca85c14dbad47a283a32" }, marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
     { name = "pyside6-essentials", version = "6.8.0.2", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'aarch64' and sys_platform == 'linux'" },
     { name = "pyside6-essentials", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
     { name = "python-xlib", marker = "sys_platform == 'linux'" },
@@ -133,7 +134,8 @@ requires-dist = [
     { name = "pillow", marker = "python_full_version >= '3.15' and sys_platform == 'linux'", specifier = ">=12.2.0", index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" },
     { name = "pyautogui", specifier = ">=0.9.52" },
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
-    { name = "pyinstaller", specifier = ">=6.15.0" },
+    { name = "pyinstaller", marker = "python_full_version < '3.15'", specifier = ">=6.15.0" },
+    { name = "pyinstaller", marker = "python_full_version >= '3.15'", git = "https://github.com/pyinstaller/pyinstaller?rev=9803892a21f84c695885ca85c14dbad47a283a32" },
     { name = "pyside6-essentials", marker = "platform_machine != 'aarch64' or sys_platform != 'linux'", specifier = ">=6.9.0" },
     { name = "pyside6-essentials", marker = "platform_machine == 'aarch64' and sys_platform == 'linux'", specifier = "<6.8.1" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
@@ -482,13 +484,18 @@ wheels = [
 name = "pyinstaller"
 version = "6.17.0"
 source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.15' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.15' and sys_platform == 'win32'",
+]
 dependencies = [
-    { name = "altgraph", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pefile", marker = "sys_platform == 'win32'" },
-    { name = "pyinstaller-hooks-contrib", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
-    { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "altgraph", marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
+    { name = "packaging", marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
+    { name = "pefile", marker = "python_full_version < '3.15' and sys_platform == 'win32'" },
+    { name = "pyinstaller-hooks-contrib", version = "2025.10", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
+    { name = "pywin32-ctypes", marker = "python_full_version < '3.15' and sys_platform == 'win32'" },
+    { name = "setuptools", marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/01/80/9e0dad9c69a7cfd4b5aaede8c6225d762bab7247a2a6b7651e1995522001/pyinstaller-6.17.0.tar.gz", hash = "sha256:be372bd911392b88277e510940ac32a5c2a6ce4b8d00a311c78fa443f4f27313", size = 4014147, upload-time = "2025-11-24T19:43:32.109Z" }
 wheels = [
@@ -505,16 +512,57 @@ wheels = [
 ]
 
 [[package]]
+name = "pyinstaller"
+version = "6.20.0"
+source = { git = "https://github.com/pyinstaller/pyinstaller?rev=9803892a21f84c695885ca85c14dbad47a283a32#9803892a21f84c695885ca85c14dbad47a283a32" }
+resolution-markers = [
+    "python_full_version >= '3.15' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.15' and sys_platform == 'win32'",
+]
+dependencies = [
+    { name = "altgraph", marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+    { name = "packaging", marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+    { name = "pefile", marker = "python_full_version >= '3.15' and sys_platform == 'win32'" },
+    { name = "pyinstaller-hooks-contrib", version = "2026.5", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+    { name = "pywin32-ctypes", marker = "python_full_version >= '3.15' and sys_platform == 'win32'" },
+    { name = "setuptools", marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+]
+
+[[package]]
 name = "pyinstaller-hooks-contrib"
 version = "2025.10"
 source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.15' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version < '3.15' and sys_platform == 'win32'",
+]
 dependencies = [
-    { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "packaging", marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
+    { name = "setuptools", marker = "(python_full_version < '3.15' and sys_platform == 'linux') or (python_full_version < '3.15' and sys_platform == 'win32')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/26/4f/e33132acdb8f732978e577b8a0130a412cbfe7a3414605e3fd380a975522/pyinstaller_hooks_contrib-2025.10.tar.gz", hash = "sha256:a1a737e5c0dccf1cf6f19a25e2efd109b9fec9ddd625f97f553dac16ee884881", size = 168155, upload-time = "2025-11-22T09:34:36.138Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/86/de/a7688eed49a1d3df337cdaa4c0d64e231309a52f269850a72051975e3c4a/pyinstaller_hooks_contrib-2025.10-py3-none-any.whl", hash = "sha256:aa7a378518772846221f63a84d6306d9827299323243db890851474dfd1231a9", size = 447760, upload-time = "2025-11-22T09:34:34.753Z" },
+]
+
+[[package]]
+name = "pyinstaller-hooks-contrib"
+version = "2026.5"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.15' and platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
+    "python_full_version >= '3.15' and sys_platform == 'win32'",
+]
+dependencies = [
+    { name = "packaging", marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+    { name = "setuptools", marker = "(python_full_version >= '3.15' and sys_platform == 'linux') or (python_full_version >= '3.15' and sys_platform == 'win32')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1a/67/f4452d68793fb15beba4f19ef39a38a8822f0da7452b503c400d5a21f5c1/pyinstaller_hooks_contrib-2026.5.tar.gz", hash = "sha256:f066dfca8f7c45ff6336c9cf9fe25b4e48bfeb322a1aa24faaedfb8a8d1b0b08", size = 173689, upload-time = "2026-05-04T22:36:55.124Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f6/5c/fd465d11da4d12b50d7eb5d2ee2ceb780d8d049dbb489f3828d131e387af/pyinstaller_hooks_contrib-2026.5-py3-none-any.whl", hash = "sha256:ea1535783fbdac4626351709e83f3ea80b681d3a4745763ebb407b5e27342eb9", size = 457314, upload-time = "2026-05-04T22:36:53.598Z" },
 ]
 
 [[package]]
