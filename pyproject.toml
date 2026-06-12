@@ -18,7 +18,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.15.0", # Python 3.14 support
+  "pyinstaller >=6.15.0", # Python 3.14 support # TODO: Bump when 3.15 wheels
 
   #
   # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
