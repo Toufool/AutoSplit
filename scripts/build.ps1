@@ -9,10 +9,20 @@ Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 try {
   & 'scripts/compile_resources.ps1'
 
+  # TODO: Remove condition once using the same version across all python
   $SupportsSplashScreen = [System.Convert]::ToBoolean(
     $(uv run --active python -c '
+import sys
 from PyInstaller.building.splash import Splash
-Splash._check_tcl_tk_compatibility()
+try:
+  if sys.version_info >= (3, 15):
+    from PyInstaller.utils.hooks.tcl_tk import tcltk_info
+    Splash._check_tcl_tk_compatibility(tcltk_info)
+  Splash._check_tcl_tk_compatibility()
+  print(True)
+except SystemExit as e:
+  print(e, file=sys.stderr)
+  print(False)
     '))
 
   $arguments = @(
