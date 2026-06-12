@@ -38,11 +38,11 @@ if sys.version_info >= (3, 15):
         #   the parent package, clobbering any same-named lazy proxy in the
         #   package's namespace
         #   (e.g. "from capture_method.ScrotCaptureMethod import ScrotCaptureMethod").
+        #   https://github.com/python/cpython/issues/151208
         # - A relative "from . import x" binds a lazy proxy that fails to reify
         #   on attribute access (e.g. PIL/__init__.py's
         #   "__version__ = _version.__version__" sees the raw proxy).
-        # TODO: Try to discuss online if this is intended, and if it can be worked around
-        # TODO: or maybe suggesting a lint to avoid this issue.
+        #   TODO: Report upstream, possibly same root cause as the issue above.
         if importing.partition(".")[0] == imported.partition(".")[0]:
             return False
         return importing.partition(".")[0] not in _EAGER_INTERNALS
