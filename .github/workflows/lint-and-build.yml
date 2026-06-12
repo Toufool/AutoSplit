@@ -89,6 +89,7 @@ jobs:
             python-version: "3.15"
             wine-compat: "-WineCompat"
     steps:
+      - uses: actions/checkout@v6
       # region https://github.com/pyinstaller/pyinstaller/issues/9204
       - name: Set up Python for PyInstaller tk issue on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
@@ -102,6 +103,8 @@ jobs:
           # On ARM64, uv defaults to x86_64 Python, force it to aarch64.
           # Also done in local script. Done CI for cache-matching and to avoid re-downloading Python.
           # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
+          #
+          # On Ubuntu use the global Python install (null) for reason above
           python-version: >-
             ${{ (!startsWith(matrix.os, 'ubuntu')
                 && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
