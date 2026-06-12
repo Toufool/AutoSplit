@@ -35,8 +35,9 @@ if ($IsLinux) {
     # System dependencies
     if (Get-Command apt-get -ErrorAction SilentlyContinue) {
       sudo apt-get update
-      # xvfb to run import smoke test headless on CI
-      $xvfb = $Env:GITHUB_JOB ? 'xvfb' : $null
+      # xvfb to run tests headless on CI
+      # x11-xserver-utils (xset, xrandr) which pymonctl requires at import
+      $xvfb = $Env:GITHUB_JOB ? @('xvfb', 'x11-xserver-utils') : $null
       # python3-tk for splash screen
       # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
       # the rest for PySide6
