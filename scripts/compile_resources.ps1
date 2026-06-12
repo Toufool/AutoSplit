@@ -40,9 +40,21 @@ if (-not $GITHUB_REPOSITORY) {
   $GITHUB_REPOSITORY = 'Toufool/AutoSplit'
 }
 
+# Our own top-level modules and packages, used by AutoSplit.py's lazy imports
+# filter (Python 3.15+). Generated because PyInstaller-frozen builds can't
+# discover pure modules on disk: they live inside the PYZ archive.
+$SRC_ROOT_MODULES = (
+  @('"__main__"') + (
+    Get-ChildItem ./src |
+      Where-Object { ($_.Extension -eq '.py' -or $_.PSIsContainer) -and $_.Name -notlike '__*' } |
+      ForEach-Object { "`"$($_.BaseName)`"" }
+  )
+) -join ', '
+
 New-Item $build_vars_path -ItemType File -Force | Out-Null
 Add-Content $build_vars_path "AUTOSPLIT_BUILD_NUMBER = `"$BUILD_NUMBER`""
 Add-Content $build_vars_path "AUTOSPLIT_GITHUB_REPOSITORY = `"$GITHUB_REPOSITORY`""
+Add-Content $build_vars_path "SRC_ROOT_MODULES = frozenset(($SRC_ROOT_MODULES))"
 Write-Host "Generated build number: `"$BUILD_NUMBER`""
 Write-Host "Set repository to `"$GITHUB_REPOSITORY`""
 
