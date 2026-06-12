@@ -35,10 +35,13 @@ if ($IsLinux) {
     # System dependencies
     if (Get-Command apt-get -ErrorAction SilentlyContinue) {
       sudo apt-get update
+      # xvfb to run import smoke test headless on CI
+      $xvfb = $Env:GITHUB_JOB ? 'xvfb' : $null
       # python3-tk for splash screen
       # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
       # the rest for PySide6
       sudo apt-get install -y `
+        $xvfb `
         python3-tk `
         libxcb-cursor-dev `
         libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
