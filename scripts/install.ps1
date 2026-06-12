@@ -33,14 +33,16 @@ if ($IsLinux) {
 if ($IsLinux) {
   if (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     # System dependencies
-    sudo apt-get update
-    # python3-tk for splash screen
-    # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
-    # the rest for PySide6
-    sudo apt-get install -y `
-      python3-tk `
-      libxcb-cursor-dev `
-      libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
+    if (Get-Command apt-get -ErrorAction SilentlyContinue) {
+      sudo apt-get update
+      # python3-tk for splash screen
+      # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
+      # the rest for PySide6
+      sudo apt-get install -y `
+        python3-tk `
+        libxcb-cursor-dev `
+        libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
+    }
 
     Write-Output 'Installing appimagetool'
     Invoke-WebRequest `
@@ -92,18 +94,12 @@ if (`
 # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
 $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 
-# On ARM64, uv defaults to x86_64 Python.
-# This is also done in CI before UV is even set-up for caching and to avoid re-downloading Python
-# https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
-if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') {
-  $Env:UV_PYTHON = 'arm64'
-}
-
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
-Write-Output "Installing Python dependencies with: uv sync $prod $lock"
 # Verbose to see sdist progression
-uv sync --verbose --active $prod $lock
+$uvSyncArgs = @('sync', '--verbose', '--active') + $prod + $lock
+Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
+uv @uvSyncArgs
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 if (-not $prod) {

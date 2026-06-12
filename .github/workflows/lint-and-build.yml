@@ -101,7 +101,6 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           # On ARM64, uv defaults to x86_64 Python, force it to aarch64.
-          # Also done in local script. Done CI for cache-matching and to avoid re-downloading Python.
           # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
           #
           # On Ubuntu use the global Python install (null) for reason above

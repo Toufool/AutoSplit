@@ -10,7 +10,7 @@ try {
   & 'scripts/compile_resources.ps1'
 
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
-  $SupportsSplashScreen = $Env:CI -or [System.Convert]::ToBoolean(
+  $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
     # TODO: Remove condition once using the same version across all python
     $(uv run --active python -c '
 import sys
