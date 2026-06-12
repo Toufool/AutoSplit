@@ -32,10 +32,6 @@ env:
   GITHUB_EXCLUDE_BUILD_NUMBER: ${{ inputs.excludeBuildNumber }}
   UV_NO_SYNC: true # Avoid accidentally pulling in dependency-groups with uv run
   APPIMAGE_EXTRACT_AND_RUN: true # Avoid needing libfuse2
-  # https://github.com/opencv/opencv-python#source-distributions
-  # Allows building OpenCV on Windows ARM64
-  # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
-  CMAKE_ARGS: "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -91,10 +87,6 @@ jobs:
             wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
-      # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
-      - name: Set UV_PYTHON for ARM runners
-        if: ${{ endsWith(matrix.os, 'arm') }}
-        run: echo "UV_PYTHON=arm64" >> "$GITHUB_ENV"
       # region https://github.com/pyinstaller/pyinstaller/issues/9204
       - name: Set up Python for PyInstaller tk issue on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
@@ -105,7 +97,14 @@ jobs:
       - name: Set up uv for Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
+          # On ARM64, uv defaults to x86_64 Python, force it to aarch64.
+          # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
+          #
+          # On Ubuntu use the global Python install (null) for reason above
+          python-version: >-
+            ${{ (!startsWith(matrix.os, 'ubuntu')
+                && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
+              || null }}
       # endregion
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
         shell: pwsh
