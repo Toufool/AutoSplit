@@ -92,6 +92,13 @@ if (`
 # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
 $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 
+# On ARM64, uv defaults to x86_64 Python.
+# This is also done in CI before UV is even set-up for caching and to avoid re-downloading Python
+# https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
+if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') {
+  $Env:UV_PYTHON = 'arm64'
+}
+
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
 Write-Output "Installing Python dependencies with: uv sync $prod $lock"

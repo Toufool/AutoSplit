@@ -90,6 +90,8 @@ jobs:
             wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
+      # On ARM64, uv defaults to x86_64 Python.
+      # Also done in local script. Done CI before UV is even set-up for caching and to avoid re-downloading Python
       # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
       - name: Set UV_PYTHON for ARM runners
         if: ${{ endsWith(matrix.os, 'arm') }}
