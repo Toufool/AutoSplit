@@ -9,6 +9,8 @@ ignore = [
   "N999", # pep8-naming: Invalid module name
   # Print are used as debug logs
   "T20", # flake8-print
+  # We use unittest, not pytest
+  "PT", # flake8-pytest-style
   # This is a relatively small, low contributors project. Git blame suffice.
   "TD002", # missing-todo-author
   # We do work in __init__ modules
