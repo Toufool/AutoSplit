@@ -8,7 +8,9 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
-  "opencv-contrib-python-headless >=4.12.0.88", # Last version with sdist # TODO: Bump when free-threading wheels
+  # "opencv-contrib-python-headless >=4.12.0.88", # Last version with sdist # TODO: Bump when free-threading wheels
+  "opencv-python @ git+https://github.com/opencv/opencv-python.git", # Last available sdist fails to build free-threaded
+
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
@@ -95,6 +97,17 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 # numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 # pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 # pyinstaller = { url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip", marker = "python_version >= '3.15'" }
+
+[tool.uv.extra-build-variables]
+# https://github.com/opencv/opencv-python#source-distributions
+#
+# BUILD_opencv_dnn/ENABLE_NEON
+# Allows building OpenCV on Windows ARM64 when only sdist is available
+# https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
+#
+# ENABLE_CONTRIB/ENABLE_HEADLESS:
+# Match flavors to opencv-contrib-python-headless when building from git source repo
+opencv-contrib-python-headless = { CMAKE_ARGS = "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1" }
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
