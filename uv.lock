@@ -133,7 +133,7 @@ requires-dist = [
     { name = "keyboard", git = "https://github.com/boppreh/keyboard.git" },
     { name = "levenshtein", specifier = ">=0.27.3" },
     { name = "numpy", specifier = ">=2.3.2" },
-    { name = "opencv-contrib-python-headless", specifier = "==4.12.0.88" },
+    { name = "opencv-contrib-python-headless", specifier = ">=4.12.0.88" },
     { name = "packaging", specifier = ">=20.0" },
     { name = "pillow", marker = "sys_platform == 'linux'", specifier = ">=12.2.0" },
     { name = "pyautogui", specifier = ">=0.9.52" },
