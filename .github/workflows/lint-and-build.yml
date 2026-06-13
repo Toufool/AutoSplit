@@ -88,6 +88,12 @@ jobs:
           - os: windows-latest
             python-version: "3.14"
             wine-compat: "-WineCompat"
+          # Note: For free-threading, only take the latest,
+          # which should have more threading issues solved
+          - os: ubuntu-22.04
+            python-version: "3.14t"
+          - os: ubuntu-22.04-arm
+            python-version: "3.14t"
     steps:
       - uses: actions/checkout@v6
       # region https://github.com/pyinstaller/pyinstaller/issues/9204
