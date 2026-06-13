@@ -22,6 +22,7 @@ exclude-newer-span = "P1W"
 
 [options.exclude-newer-package]
 typed-d3dshot = false
+pyinstaller-hooks-contrib = false
 
 [manifest]
 
@@ -485,7 +486,7 @@ wheels = [
 
 [[package]]
 name = "pyinstaller"
-version = "6.20.0"
+version = "6.21.0"
 source = { url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip" }
 dependencies = [
     { name = "altgraph", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -495,7 +496,7 @@ dependencies = [
     { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
     { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { hash = "sha256:f90f479bb4c4a63c3119eedffd778d3cbea7d842821b286bd25a5bd6dba6c860" }
+sdist = { hash = "sha256:e044252d7577d5800c6f7fe7a944e3e934458146a11fb4876917916f587c2da8" }
 
 [package.metadata]
 requires-dist = [
@@ -507,7 +508,7 @@ requires-dist = [
     { name = "packaging", specifier = ">=22.0" },
     { name = "pefile", marker = "sys_platform == 'win32'", specifier = ">=2022.5.30" },
     { name = "psutil", marker = "extra == 'hook-testing'" },
-    { name = "pyinstaller-hooks-contrib", specifier = ">=2026.4" },
+    { name = "pyinstaller-hooks-contrib", specifier = ">=2026.6" },
     { name = "pytest", marker = "extra == 'hook-testing'", specifier = ">=2.7.3" },
     { name = "pywin32-ctypes", marker = "sys_platform == 'win32'", specifier = ">=0.2.1" },
     { name = "setuptools", specifier = ">=42.0.0" },
@@ -516,15 +517,14 @@ provides-extras = ["completion", "hook-testing"]
 
 [[package]]
 name = "pyinstaller-hooks-contrib"
-version = "2026.5"
+version = "2026.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/67/f4452d68793fb15beba4f19ef39a38a8822f0da7452b503c400d5a21f5c1/pyinstaller_hooks_contrib-2026.5.tar.gz", hash = "sha256:f066dfca8f7c45ff6336c9cf9fe25b4e48bfeb322a1aa24faaedfb8a8d1b0b08", size = 173689, upload-time = "2026-05-04T22:36:55.124Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/5b/c9fe0db5e83ee1c39b2258fa21d23b15e1a60786b6c5990ee5074ead8bb6/pyinstaller_hooks_contrib-2026.6.tar.gz", hash = "sha256:bef5002c32f4f50bd55b005da12cff64eca8783e7eaf86a06a62410164bab725", size = 173354, upload-time = "2026-06-08T22:37:16.152Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/5c/fd465d11da4d12b50d7eb5d2ee2ceb780d8d049dbb489f3828d131e387af/pyinstaller_hooks_contrib-2026.5-py3-none-any.whl", hash = "sha256:ea1535783fbdac4626351709e83f3ea80b681d3a4745763ebb407b5e27342eb9", size = 457314, upload-time = "2026-05-04T22:36:53.598Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/31/f2d7343d8ed5f7c4678377886f6ce533e6eaaa131b252ce950114c2a7efa/pyinstaller_hooks_contrib-2026.6-py3-none-any.whl", hash = "sha256:fd13b8ac126b35361175edacd41a0d97080b75dd5f4b594ecefefff969509dd3", size = 457159, upload-time = "2026-06-08T22:37:14.722Z" },
 ]
 
 [[package]]

@@ -81,6 +81,7 @@ find-links = ["./scripts"] # Discover local wheels
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
+pyinstaller-hooks-contrib = false # pyinstaller develop build
 
 ###
 # Development channels
