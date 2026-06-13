@@ -109,9 +109,8 @@ $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
-$verbose = if ($Env:GITHUB_JOB) { '--verbose' } else { }
 # Verbose to see sdist progression
-$uvSyncArgs = @('sync', '--active') + $prod + $lock + $verbose
+$uvSyncArgs = @('sync', '--active') + $prod + $lock # + '--verbose'
 Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
 uv @uvSyncArgs
 
