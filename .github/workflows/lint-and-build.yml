@@ -91,6 +91,10 @@ jobs:
           - os: windows-latest
             python-version: "3.15"
             wine-compat: "-WineCompat"
+          - os: ubuntu-22.04
+            python-version: "3.15t"
+          - os: ubuntu-22.04-arm
+            python-version: "3.15t"
     steps:
       - uses: actions/checkout@v6
       # region https://github.com/pyinstaller/pyinstaller/issues/9204

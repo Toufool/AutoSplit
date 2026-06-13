@@ -113,6 +113,7 @@ $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
 $uvSyncArgs = @('sync', '--active') + $prod + $lock # + '--verbose'
 Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
 uv @uvSyncArgs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 if (-not $prod) {
