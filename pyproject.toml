@@ -26,7 +26,7 @@ dependencies = [
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
   "pywin32 >=312; sys_platform == 'win32'", # Python 3.15 support
-  "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
+  "typed-D3DShot[numpy] >=1.1.1; sys_platform == 'win32'",
   # winrt: 3.14 wheels # TODO: Bump when 3.15 wheels
   "winrt-Windows.Foundation >=3.2.1; sys_platform == 'win32'",
   "winrt-Windows.Graphics >=3.2.1; sys_platform == 'win32'",
@@ -80,13 +80,13 @@ find-links = ["./scripts"] # Discover local wheels
 
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
-# package = "3 days" # Reason
+typed-D3DShot = false # I own it
 
 ###
 # Development channels
 ###
 [tool.uv.sources]
-beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
+beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
 # numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 # pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
