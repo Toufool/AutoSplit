@@ -6,8 +6,10 @@ resolution-markers = [
     "python_full_version < '3.15' and platform_machine == 'aarch64' and sys_platform == 'linux'",
     "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version < '3.15' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
 ]
 supported-markers = [
     "sys_platform == 'linux'",
@@ -17,6 +19,9 @@ supported-markers = [
 [options]
 exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
 exclude-newer-span = "P1W"
+
+[options.exclude-newer-package]
+typed-d3dshot = false
 
 [manifest]
 
@@ -140,7 +145,7 @@ requires-dist = [
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=312" },
     { name = "pywinctl", specifier = ">=0.0.42" },
     { name = "tomli-w", specifier = ">=1.1.0" },
-    { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.0.1" },
+    { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.1.1" },
     { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'", specifier = ">=3.2.1" },
     { name = "winrt-windows-graphics", marker = "sys_platform == 'win32'", specifier = ">=3.2.1" },
     { name = "winrt-windows-graphics-capture", marker = "sys_platform == 'win32'", specifier = ">=3.2.1" },
@@ -153,7 +158,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config" },
+    { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7" },
     { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "mypy", specifier = ">=2.1" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
@@ -166,14 +171,14 @@ dev = [
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
 ]
 ruff = [
-    { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config" },
+    { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7" },
     { name = "ruff" },
 ]
 
 [[package]]
 name = "beslogic-ruff-config"
 version = "1.1.0"
-source = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config#312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
+source = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7#312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
 dependencies = [
     { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
@@ -576,8 +581,10 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version < '3.15' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
 ]
 dependencies = [
     { name = "shiboken6", version = "6.9.1", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or sys_platform == 'win32'" },
@@ -719,8 +726,10 @@ source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
     "python_full_version < '3.15' and platform_machine != 'aarch64' and sys_platform == 'linux'",
-    "python_full_version >= '3.15' and sys_platform == 'win32'",
-    "python_full_version < '3.15' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version >= '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version < '3.15' and platform_machine != 'ARM64' and sys_platform == 'win32'",
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5a/07/53b2532ecd42ff925feb06b7bb16917f5f99f9c3470f0815c256789d818b/shiboken6-6.9.1-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:efcdfa8655d34aaf8d7a0c7724def3440bd46db02f5ad3b1785db5f6ccb0a8ff", size = 206756, upload-time = "2025-06-03T13:16:46.528Z" },
@@ -749,14 +758,14 @@ wheels = [
 
 [[package]]
 name = "typed-d3dshot"
-version = "1.0.1"
+version = "1.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "comtypes", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/91/05/faad24e43db0333df99ad93cf4472702d4bfcb2bc7d946186a312f1fe3b8/typed_d3dshot-1.0.1.tar.gz", hash = "sha256:7cf3fb6304bfde82d9a279c16fd5798100e035f3ac9f53b82a9bec718d84bb29", size = 33913, upload-time = "2024-10-09T20:43:29.188Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/e8/c1d050bd5d71ba7eab613677bfafe7e43b50dcf10a7698e331231049e5f4/typed_d3dshot-1.1.1.tar.gz", hash = "sha256:c1f3acc984ad1eeb6b3199153ffe0d585f57007195a03d1b9222e9324d2fcfc5", size = 25013, upload-time = "2026-06-13T05:25:05.558Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/23/bafe1f74835ff57efc8b8bbdec95e3a5d5e4316f17c51616fb33aeaa24f2/typed_d3dshot-1.0.1-py3-none-any.whl", hash = "sha256:775cbb476535d98fb0bdc99b21d247af44957608a38bd1f6b5de7da74a2a991f", size = 33511, upload-time = "2024-10-09T20:43:27.779Z" },
+    { url = "https://files.pythonhosted.org/packages/89/bd/85db9d8ec0bc5bdf2c70867c121a4e3e26e4da15659bd352d991659201a7/typed_d3dshot-1.1.1-py3-none-any.whl", hash = "sha256:be4a1c0194047ad618c9d417a07cd5f8fea105fc6ea8930ba037f37bb144d01f", size = 33239, upload-time = "2026-06-13T05:25:04.25Z" },
 ]
 
 [package.optional-dependencies]

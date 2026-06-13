@@ -6,6 +6,7 @@ broken platform guards and lazy import issues in module-level code.
 """
 
 import importlib
+import operator
 import pkgutil
 import subprocess  # noqa: S404
 import sys
@@ -15,10 +16,6 @@ from pathlib import Path
 
 SRC_DIR = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
-
-from gen.build_vars import SRC_ROOT_MODULES  # noqa: E402
-
-EXCLUDED = {"__main__"}
 
 # Single-platform modules, by the platform they support.
 # Importing one on any other platform is expected to raise OSError.
@@ -45,11 +42,12 @@ EXPECTED_OS_ERRORS = frozenset(
 
 
 def iter_all_modules():
-    """Yields every top-level module, followed by its direct submodules (source runs only)."""
-    for top_level in sorted(SRC_ROOT_MODULES.difference(EXCLUDED)):
-        yield top_level
-        for submodule in pkgutil.iter_modules([str(SRC_DIR / top_level)]):
-            yield f"{top_level}.{submodule.name}"
+    """Yields every top-level module, followed by its direct submodules."""
+    for top_level in sorted(pkgutil.iter_modules([SRC_DIR]), key=operator.attrgetter("name")):
+        yield top_level.name
+        if top_level.ispkg:
+            for submodule in pkgutil.iter_modules([SRC_DIR / top_level.name]):
+                yield f"{top_level.name}.{submodule.name}"
 
 
 class TestImportAllModules(unittest.TestCase):
