@@ -107,7 +107,10 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 #
 # ENABLE_CONTRIB/ENABLE_HEADLESS:
 # Match flavors to opencv-contrib-python-headless when building from git source repo
-opencv-contrib-python-headless = { CMAKE_ARGS = "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1" }
+#
+# PYTHON3_LIMITED_API: Enable free-threaded builds
+opencv-contrib-python-headless = { CMAKE_ARGS = "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1 -DPYTHON3_LIMITED_API=OFF" }
+opencv-python = { CMAKE_ARGS = "-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1 -DPYTHON3_LIMITED_API=OFF" }
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
