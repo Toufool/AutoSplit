@@ -58,6 +58,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
+      # Compiling opencv-python from github source
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        if: ${{ startswith(matrix.os, 'windows') }}
       - run: scripts/install.ps1
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v3
@@ -115,6 +119,10 @@ jobs:
                 && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
               || null }}
       # endregion
+      # Compiling opencv-python from github source
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        if: ${{ startswith(matrix.os, 'windows') }}
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
       - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
       - name: Run test suite
