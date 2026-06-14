@@ -34,11 +34,11 @@ def _scrot_screenshot(x: int, y: int, width: int, height: int):
                 "-z",
                 screenshot_file,
             ))
-            return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
         except subprocess.CalledProcessError:
             # This can happen when trying to capture a region OOB
             # scrot is rude and prints directly to TTY, no stderr :/
             return None
+        return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
 
 
 class ScrotCaptureMethod(CaptureMethodBase):

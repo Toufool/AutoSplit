@@ -1,7 +1,7 @@
 [project]
 name = "AutoSplit"
 version = "2.3.3" # (remember to bump in uv.lock too)
-requires-python = ">=3.14"
+requires-python = ">=3.14,<3.15"
 dependencies = [
   "Levenshtein >=0.27.3", # free-threaded # TODO: Bump when 3.15 wheels
   "PyAutoGUI >=0.9.52",
