@@ -9,11 +9,9 @@ Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 try {
   & 'scripts/compile_resources.ps1'
 
-  $SupportsSplashScreen = [System.Convert]::ToBoolean(
-    $(uv run --active python -c '
-from PyInstaller.building.splash import Splash
-Splash._check_tcl_tk_compatibility()
-    '))
+  # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
+  $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
+    $(uv run --active scripts/check_splash_support.py))
 
   $arguments = @(
     'src/AutoSplit.py',

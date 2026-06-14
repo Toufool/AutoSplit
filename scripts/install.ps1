@@ -33,14 +33,29 @@ if ($IsLinux) {
 if ($IsLinux) {
   if (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     # System dependencies
-    sudo apt-get update
-    # python3-tk for splash screen
-    # libxcb-cursor-dev for QT_QPA_PLATFORM=xcb
-    # the rest for PySide6
-    sudo apt-get install -y `
-      python3-tk `
-      libxcb-cursor-dev `
-      libegl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1
+    if ((Get-Command apt-get, dpkg-query -ErrorAction SilentlyContinue).Count -eq 2) {
+      $packages = @(
+        # For running tests headless on CI
+        ($Env:GITHUB_JOB ? 'xvfb' : $null),
+        # Required by pymonctl at import
+        'x11-xserver-utils',
+        # For splash screen
+        'python3-tk',
+        # For QT_QPA_PLATFORM=xcb
+        'libxcb-cursor-dev',
+        # The rest for PySide6
+        'libegl1', 'libxkbcommon0', 'libxkbcommon-x11-0', 'libxcb-icccm4', 'libxcb-keysyms1'
+      ).Where({ $_ })
+      # Only install missing packages so apt doesn't re-mark them as manually installed.
+      # Multi-arch packages report one status line per architecture.
+      $missing = $packages.Where({
+          @(dpkg-query -W -f='${db:Status-Status}\n' $_ 2>$null) -notcontains 'installed'
+        })
+      if ($missing) {
+        sudo apt-get update
+        sudo apt-get install -y $missing
+      }
+    }
 
     Write-Output 'Installing appimagetool'
     Invoke-WebRequest `
@@ -87,10 +102,17 @@ if (`
   Remove-Item $PSScriptRoot/.upx/$UPXFolderName
 }
 
+# https://github.com/opencv/opencv-python#source-distributions
+# Allows building OpenCV on Windows ARM64 when only sdist is available
+# https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
+$Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
+
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
-Write-Output "Installing Python dependencies with: uv sync $prod $lock"
-uv sync --active $prod $lock
+# Verbose to see sdist progression
+$uvSyncArgs = @('sync', '--active') + $prod + $lock # + '--verbose'
+Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
+uv @uvSyncArgs
 
 # Don't compile resources on the Build CI job as it'll do so in build script
 if (-not $prod) {

@@ -1,0 +1,53 @@
+// https://github.com/microsoft/pyright/blob/main/docs/configuration.md//sample-config-file
+{
+  "typeCheckingMode": "strict",
+  // Prefer `pyright: ignore`
+  "enableTypeIgnoreComments": false,
+
+  /**
+   * Downgraded diagnostics
+   */
+  // Type stubs may not be completable
+  "reportMissingTypeStubs": "warning",
+  // Extra runtime safety
+  "reportUnnecessaryComparison": "warning",
+  // Using Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
+  "reportUnusedImport": "none",
+
+  /**
+   * Off by default even in strict mode
+   */
+  "deprecateTypingAliases": true,
+  "enableExperimentalFeatures": true,
+  "reportCallInDefaultInitializer": "error",
+  "reportImplicitOverride": "error",
+  "reportImplicitStringConcatenation": "error",
+  // False positives with TYPE_CHECKING, mostly covered by Ruff TCH00
+  "reportImportCycles": "none",
+  // Too strict. False positives on base classes
+  "reportMissingSuperCall": "none",
+  "reportPropertyTypeMismatch": "error",
+  "reportUninitializedInstanceVariable": "error",
+  "reportUnnecessaryTypeIgnoreComment": "error",
+  "reportUnusedCallResult": "none",
+
+  // Exclude from scanning when running pyright
+  "exclude": [
+    // mypyc build folder
+    "build/",
+    // PyInstaller dist folder
+    "dist/",
+    // Auto generated, fails some strict pyright checks
+    "src/gen/",
+    // Defaults
+    "**/.*",
+    "**/__pycache__",
+    "**/node_modules",
+    ".venv",
+  ],
+  // Ignore must be specified for Pylance to stop displaying errors
+  "ignore": [
+    // We expect stub files to be incomplete or contain useless statements
+    "**/*.pyi",
+  ],
+}

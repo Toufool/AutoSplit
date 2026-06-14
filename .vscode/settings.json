@@ -53,6 +53,7 @@
     // IDEM, but also it's annoying to remove imports because of commented code while testing
     "source.removeUnusedImports": "never",
   },
+  "dprint.path": ".vscode/dprint",
 
   /*
   * Git

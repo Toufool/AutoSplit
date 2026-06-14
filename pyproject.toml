@@ -3,7 +3,7 @@ name = "AutoSplit"
 version = "2.3.3" # (remember to bump in uv.lock too)
 requires-python = ">=3.14"
 dependencies = [
-  "Levenshtein >=0.25", # TODO: Bump when 3.15 wheels
+  "Levenshtein >=0.27.3", # free-threaded # TODO: Bump when 3.15 wheels
   "PyAutoGUI >=0.9.52",
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
@@ -25,8 +25,8 @@ dependencies = [
   #
   # Windows-only dependencies:
   "pygrabber >=0.2; sys_platform == 'win32'", # Completed types
-  "pywin32 >=311; sys_platform == 'win32'", # Python 3.15 support
-  "typed-D3DShot[numpy] >=1.0.1; sys_platform == 'win32'",
+  "pywin32 >=312; sys_platform == 'win32'", # Python 3.15 support
+  "typed-D3DShot[numpy] >=1.1.1; sys_platform == 'win32'",
   # winrt: 3.14 wheels # TODO: Bump when 3.15 wheels
   "winrt-Windows.Foundation >=3.2.1; sys_platform == 'win32'",
   "winrt-Windows.Graphics >=3.2.1; sys_platform == 'win32'",
@@ -38,7 +38,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow>=12.2.0; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab.
+  "pillow>=12.2.0; sys_platform == 'linux'", # Security fix # Necessary for ImageGrab. # TODO: Bump when 3.15 wheels
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -76,69 +76,25 @@ dependency-metadata = [
   { name = "PyAutoGUI", requires-dist = [] },
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
+find-links = ["./scripts"] # Discover local wheels
+
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
-# package = "3 days" # Reason
+typed-D3DShot = false # I own it
 
-[tool.uv.sources] # Development channels
-beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config" }
-# pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version == '3.15'" }
-# numpy = { index = "scientific-python-nightly-wheels" }
+###
+# Development channels
+###
+[tool.uv.sources]
+beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
+# pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
+# numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+# pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+# pyinstaller = { url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip", marker = "python_version >= '3.15'" }
+
 [[tool.uv.index]]
+exclude-newer = false # Anaconda index doesn't have upload dates
 # https://anaconda.org/scientific-python-nightly-wheels/
 name = "scientific-python-nightly-wheels"
 url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
-explicit = true
-
-# https://github.com/microsoft/pyright/blob/main/docs/configuration.md#sample-pyprojecttoml-file
-[tool.pyright]
-typeCheckingMode = "strict"
-# Prefer `pyright: ignore`
-enableTypeIgnoreComments = false
-
-###
-# Downgraded diagnostics
-###
-# Type stubs may not be completable
-reportMissingTypeStubs = "warning"
-# Extra runtime safety
-reportUnnecessaryComparison = "warning"
-# Using Ruff instead. Name is already grayed out and red squiggle looks like a mistyped import
-reportUnusedImport = "none"
-
-###
-# Off by default even in strict mode
-###
-deprecateTypingAliases = true
-enableExperimentalFeatures = true
-reportCallInDefaultInitializer = "error"
-reportImplicitOverride = "error"
-reportImplicitStringConcatenation = "error"
-# False positives with TYPE_CHECKING, mostly covered by Ruff TCH00
-reportImportCycles = "none"
-# Too strict. False positives on base classes
-reportMissingSuperCall = "none"
-reportPropertyTypeMismatch = "error"
-reportUninitializedInstanceVariable = "error"
-reportUnnecessaryTypeIgnoreComment = "error"
-reportUnusedCallResult = "none"
-
-# Exclude from scanning when running pyright
-exclude = [
-  # mypyc build folder
-  "build/",
-  # PyInstaller dist folder
-  "dist/",
-  # Auto generated, fails some strict pyright checks
-  "src/gen/",
-  # Defaults
-  "**/.*",
-  "**/__pycache__",
-  "**/node_modules",
-  ".venv",
-]
-# Ignore must be specified for Pylance to stop displaying errors
-ignore = [
-  # We expect stub files to be incomplete or contain useless statements
-  "**/*.pyi",
-]
+explicit = true # Avoid index hijacking
