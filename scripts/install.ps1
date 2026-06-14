@@ -108,9 +108,9 @@ if (`
 # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
 $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 # Match flavors to opencv-contrib-python-headless when building from git source repo
-$Env:CMAKE_ARGS += '-DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1'
+$Env:CMAKE_ARGS += ' -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1'
 # PYTHON3_LIMITED_API: Enable free-threaded builds
-$Env:CMAKE_ARGS += '-DPYTHON3_LIMITED_API=OFF'
+$Env:CMAKE_ARGS += ' -DPYTHON3_LIMITED_API=OFF'
 
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
