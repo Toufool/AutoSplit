@@ -109,7 +109,7 @@ if (`
 $Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
 # Match flavors to opencv-contrib-python-headless when building from git source repo
 $Env:CMAKE_ARGS += ' -DENABLE_CONTRIB=1 -DENABLE_HEADLESS=1'
-# PYTHON3_LIMITED_API: Enable free-threaded builds
+# Enable free-threaded builds which don't support the limited API
 $Env:CMAKE_ARGS += ' -DPYTHON3_LIMITED_API=OFF'
 
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
