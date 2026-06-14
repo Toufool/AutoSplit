@@ -16,7 +16,7 @@ dependencies = [
   "tomli-w >=1.1.0", # Typing fixes
 
   # When needed, PySide6 dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
-  # "PySide6-Essentials >=6.9.0", # Windows ARM64 support
+  "PySide6-Essentials >=6.9.0", # Windows ARM64 support
 
   #
   # Build and compile resources
