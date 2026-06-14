@@ -48,8 +48,8 @@ jobs:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
-        # arm runner slower as long as opencv doesn't provide arm64 wheels
-        os: [windows-latest, ubuntu-latest]
+        # windows arm runner slower as long as opencv doesn't provide windows arm64 wheels
+        os: [windows-latest, ubuntu-24.04-arm]
         python-version: ["3.14"]
     steps:
       - uses: actions/checkout@v6
