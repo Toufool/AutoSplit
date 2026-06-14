@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable
-from time import sleep
 from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
+from PySide6.QtTest import QTest
 
 import error_messages
-from utils import ONE_SECOND, fire_and_forget, is_digit, try_input_device_access
+from utils import fire_and_forget, is_digit, try_input_device_access
 
 if sys.platform == "linux":
     import grp
@@ -30,9 +30,6 @@ if TYPE_CHECKING:
 # While not usually recommended, we don't manipulate the mouse, and we don't want the extra delay
 pyautogui.FAILSAFE = False
 
-
-# https://github.com/LiveSplit/LiveSplit/blob/42f2f16568610c641a0101de5de3c172063d69f3/src/LiveSplit.Core/Model/DoubleTapPrevention.cs#L15
-LIVESPLIT_DOUBLE_TAP_PREVENTION_DELAY = 601 / ONE_SECOND
 SET_HOTKEY_TEXT = "Set Hotkey"
 PRESS_A_KEY_TEXT = "Press a key..."
 
@@ -101,7 +98,7 @@ def send_command(autosplit: AutoSplit, command: CommandStr):
         # being able to reload all images.
         case "start" if autosplit.settings_dict["start_also_resets"]:
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
-            sleep(LIVESPLIT_DOUBLE_TAP_PREVENTION_DELAY)
+            QTest.qWait(1)
             _send_hotkey(autosplit.settings_dict["split_hotkey"])
         case "reset":
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])

@@ -601,6 +601,12 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
        <height>24</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;If &lt;span style=&quot; font-style:italic;&quot;&gt;not&lt;/span&gt; using the LiveSplit Integration, you &lt;span style=&quot; font-weight:700;&quot;&gt;must&lt;/span&gt; disable &amp;quot;Double Tap Prevention&amp;quot; in LiveSplit settings. As it requires a 600ms delay between hotkeys. &lt;/p&gt;
+&lt;!-- Keep in sync with &quot;Start also Resets&quot; section in tutorial.md --&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string>Start also Resets</string>
      </property>
