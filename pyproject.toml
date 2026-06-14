@@ -9,7 +9,8 @@ dependencies = [
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
   # Last version with sdist # TODO: Bump when free-threading wheels
-  "opencv-contrib-python-headless >=4.12.0.88; sys_platform == 'win32'",
+  # >= still resolves above for ARM64 and fails with missing wheels+sdist
+  "opencv-contrib-python-headless ==4.12.0.88; sys_platform == 'win32'",
   # Last available sdist fails to build free-threaded # TODO: Bump remove when free-threading wheels
   "opencv-python @ git+https://github.com/opencv/opencv-python.git ; sys_platform == 'linux'",
 
