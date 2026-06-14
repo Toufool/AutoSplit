@@ -77,10 +77,7 @@ The smaller the selected region, the more efficient it is."""
             # Invalid handle or the window was closed while it was being manipulated
             return None
 
-        if is_blank(image):
-            image = None
-        else:
-            image.shape = (height, width, BGRA_CHANNEL_COUNT)
+        image = None if is_blank(image) else image.reshape((height, width, BGRA_CHANNEL_COUNT))
 
         # Cleanup DC and handle
         try_delete_dc(dc_object)
