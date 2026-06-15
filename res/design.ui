@@ -49,7 +49,7 @@
      <string>X</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="select_region_button">
@@ -62,7 +62,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Select Region</string>
@@ -78,7 +78,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Start Auto Splitter</string>
@@ -97,7 +97,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Reset</string>
@@ -116,7 +116,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Undo</string>
@@ -135,7 +135,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Skip</string>
@@ -151,7 +151,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="toolTip">
      <string>calculate the average max FPS of the set capture region</string>
@@ -183,10 +183,10 @@
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::Box</enum>
+     <enum>QFrame::Shape::Box</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
+     <enum>QFrame::Shadow::Plain</enum>
     </property>
     <property name="lineWidth">
      <number>1</number>
@@ -198,7 +198,7 @@
      <string/>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="current_split_image">
@@ -211,13 +211,13 @@
      </rect>
     </property>
     <property name="frameShape">
-     <enum>QFrame::Box</enum>
+     <enum>QFrame::Shape::Box</enum>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="current_image_label">
@@ -233,7 +233,7 @@
      <string>Current Image</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="width_label">
@@ -249,7 +249,7 @@
      <string>Width</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="height_label">
@@ -265,7 +265,7 @@
      <string>Height</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="fps_value_label">
@@ -291,7 +291,7 @@
      </rect>
     </property>
     <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -313,7 +313,7 @@
      </rect>
     </property>
     <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -338,7 +338,7 @@
      <string>Capture Region</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="current_image_file_label">
@@ -354,7 +354,7 @@
      <string>-</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="take_screenshot_button">
@@ -367,7 +367,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Take Screenshot</string>
@@ -383,10 +383,10 @@
      </rect>
     </property>
     <property name="buttonSymbols">
-     <enum>QAbstractSpinBox::UpDownArrows</enum>
+     <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
     </property>
     <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>0</number>
@@ -411,7 +411,7 @@
      </rect>
     </property>
     <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
     </property>
     <property name="minimum">
      <number>0</number>
@@ -436,7 +436,7 @@
      <string>Y</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="align_region_button">
@@ -449,7 +449,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="toolTip">
      <string>Align the capture region using a reference image</string>
@@ -468,7 +468,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Select Window</string>
@@ -484,7 +484,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Browse...</string>
@@ -529,7 +529,7 @@
      <string>-</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="image_loop_label">
@@ -558,7 +558,7 @@
      <string>Similarity Viewer</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
     <widget class="QLabel" name="table_live_label">
      <property name="geometry">
@@ -573,7 +573,7 @@
       <string>Live</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_highest_label">
@@ -589,7 +589,7 @@
       <string>Highest</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_threshold_label">
@@ -605,7 +605,7 @@
       <string>Threshold</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="Line" name="line_1">
@@ -618,7 +618,7 @@
       </rect>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
     <widget class="QLabel" name="table_current_image_label">
@@ -657,7 +657,7 @@
       </rect>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
     <widget class="Line" name="line_3">
@@ -670,7 +670,7 @@
       </rect>
      </property>
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
     </widget>
     <widget class="Line" name="line_4">
@@ -683,7 +683,7 @@
       </rect>
      </property>
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
     </widget>
     <widget class="Line" name="line_5">
@@ -696,7 +696,7 @@
       </rect>
      </property>
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
     </widget>
     <widget class="QLabel" name="table_current_image_live_label">
@@ -712,7 +712,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_current_image_highest_label">
@@ -728,7 +728,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_current_image_threshold_label">
@@ -744,7 +744,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_reset_image_live_label">
@@ -760,7 +760,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_reset_image_highest_label">
@@ -776,7 +776,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="table_reset_image_threshold_label">
@@ -792,7 +792,7 @@
       <string>-</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </widget>
@@ -806,7 +806,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="text">
      <string>Reload Start Image</string>
@@ -864,7 +864,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="toolTip">
      <string>Previous image</string>
@@ -886,7 +886,7 @@
      </rect>
     </property>
     <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
+     <enum>Qt::FocusPolicy::NoFocus</enum>
     </property>
     <property name="toolTip">
      <string>Next image</string>
@@ -938,7 +938,7 @@
     <string>F1</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="action_about">
@@ -946,7 +946,7 @@
     <string>About AutoSplit</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::MenuRole::AboutRole</enum>
    </property>
   </action>
   <action name="action_save_profile">
@@ -957,7 +957,7 @@
     <string>Ctrl+S</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="action_load_profile">
@@ -968,7 +968,7 @@
     <string>Ctrl+O</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="action_save_profile_as">
@@ -979,7 +979,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="action_check_for_updates">
@@ -995,10 +995,10 @@
     <string>Ctrl+,</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::MenuRole::PreferencesRole</enum>
    </property>
   </action>
   <action name="action_check_for_updates_on_open">
@@ -1017,7 +1017,7 @@
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::MenuRole::AboutQtRole</enum>
    </property>
   </action>
   <action name="action_about_qt_for_python">
@@ -1025,7 +1025,7 @@
     <string>About Qt for Python</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::MenuRole::AboutQtRole</enum>
    </property>
   </action>
  </widget>

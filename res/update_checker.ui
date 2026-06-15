@@ -32,7 +32,7 @@
    </font>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::NoFocus</enum>
+   <enum>Qt::FocusPolicy::NoFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Update Checker</string>
@@ -109,7 +109,7 @@
     </rect>
    </property>
    <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
+    <enum>Qt::FocusPolicy::NoFocus</enum>
    </property>
    <property name="text">
     <string>Open</string>
