@@ -51,10 +51,10 @@ jobs:
       # Per-package no-binary overrides no-build, allowing
       # known pure-Python source-only dependencies to still build.
       # The Build job intentionally builds some binary packages from source.
-      # Levenshtein and numpy don't have 3.15 wheels yet; remove once they do.
       UV_NO_BINARY_PACKAGE: >-
-        keyboard pyinstaller PyAutoGUI beslogic-ruff-config
-        ${{ matrix.python-version == '3.15' && 'Levenshtein numpy' || '' }}
+        keyboard PyAutoGUI beslogic-ruff-config
+        ${{ matrix.python-version == '3.15' && 'Levenshtein numpy pyinstaller' || '' }}
+      # TODO: ^ Remove these exceptions once 3.15 wheels are released
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible

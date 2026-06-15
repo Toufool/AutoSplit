@@ -137,7 +137,7 @@ requires-dist = [
     { name = "pillow", marker = "python_full_version >= '3.15' and sys_platform == 'linux'", specifier = ">=12.2.0", index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" },
     { name = "pyautogui", specifier = ">=0.9.52" },
     { name = "pygrabber", marker = "sys_platform == 'win32'", specifier = ">=0.2" },
-    { name = "pyinstaller", url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip" },
+    { name = "pyinstaller", git = "https://github.com/pyinstaller/pyinstaller.git" },
     { name = "pyside6-essentials", specifier = ">=6.9.0" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
     { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=312" },
@@ -483,7 +483,7 @@ wheels = [
 [[package]]
 name = "pyinstaller"
 version = "6.21.0"
-source = { url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip" }
+source = { git = "https://github.com/pyinstaller/pyinstaller.git#f809c9d1a4d82ed949912ada2fb9d46a112ce3d1" }
 dependencies = [
     { name = "altgraph", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -492,24 +492,6 @@ dependencies = [
     { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
     { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { hash = "sha256:adde8febec31a86057f8655b92f778000eef6816593b65309aceb8ab26fd51a3" }
-
-[package.metadata]
-requires-dist = [
-    { name = "altgraph" },
-    { name = "argcomplete", marker = "extra == 'completion'" },
-    { name = "execnet", marker = "extra == 'hook-testing'", specifier = ">=1.5.0" },
-    { name = "importlib-metadata", marker = "python_full_version < '3.10'", specifier = ">=4.6" },
-    { name = "macholib", marker = "sys_platform == 'darwin'", specifier = ">=1.8" },
-    { name = "packaging", specifier = ">=22.0" },
-    { name = "pefile", marker = "sys_platform == 'win32'", specifier = ">=2022.5.30" },
-    { name = "psutil", marker = "extra == 'hook-testing'" },
-    { name = "pyinstaller-hooks-contrib", specifier = ">=2026.6" },
-    { name = "pytest", marker = "extra == 'hook-testing'", specifier = ">=2.7.3" },
-    { name = "pywin32-ctypes", marker = "sys_platform == 'win32'", specifier = ">=0.2.1" },
-    { name = "setuptools", specifier = ">=42.0.0" },
-]
-provides-extras = ["completion", "hook-testing"]
 
 [[package]]
 name = "pyinstaller-hooks-contrib"
