@@ -53,7 +53,7 @@ jobs:
       # The Build job intentionally builds some binary packages from source.
       UV_NO_BINARY_PACKAGE: >-
         keyboard PyAutoGUI beslogic-ruff-config
-        ${{ matrix.python-version == '3.15' && 'RapidFuzz Levenshtein numpy pyinstaller' || '' }}
+        ${{ matrix.python-version == '3.15' && 'RapidFuzz Levenshtein numpy' || '' }}
       # TODO: ^ Remove these exceptions once 3.15 wheels are released
     strategy:
       fail-fast: false
