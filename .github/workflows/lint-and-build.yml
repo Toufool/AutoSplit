@@ -44,6 +44,14 @@ defaults:
 jobs:
   Pyright:
     runs-on: ${{ matrix.os }}
+    env:
+      # Prevent accidentally slower type-checking due to missing arm wheels.
+      # Fail rather than accidentally compile C/binary extensions from sdist.
+      UV_NO_BUILD: true
+      # Per-package no-binary overrides no-build, allowing
+      # known pure-Python source-only dependencies to still build.
+      # The Build job intentionally builds some binary packages from source.
+      UV_NO_BINARY_PACKAGE: keyboard pyinstaller PyAutoGUI beslogic-ruff-config
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
