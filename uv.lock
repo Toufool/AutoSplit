@@ -492,7 +492,7 @@ dependencies = [
     { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
     { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
-sdist = { hash = "sha256:e044252d7577d5800c6f7fe7a944e3e934458146a11fb4876917916f587c2da8" }
+sdist = { hash = "sha256:adde8febec31a86057f8655b92f778000eef6816593b65309aceb8ab26fd51a3" }
 
 [package.metadata]
 requires-dist = [
