@@ -108,7 +108,6 @@ dev = [
     { name = "dprint-py", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "mypy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "pyright", extra = ["nodejs"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "qt6-applications", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
     { name = "types-pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -154,7 +153,6 @@ dev = [
     { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "mypy", specifier = ">=2.1" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
-    { name = "qt6-applications", specifier = ">=6.5.0" },
     { name = "ruff" },
     { name = "types-keyboard" },
     { name = "types-pyautogui" },
@@ -578,15 +576,6 @@ dependencies = [
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/be/33/8e4f632210b28fc9e998a9ab990e7ed97ecd2800cc50038e3800e1d85dbe/PyWinCtl-0.4.1-py3-none-any.whl", hash = "sha256:4d875e22969e1c6239d8c73156193630aaab876366167b8d97716f956384b089", size = 63158, upload-time = "2024-09-23T08:33:39.881Z" },
-]
-
-[[package]]
-name = "qt6-applications"
-version = "6.5.0.2.3"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/89/dc9f1148d9c6dc4692586f103c108042837ae674d534814ac0db1c3068ce/qt6_applications-6.5.0.2.3-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:155b6bbb62144c32579dc6705e0fb33932994af58e5afbae3ef1c1e4472198cb", size = 88988732, upload-time = "2023-03-27T14:18:17.275Z" },
-    { url = "https://files.pythonhosted.org/packages/5f/99/0600506724143157bc4b61397084e15a1607126efff1636e23e4062e921b/qt6_applications-6.5.0.2.3-py3-none-win_amd64.whl", hash = "sha256:b6ce4c472768fb9898592e053b6cf732b231b6c945dc87a90799cb8f7db24b94", size = 43091947, upload-time = "2023-03-27T14:18:21.983Z" },
 ]
 
 [[package]]

@@ -1,4 +1,5 @@
 #! /usr/bin/pwsh
+
 param([switch]$WineCompat)
 
 # Validating user groups on Linux

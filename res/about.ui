@@ -89,7 +89,7 @@ please consider donating.
 Thank you!</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="donate_button_label">
@@ -105,7 +105,7 @@ Thank you!</string>
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;amp;business=BYRHQG69YRHBA&amp;amp;item_name=AutoSplit+development&amp;amp;currency_code=USD&amp;amp;source=url&quot;&gt;&lt;img src=&quot;:/resources/btn_donateCC_LG.png&quot;/&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="icon_label">

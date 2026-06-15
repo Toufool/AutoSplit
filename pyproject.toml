@@ -50,9 +50,6 @@ ruff = [
 ]
 dev = [
   #
-  # Visual Designer
-  "qt6-applications >=6.5.0",
-  #
   # Linters & Formatters
   "dprint-py >=0.50.0.0",
   "mypy >=2.1", # TODO: Bump when 3.15 wheels
@@ -71,6 +68,13 @@ environments = [
   # AutoSplit does not currently support macOS
   "sys_platform == 'linux'",
   "sys_platform == 'win32'",
+]
+required-environments = [
+  # Ensure we don't miss wheels at resolution for supported platform combinations
+  # "sys_platform == 'linux' and platform_machine == 'aarch64'",
+  # "sys_platform == 'linux' and platform_machine == 'x86_64'",
+  # "sys_platform == 'win32' and platform_machine == 'amd64'",
+  # "sys_platform == 'win32' and platform_machine == 'arm64'",
 ]
 dependency-metadata = [
   # PyAutoGUI installs extra libraries we don't want. We only use it for hotkeys

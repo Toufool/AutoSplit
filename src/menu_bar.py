@@ -308,19 +308,6 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         self.custom_image_settings_info_label.setText(
             self.custom_image_settings_info_label.text().format(GITHUB_REPOSITORY=GITHUB_REPOSITORY)
         )
-        # HACK: This is a workaround because custom_image_settings_info_label
-        # simply will not open links with a left click no matter what we tried.
-        self.readme_link_button.clicked.connect(
-            lambda: webbrowser.open(f"https://github.com/{GITHUB_REPOSITORY}#readme")
-        )
-        self.readme_link_button.setStyleSheet("border: 0px; background-color:rgba(0,0,0,0%);")
-        if sys.platform == "linux":
-            geometry = self.readme_link_button.geometry()
-            # In-button font has different width so "README" doesn't fit -.-
-            self.readme_link_button.setText("#DOC#")
-            self.readme_link_button.setGeometry(
-                QtCore.QRect(116, 220, geometry.width(), geometry.height())
-            )
 
     def __select_screenshot_directory(self):
         self._autosplit_ref.settings_dict["screenshot_directory"] = (
