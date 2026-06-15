@@ -1,4 +1,16 @@
 {
   // https://dprint.dev/config/#extending-a-different-configuration-file
   "extends": "https://raw.githubusercontent.com/BesLogic/shared-configs/main/.dprint.jsonc",
+  // Trying to match dprint to QT designer output, but whitespace sensitivity still not fully respected
+  // "markup": {
+  //   "associations": [
+  //     "*.csproj",
+  //     "Directory.Build.props",
+  //     "*.ui",
+  //     "*.qrc",
+  //   ],
+  //   "whitespaceSensitivity": "strict",
+  //   "component.whitespaceSensitivity": "strict",
+  //   "indentWidth": 1,
+  // },
 }

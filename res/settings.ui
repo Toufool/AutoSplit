@@ -338,35 +338,6 @@
     <attribute name="title">
      <string>Image Settings</string>
     </attribute>
-    <widget class="QCommandLinkButton" name="readme_link_button">
-     <property name="geometry">
-      <rect>
-       <x>144</x>
-       <y>220</y>
-       <width>71</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Segoe UI</family>
-       <pointsize>8</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>README</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="description">
-      <string>This is a workaround because custom_image_settings_info_label simply will not open links with a left click no matter what we tried.</string>
-     </property>
-    </widget>
     <widget class="QSpinBox" name="default_delay_time_spinbox">
      <property name="geometry">
       <rect>
@@ -499,6 +470,9 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QLabel" name="default_similarity_threshold_label">
      <property name="geometry">
@@ -628,7 +602,6 @@ It is highly recommended to NOT use pHash if you use masked images, or it'll be 
     <zorder>default_pause_time_spinbox</zorder>
     <zorder>default_pause_time_label</zorder>
     <zorder>default_delay_time_label</zorder>
-    <zorder>readme_link_button</zorder>
     <zorder>start_also_resets_checkbox</zorder>
    </widget>
    <widget class="QWidget" name="hotkeys_tab">
