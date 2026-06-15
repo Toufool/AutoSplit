@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Literal, cast
 
 import keyboard
 import pyautogui
+from PySide6.QtTest import QTest
 
 import error_messages
 from utils import fire_and_forget, is_digit, try_input_device_access
@@ -97,6 +98,8 @@ def send_command(autosplit: AutoSplit, command: CommandStr):
         # being able to reload all images.
         case "start" if autosplit.settings_dict["start_also_resets"]:
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
+            QTest.qWait(1)
+            _send_hotkey(autosplit.settings_dict["split_hotkey"])
         case "reset":
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
         case "start" | "split":

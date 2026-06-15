@@ -98,6 +98,8 @@ jobs:
             wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2 # Needed for automatic version-bump check
       # region https://github.com/pyinstaller/pyinstaller/issues/9204
       - name: Set up Python for PyInstaller tk issue on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}

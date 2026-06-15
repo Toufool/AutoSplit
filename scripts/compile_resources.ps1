@@ -20,9 +20,11 @@ foreach ($file in $files) {
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"
-if ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true
-  # -or ($Env:GITHUB_EVENT_NAME -eq 'push' -and $Env:GITHUB_REF_NAME -eq 'main')
-) {
+$versionBumped = $Env:GITHUB_EVENT_NAME -eq 'push' `
+  -and (git rev-parse --verify HEAD^ 2>$null) `
+  -and (git diff HEAD^ HEAD -- "$PSScriptRoot/../pyproject.toml" | Select-String '^\+version\s*=')
+
+if ($Env:GITHUB_EXCLUDE_BUILD_NUMBER -eq $true -or $versionBumped) {
   $BUILD_NUMBER = ''
 }
 else {
