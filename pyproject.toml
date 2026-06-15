@@ -49,7 +49,7 @@ dev = [
   #
   # Linters & Formatters
   "dprint-py >=0.50.0.0",
-  "mypy >=2.1", # TODO: Bump when 3.15 wheels
+  "mypy >=2.1; python_version < '3.15'", # TODO: Bump when 3.15 wheels
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   { include-group = "ruff" },
   #
@@ -94,7 +94,7 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
 # numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
-pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git" }
+pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", marker = "python_version >= '3.15'" }
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
