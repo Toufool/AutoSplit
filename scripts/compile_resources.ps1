@@ -17,6 +17,7 @@ foreach ($file in $files) {
     ForEach-Object { $_ -replace 'def (\w+?)\(self, (\w+?)\):', 'def $1(self, $2: QWidget):' } |
     Set-Content $file.PSPath
 }
+uv run --active ruff check --fix --select=F401 src/gen/*.py
 Write-Host 'Generated code from .ui files'
 
 $build_vars_path = "$PSScriptRoot/../src/gen/build_vars.py"

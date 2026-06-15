@@ -1,4 +1,5 @@
 #! /usr/bin/pwsh
+
 param([switch]$WineCompat)
 
 $ErrorActionPreference = 'Stop'
