@@ -23,7 +23,7 @@ try {
     "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
     '--icon=res/icon.ico')
   # Don't UPX compress if trying to be Wine Compatible, or on Linux (handled manually below)
-  if (-not $WineCompat -or -not $Windows) {
+  if (-not $WineCompat -and -not $IsLinux) {
     $arguments += '--upx-dir=scripts/.upx'
   }
   else {
@@ -57,12 +57,11 @@ try {
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
 
-    # PyInstaller's --strip breaks ELF load command alignment in numpy's vendored OpenBLAS.
-    # Restore the original unstripped library from site-packages.
+    # PyInstaller's --strip breaks ELF load command alignment in all of numpy's vendored libs.
+    # Restore all original unstripped libraries from site-packages.
     $numpyLibsSrc = uv run --active python -c "import numpy, pathlib; print(pathlib.Path(numpy.__file__).parent.parent / 'numpy.libs')"
     if (Test-Path $numpyLibsSrc) {
-      Get-ChildItem $numpyLibsSrc -Filter 'libscipy_openblas64_*.so' |
-        Copy-Item -Destination 'build/AppDir/_internal/numpy.libs/' -Force
+      Copy-Item -Path "$numpyLibsSrc/*" -Destination 'build/AppDir/_internal/numpy.libs/' -Force
     }
 
     # if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
@@ -77,8 +76,8 @@ try {
     #       # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
     #       # _internal/PySide6/Qt/plugins/*/*.so* breaks style
     #       $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*' -or
-    #       # numpy-bundled OpenBLAS; --strip breaks its ELF load alignment (restored below) — skip UPX to avoid re-breaking it
-    #       $_.Name -like 'libscipy_openblas64_*'
+    #       # numpy.libs: --strip breaks ELF load alignment in all bundled libs (restored below) — skip UPX to avoid re-breaking them
+    #       $_.Directory -like '*/AppDir/_internal/numpy.libs'
     #     )
     #   }
     #   try {
