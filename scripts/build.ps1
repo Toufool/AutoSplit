@@ -22,8 +22,12 @@ try {
     '--additional-hooks-dir=Pyinstaller/hooks',
     "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
     '--icon=res/icon.ico')
-  if (-not $WineCompat) {
+  # Don't UPX compress if trying to be Wine Compatible, or on Linux (handled manually below)
+  if (-not $WineCompat -or -not $Windows) {
     $arguments += '--upx-dir=scripts/.upx'
+  }
+  else {
+    $arguments += '--noupx'
   }
   if ($SupportsSplashScreen) {
     # https://github.com/pyinstaller/pyinstaller/issues/9022
@@ -39,7 +43,6 @@ try {
     if (Test-Path build/AppDir) { Remove-Item build/AppDir -Recurse -Force }
     $arguments += @(
       '--distpath=build/AppDir'
-      '--noupx' # Run manually below
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
       '--strip')
   }
