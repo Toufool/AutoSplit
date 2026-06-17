@@ -65,9 +65,8 @@ try {
           # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
           # _internal/PySide6/Qt/plugins/*/*.so* breaks style
           $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*' -or
-          # numpy bundles OpenBLAS here; UPX breaks ELF load command page-alignment
-          # (environment-dependent, may not reproduce locally).
-          $_.Directory -like '*/AppDir/_internal/numpy.libs'
+          # numpy-bundled OpenBLAS; UPX breaks ELF load command page-alignment (environment-dependent, may not reproduce locally).
+          $_.Name -like 'libscipy_openblas64_*'
         )
       }
       try {
