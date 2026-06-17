@@ -90,18 +90,17 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-22.04, ubuntu-24.04-arm]
-        python-version: ["3.14"]
+        # Note: For free-threading, only take the latest, which has more threading issues solved
+        python-version: ["3.14", "3.14t"]
         wine-compat: [""]
         include:
           - os: windows-latest
             python-version: "3.14"
             wine-compat: "-WineCompat"
-          # Note: For free-threading, only take the latest,
-          # which should have more threading issues solved
-          - os: ubuntu-22.04
+
+          - os: windows-latest
             python-version: "3.14t"
-          - os: ubuntu-24.04-arm
-            python-version: "3.14t"
+            wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
         with:
