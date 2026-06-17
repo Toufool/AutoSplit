@@ -44,8 +44,7 @@ try {
     $arguments += @(
       '--distpath=build/AppDir'
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
-      # '--strip')
-    )
+      '--strip')
   }
 
   Write-Output $arguments
