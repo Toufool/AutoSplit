@@ -47,7 +47,7 @@ try {
       '--strip')
   }
 
-  Write-Output $arguments
+  Write-Output pyinstaller ($arguments -join ' ')
   & uv run --active pyinstaller @arguments
 
   if ($IsLinux) {
