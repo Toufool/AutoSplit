@@ -256,12 +256,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         self.show()
 
+        # https://pyinstaller.org/en/stable/advanced-topics.html#module-pyi_splash
+        # doc implies calling `pyi_splash.is_alive()` should return false should be enough, but in
+        # reality benign error logs are still printed if _PYI_SPLASH_IPC env is missing on import.
+        # Which is acceptable in dev and improves missing Splash visibility in prod build.
         try:
             import pyi_splash  # pyright: ignore[reportMissingModuleSource]  # noqa: PLC0415
-
-            pyi_splash.close()
         except ModuleNotFoundError:
-            pass
+            pass  # App is not frozen
+        else:
+            pyi_splash.close()
 
         # Needs to be after Ui_MainWindow.show() to be shown on top
         if not self.is_auto_controlled:
