@@ -133,7 +133,7 @@ requires-dist = [
     { name = "pyinstaller", specifier = ">=6.15.0" },
     { name = "pyside6-essentials", specifier = ">=6.9.0" },
     { name = "python-xlib", marker = "sys_platform == 'linux'", specifier = ">=0.33" },
-    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=312" },
+    { name = "pywin32", marker = "sys_platform == 'win32'", git = "https://github.com/mhammond/pywin32.git" },
     { name = "pywinctl", specifier = ">=0.0.42" },
     { name = "tomli-w", specifier = ">=1.1.0" },
     { name = "typed-d3dshot", extras = ["numpy"], marker = "sys_platform == 'win32'", specifier = ">=1.1.1" },
@@ -531,13 +531,8 @@ wheels = [
 
 [[package]]
 name = "pywin32"
-version = "312"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/2b/1f3cded5822fd49c02f40544cbb5f58c7cfd6b1694869fd476cb6170ee97/pywin32-312-cp314-cp314-win32.whl", hash = "sha256:a77a90fbb6881238d2ca9c6fd797b25817f3768fe78d214a90137ff055a75f5b", size = 6468928, upload-time = "2026-06-04T07:49:43.188Z" },
-    { url = "https://files.pythonhosted.org/packages/21/82/3bf86d2e2808902013132e1ce905a7da0da53790f3836c64bf44d55e24f3/pywin32-312-cp314-cp314-win_amd64.whl", hash = "sha256:a4dd3a848290ef724347b19f301045831d8e802fa4464f491b98b1e0a081432e", size = 7024157, upload-time = "2026-06-04T07:49:45.34Z" },
-    { url = "https://files.pythonhosted.org/packages/a4/0e/73f6d6800b4f27655abd9e9f6aaeaefcddb2b946e4674efa2bab184a7f7b/pywin32-312-cp314-cp314-win_arm64.whl", hash = "sha256:9fce94568364e0155e6dfb781ac5d95903be8baf28670632beab1b523f300daa", size = 6839598, upload-time = "2026-06-04T07:49:47.613Z" },
-]
+version = "312.1"
+source = { git = "https://github.com/mhammond/pywin32.git#3cdbd17e604e3c91cec9db42ff485ce745fe2ab4" }
 
 [[package]]
 name = "pywin32-ctypes"
