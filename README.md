@@ -48,7 +48,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 - Wine 10.1+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux
-  - Should work on Ubuntu 24.04+ (tested on Kubuntu 26.04)
+  - Should work on Ubuntu 24.04+ (glibc 2.39) (tested on Kubuntu 26.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - x64 and ARM64 architectures
