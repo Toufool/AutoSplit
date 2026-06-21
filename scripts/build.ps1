@@ -23,10 +23,11 @@ try {
     "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
     '--icon=res/icon.ico')
   # Don't UPX compress if trying to be Wine Compatible, or on Linux (handled manually below)
-  if (-not $WineCompat -or -not $Windows) {
+  if (-not $WineCompat -and -not $IsLinux) {
     $arguments += '--upx-dir=scripts/.upx'
   }
   else {
+    # Missing upx executable should be enough, but let's be explicit
     $arguments += '--noupx'
   }
   if ($SupportsSplashScreen) {
@@ -47,7 +48,7 @@ try {
       '--strip')
   }
 
-  Write-Output $arguments
+  Write-Output "pyinstaller $($arguments -join ' ')"
   & uv run --active pyinstaller @arguments
 
   if ($IsLinux) {
