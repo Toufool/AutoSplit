@@ -47,7 +47,7 @@ jobs:
     env:
       # Prevent accidentally slower type-checking due to missing arm wheels.
       # Fail rather than accidentally compile C/binary extensions from sdist.
-      UV_NO_BUILD: ${{ !(matrix.python-version == '3.15' && matrix.os == 'windows-latest') }} # winrt-Windows no free-threading wheels yet
+      UV_NO_BUILD: ${{ matrix.os != 'windows-latest' }} # winrt-Windows no free-threading wheels yet
       # Per-package no-binary overrides no-build, allowing
       # known pure-Python source-only dependencies to still build.
       # The Build job intentionally builds some binary packages from source.
