@@ -100,7 +100,7 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
     def do_not_ask_me_again_state_changed(self):
         user_profile.set_check_for_updates_on_open(
             self.design_window,
-            self.do_not_ask_again_checkbox.isChecked(),
+            not self.do_not_ask_again_checkbox.isChecked(),
         )
 
 

@@ -65,7 +65,7 @@ IMREAD_EXT_FILTER = (
 def get_top_window_at(x: int, y: int):
     """Give QWidget time to disappear to avoid Xlib.error.BadDrawable on Linux."""
     if sys.platform == "linux":
-        # Tested in increments of 10ms on my Pop!_OS 22.04 VM
+        # 80ms was the minimum needed when tested in increments of 10ms on my Pop!_OS 22.04 VM
         QTest.qWait(80)
     return getTopWindowAt(x, y)
 
