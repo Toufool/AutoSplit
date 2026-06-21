@@ -48,10 +48,11 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 - Wine 10.1+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux
-  - Should work on Ubuntu 22.04+ for x64 devices, Ubuntu 24.04+ for ARM64 devices
+  - Should work on Ubuntu 24.04+ (tested on Kubuntu 26.04)
   - Wayland is not currently supported
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
-- x64 and ARM64 architectures \* (see [Known Limitations](#known-limitations) for ARM64)
+- x64 and ARM64 architectures
+  - Native ARM64 builds go completely untested. There may be unforeseen issues.
 - If you'd like to run the project directly in Python from the source code, refer to the [build instructions](/docs/build%20instructions.md).
 
 ## Timer Integration
@@ -78,7 +79,6 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Linux support has feature-parity but is less performant. We're [looking for contributors](../../issues?q=is%3Aissue+is%3Aopen+label%3A"help+wanted"+label%3ALinux+).
   - Incompatible with LiveSplitOne on Linux (see <https://github.com/LiveSplit/LiveSplitOne/issues/1025>)
 - Antivirus false positives. Please read <https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md>
-- Native ARM64 builds go completely untested. There may be unforeseen issues.
 
 ### Wine Limitations
 

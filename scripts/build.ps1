@@ -22,8 +22,13 @@ try {
     '--additional-hooks-dir=Pyinstaller/hooks',
     "--add-data=pyproject.toml$([System.IO.Path]::PathSeparator).",
     '--icon=res/icon.ico')
-  if (-not $WineCompat) {
+  # Don't UPX compress if trying to be Wine Compatible, or on Linux (handled manually below)
+  if (-not $WineCompat -and -not $IsLinux) {
     $arguments += '--upx-dir=scripts/.upx'
+  }
+  else {
+    # Missing upx executable should be enough, but let's be explicit
+    $arguments += '--noupx'
   }
   if ($SupportsSplashScreen) {
     # https://github.com/pyinstaller/pyinstaller/issues/9022
@@ -43,7 +48,7 @@ try {
       '--strip')
   }
 
-  Write-Output $arguments
+  Write-Output "pyinstaller $($arguments -join ' ')"
   & uv run --active pyinstaller @arguments
 
   if ($IsLinux) {
