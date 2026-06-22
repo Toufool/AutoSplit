@@ -58,14 +58,6 @@ try {
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
 
-    # PyInstaller's --strip breaks ELF load command alignment in numpy's vendored OpenBLAS.
-    # Restore the original unstripped library from site-packages.
-    $numpyLibsSrc = uv run --active python -c "import numpy, pathlib; print(pathlib.Path(numpy.__file__).parent.parent / 'numpy.libs')"
-    if (Test-Path $numpyLibsSrc) {
-      Get-ChildItem $numpyLibsSrc -Filter 'libscipy_openblas64_*.so' |
-        Copy-Item -Destination 'build/AppDir/_internal/numpy.libs/' -Force
-    }
-
     if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
       # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
       # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
@@ -77,9 +69,7 @@ try {
           $_.Directory -like '*/AppDir/_internal' -or
           # _internal/PySide6/Qt/*/*.so* causes Segmentation fault
           # _internal/PySide6/Qt/plugins/*/*.so* breaks style
-          $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*' -or
-          # numpy-bundled OpenBLAS; --strip breaks its ELF load alignment (restored below) — skip UPX to avoid re-breaking it
-          $_.Name -like 'libscipy_openblas64_*'
+          $_.Directory -like '*/AppDir/_internal/PySide6/Qt/*'
         )
       }
       try {

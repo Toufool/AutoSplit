@@ -47,7 +47,7 @@ jobs:
     env:
       # Prevent accidentally slower type-checking due to missing arm wheels.
       # Fail rather than accidentally compile C/binary extensions from sdist.
-      UV_NO_BUILD: ${{ matrix.os != 'windows-latest' }} # winrt-Windows no free-threading wheels yet
+      UV_NO_BUILD: true
       # Per-package no-binary overrides no-build, allowing
       # known pure-Python source-only dependencies to still build.
       # The Build job intentionally builds some binary packages from source.
@@ -124,6 +124,13 @@ jobs:
                 && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
               || null }}
       # endregion
+      # MinGW (cc) fails SIZEOF_PY_INTPTR_T detection on ARM64; force MSVC for numpy sdist
+      # TODO: Remove this action once we use free-threading wheels
+      - name: Set up MSVC ARM64 environment
+        if: ${{ matrix.os == 'windows-11-arm' && endsWith(matrix.python-version, 't') }}
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: arm64
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
       - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
       - name: Run test suite
