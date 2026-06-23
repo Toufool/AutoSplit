@@ -38,6 +38,8 @@ if ($IsLinux) {
       $packages = @(
         # For running tests headless on CI
         ($Env:GITHUB_JOB ? 'xvfb' : $null),
+        # scikit-build (opencv) defaults to Ninja generator
+        'ninja-build'
         # Required by pymonctl at import
         'x11-xserver-utils',
         # For splash screen
@@ -116,9 +118,16 @@ $Env:CMAKE_ARGS += ' -DPYTHON3_LIMITED_API=OFF'
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
 # Verbose to see sdist progression
-$uvSyncArgs = @('sync', '--active') + $prod + $lock # + '--verbose'
+# Exclude PySide6: uv sync/lock can't distinguish GIL vs free-threading ABI.
+# uv pip install does wheel-tag selection at runtime — picks local cp314t wheel
+# for free-threading Python, falls back to PyPI abi3 for GIL Python / Windows.
+$uvSyncArgs = @('sync', '--active', '--no-install-package', 'pyside6-essentials', '--no-install-package', 'shiboken6') + $prod + $lock # + '--verbose'
 Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
 uv @uvSyncArgs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+Write-Output 'Installing PySide6 with ABI-aware wheel selection'
+uv pip install --active pyside6-essentials shiboken6
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Don't compile resources on the Build CI job as it'll do so in build script

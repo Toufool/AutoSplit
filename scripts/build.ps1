@@ -12,7 +12,7 @@ try {
 
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
   $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
-    $(uv run --active scripts/check_splash_support.py))
+    $(uv run --active --no-sync scripts/check_splash_support.py))
 
   $arguments = @(
     'src/AutoSplit.py',
@@ -49,7 +49,7 @@ try {
   }
 
   Write-Output "pyinstaller $($arguments -join ' ')"
-  & uv run --active pyinstaller @arguments
+  & uv run --active --no-sync pyinstaller @arguments
 
   if ($IsLinux) {
     # Hoist the onedir output so files sit directly in the AppDir root.
