@@ -89,6 +89,12 @@ override-dependencies = [
 find-links = ["./scripts"] # Discover local wheels
 
 exclude-newer = "1 week"
+[tool.uv.extra-build-dependencies]
+# opencv-python's build-system.requires only pins numpy up to python_version=='3.13',
+# so building its sdist on 3.14(t) gets no numpy in the isolated build env
+# (ModuleNotFoundError: No module named 'numpy'). Inject it back here.
+opencv-contrib-python-headless = ["numpy>=2.3.2"]
+opencv-python = ["numpy>=2.3.2"]
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
 pyside6-essentials = false

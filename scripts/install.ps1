@@ -127,7 +127,7 @@ uv @uvSyncArgs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Output 'Installing PySide6 with ABI-aware wheel selection'
-uv pip install --active pyside6-essentials shiboken6
+uv pip install pyside6-essentials shiboken6
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 # Don't compile resources on the Build CI job as it'll do so in build script
