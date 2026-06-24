@@ -22,8 +22,6 @@ exclude-newer-span = "P1W"
 
 [options.exclude-newer-package]
 typed-d3dshot = false
-pyinstaller-hooks-contrib = { timestamp = "0001-01-01T00:00:00Z", span = "P6D" }
-pyinstaller = { timestamp = "0001-01-01T00:00:00Z", span = "P2D" }
 
 [manifest]
 
@@ -164,7 +162,7 @@ dev = [
     { name = "ruff" },
     { name = "types-keyboard" },
     { name = "types-pyautogui" },
-    { name = "types-pyinstaller" },
+    { name = "types-pyinstaller", specifier = ">=6.21.0.20260616" },
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
 ]
@@ -753,11 +751,11 @@ wheels = [
 
 [[package]]
 name = "types-pyinstaller"
-version = "6.19.0.20260215"
+version = "6.21.0.20260616"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e2/ac/552ef1a39253189266638f439655b7e73658413ad290e4126cf1985e2ccb/types_pyinstaller-6.19.0.20260215.tar.gz", hash = "sha256:dead1011722ad06d6c8482be271dc8c7e2f995ec76c7b8fc54b24f996ae8c608", size = 19945, upload-time = "2026-02-15T04:10:38.201Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7a/7f/34eb7a7e347a41a1f8211b4f5387f7d7c5e9a6cb575be59ec91da8e48400/types_pyinstaller-6.21.0.20260616.tar.gz", hash = "sha256:57d8d3510c72010e2bc1af4ced43a35fdae3f8d229995d0c0a73d3bdc46d2323", size = 20547, upload-time = "2026-06-16T07:11:56.966Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/fc/9d86a9c0aba04c60b5786a7929bdba4f5b97401ea1bc2ed8d7a485e026a4/types_pyinstaller-6.19.0.20260215-py3-none-any.whl", hash = "sha256:5e3af03dad356be22eb2524c1955149ebd4723ad1af529ac4fecf9d8fbc17ec1", size = 22064, upload-time = "2026-02-15T04:10:36.921Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/0a/aea1b388201325dbe7959de9d48a95086d2b50c7ba3888437f2cc22a8eb9/types_pyinstaller-6.21.0.20260616-py3-none-any.whl", hash = "sha256:75c57b230112071c2dd2049bc7d7aeab5e3765ebf94620f0b723a1263f450e66", size = 22651, upload-time = "2026-06-16T07:11:56.047Z" },
 ]
 
 [[package]]

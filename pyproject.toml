@@ -56,7 +56,7 @@ dev = [
   # Types
   "types-PyAutoGUI",
   "types-keyboard",
-  "types-pyinstaller",
+  "types-pyinstaller >=6.21.0.20260616",
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
 ]
@@ -84,9 +84,6 @@ find-links = ["./scripts"] # Discover local wheels
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
-# pyinstaller-hooks-contrib = false # pyinstaller develop build
-pyinstaller = "2 days" # TODO: REMOVE BEFORE MERGING
-pyinstaller-hooks-contrib = "6 days" # TODO: REMOVE BEFORE MERGING
 
 ###
 # Development channels

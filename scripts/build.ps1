@@ -10,11 +10,9 @@ Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 try {
   & 'scripts/compile_resources.ps1'
 
-  # TODO: Remove UV_PYTHON check once tcl/tk is fixed on Python 3.15
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
-  $SupportsSplashScreen = ($Env:UV_PYTHON -notlike '3.15*') -and (
-    $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
-      $(uv run --active scripts/check_splash_support.py)))
+  $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
+    $(uv run --active scripts/check_splash_support.py))
 
   $arguments = @(
     'src/AutoSplit.py',

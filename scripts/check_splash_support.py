@@ -4,9 +4,6 @@ Check whether PyInstaller can build the splash screen on this platform.
 Prints "True" or "False" to stdout for consumption by build.ps1.
 """
 
-# Not found in typeshed because private
-# pyright: reportMissingImports=false, reportUnknownVariableType=false, reportUnknownMemberType=false, reportAttributeAccessIssue=false
-
 import sys
 
 from PyInstaller.building.splash import Splash
