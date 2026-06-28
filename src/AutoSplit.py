@@ -240,7 +240,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.main_splitter.setStretchFactor(1, 1)
         self.main_splitter.setStretchFactor(2, 1)
         self._layout_is_portrait = False
-        self._sync_toggle_layout_text()
         if SETTINGS.value("layout_is_portrait", False, type=bool):
             self.toggle_layout()
 
@@ -1007,30 +1006,30 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
 
     def toggle_layout(self) -> None:
-        if not self._layout_is_portrait:
-            # Landscape → portrait
+        self._layout_is_portrait = not self._layout_is_portrait
+
+        if self._layout_is_portrait:  # Landscape --> portrait
             right_layout = cast("QVBoxLayout", self.right_panel.layout())
             right_layout.insertWidget(0, self.capture_region_label)
             right_layout.insertWidget(1, self.capture_region_window_label)
             right_layout.insertWidget(2, self.live_image)
             right_layout.insertWidget(3, self.similarity_viewer_groupbox)
-            self.center_panel.setVisible(False)
             cast("QVBoxLayout", self.left_panel.layout()).addWidget(self.split_controls_panel)
-            self._layout_is_portrait = True
-            self._apply_split_controls_layout()
-        else:
-            # Portrait → landscape
+        else:  # Portrait --> landscape
             center_layout = cast("QVBoxLayout", self.center_panel.layout())
             center_layout.insertWidget(0, self.capture_region_label)
             center_layout.insertWidget(1, self.capture_region_window_label)
             center_layout.insertWidget(2, self.live_image)
             center_layout.insertWidget(3, self.similarity_viewer_groupbox)
-            self.center_panel.setVisible(True)
             cast("QVBoxLayout", self.right_panel.layout()).addWidget(self.split_controls_panel)
-            self._layout_is_portrait = False
-            self._apply_split_controls_layout()
+        self.center_panel.setVisible(not self._layout_is_portrait)
+        self._apply_split_controls_layout()
+        self.action_toggle_layout.setText(
+            "Toggle Layout to Landscape"
+            if self._layout_is_portrait
+            else "Toggle Layout to Portrait"
+        )
         SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
-        self._sync_toggle_layout_text()
 
     def _apply_split_controls_layout(self) -> None:
         """Two columns in landscape; single stacked column in portrait (narrow panel)."""
@@ -1063,13 +1062,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             layout.addWidget(self.reset_button, 1, 1)
             layout.addWidget(self.start_auto_splitter_button, 2, 1)
             layout.addItem(self.split_controls_spacer, 3, 0, 1, 2)
-
-    def _sync_toggle_layout_text(self) -> None:
-        self.action_toggle_layout.setText(
-            "Toggle Layout to Landscape"
-            if self._layout_is_portrait
-            else "Toggle Layout to Portrait"
-        )
 
     @override
     def closeEvent(self, event: QtGui.QCloseEvent | None = None):
