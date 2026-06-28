@@ -59,8 +59,7 @@
   <url type="contribute">https://github.com/Toufool/AutoSplit/blob/main/docs/CONTRIBUTING.md</url>
   <launchable type="desktop-id">AutoSplit.desktop</launchable>
   <releases>
-    <!--
-    https://www.freedesktop.org/software/appstream/docs/sect-Metadata-Releases.html#tag-release-url -->
+    <!-- https://www.freedesktop.org/software/appstream/docs/sect-Metadata-Releases.html#tag-release-url -->
     <url type="details">https://github.com/Toufool/AutoSplit/releases</url>
   </releases>
   <recommends>
@@ -83,11 +82,13 @@
   <screenshots>
     <screenshot type="default" environment="windows10:dark">
       <image
-        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/example.gif" />
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/example.gif"
+      />
     </screenshot>
     <screenshot environment="windows10:light">
       <image
-        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/mask_example_image.gif" />
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/mask_example_image.gif"
+      />
     </screenshot>
   </screenshots>
   <!-- https://hughsie.github.io/oars/ -->
