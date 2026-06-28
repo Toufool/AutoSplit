@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 
 import cv2
 import numpy as np
+from PySide6 import QtCore
 
 from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 
@@ -83,6 +84,8 @@ BGR_CHANNEL_COUNT = 3
 """How many channels in a BGR image"""
 BGRA_CHANNEL_COUNT = 4
 """How many channels in a BGRA image"""
+
+SETTINGS = QtCore.QSettings("AutoSplit", "AutoSplit")
 
 
 class ImageShape(IntEnum):

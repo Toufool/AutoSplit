@@ -32,7 +32,7 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import TYPE_CHECKING, NoReturn, override
+from typing import TYPE_CHECKING, NoReturn, cast, override
 
 import cv2
 from PySide6 import QtCore, QtGui
@@ -44,6 +44,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMainWindow,
     QMessageBox,
+    QVBoxLayout,
 )
 
 import error_messages
@@ -85,6 +86,7 @@ from utils import (
     FROZEN,
     ONE_SECOND,
     RUNNING_WAYLAND,
+    SETTINGS,
     auto_split_directory,
     decimal,
     flatten,
@@ -98,8 +100,6 @@ if TYPE_CHECKING:
     from cv2.typing import MatLike
 
 CHECK_FPS_ITERATIONS = 10
-
-_SETTINGS = QtCore.QSettings("AutoSplit", "AutoSplit")
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -181,7 +181,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
-        user_profile.load_check_for_updates_on_open(self)
+        self.action_check_for_updates_on_open.setChecked(
+            cast("bool", SETTINGS.value("check_for_updates_on_open", True, type=bool))
+        )
 
         if self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
@@ -227,10 +229,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             lambda: self.__reload_start_image(started_by_button=True)
         )
         self.action_check_for_updates_on_open.changed.connect(
-            lambda: user_profile.set_check_for_updates_on_open(
-                self,
-                self.action_check_for_updates_on_open.isChecked(),
-            ),
+            lambda: SETTINGS.setValue(
+                "check_for_updates_on_open", self.action_check_for_updates_on_open.isChecked()
+            )
         )
         self.action_toggle_layout.triggered.connect(self.toggle_layout)
 
@@ -240,7 +241,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.main_splitter.setStretchFactor(2, 1)
         self._layout_is_portrait = False
         self._sync_toggle_layout_text()
-        if int(_SETTINGS.value("layout_is_portrait", 0)):
+        if SETTINGS.value("layout_is_portrait", False, type=bool):
             self.toggle_layout()
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
@@ -1008,27 +1009,27 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def toggle_layout(self) -> None:
         if not self._layout_is_portrait:
             # Landscape → portrait
-            right_layout = self.right_panel.layout()
+            right_layout = cast("QVBoxLayout", self.right_panel.layout())
             right_layout.insertWidget(0, self.capture_region_label)
             right_layout.insertWidget(1, self.capture_region_window_label)
             right_layout.insertWidget(2, self.live_image)
             right_layout.insertWidget(3, self.similarity_viewer_groupbox)
             self.center_panel.setVisible(False)
-            self.left_panel.layout().addWidget(self.split_controls_panel)
+            cast("QVBoxLayout", self.left_panel.layout()).addWidget(self.split_controls_panel)
             self._layout_is_portrait = True
             self._apply_split_controls_layout()
         else:
             # Portrait → landscape
-            center_layout = self.center_panel.layout()
+            center_layout = cast("QVBoxLayout", self.center_panel.layout())
             center_layout.insertWidget(0, self.capture_region_label)
             center_layout.insertWidget(1, self.capture_region_window_label)
             center_layout.insertWidget(2, self.live_image)
             center_layout.insertWidget(3, self.similarity_viewer_groupbox)
             self.center_panel.setVisible(True)
-            self.right_panel.layout().addWidget(self.split_controls_panel)
+            cast("QVBoxLayout", self.right_panel.layout()).addWidget(self.split_controls_panel)
             self._layout_is_portrait = False
             self._apply_split_controls_layout()
-        _SETTINGS.setValue("layout_is_portrait", int(self._layout_is_portrait))
+        SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
         self._sync_toggle_layout_text()
 
     def _apply_split_controls_layout(self) -> None:

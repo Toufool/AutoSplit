@@ -15,7 +15,6 @@ from PySide6.QtGui import QBrush, QPalette
 from PySide6.QtWidgets import QFileDialog
 
 import error_messages
-import user_profile
 from capture_method import (
     CAPTURE_METHODS,
     CameraInfo,
@@ -25,9 +24,17 @@ from capture_method import (
 )
 from gen import about, design, settings as settings_ui, update_checker
 from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
-from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
+from utils import (
+    AUTOSPLIT_VERSION,
+    GITHUB_REPOSITORY,
+    ONE_SECOND,
+    SETTINGS,
+    decimal,
+    fire_and_forget,
+)
 
 if TYPE_CHECKING:
+    import user_profile
     from AutoSplit import AutoSplit
 
 HALF_BRIGHTNESS = 128
@@ -98,10 +105,9 @@ class __UpdateCheckerWidget(QtWidgets.QWidget, update_checker.Ui_UpdateChecker):
         self.close()
 
     def do_not_ask_me_again_state_changed(self):
-        user_profile.set_check_for_updates_on_open(
-            self.design_window,
-            not self.do_not_ask_again_checkbox.isChecked(),
-        )
+        value = not self.do_not_ask_again_checkbox.isChecked()
+        self.design_window.action_check_for_updates_on_open.setChecked(value)
+        SETTINGS.setValue("check_for_updates_on_open", value)
 
 
 def open_update_checker(autosplit: AutoSplit, latest_version: str, *, check_on_open: bool):
