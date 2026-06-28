@@ -6,12 +6,18 @@
   <name>AutoSplit</name>
   <summary>Image comparison based auto splitter for speedrunning</summary>
   <description>
-    <p>This program can be used to automatically start, split, and reset
-      your preferred speedrun timer by comparing images to a capture region.</p>
-    <p>This allows you to focus more on your speedrun and less on managing your timer.
-      It also improves the accuracy of your splits.</p>
-    <p>It can be used in tandem with any speedrun timer that accepts hotkeys
-      (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.</p>
+    <p>
+      This program can be used to automatically start, split, and reset
+      your preferred speedrun timer by comparing images to a capture region.
+    </p>
+    <p>
+      This allows you to focus more on your speedrun and less on managing your timer.
+      It also improves the accuracy of your splits.
+    </p>
+    <p>
+      It can be used in tandem with any speedrun timer that accepts hotkeys
+      (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
+    </p>
   </description>
   <categories>
     <category>Utility</category>

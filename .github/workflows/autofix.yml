@@ -17,13 +17,14 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           activate-environment: true
-      - run: uv sync --locked --only-group=ruff
+      - run: uv sync --locked --only-group=formatters
+
       - run: ruff check --fix
       - run: ruff format
         # Format even if the the previous step failed
         if: ${{ !cancelled() }}
 
-      - run: npx dprint fmt
+      - run: dprint fmt
         # Format even if the the previous step failed
         if: ${{ !cancelled() }}
 
