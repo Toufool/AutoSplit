@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>772</width>
-    <height>504</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="font">
@@ -917,9 +917,6 @@
         <item>
          <widget class="QWidget" name="split_controls_panel" native="true">
           <layout class="QGridLayout" name="split_controls_layout" columnstretch="1,0">
-           <property name="spacing">
-            <number>2</number>
-           </property>
            <property name="leftMargin">
             <number>2</number>
            </property>
@@ -930,6 +927,9 @@
             <number>2</number>
            </property>
            <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
             <number>2</number>
            </property>
            <item row="0" column="0">
@@ -1021,6 +1021,9 @@
               </sizepolicy>
              </property>
              <layout class="QHBoxLayout" name="action_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
               <property name="leftMargin">
                <number>0</number>
               </property>
@@ -1032,9 +1035,6 @@
               </property>
               <property name="bottomMargin">
                <number>0</number>
-              </property>
-              <property name="spacing">
-               <number>4</number>
               </property>
               <item>
                <widget class="QPushButton" name="undo_split_button">

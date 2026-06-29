@@ -274,6 +274,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
 
         self.show()
+        # Lock the window to a fixed, content-fitting size (non-resizable).
+        QtCore.QTimer.singleShot(0, self._shrink_window_to_fit)
 
         # https://pyinstaller.org/en/stable/advanced-topics.html#module-pyi_splash
         # doc implies calling `pyi_splash.is_alive()` should return false should be enough, but in
@@ -1030,6 +1032,17 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             else "Toggle Layout to Portrait"
         )
         SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
+        # The window keeps its old geometry after re-layout, leaving blank space.
+        # Shrink it back to fit; deferred because the panel/splitter size hints
+        # only settle over the next couple of layout passes.
+        QtCore.QTimer.singleShot(0, self._shrink_window_to_fit)
+
+    def _shrink_window_to_fit(self) -> None:
+        # setFixedSize both fits the window to its content and removes the
+        # user resize handles. Two passes: the panel/splitter size hints only
+        # settle over consecutive layout passes.
+        self.setFixedSize(self.sizeHint())
+        QtCore.QTimer.singleShot(0, lambda: self.setFixedSize(self.sizeHint()))
 
     def _apply_split_controls_layout(self) -> None:
         """Two columns in landscape; single stacked column in portrait (narrow panel)."""
