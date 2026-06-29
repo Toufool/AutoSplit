@@ -96,6 +96,11 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 
+# When opencv builds from sdist, its isolated build env ignores the numpy source
+# mapping above. match-runtime reuses our installed numpy instead of building it.
+[tool.uv.extra-build-dependencies]
+opencv-contrib-python-headless = [{ requirement = "numpy", match-runtime = true }]
+
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
 # https://anaconda.org/scientific-python-nightly-wheels/
