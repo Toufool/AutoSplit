@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
+
 import os
 import sys
+import warnings
+
+# Enable all warnings, which Python hides by default outside __main__
+warnings.simplefilter("default")
 
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
@@ -27,6 +32,7 @@ if sys.platform == "linux":
     # Useful for debugging missing system packages
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
+# ruff: disable[E402] # https://github.com/astral-sh/ruff/issues/21423
 import signal
 from collections.abc import Callable
 from copy import deepcopy
@@ -86,6 +92,8 @@ from utils import (
     list_processes,
     open_file,
 )
+
+# ruff: enable[E402]
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
