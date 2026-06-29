@@ -113,5 +113,5 @@ exclude-newer = false # Anaconda index doesn't have upload dates
 # https://anaconda.org/scientific-python-nightly-wheels/
 name = "scientific-python-nightly-wheels"
 url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
-# explicit = true # Avoid index hijacking
-explicit = false # Set back to true once https://github.com/opencv/opencv-python/pull/1121 is fixed or Python 3.15 wheels
+explicit = true # Avoid index hijacking
+# explicit = false # Set back to true once https://github.com/opencv/opencv-python/pull/1121 is fixed or Python 3.15 wheels
