@@ -80,7 +80,7 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import TYPE_CHECKING, NoReturn, override
+from typing import TYPE_CHECKING, NoReturn, cast, override
 
 import cv2
 from PySide6 import QtCore, QtGui
@@ -220,8 +220,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
-        user_profile.load_check_for_updates_on_open(self)
-
+        self.action_check_for_updates_on_open.setChecked(
+            cast(
+                "bool", user_profile.QT_SETTINGS.value("check_for_updates_on_open", True, type=bool)
+            )
+        )
         if self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
 
@@ -266,10 +269,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             lambda: self.__reload_start_image(started_by_button=True)
         )
         self.action_check_for_updates_on_open.changed.connect(
-            lambda: user_profile.set_check_for_updates_on_open(
-                self,
-                self.action_check_for_updates_on_open.isChecked(),
-            ),
+            lambda: user_profile.QT_SETTINGS.setValue(
+                "check_for_updates_on_open", self.action_check_for_updates_on_open.isChecked()
+            )
         )
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
