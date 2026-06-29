@@ -11,7 +11,6 @@ from enum import IntEnum
 from functools import partial
 from itertools import chain
 from pathlib import Path
-from platform import version
 from threading import Thread
 from typing import TYPE_CHECKING, Any, TypedDict, TypeGuard, TypeVar
 
@@ -23,6 +22,7 @@ from gen.build_vars import AUTOSPLIT_BUILD_NUMBER, AUTOSPLIT_GITHUB_REPOSITORY
 if sys.platform == "win32":
     import ctypes
     import ctypes.wintypes
+    import platform
     from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
     import win32gui
@@ -343,7 +343,7 @@ def list_processes():
 
 
 # Environment specifics
-WINDOWS_BUILD_NUMBER = int(version().split(".")[-1]) if sys.platform == "win32" else -1
+WINDOWS_BUILD_NUMBER = int(platform.version().split(".")[-1]) if sys.platform == "win32" else -1
 FIRST_WIN_11_BUILD = 22000
 WGC_MIN_BUILD = 17134
 """https://docs.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturepicker#applies-to"""

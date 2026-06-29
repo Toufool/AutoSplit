@@ -17,7 +17,8 @@ from utils import auto_split_directory
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
-    from gen import design
+
+QT_SETTINGS = QtCore.QSettings("AutoSplit", "AutoSplit")
 
 
 class UserProfileDict(TypedDict):
@@ -225,35 +226,3 @@ def load_settings_on_open(autosplit: AutoSplit):
         return
 
     load_settings(autosplit, os.path.join(auto_split_directory, settings_files[0]))
-
-
-def load_check_for_updates_on_open(autosplit: AutoSplit):
-    """
-    Retrieve the "Check For Updates On Open" QSettings and set the checkbox state
-    These are only global settings values. They are not *toml settings values.
-    """
-    # Type not inferred by PySide6: https://bugreports.qt.io/browse/PYSIDE-2542
-    value = cast(
-        "bool",
-        QtCore.QSettings(
-            "AutoSplit",
-            "Check For Updates On Open",
-        ).value(
-            "check_for_updates_on_open",
-            True,
-            type=bool,
-        ),
-    )
-    autosplit.action_check_for_updates_on_open.setChecked(value)
-
-
-def set_check_for_updates_on_open(design_window: design.Ui_MainWindow, value: bool):  # noqa: FBT001
-    """Sets the "Check For Updates On Open" QSettings value and the checkbox state."""
-    design_window.action_check_for_updates_on_open.setChecked(value)
-    QtCore.QSettings(
-        "AutoSplit",
-        "Check For Updates On Open",
-    ).setValue(
-        "check_for_updates_on_open",
-        value,
-    )
