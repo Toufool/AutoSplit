@@ -96,14 +96,22 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 
+[tool.uv.extra-build-dependencies]
+# opencv pins its numpy build dependency per Python version but has no 3.15 entry,
+# so uv resolves the latest stable numpy and compiles it from sdist on win-arm64
+# (MinGW cc fails the pointer-size check). Force opencv to build against our
+# prebuilt nightly numpy wheel instead. The .dev0 specifier opts the build resolver
+# into prereleases. Remove once Python 3.15 wheels or the following is fixed
+# https://github.com/opencv/opencv-python/pull/1121
+opencv-contrib-python-headless = ["numpy>=2.6.0.dev0"]
 # When opencv builds from sdist, its isolated build env ignores the numpy source
 # mapping above. match-runtime reuses our installed numpy instead of building it.
-[tool.uv.extra-build-dependencies]
-opencv-contrib-python-headless = [{ requirement = "numpy", match-runtime = true }]
+# opencv-contrib-python-headless = [{ requirement = "numpy", match-runtime = true }]
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
 # https://anaconda.org/scientific-python-nightly-wheels/
 name = "scientific-python-nightly-wheels"
 url = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple"
-explicit = true # Avoid index hijacking
+# explicit = true # Avoid index hijacking
+explicit = false # Set back to true once https://github.com/opencv/opencv-python/pull/1121 is fixed or Python 3.15 wheels
