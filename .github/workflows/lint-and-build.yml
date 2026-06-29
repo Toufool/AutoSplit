@@ -127,13 +127,6 @@ jobs:
                 && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
               || null }}
       # endregion
-      # MinGW (cc) fails SIZEOF_PY_INTPTR_T detection on ARM64; force MSVC for numpy sdist
-      # TODO: Remove this action once we use numpy 3.15 wheels
-      - name: Set up MSVC ARM64 environment
-        if: ${{ matrix.os == 'windows-11-arm' && matrix.python-version == '3.15' }}
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: arm64
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
       - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
       - name: Run test suite
