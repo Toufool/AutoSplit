@@ -7,21 +7,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>426</height>
+    <width>772</width>
+    <height>432</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>786</width>
-    <height>426</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>786</width>
-    <height>426</height>
-   </size>
   </property>
   <property name="font">
    <font>
@@ -36,875 +24,1135 @@
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="central_widget">
-   <widget class="QLabel" name="x_label">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>145</y>
-      <width>49</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>X</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="select_region_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>67</y>
-      <width>107</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Select Region</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="start_auto_splitter_button">
-    <property name="geometry">
-     <rect>
-      <x>657</x>
-      <y>369</y>
-      <width>121</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Start Auto Splitter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="reset_button">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>657</x>
-      <y>339</y>
-      <width>121</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Reset</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="undo_split_button">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>657</x>
-      <y>310</y>
-      <width>59</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Undo</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="skip_split_button">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>719</x>
-      <y>310</y>
-      <width>59</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Skip</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="check_fps_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>270</y>
-      <width>53</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>calculate the average max FPS of the set capture region</string>
-    </property>
-    <property name="text">
-     <string>Max FPS</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="fps_label">
-    <property name="geometry">
-     <rect>
-      <x>92</x>
-      <y>272</y>
-      <width>21</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>FPS</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="live_image">
-    <property name="geometry">
-     <rect>
-      <x>127</x>
-      <y>67</y>
-      <width>320</width>
-      <height>240</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Shape::Box</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Shadow::Plain</enum>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="current_split_image">
-    <property name="geometry">
-     <rect>
-      <x>456</x>
-      <y>67</y>
-      <width>320</width>
-      <height>240</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Shape::Box</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="current_image_label">
-    <property name="geometry">
-     <rect>
-      <x>456</x>
-      <y>31</y>
-      <width>318</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Current Image</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="width_label">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>190</y>
-      <width>49</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Width</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="height_label">
-    <property name="geometry">
-     <rect>
-      <x>66</x>
-      <y>190</y>
-      <width>49</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Height</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="fps_value_label">
-    <property name="geometry">
-     <rect>
-      <x>65</x>
-      <y>272</y>
-      <width>26</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="width_spinbox">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>210</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>10000</number>
-    </property>
-    <property name="value">
-     <number>640</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="height_spinbox">
-    <property name="geometry">
-     <rect>
-      <x>66</x>
-      <y>210</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>10000</number>
-    </property>
-    <property name="value">
-     <number>480</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="capture_region_label">
-    <property name="geometry">
-     <rect>
-      <x>127</x>
-      <y>31</y>
-      <width>318</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Capture Region</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="current_image_file_label">
-    <property name="geometry">
-     <rect>
-      <x>484</x>
-      <y>49</y>
-      <width>264</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="take_screenshot_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>240</y>
-      <width>107</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Take Screenshot</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="x_spinbox">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>165</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="buttonSymbols">
-     <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
-    </property>
-    <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
-    </property>
-    <property name="minimum">
-     <number>0</number>
-    </property>
-    <property name="maximum">
-     <number>999999999</number>
-    </property>
-    <property name="singleStep">
-     <number>1</number>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="y_spinbox">
-    <property name="geometry">
-     <rect>
-      <x>66</x>
-      <y>165</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="correctionMode">
-     <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
-    </property>
-    <property name="minimum">
-     <number>0</number>
-    </property>
-    <property name="maximum">
-     <number>999999999</number>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="y_label">
-    <property name="geometry">
-     <rect>
-      <x>66</x>
-      <y>145</y>
-      <width>49</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Y</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="align_region_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>119</y>
-      <width>107</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>Align the capture region using a reference image</string>
-    </property>
-    <property name="text">
-     <string>Align Region</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="select_window_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>93</y>
-      <width>107</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Select Window</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="split_image_folder_button">
-    <property name="geometry">
-     <rect>
-      <x>696</x>
-      <y>5</y>
-      <width>81</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Browse...</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="split_image_folder_label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>9</y>
-      <width>111</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Split Image Folder:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="split_image_folder_input">
-    <property name="geometry">
-     <rect>
-      <x>127</x>
-      <y>6</y>
-      <width>561</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="capture_region_window_label">
-    <property name="geometry">
-     <rect>
-      <x>127</x>
-      <y>49</y>
-      <width>318</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>-</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="image_loop_label">
-    <property name="geometry">
-     <rect>
-      <x>458</x>
-      <y>313</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Image Loop:</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="similarity_viewer_groupbox">
-    <property name="geometry">
-     <rect>
-      <x>127</x>
-      <y>312</y>
-      <width>321</width>
-      <height>84</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Similarity Viewer</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-    <widget class="QLabel" name="table_live_label">
-     <property name="geometry">
-      <rect>
-       <x>133</x>
-       <y>22</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Live</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_highest_label">
-     <property name="geometry">
-      <rect>
-       <x>197</x>
-       <y>22</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Highest</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_threshold_label">
-     <property name="geometry">
-      <rect>
-       <x>261</x>
-       <y>22</y>
-       <width>56</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Threshold</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="Line" name="line_1">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>39</y>
-       <width>322</width>
-       <height>3</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_current_image_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>42</y>
-       <width>111</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Current Image</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_reset_image_label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>64</y>
-       <width>111</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Reset Image</string>
-     </property>
-    </widget>
-    <widget class="Line" name="line_2">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>61</y>
-       <width>322</width>
-       <height>3</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_3">
-     <property name="geometry">
-      <rect>
-       <x>129</x>
-       <y>20</y>
-       <width>3</width>
-       <height>62</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_4">
-     <property name="geometry">
-      <rect>
-       <x>193</x>
-       <y>20</y>
-       <width>3</width>
-       <height>95</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-    </widget>
-    <widget class="Line" name="line_5">
-     <property name="geometry">
-      <rect>
-       <x>257</x>
-       <y>20</y>
-       <width>3</width>
-       <height>95</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_current_image_live_label">
-     <property name="geometry">
-      <rect>
-       <x>133</x>
-       <y>43</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_current_image_highest_label">
-     <property name="geometry">
-      <rect>
-       <x>197</x>
-       <y>43</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_current_image_threshold_label">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>43</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_reset_image_live_label">
-     <property name="geometry">
-      <rect>
-       <x>133</x>
-       <y>64</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_reset_image_highest_label">
-     <property name="geometry">
-      <rect>
-       <x>197</x>
-       <y>64</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="table_reset_image_threshold_label">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>64</y>
-       <width>57</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QPushButton" name="reload_start_image_button">
-    <property name="geometry">
-     <rect>
-      <x>457</x>
-      <y>369</y>
-      <width>131</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="text">
-     <string>Reload Start Image</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="start_image_status_label">
-    <property name="geometry">
-     <rect>
-      <x>458</x>
-      <y>344</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start Image Status:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="start_image_status_value_label">
-    <property name="geometry">
-     <rect>
-      <x>577</x>
-      <y>344</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>status</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="image_loop_value_label">
-    <property name="geometry">
-     <rect>
-      <x>537</x>
-      <y>313</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>N/A</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="previous_image_button">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>455</x>
-      <y>49</y>
-      <width>27</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>Previous image</string>
-    </property>
-    <property name="text">
-     <string>&lt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="next_image_button">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>750</x>
-      <y>49</y>
-      <width>27</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::FocusPolicy::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>Next image</string>
-    </property>
-    <property name="text">
-     <string>&gt;</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="central_layout">
+    <property name="spacing">
+     <number>4</number>
+    </property>
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>4</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="folder_row" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QHBoxLayout" name="folder_layout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="split_image_folder_label">
+         <property name="minimumSize">
+          <size>
+           <width>111</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>111</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Split Image Folder:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="split_image_folder_input">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="split_image_folder_button">
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSplitter" name="main_splitter">
+      <property name="styleSheet">
+       <string>QSplitter::handle { background: transparent; }</string>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="left_panel" native="true">
+       <property name="maximumSize">
+        <size>
+         <width>112</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="left_layout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <spacer name="left_top_spacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>41</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="select_region_button">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Select Region</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="select_window_button">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Select Window</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="align_region_button">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Align the capture region using a reference image</string>
+          </property>
+          <property name="text">
+           <string>Align Region</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="coords_widget" native="true">
+          <layout class="QGridLayout" name="coords_layout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="2" column="0">
+            <widget class="QLabel" name="width_label">
+             <property name="text">
+              <string>Width</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="height_spinbox">
+             <property name="correctionMode">
+              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>480</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QSpinBox" name="x_spinbox">
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
+             </property>
+             <property name="correctionMode">
+              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="height_label">
+             <property name="text">
+              <string>Height</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="y_spinbox">
+             <property name="correctionMode">
+              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QSpinBox" name="width_spinbox">
+             <property name="correctionMode">
+              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+             <property name="value">
+              <number>640</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="x_label">
+             <property name="text">
+              <string>X</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="y_label">
+             <property name="text">
+              <string>Y</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="take_screenshot_button">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::NoFocus</enum>
+          </property>
+          <property name="text">
+           <string>Take Screenshot</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="fps_row" native="true">
+          <layout class="QHBoxLayout" name="fps_layout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="check_fps_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>54</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="toolTip">
+              <string>calculate the average max FPS of the set capture region</string>
+             </property>
+             <property name="text">
+              <string>Max FPS</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="fps_value_label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="fps_label">
+             <property name="text">
+              <string>FPS</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="left_bottom_spacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="center_panel" native="true">
+       <property name="maximumSize">
+        <size>
+         <width>322</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="center_layout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="capture_region_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Capture Region</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capture_region_window_label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>-</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="live_image">
+          <property name="minimumSize">
+           <size>
+            <width>320</width>
+            <height>240</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>240</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Shape::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Shadow::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="midLineWidth">
+           <number>0</number>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="similarity_viewer_groupbox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>84</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>84</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Similarity Viewer</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+          <widget class="QLabel" name="table_live_label">
+           <property name="geometry">
+            <rect>
+             <x>129</x>
+             <y>22</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Live</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_highest_label">
+           <property name="geometry">
+            <rect>
+             <x>194</x>
+             <y>22</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Highest</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_threshold_label">
+           <property name="geometry">
+            <rect>
+             <x>258</x>
+             <y>22</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Threshold</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="Line" name="line_1">
+           <property name="geometry">
+            <rect>
+             <x>1</x>
+             <y>39</y>
+             <width>318</width>
+             <height>3</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_current_image_label">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>42</y>
+             <width>111</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Current Image</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_reset_image_label">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>64</y>
+             <width>111</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Reset Image</string>
+           </property>
+          </widget>
+          <widget class="Line" name="line_2">
+           <property name="geometry">
+            <rect>
+             <x>1</x>
+             <y>61</y>
+             <width>318</width>
+             <height>3</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="Line" name="line_3">
+           <property name="geometry">
+            <rect>
+             <x>124</x>
+             <y>20</y>
+             <width>3</width>
+             <height>64</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="Line" name="line_4">
+           <property name="geometry">
+            <rect>
+             <x>189</x>
+             <y>20</y>
+             <width>3</width>
+             <height>64</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="Line" name="line_5">
+           <property name="geometry">
+            <rect>
+             <x>254</x>
+             <y>20</y>
+             <width>3</width>
+             <height>64</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_current_image_live_label">
+           <property name="geometry">
+            <rect>
+             <x>129</x>
+             <y>43</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_current_image_highest_label">
+           <property name="geometry">
+            <rect>
+             <x>194</x>
+             <y>43</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_current_image_threshold_label">
+           <property name="geometry">
+            <rect>
+             <x>258</x>
+             <y>43</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_reset_image_live_label">
+           <property name="geometry">
+            <rect>
+             <x>129</x>
+             <y>64</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_reset_image_highest_label">
+           <property name="geometry">
+            <rect>
+             <x>194</x>
+             <y>64</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="table_reset_image_threshold_label">
+           <property name="geometry">
+            <rect>
+             <x>258</x>
+             <y>64</y>
+             <width>56</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <spacer name="center_spacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="right_panel" native="true">
+       <property name="maximumSize">
+        <size>
+         <width>322</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="right_layout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="current_image_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Current Image</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="nav_row" native="true">
+          <layout class="QHBoxLayout" name="nav_layout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>1</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="previous_image_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="toolTip">
+              <string>Previous image</string>
+             </property>
+             <property name="text">
+              <string>&lt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="current_image_file_label">
+             <property name="text">
+              <string>-</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="next_image_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>32</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="toolTip">
+              <string>Next image</string>
+             </property>
+             <property name="text">
+              <string>&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="current_split_image">
+          <property name="minimumSize">
+           <size>
+            <width>320</width>
+            <height>240</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>320</width>
+            <height>240</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Shape::Box</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="split_controls_panel" native="true">
+          <layout class="QGridLayout" name="split_controls_layout" columnstretch="1,0">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QWidget" name="image_loop_row" native="true">
+             <layout class="QHBoxLayout" name="image_loop_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="image_loop_label">
+                <property name="text">
+                 <string>Image Loop:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="image_loop_value_label">
+                <property name="text">
+                 <string>N/A</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QWidget" name="start_image_status_row" native="true">
+             <layout class="QHBoxLayout" name="start_image_status_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="start_image_status_label">
+                <property name="text">
+                 <string>Start Image Status:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="start_image_status_value_label">
+                <property name="text">
+                 <string>status</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="reload_start_image_button">
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Reload Start Image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QWidget" name="action_row" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QHBoxLayout" name="action_layout">
+              <property name="spacing">
+               <number>4</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="undo_split_button">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>56</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
+                </property>
+                <property name="text">
+                 <string>Undo</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="skip_split_button">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>56</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
+                </property>
+                <property name="text">
+                 <string>Skip</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="reset_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Reset</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="start_auto_splitter_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::NoFocus</enum>
+             </property>
+             <property name="text">
+              <string>Start Auto Splitter</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <spacer name="split_controls_spacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>786</width>
+     <width>772</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu_file">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_settings"/>
+    <addaction name="separator"/>
+    <addaction name="action_save_profile"/>
+    <addaction name="action_save_profile_as"/>
+    <addaction name="action_load_profile"/>
+   </widget>
+   <widget class="QMenu" name="menu_view">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="action_toggle_layout"/>
+   </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>Help</string>
@@ -917,17 +1165,8 @@
     <addaction name="action_about_qt"/>
     <addaction name="action_about_qt_for_python"/>
    </widget>
-   <widget class="QMenu" name="menu_file">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="action_settings"/>
-    <addaction name="separator"/>
-    <addaction name="action_save_profile"/>
-    <addaction name="action_save_profile_as"/>
-    <addaction name="action_load_profile"/>
-   </widget>
    <addaction name="menu_file"/>
+   <addaction name="menu_view"/>
    <addaction name="menu_help"/>
   </widget>
   <action name="action_view_help">
@@ -1026,6 +1265,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="action_toggle_layout">
+   <property name="text">
+    <string>Toggle Layout to Portrait</string>
    </property>
   </action>
  </widget>

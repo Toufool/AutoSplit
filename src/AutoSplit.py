@@ -32,12 +32,20 @@ from collections.abc import Callable
 from copy import deepcopy
 from time import time
 from types import FunctionType
-from typing import TYPE_CHECKING, NoReturn, override
+from typing import TYPE_CHECKING, NoReturn, cast, override
 
 import cv2
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
+from PySide6.QtWidgets import (
+    QApplication,
+    QBoxLayout,
+    QFileDialog,
+    QLabel,
+    QMainWindow,
+    QMessageBox,
+    QVBoxLayout,
+)
 
 import error_messages
 import user_profile
@@ -78,6 +86,7 @@ from utils import (
     FROZEN,
     ONE_SECOND,
     RUNNING_WAYLAND,
+    SETTINGS,
     auto_split_directory,
     decimal,
     flatten,
@@ -172,7 +181,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
-        user_profile.load_check_for_updates_on_open(self)
+        self.action_check_for_updates_on_open.setChecked(
+            cast("bool", SETTINGS.value("check_for_updates_on_open", True, type=bool))
+        )
 
         if self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
@@ -218,11 +229,19 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             lambda: self.__reload_start_image(started_by_button=True)
         )
         self.action_check_for_updates_on_open.changed.connect(
-            lambda: user_profile.set_check_for_updates_on_open(
-                self,
-                self.action_check_for_updates_on_open.isChecked(),
-            ),
+            lambda: SETTINGS.setValue(
+                "check_for_updates_on_open", self.action_check_for_updates_on_open.isChecked()
+            )
         )
+        self.action_toggle_layout.triggered.connect(self.toggle_layout)
+
+        # left panel stays at sizeHint; center and right expand
+        self.main_splitter.setStretchFactor(0, 0)
+        self.main_splitter.setStretchFactor(1, 1)
+        self.main_splitter.setStretchFactor(2, 1)
+        self._layout_is_portrait = False
+        if SETTINGS.value("layout_is_portrait", False, type=bool):
+            self.toggle_layout()
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.x_spinbox.valueChanged.connect(self.__update_x)
@@ -255,6 +274,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
 
         self.show()
+        # Lock the window to a fixed, content-fitting size (non-resizable).
+        QtCore.QTimer.singleShot(0, self._shrink_window_to_fit)
 
         # https://pyinstaller.org/en/stable/advanced-topics.html#module-pyi_splash
         # doc implies calling `pyi_splash.is_alive()` should return false should be enough, but in
@@ -985,6 +1006,75 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         else:
             loop_tuple = self.split_images_and_loop_number[self.split_image_number]
             self.image_loop_value_label.setText(f"{loop_tuple[1]}/{loop_tuple[0].loops}")
+
+    def toggle_layout(self) -> None:
+        self._layout_is_portrait = not self._layout_is_portrait
+
+        if self._layout_is_portrait:  # Landscape --> portrait
+            right_layout = cast("QVBoxLayout", self.right_panel.layout())
+            right_layout.insertWidget(0, self.capture_region_label)
+            right_layout.insertWidget(1, self.capture_region_window_label)
+            right_layout.insertWidget(2, self.live_image)
+            right_layout.insertWidget(3, self.similarity_viewer_groupbox)
+            cast("QVBoxLayout", self.left_panel.layout()).addWidget(self.split_controls_panel)
+        else:  # Portrait --> landscape
+            center_layout = cast("QVBoxLayout", self.center_panel.layout())
+            center_layout.insertWidget(0, self.capture_region_label)
+            center_layout.insertWidget(1, self.capture_region_window_label)
+            center_layout.insertWidget(2, self.live_image)
+            center_layout.insertWidget(3, self.similarity_viewer_groupbox)
+            cast("QVBoxLayout", self.right_panel.layout()).addWidget(self.split_controls_panel)
+        self.center_panel.setVisible(not self._layout_is_portrait)
+        self._apply_split_controls_layout()
+        self.action_toggle_layout.setText(
+            "Toggle Layout to Landscape"
+            if self._layout_is_portrait
+            else "Toggle Layout to Portrait"
+        )
+        SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
+        # The window keeps its old geometry after re-layout, leaving blank space.
+        # Shrink it back to fit; deferred because the panel/splitter size hints
+        # only settle over the next couple of layout passes.
+        QtCore.QTimer.singleShot(0, self._shrink_window_to_fit)
+
+    def _shrink_window_to_fit(self) -> None:
+        # setFixedSize both fits the window to its content and removes the
+        # user resize handles. Two passes: the panel/splitter size hints only
+        # settle over consecutive layout passes.
+        self.setFixedSize(self.sizeHint())
+        QtCore.QTimer.singleShot(0, lambda: self.setFixedSize(self.sizeHint()))
+
+    def _apply_split_controls_layout(self) -> None:
+        """Two columns in landscape; single stacked column in portrait (narrow panel)."""
+        self.start_image_status_layout.setDirection(
+            QBoxLayout.Direction.TopToBottom
+            if self._layout_is_portrait
+            else QBoxLayout.Direction.LeftToRight
+        )
+        layout = self.split_controls_layout
+        layout.removeItem(self.split_controls_spacer)
+        widgets = (
+            self.image_loop_row,
+            self.start_image_status_row,
+            self.reload_start_image_button,
+            self.action_row,
+            self.reset_button,
+            self.start_auto_splitter_button,
+        )
+        for widget in widgets:
+            layout.removeWidget(widget)
+        if self._layout_is_portrait:
+            for row, widget in enumerate(widgets):
+                layout.addWidget(widget, row, 0)
+            layout.addItem(self.split_controls_spacer, len(widgets), 0, 1, 1)
+        else:
+            layout.addWidget(self.image_loop_row, 0, 0)
+            layout.addWidget(self.start_image_status_row, 1, 0)
+            layout.addWidget(self.reload_start_image_button, 2, 0)
+            layout.addWidget(self.action_row, 0, 1)
+            layout.addWidget(self.reset_button, 1, 1)
+            layout.addWidget(self.start_auto_splitter_button, 2, 1)
+            layout.addItem(self.split_controls_spacer, 3, 0, 1, 2)
 
     @override
     def closeEvent(self, event: QtGui.QCloseEvent | None = None):

@@ -81,20 +81,20 @@ name = "autosplit"
 version = "2.3.4"
 source = { virtual = "." }
 dependencies = [
-    { name = "keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "levenshtein", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "opencv-contrib-python-headless", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pillow", marker = "sys_platform == 'linux'" },
-    { name = "pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "keyboard" },
+    { name = "levenshtein" },
+    { name = "numpy" },
+    { name = "opencv-contrib-python-headless" },
+    { name = "packaging" },
+    { name = "pillow", marker = "sys_platform != 'win32'" },
+    { name = "pyautogui" },
     { name = "pygrabber", marker = "sys_platform == 'win32'" },
-    { name = "pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pyside6-essentials", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "python-xlib", marker = "sys_platform == 'linux'" },
+    { name = "pyinstaller" },
+    { name = "pyside6-essentials" },
+    { name = "python-xlib", marker = "sys_platform != 'win32'" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
-    { name = "pywinctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "tomli-w", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "pywinctl" },
+    { name = "tomli-w" },
     { name = "typed-d3dshot", extra = ["numpy"], marker = "sys_platform == 'win32'" },
     { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'" },
     { name = "winrt-windows-graphics", marker = "sys_platform == 'win32'" },
@@ -108,20 +108,21 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "beslogic-ruff-config", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "dprint-py", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "mypy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pyright", extra = ["nodejs"], marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-keyboard", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-pyautogui", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-pyinstaller", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
+    { name = "beslogic-ruff-config" },
+    { name = "dprint-py" },
+    { name = "mypy" },
+    { name = "pyright", extra = ["nodejs"] },
+    { name = "ruff" },
+    { name = "types-keyboard" },
+    { name = "types-pyautogui" },
+    { name = "types-pyinstaller" },
+    { name = "types-python-xlib", marker = "sys_platform != 'win32'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'" },
 ]
-ruff = [
-    { name = "beslogic-ruff-config", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+formatters = [
+    { name = "beslogic-ruff-config" },
+    { name = "dprint-py" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -164,8 +165,9 @@ dev = [
     { name = "types-python-xlib", marker = "sys_platform == 'linux'" },
     { name = "types-pywin32", marker = "sys_platform == 'win32'", specifier = ">=306.0.0.20240130" },
 ]
-ruff = [
+formatters = [
     { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7" },
+    { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "ruff" },
 ]
 
@@ -174,7 +176,7 @@ name = "beslogic-ruff-config"
 version = "1.1.0"
 source = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7#312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
 dependencies = [
-    { name = "ruff", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "ruff" },
 ]
 
 [[package]]
@@ -201,8 +203,8 @@ name = "ewmhlib"
 version = "0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "python-xlib", marker = "sys_platform == 'linux'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux'" },
+    { name = "python-xlib" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2f/3a/46ca34abf0725a754bc44ef474ad34aedcc3ea23b052d97b18b76715a6a9/EWMHlib-0.2-py3-none-any.whl", hash = "sha256:f5b07d8cfd4c7734462ee744c32d490f2f3233fa7ab354240069344208d2f6f5", size = 46657, upload-time = "2024-04-17T08:15:56.338Z" },
@@ -218,7 +220,7 @@ name = "levenshtein"
 version = "0.27.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "rapidfuzz", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "rapidfuzz" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/82/56/dcf68853b062e3b94bdc3d011cc4198779abc5b9dc134146a062920ce2e2/levenshtein-0.27.3.tar.gz", hash = "sha256:1ac326b2c84215795163d8a5af471188918b8797b4953ec87aaba22c9c1f9fc0", size = 393269, upload-time = "2025-11-01T12:14:31.04Z" }
 wheels = [
@@ -277,11 +279,11 @@ name = "mypy"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ast-serialize", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "librt", marker = "(platform_python_implementation != 'PyPy' and sys_platform == 'linux') or (platform_python_implementation != 'PyPy' and sys_platform == 'win32')" },
-    { name = "mypy-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "pathspec", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "ast-serialize" },
+    { name = "librt", marker = "platform_python_implementation != 'PyPy'" },
+    { name = "mypy-extensions" },
+    { name = "pathspec" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/82/15/cca9d88503549ed6fedeaa1d448cdddd542ee8a490232d732e278036fbf2/mypy-2.1.0.tar.gz", hash = "sha256:81e76ad12c2d804512e9b13240d1588316531bfba07558286078bfbce9613633", size = 3898359, upload-time = "2026-05-11T18:37:36.237Z" }
 wheels = [
@@ -357,7 +359,7 @@ name = "opencv-contrib-python-headless"
 version = "4.11.0.86"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/53/cc/295e9a4e783ca71ba1b8fbd34e51bc603eba4611afcfc7de1b09b2d6ed8d/opencv-contrib-python-headless-4.11.0.86.tar.gz", hash = "sha256:839319098a73264c580c97cb1ca835f7fce3d30e4fa9fa6d4d0618fff551be0b", size = 150579288, upload-time = "2025-01-16T13:54:11.763Z" }
 wheels = [
@@ -428,8 +430,8 @@ name = "pygrabber"
 version = "0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "comtypes", marker = "sys_platform == 'win32'" },
-    { name = "numpy", marker = "sys_platform == 'win32'" },
+    { name = "comtypes" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d4/24/e7e5efa1d915853f3f34cedf751cbee9d88bee47a41122d495ee95452dad/pygrabber-0.2.tar.gz", hash = "sha256:e584b119d4c9b9a8f339eb34d1fe7fdd16214a2bf5a1876171145caebdb9e413", size = 18487, upload-time = "2023-10-20T07:17:14.97Z" }
 wheels = [
@@ -441,12 +443,12 @@ name = "pyinstaller"
 version = "6.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "altgraph", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "altgraph" },
+    { name = "packaging" },
     { name = "pefile", marker = "sys_platform == 'win32'" },
-    { name = "pyinstaller-hooks-contrib", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "pyinstaller-hooks-contrib" },
     { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
-    { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "setuptools" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/01/80/9e0dad9c69a7cfd4b5aaede8c6225d762bab7247a2a6b7651e1995522001/pyinstaller-6.17.0.tar.gz", hash = "sha256:be372bd911392b88277e510940ac32a5c2a6ce4b8d00a311c78fa443f4f27313", size = 4014147, upload-time = "2025-11-24T19:43:32.109Z" }
 wheels = [
@@ -467,8 +469,8 @@ name = "pyinstaller-hooks-contrib"
 version = "2025.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "packaging", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "setuptools", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "packaging" },
+    { name = "setuptools" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/26/4f/e33132acdb8f732978e577b8a0130a412cbfe7a3414605e3fd380a975522/pyinstaller_hooks_contrib-2025.10.tar.gz", hash = "sha256:a1a737e5c0dccf1cf6f19a25e2efd109b9fec9ddd625f97f553dac16ee884881", size = 168155, upload-time = "2025-11-22T09:34:36.138Z" }
 wheels = [
@@ -480,10 +482,10 @@ name = "pymonctl"
 version = "0.92"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ewmhlib", marker = "sys_platform == 'linux'" },
-    { name = "python-xlib", marker = "sys_platform == 'linux'" },
+    { name = "ewmhlib", marker = "sys_platform != 'win32'" },
+    { name = "python-xlib", marker = "sys_platform != 'win32'" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2d/13/076a20da28b82be281f7e43e16d9da0f545090f5d14b2125699232b9feba/PyMonCtl-0.92-py3-none-any.whl", hash = "sha256:2495d8dab78f9a7dbce37e74543e60b8bd404a35c3108935697dda7768611b5a", size = 45945, upload-time = "2024-04-22T10:07:09.566Z" },
@@ -494,8 +496,8 @@ name = "pyright"
 version = "1.1.410"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nodeenv", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/10/53/e4d8ea1391bd4355231be6f91bf239479aa0014260ed3fb5526eeb12a1f2/pyright-1.1.410.tar.gz", hash = "sha256:07a073b8ba6749826773c1269773efa11b93440d9a6aa60419d9a3172d6dc488", size = 4062013, upload-time = "2026-06-01T17:35:48.894Z" }
 wheels = [
@@ -504,7 +506,7 @@ wheels = [
 
 [package.optional-dependencies]
 nodejs = [
-    { name = "nodejs-wheel-binaries", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nodejs-wheel-binaries" },
 ]
 
 [[package]]
@@ -512,7 +514,7 @@ name = "pyside6-essentials"
 version = "6.9.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "shiboken6", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "shiboken6" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/59/6a/ea0db68d40a1c487fd255634896f4e37b6560e3ef1f57ca5139bf6509b1f/PySide6_Essentials-6.9.1-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:e5da48883f006c6206ef85874db74ddebcdf69b0281bd4f1642b1c5ac1d54aea", size = 96416183, upload-time = "2025-06-03T13:12:48.945Z" },
@@ -526,7 +528,7 @@ name = "python-xlib"
 version = "0.33"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "sys_platform == 'linux'" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/86/f5/8c0653e5bb54e0cbdfe27bf32d41f27bc4e12faa8742778c17f2a71be2c0/python-xlib-0.33.tar.gz", hash = "sha256:55af7906a2c75ce6cb280a584776080602444f75815a7aff4d287bb2d7018b32", size = 269068, upload-time = "2022-12-25T18:53:00.824Z" }
 wheels = [
@@ -560,10 +562,10 @@ name = "pywinbox"
 version = "0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ewmhlib", marker = "sys_platform == 'linux'" },
-    { name = "python-xlib", marker = "sys_platform == 'linux'" },
+    { name = "ewmhlib", marker = "sys_platform != 'win32'" },
+    { name = "python-xlib", marker = "sys_platform != 'win32'" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b1/37/d59397221e15d2a7f38afaa4e8e6b8c244d818044f7daa0bdc5988df0a69/PyWinBox-0.7-py3-none-any.whl", hash = "sha256:8b2506a8dd7afa0a910b368762adfac885274132ef9151b0c81b0d2c6ffd6f83", size = 12274, upload-time = "2024-04-17T10:10:31.899Z" },
@@ -574,12 +576,12 @@ name = "pywinctl"
 version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ewmhlib", marker = "sys_platform == 'linux'" },
-    { name = "pymonctl", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "python-xlib", marker = "sys_platform == 'linux'" },
+    { name = "ewmhlib", marker = "sys_platform != 'win32'" },
+    { name = "pymonctl" },
+    { name = "python-xlib", marker = "sys_platform != 'win32'" },
     { name = "pywin32", marker = "sys_platform == 'win32'" },
-    { name = "pywinbox", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "pywinbox" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/be/33/8e4f632210b28fc9e998a9ab990e7ed97ecd2800cc50038e3800e1d85dbe/PyWinCtl-0.4.1-py3-none-any.whl", hash = "sha256:4d875e22969e1c6239d8c73156193630aaab876366167b8d97716f956384b089", size = 63158, upload-time = "2024-09-23T08:33:39.881Z" },
@@ -677,7 +679,7 @@ name = "typed-d3dshot"
 version = "1.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "comtypes", marker = "sys_platform == 'win32'" },
+    { name = "comtypes" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/47/e8/c1d050bd5d71ba7eab613677bfafe7e43b50dcf10a7698e331231049e5f4/typed_d3dshot-1.1.1.tar.gz", hash = "sha256:c1f3acc984ad1eeb6b3199153ffe0d585f57007195a03d1b9222e9324d2fcfc5", size = 25013, upload-time = "2026-06-13T05:25:05.558Z" }
 wheels = [
@@ -686,7 +688,7 @@ wheels = [
 
 [package.optional-dependencies]
 numpy = [
-    { name = "numpy", marker = "sys_platform == 'win32'" },
+    { name = "numpy" },
 ]
 
 [[package]]
@@ -748,7 +750,7 @@ name = "winrt-runtime"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "sys_platform == 'win32'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/16/dd/acdd527c1d890c8f852cc2af644aa6c160974e66631289420aa871b05e65/winrt_runtime-3.2.1.tar.gz", hash = "sha256:c8dca19e12b234ae6c3dadf1a4d0761b51e708457492c13beb666556958801ea", size = 21721, upload-time = "2025-06-06T14:40:27.593Z" }
 wheels = [
@@ -762,7 +764,7 @@ name = "winrt-windows-foundation"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0c/55/098ce7ea0679efcc1298b269c48768f010b6c68f90c588f654ec874c8a74/winrt_windows_foundation-3.2.1.tar.gz", hash = "sha256:ad2f1fcaa6c34672df45527d7c533731fdf65b67c4638c2b4aca949f6eec0656", size = 30485, upload-time = "2025-06-06T14:41:53.344Z" }
 wheels = [
@@ -776,7 +778,7 @@ name = "winrt-windows-graphics"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/30/e5/781e29e2c459280d600009c1a1f11f03e83896a515977ccf7ddc92f8b501/winrt_windows_graphics-3.2.1.tar.gz", hash = "sha256:7f40ce7770ebb45319f9bb3d9104e58b1f20cdf3c33d6d0540e59a2ae752b674", size = 7776, upload-time = "2025-06-06T14:42:05.859Z" }
 wheels = [
@@ -790,7 +792,7 @@ name = "winrt-windows-graphics-capture"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/4f/32/751884ce5a857f363a6e854d56efd6d707e331585440d2db95ff88743f58/winrt_windows_graphics_capture-3.2.1.tar.gz", hash = "sha256:c4c3a4bc2c87062e4a09a42b7f6f1411f201ca04142954b1223dc46c72240efd", size = 10410, upload-time = "2025-06-06T14:42:06.623Z" }
 wheels = [
@@ -815,7 +817,7 @@ name = "winrt-windows-graphics-directx"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/dc/86/2f94a297db367b78c747b88da61551e59b1e62c553882018883110ec7bee/winrt_windows_graphics_directx-3.2.1.tar.gz", hash = "sha256:3e7e875055644151eedbc556806d90e8c53ef6375a6c98669a9ddacbe0953586", size = 4503, upload-time = "2025-06-06T14:42:07.786Z" }
 wheels = [
@@ -829,7 +831,7 @@ name = "winrt-windows-graphics-directx-direct3d11"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2d/d3/23933ea9f39952e4ae679eaa9eef34dec05dbdd35e2eb192dce5fc4fff8f/winrt_windows_graphics_directx_direct3d11-3.2.1.tar.gz", hash = "sha256:157618f9d5071ff422098472fa96524fe9385a39776ff4483d5a66a510a8114c", size = 8656, upload-time = "2025-06-06T14:42:08.388Z" }
 wheels = [
@@ -854,7 +856,7 @@ name = "winrt-windows-graphics-imaging"
 version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-runtime" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3c/90/14655f93d5cc4224ae6c44866c36928926b54c8fe7ae4a465b10332bd935/winrt_windows_graphics_imaging-3.2.1.tar.gz", hash = "sha256:1e0bdb08625b0ce144a2e76dd5ed86605906e41196df92d660c8f87a993a1513", size = 26786, upload-time = "2025-06-06T14:42:11.95Z" }
 wheels = [
