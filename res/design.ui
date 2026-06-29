@@ -8,19 +8,19 @@
     <x>0</x>
     <y>0</y>
     <width>786</width>
-    <height>426</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>786</width>
-    <height>426</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>786</width>
-    <height>426</height>
+    <height>720</height>
    </size>
   </property>
   <property name="font">
@@ -930,6 +930,59 @@
    <addaction name="menu_file"/>
    <addaction name="menu_help"/>
   </widget>
+  <widget class="QStatusBar" name="status_bar">
+   <widget class="ClickableLabel" name="log_footer_label">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>1</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="toolTip">
+     <string>Last log message. Click to show the full log.</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="log_dock">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Log</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="log_dock_contents">
+    <layout class="QVBoxLayout" name="log_dock_layout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPlainTextEdit" name="log_history_view">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_view_help">
    <property name="text">
     <string>View Help</string>
@@ -1029,6 +1082,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>log_capture</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>split_image_folder_input</tabstop>
   <tabstop>x_spinbox</tabstop>

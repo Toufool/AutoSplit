@@ -33,6 +33,14 @@ if sys.platform == "linux":
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
 # ruff: disable[E402] # https://github.com/astral-sh/ruff/issues/21423
+# Tee stdout/stderr before the heavy imports below, so import-time warnings and errors
+# (e.g. Xlib ResourceWarnings) are mirrored to the log footer too. This must run after the
+# platform-specific setup above (which has to happen before any Qt import) but before
+# cv2/PySide6/capture_method are imported.
+import log_capture
+
+log_capture.install()
+
 import signal
 from collections.abc import Callable
 from copy import deepcopy
@@ -43,7 +51,7 @@ from typing import TYPE_CHECKING, NoReturn, cast, override
 import cv2
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QWidget
 
 import error_messages
 import user_profile
@@ -100,6 +108,19 @@ if TYPE_CHECKING:
 
 CHECK_FPS_ITERATIONS = 10
 
+MAIN_CONTENT_HEIGHT = 404
+"""Fixed height of the main (absolutely-laid-out) content, so the expandable log panel grows the
+window downward instead of squashing it. Matches the window's collapsed minimum minus the
+menu and status bars."""
+LOG_PANEL_HEIGHT = 250
+"""How tall the expandable log history panel is when shown."""
+LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
+"""Color for log lines that came from stderr (warnings, errors, tracebacks)."""
+LOG_FOOTER_STYLE = """
+ClickableLabel {{ padding: 1px 16px 1px 6px; color: {color}; }}
+ClickableLabel:hover {{ background-color: palette(midlight); }}
+"""
+
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Parse command line args
@@ -129,6 +150,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     UpdateCheckerWidget: update_checker.Ui_UpdateChecker | None = None
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
+
+    # Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered.
+    _last_footer_entry: tuple[str, str, bool] | None = None
 
     def __init__(self):  # noqa: PLR0915
         super().__init__()
@@ -173,6 +197,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             f"AutoSplit v{AUTOSPLIT_VERSION}"
             + (" (externally controlled)" if self.is_auto_controlled else "")
         )
+        self._setup_log_footer()
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
         for hotkey in HOTKEYS:
@@ -285,6 +310,71 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             check_for_updates(self, check_on_open=True)
 
     # FUNCTIONS
+
+    def _setup_log_footer(self):
+        """Wire up the clickable log footer and the expandable log history panel."""
+        # Pin the main content so the log panel grows the window downward rather than squashing it.
+        self.central_widget.setFixedHeight(MAIN_CONTENT_HEIGHT)
+        # Place the footer label so it fills the status bar and is the click target. A top border
+        # and dropped size grip make the footer read as its own clearly-defined, clickable strip.
+        self.status_bar.addWidget(self.log_footer_label, 1)
+        self.status_bar.setSizeGripEnabled(False)
+        self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
+        self.status_bar.setStyleSheet("QStatusBar { border-top: 1px solid palette(mid); }")
+        # Make the dock read as an inline panel: no title bar, hidden until the footer is clicked.
+        title_spacer = QWidget()
+        title_spacer.setFixedHeight(0)  # Hide draggable separator
+        self.log_dock.setTitleBarWidget(title_spacer)
+        self.setStyleSheet("QMainWindow::separator { height: 0px; width: 0px; }")
+        self.log_dock.hide()
+        self.log_footer_label.clicked.connect(self._toggle_log_panel)
+
+        # Surface anything already logged (e.g. the version/PID line) before connecting live.
+        history = log_capture.LOG_EMITTER.history()
+        for timestamp, text, is_stderr in history:
+            self._append_log_line(timestamp, text, is_stderr=is_stderr)
+        if history:
+            self._update_log_footer(*history[-1])
+        log_capture.LOG_EMITTER.line_logged.connect(self._on_log_line)
+
+    def _toggle_log_panel(self):
+        show = not self.log_dock.isVisible()
+        self.log_dock.setVisible(show)
+        self.resize(self.width(), self.minimumHeight() + (LOG_PANEL_HEIGHT if show else 0))
+        self._refresh_log_footer()  # Flip the chevron to match the new state.
+
+    def _append_log_line(self, timestamp: str, text: str, *, is_stderr: bool):
+        cursor = self.log_history_view.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        char_format = QtGui.QTextCharFormat()
+        if is_stderr:
+            char_format.setForeground(LOG_STDERR_COLOR)
+        # Newline before each entry (not after) so there is no trailing blank line.
+        prefix = "" if self.log_history_view.document().isEmpty() else "\n"
+        cursor.insertText(f"{prefix}{timestamp} {text}", char_format)
+        scrollbar = self.log_history_view.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
+    def _update_log_footer(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001
+        self._last_footer_entry = (timestamp, text, is_stderr)
+        self._refresh_log_footer()
+
+    def _refresh_log_footer(self):
+        if self._last_footer_entry is None:
+            return
+        timestamp, text, is_stderr = self._last_footer_entry
+        # The footer is a single line; show the timestamp and first line of (multi-line) entries.
+        first_line = text.split("\n", 1)[0]
+        # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
+        chevron = "▲" if self.log_dock.isVisible() else "▶"
+        color = LOG_STDERR_COLOR.name() if is_stderr else "palette(text)"
+        self.log_footer_label.setStyleSheet(LOG_FOOTER_STYLE.format(color=color))
+        self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
+
+    @QtCore.Slot(str, str, bool)
+    def _on_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001
+        self._append_log_line(timestamp, text, is_stderr=is_stderr)
+        self._update_log_footer(timestamp, text, is_stderr)
 
     def __browse(self):
         # User selects the file with the split images in it.
