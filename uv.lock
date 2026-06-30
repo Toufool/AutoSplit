@@ -112,7 +112,7 @@ dependencies = [
 dev = [
     { name = "beslogic-ruff-config" },
     { name = "dprint-py" },
-    { name = "mypy" },
+    { name = "mypy", marker = "python_full_version < '3.15'" },
     { name = "pyright", extra = ["nodejs"] },
     { name = "ruff" },
     { name = "types-keyboard" },
@@ -160,7 +160,7 @@ requires-dist = [
 dev = [
     { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7" },
     { name = "dprint-py", specifier = ">=0.50.0.0" },
-    { name = "mypy", specifier = ">=2.1" },
+    { name = "mypy", marker = "python_full_version < '3.15'", specifier = ">=2.1" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
     { name = "ruff" },
     { name = "types-keyboard" },
