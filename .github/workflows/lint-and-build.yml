@@ -135,7 +135,7 @@ jobs:
         with:
           arch: arm64
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
-      - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
+      - run: scripts/build.ps1 ${{ matrix.wine-compat }}
       - name: Run test suite
         # pywinctl/pymonctl connect to the X display at import-time, hence xvfb
         run: >-
