@@ -158,6 +158,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered.
     _last_footer_entry: tuple[str, str, bool] | None = None
 
+    # Window height with the log panel collapsed; captured from the .ui to fix the height per state.
+    _collapsed_height = 0
+
     def __init__(self):  # noqa: PLR0915
         super().__init__()
 
@@ -318,6 +321,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def _setup_log_footer(self):
         """Wire up the clickable log footer and the expandable log history panel."""
+        self._collapsed_height = self.minimumHeight()
         # The status bar doesn't add() its .ui child, and stretch isn't expressible there.
         self.status_bar.addWidget(self.log_footer_label, 1)
         self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
@@ -340,7 +344,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
         self.log_dock.setVisible(show)
-        self.resize(self.width(), self.minimumHeight() + (LOG_PANEL_HEIGHT if show else 0))
+        # Fix the height per state so it can't be dragged to over-expand or hide content.
+        self.setFixedHeight(self._collapsed_height + (LOG_PANEL_HEIGHT if show else 0))
         self._refresh_log_footer()  # Flip the chevron to match the new state.
 
     def _toggle_log_panel(self):
