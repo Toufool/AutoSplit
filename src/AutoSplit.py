@@ -117,11 +117,6 @@ _LOG_LOCATION_PREFIX = re.compile(r"^\S+:\d+:\s+")
 """Matches a leading ``path:lineno:`` (e.g. from a warning) to drop it from the footer preview."""
 
 
-def _footer_preview(text: str) -> str:
-    """First line of an (already-relativized) entry; drops a leading ``path:lineno:`` prefix."""
-    return _LOG_LOCATION_PREFIX.sub("", text.split("\n", 1)[0])
-
-
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Parse command line args
     is_auto_controlled = "--auto-controlled" in sys.argv
@@ -151,8 +146,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
 
-    # Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered.
-    _last_footer_entry: tuple[str, str, bool] | None = None
+    _last_footer_entry: log_capture.LogLine | None = None
+    """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
 
     # Window height with the log panel collapsed; captured from the .ui to fix the height per state.
     _collapsed_height = 0
@@ -373,7 +368,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
         timestamp, text, is_stderr = self._last_footer_entry
         # Footer is single-line and shows the message directly (no path prefix).
-        first_line = _footer_preview(text)
+        # First line of an (already-relativized) entry; drops a leading ``path:lineno:`` prefix.
+        first_line = _LOG_LOCATION_PREFIX.sub("", text.split("\n", 1)[0])
         # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
         # Not using isVisible()) as it's incorrect during startup restore, before window is shown
         chevron = "▶" if self.log_dock.isHidden() else "▲"
