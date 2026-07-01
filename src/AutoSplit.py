@@ -196,9 +196,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.update_auto_control = AutoControlledThread(self)
             self.update_auto_control.start()
 
-        # split image folder line edit text
-        self.split_image_folder_input.setText("No Folder Selected")
-
         # Connecting menu actions
         self.action_view_help.triggered.connect(view_help)
         self.action_about.triggered.connect(lambda: open_about(self))
