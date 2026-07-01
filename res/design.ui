@@ -927,7 +927,14 @@
     <addaction name="action_save_profile_as"/>
     <addaction name="action_load_profile"/>
    </widget>
+   <widget class="QMenu" name="menu_view">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="action_toggle_logs"/>
+   </widget>
    <addaction name="menu_file"/>
+   <addaction name="menu_view"/>
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar">
@@ -1079,6 +1086,17 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="action_toggle_logs">
+   <property name="text">
+    <string>Toggle Logs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
  </widget>

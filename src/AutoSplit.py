@@ -233,6 +233,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.split_image_folder_input.setText("No Folder Selected")
 
         # Connecting menu actions
+        self.action_toggle_logs.triggered.connect(self._toggle_log_panel)
         self.action_view_help.triggered.connect(view_help)
         self.action_about.triggered.connect(lambda: open_about(self))
         self.action_about_qt.triggered.connect(about_qt)
