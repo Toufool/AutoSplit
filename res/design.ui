@@ -35,7 +35,22 @@
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow::separator { height: 0px; width: 0px; }</string>
+  </property>
   <widget class="QWidget" name="central_widget">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>404</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>404</height>
+    </size>
+   </property>
    <widget class="QLabel" name="x_label">
     <property name="geometry">
      <rect>
@@ -938,6 +953,12 @@
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QStatusBar { border-top: 1px solid palette(mid); }</string>
+   </property>
    <widget class="ClickableLabel" name="log_footer_label">
     <property name="sizePolicy">
      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">

@@ -109,10 +109,6 @@ if TYPE_CHECKING:
 
 CHECK_FPS_ITERATIONS = 10
 
-MAIN_CONTENT_HEIGHT = 404
-"""Fixed height of the main (absolutely-laid-out) content, so the expandable log panel grows the
-window downward instead of squashing it. Matches the window's collapsed minimum minus the
-menu and status bars."""
 LOG_PANEL_HEIGHT = 250
 """How tall the expandable log history panel is when shown."""
 LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
@@ -322,19 +318,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def _setup_log_footer(self):
         """Wire up the clickable log footer and the expandable log history panel."""
-        # Pin the main content so the log panel grows the window downward rather than squashing it.
-        self.central_widget.setFixedHeight(MAIN_CONTENT_HEIGHT)
-        # Place the footer label so it fills the status bar and is the click target. A top border
-        # and dropped size grip make the footer read as its own clearly-defined, clickable strip.
+        # The status bar doesn't add() its .ui child, and stretch isn't expressible there.
         self.status_bar.addWidget(self.log_footer_label, 1)
-        self.status_bar.setSizeGripEnabled(False)
         self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
-        self.status_bar.setStyleSheet("QStatusBar { border-top: 1px solid palette(mid); }")
-        # Make the dock read as an inline panel: no title bar, hidden until the footer is clicked.
-        title_spacer = QWidget()
-        title_spacer.setFixedHeight(0)  # Hide draggable separator
-        self.log_dock.setTitleBarWidget(title_spacer)
-        self.setStyleSheet("QMainWindow::separator { height: 0px; width: 0px; }")
+        # An empty title bar (collapses to no height) makes the dock read as an inline panel.
+        self.log_dock.setTitleBarWidget(QWidget())
         self.log_footer_label.clicked.connect(self._toggle_log_panel)
 
         # Surface anything already logged (e.g. the version/PID line) before connecting live.
@@ -383,7 +371,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Footer is single-line and shows the message directly (no path prefix).
         first_line = _footer_preview(text)
         # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
-        chevron = "▲" if self.log_dock.isVisible() else "▶"
+        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
+        chevron = "▶" if self.log_dock.isHidden() else "▲"
         color = LOG_STDERR_COLOR.name() if is_stderr else "palette(text)"
         self.log_footer_label.setStyleSheet(LOG_FOOTER_STYLE.format(color=color))
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
