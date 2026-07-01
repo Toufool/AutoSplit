@@ -326,7 +326,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         title_spacer.setFixedHeight(0)  # Hide draggable separator
         self.log_dock.setTitleBarWidget(title_spacer)
         self.setStyleSheet("QMainWindow::separator { height: 0px; width: 0px; }")
-        self.log_dock.hide()
         self.log_footer_label.clicked.connect(self._toggle_log_panel)
 
         # Surface anything already logged (e.g. the version/PID line) before connecting live.
@@ -334,16 +333,25 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         for timestamp, text, is_stderr in history:
             self._append_log_line(timestamp, text, is_stderr=is_stderr)
         if history:
-            self._update_log_footer(*history[-1])
+            last_timestamp, last_text, last_is_stderr = history[-1]
+            self._update_log_footer(last_timestamp, last_text, is_stderr=last_is_stderr)
         log_capture.LOG_EMITTER.line_logged.connect(self._on_log_line)
 
-    def _toggle_log_panel(self):
-        show = not self.log_dock.isVisible()
+        # Restore the panel's last expanded/collapsed state.
+        self._set_log_panel_visible(
+            show=cast("bool", user_profile.QT_SETTINGS.value("log_panel_visible", False, type=bool))
+        )
+
+    def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
         self.log_dock.setVisible(show)
         self.resize(self.width(), self.minimumHeight() + (LOG_PANEL_HEIGHT if show else 0))
         self._refresh_log_footer()  # Flip the chevron to match the new state.
 
-    def _append_log_line(self, timestamp: str, text: str, *, is_stderr: bool):
+    def _toggle_log_panel(self):
+        self._set_log_panel_visible(not self.log_dock.isVisible())
+        user_profile.QT_SETTINGS.setValue("log_panel_visible", self.log_dock.isVisible())
+
+    def _append_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
         cursor = self.log_history_view.textCursor()
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
         char_format = QtGui.QTextCharFormat()
@@ -355,7 +363,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         scrollbar = self.log_history_view.verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
 
-    def _update_log_footer(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001
+    def _update_log_footer(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
         self._last_footer_entry = (timestamp, text, is_stderr)
         self._refresh_log_footer()
 
@@ -372,8 +380,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
 
     @QtCore.Slot(str, str, bool)
-    def _on_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001
-        self._append_log_line(timestamp, text, is_stderr=is_stderr)
+    def _on_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
+        self._append_log_line(timestamp, text, is_stderr)
         self._update_log_footer(timestamp, text, is_stderr)
 
     def __browse(self):
