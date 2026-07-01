@@ -113,10 +113,6 @@ LOG_PANEL_HEIGHT = 250
 """How tall the expandable log history panel is when shown."""
 LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
 """Color for log lines that came from stderr (warnings, errors, tracebacks)."""
-LOG_FOOTER_STYLE = """
-ClickableLabel {{ padding: 1px 16px 1px 6px; color: {color}; }}
-ClickableLabel:hover {{ background-color: palette(midlight); }}
-"""
 _LOG_LOCATION_PREFIX = re.compile(r"^\S+:\d+:\s+")
 """Matches a leading ``path:lineno:`` (e.g. from a warning) to drop it from the footer preview."""
 
@@ -227,9 +223,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             # Use and Start the thread that checks for updates from LiveSplit
             self.update_auto_control = AutoControlledThread(self)
             self.update_auto_control.start()
-
-        # split image folder line edit text
-        self.split_image_folder_input.setText("No Folder Selected")
 
         # Connecting menu actions
         self.action_toggle_logs.triggered.connect(self._toggle_log_panel)
@@ -378,8 +371,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
         # Not using isVisible()) as it's incorrect during startup restore, before window is shown
         chevron = "▶" if self.log_dock.isHidden() else "▲"
-        color = LOG_STDERR_COLOR.name() if is_stderr else "palette(text)"
-        self.log_footer_label.setStyleSheet(LOG_FOOTER_STYLE.format(color=color))
+        stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
+        self.log_footer_label.setStyleSheet(stderr_color)
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
 
     @QtCore.Slot(str, str, bool)
