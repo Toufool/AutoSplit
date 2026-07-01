@@ -512,6 +512,9 @@
       <height>22</height>
      </rect>
     </property>
+    <property name="text">
+     <string>No Folder Selected</string>
+    </property>
     <property name="readOnly">
      <bool>true</bool>
     </property>
