@@ -317,13 +317,12 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
         # An empty title bar (collapses to no height) makes the dock read as an inline panel.
         self.log_dock.setTitleBarWidget(QWidget())
-        # Monospace so timestamps and indented continuation lines align (system fixed-width font).
-        self.log_history_view.setFont(
+        self.log_history_view.setFont(  # Use the system's monospace font.
             QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.SystemFont.FixedFont)
         )
         self.log_footer_label.clicked.connect(self._toggle_log_panel)
 
-        # Surface anything already logged (e.g. the version/PID line) before connecting live.
+        # Include logs already emitted before connecting live.
         history = log_capture.LOG_EMITTER.history()
         for log_line in history:
             self._append_log_line(log_line)

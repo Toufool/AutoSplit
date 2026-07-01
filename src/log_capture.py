@@ -4,7 +4,7 @@ handler, uncaught tracebacks) without suppressing it, and re-broadcast each comp
 signal so the GUI can surface it in the log footer.
 
 The real `sys.stdout` / `sys.stderr` are *teed*, never replaced: writes still reach the original
-streams byte-for-byte (this keeps the `--auto-controlled` LiveSplit stdout protocol intact), and a
+streams as-is (keeping `--auto-controlled` stdout protocol intact), and a formatted
 copy of each line is emitted on top.
 """
 
