@@ -49,7 +49,7 @@ formatters = [
 dev = [
   #
   # Linters & Formatters
-  "mypy >=2.1", # TODO: Bump when 3.15 wheels
+  "mypy >=2.1; python_version < '3.15'", # TODO: Bump when 3.15 wheels
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
   { include-group = "formatters" },
   #
@@ -92,9 +92,16 @@ typed-D3DShot = false # I own it
 [tool.uv.sources]
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "312cfab8a1e2653639a2ef665e99eac6c7412ba7" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
-# pyinstaller = { url = "https://github.com/pyinstaller/pyinstaller/archive/develop.zip", marker = "python_version >= '3.15'" }
-# numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
-# pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+# pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", marker = "python_version >= '3.15'" }
+numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
+
+[tool.uv.extra-build-dependencies]
+# When opencv builds from sdist, its isolated build env ignores the numpy source
+# mapping above. match-runtime reuses our installed numpy instead of building it.
+opencv-contrib-python-headless = [
+  { requirement = "numpy", match-runtime = true },
+]
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates

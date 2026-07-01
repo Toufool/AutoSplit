@@ -49,18 +49,21 @@ jobs:
     env:
       # Prevent accidentally slower type-checking due to missing arm wheels.
       # Fail rather than accidentally compile C/binary extensions from sdist.
-      UV_NO_BUILD: true
+      UV_NO_BUILD: ${{ !(matrix.python-version == '3.15' && matrix.os == 'windows-latest') }} # winrt-Windows no wheels for 3.15 yet
       # Per-package no-binary overrides no-build, allowing
       # known pure-Python source-only dependencies to still build.
       # The Build job intentionally builds some binary packages from source.
-      UV_NO_BINARY_PACKAGE: keyboard PyAutoGUI beslogic-ruff-config
+      UV_NO_BINARY_PACKAGE: >-
+        keyboard PyAutoGUI beslogic-ruff-config
+        ${{ matrix.python-version == '3.15' && 'RapidFuzz Levenshtein' || '' }}
+      # TODO: ^ Remove these exceptions once 3.15 wheels are released
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible
       matrix:
         # windows arm runner slower as long as opencv doesn't provide windows arm64 wheels
         os: [windows-latest, ubuntu-24.04-arm]
-        python-version: ["3.14"]
+        python-version: ["3.14", "3.15"]
     steps:
       - uses: actions/checkout@v6
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -92,11 +95,14 @@ jobs:
       # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-24.04, ubuntu-24.04-arm]
-        python-version: ["3.14"]
+        python-version: ["3.14", "3.15"]
         wine-compat: [""]
         include:
           - os: windows-latest
             python-version: "3.14"
+            wine-compat: "-WineCompat"
+          - os: windows-latest
+            python-version: "3.15"
             wine-compat: "-WineCompat"
     steps:
       - uses: actions/checkout@v6
@@ -121,8 +127,15 @@ jobs:
                 && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
               || null }}
       # endregion
+      # MinGW (cc) fails SIZEOF_PY_INTPTR_T detection on ARM64; force MSVC for numpy sdist
+      # TODO: Remove this action once we use numpy 3.15 wheels
+      - name: Set up MSVC ARM64 environment
+        if: ${{ matrix.os == 'windows-11-arm' && matrix.python-version == '3.15' }}
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: arm64
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
-      - run: "scripts/build.ps1 ${{ matrix.wine-compat }}"
+      - run: scripts/build.ps1 ${{ matrix.wine-compat }}
       - name: Run test suite
         # pywinctl/pymonctl connect to the X display at import-time, hence xvfb
         run: >-

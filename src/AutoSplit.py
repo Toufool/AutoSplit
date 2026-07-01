@@ -7,6 +7,54 @@ import warnings
 # Enable all warnings, which Python hides by default outside __main__
 warnings.simplefilter("default")
 
+if sys.version_info >= (3, 15):
+    # Packages whose *internal* imports must stay eager
+    # (importing them from elsewhere is still lazy):
+    # - stdlib: gains nothing (loads at startup anyway),
+    #   and its lazy proxies fail to reify under shiboken6's patched __import__
+    #   (e.g. typing.Union: "'lazy_import' object is not subscriptable").
+    # - shiboken6/shibokensupport: patch __import__ (feature_import) and exec
+    #   embedded modules behind aliased spec names
+    #   (PySide6.support.signature.* vs shibokensupport.*).
+    # - numpy: its self-check raises a bogus version conflict when imported
+    #   through shiboken6's patched __import__.
+    _EAGER_INTERNALS = (
+        frozenset({
+            "PySide6",
+            "shiboken6",
+            "shibokensupport",
+            "numpy",
+        })
+        | sys.stdlib_module_names
+    )
+
+    def _lazy_imports_filter(
+        importing: str | None,
+        imported: str,
+        fromlist: tuple[str, ...] | None = None,  # noqa: ARG001
+        /,
+    ) -> bool:
+        # No importer means exec'd/embedded code (e.g. shiboken6's signature
+        # bootstrap), which can't be trusted to resolve lazy proxies.
+        if not importing:
+            return False
+        # Imports within the same top-level package must stay eager:
+        # - A package importing its own submodule rebinds the submodule name on
+        #   the parent package, clobbering any same-named lazy proxy in the
+        #   package's namespace
+        #   (e.g. "from capture_method.ScrotCaptureMethod import ScrotCaptureMethod").
+        #   https://github.com/python/cpython/issues/151208
+        # - A relative "from . import x" binds a lazy proxy that fails to reify
+        #   on attribute access (e.g. PIL/__init__.py's
+        #   "__version__ = _version.__version__" sees the raw proxy).
+        #   TODO: Report upstream, possibly same root cause as the issue above.
+        if importing.partition(".")[0] == imported.partition(".")[0]:
+            return False
+        return importing.partition(".")[0] not in _EAGER_INTERNALS
+
+    sys.set_lazy_imports_filter(_lazy_imports_filter)
+    sys.set_lazy_imports("all")
+
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
 # The unittest workaround significantly increases
