@@ -34,10 +34,9 @@ if sys.platform == "linux":
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
 # ruff: disable[E402] # https://github.com/astral-sh/ruff/issues/21423
-# Tee stdout/stderr before the heavy imports below, so import-time warnings and errors
-# (e.g. Xlib ResourceWarnings) are mirrored to the log footer too. This must run after the
-# platform-specific setup above (which has to happen before any Qt import) but before
-# cv2/PySide6/capture_method are imported.
+
+# Tee stdout/stderr as soon as possible, so import-time warnings and errors are also caught.
+# This must run after the platform-specific setup above (which has to happen before any Qt import).
 import log_capture
 
 log_capture.install()
@@ -112,9 +111,10 @@ CHECK_FPS_ITERATIONS = 10
 LOG_PANEL_HEIGHT = 250
 """How tall the expandable log history panel is when shown."""
 LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
-"""Color for log lines that came from stderr (warnings, errors, tracebacks)."""
-_LOG_LOCATION_PREFIX = re.compile(r"^\S+:\d+:\s+")
-"""Matches a leading ``path:lineno:`` (e.g. from a warning) to drop it from the footer preview."""
+"""Color for log lines that came from stderr (warnings, errors, tracebacks).
+Source: Pomegranate from https://flatuicolors.com/palette/defo"""
+LOG_LOCATION_PREFIX_RE = re.compile(r"^\S+:\d+:\s+")
+"""Matches a leading `path:lineno:` (e.g. from a warning) to drop it from the footer preview."""
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -149,8 +149,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     _last_footer_entry: log_capture.LogLine | None = None
     """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
 
-    # Window height with the log panel collapsed; captured from the .ui to fix the height per state.
     _collapsed_height = 0
+    """
+    Window height with the log panel collapsed; captured from the .ui to fix the height per state.
+    """
 
     def __init__(self):  # noqa: PLR0915
         super().__init__()
@@ -371,8 +373,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return
         timestamp, text, is_stderr = self._last_footer_entry
         # Footer is single-line and shows the message directly (no path prefix).
-        # First line of an (already-relativized) entry; drops a leading ``path:lineno:`` prefix.
-        first_line = _LOG_LOCATION_PREFIX.sub("", text.split("\n", 1)[0])
+        # First line of an (already-relativized) entry; drops a leading `path:lineno:` prefix.
+        first_line = LOG_LOCATION_PREFIX_RE.sub("", text.split("\n", 1)[0])
         # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
         # Not using isVisible()) as it's incorrect during startup restore, before window is shown
         chevron = "▶" if self.log_dock.isHidden() else "▲"

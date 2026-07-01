@@ -41,7 +41,7 @@ def _set_text_message(
     kill_button: str = "",
     accept_button: str = "",
 ):
-    # Also surface the error in the log (console + footer/history) as a single stderr entry.
+    # Also surface the error message in the logs
     plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
     sys.stderr.write(f"{plain_message}\n{details}\n" if details else f"{plain_message}\n")
 

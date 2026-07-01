@@ -1,10 +1,10 @@
 """
-Capture everything written to the console (``print``, ``warnings``, ``logging``'s last-resort
+Capture everything written to the console (`print`, `warnings`, `logging`'s last-resort
 handler, uncaught tracebacks) without suppressing it, and re-broadcast each completed line as a Qt
 signal so the GUI can surface it in the log footer.
 
-The real ``sys.stdout`` / ``sys.stderr`` are *teed*, never replaced: writes still reach the original
-streams byte-for-byte (this keeps the ``--auto-controlled`` LiveSplit stdout protocol intact), and a
+The real `sys.stdout` / `sys.stderr` are *teed*, never replaced: writes still reach the original
+streams byte-for-byte (this keeps the `--auto-controlled` LiveSplit stdout protocol intact), and a
 copy of each line is emitted on top.
 """
 
@@ -19,32 +19,27 @@ from typing import TextIO, cast, override
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-LOG_HISTORY_MAX_LINES = 5000
-"""A line is more than enough context for a footer, but keep a generous scrollback for the panel."""
+LOG_HISTORY_MAX_LINES = 256 * 2**4
+"""Arbitrary scrollback cap. Memory-bounded, but more than enough for a log session."""
 TIMESTAMP_FORMAT = "%H:%M:%S.%f"
 """Time-only (no date) timestamp prefixed to each displayed log line. `%f` is microseconds; the last
 3 digits are trimmed off at format time to leave milliseconds."""
 
 EXCLUDED_SUBSTRINGS = (
-    # The `keyboard` library prints this on Linux when AutoSplit isn't in the `input` group.
-    # AutoSplit already surfaces this properly via `error_messages.linux_groups()`.
+    # False-positive: `keyboard` prints this on first import even when the user IS in the `input`
+    # group. A proper check is already done and shown through `error_messages.linux_groups()`.
     "You must be in the 'input' group to access global events",
 )
-"""Substrings of known-benign dependency messages to hide from the footer/history because they would
-mislead users. These are still written to the real console: only the in-app log is filtered"""
+"""Substrings of entries to hide from the log history because they would mislead users.
+These are still written to the real console: only the in-app log is filtered"""
 
 LogLine = tuple[str, str, bool]
-"""A logged line: ``(timestamp, text, is_stderr)``. ``is_stderr`` marks warnings/errors."""
-
-_WORKING_DIR_PREFIX = f"{os.getcwd()}{os.sep}"
-"""Absolute prefix stripped from captured paths to show them relative to the working dir."""
+"""A logged line: `(timestamp, text, is_stderr)`. `is_stderr` marks warnings/errors."""
 
 
 class LogEmitter(QtCore.QObject):
     """Thread-safe fan-out of logged lines to the GUI, with a bounded scrollback buffer."""
 
-    # `Signal(LogLine)` can't be used: PySide rejects the subscripted `tuple[...]` alias and
-    # silently registers a zero-arg signal, so the payload type is documented here instead.
     line_logged = QtCore.Signal(tuple)
     """Emitted once per completed line, carrying a `LogLine`: `(timestamp, text, is_stderr)`."""
 
@@ -58,15 +53,14 @@ class LogEmitter(QtCore.QObject):
         # filters out blank lines (e.g. a lone "\n" write) and known-benign noise.
         if not text or any(excluded in text for excluded in EXCLUDED_SUBSTRINGS):
             return
-        # Store paths relative to the working dir (the console already got the absolute ones).
-        text = text.replace(_WORKING_DIR_PREFIX, "")
+        # Store paths relative to the working dir by stripping the working dir path
+        text = text.replace(f"{os.getcwd()}{os.sep}", "")
         # Stamp at capture time (on the writing thread) so the time reflects when it was logged.
         # Naive local wall-clock time is intentional for a log footer (DTZ005: no tz wanted).
         timestamp = datetime.now().strftime(TIMESTAMP_FORMAT)[:-3] + ":"  # noqa: DTZ005
         log_line: LogLine = (timestamp, text, is_stderr)
         with self._lock:
             self._history.append(log_line)
-        # Queued across threads thanks to Qt's auto-connection: safe to call from any thread.
         self.line_logged.emit(log_line)
 
     def history(self):
@@ -82,12 +76,12 @@ LOG_EMITTER = LogEmitter()
 class _TeeStream:
     """
     A text stream that forwards to a real stream (if any) and mirrors completed output to the
-    emitter. ``real`` may be ``None`` in frozen ``--noconsole`` builds, in which case there is no
+    emitter. `real` may be `None` in frozen `--noconsole` builds, in which case there is no
     console to write to but the footer still receives the output.
 
-    A single ``write`` is treated as one log entry, even when it spans several lines (e.g. a
+    A single `write` is treated as one log entry, even when it spans several lines (e.g. a
     multi-line warning), so it gets a single timestamp and renders as one multi-line block.
-    Separate ``write`` calls (e.g. successive ``print`` calls) stay separate entries.
+    Separate `write` calls (e.g. successive `print` calls) stay separate entries.
     """
 
     def __init__(self, real: TextIO | None, emitter: LogEmitter, *, is_stderr: bool):
@@ -123,7 +117,7 @@ class _TeeStream:
 
 def install():
     """
-    Wrap ``sys.stdout`` and ``sys.stderr`` so console output is mirrored to `LOG_EMITTER`.
+    Wrap `sys.stdout` and `sys.stderr` so console output is mirrored to `LOG_EMITTER`.
 
     Call once, as early as possible, so startup output is captured.
     """
@@ -134,7 +128,7 @@ def install():
 class ClickableLabel(QtWidgets.QLabel):
     """
     A `QLabel` that emits `clicked` when pressed and right-elides its text to fit its current width.
-    Used as the log footer; promoted from `QLabel` in ``design.ui``.
+    Used as the log footer; promoted from `QLabel` in `design.ui`.
     """
 
     clicked = QtCore.Signal()
