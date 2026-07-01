@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import sys
 import warnings
 
@@ -120,6 +121,13 @@ LOG_FOOTER_STYLE = """
 ClickableLabel {{ padding: 1px 16px 1px 6px; color: {color}; }}
 ClickableLabel:hover {{ background-color: palette(midlight); }}
 """
+_LOG_LOCATION_PREFIX = re.compile(r"^\S+:\d+:\s+")
+"""Matches a leading ``path:lineno:`` (e.g. from a warning) to drop it from the footer preview."""
+
+
+def _footer_preview(text: str) -> str:
+    """First line of an (already-relativized) entry; drops a leading ``path:lineno:`` prefix."""
+    return _LOG_LOCATION_PREFIX.sub("", text.split("\n", 1)[0])
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -330,11 +338,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
         # Surface anything already logged (e.g. the version/PID line) before connecting live.
         history = log_capture.LOG_EMITTER.history()
-        for timestamp, text, is_stderr in history:
-            self._append_log_line(timestamp, text, is_stderr=is_stderr)
+        for log_line in history:
+            self._append_log_line(log_line)
         if history:
-            last_timestamp, last_text, last_is_stderr = history[-1]
-            self._update_log_footer(last_timestamp, last_text, is_stderr=last_is_stderr)
+            self._update_log_footer(history[-1])
         log_capture.LOG_EMITTER.line_logged.connect(self._on_log_line)
 
         # Restore the panel's last expanded/collapsed state.
@@ -351,7 +358,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self._set_log_panel_visible(not self.log_dock.isVisible())
         user_profile.QT_SETTINGS.setValue("log_panel_visible", self.log_dock.isVisible())
 
-    def _append_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
+    def _append_log_line(self, log_line: log_capture.LogLine):
+        timestamp, text, is_stderr = log_line
         cursor = self.log_history_view.textCursor()
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
         char_format = QtGui.QTextCharFormat()
@@ -363,16 +371,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         scrollbar = self.log_history_view.verticalScrollBar()
         scrollbar.setValue(scrollbar.maximum())
 
-    def _update_log_footer(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
-        self._last_footer_entry = (timestamp, text, is_stderr)
+    def _update_log_footer(self, log_line: log_capture.LogLine):
+        self._last_footer_entry = log_line
         self._refresh_log_footer()
 
     def _refresh_log_footer(self):
         if self._last_footer_entry is None:
             return
         timestamp, text, is_stderr = self._last_footer_entry
-        # The footer is a single line; show the timestamp and first line of (multi-line) entries.
-        first_line = text.split("\n", 1)[0]
+        # Footer is single-line and shows the message directly (no path prefix).
+        first_line = _footer_preview(text)
         # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
         chevron = "▲" if self.log_dock.isVisible() else "▶"
         color = LOG_STDERR_COLOR.name() if is_stderr else "palette(text)"
@@ -380,9 +388,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
 
     @QtCore.Slot(str, str, bool)
-    def _on_log_line(self, timestamp: str, text: str, is_stderr: bool):  # noqa: FBT001 # is_stderr is intrinsic line data, not an arbitrary boolean flag
-        self._append_log_line(timestamp, text, is_stderr)
-        self._update_log_footer(timestamp, text, is_stderr)
+    def _on_log_line(self, *log_line: *log_capture.LogLine):
+        self._append_log_line(log_line)
+        self._update_log_footer(log_line)
 
     def __browse(self):
         # User selects the file with the split images in it.

@@ -10,6 +10,7 @@ copy of each line is emitted on top.
 
 from __future__ import annotations
 
+import os
 import sys
 import threading
 from collections import deque
@@ -35,6 +36,9 @@ mislead users. These are still written to the real console: only the in-app log 
 LogLine = tuple[str, str, bool]
 """A logged line: ``(timestamp, text, is_stderr)``. ``is_stderr`` marks warnings/errors."""
 
+_WORKING_DIR_PREFIX = f"{os.getcwd()}{os.sep}"
+"""Absolute prefix stripped from captured paths to show them relative to the working dir."""
+
 
 class LogEmitter(QtCore.QObject):
     """Thread-safe fan-out of logged lines to the GUI, with a bounded scrollback buffer."""
@@ -52,6 +56,8 @@ class LogEmitter(QtCore.QObject):
         # filters out blank lines (e.g. a lone "\n" write) and known-benign noise.
         if not text or any(excluded in text for excluded in EXCLUDED_SUBSTRINGS):
             return
+        # Store paths relative to the working dir (the console already got the absolute ones).
+        text = text.replace(_WORKING_DIR_PREFIX, "")
         # Stamp at capture time (on the writing thread) so the time reflects when it was logged.
         # Naive local wall-clock time is intentional for a log footer (DTZ005: no tz wanted).
         timestamp = datetime.now().strftime(TIMESTAMP_FORMAT)[:-3] + ":"  # noqa: DTZ005
