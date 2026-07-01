@@ -327,7 +327,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self._append_log_line(log_line)
         if history:
             self._update_log_footer(history[-1])
-        log_capture.LOG_EMITTER.line_logged.connect(self._on_log_line)
+        # Each live line goes into the panel and updates the footer
+        # (append first, so the footer's single-line preview reflects the line that was just added).
+        log_capture.LOG_EMITTER.line_logged.connect(self._append_log_line)
+        log_capture.LOG_EMITTER.line_logged.connect(self._update_log_footer)
 
         # Restore the panel's last expanded/collapsed state.
         self._set_log_panel_visible(
@@ -376,11 +379,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
         self.log_footer_label.setStyleSheet(stderr_color)
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
-
-    @QtCore.Slot(str, str, bool)
-    def _on_log_line(self, *log_line: *log_capture.LogLine):
-        self._append_log_line(log_line)
-        self._update_log_footer(log_line)
 
     def __browse(self):
         # User selects the file with the split images in it.

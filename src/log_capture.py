@@ -43,8 +43,10 @@ _WORKING_DIR_PREFIX = f"{os.getcwd()}{os.sep}"
 class LogEmitter(QtCore.QObject):
     """Thread-safe fan-out of logged lines to the GUI, with a bounded scrollback buffer."""
 
-    line_logged = QtCore.Signal(str, str, bool)
-    """Emitted once per completed line: ``(timestamp, text, is_stderr)``."""
+    # `Signal(LogLine)` can't be used: PySide rejects the subscripted `tuple[...]` alias and
+    # silently registers a zero-arg signal, so the payload type is documented here instead.
+    line_logged = QtCore.Signal(tuple)
+    """Emitted once per completed line, carrying a `LogLine`: `(timestamp, text, is_stderr)`."""
 
     def __init__(self):
         super().__init__()
@@ -61,12 +63,13 @@ class LogEmitter(QtCore.QObject):
         # Stamp at capture time (on the writing thread) so the time reflects when it was logged.
         # Naive local wall-clock time is intentional for a log footer (DTZ005: no tz wanted).
         timestamp = datetime.now().strftime(TIMESTAMP_FORMAT)[:-3] + ":"  # noqa: DTZ005
+        log_line: LogLine = (timestamp, text, is_stderr)
         with self._lock:
-            self._history.append((timestamp, text, is_stderr))
+            self._history.append(log_line)
         # Queued across threads thanks to Qt's auto-connection: safe to call from any thread.
-        self.line_logged.emit(timestamp, text, is_stderr)
+        self.line_logged.emit(log_line)
 
-    def history(self) -> list[LogLine]:
+    def history(self):
         """Snapshot of the lines logged so far, oldest first."""
         with self._lock:
             return list(self._history)
@@ -93,7 +96,7 @@ class _TeeStream:
         self._is_stderr = is_stderr
         self._partial = ""
 
-    def write(self, text: str) -> int:
+    def write(self, text: str):
         if self._real is not None:
             self._real.write(text)
         self._partial += text
@@ -109,7 +112,7 @@ class _TeeStream:
         if self._real is not None:
             self._real.flush()
 
-    def __getattr__(self, name: str) -> object:
+    def __getattr__(self, name: str):
         # Delegate everything else (encoding, fileno, isatty, errors, ...) to the real stream so the
         # tee is indistinguishable from it. `_real` is always set in __init__, so no recursion.
         real = self.__dict__["_real"]
