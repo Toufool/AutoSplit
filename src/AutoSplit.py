@@ -108,8 +108,6 @@ if TYPE_CHECKING:
 
 CHECK_FPS_ITERATIONS = 10
 
-LOG_PANEL_HEIGHT = 250
-"""How tall the expandable log history panel is when shown."""
 LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
 """Color for log lines that came from stderr (warnings, errors, tracebacks).
 Source: Pomegranate from https://flatuicolors.com/palette/defo"""
@@ -145,14 +143,6 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     UpdateCheckerWidget: update_checker.Ui_UpdateChecker | None = None
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
-
-    _last_footer_entry: log_capture.LogLine | None = None
-    """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
-
-    _collapsed_height = 0
-    """
-    Window height with the log panel collapsed; captured from the .ui to fix the height per state.
-    """
 
     def __init__(self):  # noqa: PLR0915
         super().__init__()
@@ -309,9 +299,24 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     # FUNCTIONS
 
+    # region Log footer panel
+    _last_log_footer_entry: log_capture.LogLine | None = None
+    """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
+
+    _collapsed_height = 0
+    """
+    Window height with the log panel collapsed; captured from the .ui to fix the height per state.
+    """
+
+    _log_panel_height = 0
+    """Window growth when the panel opens; derived from the .ui (expanded - collapsed height)."""
+
     def _setup_log_footer(self):
         """Wire up the clickable log footer and the expandable log history panel."""
+        # Both come from the .ui: collapsed = minimumSize height, panel = designed (expanded)
+        # geometry height minus that. Captured before setFixedHeight() overwrites minimumHeight().
         self._collapsed_height = self.minimumHeight()
+        self._log_panel_height = self.height() - self._collapsed_height
         # The status bar doesn't add() its .ui child, and stretch isn't expressible there.
         self.status_bar.addWidget(self.log_footer_label, 1)
         self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
@@ -320,6 +325,9 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.log_history_view.setFont(  # Use the system's monospace font.
             QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.SystemFont.FixedFont)
         )
+        # Drop the .ui's Designer-only placeholders (kept there as layout/line-count notes).
+        self.log_history_view.clear()
+        self.log_dock.setWindowTitle("")
         self.log_footer_label.clicked.connect(self._toggle_log_panel)
 
         # Include logs already emitted before connecting live.
@@ -341,7 +349,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
         self.log_dock.setVisible(show)
         # Fix the height per state so it can't be dragged to over-expand or hide content.
-        self.setFixedHeight(self._collapsed_height + (LOG_PANEL_HEIGHT if show else 0))
+        self.setFixedHeight(self._collapsed_height + (self._log_panel_height if show else 0))
         self._refresh_log_footer()  # Flip the chevron to match the new state.
 
     def _toggle_log_panel(self):
@@ -364,13 +372,13 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         scrollbar.setValue(scrollbar.maximum())
 
     def _update_log_footer(self, log_line: log_capture.LogLine):
-        self._last_footer_entry = log_line
+        self._last_log_footer_entry = log_line
         self._refresh_log_footer()
 
     def _refresh_log_footer(self):
-        if self._last_footer_entry is None:
+        if self._last_log_footer_entry is None:
             return
-        timestamp, text, is_stderr = self._last_footer_entry
+        timestamp, text, is_stderr = self._last_log_footer_entry
         # Footer is single-line and shows the message directly (no path prefix).
         # First line of an (already-relativized) entry; drops a leading `path:lineno:` prefix.
         first_line = LOG_LOCATION_PREFIX_RE.sub("", text.split("\n", 1)[0])
@@ -380,6 +388,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
         self.log_footer_label.setStyleSheet(stderr_color)
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
+
+    # endregion
 
     def __browse(self):
         # User selects the file with the split images in it.

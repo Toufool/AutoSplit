@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>786</width>
-    <height>700</height>
+    <height>598</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,7 +20,7 @@
   <property name="maximumSize">
    <size>
     <width>786</width>
-    <height>720</height>
+    <height>598</height>
    </size>
   </property>
   <property name="font">
@@ -988,11 +988,15 @@ ClickableLabel:hover { background-color: palette(midlight); }</string>
    </widget>
   </widget>
   <widget class="QDockWidget" name="log_dock">
+   <property name="styleSheet">
+    <string notr="true">QDockWidget::title { padding: 6px;  }</string>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Log</string>
+    <string>1 (docker header can't be hidden in editor, removed at runtime)
+2 (line count height is approximate, making header appear about 2 lines)</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -1013,8 +1017,24 @@ ClickableLabel:hover { background-color: palette(midlight); }</string>
      </property>
      <item>
       <widget class="QPlainTextEdit" name="log_history_view">
+       <property name="font">
+        <font>
+         <family>monospace</family>
+        </font>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
+       </property>
+       <property name="plainText">
+        <string>3
+4
+5
+6
+7
+8
+9
+10
+11</string>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
