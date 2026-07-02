@@ -9,7 +9,7 @@ import traceback
 from types import TracebackType
 from typing import TYPE_CHECKING, NoReturn
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from utils import FROZEN, GITHUB_REPOSITORY
 
@@ -41,6 +41,10 @@ def _set_text_message(
     kill_button: str = "",
     accept_button: str = "",
 ):
+    # Also surface the error message in the logs
+    plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
+    sys.stderr.write(f"{plain_message}\n{details}\n" if details else f"{plain_message}\n")
+
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
     message_box.setTextFormat(QtCore.Qt.TextFormat.RichText)
