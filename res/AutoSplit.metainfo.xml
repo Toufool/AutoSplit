@@ -6,18 +6,12 @@
   <name>AutoSplit</name>
   <summary>Image comparison based auto splitter for speedrunning</summary>
   <description>
-    <p>
-      This program can be used to automatically start, split, and reset
-      your preferred speedrun timer by comparing images to a capture region.
-    </p>
-    <p>
-      This allows you to focus more on your speedrun and less on managing your timer.
-      It also improves the accuracy of your splits.
-    </p>
-    <p>
-      It can be used in tandem with any speedrun timer that accepts hotkeys
-      (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.
-    </p>
+    <p>This program can be used to automatically start, split, and reset
+      your preferred speedrun timer by comparing images to a capture region.</p>
+    <p>This allows you to focus more on your speedrun and less on managing your timer.
+      It also improves the accuracy of your splits.</p>
+    <p>It can be used in tandem with any speedrun timer that accepts hotkeys
+      (LiveSplit, WSplit, etc.), and can be integrated with LiveSplit.</p>
   </description>
   <categories>
     <category>Utility</category>
@@ -59,7 +53,8 @@
   <url type="contribute">https://github.com/Toufool/AutoSplit/blob/main/docs/CONTRIBUTING.md</url>
   <launchable type="desktop-id">AutoSplit.desktop</launchable>
   <releases>
-    <!-- https://www.freedesktop.org/software/appstream/docs/sect-Metadata-Releases.html#tag-release-url -->
+    <!--
+    https://www.freedesktop.org/software/appstream/docs/sect-Metadata-Releases.html#tag-release-url -->
     <url type="details">https://github.com/Toufool/AutoSplit/releases</url>
   </releases>
   <recommends>
@@ -82,13 +77,11 @@
   <screenshots>
     <screenshot type="default" environment="windows10:dark">
       <image
-        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/example.gif"
-      />
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/example.gif" />
     </screenshot>
     <screenshot environment="windows10:light">
       <image
-        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/mask_example_image.gif"
-      />
+        source="https://raw.githubusercontent.com/Toufool/AutoSplit/refs/heads/main/docs/mask_example_image.gif" />
     </screenshot>
   </screenshots>
   <!-- https://hughsie.github.io/oars/ -->
