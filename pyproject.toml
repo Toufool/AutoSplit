@@ -60,6 +60,7 @@ dev = [
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
 ]
+
 [tool.uv]
 required-version = ">=0.11.25" # Lockfile supported environments simplifications
 environments = [
