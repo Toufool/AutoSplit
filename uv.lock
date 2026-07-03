@@ -23,6 +23,10 @@ typed-d3dshot = false
 opencv-contrib-python-headless = { timestamp = "0001-01-01T00:00:00Z", span = "P1D" }
 
 [manifest]
+overrides = [
+    { name = "numpy", marker = "python_full_version < '3.15'", specifier = ">=2.3.2" },
+    { name = "numpy", marker = "python_full_version >= '3.15'", specifier = ">=2.3.2", index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" },
+]
 
 [[manifest.dependency-metadata]]
 name = "pyautogui"
