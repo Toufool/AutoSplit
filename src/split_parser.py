@@ -30,7 +30,8 @@ if TYPE_CHECKING:
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-) = tuple(range(MAXBYTE))  # No more flags than Python's cached small integers
+    # Keep combined bitflags <= 256 (Python cached small integers)
+) = tuple(1 << i for i in range(8))
 
 FileFlagValueT = TypeVar("FileFlagValueT", str, int, float)
 
