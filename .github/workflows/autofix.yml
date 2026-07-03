@@ -19,6 +19,7 @@ jobs:
           activate-environment: true
       # Not locked, this will fix lock file if we forgot about it
       - run: uv sync --only-group=formatters
+
       - run: ruff check --fix
       - run: ruff format
         # Format even if the the previous step failed
