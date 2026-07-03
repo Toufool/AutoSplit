@@ -80,6 +80,12 @@ dependency-metadata = [
   { name = "PyAutoGUI", requires-dist = [] },
   { name = "types-PyAutoGUI", requires-dist = [] },
 ]
+override-dependencies = [
+  # opencv-contrib-python-headless requires numpy>=2,<2.3.0 but that's a bad upper bound
+  # https://github.com/opencv/opencv-python/pull/1121
+  # https://github.com/opencv/opencv-python/issues/1201
+  "numpy>=2.3.2",
+]
 find-links = ["./scripts"] # Discover local wheels
 
 exclude-newer = "1 week"
