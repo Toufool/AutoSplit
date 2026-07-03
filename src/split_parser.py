@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
-from utils import MAXBYTE, is_valid_image
+from utils import is_valid_image
 
 if sys.platform == "win32":
     from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
