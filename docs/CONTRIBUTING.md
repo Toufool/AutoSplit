@@ -36,7 +36,7 @@ As time goes on, project-specific standards and "gotchas" in the frameworks we u
 
 The bigger the bundle, the longer it takes to boot single-file executables. That is because we need to ship everything and the bootloader basically has to extract it all.
 Our main use case is a single-file that is as easy to use as possible for the end user.
-Keeping install time, build time and bandwith as low as possible is also a nice-to-have.
+Keeping install time, build time and bandwidth as low as possible is also a nice-to-have.
 
 You should also consider whether the work the dependency is doing is simple enough that you could implement it yourself.
 

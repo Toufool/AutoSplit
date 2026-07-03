@@ -5,15 +5,14 @@ Set-Location "$PSScriptRoot/.."
 
 New-Item ./src/gen -ItemType directory -Force | Out-Null
 New-Item ./src/gen/__init__.py -ItemType File -Force | Out-Null
-uv run --active --no-sync pyside6-uic './res/about.ui' -o './src/gen/about.py'
-uv run --active --no-sync pyside6-uic './res/design.ui' -o './src/gen/design.py'
-uv run --active --no-sync pyside6-uic './res/settings.ui' -o './src/gen/settings.py'
-uv run --active --no-sync pyside6-uic './res/update_checker.ui' -o './src/gen/update_checker.py'
+uv run --active --no-sync pyside6-uic --from-imports './res/about.ui' -o './src/gen/about.py'
+uv run --active --no-sync pyside6-uic --from-imports './res/design.ui' -o './src/gen/design.py'
+uv run --active --no-sync pyside6-uic --from-imports './res/settings.ui' -o './src/gen/settings.py'
+uv run --active --no-sync pyside6-uic --from-imports './res/update_checker.ui' -o './src/gen/update_checker.py'
 uv run --active --no-sync pyside6-rcc './res/resources.qrc' -o './src/gen/resources_rc.py'
 $files = Get-ChildItem ./src/gen/ *.py
 foreach ($file in $files) {
   (Get-Content $file.PSPath) |
-    ForEach-Object { $_.replace('import resources_rc', 'from . import resources_rc') } |
     ForEach-Object { $_ -replace 'def (\w+?)\(self, (\w+?)\):', 'def $1(self, $2: QWidget):' } |
     Set-Content $file.PSPath
 }

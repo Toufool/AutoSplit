@@ -8,10 +8,7 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
-  # Last version with sdist # TODO: Bump when free-threading wheels
-  # >= still resolves above for ARM64 and fails with missing wheels+sdist
-  "opencv-contrib-python-headless ==4.12.0.88",
-
+  "opencv-contrib-python-headless >=5.0", # Restored sdist
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
@@ -20,7 +17,7 @@ dependencies = [
 
   #
   # Build and compile resources
-  "pyinstaller >=6.15.0", # Python 3.14 support
+  "pyinstaller >=6.21.0", # Python 3.15 support
 
   #
   # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
@@ -44,26 +41,27 @@ dependencies = [
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
-ruff = [
+formatters = [
   "beslogic-ruff-config",
+  "dprint-py >=0.50.0.0",
   "ruff", # Version should come from beslogic-ruff-config and the lock file
 ]
 dev = [
   #
   # Linters & Formatters
-  "dprint-py >=0.50.0.0",
   "mypy >=2.1", # TODO: Bump when 3.15 wheels
   "pyright[nodejs] >=1.1.400", # reportPrivateImportUsage behaviour change
-  { include-group = "ruff" },
+  { include-group = "formatters" },
   #
   # Types
   "types-PyAutoGUI",
   "types-keyboard",
-  "types-pyinstaller",
+  "types-pyinstaller >=6.21.0.20260616", # types to check for Splash screen support
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
 ]
 [tool.uv]
+required-version = ">=0.11.25" # Lockfile supported environments simplifications
 environments = [
   # AutoSplit does not currently support macOS
   "sys_platform == 'linux'",
@@ -99,6 +97,7 @@ opencv-python = ["numpy>=2.3.2"]
 typed-D3DShot = false # I own it
 pyside6-essentials = false
 shiboken6 = false
+opencv-contrib-python-headless = "12 hours"
 
 ###
 # Development channels

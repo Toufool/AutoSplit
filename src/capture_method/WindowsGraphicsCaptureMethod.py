@@ -156,7 +156,7 @@ Caps at around 60 FPS."""
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
-        image.reshape((self.size.height, self.size.width, BGRA_CHANNEL_COUNT))
+        image = image.reshape((self.size.height, self.size.width, BGRA_CHANNEL_COUNT))
         image = image[
             selection["y"] : selection["y"] + selection["height"],
             selection["x"] : selection["x"] + selection["width"],
