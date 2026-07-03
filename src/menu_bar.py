@@ -15,6 +15,7 @@ from PySide6.QtGui import QBrush, QPalette
 from PySide6.QtWidgets import QFileDialog
 
 import error_messages
+import user_profile
 from capture_method import (
     CAPTURE_METHODS,
     CameraInfo,
@@ -27,7 +28,6 @@ from hotkeys import HOTKEYS, HOTKEYS_WHEN_AUTOCONTROLLED, CommandStr, set_hotkey
 from utils import AUTOSPLIT_VERSION, GITHUB_REPOSITORY, ONE_SECOND, decimal, fire_and_forget
 
 if TYPE_CHECKING:
-    import user_profile
     from AutoSplit import AutoSplit
 
 HALF_BRIGHTNESS = 128

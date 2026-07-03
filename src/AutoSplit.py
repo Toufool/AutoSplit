@@ -323,20 +323,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     _last_log_footer_entry: log_capture.LogLine | None = None
     """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
 
-    _collapsed_height = 0
-    """
-    Window height with the log panel collapsed; captured from the .ui to fix the height per state.
-    """
-
-    _log_panel_height = 0
-    """Window growth when the panel opens; derived from the .ui (expanded - collapsed height)."""
-
     def _setup_log_footer(self):
         """Wire up the clickable log footer and the expandable log history panel."""
-        # Both come from the .ui: collapsed = minimumSize height, panel = designed (expanded)
-        # geometry height minus that. Captured before setFixedHeight() overwrites minimumHeight().
-        self._collapsed_height = self.minimumHeight()
-        self._log_panel_height = self.height() - self._collapsed_height
         # The status bar doesn't add() its .ui child, and stretch isn't expressible there.
         self.status_bar.addWidget(self.log_footer_label, 1)
         self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
@@ -368,8 +356,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
         self.log_dock.setVisible(show)
-        # Fix the height per state so it can't be dragged to over-expand or hide content.
-        self.setFixedHeight(self._collapsed_height + (self._log_panel_height if show else 0))
+        # The dock lives outside the central widget (a bottom dock area), so showing it grows the
+        # window downward without shifting content. Refit to the new content in whatever orientation
+        # the window currently has, sharing the layout-toggle's sizing path (fixed, non-resizable).
+        self._shrink_window_to_fit()
         self._refresh_log_footer()  # Flip the chevron to match the new state.
 
     def _toggle_log_panel(self):
