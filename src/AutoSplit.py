@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
+
 import os
+import re
 import sys
+import warnings
+
+# Enable all warnings, which Python hides by default outside __main__
+warnings.simplefilter("default")
 
 # Prevent PyAutoGUI and pywinctl from setting Process DPI Awareness,
 # which Qt tries to do then throws warnings about it.
@@ -27,6 +33,14 @@ if sys.platform == "linux":
     # Useful for debugging missing system packages
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
+# ruff: disable[E402] # https://github.com/astral-sh/ruff/issues/21423
+
+# Tee stdout/stderr as soon as possible, so import-time warnings and errors are also caught.
+# This must run after the platform-specific setup above (which has to happen before any Qt import).
+import log_capture
+
+log_capture.install()
+
 import signal
 from collections.abc import Callable
 from copy import deepcopy
@@ -45,6 +59,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QVBoxLayout,
+    QWidget,
 )
 
 import error_messages
@@ -86,7 +101,6 @@ from utils import (
     FROZEN,
     ONE_SECOND,
     RUNNING_WAYLAND,
-    SETTINGS,
     auto_split_directory,
     decimal,
     flatten,
@@ -96,10 +110,18 @@ from utils import (
     open_file,
 )
 
+# ruff: enable[E402]
+
 if TYPE_CHECKING:
     from cv2.typing import MatLike
 
 CHECK_FPS_ITERATIONS = 10
+
+LOG_STDERR_COLOR = QtGui.QColor("#c0392b")
+"""Color for log lines that came from stderr (warnings, errors, tracebacks).
+Source: Pomegranate from https://flatuicolors.com/palette/defo"""
+LOG_LOCATION_PREFIX_RE = re.compile(r"^\S+:\d+:\s+")
+"""Matches a leading `path:lineno:` (e.g. from a warning) to drop it from the footer preview."""
 
 
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
@@ -174,6 +196,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             f"AutoSplit v{AUTOSPLIT_VERSION}"
             + (" (externally controlled)" if self.is_auto_controlled else "")
         )
+        self._setup_log_footer()
 
         # Hotkeys need to be initialized to be passed as thread arguments in hotkeys.py
         for hotkey in HOTKEYS:
@@ -182,9 +205,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Get default values defined in SettingsDialog
         self.settings_dict = get_default_settings_from_ui(self)
         self.action_check_for_updates_on_open.setChecked(
-            cast("bool", SETTINGS.value("check_for_updates_on_open", True, type=bool))
+            cast(
+                "bool", user_profile.QT_SETTINGS.value("check_for_updates_on_open", True, type=bool)
+            )
         )
-
         if self.is_auto_controlled:
             self.start_auto_splitter_button.setEnabled(False)
 
@@ -196,10 +220,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.update_auto_control = AutoControlledThread(self)
             self.update_auto_control.start()
 
-        # split image folder line edit text
-        self.split_image_folder_input.setText("No Folder Selected")
-
         # Connecting menu actions
+        self.action_toggle_logs.triggered.connect(self._toggle_log_panel)
         self.action_view_help.triggered.connect(view_help)
         self.action_about.triggered.connect(lambda: open_about(self))
         self.action_about_qt.triggered.connect(about_qt)
@@ -229,7 +251,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             lambda: self.__reload_start_image(started_by_button=True)
         )
         self.action_check_for_updates_on_open.changed.connect(
-            lambda: SETTINGS.setValue(
+            lambda: user_profile.QT_SETTINGS.setValue(
                 "check_for_updates_on_open", self.action_check_for_updates_on_open.isChecked()
             )
         )
@@ -240,7 +262,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.main_splitter.setStretchFactor(1, 1)
         self.main_splitter.setStretchFactor(2, 1)
         self._layout_is_portrait = False
-        if SETTINGS.value("layout_is_portrait", False, type=bool):
+        if user_profile.QT_SETTINGS.value("layout_is_portrait", False, type=bool):
             self.toggle_layout()
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
@@ -296,6 +318,98 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             check_for_updates(self, check_on_open=True)
 
     # FUNCTIONS
+
+    # region Log footer panel
+    _last_log_footer_entry: log_capture.LogLine | None = None
+    """Last (timestamp, text, is_stderr) shown in the footer, kept so it can be re-rendered."""
+
+    _collapsed_height = 0
+    """
+    Window height with the log panel collapsed; captured from the .ui to fix the height per state.
+    """
+
+    _log_panel_height = 0
+    """Window growth when the panel opens; derived from the .ui (expanded - collapsed height)."""
+
+    def _setup_log_footer(self):
+        """Wire up the clickable log footer and the expandable log history panel."""
+        # Both come from the .ui: collapsed = minimumSize height, panel = designed (expanded)
+        # geometry height minus that. Captured before setFixedHeight() overwrites minimumHeight().
+        self._collapsed_height = self.minimumHeight()
+        self._log_panel_height = self.height() - self._collapsed_height
+        # The status bar doesn't add() its .ui child, and stretch isn't expressible there.
+        self.status_bar.addWidget(self.log_footer_label, 1)
+        self.status_bar.setContentsMargins(0, 0, 0, 0)  # Let the label's padding define the insets.
+        # An empty title bar (collapses to no height) makes the dock read as an inline panel.
+        self.log_dock.setTitleBarWidget(QWidget())
+        self.log_history_view.setFont(  # Use the system's monospace font.
+            QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.SystemFont.FixedFont)
+        )
+        # Drop the .ui's Designer-only placeholders (kept there as layout/line-count notes).
+        self.log_history_view.clear()
+        self.log_dock.setWindowTitle("")
+        self.log_footer_label.clicked.connect(self._toggle_log_panel)
+
+        # Include logs already emitted before connecting live.
+        history = log_capture.LOG_EMITTER.history()
+        for log_line in history:
+            self._append_log_line(log_line)
+        if history:
+            self._update_log_footer(history[-1])
+        # Each live line goes into the panel and updates the footer
+        # (append first, so the footer's single-line preview reflects the line that was just added).
+        log_capture.LOG_EMITTER.line_logged.connect(self._append_log_line)
+        log_capture.LOG_EMITTER.line_logged.connect(self._update_log_footer)
+
+        # Restore the panel's last expanded/collapsed state.
+        self._set_log_panel_visible(
+            show=cast("bool", user_profile.QT_SETTINGS.value("log_panel_visible", False, type=bool))
+        )
+
+    def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
+        self.log_dock.setVisible(show)
+        # Fix the height per state so it can't be dragged to over-expand or hide content.
+        self.setFixedHeight(self._collapsed_height + (self._log_panel_height if show else 0))
+        self._refresh_log_footer()  # Flip the chevron to match the new state.
+
+    def _toggle_log_panel(self):
+        self._set_log_panel_visible(not self.log_dock.isVisible())
+        user_profile.QT_SETTINGS.setValue("log_panel_visible", self.log_dock.isVisible())
+
+    def _append_log_line(self, log_line: log_capture.LogLine):
+        timestamp, text, is_stderr = log_line
+        cursor = self.log_history_view.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        char_format = QtGui.QTextCharFormat()
+        if is_stderr:
+            char_format.setForeground(LOG_STDERR_COLOR)
+        # Newline before each entry (not after) so there is no trailing blank line.
+        prefix = "" if self.log_history_view.document().isEmpty() else "\n"
+        # Align a multi-line entry's continuation lines under the text (past the timestamp).
+        body = text.replace("\n", "\n" + " " * (len(timestamp) + 1))
+        cursor.insertText(f"{prefix}{timestamp} {body}", char_format)
+        scrollbar = self.log_history_view.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
+    def _update_log_footer(self, log_line: log_capture.LogLine):
+        self._last_log_footer_entry = log_line
+        self._refresh_log_footer()
+
+    def _refresh_log_footer(self):
+        if self._last_log_footer_entry is None:
+            return
+        timestamp, text, is_stderr = self._last_log_footer_entry
+        # Footer is single-line and shows the message directly (no path prefix).
+        # First line of an (already-relativized) entry; drops a leading `path:lineno:` prefix.
+        first_line = LOG_LOCATION_PREFIX_RE.sub("", text.split("\n", 1)[0])
+        # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
+        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
+        chevron = "▶" if self.log_dock.isHidden() else "▲"
+        stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
+        self.log_footer_label.setStyleSheet(stderr_color)
+        self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
+
+    # endregion
 
     def __browse(self):
         # User selects the file with the split images in it.
@@ -1031,7 +1145,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self._layout_is_portrait
             else "Toggle Layout to Portrait"
         )
-        SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
+        user_profile.QT_SETTINGS.setValue("layout_is_portrait", self._layout_is_portrait)
         # The window keeps its old geometry after re-layout, leaving blank space.
         # Shrink it back to fit; deferred because the panel/splitter size hints
         # only settle over the next couple of layout passes.

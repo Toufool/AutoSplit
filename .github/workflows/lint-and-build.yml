@@ -53,7 +53,7 @@ jobs:
       # Per-package no-binary overrides no-build, allowing
       # known pure-Python source-only dependencies to still build.
       # The Build job intentionally builds some binary packages from source.
-      UV_NO_BINARY_PACKAGE: keyboard pyinstaller PyAutoGUI beslogic-ruff-config
+      UV_NO_BINARY_PACKAGE: keyboard PyAutoGUI beslogic-ruff-config
     strategy:
       fail-fast: false
       # Pyright is version and platform sensible

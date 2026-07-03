@@ -8,8 +8,14 @@
     <x>0</x>
     <y>0</y>
     <width>772</width>
-    <height>432</height>
+    <height>580</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>772</width>
+    <height>432</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -22,6 +28,9 @@
   <property name="windowIcon">
    <iconset resource="resources.qrc">
     <normaloff>:/resources/icon.ico</normaloff>:/resources/icon.ico</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow::separator { height: 0px; width: 0px; }</string>
   </property>
   <widget class="QWidget" name="central_widget">
    <layout class="QVBoxLayout" name="central_layout">
@@ -85,6 +94,9 @@
        </item>
        <item>
         <widget class="QLineEdit" name="split_image_folder_input">
+         <property name="text">
+          <string>No Folder Selected</string>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1152,6 +1164,7 @@
      <string>View</string>
     </property>
     <addaction name="action_toggle_layout"/>
+    <addaction name="action_toggle_logs"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
@@ -1168,6 +1181,95 @@
    <addaction name="menu_file"/>
    <addaction name="menu_view"/>
    <addaction name="menu_help"/>
+  </widget>
+  <widget class="QStatusBar" name="status_bar">
+   <property name="styleSheet">
+    <string notr="true">QStatusBar { border-top: 1px solid palette(mid); }
+ClickableLabel { padding: 1px 16px 1px 6px; }
+ClickableLabel:hover { background-color: palette(midlight); }</string>
+   </property>
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+   <widget class="ClickableLabel" name="log_footer_label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <horstretch>1</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="toolTip">
+     <string>Last log message. Click to show the full log.</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="log_dock">
+   <property name="styleSheet">
+    <string notr="true">QDockWidget::title { padding: 6px;  }</string>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>1 (docker header can't be hidden in editor, removed at runtime)
+2 (line count height is approximate, making header appear about 2 lines)</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="log_dock_contents">
+    <layout class="QVBoxLayout" name="log_dock_layout">
+     <property name="leftMargin">
+      <number>3</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>3</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPlainTextEdit" name="log_history_view">
+       <property name="font">
+        <font>
+         <family>monospace</family>
+        </font>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="plainText">
+        <string>3
+4
+5
+6
+7
+8
+9
+10
+11</string>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="action_view_help">
    <property name="text">
@@ -1271,8 +1373,32 @@
    <property name="text">
     <string>Toggle Layout to Portrait</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="action_toggle_logs">
+   <property name="text">
+    <string>Toggle Logs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
+   </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>log_capture</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>split_image_folder_input</tabstop>
   <tabstop>x_spinbox</tabstop>

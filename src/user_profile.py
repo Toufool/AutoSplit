@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, NoReturn, TypedDict, cast, override
 from warnings import deprecated
 
 import tomli_w
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
@@ -17,6 +17,8 @@ from utils import auto_split_directory
 
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
+
+QT_SETTINGS = QtCore.QSettings("AutoSplit", "AutoSplit")
 
 
 class UserProfileDict(TypedDict):
