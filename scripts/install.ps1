@@ -2,8 +2,8 @@
 
 param([switch]$WineCompat)
 
-# Validating user groups on Linux
 if ($IsLinux) {
+  # Validating user groups on Linux
   $groups = groups
   if ($groups.Contains('input') -and $groups.Contains('tty')) {
     Write-Host "User $Env:USER is already part of groups input and tty. No actions taken."
@@ -20,18 +20,15 @@ if ($IsLinux) {
       Write-Output 'SUBSYSTEM=="input", MODE="0666" GROUP="plugdev"' | sudo tee /etc/udev/rules.d/12-input.rules
       Write-Output 'SUBSYSTEM=="misc", MODE="0666" GROUP="plugdev"' | sudo tee -a /etc/udev/rules.d/12-input.rules
       Write-Output 'SUBSYSTEM=="tty", MODE="0666" GROUP="plugdev"' | sudo tee -a /etc/udev/rules.d/12-input.rules
-    }
-    Write-Host 'You have been added automatically,' `
-      "but still need to manually terminate your session with 'loginctl terminate-user $Env:USER'" `
-      'for the changes to take effect outside of this script.'
-    if (-not $Env:GITHUB_JOB) {
+
+      Write-Host 'You have been added automatically,' `
+        "but still need to manually terminate your session with 'loginctl terminate-user $Env:USER'" `
+        'for the changes to take effect outside of this script.'
       Write-Host -NoNewline 'Press any key to continue...'
       $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     }
   }
-}
 
-if ($IsLinux) {
   if (-not $Env:GITHUB_JOB -or $Env:GITHUB_JOB -eq 'Build') {
     # System dependencies
     if ((Get-Command apt-get, dpkg-query -ErrorAction SilentlyContinue).Count -eq 2) {
@@ -116,6 +113,6 @@ Write-Output "Installing Python dependencies with: uv $uvSyncArgs"
 uv @uvSyncArgs
 
 # Don't compile resources on the Build CI job as it'll do so in build script
-if (-not $prod) {
+if ($Env:GITHUB_JOB -ne 'Build') {
   & "$PSScriptRoot/compile_resources.ps1"
 }
