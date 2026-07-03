@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from PySide6 import QtCore
 
@@ -16,6 +16,7 @@ class AutoControlledThread(QtCore.QThread):
         self._autosplit_ref = autosplit
         super().__init__()
 
+    @override
     @QtCore.Slot()
     def run(self):
         while True:
