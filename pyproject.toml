@@ -8,7 +8,7 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
-  "opencv-contrib-python-headless >=4.13", # glibc 2.28 wheels (for aarch) # TODO: Bump when 3.15 wheels # TODO: Bump to 5.0 after a week for restored sdist
+  "opencv-contrib-python-headless >=5.0", # v4.13: glibc 2.28 wheels (for aarch); v5 restored sdist
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
@@ -85,6 +85,7 @@ find-links = ["./scripts"] # Discover local wheels
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
+opencv-contrib-python-headless = "1 day" # Fixed sdist
 
 ###
 # Development channels
