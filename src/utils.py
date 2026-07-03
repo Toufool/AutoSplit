@@ -259,7 +259,10 @@ def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
 
 
 def imread(filename: str, flags: int = cv2.IMREAD_COLOR):
-    return cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)
+    decoded_image = cv2.imdecode(np.fromfile(filename, dtype=np.uint8), flags)
+    if decoded_image is None:
+        raise ValueError(f"Could not decode '{filename}'. Make sure it is an image")
+    return decoded_image
 
 
 def imwrite(filename: str, img: MatLike, params: Sequence[int] = ()):
