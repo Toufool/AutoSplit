@@ -6,14 +6,7 @@ import cv2
 import Levenshtein
 import numpy as np
 
-from utils import (
-    BGRA_CHANNEL_COUNT,
-    MAXBYTE,
-    ColorChannel,
-    ImageShape,
-    is_valid_image,
-    run_tesseract,
-)
+from utils import MAXBYTE, ColorChannel, is_valid_image, run_tesseract
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -201,19 +194,3 @@ def get_comparison_method_by_index(comparison_method_index: int):
             return compare_phash
         case _:
             return __compare_dummy
-
-
-def check_if_image_has_transparency(image: MatLike):
-    # Check if there's a transparency channel (4th channel)
-    # and if at least one pixel is transparent (< 255)
-    if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
-        return False
-    mean: float = image[:, :, ColorChannel.Alpha].mean()
-    if mean == 0:
-        # Non-transparent images code path is usually faster and simpler, so let's return that
-        return False
-        # TODO: error message if all pixels are transparent
-        # (the image appears as all black in windows,
-        # so it's not obvious for the user what they did wrong)
-
-    return mean != MAXBYTE
