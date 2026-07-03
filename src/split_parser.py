@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
-from utils import is_valid_image
+from utils import MAXBYTE, is_valid_image
 
 if sys.platform == "win32":
     from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-) = tuple(1 << i for i in range(31))  # 32 bits of flags
+) = tuple(range(MAXBYTE))  # No more flags than Python's cached small integers
 
 FileFlagValueT = TypeVar("FileFlagValueT", str, int, float)
 
