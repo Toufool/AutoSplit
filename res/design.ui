@@ -1201,7 +1201,7 @@ ClickableLabel:hover { background-color: palette(midlight); }</string>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
       <horstretch>1</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
