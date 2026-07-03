@@ -7,6 +7,7 @@ import Levenshtein
 import numpy as np
 
 from utils import (
+    BGR_CHANNEL_COUNT,
     BGRA_CHANNEL_COUNT,
     MAXBYTE,
     ColorChannel,
@@ -22,7 +23,7 @@ MAXRANGE = MAXBYTE + 1
 CHANNELS = (ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value)
 HISTOGRAM_SIZE = (8, 8, 8)
 RANGES = (0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE)
-MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
+MASK_SIZE_MULTIPLIER = BGR_CHANNEL_COUNT * MAXBYTE * MAXBYTE
 MAX_VALUE = 1.0
 CV2_PHASH_SIZE = 8
 

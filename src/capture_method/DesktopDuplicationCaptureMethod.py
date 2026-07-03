@@ -71,4 +71,4 @@ https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"
         screenshot = self._desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None
-        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)

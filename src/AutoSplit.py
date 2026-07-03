@@ -1087,7 +1087,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             text = "\nor\n".join(self.split_image.texts)
             self.current_split_image.setText(f"Looking for OCR text:\n{text}")
         elif is_valid_image(self.split_image.byte_array):
-            set_preview_image(self.current_split_image, self.split_image.byte_array)
+            set_preview_image(self.current_split_image, self.split_image.get_preview_image())
 
         self.current_image_file_label.setText(self.split_image.filename)
         self.table_current_image_threshold_label.setText(

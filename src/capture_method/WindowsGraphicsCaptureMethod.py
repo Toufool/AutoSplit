@@ -7,6 +7,7 @@ if sys.platform != "win32":
 import asyncio
 from typing import TYPE_CHECKING, cast, override
 
+import cv2
 import numpy as np
 import win32api
 import win32gui
@@ -161,6 +162,8 @@ Caps at around 60 FPS."""
             selection["y"] : selection["y"] + selection["height"],
             selection["x"] : selection["x"] + selection["width"],
         ]
+        # The OS hands us a native BGRA buffer; drop the unused alpha
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
         self.last_converted_frame = image
         return image
 

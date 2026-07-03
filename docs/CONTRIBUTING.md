@@ -50,7 +50,7 @@ For image shape and channels, please use `utils.ImageShape` and `utils.ColorChan
 
 ### Image color format and channels
 
-To avoid image shape mismatch issues, and to keep code simpler, we standardize the image color format to BGRA. This should always be done early in the pipeline, so whatever functionality takes care of obtaining an image should also ensure its color format. You can do so with `cv2.cvtColor` (ie: `cv2.cvtColor(image, cv2.COLOR_RGBA2BGRA)` or `cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)`).
+To avoid image shape mismatch issues, reduce memory usage, and to keep code simpler, we standardize the image color format to BGR. This should always be done early in the pipeline, so whatever functionality takes care of obtaining an image should also ensure its color format. You can do so with `cv2.cvtColor` (ie: `cv2.cvtColor(image, cv2.COLOR_RGB2BGR)` or `cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)`). Split Images' transparency is handled by first extracting a binary mask into `AutoSplitImage.mask`.
 
 ### Split-specific setting overrides
 

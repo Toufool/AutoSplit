@@ -5,6 +5,7 @@ if sys.platform != "win32":
 import ctypes
 from typing import TYPE_CHECKING, override
 
+import cv2
 import numpy as np
 import pywintypes
 import win32con
@@ -84,7 +85,8 @@ The smaller the selected region, the more efficient it is."""
         try_delete_dc(compatible_dc)
         win32gui.ReleaseDC(hwnd, window_dc)
         win32gui.DeleteObject(bitmap.GetHandle())
-        return image
+        # The OS hands us a native BGRA buffer; drop the unused alpha
+        return None if image is None else cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
     @override
     def recover_window(self, captured_window_title: str):
