@@ -1248,6 +1248,9 @@ def main():
             myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
             shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
+        # Decouple from the executable basename (which varies per build)
+        app.setApplicationName("AutoSplit")
+        app.setApplicationVersion(AUTOSPLIT_VERSION)
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
 
         if is_already_open():

@@ -43,7 +43,7 @@ def _set_text_message(
 ):
     # Also surface the error message in the logs
     plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
-    sys.stderr.write(f"{plain_message}\n{details}\n" if details else f"{plain_message}\n")
+    print(f"{plain_message}\n{details}\n" if details else f"{plain_message}", sys.stderr)
 
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
@@ -84,6 +84,22 @@ def image_type(image: str):
     _set_text_message(
         f"{image!r} is not a valid image file, does not exist, "
         + "or the full image file path contains a special character."
+    )
+
+
+def image_fully_transparent(image: str):
+    file_app = "Explorer" if sys.platform == "win32" else "Manager"
+    _set_text_message(
+        f"{image!r} is fully transparent. "
+        + "Every pixel has an alpha of 0, so there is nothing left to compare against. "
+        + f"The image may be appearing as all black in your File {file_app}."
+    )
+
+
+def image_partial_transparency(image: str):
+    _set_text_message(
+        f"{image!r} contains semi-transparent pixels. "
+        + "To avoid confusion, only fully solid or fully transparent pixels are allowed."
     )
 
 
@@ -144,9 +160,9 @@ def invalid_hotkey(hotkey_name: str):
 
 
 def no_settings_file_on_open():
-    _set_text_message(
+    print(
         "No settings file found. "
-        + "One can be loaded on open if placed in the same folder as the AutoSplit executable."
+        + "One can be loaded on open if placed in the same folder as the AutoSplit executable.",
     )
 
 
