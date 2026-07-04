@@ -4,7 +4,6 @@ param([switch]$WineCompat)
 
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
-if ($WineCompat) { $WineCompat = '-WineCompat' }
 
 Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 
@@ -12,7 +11,7 @@ try {
   & 'scripts/compile_resources.ps1'
 
   $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
-  $pythonVersion = (uv run --active python --version) -replace ' (\d+\.\d+)\S*', '.$1'
+  $pythonVersion = (uv run --active python --version) -replace '^Python (\d+\.\d+).*', 'python$1'
 
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
   $supportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
@@ -39,9 +38,10 @@ try {
     $arguments += @('--splash=res/splash.png')
   }
   if ($IsWindows) {
+    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToLower()
     $arguments += @(
       '--onefile',
-      "--name=AutoSplit-$version.$pythonVersion-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)$WineCompat"
+      "--name=AutoSplit-$version+$pythonVersion-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
@@ -112,7 +112,7 @@ try {
     # AppImage naming nomenclature:
     # - https://github.com/AppImage/AppImageSpec/blob/master/draft.md#type-2-image-format
     # - https://github.com/AppImage/appimage.github.io#:~:text=Standard%20nomenclature
-    $appImageName = "AutoSplit-$version.$pythonVersion-$arch.AppImage"
+    $appImageName = "AutoSplit-$version+$pythonVersion-$arch.AppImage"
     & 'scripts/appimagetool.AppImage' build/AppDir dist/$appImageName
 
     Write-Host "Created dist/$appImageName"
