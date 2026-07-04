@@ -10,20 +10,8 @@ import cv2
 import numpy as np
 
 import error_messages
-from compare import (
-    check_if_image_has_transparency,
-    extract_and_compare_text,
-    get_comparison_method_by_index,
-)
-from utils import (
-    BGR_CHANNEL_COUNT,
-    MAXBYTE,
-    TESSERACT_PATH,
-    ColorChannel,
-    ImageShape,
-    imread,
-    is_valid_image,
-)
+from compare import extract_and_compare_text, get_comparison_method_by_index
+from utils import MAXBYTE, TESSERACT_PATH, imread, is_valid_image
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -52,8 +40,6 @@ class AutoSplitImage:
     image_type: ImageType
     byte_array: MatLike | None = None
     mask: MatLike | None = None
-    # This value is internal, check for mask instead
-    _has_transparency = False
     # These values should be overridden by some Defaults if None. Use getters instead
     __delay_time: float | None = None
     __comparison_method: int | None = None
@@ -167,17 +153,19 @@ class AutoSplitImage:
             error_messages.image_type(path)
             return
 
-        self._has_transparency = check_if_image_has_transparency(image)
+        transparency, alpha_nonzero_count = get_image_transparency(image)
+        if transparency == ImageTransparency.ERROR_FULLY_TRANSPARENT:
+            error_messages.image_fully_transparent(path)
+        elif transparency == ImageTransparency.ERROR_PARTIAL_TRANSPARENCY:
+            error_messages.image_partial_transparency(path)
+
         # If image has transparency, create a mask
-        if self._has_transparency:
+        if transparency == ImageTransparency.HAS_MASK:
             # Adaptively determine the target size according to
             # the number of nonzero elements in the alpha channel of the split image.
             # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # noqa: E501
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(
-                1,
-                sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])),
-            )
+            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / alpha_nonzero_count))
 
             image = cv2.resize(
                 image,
@@ -191,8 +179,8 @@ class AutoSplitImage:
             self.mask = cv2.inRange(image, MASK_LOWER_BOUND, MASK_UPPER_BOUND)
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
-            # Add Alpha channel if missing
-            if image.shape[ImageShape.Channels] == BGR_CHANNEL_COUNT:
+            if transparency == ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL:
+                # Add Alpha channel if missing
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
@@ -237,9 +225,11 @@ class AutoSplitImage:
 
 if True:
     from split_parser import (
+        ImageTransparency,
         comparison_method_from_filename,
         delay_time_from_filename,
         flags_from_filename,
+        get_image_transparency,
         loop_from_filename,
         pause_from_filename,
         threshold_from_filename,

@@ -8,7 +8,13 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
-  "opencv-contrib-python-headless >=5.0", # v4.13: glibc 2.28 wheels (for aarch); v5 restored sdist
+  # v4.13: glibc 2.28 wheels (for aarch); v5 restored sdist
+  "opencv-contrib-python-headless >=5.0; sys_platform != 'win32' or platform_machine != 'ARM64'",
+  # Windows ARM64 has no opencv wheel (any version) so it source-builds the sdist.
+  # v5 sdist fails to build there (opencv-python setup.py expects an ffmpeg dll that
+  # isn't provided for win-arm64). Pin to the last 4.x that builds until win-arm64
+  # wheels ship: https://github.com/opencv/opencv-python/pull/1143
+  "opencv-contrib-python-headless ==4.11.*; sys_platform == 'win32' and platform_machine == 'ARM64'",
   "packaging >=20.0", # py.typed
   "tomli-w >=1.1.0", # Typing fixes
 
