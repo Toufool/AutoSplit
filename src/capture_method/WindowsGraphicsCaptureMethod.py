@@ -22,7 +22,7 @@ from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitma
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
-from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
+from utils import ALPHA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -157,7 +157,7 @@ Caps at around 60 FPS."""
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
-        image = image.reshape((self.size.height, self.size.width, BGRA_CHANNEL_COUNT))
+        image = image.reshape((self.size.height, self.size.width, ALPHA_CHANNEL_COUNT))
         image = image[
             selection["y"] : selection["y"] + selection["height"],
             selection["x"] : selection["x"] + selection["width"],

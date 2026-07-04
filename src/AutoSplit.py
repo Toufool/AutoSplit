@@ -87,8 +87,8 @@ from split_parser import (
 )
 from user_profile import DEFAULT_PROFILE
 from utils import (
+    ALPHA_CHANNEL_COUNT,
     AUTOSPLIT_VERSION,
-    BGRA_CHANNEL_COUNT,
     FROZEN,
     ONE_SECOND,
     RUNNING_WAYLAND,
@@ -1160,7 +1160,7 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
     else:
         height, width, channels = image.shape
 
-        if channels == BGRA_CHANNEL_COUNT:
+        if channels == ALPHA_CHANNEL_COUNT:
             image_format = QtGui.QImage.Format.Format_RGBA8888
             capture = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA)
         else:

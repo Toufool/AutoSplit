@@ -73,10 +73,7 @@ Leaves behind a screenshot file in `/tmp` if interrupted."""
             selection["width"],
             selection["height"],
         )
-        if not is_valid_image(image):
-            return None
-        # `imread` with `IMREAD_COLOR_BGR` already gives us BGR
-        return image
+        return image if is_valid_image(image) else None
 
     @override
     def recover_window(self, captured_window_title: str):

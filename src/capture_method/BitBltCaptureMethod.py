@@ -13,7 +13,7 @@ import win32gui
 import win32ui
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import BGRA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
+from utils import ALPHA_CHANNEL_COUNT, get_window_bounds, is_valid_hwnd, try_delete_dc
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -78,15 +78,18 @@ The smaller the selected region, the more efficient it is."""
             # Invalid handle or the window was closed while it was being manipulated
             return None
 
-        image = None if is_blank(image) else image.reshape((height, width, BGRA_CHANNEL_COUNT))
+        if is_blank(image):
+            image = None
+        else:
+            image = image.reshape((height, width, ALPHA_CHANNEL_COUNT))
+            image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
         # Cleanup DC and handle
         try_delete_dc(dc_object)
         try_delete_dc(compatible_dc)
         win32gui.ReleaseDC(hwnd, window_dc)
         win32gui.DeleteObject(bitmap.GetHandle())
-        # The OS hands us a native BGRA buffer; drop the unused alpha
-        return None if image is None else cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+        return image
 
     @override
     def recover_window(self, captured_window_title: str):

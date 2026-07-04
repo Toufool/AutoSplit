@@ -13,7 +13,7 @@ from pywinctl import getTopWindowAt
 import error_messages
 from capture_method import Region
 from utils import (
-    BGRA_CHANNEL_COUNT,
+    ALPHA_CHANNEL_COUNT,
     MAXBYTE,
     ImageShape,
     auto_split_directory,
@@ -220,7 +220,7 @@ def align_region(autosplit: AutoSplit):
 
     template = imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Captures are standardized to BGR, so drop the template's alpha channel if present
-    if template.shape[ImageShape.Channels] == BGRA_CHANNEL_COUNT:
+    if template.shape[ImageShape.Channels] == ALPHA_CHANNEL_COUNT:
         template = cv2.cvtColor(template, cv2.COLOR_BGRA2BGR)
 
     # Validate template is a valid image file
