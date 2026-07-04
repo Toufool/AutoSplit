@@ -11,7 +11,7 @@ import numpy as np
 
 import error_messages
 from compare import extract_and_compare_text, get_comparison_method_by_index
-from utils import MAXBYTE, TESSERACT_PATH, ColorChannel, imread, is_valid_image
+from utils import MAXBYTE, TESSERACT_PATH, imread, is_valid_image
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -153,7 +153,7 @@ class AutoSplitImage:
             error_messages.image_type(path)
             return
 
-        transparency = get_image_transparency(image)
+        transparency, alpha_nonzero_count = get_image_transparency(image)
         if transparency == ImageTransparency.ERROR_FULLY_TRANSPARENT:
             error_messages.image_fully_transparent(path)
         elif transparency == ImageTransparency.ERROR_PARTIAL_TRANSPARENCY:
@@ -165,10 +165,7 @@ class AutoSplitImage:
             # the number of nonzero elements in the alpha channel of the split image.
             # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # noqa: E501
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
-            scale = min(
-                1,
-                sqrt(COMPARISON_RESIZE_AREA / cv2.countNonZero(image[:, :, ColorChannel.Alpha])),
-            )
+            scale = min(1, sqrt(COMPARISON_RESIZE_AREA / alpha_nonzero_count))
 
             image = cv2.resize(
                 image,

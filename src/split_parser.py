@@ -57,16 +57,20 @@ def get_image_transparency(image: MatLike):
     """
     Classify an image's transparency from its alpha channel.
 
+    Returns the classification along with the alpha channel's non-zero pixel
+    count (`0` when no count was needed to classify), so callers don't have to
+    recompute it.
+
     Optimized for the common, valid outcomes (`NO_MASK_*` and `HAS_MASK`) using
     cheap, allocation-free reductions. The `ERROR_*` outcomes are rare and lead
     to a user-facing error, so they're allowed to be slow.
     """
     if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
-        return ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL
+        return ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL, 0
     alpha = image[:, :, ColorChannel.Alpha]
     # Fully opaque is the most common case; a single reduction rules it in.
     if alpha.min() == MAXBYTE:
-        return ImageTransparency.NO_MASK_FULLY_SOLID
+        return ImageTransparency.NO_MASK_FULLY_SOLID, 0
     # Detect a valid mask (only fully transparent/opaque pixels)
     # without allocating per-pixel comparison masks:
     # such an alpha channel sums to 255x its non-zero pixel count.
@@ -75,10 +79,10 @@ def get_image_transparency(image: MatLike):
         # A fully transparent image (no non-zero pixels) is already an error,
         # so there's no need to further consider partial transparency.
         if nonzero_count == 0:
-            return ImageTransparency.ERROR_FULLY_TRANSPARENT
-        return ImageTransparency.HAS_MASK
+            return ImageTransparency.ERROR_FULLY_TRANSPARENT, 0
+        return ImageTransparency.HAS_MASK, nonzero_count
     # At least one semi-transparent pixel remains.
-    return ImageTransparency.ERROR_PARTIAL_TRANSPARENCY
+    return ImageTransparency.ERROR_PARTIAL_TRANSPARENCY, 0
 
 
 def __value_from_filename(
