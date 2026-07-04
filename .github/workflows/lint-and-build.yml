@@ -151,9 +151,9 @@ jobs:
             Build logs for ${{ steps.artifact_vars.outputs.OS }}${{ matrix.wine-compat }} (Python
             ${{ matrix.python-version }})
           path: |
-            build/AutoSplit/*.toc
-            build/AutoSplit/*.txt
-            build/AutoSplit/*.html
+            build/AutoSplit*/*.toc
+            build/AutoSplit*/*.txt
+            build/AutoSplit*/*.html
           if-no-files-found: error
 
   Merge-Build-Artifacts:
