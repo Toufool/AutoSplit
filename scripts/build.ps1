@@ -105,7 +105,12 @@ try {
     # Create AppImage
     ###
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
-    Copy-Item res/splash.png build/AppDir/AutoSplit.png
+    # Icon as PNG (freedesktop doesn't support .ico), converted from res/icon.ico.
+    # Not splash.png, which uses hard transparency for the Tcl/Tk splash.
+    New-Item -ItemType Directory -Path build/AppDir/usr/share/icons/hicolor/256x256/apps -Force | Out-Null
+    uv run --active python -c "from PIL import Image; Image.open('res/icon.ico').save('build/AppDir/AutoSplit.png')"
+    # Top-level -> .DirIcon (file thumbnail); hicolor copy -> desktop integration (menu/taskbar).
+    Copy-Item build/AppDir/AutoSplit.png build/AppDir/usr/share/icons/hicolor/256x256/apps/AutoSplit.png
     $date = Get-Date -Format 'yyyy-MM-dd'
 
     New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
