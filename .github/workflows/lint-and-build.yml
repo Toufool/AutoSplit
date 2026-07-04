@@ -44,7 +44,31 @@ defaults:
     shell: pwsh
 
 jobs:
+  PySentry:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+      - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
+
+  # Single source of truth for the shipped Python version(s).
+  # GitHub Actions has no length() and `strategy` can't read `env`, so the matrix and the
+  # "more than one Python version" flag are both derived here and consumed via `needs`.
+  Setup:
+    runs-on: ubuntu-slim
+    outputs:
+      python-versions: ${{ steps.set.outputs.python-versions }}
+      include-python-version-tag: ${{ steps.set.outputs.include-python-version-tag }}
+    steps:
+      - id: set
+        # Only the Python version(s) we plan on shipping matter.
+        run: |
+          $pythonVersions = @('3.14')
+          "python-versions=$($pythonVersions | ConvertTo-Json -Compress -AsArray)" >> $Env:GITHUB_OUTPUT
+          "include-python-version-tag=$(if ($pythonVersions.Count -gt 1) { '-IncludePythonVersionTag' })" >> $Env:GITHUB_OUTPUT
+
   Pyright:
+    needs: Setup
     runs-on: ${{ matrix.os }}
     env:
       # Prevent accidentally slower type-checking due to missing arm wheels.
@@ -60,7 +84,7 @@ jobs:
       matrix:
         # windows arm runner slower as long as opencv doesn't provide windows arm64 wheels
         os: [windows-latest, ubuntu-24.04-arm]
-        python-version: ["3.14"]
+        python-version: ${{ fromJson(needs.Setup.outputs.python-versions) }}
     steps:
       - uses: actions/checkout@v6
       - name: Set up uv for Python ${{ matrix.python-version }}
@@ -76,23 +100,16 @@ jobs:
           working-directory: src/
           python-version: ${{ matrix.python-version }}
 
-  PySentry:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
-      - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
-
   Build:
+    needs: Setup
     runs-on: ${{ matrix.os }}
     outputs:
       AUTOSPLIT_VERSION: ${{ steps.artifact_vars.outputs.AUTOSPLIT_VERSION }}
     strategy:
       fail-fast: false
-      # Only the Python version we plan on shipping matters.
       matrix:
         os: [windows-latest, windows-11-arm, ubuntu-24.04, ubuntu-24.04-arm]
-        python-version: ["3.14"]
+        python-version: ${{ fromJson(needs.Setup.outputs.python-versions) }}
         wine-compat: [""]
         include:
           - os: windows-latest
@@ -122,7 +139,7 @@ jobs:
               || null }}
       # endregion
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
-      - run: scripts/build.ps1 ${{ matrix.wine-compat }}
+      - run: scripts/build.ps1 ${{ matrix.wine-compat }} ${{ needs.Setup.outputs.include-python-version-tag }}
       - name: Run test suite
         # pywinctl/pymonctl connect to the X display at import-time, hence xvfb
         run: >-
@@ -168,18 +185,22 @@ jobs:
           pattern: AutoSplit v*
 
   Release-Template:
-    needs: Build
+    needs: [Setup, Build]
     runs-on: ubuntu-slim
     steps:
       - name: Annotate release template URL
         run: |
           $version = "v${{ needs.Build.outputs.AUTOSPLIT_VERSION }}"
-          $body = [uri]::EscapeDataString(((@'
+          $pythonBullet = if ('${{ needs.Setup.outputs.include-python-version-tag }}') {
+            "- Python: This is the Python version bundled with AutoSplit. Try the newer version, it should be functionally identical, with a marginal performance boost. If you have any issue with it, please [report it here](https://github.com/Toufool/AutoSplit/issues) or on the Discord server and use an older Python version in the mean time."
+          }
+          else { '' }
+          $body = [uri]::EscapeDataString((@'
           # Which Asset should I download?
 
-          - Python: This is the Python version bundled with AutoSplit. Try the newer version, it should be functionally identical, with a marginal performance boost. If you have any issue with it, please [report it here](https://github.com/Toufool/AutoSplit/issues) or on the Discord server and use an older Python version in the mean time.
+          {{PYTHON}}
           - `arm64` vs `x64`: [Check your Processor Platform Architecture](https://www.checkadevice.com/tests/system/) (note that `x86_64`==`x64` and `aarch64`==`arm64`). If you're still unsure, `x64` will work either way. `arm64` should be more efficient.
           - WineCompat: This is for running the Windows executable under Wine on Linux
-          '@).Trim() -replace "`n", ''))
+          '@).Replace('{{PYTHON}}', $pythonBullet).Trim() -replace "`n", '')
           # ^ Removing newline from template because GitHub will actually decode %0A
           echo "::notice::${{ github.server_url }}/${{ github.repository }}/releases/new?target=main&tag=$version&title=$version&body=$body"
