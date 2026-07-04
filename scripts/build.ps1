@@ -4,14 +4,18 @@ param([switch]$WineCompat)
 
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
+if ($WineCompat) { $WineCompat = '-WineCompat' }
 
 Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 
 try {
   & 'scripts/compile_resources.ps1'
 
+  $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+  $pythonVersion = (uv run --active python --version) -replace ' (\d+\.\d+)\S*', '.$1'
+
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
-  $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
+  $supportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
     $(uv run --active scripts/check_splash_support.py))
 
   $arguments = @(
@@ -30,13 +34,14 @@ try {
     # Missing upx executable should be enough, but let's be explicit
     $arguments += '--noupx'
   }
-  if ($SupportsSplashScreen) {
+  if ($supportsSplashScreen) {
     # https://github.com/pyinstaller/pyinstaller/issues/9022
     $arguments += @('--splash=res/splash.png')
   }
   if ($IsWindows) {
     $arguments += @(
       '--onefile',
+      "--name=AutoSplit-$version.$pythonVersion-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)$WineCompat"
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
@@ -94,8 +99,6 @@ try {
     ###
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
     Copy-Item res/splash.png build/AppDir/AutoSplit.png
-    $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
-    $pythonVersion = (uv run --active python --version) -replace ' (\d+\.\d+)\S*', '.$1'
     $date = Get-Date -Format 'yyyy-MM-dd'
 
     New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
