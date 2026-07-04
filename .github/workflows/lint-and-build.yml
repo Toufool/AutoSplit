@@ -66,7 +66,7 @@ jobs:
       - id: set
         # Only the Python version(s) we plan on shipping matter.
         run: |
-          $pythonVersions = @('3.14', '3,15')
+          $pythonVersions = @('3.14', '3.15')
           "python-versions=$($pythonVersions | ConvertTo-Json -Compress -AsArray)" >> $Env:GITHUB_OUTPUT
           "include-python-version-tag=$(if ($pythonVersions.Count -gt 1) { '-IncludePythonVersionTag' })" >> $Env:GITHUB_OUTPUT
 
