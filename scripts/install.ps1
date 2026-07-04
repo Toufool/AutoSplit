@@ -57,7 +57,7 @@ if ($IsLinux) {
 
     Write-Output 'Installing appimagetool'
     Invoke-WebRequest `
-      -Uri "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$(uname -m).AppImage" `
+      -Uri "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$(uname -m).AppImage" `
       -OutFile "$PSScriptRoot/appimagetool.AppImage"
     chmod +x "$PSScriptRoot/appimagetool.AppImage"
   }
