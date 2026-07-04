@@ -182,9 +182,9 @@ class AutoSplitImage:
             self.mask = cv2.inRange(image, MASK_LOWER_BOUND, MASK_UPPER_BOUND)
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
-            if transparency == ImageTransparency.NO_MASK_FULLY_SOLID:
+            if transparency == ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL:
                 # Captures are standardized to BGR, so drop the alpha channel if present
-                image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
 
         self.byte_array = image
 
