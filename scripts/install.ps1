@@ -103,7 +103,9 @@ if (`
 # https://github.com/opencv/opencv-python#source-distributions
 # Allows building OpenCV on Windows ARM64 when only sdist is available
 # https://github.com/opencv/opencv-python/issues/1092#issuecomment-2862538656
-$Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF'
+# gapi off: its serialization needs winsock (htonl/ntohl), but the sdist passes a
+# malformed `/lws2_32` flag to MSVC LINK, so ws2_32 is never linked -> LNK2019.
+$Env:CMAKE_ARGS = '-DBUILD_opencv_dnn=OFF -DENABLE_NEON=OFF -DBUILD_opencv_gapi=OFF'
 
 $prod = if ($Env:GITHUB_JOB -eq 'Build') { '--no-dev' } else { }
 $lock = if ($Env:GITHUB_JOB) { '--locked' } else { }
