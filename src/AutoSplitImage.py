@@ -10,22 +10,8 @@ import cv2
 import numpy as np
 
 import error_messages
-from compare import (
-    check_if_image_has_transparency,
-    extract_and_compare_text,
-    get_comparison_method_by_index,
-)
-from utils import (
-    BGRA_CHANNEL_COUNT,
-    MAXBYTE,
-    TESSERACT_PATH,
-    ColorChannel,
-    ImageShape,
-    imread,
-    is_valid_image,
-)
 from compare import extract_and_compare_text, get_comparison_method_by_index
-from utils import MAXBYTE, TESSERACT_PATH, imread, is_valid_image
+from utils import MAXBYTE, TESSERACT_PATH, ColorChannel, imread, is_valid_image
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike

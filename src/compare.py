@@ -6,16 +6,7 @@ import cv2
 import Levenshtein
 import numpy as np
 
-from utils import (
-    BGR_CHANNEL_COUNT,
-    BGRA_CHANNEL_COUNT,
-    MAXBYTE,
-    ColorChannel,
-    ImageShape,
-    is_valid_image,
-    run_tesseract,
-)
-from utils import MAXBYTE, ColorChannel, is_valid_image, run_tesseract
+from utils import BGR_CHANNEL_COUNT, MAXBYTE, ColorChannel, is_valid_image, run_tesseract
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
