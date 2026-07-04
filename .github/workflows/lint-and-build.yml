@@ -158,7 +158,7 @@ jobs:
 
   Merge-Build-Artifacts:
     needs: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Merge all executables into a single artifact
         uses: actions/upload-artifact/merge@v7
@@ -169,7 +169,7 @@ jobs:
 
   Release-Template:
     needs: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Annotate release template URL
         run: |
