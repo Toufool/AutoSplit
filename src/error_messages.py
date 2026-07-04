@@ -43,7 +43,7 @@ def _set_text_message(
 ):
     # Also surface the error message in the logs
     plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
-    sys.stderr.write(f"{plain_message}\n{details}\n" if details else f"{plain_message}\n")
+    print(f"{plain_message}\n{details}\n" if details else f"{plain_message}", sys.stderr)
 
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
@@ -144,9 +144,9 @@ def invalid_hotkey(hotkey_name: str):
 
 
 def no_settings_file_on_open():
-    _set_text_message(
+    print(
         "No settings file found. "
-        + "One can be loaded on open if placed in the same folder as the AutoSplit executable."
+        + "One can be loaded on open if placed in the same folder as the AutoSplit executable.",
     )
 
 

@@ -58,7 +58,13 @@ try {
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
 
-    if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+    $arch = switch ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) {
+      'X64' { 'x86_64' }
+      'Arm64' { 'aarch64' }
+      default { throw "Unsupported arch: $_" }
+    }
+
+    if ($arch -eq 'x86_64') {
       # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
       # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
       # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
@@ -89,6 +95,7 @@ try {
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
     Copy-Item res/splash.png build/AppDir/AutoSplit.png
     $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+    $pythonVersion = (uv run --active python --version) -replace ' (\d+\.\d+)\S*', '.$1'
     $date = Get-Date -Format 'yyyy-MM-dd'
 
     New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
@@ -99,10 +106,13 @@ try {
     if (Test-Path dist) { Remove-Item dist -Recurse -Force }
     New-Item -ItemType Directory -Path dist | Out-Null
 
-    & 'scripts/appimagetool.AppImage' build/AppDir dist/AutoSplit.AppImage
-    chmod +x dist/AutoSplit.AppImage
+    # AppImage naming nomenclature:
+    # - https://github.com/AppImage/AppImageSpec/blob/master/draft.md#type-2-image-format
+    # - https://github.com/AppImage/appimage.github.io#:~:text=Standard%20nomenclature
+    $appImageName = "AutoSplit-$version.$pythonVersion-$arch.AppImage"
+    & 'scripts/appimagetool.AppImage' build/AppDir dist/$appImageName
 
-    Write-Host 'Created dist/AutoSplit.AppImage'
+    Write-Host "Created dist/$appImageName"
   }
 }
 finally {
