@@ -1147,7 +1147,7 @@ ClickableLabel:hover { background-color: palette(midlight); }</string>
     <string>Toggle Logs</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+L</string>
+    <string>Ctrl+J</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
