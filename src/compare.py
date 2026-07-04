@@ -87,7 +87,7 @@ def compare_template(source: MatLike, capture: MatLike, mask: MatLike | None = N
 
 
 # The old scipy-based implementation.
-# Turns out this cuases an extra 25 MB build compared to opencv-contrib-python-headless
+# Turns out this causes an extra 25 MB build compared to opencv-contrib-python-headless
 # # from scipy import fft
 # def __cv2_scipy_compute_phash(image: MatLike, hash_size: int, highfreq_factor: int = 4):
 #     """Implementation copied from https://github.com/JohannesBuchner/imagehash/blob/38005924fe9be17cfed145bbc6d83b09ef8be025/imagehash/__init__.py#L260 ."""  # noqa: E501
