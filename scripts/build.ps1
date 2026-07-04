@@ -125,6 +125,12 @@ try {
     }
     & 'scripts/appimagetool.AppImage' @arguments
 
+    # appimagetool writes the .zsync file to the working directory (repo root) as the AppImage
+    # basename, not next to the AppImage. Move it into dist/.
+    if (Test-Path "$appImageName.zsync") {
+      Move-Item "$appImageName.zsync" "dist/$appImageName.zsync" -Force
+    }
+
     Write-Host "Created dist/$appImageName"
   }
 }
