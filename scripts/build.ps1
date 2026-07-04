@@ -1,6 +1,9 @@
 #! /usr/bin/pwsh
 
-param([switch]$WineCompat)
+param(
+  [switch]$WineCompat,
+  [switch]$IncludePythonVersionTag
+)
 
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
@@ -10,8 +13,15 @@ Push-Location "$PSScriptRoot/.." # Avoid issues with space in path
 try {
   & 'scripts/compile_resources.ps1'
 
+  $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+  # Semver-compliant Python version tag
+  $pythonVersionTag = if ($IncludePythonVersionTag) {
+    (uv run --active python --version) -replace '^Python (\d+\.\d+).*', '+Python$1'
+  }
+  else { '' }
+
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
-  $SupportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
+  $supportsSplashScreen = $Env:GITHUB_JOB -or [System.Convert]::ToBoolean(
     $(uv run --active scripts/check_splash_support.py))
 
   $arguments = @(
@@ -30,13 +40,15 @@ try {
     # Missing upx executable should be enough, but let's be explicit
     $arguments += '--noupx'
   }
-  if ($SupportsSplashScreen) {
+  if ($supportsSplashScreen) {
     # https://github.com/pyinstaller/pyinstaller/issues/9022
     $arguments += @('--splash=res/splash.png')
   }
   if ($IsWindows) {
+    $arch = "$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)".ToLower()
     $arguments += @(
       '--onefile',
+      "--name=AutoSplit-$version$pythonVersionTag-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
@@ -58,7 +70,13 @@ try {
     Move-Item build/AppDir/AutoSplit/_internal build/AppDir/_internal
     Remove-Item build/AppDir/AutoSplit
 
-    if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'X64') {
+    $arch = switch ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) {
+      'X64' { 'x86_64' }
+      'Arm64' { 'aarch64' }
+      default { throw "Unsupported arch: $_" }
+    }
+
+    if ($arch -eq 'x86_64') {
       # Technically UPX works for Linux executables, but trying to compress .so can still result in Segmentation fault
       # https://github.com/orgs/pyinstaller/discussions/8922#discussioncomment-13185670
       # https://github.com/pyinstaller/pyinstaller/blob/4d28a528f8ab8632f7cfa7662fc6fcc45881e741/PyInstaller/building/utils.py#L281-L288
@@ -87,8 +105,12 @@ try {
     # Create AppImage
     ###
     Copy-Item res/AutoSplit.desktop build/AppDir/AutoSplit.desktop
-    Copy-Item res/splash.png build/AppDir/AutoSplit.png
-    $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+    # Icon as PNG (freedesktop doesn't support .ico), converted from res/icon.ico.
+    # Not splash.png, which uses hard transparency for the Tcl/Tk splash.
+    New-Item -ItemType Directory -Path build/AppDir/usr/share/icons/hicolor/256x256/apps -Force | Out-Null
+    uv run --active python -c "from PIL import Image; Image.open('res/icon.ico').save('build/AppDir/AutoSplit.png')"
+    # Top-level -> .DirIcon (file thumbnail); hicolor copy -> desktop integration (menu/taskbar).
+    Copy-Item build/AppDir/AutoSplit.png build/AppDir/usr/share/icons/hicolor/256x256/apps/AutoSplit.png
     $date = Get-Date -Format 'yyyy-MM-dd'
 
     New-Item -ItemType Directory -Path build/AppDir/usr/share/metainfo -Force | Out-Null
@@ -99,10 +121,28 @@ try {
     if (Test-Path dist) { Remove-Item dist -Recurse -Force }
     New-Item -ItemType Directory -Path dist | Out-Null
 
-    & 'scripts/appimagetool.AppImage' build/AppDir dist/AutoSplit.AppImage
-    chmod +x dist/AutoSplit.AppImage
+    # AppImage naming nomenclature:
+    # - https://github.com/AppImage/AppImageSpec/blob/master/draft.md#type-2-image-format
+    # - https://github.com/AppImage/appimage.github.io#:~:text=Standard%20nomenclature
+    $appImageName = "AutoSplit-$version$pythonVersionTag-$arch.AppImage"
+    $arguments = @('build/AppDir', "dist/$appImageName")
+    # Update information
+    # https://docs.appimage.org/packaging-guide/optional/updates.html#using-appimagetool
+    # https://github.com/AppImage/AppImageSpec/blob/master/draft.md#github-releases
+    if ($Env:GITHUB_REPOSITORY) {
+      # Skip update information if not doing a GitHub build
+      $owner, $repo = $Env:GITHUB_REPOSITORY -split '/'
+      $arguments += @('-u', "gh-releases-zsync|$owner|$repo|latest|AutoSplit-*-$arch.AppImage.zsync")
+    }
+    & 'scripts/appimagetool.AppImage' @arguments
 
-    Write-Host 'Created dist/AutoSplit.AppImage'
+    # appimagetool writes the .zsync file to the working directory (repo root) as the AppImage
+    # basename, not next to the AppImage. Move it into dist/.
+    if (Test-Path "$appImageName.zsync") {
+      Move-Item "$appImageName.zsync" "dist/$appImageName.zsync" -Force
+    }
+
+    Write-Host "Created dist/$appImageName"
   }
 }
 finally {
