@@ -114,7 +114,16 @@ try {
     # - https://github.com/AppImage/AppImageSpec/blob/master/draft.md#type-2-image-format
     # - https://github.com/AppImage/appimage.github.io#:~:text=Standard%20nomenclature
     $appImageName = "AutoSplit-$version+$pythonVersion-$arch.AppImage"
-    & 'scripts/appimagetool.AppImage' build/AppDir dist/$appImageName
+    $arguments = @('build/AppDir', "dist/$appImageName")
+    # Update information
+    # https://docs.appimage.org/packaging-guide/optional/updates.html#using-appimagetool
+    # https://github.com/AppImage/AppImageSpec/blob/master/draft.md#github-releases
+    if ($Env:GITHUB_REPOSITORY) {
+      # Skip update information if not doing a GitHub build
+      $owner, $repo = $Env:GITHUB_REPOSITORY -split '/'
+      $arguments += @('-u', "gh-releases-zsync|$owner|$repo|latest|AutoSplit-*-$arch.AppImage.zsync")
+    }
+    & 'scripts/appimagetool.AppImage' @arguments
 
     Write-Host "Created dist/$appImageName"
   }
