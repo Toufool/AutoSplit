@@ -87,6 +87,22 @@ def image_type(image: str):
     )
 
 
+def image_fully_transparent(image: str):
+    file_app = "Explorer" if sys.platform == "win32" else "Manager"
+    _set_text_message(
+        f"{image!r} is fully transparent. "
+        + "Every pixel has an alpha of 0, so there is nothing left to compare against. "
+        + f"The image may be appearing as all black in your File {file_app}."
+    )
+
+
+def image_partial_transparency(image: str):
+    _set_text_message(
+        f"{image!r} contains semi-transparent pixels. "
+        + "To avoid confusion, only fully solid or fully transparent pixels are allowed."
+    )
+
+
 def region():
     _set_text_message(
         "No region is selected or the Capture Region window is not open. "

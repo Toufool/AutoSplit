@@ -4,13 +4,16 @@ import os
 import re
 import sys
 from collections.abc import Callable
+from enum import IntEnum, auto
 from functools import partial
 from stat import UF_HIDDEN
 from typing import TYPE_CHECKING, TypeVar
 
+import numpy as np
+
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
-from utils import is_valid_image
+from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if sys.platform == "win32":
     from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
@@ -18,6 +21,7 @@ if sys.platform == "win32":
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
+    from cv2.typing import MatLike
 
     from AutoSplit import AutoSplit
 
@@ -26,13 +30,60 @@ if TYPE_CHECKING:
     BELOW_FLAG,
     PAUSE_FLAG,
     *_,
-    # Keep combined bitflags under 256 (Python cached small integers)
+    # Keep combined bitflags <= 256 (Python cached small integers)
 ) = tuple(1 << i for i in range(8))
 
 FileFlagValueT = TypeVar("FileFlagValueT", str, int, float)
 
 # Note, the following symbols cannot be used in a filename:
 # / \ : * ? " < > |
+
+
+class ImageTransparency(IntEnum):
+    """Classification of a split image's alpha channel."""
+
+    NO_MASK_NO_ALPHA_CHANNEL = auto()
+    """No alpha channel at all (a 3-channel image)."""
+    NO_MASK_FULLY_SOLID = auto()
+    """Has an alpha channel, but every pixel is fully opaque (alpha of 255)."""
+    HAS_MASK = auto()
+    """Has transparency using only fully transparent and fully opaque pixels."""
+    ERROR_FULLY_TRANSPARENT = auto()
+    """Every pixel is fully transparent (alpha of 0)."""
+    ERROR_PARTIAL_TRANSPARENCY = auto()
+    """At least one semi-transparent pixel (alpha strictly between 0 and 255)."""
+
+
+def get_image_transparency(image: MatLike):
+    """
+    Classify an image's transparency from its alpha channel.
+
+    Returns the classification along with the alpha channel's non-zero pixel
+    count (`0` when no count was needed to classify), so callers don't have to
+    recompute it.
+
+    Optimized for the common, valid outcomes (`NO_MASK_*` and `HAS_MASK`) using
+    cheap, allocation-free reductions. The `ERROR_*` outcomes are rare and lead
+    to a user-facing error, so they're allowed to be slow.
+    """
+    if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
+        return ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL, 0
+    alpha = image[:, :, ColorChannel.Alpha]
+    # Fully opaque is the most common case; a single reduction rules it in.
+    if alpha.min() == MAXBYTE:
+        return ImageTransparency.NO_MASK_FULLY_SOLID, 0
+    # Detect a valid mask (only fully transparent/opaque pixels)
+    # without allocating per-pixel comparison masks:
+    # such an alpha channel sums to 255x its non-zero pixel count.
+    nonzero_count = np.count_nonzero(alpha)
+    if alpha.sum() == MAXBYTE * nonzero_count:
+        # A fully transparent image (no non-zero pixels) is already an error,
+        # so there's no need to further consider partial transparency.
+        if nonzero_count == 0:
+            return ImageTransparency.ERROR_FULLY_TRANSPARENT, 0
+        return ImageTransparency.HAS_MASK, nonzero_count
+    # At least one semi-transparent pixel remains.
+    return ImageTransparency.ERROR_PARTIAL_TRANSPARENCY, 0
 
 
 def __value_from_filename(
