@@ -11,6 +11,7 @@ try {
   & 'scripts/compile_resources.ps1'
 
   $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+  # Semver-compliant Python version tag
   $pythonVersion = (uv run --active python --version) -replace '^Python (\d+\.\d+).*', 'python$1'
 
   # CI not allowed to skip splash screen, it MUST build (will fail when calling PyInstaller)
@@ -38,7 +39,7 @@ try {
     $arguments += @('--splash=res/splash.png')
   }
   if ($IsWindows) {
-    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToLower()
+    $arch = "$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)".ToLower()
     $arguments += @(
       '--onefile',
       "--name=AutoSplit-$version+$pythonVersion-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
