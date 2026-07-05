@@ -79,10 +79,10 @@ DWMWA_EXTENDED_FRAME_BOUNDS = 9
 MAXBYTE = 255
 ONE_SECOND = 1000
 """1000 milliseconds in 1 second"""
-BGR_CHANNEL_COUNT = 3
-"""How many channels in a BGR image"""
-BGRA_CHANNEL_COUNT = 4
-"""How many channels in a BGRA image"""
+NO_ALPHA_CHANNEL_COUNT = 3
+"""How many channels in a BGR/RGB image"""
+ALPHA_CHANNEL_COUNT = 4
+"""How many channels in a BGRA/RGBA image"""
 
 
 class ImageShape(IntEnum):

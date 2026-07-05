@@ -33,7 +33,7 @@ class CaptureMethodBase:
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
 
-        @return: The image of the region in the window in BGRA format
+        @return: The image of the region in the window in BGR format
         """
         return None
 

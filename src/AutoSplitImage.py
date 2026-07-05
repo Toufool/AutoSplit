@@ -11,7 +11,7 @@ import numpy as np
 
 import error_messages
 from compare import extract_and_compare_text, get_comparison_method_by_index
-from utils import MAXBYTE, TESSERACT_PATH, imread, is_valid_image
+from utils import MAXBYTE, TESSERACT_PATH, ColorChannel, imread, is_valid_image
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -175,15 +175,30 @@ class AutoSplitImage:
                 interpolation=cv2.INTER_NEAREST,
             )
 
-            # Mask based on adaptively resized, nearest neighbor interpolated split image
+            # Mask based on adaptively resized, nearest neighbor interpolated split image.
+            # This must happen before dropping the alpha channel below.
             self.mask = cv2.inRange(image, MASK_LOWER_BOUND, MASK_UPPER_BOUND)
+            image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
         else:
             image = cv2.resize(image, COMPARISON_RESIZE, interpolation=cv2.INTER_NEAREST)
-            if transparency == ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL:
-                # Add Alpha channel if missing
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+            # Captures are standardized to BGR, so drop the alpha channel if present
+            if transparency == ImageTransparency.NO_MASK_FULLY_SOLID:
+                image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
         self.byte_array = image
+
+    def get_preview_image(self):
+        """
+        The comparison `byte_array` is stored as BGR, but the preview should
+        show the user the transparency. Re-attach the mask as the alpha channel.
+        """
+        if self.byte_array is None:
+            return None
+        if self.mask is None:
+            return self.byte_array
+        preview = cv2.cvtColor(self.byte_array, cv2.COLOR_BGR2BGRA)
+        preview[:, :, ColorChannel.Alpha] = self.mask
+        return preview
 
     def check_flag(self, flag: int):
         return self.flags & flag == flag
