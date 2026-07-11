@@ -40,7 +40,8 @@ try {
     # Native Windows tolerates it, Wine's loader doesn't. Exclude them from compression.
     $arguments += @(
       '--upx-exclude=pythoncom*.dll',
-      '--upx-exclude=pywintypes*.dll')
+      '--upx-exclude=pywintypes*.dll',
+      '--upx-exclude=win32*.pyd')
   }
   else {
     # Missing upx executable should be enough, but let's be explicit
