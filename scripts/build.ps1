@@ -35,6 +35,12 @@ try {
   # Don't UPX compress if trying to be Wine Compatible, or on Linux (handled manually below)
   if (-not $WineCompat -and -not $IsLinux) {
     $arguments += '--upx-dir=scripts/.upx'
+    # pywin32's DLLs do custom load-time magic (__import_pywin32_system_module__) that
+    # UPX self-decompression breaks under Wine ("DLL initialisation failed").
+    # Native Windows tolerates it, Wine's loader doesn't. Exclude them from compression.
+    $arguments += @(
+      '--upx-exclude=pythoncom*.dll',
+      '--upx-exclude=pywintypes*.dll')
   }
   else {
     # Missing upx executable should be enough, but let's be explicit
