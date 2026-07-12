@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 try:
     # Test for laptop cross-GPU Desktop Duplication issue (ModuleNotFoundError or COMError)
     d3dshot.create(capture_output="numpy")
-    # Throws ImportError in Wine+UPX: win32api.pyd imports RegOpenKeyTransactedW (absent from
-    # Wine's advapi32); UPX's load-time GetProcAddress import rebuild then fails DLL init.
 except ModuleNotFoundError, COMError:
     IS_DESKTOP_DUPLICATION_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
 else:
