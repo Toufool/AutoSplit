@@ -46,7 +46,7 @@ except win32api.error as exception:
         raise
     IS_WGC_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
 
-if IS_WGC_SUPPORTED:
+if TYPE_CHECKING or IS_WGC_SUPPORTED:
     # This pyd hard-fails to load when the d3d11 export is missing (UPX+Wine)
     from winrt.windows.graphics.directx.direct3d11.interop import (
         create_direct3d11_device_from_dxgi_device,
