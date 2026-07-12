@@ -21,7 +21,8 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-try:  # Test for laptop cross-GPU Desktop Duplication issue
+try:
+    # Test for laptop cross-GPU Desktop Duplication issue (ModuleNotFoundError or COMError)
     d3dshot.create(capture_output="numpy")
 except ModuleNotFoundError, COMError:
     IS_DESKTOP_DUPLICATION_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]

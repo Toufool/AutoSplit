@@ -17,8 +17,6 @@ warnings.simplefilter("default")
 if sys.platform == "win32":
     import ctypes
 
-    from win32comext.shell import shell as shell32
-
     def do_nothing(*_): ...
 
     # pyautogui._pyautogui_win.py
@@ -1196,14 +1194,17 @@ def main():
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:  # noqa: PLW0717 # We really want to catch everything here
-        if sys.platform == "win32":
-            myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-            shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
         # Decouple from the executable basename (which varies per build)
         app.setApplicationName("AutoSplit")
         app.setApplicationVersion(AUTOSPLIT_VERSION)
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
+
+        if sys.platform == "win32":
+            # Technically not needed since we version the filename now,
+            # but kept in case users strips down the executable filename
+            set_aumid = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID
+            set_aumid.restype = ctypes.HRESULT  # auto-raises OSError on failure
+            set_aumid(f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}")
 
         if is_already_open():
             error_messages.already_open()

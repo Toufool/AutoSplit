@@ -41,16 +41,10 @@ try {
   if (-not $WineCompat -and -not $IsLinux) {
     $arguments += '--upx-dir=scripts/.upx'
     $arguments += @(
-      # pywin32's DLLs do custom load-time magic (__import_pywin32_system_module__) that
-      # UPX self-decompression breaks under Wine ("DLL initialisation failed").
-      # Native Windows tolerates it, Wine's loader doesn't. Exclude them from compression.
+      # Wine doesn't export (not even stub) win32api ole32.Co{Get,Set}CancelObject
       '--upx-exclude=pythoncom*.dll',
-      '--upx-exclude=pywintypes*.dll',
-      '--upx-exclude=win32*.pyd',
-      # win32comext.shell.shell -> shell.pyd (plain name, no win32 prefix)
-      '--upx-exclude=shell.pyd',
-      # winrt projection modules hit the same UPX+Wine DLL-init breakage
-      '--upx-exclude=_winrt*.pyd')
+      # Wine doesn't export (not even stub) `ADVAPI32.Reg{Open,Delete}KeyTransactedW`
+      '--upx-exclude=win32api.pyd')
   }
   else {
     # Missing upx executable should be enough, but let's be explicit
