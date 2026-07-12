@@ -6,7 +6,7 @@ import cv2
 import Levenshtein
 import numpy as np
 
-from utils import MAXBYTE, ColorChannel, is_valid_image, run_tesseract
+from utils import MAXBYTE, NO_ALPHA_CHANNEL_COUNT, ColorChannel, is_valid_image, run_tesseract
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -15,7 +15,7 @@ MAXRANGE = MAXBYTE + 1
 CHANNELS = (ColorChannel.Red.value, ColorChannel.Green.value, ColorChannel.Blue.value)
 HISTOGRAM_SIZE = (8, 8, 8)
 RANGES = (0, MAXRANGE, 0, MAXRANGE, 0, MAXRANGE)
-MASK_SIZE_MULTIPLIER = ColorChannel.Alpha * MAXBYTE * MAXBYTE
+MASK_SIZE_MULTIPLIER = NO_ALPHA_CHANNEL_COUNT * MAXBYTE * MAXBYTE
 MAX_VALUE = 1.0
 CV2_PHASH_SIZE = 8
 
