@@ -85,7 +85,7 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
 - No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
 - Requires Wine 10.1+ / Steam Proton 11+ (due to [added `crealf` implementation](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf))
-- Wine 10.1 to 11.2 must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hadn't [implemented `PssQuerySnapshot`](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) yet.
+- Wine 10.1 to 11.2 must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hadn't [stubbed `PssQuerySnapshot`](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) yet.
 - Wine 11.3+ can use the regular Windows build.
 - Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through the same Proton version as the target game, targetting the game's Wine prefix.
   - For steam games, this can be made a lot easier using [`protontricks`](https://protontricks.com/): `protontricks-launch --appid <YOUR_STEAM_GAME> </path/to/autosplit.exe>`
