@@ -45,7 +45,9 @@ try {
       # UPX self-decompression breaks under Wine ("DLL initialisation failed").
       # Native Windows tolerates it, Wine's loader doesn't. Exclude them from compression.
       '--upx-exclude=pythoncom*.dll',
-      '--upx-exclude=pywintypes*.dll')
+      '--upx-exclude=pywintypes*.dll',
+      # Wine doesn't even stub `ADVAPI32.RegOpenKeyTransactedW`/`ADVAPI32.RegDeleteKeyTransactedW`
+      '--upx-exclude=win32api.pyd')
   }
   else {
     # Missing upx executable should be enough, but let's be explicit

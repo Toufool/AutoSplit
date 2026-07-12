@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, cast, override
 
 import cv2
 import numpy as np
+import win32api
 import win32gui
 import winerror
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
@@ -30,10 +31,6 @@ if TYPE_CHECKING:
 WGC_NO_BORDER_MIN_BUILD = 20348
 
 try:
-    # Throws ImportError in Wine+UPX: win32api.pyd imports RegOpenKeyTransactedW (absent from
-    # Wine's advapi32); UPX's load-time GetProcAddress import rebuild then fails DLL init.
-    import win32api
-
     # Wine hasn't implemented CreateDirect3D11DeviceFromDXGIDevice yet
     # https://bugs.winehq.org/show_bug.cgi?id=52487
     # Keep this check for a while even after it's implemented
@@ -44,8 +41,6 @@ try:
             "CreateDirect3D11DeviceFromDXGIDevice",  # pyright: ignore[reportArgumentType]
         )
     )
-except ImportError:
-    IS_WGC_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
 except win32api.error as exception:
     if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
         raise
