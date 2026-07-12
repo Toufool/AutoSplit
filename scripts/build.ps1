@@ -14,6 +14,11 @@ try {
   & 'scripts/compile_resources.ps1'
 
   $version = (Select-String 'pyproject.toml' -Pattern '^version = "(.+)"').Matches.Groups[1].Value
+  # Include the build number (generated in compile_resources.ps1) in the filename
+  # But only on CI, keeping the filename consistent for local dev builds
+  $buildNumber = (Select-String 'src/gen/build_vars.py' `
+      -Pattern '^AUTOSPLIT_BUILD_NUMBER = "(.*)"').Matches.Groups[1].Value
+  $buildNumber = if ($Env:GITHUB_JOB -and $buildNumber) { "-$buildNumber" } else { '' }
   # Semver-compliant Python version tag
   $pythonVersionTag = if ($IncludePythonVersionTag) {
     (uv run --active python --version) -replace '^Python (\d+\.\d+).*', '+Python$1'
@@ -48,7 +53,7 @@ try {
     $arch = "$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)".ToLower()
     $arguments += @(
       '--onefile',
-      "--name=AutoSplit-$version$pythonVersionTag-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
+      "--name=AutoSplit-$version$buildNumber$pythonVersionTag-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
       # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
       '--hidden-import=winrt.windows.foundation')
   }
@@ -124,14 +129,15 @@ try {
     # AppImage naming nomenclature:
     # - https://github.com/AppImage/AppImageSpec/blob/master/draft.md#type-2-image-format
     # - https://github.com/AppImage/appimage.github.io#:~:text=Standard%20nomenclature
-    $appImageName = "AutoSplit-$version$pythonVersionTag-$arch.AppImage"
+    $appImageName = "AutoSplit-$version$buildNumber$pythonVersionTag-$arch.AppImage"
     $arguments = @('build/AppDir', "dist/$appImageName")
-    # Update information
-    # https://docs.appimage.org/packaging-guide/optional/updates.html#using-appimagetool
-    # https://github.com/AppImage/AppImageSpec/blob/master/draft.md#github-releases
-    if ($Env:GITHUB_REPOSITORY) {
-      # Skip update information if not doing a GitHub build
+    # Skip update information (and the zsync file it generates) unless this is a production build:
+    # a GitHub build with a clean version number (no build number)
+    if ($Env:GITHUB_REPOSITORY -and -not $buildNumber) {
       $owner, $repo = $Env:GITHUB_REPOSITORY -split '/'
+      # Update information
+      # https://docs.appimage.org/packaging-guide/optional/updates.html#using-appimagetool
+      # https://github.com/AppImage/AppImageSpec/blob/master/draft.md#github-releases
       $arguments += @('-u', "gh-releases-zsync|$owner|$repo|latest|AutoSplit-*-$arch.AppImage.zsync")
     }
     & 'scripts/appimagetool.AppImage' @arguments
