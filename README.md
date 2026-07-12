@@ -45,7 +45,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
-- Wine 10.1+ ([very limited](#wine-limitations))
+- Wine 10.1+ or 11.3+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux
   - Should work on Ubuntu 24.04+ (glibc 2.39) (tested on Kubuntu 26.04)
@@ -85,10 +85,11 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
 - No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
 - Requires Wine 10.1+ / Steam Proton 11+ (due to [added `crealf` implementation](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf))
-- Must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hasn't implemented `PssQuerySnapshot` yet. There's an open [bug report](https://bugs.winehq.org/show_bug.cgi?id=58610) and [merge request](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) you can follow.
+- Wine 10.1 to 11.2 must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hadn't [implemented `PssQuerySnapshot`](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) yet.
+- Wine 11.3+ can use the regular Windows build.
 - Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through the same Proton version as the target game, targetting the game's Wine prefix.
   - For steam games, this can be made a lot easier using [`protontricks`](https://protontricks.com/): `protontricks-launch --appid <YOUR_STEAM_GAME> </path/to/autosplit.exe>`
-  - For regular Wine it would look somethng like this: `WINEPREFIX="</path/to/game/prefix>" wine </path/to/autosplit.exe>`
+  - For regular Wine it would look something like this: `WINEPREFIX="</path/to/game/prefix>" wine </path/to/autosplit.exe>`
 
 ## Resources
 
