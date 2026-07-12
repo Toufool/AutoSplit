@@ -376,15 +376,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self._refresh_log_footer()
 
     def _refresh_log_footer(self):
+        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
+        chevron = "▶" if self.log_dock.isHidden() else "▲"
         if self._last_log_footer_entry is None:
+            self.log_footer_label.set_elided_text(f"{chevron}  Log messages will appear here")
             return
         timestamp, text, is_stderr = self._last_log_footer_entry
         # Footer is single-line and shows the message directly (no path prefix).
         # First line of an (already-relativized) entry; drops a leading `path:lineno:` prefix.
         first_line = LOG_LOCATION_PREFIX_RE.sub("", text.split("\n", 1)[0])
-        # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
-        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
-        chevron = "▶" if self.log_dock.isHidden() else "▲"
         stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
         self.log_footer_label.setStyleSheet(stderr_color)
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
