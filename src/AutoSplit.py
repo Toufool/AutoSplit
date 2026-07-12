@@ -1202,7 +1202,7 @@ def main():
         if sys.platform == "win32":
             # Technically not needed since we version the filename now,
             # but kept in case users strips down the executable filename
-            set_aumid = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID  # pyright: ignore[reportAttributeAccessIssue]
+            set_aumid = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID
             set_aumid.restype = ctypes.HRESULT  # auto-raises OSError on failure
             set_aumid(f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}")
 
