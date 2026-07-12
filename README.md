@@ -115,7 +115,6 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Starring the repository <img style="vertical-align: sub" src="./docs/repo_star.png" alt="Example" />
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
-  - <https://bugs.winehq.org/show_bug.cgi?id=58610>
   - <https://bugs.winehq.org/show_bug.cgi?id=52487>
   - <https://qt-project.atlassian.net/browse/QTBUG-114436>
   - <https://qt-project.atlassian.net/browse/PYSIDE-2541>
