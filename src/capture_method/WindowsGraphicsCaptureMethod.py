@@ -15,9 +15,6 @@ import winerror
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winrt.windows.graphics.capture.interop import create_for_window
 from winrt.windows.graphics.directx import DirectXPixelFormat
-from winrt.windows.graphics.directx.direct3d11.interop import (
-    create_direct3d11_device_from_dxgi_device,
-)
 from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
@@ -48,6 +45,12 @@ except win32api.error as exception:
     if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
         raise
     IS_WGC_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
+
+if IS_WGC_SUPPORTED:
+    # This pyd hard-fails to load when the d3d11 export is missing (UPX+Wine)
+    from winrt.windows.graphics.directx.direct3d11.interop import (
+        create_direct3d11_device_from_dxgi_device,
+    )
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):

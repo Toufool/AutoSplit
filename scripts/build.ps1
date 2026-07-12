@@ -48,9 +48,7 @@ try {
       '--upx-exclude=pywintypes*.dll',
       '--upx-exclude=win32*.pyd',
       # win32comext.shell.shell -> shell.pyd (plain name, no win32 prefix)
-      '--upx-exclude=shell.pyd',
-      # winrt projection modules hit the same UPX+Wine DLL-init breakage
-      '--upx-exclude=_winrt*.pyd')
+      '--upx-exclude=shell.pyd')
   }
   else {
     # Missing upx executable should be enough, but let's be explicit
