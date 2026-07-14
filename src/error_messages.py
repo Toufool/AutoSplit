@@ -287,7 +287,7 @@ def make_excepthook(autosplit: AutoSplit):
             "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):
             return
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        # Within LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
 
     return excepthook
