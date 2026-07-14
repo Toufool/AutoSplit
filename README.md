@@ -1,5 +1,7 @@
-<!-- markdownlint-disable-next-line MD033 -->
+<!-- markdownlint-disable-next-line MD033 MD041 -->
+<div align="right">(tip: table of content button here ↗️)</div>
 
+<!-- dprint-ignore --><!-- markdownlint-disable-next-line MD033 -->
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
 
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
