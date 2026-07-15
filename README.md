@@ -1,12 +1,12 @@
-<!-- markdownlint-disable-next-line MD033 -->
-
+<!-- dprint-ignore --><!-- markdownlint-disable-next-line MD033 -->
 # <img src="res/icon.ico" alt="LiveSplit" height="42" width="42" align="top"/> AutoSplit [![CodeQL](/../../actions/workflows/codeql-analysis.yml/badge.svg)](/../../actions/workflows/codeql-analysis.yml) [![Lint and build](/../../actions/workflows/lint-and-build.yml/badge.svg)](/../../actions/workflows/lint-and-build.yml)
 
 [![SemVer](https://badgen.net/badge/_/SemVer%20compliant/grey?label)](https://semver.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://docs.astral.sh/ruff/linter/)
 [![Ruff format](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/format.json)](https://docs.astral.sh/ruff/formatter/)
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
-[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)<!-- markdownlint-disable-next-line MD033 -->
+<sup>&nbsp;&nbsp;(tip: table of content button here ↗️)</sup>
 
 Easy to use image comparison based auto splitter for speedrunning on console or PC.
 
@@ -45,7 +45,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
 ### Compatibility
 
 - Windows 10 and 11.
-- Wine 10.1+ ([very limited](#wine-limitations))
+- Wine 10.1+ or 11.3+ ([very limited](#wine-limitations))
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux
   - Should work on Ubuntu 24.04+ (glibc 2.39) (tested on Kubuntu 26.04)
@@ -85,10 +85,11 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
 - No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
 - Requires Wine 10.1+ / Steam Proton 11+ (due to [added `crealf` implementation](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf))
-- Must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hasn't implemented `PssQuerySnapshot` yet. There's an open [bug report](https://bugs.winehq.org/show_bug.cgi?id=58610) and [merge request](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) you can follow.
+- Wine 10.1 to 11.2 must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hadn't [stubbed `PssQuerySnapshot`](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) yet.
+- Wine 11.3+ can use the regular Windows build.
 - Only applications running within the **same wineserver instance** can be recorded. Which means that if you want to record a Steam Game for example, you would need to run AutoSplit through the same Proton version as the target game, targetting the game's Wine prefix.
   - For steam games, this can be made a lot easier using [`protontricks`](https://protontricks.com/): `protontricks-launch --appid <YOUR_STEAM_GAME> </path/to/autosplit.exe>`
-  - For regular Wine it would look somethng like this: `WINEPREFIX="</path/to/game/prefix>" wine </path/to/autosplit.exe>`
+  - For regular Wine it would look something like this: `WINEPREFIX="</path/to/game/prefix>" wine </path/to/autosplit.exe>`
 
 ## Resources
 
@@ -114,7 +115,6 @@ Not a developer? You can still help through the following methods:
 - Sharing AutoSplit with other speedrunners
 - Starring the repository <img style="vertical-align: sub" src="./docs/repo_star.png" alt="Example" />
 - Upvoting 👍 the following upstream issues in libraries and tools we use:
-  - <https://bugs.winehq.org/show_bug.cgi?id=58610>
   - <https://bugs.winehq.org/show_bug.cgi?id=52487>
   - <https://qt-project.atlassian.net/browse/QTBUG-114436>
   - <https://qt-project.atlassian.net/browse/PYSIDE-2541>

@@ -68,7 +68,7 @@ class XcbCaptureMethod(CaptureMethodBase):
         image = np.array(image)
         if not is_valid_image(image):
             return None
-        return cv2.cvtColor(image, cv2.COLOR_RGB2BGRA)
+        return cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     @override
     def recover_window(self, captured_window_title: str):

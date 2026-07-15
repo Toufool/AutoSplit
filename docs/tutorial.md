@@ -1,3 +1,6 @@
+<!-- markdownlint-disable-next-line MD033 MD041 -->
+<div align="right">(tip: table of content button here ↗️)</div>
+
 # TUTORIAL
 
 ## OPTIONS
