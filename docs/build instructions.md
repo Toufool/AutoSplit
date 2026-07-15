@@ -42,9 +42,10 @@ All scripts pass the `--active` flag to make sure the active environment is used
 ## Install and Build steps
 
 - Run `./scripts/install.ps1` to create/update a virtual environment and install all dependencies.
-- Run the app directly with `./scripts/start.ps1 [--auto-controlled]`.
+- Run the app directly with `./scripts/start.ps1 [--auto-controlled] [--minimized]`.
   - Or debug by pressing `F5` in VSCode.
   - The `--auto-controlled` flag is passed when AutoSplit is started by LiveSplit.
+  - The `--minimized` flag starts the app minimized to the taskbar. Also intended for use with the LiveSplit integration.
 - Run `./scripts/build.ps1` or press `CTRL+Shift+B` in VSCode to build an executable.
 - Optional: Recompile resources after modifications by running `./scripts/compile_resources.ps1`.
   - This should be done automatically by other scripts
