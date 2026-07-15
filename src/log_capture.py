@@ -11,6 +11,7 @@ copy of each line is emitted on top.
 from __future__ import annotations
 
 import os
+import re
 import sys
 import threading
 from collections import deque
@@ -33,6 +34,10 @@ EXCLUDED_SUBSTRINGS = (
 """Substrings of entries to hide from the log history because they would mislead users.
 These are still written to the real console: only the in-app log is filtered"""
 
+ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*m")
+"""SGR (color/style) escape sequences. Python 3.13+ colourizes tracebacks; the real console renders
+them, but the Qt log widget shows the raw codes, so they're stripped from the in-app copy only."""
+
 LogLine = tuple[str, str, bool]
 """A logged line: `(timestamp, text, is_stderr)`. `is_stderr` marks warnings/errors."""
 
@@ -49,6 +54,9 @@ class LogEmitter(QtCore.QObject):
         self._history: deque[LogLine] = deque(maxlen=LOG_HISTORY_MAX_LINES)
 
     def emit_line(self, text: str, *, is_stderr: bool):
+        # The Qt log widget can't render ANSI colours; drop them so codes don't show as raw text.
+        # Done before filtering so a line that's only escape codes is caught by the blank check.
+        text = ANSI_ESCAPE_RE.sub("", text)
         # The console already received this (the tee writes before emitting); only the in-app log
         # filters out blank lines (e.g. a lone "\n" write) and known-benign noise.
         if not text or any(excluded in text for excluded in EXCLUDED_SUBSTRINGS):
