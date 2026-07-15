@@ -116,6 +116,7 @@ LOG_LOCATION_PREFIX_RE = re.compile(r"^\S+:\d+:\s+")
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Parse command line args
     is_auto_controlled = "--auto-controlled" in sys.argv
+    start_minimized = "--minimized" in sys.argv
 
     # Signals
     start_auto_splitter_signal = QtCore.Signal()
@@ -275,7 +276,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
 
-        self.show()
+        if self.start_minimized:
+            self.showMinimized()
+        else:
+            self.show()
 
         # https://pyinstaller.org/en/stable/advanced-topics.html#module-pyi_splash
         # doc implies calling `pyi_splash.is_alive()` should return false should be enough, but in
