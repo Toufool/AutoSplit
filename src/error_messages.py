@@ -43,7 +43,10 @@ def _set_text_message(
 ):
     # Also surface the error message in the logs
     plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
-    print(f"{plain_message}\n{details}\n" if details else f"{plain_message}", sys.stderr)
+    print(
+        f"{plain_message}\n{details}\n" if details else f"{plain_message}",
+        file=sys.stderr if details else None,
+    )
 
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
