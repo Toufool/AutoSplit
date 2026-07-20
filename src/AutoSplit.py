@@ -65,8 +65,6 @@ if sys.version_info >= (3, 15):
 if sys.platform == "win32":
     import ctypes
 
-    from win32comext.shell import shell as shell32
-
     def do_nothing(*_): ...
 
     # pyautogui._pyautogui_win.py
@@ -135,8 +133,8 @@ from split_parser import (
 )
 from user_profile import DEFAULT_PROFILE
 from utils import (
+    ALPHA_CHANNEL_COUNT,
     AUTOSPLIT_VERSION,
-    BGRA_CHANNEL_COUNT,
     FROZEN,
     ONE_SECOND,
     RUNNING_WAYLAND,
@@ -166,6 +164,7 @@ LOG_LOCATION_PREFIX_RE = re.compile(r"^\S+:\d+:\s+")
 class AutoSplit(QMainWindow, design.Ui_MainWindow):
     # Parse command line args
     is_auto_controlled = "--auto-controlled" in sys.argv
+    start_minimized = "--minimized" in sys.argv
 
     # Signals
     start_auto_splitter_signal = QtCore.Signal()
@@ -325,7 +324,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Automatic timer start
         self.timer_start_image.timeout.connect(self.__compare_capture_for_auto_start)
 
-        self.show()
+        if self.start_minimized:
+            self.showMinimized()
+        else:
+            self.show()
 
         # https://pyinstaller.org/en/stable/advanced-topics.html#module-pyi_splash
         # doc implies calling `pyi_splash.is_alive()` should return false should be enough, but in
@@ -424,15 +426,15 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self._refresh_log_footer()
 
     def _refresh_log_footer(self):
+        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
+        chevron = "▶" if self.log_dock.isHidden() else "▲"
         if self._last_log_footer_entry is None:
+            self.log_footer_label.set_elided_text(f"{chevron}  Log messages will appear here")
             return
         timestamp, text, is_stderr = self._last_log_footer_entry
         # Footer is single-line and shows the message directly (no path prefix).
         # First line of an (already-relativized) entry; drops a leading `path:lineno:` prefix.
         first_line = LOG_LOCATION_PREFIX_RE.sub("", text.split("\n", 1)[0])
-        # Footer affordances hinting it expands a log panel: a chevron and hover/border styling.
-        # Not using isVisible()) as it's incorrect during startup restore, before window is shown
-        chevron = "▶" if self.log_dock.isHidden() else "▲"
         stderr_color = f"color: {LOG_STDERR_COLOR.name()};" if is_stderr else ""
         self.log_footer_label.setStyleSheet(stderr_color)
         self.log_footer_label.set_elided_text(f"{chevron}  {timestamp} {first_line}")
@@ -1135,7 +1137,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             text = "\nor\n".join(self.split_image.texts)
             self.current_split_image.setText(f"Looking for OCR text:\n{text}")
         elif is_valid_image(self.split_image.byte_array):
-            set_preview_image(self.current_split_image, self.split_image.byte_array)
+            set_preview_image(self.current_split_image, self.split_image.get_preview_image())
 
         self.current_image_file_label.setText(self.split_image.filename)
         self.table_current_image_threshold_label.setText(
@@ -1208,7 +1210,7 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
     else:
         height, width, channels = image.shape
 
-        if channels == BGRA_CHANNEL_COUNT:
+        if channels == ALPHA_CHANNEL_COUNT:
             image_format = QtGui.QImage.Format.Format_RGBA8888
             capture = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA)
         else:
@@ -1244,14 +1246,17 @@ def main():
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
     try:  # noqa: PLW0717 # We really want to catch everything here
-        if sys.platform == "win32":
-            myappid = f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}"
-            shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
         # Decouple from the executable basename (which varies per build)
         app.setApplicationName("AutoSplit")
         app.setApplicationVersion(AUTOSPLIT_VERSION)
         app.setWindowIcon(QtGui.QIcon(":/resources/icon.ico"))
+
+        if sys.platform == "win32":
+            # Technically not needed since we version the filename now,
+            # but kept in case users strips down the executable filename
+            set_aumid = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID
+            set_aumid.restype = ctypes.HRESULT  # auto-raises OSError on failure
+            set_aumid(f"Toufool.AutoSplit.v{AUTOSPLIT_VERSION}")
 
         if is_already_open():
             error_messages.already_open()

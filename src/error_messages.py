@@ -43,7 +43,10 @@ def _set_text_message(
 ):
     # Also surface the error message in the logs
     plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
-    print(f"{plain_message}\n{details}\n" if details else f"{plain_message}", sys.stderr)
+    print(
+        f"{plain_message}\n{details}\n" if details else f"{plain_message}",
+        file=sys.stderr if details else None,
+    )
 
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
@@ -287,7 +290,7 @@ def make_excepthook(autosplit: AutoSplit):
             "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):
             return
-        # Whithin LiveSplit excepthook needs to use MainWindow's signals to show errors
+        # Within LiveSplit excepthook needs to use MainWindow's signals to show errors
         autosplit.show_error_signal.emit(lambda: exception_traceback(exception))
 
     return excepthook

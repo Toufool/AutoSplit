@@ -21,7 +21,8 @@ if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
 
-try:  # Test for laptop cross-GPU Desktop Duplication issue
+try:
+    # Test for laptop cross-GPU Desktop Duplication issue (ModuleNotFoundError or COMError)
     d3dshot.create(capture_output="numpy")
 except ModuleNotFoundError, COMError:
     IS_DESKTOP_DUPLICATION_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
@@ -71,4 +72,4 @@ https://www.github.com/{GITHUB_REPOSITORY}/blob/main/docs/D3DDD-Note-Laptops.md"
         screenshot = self._desktop_duplication.screenshot((left, top, right, bottom))
         if screenshot is None:
             return None
-        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGRA)
+        return cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
