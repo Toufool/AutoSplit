@@ -34,7 +34,7 @@ def _scrot_screenshot(x: int, y: int, width: int, height: int):
                 "-z",
                 screenshot_file,
             ))
-            return imread(screenshot_file, cv2.IMREAD_COLOR_RGB)
+            return imread(screenshot_file, cv2.IMREAD_COLOR_BGR)
         except subprocess.CalledProcessError:
             # This can happen when trying to capture a region OOB
             # scrot is rude and prints directly to TTY, no stderr :/
@@ -73,9 +73,7 @@ Leaves behind a screenshot file in `/tmp` if interrupted."""
             selection["width"],
             selection["height"],
         )
-        if not is_valid_image(image):
-            return None
-        return cv2.cvtColor(image, cv2.COLOR_RGB2BGRA)
+        return image if is_valid_image(image) else None
 
     @override
     def recover_window(self, captured_window_title: str):

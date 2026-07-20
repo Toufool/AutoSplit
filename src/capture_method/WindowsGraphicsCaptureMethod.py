@@ -7,6 +7,7 @@ if sys.platform != "win32":
 import asyncio
 from typing import TYPE_CHECKING, cast, override
 
+import cv2
 import numpy as np
 import win32api
 import win32gui
@@ -14,14 +15,11 @@ import winerror
 from winrt.windows.graphics.capture import Direct3D11CaptureFramePool, GraphicsCaptureSession
 from winrt.windows.graphics.capture.interop import create_for_window
 from winrt.windows.graphics.directx import DirectXPixelFormat
-from winrt.windows.graphics.directx.direct3d11.interop import (
-    create_direct3d11_device_from_dxgi_device,
-)
 from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
-from utils import BGRA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
+from utils import ALPHA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -47,6 +45,12 @@ except win32api.error as exception:
     if exception.winerror != winerror.ERROR_PROC_NOT_FOUND:
         raise
     IS_WGC_SUPPORTED = False  # pyright: ignore[reportConstantRedefinition]
+
+if TYPE_CHECKING or IS_WGC_SUPPORTED:
+    # This pyd hard-fails to load when the d3d11 export is missing (UPX+Wine)
+    from winrt.windows.graphics.directx.direct3d11.interop import (
+        create_direct3d11_device_from_dxgi_device,
+    )
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):
@@ -156,11 +160,13 @@ Caps at around 60 FPS."""
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
         reference = bitmap_buffer.create_reference()
         image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
-        image = image.reshape((self.size.height, self.size.width, BGRA_CHANNEL_COUNT))
+        image = image.reshape((self.size.height, self.size.width, ALPHA_CHANNEL_COUNT))
         image = image[
             selection["y"] : selection["y"] + selection["height"],
             selection["x"] : selection["x"] + selection["width"],
         ]
+        # The OS hands us a native BGRA buffer; drop the unused alpha
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
         self.last_converted_frame = image
         return image
 

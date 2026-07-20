@@ -13,7 +13,7 @@ import numpy as np
 
 import error_messages
 from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
-from utils import BGRA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
+from utils import ALPHA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if sys.platform == "win32":
     from stat import FILE_ATTRIBUTE_HIDDEN, FILE_ATTRIBUTE_SYSTEM
@@ -66,7 +66,7 @@ def get_image_transparency(image: MatLike):
     cheap, allocation-free reductions. The `ERROR_*` outcomes are rare and lead
     to a user-facing error, so they're allowed to be slow.
     """
-    if image.shape[ImageShape.Channels] != BGRA_CHANNEL_COUNT:
+    if image.shape[ImageShape.Channels] != ALPHA_CHANNEL_COUNT:
         return ImageTransparency.NO_MASK_NO_ALPHA_CHANNEL, 0
     alpha = image[:, :, ColorChannel.Alpha]
     # Fully opaque is the most common case; a single reduction rules it in.

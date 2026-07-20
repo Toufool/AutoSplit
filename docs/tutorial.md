@@ -1,3 +1,6 @@
+<!-- markdownlint-disable-next-line MD033 MD041 -->
+<div align="right">(tip: table of content button here ↗️)</div>
+
 # TUTORIAL
 
 ## OPTIONS
@@ -271,6 +274,13 @@ The size of the selected rectangle can also impact the CPU load (bigger = more C
 - All of these actions can also be handled by their corresponding buttons.
 - Note that pressing your Pause Hotkey does not serve any function in AutoSplit itself and is strictly used for the Pause flag.
 
-#### LiveSplit Integration
+### LiveSplit Integration
 
 See the [usage instructions](https://github.com/Toufool/LiveSplit.AutoSplitIntegration#openingclosing-autosplit).
+
+## Command-line options
+
+AutoSplit accepts the following command-line flags:
+
+- `--auto-controlled` is reserved for timer integrations and is passed automatically when AutoSplit is started by LiveSplit. You should not need to set it manually.
+- `--minimized` starts AutoSplit minimized to the taskbar, so it stays out of the way. Mainly intended for use with a timer integration.

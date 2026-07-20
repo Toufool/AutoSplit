@@ -143,7 +143,8 @@ https://obsproject.com/kb/virtual-camera-guide"""
             y : y + selection["height"],
             x : x + selection["width"],
         ]
-        self.last_converted_frame = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
+        # `cv2.VideoCapture` frames are already BGR
+        self.last_converted_frame = image
         return self.last_converted_frame
 
     @override
