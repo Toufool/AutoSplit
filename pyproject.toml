@@ -8,6 +8,8 @@ dependencies = [
   "PyWinCtl >=0.0.42", # py.typed
   "keyboard @ git+https://github.com/boppreh/keyboard.git", # Fix install on macos and linux-ci https://github.com/boppreh/keyboard/pull/568
   "numpy >=2.3.2", # Python 3.14 support # TODO: Bump when 3.15 wheels
+  "packaging >=20.0", # py.typed
+  "tomli-w >=1.1.0", # Typing fixes
   # v4.13: glibc 2.28 wheels (for aarch); v5 restored sdist
   "opencv-contrib-python-headless >=5.0; sys_platform != 'win32' or platform_machine != 'ARM64'",
   # Windows ARM64 has no opencv wheel (any version) so it source-builds the sdist.
@@ -15,8 +17,12 @@ dependencies = [
   # isn't provided for win-arm64). Pin to the last 4.x that builds until win-arm64
   # wheels ship: https://github.com/opencv/opencv-python/pull/1143
   "opencv-contrib-python-headless ==4.11.*; sys_platform == 'win32' and platform_machine == 'ARM64'",
-  "packaging >=20.0", # py.typed
-  "tomli-w >=1.1.0", # Typing fixes
+  # opencv builds from sdist on Windows ARM64 (no wheel exists). Build isolation is
+  # disabled for it (see [tool.uv]), so its PEP 517 build deps must already be in the
+  # env; uv's two-phase install provides these project deps before the opencv build.
+  "pip; sys_platform == 'win32' and platform_machine == 'ARM64'",
+  "scikit-build >=0.14.0; sys_platform == 'win32' and platform_machine == 'ARM64'",
+  "setuptools <70.0.0; sys_platform == 'win32' and platform_machine == 'ARM64'", # scikit-build compat
 
   # When needed, PySide6 dev builds can be found at https://download.qt.io/snapshots/ci/pyside/dev?C=M;O=D
   "PySide6-Essentials >=6.9.0", # Windows ARM64 support
@@ -93,6 +99,12 @@ override-dependencies = [
   # https://github.com/opencv/opencv-python/issues/1201
   "numpy>=2.3.2",
 ]
+# opencv builds from sdist on win-arm64 and needs numpy, but only the nightly index
+# ships a win-arm64 cp315 wheel. Can't route that into an isolated build env: match-runtime
+# is ignored for opencv's dynamic backend, and sources index pinning isn't respected there
+# (astral-sh/uv#18059). So disable isolation to reuse the project env's nightly numpy; the
+# other build deps are declared as win-arm64 project deps so they're present beforehand.
+no-build-isolation-package = ["opencv-contrib-python-headless"]
 find-links = ["./scripts"] # Discover local wheels
 
 exclude-newer = "1 week"
@@ -109,13 +121,6 @@ beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config
 # pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", marker = "python_version >= '3.15'" }
 numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
-
-[tool.uv.extra-build-dependencies]
-# When opencv builds from sdist, its isolated build env ignores the numpy source
-# mapping above. match-runtime reuses our installed numpy instead of building it.
-opencv-contrib-python-headless = [
-  { requirement = "numpy", match-runtime = true },
-]
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates
