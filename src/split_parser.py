@@ -344,12 +344,12 @@ def parse_and_validate_images(autosplit: AutoSplit):
 
             # Check that there's only one Reset Image
             if image.image_type == ImageType.RESET:
-                error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # noqa: E731
+                error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # ruff:ignore[lambda-assignment]
                 break
 
             # Check that there's only one Start Image
             if image.image_type == ImageType.START:
-                error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # noqa: E731
+                error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # ruff:ignore[lambda-assignment]
                 break
 
     if error_message:

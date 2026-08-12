@@ -33,4 +33,4 @@ class QtCaptureMethod(CaptureMethodBase):
         frame = np.frombuffer(cast("MatLike", b), np.uint8).reshape((200, 200, 3))
 
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return frame  # noqa: RET504
+        return frame  # ruff:ignore[unnecessary-assign]
