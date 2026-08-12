@@ -8,7 +8,7 @@ broken platform guards and lazy import issues in module-level code.
 import importlib
 import operator
 import pkgutil
-import subprocess  # ruff:ignore[suspicious-subprocess-import]
+import subprocess  # noqa: S404
 import sys
 import textwrap
 import unittest
@@ -65,7 +65,7 @@ class TestImportAllModules(unittest.TestCase):
                 for attr_name in [
                     k for k, v in vars(module).items() if type(v).__name__ == "lazy_import"
                 ]:
-                    eval(attr_name, vars(module))  # ruff:ignore[suspicious-eval-usage]
+                    eval(attr_name, vars(module))  # noqa: S307
 
     def test_app_entrypoint_in_fresh_interpreter(self):
         """
@@ -86,7 +86,7 @@ class TestImportAllModules(unittest.TestCase):
             assert isinstance(signature, inspect.Signature), signature
         """)
         # Trusted, hardcoded code string ran with our own interpreter
-        result = subprocess.run(  # ruff:ignore[subprocess-without-shell-equals-true]
+        result = subprocess.run(  # noqa: S603
             [sys.executable, "-c", code],
             capture_output=True,
             text=True,

@@ -1,4 +1,4 @@
-# ruff:file-ignore[line-too-long] # Copied long descriptions
+# ruff: noqa: E501 # Copied long descriptions
 """
 Implements https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/vidioc-querycap.html .
 Avoids dependency on https://tiagocoutinho.github.io/linuxpy/api/video/?h=#linuxpy.video.device.iter_devices .
@@ -7,8 +7,8 @@ Avoids dependency on https://tiagocoutinho.github.io/linuxpy/api/video/?h=#linux
 import ctypes
 
 
-class v4l2_capability(ctypes.Structure):  # ruff:ignore[invalid-class-name]
-    """https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/vidioc-querycap.html#c.V4L.v4l2_capability"""  # ruff:ignore[missing-trailing-period, missing-terminal-punctuation]
+class v4l2_capability(ctypes.Structure):  # noqa: N801
+    """https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/vidioc-querycap.html#c.V4L.v4l2_capability"""  # noqa: D400, D415
 
     driver: bytes  # pyright: ignore[reportUninitializedInstanceVariable]
     card: bytes  # pyright: ignore[reportUninitializedInstanceVariable]

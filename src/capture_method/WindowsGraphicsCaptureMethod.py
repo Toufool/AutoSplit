@@ -113,9 +113,9 @@ Caps at around 60 FPS."""
             try:
                 self.session.close()
             except OSError:
-                # OSError: The application called an interface that was marshalled for a different thread # ruff:ignore[line-too-long]
-                # This still seems to close the session and prevent the following hard crash in LiveSplit # ruff:ignore[line-too-long]
-                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # ruff:ignore[line-too-long]
+                # OSError: The application called an interface that was marshalled for a different thread # noqa: E501
+                # This still seems to close the session and prevent the following hard crash in LiveSplit # noqa: E501
+                # "AutoSplit.exe	<process started at 00:05:37.020 has terminated with 0xc0000409 (EXCEPTION_STACK_BUFFER_OVERRUN)>" # noqa: E501
                 pass
             self.session = None
 

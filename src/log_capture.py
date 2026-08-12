@@ -65,7 +65,7 @@ class LogEmitter(QtCore.QObject):
         text = text.replace(f"{os.getcwd()}{os.sep}", "")
         # Stamp at capture time (on the writing thread) so the time reflects when it was logged.
         # Naive local wall-clock time is intentional for a log footer (DTZ005: no tz wanted).
-        timestamp = datetime.now().strftime(TIMESTAMP_FORMAT)[:-3] + ":"  # ruff:ignore[call-datetime-now-without-tzinfo]
+        timestamp = datetime.now().strftime(TIMESTAMP_FORMAT)[:-3] + ":"  # noqa: DTZ005
         log_line: LogLine = (timestamp, text, is_stderr)
         with self._lock:
             self._history.append(log_line)

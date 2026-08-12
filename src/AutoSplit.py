@@ -32,7 +32,7 @@ if sys.version_info >= (3, 15):
     def _lazy_imports_filter(
         importing: str | None,
         imported: str,
-        fromlist: tuple[str, ...] | None = None,  # ruff:ignore[unused-function-argument]
+        fromlist: tuple[str, ...] | None = None,  # noqa: ARG001
         /,
     ) -> bool:
         # No importer means exec'd/embedded code (e.g. shiboken6's signature
@@ -79,7 +79,7 @@ if sys.platform == "linux":
     # Useful for debugging missing system packages
     # os.environ.setdefault("QT_DEBUG_PLUGINS", "1")
 
-# ruff: disable[module-import-not-at-top-of-file] # https://github.com/astral-sh/ruff/issues/21423
+# ruff: disable[E402] # https://github.com/astral-sh/ruff/issues/21423
 
 # Tee stdout/stderr as soon as possible, so import-time warnings and errors are also caught.
 # This must run after the platform-specific setup above (which has to happen before any Qt import).
@@ -147,7 +147,7 @@ from utils import (
     open_file,
 )
 
-# ruff: enable[module-import-not-at-top-of-file]
+# ruff: enable[E402]
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -191,7 +191,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     CheckForUpdatesThread: QtCore.QThread | None = None
     SettingsWidget: settings.Ui_SettingsWidget | None = None
 
-    def __init__(self):  # ruff:ignore[too-many-statements]
+    def __init__(self):  # noqa: PLR0915
         super().__init__()
 
         # Initialize a few attributes
@@ -304,7 +304,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.after_setting_hotkey_signal.connect(lambda: after_setting_hotkey(self))
         self.start_auto_splitter_signal.connect(self.__auto_splitter)
 
-        def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):  # ruff:ignore[boolean-type-hint-positional-argument]
+        def _update_checker_widget_signal_slot(latest_version: str, check_on_open: bool):  # noqa: FBT001
             return open_update_checker(self, latest_version, check_on_open=check_on_open)
 
         self.update_checker_widget_signal.connect(_update_checker_widget_signal_slot)
@@ -334,7 +334,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # reality benign error logs are still printed if _PYI_SPLASH_IPC env is missing on import.
         # Which is acceptable in dev and improves missing Splash visibility in prod build.
         try:
-            import pyi_splash  # pyright: ignore[reportMissingModuleSource]  # ruff:ignore[import-outside-top-level]
+            import pyi_splash  # pyright: ignore[reportMissingModuleSource]  # noqa: PLC0415
         except ModuleNotFoundError:
             pass  # App is not frozen
         else:
@@ -396,7 +396,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             show=cast("bool", user_profile.QT_SETTINGS.value("log_panel_visible", False, type=bool))
         )
 
-    def _set_log_panel_visible(self, show: bool):  # ruff:ignore[boolean-type-hint-positional-argument] # boolean value setter, not an arbitrary flag
+    def _set_log_panel_visible(self, show: bool):  # noqa: FBT001 # boolean value setter, not an arbitrary flag
         self.log_dock.setVisible(show)
         # Fix the height per state so it can't be dragged to over-expand or hide content.
         self.setFixedHeight(self._collapsed_height + (self._log_panel_height if show else 0))
@@ -564,7 +564,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         if below_flag and not self.split_below_threshold and similarity_diff >= 0:
             self.split_below_threshold = True
             return
-        if (  # ruff:ignore[too-many-boolean-expressions] # See above TODO
+        if (  # noqa: PLR0916 # See above TODO
             below_flag
             and self.split_below_threshold
             and similarity_diff < 0
@@ -770,7 +770,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return True
         return False
 
-    def __auto_splitter(self):  # ruff:ignore[complex-structure, too-many-branches, too-many-statements]
+    def __auto_splitter(self):  # noqa: C901,PLR0912,PLR0915
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
             self.gui_changes_on_reset(safe_to_reload_start_image=True)
             error_messages.split_hotkey()
@@ -1245,7 +1245,7 @@ def main():
     QApplication.setStyle("fusion")
     # Call to QApplication outside the try-except so we can show error messages
     app = QApplication(sys.argv)
-    try:  # ruff:ignore[too-many-statements-in-try-clause] # We really want to catch everything here
+    try:  # noqa: PLW0717 # We really want to catch everything here
         # Decouple from the executable basename (which varies per build)
         app.setApplicationName("AutoSplit")
         app.setApplicationVersion(AUTOSPLIT_VERSION)
@@ -1276,7 +1276,7 @@ def main():
             timer.start(500)
 
         exit_code = app.exec()
-    except Exception as exception:  # ruff:ignore[blind-except] # We really want to catch everything here
+    except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
         error_messages.handle_top_level_exceptions(exception)
 
     # Catch Keyboard Interrupts for a clean close
