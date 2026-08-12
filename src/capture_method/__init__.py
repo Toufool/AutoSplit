@@ -168,7 +168,7 @@ class CameraInfo:
 def get_input_devices():
     if sys.platform == "win32":
         try:
-            from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
+            from pygrabber.dshow_graph import FilterGraph  # ruff:ignore[import-outside-top-level]
         except OSError as exception:
             # wine can choke on D3D Device Enumeration if missing directshow
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:

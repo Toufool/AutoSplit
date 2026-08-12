@@ -4,29 +4,29 @@ extend = ".venv/Beslogic-Ruff-Config/ruff.toml"
 [lint]
 explicit-preview-rules = false # This project uses bleeding-edge behaviours
 ignore = [
-  "D205", # Not all docstrings have a short description + description
+  "missing-blank-line-after-summary", # Not all docstrings have a short description + description
   # We have some Pascal case module names
-  "N999", # pep8-naming: Invalid module name
+  "invalid-module-name", # pep8-naming: Invalid module name
   # Print are used as debug logs
   "T20", # flake8-print
   # We use unittest, not pytest
   "PT", # flake8-pytest-style
   # This is a relatively small, low contributors project. Git blame suffice.
-  "TD002", # missing-todo-author
+  "missing-todo-author", # missing-todo-author
   # We do work in __init__ modules
-  "RUF067", # non-empty-init-module
+  "non-empty-init-module", # non-empty-init-module
 
   ###
   # TODO
   ###
   "PTH", # flake8-use-pathlib
-  "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
+  "invalid-formatter-suppression-comment", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
 ]
 
 [lint.per-file-ignores]
 "src/d3d11.py" = [
   # Following windows API/ctypes like naming conventions
-  "N801", # invalid-class-name
+  "invalid-class-name", # invalid-class-name
 ]
 
 [lint.isort]

@@ -138,8 +138,8 @@ def select_region(autosplit: AutoSplit):
         offset_x = window_x + left_bounds
         offset_y = window_y + top_bounds
     else:
-        root: Window = window._xWin.query_tree().root  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
-        data = root.translate_coords(window._xWin.id, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        root: Window = window._xWin.query_tree().root  # pyright:ignore[reportPrivateUsage] # ruff:ignore[private-member-access]
+        data = root.translate_coords(window._xWin.id, 0, 0)._data  # pyright:ignore[reportPrivateUsage] # ruff:ignore[private-member-access]
         offset_x = data["x"]
         offset_y = data["y"]
 
@@ -186,7 +186,7 @@ def select_window(autosplit: AutoSplit):
         border_width = ceil((window_width - client_width) / 2)
         titlebar_with_border_height = window_height - client_height - border_width
     else:
-        data = window._xWin.get_geometry()._data  # pyright:ignore[reportPrivateUsage] # noqa: SLF001
+        data = window._xWin.get_geometry()._data  # pyright:ignore[reportPrivateUsage] # ruff:ignore[private-member-access]
         client_height = data["height"]
         client_width = data["width"]
         border_width = data["border_width"]
