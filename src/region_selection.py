@@ -180,7 +180,7 @@ def select_window(autosplit: AutoSplit):
     autosplit.capture_method.reinitialize()
 
     if sys.platform == "win32":
-        # Exlude the borders and titlebar from the window selection. To only get the client area.
+        # Exclude the borders and titlebar from the window selection. To only get the client area.
         _, __, window_width, window_height = get_window_bounds(hwnd)
         _, __, client_width, client_height = win32gui.GetClientRect(hwnd)
         border_width = ceil((window_width - client_width) / 2)
