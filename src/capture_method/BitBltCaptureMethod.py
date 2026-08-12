@@ -51,7 +51,7 @@ The smaller the selected region, the more efficient it is."""
             return None
 
         # If the window closes while it's being manipulated, it could cause a crash
-        try:  # ruff:ignore[too-many-statements-in-try-clause]
+        try:  # noqa: PLW0717
             window_dc = win32gui.GetWindowDC(hwnd)
             dc_object = win32ui.CreateDCFromHandle(window_dc)
 

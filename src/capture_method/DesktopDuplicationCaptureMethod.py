@@ -5,7 +5,7 @@ import sys
 if sys.platform != "win32":
     raise OSError
 
-from _ctypes import COMError  # ruff:ignore[import-private-name] # comtypes is untyped
+from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 from typing import TYPE_CHECKING, override
 
 import cv2

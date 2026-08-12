@@ -285,7 +285,7 @@ def make_excepthook(autosplit: AutoSplit):
         # Catch Keyboard Interrupts for a clean close
         if exception_type is KeyboardInterrupt or isinstance(exception, KeyboardInterrupt):
             sys.exit(0)
-        # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture # ruff:ignore[line-too-long]
+        # HACK: Can happen when starting the region selector while capturing with WindowsGraphicsCapture # noqa: E501
         if exception_type is SystemError and str(exception) == (
             "<class 'PySide6.QtGui.QPaintEvent'> returned a result with an error set"
         ):

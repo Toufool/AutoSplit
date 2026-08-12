@@ -22,13 +22,13 @@ class CaptureMethodBase:
 
     def reinitialize(self):
         self.close()
-        self.__init__(self._autosplit_ref)  # type: ignore[misc]  # ruff:ignore[unnecessary-dunder-call]
+        self.__init__(self._autosplit_ref)  # type: ignore[misc]  # noqa: PLC2801
 
     def close(self):
         # Some capture methods don't need any cleanup
         pass
 
-    def get_frame(self) -> MatLike | None:  # ruff:ignore[no-self-use]
+    def get_frame(self) -> MatLike | None:  # noqa: PLR6301
         """
         Captures an image of the region for a window matching the given
         parameters of the bounding box.
@@ -37,7 +37,7 @@ class CaptureMethodBase:
         """
         return None
 
-    def recover_window(self, captured_window_title: str) -> bool:  # ruff:ignore[no-self-use]
+    def recover_window(self, captured_window_title: str) -> bool:  # noqa: PLR6301
         return False
 
     def check_selected_region_exists(self) -> bool:

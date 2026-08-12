@@ -163,7 +163,7 @@ class AutoSplitImage:
         if transparency == ImageTransparency.HAS_MASK:
             # Adaptively determine the target size according to
             # the number of nonzero elements in the alpha channel of the split image.
-            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # ruff:ignore[line-too-long]
+            # This may result in images bigger than COMPARISON_RESIZE if there's plenty of transparency. # noqa: E501
             # Which wouldn't incur any performance loss in methods where masked regions are ignored.
             scale = min(1, sqrt(COMPARISON_RESIZE_AREA / alpha_nonzero_count))
 

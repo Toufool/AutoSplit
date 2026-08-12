@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 import shutil
-import subprocess  # ruff:ignore[suspicious-subprocess-import]
+import subprocess  # noqa: S404
 import sys
 import tomllib
 from collections.abc import Callable, Iterable, Sequence
@@ -23,7 +23,7 @@ if sys.platform == "win32":
     import ctypes
     import ctypes.wintypes
     import platform
-    from _ctypes import COMError  # ruff:ignore[import-private-name] # comtypes is untyped
+    from _ctypes import COMError  # noqa: PLC2701 # comtypes is untyped
 
     import win32gui
     import win32ui
@@ -177,7 +177,7 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
         return (0, 0)
     try:
-        from pygrabber.dshow_graph import FilterGraph  # ruff:ignore[import-outside-top-level]
+        from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
     except OSError as exception:
         # wine can choke on D3D Device Enumeration if missing directshow
         if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
@@ -205,10 +205,10 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
     if sys.platform == "win32":
-        os.startfile(file_path)  # ruff:ignore[start-process-with-no-shell]
+        os.startfile(file_path)  # noqa: S606
     else:
         opener = "xdg-open" if sys.platform == "linux" else "open"
-        subprocess.check_call([opener, file_path])  # ruff:ignore[subprocess-without-shell-equals-true]
+        subprocess.check_call([opener, file_path])  # noqa: S603
 
 
 def get_or_create_eventloop():
@@ -225,7 +225,7 @@ def try_input_device_access():
     if sys.platform != "linux":
         return False
     try:
-        UI_SET_EVBIT = 0x40045564  # ruff:ignore[non-lowercase-variable-in-function]
+        UI_SET_EVBIT = 0x40045564  # noqa: N806
         with open("/dev/uinput", "wb") as uinput:
             fcntl.ioctl(uinput, UI_SET_EVBIT)
     except OSError:
@@ -321,7 +321,7 @@ def run_tesseract(png: bytes):
     @return: The recognized output string from tesseract.
     """
     return (
-        subprocess  # ruff:ignore[subprocess-without-shell-equals-true] # Only using known literal strings or shutil.which result
+        subprocess  # noqa: S603 # Only using known literal strings or shutil.which result
         .Popen(TESSERACT_CMD, **subprocess_kwargs())
         .communicate(input=png)[0]
         .decode()

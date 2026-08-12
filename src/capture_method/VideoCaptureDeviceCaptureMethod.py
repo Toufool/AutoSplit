@@ -49,7 +49,7 @@ https://obsproject.com/kb/virtual-camera-guide"""
     is_old_image = False
 
     def __read_loop(self):
-        try:  # ruff:ignore[too-many-statements-in-try-clause] # We really want to catch everything here
+        try:  # noqa: PLW0717 # We really want to catch everything here
             while not self.stop_thread.is_set():
                 try:
                     result, image = self.capture_device.read()
@@ -77,7 +77,7 @@ https://obsproject.com/kb/virtual-camera-guide"""
 
                 self.last_captured_frame = image
                 self.is_old_image = False
-        except Exception as exception:  # ruff:ignore[blind-except] # We really want to catch everything here
+        except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
             error = exception
             self.capture_device.release()
             self._autosplit_ref.show_error_signal.emit(
