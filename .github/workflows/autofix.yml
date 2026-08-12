@@ -17,8 +17,10 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           activate-environment: true
-      # Not locked, this will fix lock file if we forgot about it
-      - run: uv sync --only-group=formatters
+      # Fix lockfile without unnecessarily bumping versions
+      - run: uv lock
+      # Frozen because we don't need to check if lockfile is updated
+      - run: uv sync --frozen --only-group=formatters
 
       - run: ruff check --fix
       - run: ruff format
