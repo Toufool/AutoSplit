@@ -49,7 +49,7 @@ dependencies = [
 formatters = [
   "beslogic-ruff-config",
   "dprint-py >=0.50.0.0",
-  "ruff <0.15.22", # Version should come from beslogic-ruff-config and the lock file
+  "ruff", # Version should come from beslogic-ruff-config and the lock file
 ]
 dev = [
   #
@@ -103,7 +103,7 @@ numpy = "2 day" # Fixed sdist
 # Development channels
 ###
 [tool.uv.sources]
-beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "1ee6311d79490fbaaa99c3c8b1a0edf6e952f2b8" }
+beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "39c27278054fc428b54205581a0e23caca7ad77a" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
 # pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", marker = "python_version >= '3.15'" }
 # numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
