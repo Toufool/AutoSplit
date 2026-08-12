@@ -316,7 +316,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
     # while the program waits for user input on the hotkey
     @fire_and_forget
     def read_and_set_hotkey():
-        try:  # noqa: PLW0717 # We really want to catch everything here
+        try:  # ruff:ignore[too-many-statements-in-try-clause] # We really want to catch everything here
             hotkey_name = preselected_hotkey_name or __read_hotkey()
 
             # Unset hotkey by pressing "Escape". This is the same behaviour as LiveSplit
@@ -367,7 +367,7 @@ def set_hotkey(autosplit: AutoSplit, hotkey: Hotkey, preselected_hotkey_name: st
             autosplit.settings_dict[f"{hotkey}_hotkey"] = (  # pyright: ignore[reportGeneralTypeIssues]
                 hotkey_name
             )
-        except Exception as exception:  # noqa: BLE001 # We really want to catch everything here
+        except Exception as exception:  # ruff:ignore[blind-except] # We really want to catch everything here
             error = exception
             autosplit.show_error_signal.emit(lambda: error_messages.exception_traceback(error))
         finally:

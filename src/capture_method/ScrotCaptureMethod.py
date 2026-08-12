@@ -5,7 +5,7 @@ if sys.platform != "linux":
 
 import os
 import shutil
-import subprocess  # noqa: S404
+import subprocess  # ruff:ignore[suspicious-subprocess-import]
 import tempfile
 from typing import TYPE_CHECKING, override
 
@@ -27,7 +27,7 @@ def _scrot_screenshot(x: int, y: int, width: int, height: int):
     with tempfile.TemporaryDirectory() as tmp:
         screenshot_file = os.path.join(tmp, "autosplit")
         try:
-            subprocess.check_call((  # noqa: S603 # Not user input
+            subprocess.check_call((  # ruff:ignore[subprocess-without-shell-equals-true] # Not user input
                 "/usr/bin/scrot",
                 "-a",
                 f"{x},{y},{width},{height}",
@@ -63,7 +63,7 @@ Leaves behind a screenshot file in `/tmp` if interrupted."""
 
         root = self._display.screen().root
         try:
-            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
+            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # ruff:ignore[private-member-access]
         except BadWindow:
             return None
         selection = self._autosplit_ref.settings_dict["capture_region"]

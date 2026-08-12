@@ -41,7 +41,7 @@ class XcbCaptureMethod(CaptureMethodBase):
 
         root = self._display.screen().root
         try:
-            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
+            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # ruff:ignore[private-member-access]
         except BadWindow:
             return None
         # image = window.get_image(
