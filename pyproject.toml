@@ -25,9 +25,6 @@ dependencies = [
   "PySide6-Essentials >=6.9.0", # Windows ARM64 support
 
   #
-  # Build and compile resources
-
-  #
   # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#environment-markers
   #
   # Windows-only dependencies:
