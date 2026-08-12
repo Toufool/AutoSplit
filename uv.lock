@@ -162,7 +162,7 @@ dev = [
     { name = "dprint-py", specifier = ">=0.50.0.0" },
     { name = "mypy", specifier = ">=2.2" },
     { name = "pyright", extras = ["nodejs"], specifier = ">=1.1.400" },
-    { name = "ruff" },
+    { name = "ruff", specifier = "<0.16" },
     { name = "types-keyboard" },
     { name = "types-pyautogui" },
     { name = "types-pyinstaller", specifier = ">=6.21.0.20260616" },
@@ -172,7 +172,7 @@ dev = [
 formatters = [
     { name = "beslogic-ruff-config", git = "https://github.com/Beslogic/Beslogic-Ruff-Config?rev=312cfab8a1e2653639a2ef665e99eac6c7412ba7" },
     { name = "dprint-py", specifier = ">=0.50.0.0" },
-    { name = "ruff" },
+    { name = "ruff", specifier = "<0.16" },
 ]
 
 [[package]]

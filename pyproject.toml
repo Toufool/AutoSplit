@@ -49,7 +49,7 @@ dependencies = [
 formatters = [
   "beslogic-ruff-config",
   "dprint-py >=0.50.0.0",
-  "ruff", # Version should come from beslogic-ruff-config and the lock file
+  "ruff < 0.16", # Version should come from beslogic-ruff-config and the lock file
 ]
 dev = [
   #
