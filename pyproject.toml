@@ -96,8 +96,6 @@ override-dependencies = [
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
-librt = "3 day" # Fixed sdist
-numpy = "2 day" # Fixed sdist
 
 ###
 # Development channels

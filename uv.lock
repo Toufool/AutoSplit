@@ -20,8 +20,6 @@ exclude-newer-span = "P1W"
 
 [options.exclude-newer-package]
 typed-d3dshot = false
-librt = { timestamp = "0001-01-01T00:00:00Z", span = "P3D" }
-numpy = { timestamp = "0001-01-01T00:00:00Z", span = "P2D" }
 
 [manifest]
 overrides = [{ name = "numpy", specifier = ">=2.5.2" }]
