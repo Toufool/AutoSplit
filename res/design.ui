@@ -7,13 +7,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>772</width>
+    <width>786</width>
     <height>580</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>772</width>
+    <width>786</width>
     <height>432</height>
    </size>
   </property>
@@ -68,7 +68,7 @@
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>2</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
@@ -126,7 +126,7 @@
       <widget class="QWidget" name="left_panel" native="true">
        <property name="maximumSize">
         <size>
-         <width>112</width>
+         <width>122</width>
          <height>16777215</height>
         </size>
        </property>
@@ -411,7 +411,7 @@
       <widget class="QWidget" name="center_panel" native="true">
        <property name="maximumSize">
         <size>
-         <width>322</width>
+         <width>324</width>
          <height>16777215</height>
         </size>
        </property>
@@ -778,7 +778,7 @@
       <widget class="QWidget" name="right_panel" native="true">
        <property name="maximumSize">
         <size>
-         <width>322</width>
+         <width>324</width>
          <height>16777215</height>
         </size>
        </property>
@@ -930,13 +930,13 @@
          <widget class="QWidget" name="split_controls_panel" native="true">
           <layout class="QGridLayout" name="split_controls_layout" columnstretch="1,0">
            <property name="leftMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>2</number>
            </property>
            <property name="rightMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
             <number>2</number>
@@ -1026,12 +1026,6 @@
            </item>
            <item row="0" column="1">
             <widget class="QWidget" name="action_row" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <layout class="QHBoxLayout" name="action_layout">
               <property name="spacing">
                <number>4</number>
@@ -1050,14 +1044,20 @@
               </property>
               <item>
                <widget class="QPushButton" name="undo_split_button">
-                <property name="enabled">
-                 <bool>false</bool>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="maximumSize">
+                <property name="minimumSize">
                  <size>
                   <width>56</width>
-                  <height>16777215</height>
+                  <height>0</height>
                  </size>
+                </property>
+                <property name="enabled">
+                 <bool>false</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::FocusPolicy::NoFocus</enum>
@@ -1069,14 +1069,20 @@
               </item>
               <item>
                <widget class="QPushButton" name="skip_split_button">
-                <property name="enabled">
-                 <bool>false</bool>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="maximumSize">
+                <property name="minimumSize">
                  <size>
                   <width>56</width>
-                  <height>16777215</height>
+                  <height>0</height>
                  </size>
+                </property>
+                <property name="enabled">
+                 <bool>false</bool>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::FocusPolicy::NoFocus</enum>
@@ -1104,12 +1110,6 @@
            </item>
            <item row="2" column="1">
             <widget class="QPushButton" name="start_auto_splitter_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
