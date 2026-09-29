@@ -141,6 +141,11 @@ elif sys.platform == "linux":
         # TODO: Should we show a specific warning for, or document:
         # pyscreeze.PyScreezeException: Your computer uses the Wayland window system. Scrot works on the X11 window system but not Wayland. You must install gnome-screenshot by running `sudo apt install gnome-screenshot` # noqa: E501
         pass
+    except Exception as exception:
+        # Ignore gnomes-screenshot not being available,
+        # as its screen-flashes make it unviable for screen-recording
+        if "gnome-screenshot" not in str(exception):
+            raise
     else:
         # TODO: Investigate solution for Slow Scrot:
         # https://github.com/asweigart/pyscreeze/issues/68
