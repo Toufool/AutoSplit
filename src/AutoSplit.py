@@ -662,6 +662,10 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
     def __check_fps(self):
         self.fps_value_label.setText("...")
         QApplication.processEvents()
+        if not self.capture_method.check_selected_region_exists():
+            self.fps_value_label.clear()
+            error_messages.region()
+            return
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
             self.fps_value_label.clear()
             return
@@ -783,7 +787,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             return True
         return False
 
-    def __auto_splitter(self):  # noqa: C901,PLR0912,PLR0915
+    def __auto_splitter(self):  # noqa: C901,PLR0911,PLR0912,PLR0915
         if not self.settings_dict["split_hotkey"] and not self.is_auto_controlled:
             self.gui_changes_on_reset(safe_to_reload_start_image=True)
             error_messages.split_hotkey()
@@ -792,11 +796,14 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # Set start time before parsing the images as it's a heavy operation that will cause delays
         self.run_start_time = time()
 
+        if not self.capture_method.check_selected_region_exists():
+            self.gui_changes_on_reset(safe_to_reload_start_image=True)
+            error_messages.region()
+            return
         if not (validate_before_parsing(self) and parse_and_validate_images(self)):
-            # `safe_to_reload_start_image: bool = False`
-            # because __reload_start_image also does this check,
+            # `safe_to_reload_start_image=False` because __reload_start_image also does this check,
             # we don't want to double a Start/Reset Image error message
-            self.gui_changes_on_reset()
+            self.gui_changes_on_reset(safe_to_reload_start_image=False)
             return
 
         # Construct a list of images + loop count tuples.

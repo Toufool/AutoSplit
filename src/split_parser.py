@@ -273,8 +273,6 @@ def validate_before_parsing(autosplit: AutoSplit, *, show_error: bool = True):
         error = error_messages.split_image_directory
     elif not os.path.isdir(split_image_directory):
         error = partial(error_messages.invalid_directory, split_image_directory)
-    elif not autosplit.capture_method.check_selected_region_exists():
-        error = error_messages.region
     if error and show_error:
         error()
     return not error
