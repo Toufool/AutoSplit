@@ -2,6 +2,10 @@
 {
   // https://github.com/BesLogic/shared-configs/blob/main/.dprint.jsonc
   "extends": "https://raw.githubusercontent.com/BesLogic/shared-configs/main/.dprint.jsonc",
+  "markdown": {
+    // Not sure if I really prefer "never", reconsider
+    "textWrap": "maintain",
+  },
   // Trying to match dprint to QT designer output, but whitespace sensitivity still not fully respected
   // "markup": {
   //   "associations": [
