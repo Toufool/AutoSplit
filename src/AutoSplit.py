@@ -19,12 +19,15 @@ if sys.version_info >= (3, 15):
     #   (PySide6.support.signature.* vs shibokensupport.*).
     # - numpy: its self-check raises a bogus version conflict when imported
     #   through shiboken6's patched __import__.
+    # - Levenshtein: its lazy "import rapidfuzz.distance.X as _X" statements recurse
+    #   infinitely (RecursionError) when reified through shiboken6's patched __import__.
     _EAGER_INTERNALS = (
         frozenset({
             "PySide6",
             "shiboken6",
             "shibokensupport",
             "numpy",
+            "Levenshtein",
         })
         | sys.stdlib_module_names
     )
@@ -226,7 +229,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.split_below_threshold = False
         self.run_start_time = 0.0
         self.start_image: AutoSplitImage | None = None
-        self.reset_image: AutoSplitImage | None = None
+        self.reset_images: list[AutoSplitImage] = []
         self.split_images: list[AutoSplitImage] = []
         self.split_image: AutoSplitImage | None = None
         self.update_auto_control: AutoControlledThread | None = None
@@ -663,11 +666,11 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             self.fps_value_label.clear()
             return
 
-        images = self.split_images
-        if self.start_image:
-            images.append(self.start_image)
-        if self.reset_image:
-            images.append(self.reset_image)
+        images = [
+            *self.split_images,
+            *self.reset_images,
+            *([self.start_image] if self.start_image is not None else []),
+        ]
 
         # run X iterations of screenshotting capture region + comparison + displaying.
         t0 = time()
@@ -988,7 +991,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         # This is done so that it can detect if user hit split/undo split while paused/delayed.
         pause_split_image_number = self.split_image_number
         while True:
-            # Calculate similarity for Reset Image
+            # Calculate similarity for Reset Images
             if self.__reset_if_should(self.__get_capture_for_comparison()):
                 return True
 
@@ -1092,31 +1095,45 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
 
     def __reset_if_should(self, capture: MatLike | None):
         """Checks if we should reset, resets if it's the case, and returns the result."""
-        if self.reset_image:
+        if self.reset_images:
             if self.settings_dict["enable_auto_reset"]:
-                similarity = self.reset_image.compare_with_capture(self, capture)
-                threshold = self.reset_image.get_similarity_threshold(self)
-
-                pause_times = [self.reset_image.get_pause_time(self)]
-                if self.start_image:
-                    pause_times.append(self.start_image.get_pause_time(self))
-                paused = time() - self.run_start_time <= max(pause_times)
-                if paused:
-                    should_reset = False
-                    self.table_reset_image_live_label.setText("paused")
-                else:
-                    should_reset = similarity >= threshold
+                elapsed_time = time() - self.run_start_time
+                start_pause_time = self.start_image.get_pause_time(self) if self.start_image else 0
+                active_reset_images = [
+                    reset_image
+                    for reset_image in self.reset_images
+                    if elapsed_time > max(reset_image.get_pause_time(self), start_pause_time)
+                ]
+                if active_reset_images:
+                    # Display the Reset Image that is the closest to its threshold
+                    similarity, threshold = max(
+                        (
+                            (
+                                reset_image.compare_with_capture(self, capture),
+                                reset_image.get_similarity_threshold(self),
+                            )
+                            for reset_image in active_reset_images
+                        ),
+                        key=lambda similarity_and_threshold: (
+                            similarity_and_threshold[0] - similarity_and_threshold[1]
+                        ),
+                    )
                     self.reset_highest_similarity = max(similarity, self.reset_highest_similarity)
                     self.table_reset_image_highest_label.setText(
                         decimal(self.reset_highest_similarity)
                     )
                     self.table_reset_image_live_label.setText(decimal(similarity))
-
-                self.table_reset_image_threshold_label.setText(decimal(threshold))
-
-                if should_reset:
-                    send_command(self, "reset")
-                    self.reset()
+                    self.table_reset_image_threshold_label.setText(decimal(threshold))
+                    if similarity >= threshold:
+                        send_command(self, "reset")
+                        self.reset()
+                else:
+                    self.table_reset_image_live_label.setText("paused")
+                    self.table_reset_image_threshold_label.setText(
+                        decimal(
+                            min(image.get_similarity_threshold(self) for image in self.reset_images)
+                        )
+                    )
             else:
                 self.table_reset_image_live_label.setText("disabled")
         else:

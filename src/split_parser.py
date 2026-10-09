@@ -7,12 +7,12 @@ from collections.abc import Callable
 from enum import IntEnum, auto
 from functools import partial
 from stat import UF_HIDDEN
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Literal, TypeVar, overload
 
 import numpy as np
 
 import error_messages
-from AutoSplitImage import RESET_KEYWORD, START_KEYWORD, AutoSplitImage, ImageType
+from AutoSplitImage import START_KEYWORD, AutoSplitImage, ImageType
 from utils import ALPHA_CHANNEL_COUNT, MAXBYTE, ColorChannel, ImageShape, is_valid_image
 
 if sys.platform == "win32":
@@ -234,13 +234,36 @@ def flags_from_filename(filename: str):
     return flags
 
 
-def __pop_image_type(split_image: list[AutoSplitImage], image_type: ImageType):
-    for image in split_image:
-        if image.image_type == image_type:
-            split_image.remove(image)
-            return image
+@overload
+def __pop_image_type(
+    split_images: list[AutoSplitImage], image_type: Literal[ImageType.START]
+) -> AutoSplitImage | None: ...
+@overload
+def __pop_image_type(
+    split_images: list[AutoSplitImage], image_type: Literal[ImageType.SPLIT, ImageType.RESET]
+) -> list[AutoSplitImage]: ...
+def __pop_image_type(split_images: list[AutoSplitImage], image_type: ImageType):
+    if image_type == ImageType.START:
+        # Only one Start Image is allowed.
+        # Any other is left in the list to be reported during validation.
+        for index, image in enumerate(split_images):
+            if image.image_type == image_type:
+                return split_images.pop(index)
+        return None
 
-    return None
+    images: list[AutoSplitImage] = []
+    remaining_images: list[AutoSplitImage] = []
+    for image in split_images:
+        (images if image.image_type == image_type else remaining_images).append(image)
+    split_images[:] = remaining_images
+    return images
+
+
+def __set_reset_images(autosplit: AutoSplit, reset_images: list[AutoSplitImage]):
+    autosplit.reset_images = reset_images
+    autosplit.table_reset_image_label.setText(
+        f"Reset Images ({len(reset_images)})" if len(reset_images) > 1 else "Reset Image"
+    )
 
 
 def validate_before_parsing(autosplit: AutoSplit, *, show_error: bool = True):
@@ -298,7 +321,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     all_images = __get_images_from_directory(autosplit.settings_dict["split_image_directory"])
     # Find non-split images and then remove them from the list
     start_image = __pop_image_type(all_images, ImageType.START)
-    reset_image = __pop_image_type(all_images, ImageType.RESET)
+    reset_images = __pop_image_type(all_images, ImageType.RESET)
     split_images = all_images
 
     error_message: Callable[[], object] | None = None
@@ -318,7 +341,7 @@ def parse_and_validate_images(autosplit: AutoSplit):
     # If there is no reset hotkey set but a Reset Image is present,
     # and is not auto controlled, throw an error.
     elif (
-        reset_image
+        reset_images
         and not autosplit.settings_dict["reset_hotkey"]
         and not autosplit.is_auto_controlled
     ):
@@ -342,25 +365,20 @@ def parse_and_validate_images(autosplit: AutoSplit):
                 error_message = error_messages.pause_hotkey
                 break
 
-            # Check that there's only one Reset Image
-            if image.image_type == ImageType.RESET:
-                error_message = lambda: error_messages.multiple_keyword_images(RESET_KEYWORD)  # noqa: E731
-                break
-
             # Check that there's only one Start Image
             if image.image_type == ImageType.START:
-                error_message = lambda: error_messages.multiple_keyword_images(START_KEYWORD)  # noqa: E731
+                error_message = partial(error_messages.multiple_keyword_images, START_KEYWORD)
                 break
 
     if error_message:
         autosplit.start_image = None
-        autosplit.reset_image = None
+        __set_reset_images(autosplit, [])
         autosplit.split_images = []
         autosplit.gui_changes_on_reset()
         error_message()
         return False
 
     autosplit.start_image = start_image
-    autosplit.reset_image = reset_image
+    __set_reset_images(autosplit, reset_images)
     autosplit.split_images = split_images
     return True
