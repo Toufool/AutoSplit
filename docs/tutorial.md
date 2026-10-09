@@ -180,7 +180,7 @@ The best way to create a masked image is to set your capture region as the entir
 
 ### Reset Image
 
-You can have one (and only one) image with the keyword `reset` in its name. AutoSplit will press the reset button when it finds this image. This image will only be used for resets and it will not be tied to any split. You can set a threshold and pause time for it. The pause time is the amount of seconds AutoSplit will wait before checking for the Reset Image once the run starts. For example: `Reset_(0.95)_[10].png`.
+You can have one or more images with the keyword `reset` in their name. AutoSplit will press the reset button when it matches any of these images. These images will only be used for resets and they will not be tied to any split. You can set a threshold and pause time for each of them. The pause time is the amount of seconds AutoSplit will wait before checking for that Reset Image once the run starts. For example: `Reset_(0.95)_[10].png`. When there is more than one Reset Image, the comparison table shows the one closest to its threshold.
 
 ### Start Image
 

@@ -224,8 +224,13 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
             else "-"
         )
         self._autosplit_ref.table_reset_image_threshold_label.setText(
-            decimal(self._autosplit_ref.reset_image.get_similarity_threshold(self._autosplit_ref))
-            if self._autosplit_ref.reset_image
+            decimal(
+                min(
+                    reset_image.get_similarity_threshold(self._autosplit_ref)
+                    for reset_image in self._autosplit_ref.reset_images
+                )
+            )
+            if self._autosplit_ref.reset_images
             else "-"
         )
 
