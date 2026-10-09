@@ -19,12 +19,15 @@ if sys.version_info >= (3, 15):
     #   (PySide6.support.signature.* vs shibokensupport.*).
     # - numpy: its self-check raises a bogus version conflict when imported
     #   through shiboken6's patched __import__.
+    # - Levenshtein: its lazy "import rapidfuzz.distance.X as _X" statements recurse
+    #   infinitely (RecursionError) when reified through shiboken6's patched __import__.
     _EAGER_INTERNALS = (
         frozenset({
             "PySide6",
             "shiboken6",
             "shibokensupport",
             "numpy",
+            "Levenshtein",
         })
         | sys.stdlib_module_names
     )
