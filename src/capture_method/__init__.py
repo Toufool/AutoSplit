@@ -216,8 +216,4 @@ def get_all_video_capture_devices():
             else None
         )
 
-    return [
-        camera_info
-        for camera_info in starmap(get_camera_info, enumerate(named_video_inputs))
-        if camera_info is not None
-    ]
+    return list(filter(None, starmap(get_camera_info, enumerate(named_video_inputs))))
