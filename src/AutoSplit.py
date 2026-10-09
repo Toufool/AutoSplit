@@ -1020,6 +1020,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.start_auto_splitter_button.setText("Running...")
         self.split_image_folder_button.setEnabled(False)
         self.reload_start_image_button.setEnabled(False)
+        self.action_load_profile.setEnabled(False)
         self.previous_image_button.setEnabled(True)
         self.next_image_button.setEnabled(True)
 
@@ -1050,6 +1051,7 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self.table_reset_image_threshold_label.setText("-")
         self.split_image_folder_button.setEnabled(True)
         self.reload_start_image_button.setEnabled(True)
+        self.action_load_profile.setEnabled(True)
         self.previous_image_button.setEnabled(False)
         self.next_image_button.setEnabled(False)
 
