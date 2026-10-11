@@ -332,7 +332,8 @@ def parse_and_validate_images(autosplit: AutoSplit):
                     error_message = partial(error_messages.image_validity, image.filename)
                     break
 
-                # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+                # error out if there is a {p} flag
+                # but no pause hotkey set and is not auto controlled.
                 if (
                     not autosplit.settings_dict["pause_hotkey"]
                     and image.check_flag(PAUSE_FLAG)
