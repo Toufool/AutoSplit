@@ -7,7 +7,7 @@ from collections.abc import Callable
 from enum import IntEnum, auto
 from functools import partial
 from stat import UF_HIDDEN
-from typing import TYPE_CHECKING, Literal, TypeVar, overload
+from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 
@@ -234,23 +234,7 @@ def flags_from_filename(filename: str):
     return flags
 
 
-@overload
-def __pop_image_type(
-    split_images: list[AutoSplitImage], image_type: Literal[ImageType.START]
-) -> AutoSplitImage | None: ...
-@overload
-def __pop_image_type(
-    split_images: list[AutoSplitImage], image_type: Literal[ImageType.SPLIT, ImageType.RESET]
-) -> list[AutoSplitImage]: ...
 def __pop_image_type(split_images: list[AutoSplitImage], image_type: ImageType):
-    if image_type == ImageType.START:
-        # Only one Start Image is allowed.
-        # Any other is left in the list to be reported during validation.
-        for index, image in enumerate(split_images):
-            if image.image_type == image_type:
-                return split_images.pop(index)
-        return None
-
     images: list[AutoSplitImage] = []
     remaining_images: list[AutoSplitImage] = []
     for image in split_images:
@@ -311,12 +295,14 @@ def __parse_and_validate_images(autosplit: AutoSplit):
 
     all_images = __get_images_from_directory(split_image_directory)
     # Find non-split images and then remove them from the list
-    start_image = __pop_image_type(all_images, ImageType.START)
+    start_images = __pop_image_type(all_images, ImageType.START)
     reset_images = __pop_image_type(all_images, ImageType.RESET)
     split_images = all_images
 
     if not split_images:
         raise __InvalidImagesError(error_messages.no_split_image)
+    if len(start_images) > 1:
+        raise __InvalidImagesError(partial(error_messages.multiple_keyword_images, START_KEYWORD))
 
     # Hotkeys are only required when not auto controlled
     hotkeys_required = not autosplit.is_auto_controlled
@@ -332,12 +318,8 @@ def __parse_and_validate_images(autosplit: AutoSplit):
             raise __InvalidImagesError(partial(error_messages.image_validity, image.filename))
         if missing_pause_hotkey and image.check_flag(PAUSE_FLAG):
             raise __InvalidImagesError(error_messages.pause_hotkey)
-        # Check that there's only one Start Image
-        if image.image_type == ImageType.START:
-            raise __InvalidImagesError(
-                partial(error_messages.multiple_keyword_images, START_KEYWORD)
-            )
 
+    start_image = start_images[0] if start_images else None
     return start_image, reset_images, split_images
 
 
