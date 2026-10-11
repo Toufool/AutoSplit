@@ -202,7 +202,8 @@ def get_all_video_capture_devices():
 
     def get_camera_info(index: int, device_name: str):
         backend = ""
-        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use. See #169
+        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use.
+        # See Toufool/AutoSplit#169
         # FIXME: Maybe offer the option to the user to obtain more info about their devices?
         #        Off by default. With a tooltip to explain the risk.
         # video_capture = cv2.VideoCapture(index)

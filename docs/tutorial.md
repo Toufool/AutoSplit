@@ -17,6 +17,12 @@
 - Custom split image settings are handled in the filename. See how [here](#custom-split-image-settings).
 - To create split images, it is recommended to use AutoSplit's Take Screenshot button for accuracy. However, images can be created using any method including Print Screen and [Snipping Tool](https://support.microsoft.com/en-us/help/4027213/windows-10-open-snipping-tool-and-take-a-screenshot).
 
+#### Reload Images
+
+- Images are loaded from your Split Image Folder ahead of time, not when the run starts. This avoids any delay right after your timer starts.
+- Click "Reload Images" after adding, removing, or editing images in your Split Image Folder. This reloads all Split Images, [Reset Images](#reset-images), and the [Start Image](#start-image).
+- Images are also reloaded automatically when you select a new Split Image Folder, load a [profile](#profiles), and after each run ends or is reset.
+
 #### Capture Region
 
 - This is the region that your split images are compared to. Usually, this is going to be the full game screen.
@@ -178,13 +184,13 @@ The best way to create a masked image is to set your capture region as the entir
 
 ![Mask Example](/docs/mask_example_image.png)
 
-### Reset Image
+### Reset Images
 
 You can have one or more images with the keyword `reset` in their name. AutoSplit will press the reset button when it matches any of these images. These images will only be used for resets and they will not be tied to any split. You can set a threshold and pause time for each of them. The pause time is the amount of seconds AutoSplit will wait before checking for that Reset Image once the run starts. For example: `Reset_(0.95)_[10].png`. When there is more than one Reset Image, the comparison table shows the one closest to its threshold.
 
 ### Start Image
 
-The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`.You can reload the image using the "`Reload Start Image`" button. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
+The Start Image is similar to the Reset Image. You can only have one Start Image with the keyword `start_auto_splitter`. The pause time is the amount of seconds AutoSplit will wait before starting comparisons of the first split image. Delay times will be used to delay starting your timer after the threshold is met.
 
 ### Text Recognition / Optical Character Recognition (OCR) ⚠️EXPERIMENTAL⚠️
 

@@ -29,7 +29,7 @@ CREATE_NEW_ISSUE_MESSAGE = (
 )
 
 
-def __exit_program():
+def __exit_program() -> NoReturn:
     # stop main thread (which is probably blocked reading input) via an interrupt signal
     os.kill(os.getpid(), signal.SIGINT)
     sys.exit(1)
@@ -114,13 +114,13 @@ def region():
 
 
 def split_hotkey():
-    _set_text_message("No split hotkey has been set.")
+    _set_text_message("No Start/Split hotkey has been set.")
 
 
 def pause_hotkey():
     _set_text_message(
         "Your Split Image Folder contains an image filename with a pause flag {p}, "
-        + "but no pause hotkey is set."
+        + "but no Pause hotkey is set."
     )
 
 
@@ -132,18 +132,12 @@ def alignment_not_matched():
     _set_text_message("No area in capture region matched reference image. Alignment failed.")
 
 
-def no_keyword_image(keyword: str):
-    _set_text_message(
-        f"Your Split Image Folder does not contain an image with the keyword {keyword!r}."
-    )
-
-
 def multiple_keyword_images(keyword: str):
     _set_text_message(f"Only one image with the keyword {keyword!r} is allowed.")
 
 
 def reset_hotkey():
-    _set_text_message("Your Split Image Folder contains a Reset Image, but no reset hotkey is set.")
+    _set_text_message("Your Split Image Folder contains a Reset Image, but no Reset hotkey is set.")
 
 
 def old_version_settings_file():
@@ -183,10 +177,7 @@ def check_for_updates():
 
 
 def load_start_image():
-    _set_text_message(
-        "Start Image found, but cannot be loaded unless Start hotkey is set. "
-        + "Please set the hotkey, and then click the Reload Start Image button."
-    )
+    _set_text_message("Start Image found, but cannot be used until Start/Split hotkey is set.")
 
 
 def stdin_lost():
