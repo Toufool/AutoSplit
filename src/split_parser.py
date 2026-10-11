@@ -234,15 +234,6 @@ def flags_from_filename(filename: str):
     return flags
 
 
-def __pop_image_type(images: list[AutoSplitImage], image_type: ImageType):
-    popped_images: list[AutoSplitImage] = []
-    remaining_images: list[AutoSplitImage] = []
-    for image in images:
-        (popped_images if image.image_type == image_type else remaining_images).append(image)
-    images[:] = remaining_images
-    return popped_images
-
-
 def is_user_file(path: StrPath):
     """Returns False for hidden files, system files and folders."""
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
@@ -293,31 +284,37 @@ def __parse_and_validate_images(autosplit: AutoSplit):
     if not os.path.isdir(split_image_directory):
         raise __InvalidImagesError(partial(error_messages.invalid_directory, split_image_directory))
 
-    all_images = __get_images_from_directory(split_image_directory)
-    # Find non-split images and then remove them from the list
-    start_images = __pop_image_type(all_images, ImageType.START)
-    reset_images = __pop_image_type(all_images, ImageType.RESET)
-    split_images = all_images
+    # Hotkeys are only required when not auto controlled
+    hotkeys_required = not autosplit.is_auto_controlled
+    missing_pause_hotkey = hotkeys_required and not autosplit.settings_dict["pause_hotkey"]
+
+    # Validate and group images by type in a single pass
+    images_by_type: dict[ImageType, list[AutoSplitImage]] = {
+        image_type: [] for image_type in ImageType
+    }
+    for image in __get_images_from_directory(split_image_directory):
+        # Image failed to load or is empty
+        if not image.is_ocr and not is_valid_image(image.byte_array):
+            raise __InvalidImagesError(partial(error_messages.image_validity, image.filename))
+        # The pause flag is only used by Split Images
+        if (
+            missing_pause_hotkey
+            and image.image_type == ImageType.SPLIT
+            and image.check_flag(PAUSE_FLAG)
+        ):
+            raise __InvalidImagesError(error_messages.pause_hotkey)
+        images_by_type[image.image_type].append(image)
+
+    start_images = images_by_type[ImageType.START]
+    reset_images = images_by_type[ImageType.RESET]
+    split_images = images_by_type[ImageType.SPLIT]
 
     if not split_images:
         raise __InvalidImagesError(error_messages.no_split_image)
     if len(start_images) > 1:
         raise __InvalidImagesError(partial(error_messages.multiple_keyword_images, START_KEYWORD))
-
-    # Hotkeys are only required when not auto controlled
-    hotkeys_required = not autosplit.is_auto_controlled
     if reset_images and hotkeys_required and not autosplit.settings_dict["reset_hotkey"]:
         raise __InvalidImagesError(error_messages.reset_hotkey)
-    missing_pause_hotkey = hotkeys_required and not autosplit.settings_dict["pause_hotkey"]
-
-    # Make sure that each of the images follows the guidelines for correct format
-    # according to all of the settings selected by the user.
-    for image in split_images:
-        # Test for image without transparency
-        if not image.is_ocr and not is_valid_image(image.byte_array):
-            raise __InvalidImagesError(partial(error_messages.image_validity, image.filename))
-        if missing_pause_hotkey and image.check_flag(PAUSE_FLAG):
-            raise __InvalidImagesError(error_messages.pause_hotkey)
 
     start_image = start_images[0] if start_images else None
     return start_image, reset_images, split_images
