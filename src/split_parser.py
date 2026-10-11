@@ -234,13 +234,13 @@ def flags_from_filename(filename: str):
     return flags
 
 
-def __pop_image_type(split_images: list[AutoSplitImage], image_type: ImageType):
-    images: list[AutoSplitImage] = []
+def __pop_image_type(images: list[AutoSplitImage], image_type: ImageType):
+    popped_images: list[AutoSplitImage] = []
     remaining_images: list[AutoSplitImage] = []
-    for image in split_images:
-        (images if image.image_type == image_type else remaining_images).append(image)
-    split_images[:] = remaining_images
-    return images
+    for image in images:
+        (popped_images if image.image_type == image_type else remaining_images).append(image)
+    images[:] = remaining_images
+    return popped_images
 
 
 def is_user_file(path: StrPath):
