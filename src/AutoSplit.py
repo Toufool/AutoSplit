@@ -306,6 +306,8 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
         self._layout_is_portrait = False
         if user_profile.QT_SETTINGS.value("layout_is_portrait", False, type=bool):
             self.toggle_layout()
+        else:
+            self._apply_split_controls_layout()
 
         # update x, y, width, and height when changing the value of these spinbox's are changed
         self.x_spinbox.valueChanged.connect(self.__update_x)
@@ -1222,6 +1224,16 @@ class AutoSplit(QMainWindow, design.Ui_MainWindow):
             if self._layout_is_portrait
             else QBoxLayout.Direction.LeftToRight
         )
+        # Left-align the "Image Loop" and "Start Image Status" values when side by side
+        status_labels = (self.image_loop_label, self.start_image_status_label)
+        status_label_width = (
+            0
+            if self._layout_is_portrait
+            else max(label.sizeHint().width() for label in status_labels)
+        )
+        for label in status_labels:
+            label.setMinimumWidth(status_label_width)
+
         layout = self.split_controls_layout
         layout.removeItem(self.split_controls_spacer)
         widgets = (

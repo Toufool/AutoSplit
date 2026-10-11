@@ -77,13 +77,13 @@
         <widget class="QLabel" name="split_image_folder_label">
          <property name="minimumSize">
           <size>
-           <width>111</width>
+           <width>122</width>
            <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>111</width>
+           <width>122</width>
            <height>16777215</height>
           </size>
          </property>
@@ -946,7 +946,7 @@
            </property>
            <item row="0" column="0">
             <widget class="QWidget" name="image_loop_row" native="true">
-             <layout class="QHBoxLayout" name="image_loop_layout">
+             <layout class="QHBoxLayout" name="image_loop_layout" stretch="0,1">
               <property name="spacing">
                <number>4</number>
               </property>
@@ -981,7 +981,7 @@
            </item>
            <item row="1" column="0">
             <widget class="QWidget" name="start_image_status_row" native="true">
-             <layout class="QHBoxLayout" name="start_image_status_layout">
+             <layout class="QHBoxLayout" name="start_image_status_layout" stretch="0,1">
               <property name="spacing">
                <number>4</number>
               </property>
