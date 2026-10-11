@@ -94,8 +94,7 @@ def send_command(autosplit: AutoSplit, command: CommandStr):
             print(command, flush=True)
         # Note: Rather than having the start image able to also reset the timer, having
         # the reset image check be active at all time would be a better, more organic solution.
-        # But that is dependent on migrating to an observer pattern (#219) and
-        # being able to reload all images.
+        # But that is dependent on migrating to an observer pattern (Toufool/AutoSplit#219).
         case "start" if autosplit.settings_dict["start_also_resets"]:
             _send_hotkey(autosplit.settings_dict["reset_hotkey"])
             QTest.qWait(1)

@@ -1015,12 +1015,12 @@
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QPushButton" name="reload_start_image_button">
+            <widget class="QPushButton" name="reload_images_button">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
              <property name="text">
-              <string>Reload Start Image</string>
+              <string>Reload Images</string>
              </property>
             </widget>
            </item>
@@ -1216,7 +1216,7 @@ ClickableLabel:hover { background-color: palette(midlight); }</string>
   </widget>
   <widget class="QDockWidget" name="log_dock">
    <property name="styleSheet">
-    <string notr="true">QDockWidget::title { padding: 6px;  }</string>
+    <string notr="true">QDockWidget::title { padding: 6px; }</string>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFeature::NoDockWidgetFeatures</set>

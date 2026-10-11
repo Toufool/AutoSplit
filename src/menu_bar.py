@@ -231,7 +231,7 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
                 )
             )
             if self._autosplit_ref.reset_images
-            else "-"
+            else "N/A"
         )
 
     def __set_value(self, key: str, value: Any):

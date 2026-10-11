@@ -259,25 +259,6 @@ def __pop_image_type(split_images: list[AutoSplitImage], image_type: ImageType):
     return images
 
 
-def __set_reset_images(autosplit: AutoSplit, reset_images: list[AutoSplitImage]):
-    autosplit.reset_images = reset_images
-    autosplit.table_reset_image_label.setText(
-        f"Reset Images ({len(reset_images)})" if len(reset_images) > 1 else "Reset Image"
-    )
-
-
-def validate_before_parsing(autosplit: AutoSplit, *, show_error: bool = True):
-    error = None
-    split_image_directory = autosplit.settings_dict["split_image_directory"]
-    if not split_image_directory:
-        error = error_messages.split_image_directory
-    elif not os.path.isdir(split_image_directory):
-        error = partial(error_messages.invalid_directory, split_image_directory)
-    if error and show_error:
-        error()
-    return not error
-
-
 def is_user_file(path: StrPath):
     """Returns False for hidden files, system files and folders."""
     if os.path.isdir(path) or os.path.basename(path).startswith("."):
@@ -316,67 +297,70 @@ def __get_images_from_directory(directory: StrPath):
 
 
 def parse_and_validate_images(autosplit: AutoSplit):
-    all_images = __get_images_from_directory(autosplit.settings_dict["split_image_directory"])
-    # Find non-split images and then remove them from the list
-    start_image = __pop_image_type(all_images, ImageType.START)
-    reset_images = __pop_image_type(all_images, ImageType.RESET)
-    split_images = all_images
-
     error_message: Callable[[], object] | None = None
+    split_image_directory = autosplit.settings_dict["split_image_directory"]
+    if not split_image_directory:
+        error_message = error_messages.split_image_directory
+    elif not os.path.isdir(split_image_directory):
+        error_message = partial(error_messages.invalid_directory, split_image_directory)
 
-    if not split_images:
-        error_message = error_messages.no_split_image
+    if not error_message:
+        all_images = __get_images_from_directory(split_image_directory)
+        # Find non-split images and then remove them from the list
+        start_image = __pop_image_type(all_images, ImageType.START)
+        reset_images = __pop_image_type(all_images, ImageType.RESET)
+        split_images = all_images
 
-    # If there is no start hotkey set but a Start Image is present,
-    # and is not auto controlled, throw an error.
-    elif (
-        start_image
-        and not autosplit.settings_dict["split_hotkey"]
-        and not autosplit.is_auto_controlled
-    ):
-        error_message = error_messages.load_start_image
+        if not split_images:
+            error_message = error_messages.no_split_image
 
-    # If there is no reset hotkey set but a Reset Image is present,
-    # and is not auto controlled, throw an error.
-    elif (
-        reset_images
-        and not autosplit.settings_dict["reset_hotkey"]
-        and not autosplit.is_auto_controlled
-    ):
-        error_message = error_messages.reset_hotkey
+        # If there is no reset hotkey set but a Reset Image is present,
+        # and is not auto controlled, throw an error.
+        elif (
+            reset_images
+            and not autosplit.settings_dict["reset_hotkey"]
+            and not autosplit.is_auto_controlled
+        ):
+            error_message = error_messages.reset_hotkey
 
-    # Make sure that each of the images follows the guidelines for correct format
-    # according to all of the settings selected by the user.
-    else:
-        for image in split_images:
-            # Test for image without transparency
-            if not image.is_ocr and not is_valid_image(image.byte_array):
-                error_message = partial(error_messages.image_validity, image.filename)
-                break
+        # Make sure that each of the images follows the guidelines for correct format
+        # according to all of the settings selected by the user.
+        else:
+            for image in split_images:
+                # Test for image without transparency
+                if not image.is_ocr and not is_valid_image(image.byte_array):
+                    error_message = partial(error_messages.image_validity, image.filename)
+                    break
 
-            # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
-            if (
-                not autosplit.settings_dict["pause_hotkey"]
-                and image.check_flag(PAUSE_FLAG)
-                and not autosplit.is_auto_controlled
-            ):
-                error_message = error_messages.pause_hotkey
-                break
+                # error out if there is a {p} flag but no pause hotkey set and is not auto controlled.
+                if (
+                    not autosplit.settings_dict["pause_hotkey"]
+                    and image.check_flag(PAUSE_FLAG)
+                    and not autosplit.is_auto_controlled
+                ):
+                    error_message = error_messages.pause_hotkey
+                    break
 
-            # Check that there's only one Start Image
-            if image.image_type == ImageType.START:
-                error_message = partial(error_messages.multiple_keyword_images, START_KEYWORD)
-                break
+                # Check that there's only one Start Image
+                if image.image_type == ImageType.START:
+                    error_message = partial(error_messages.multiple_keyword_images, START_KEYWORD)
+                    break
+
+        if not error_message:
+            autosplit.start_image = start_image
+            autosplit.reset_images = reset_images
+            autosplit.split_images = split_images
 
     if error_message:
         autosplit.start_image = None
-        __set_reset_images(autosplit, [])
+        autosplit.reset_images = []
         autosplit.split_images = []
         autosplit.gui_changes_on_reset()
         error_message()
-        return False
 
-    autosplit.start_image = start_image
-    __set_reset_images(autosplit, reset_images)
-    autosplit.split_images = split_images
-    return True
+    reset_images_len = len(autosplit.reset_images)
+    autosplit.table_reset_image_label.setText(
+        f"Reset Images ({reset_images_len})" if reset_images_len > 1 else "Reset Image"
+    )
+
+    return not error_message
