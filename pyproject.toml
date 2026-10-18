@@ -67,7 +67,7 @@ dev = [
 ]
 
 [tool.uv]
-required-version = ">=0.11.25" # Lockfile supported environments simplifications
+required-version = ">=0.13.0" # Defaults to ARM64 Python on ARM64 host
 environments = [
   # AutoSplit does not currently support macOS
   "sys_platform == 'linux'",

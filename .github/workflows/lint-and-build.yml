@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10.3.0
       - run: uvx pysentry-rs --sources=pypa,pypi,osv --forbid-unmaintained
 
   # Single source of truth for the shipped Python version(s).
@@ -91,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
@@ -133,16 +133,10 @@ jobs:
           allow-prereleases: true
           python-version: ${{ matrix.python-version }}
       - name: Set up uv for Python ${{ matrix.python-version }}
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v10.3.0
         with:
-          # On ARM64, uv defaults to x86_64 Python, force it to aarch64.
-          # https://github.com/astral-sh/uv/issues/12906#issuecomment-3587439179
-          #
-          # On Ubuntu use the global Python install (null) for reason above
-          python-version: >-
-            ${{ (!startsWith(matrix.os, 'ubuntu')
-                && format('{0}-{1}', matrix.python-version, endsWith(matrix.os, 'arm') && 'aarch64' || 'x86_64'))
-              || null }}
+          # On Ubuntu use the global Python install (null) for PyInstaller reason above
+          python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
       # endregion
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
       - run: scripts/build.ps1 ${{ matrix.wine-compat }} ${{ needs.Setup.outputs.include-python-version-tag }}

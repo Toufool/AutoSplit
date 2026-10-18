@@ -14,7 +14,7 @@ jobs:
       RUFF_OUTPUT_FORMAT: github
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           activate-environment: true
       # Not locked, this will fix lock file if we forgot about it
