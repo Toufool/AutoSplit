@@ -14,6 +14,7 @@ from utils import first, get_input_device_resolution
 
 if sys.platform == "win32":
     import winerror
+    from pygrabber.dshow_ids import DeviceCategories
 
     from capture_method.BitBltCaptureMethod import BitBltCaptureMethod
     from capture_method.DesktopDuplicationCaptureMethod import (
@@ -162,19 +163,24 @@ class CameraInfo:
     name: str
     occupied: bool
     backend: str
-    resolution: tuple[int, int]
+    resolution: tuple[int, int] | None
 
 
-def get_input_devices():
+def _get_input_devices():
     if sys.platform == "win32":
         try:
-            from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
+            from pygrabber.dshow_graph import SystemDeviceEnum  # noqa: PLC0415
         except OSError as exception:
             # wine can choke on D3D Device Enumeration if missing directshow
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
                 raise
             return list[tuple[int, str]]()
-        return list(enumerate(FilterGraph().get_input_devices()))
+        # Not using FilterGraph().get_input_devices(), which does the same thing,
+        # but also eagerly builds a graph and a WMV profile manager we don't need.
+        # Some wine versions raise E_NOTIMPL on the latter.
+        return list(
+            enumerate(SystemDeviceEnum().get_available_filters(DeviceCategories.VideoInputDevice))
+        )
 
     cameras: list[tuple[int, str]] = []
     if sys.platform == "linux":
@@ -197,35 +203,30 @@ def get_input_devices():
     return cameras
 
 
+def _get_camera_info(index: int, device_name: str):
+    backend = ""
+    # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use.
+    # See Toufool/AutoSplit#169
+    # So don't try to grab a frame to test a device! Code below would break
+    #        # FIXME: Maybe offer the option to the user to obtain more info about their devices?
+    #        Off by default. With a tooltip to explain the risk.
+    # video_capture = cv2.VideoCapture(index)
+    # video_capture.setExceptionMode(True)
+    # try:
+    #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
+    #     backend = video_capture.getBackendName()  # STS_ASSERT
+    #     video_capture.grab()  # STS_ERROR
+    # except cv2.error as error:
+    #     return (
+    #         CameraInfo(index, device_name, True, backend)
+    #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT)
+    #         else None
+    #     )
+    # finally:
+    #     video_capture.release()
+
+    return CameraInfo(index, device_name, False, backend, get_input_device_resolution(index))
+
+
 def get_all_video_capture_devices():
-    named_video_inputs = get_input_devices()
-
-    def get_camera_info(index: int, device_name: str):
-        backend = ""
-        # Probing freezes some devices (like GV-USB2 and AverMedia) if already in use.
-        # See Toufool/AutoSplit#169
-        # FIXME: Maybe offer the option to the user to obtain more info about their devices?
-        #        Off by default. With a tooltip to explain the risk.
-        # video_capture = cv2.VideoCapture(index)
-        # video_capture.setExceptionMode(True)
-        # try:
-        #     # https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
-        #     backend = video_capture.getBackendName()  # STS_ASSERT
-        #     video_capture.grab()  # STS_ERROR
-        # except cv2.error as error:
-        #     return (
-        #         CameraInfo(index, device_name, True, backend)
-        #         if error.code in (cv2.Error.STS_ERROR, cv2.Error.STS_ASSERT)
-        #         else None
-        #     )
-        # finally:
-        #     video_capture.release()
-
-        resolution = get_input_device_resolution(index)
-        return (
-            CameraInfo(index, device_name, False, backend, resolution)
-            if resolution is not None
-            else None
-        )
-
-    return list(filter(None, starmap(get_camera_info, named_video_inputs)))
+    return list(starmap(_get_camera_info, _get_input_devices()))
