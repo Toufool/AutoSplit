@@ -170,6 +170,10 @@ def _capture_native_stderr():
     read_fd, write_fd = os.pipe()
     os.dup2(write_fd, STDERR_FILENO)
     os.close(write_fd)
+    # TODO: On a hard crash (segfault, abort, Python fatal error), the last things native code and
+    # the interpreter wrote to the stderr descriptor are stuck in the pipe and die with the process.
+    # Add a crash hook that dumps a log file (ie: `faulthandler.enable(file=...)` on a real file,
+    # not the stderr descriptor) so users still have something to report.
 
     if sys.stderr is not None and original_fd is not None:
         sys.stderr = io.TextIOWrapper(
