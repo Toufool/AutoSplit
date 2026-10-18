@@ -64,6 +64,12 @@ dev = [
   "types-pyinstaller >=6.21.0.20260616", # types to check for Splash screen support
   "types-python-xlib; sys_platform == 'linux'",
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
+  #
+  # OS-specific, but installable on other OSes for convenient typing references
+  "pillow",
+  "pygrabber",
+  "python-xlib",
+  "typed-D3DShot[numpy]",
 ]
 
 [tool.uv]
