@@ -40,6 +40,8 @@ if sys.platform == "linux":
 
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from AutoSplit import AutoSplit
 
 
@@ -166,7 +168,7 @@ class CameraInfo:
     resolution: tuple[int, int] | None
 
 
-def _get_input_devices():
+def _get_input_devices() -> Iterable[tuple[int, str]]:
     if sys.platform == "win32":
         try:
             from pygrabber.dshow_graph import SystemDeviceEnum  # noqa: PLC0415
@@ -174,32 +176,34 @@ def _get_input_devices():
             # wine can choke on D3D Device Enumeration if missing directshow
             if exception.winerror != winerror.TYPE_E_CANTLOADLIBRARY:
                 raise
-            return list[tuple[int, str]]()
+            return ()
         # Not using FilterGraph().get_input_devices(), which does the same thing,
         # but also eagerly builds a graph and a WMV profile manager we don't need.
         # Some wine versions raise E_NOTIMPL on the latter.
-        return list(
-            enumerate(SystemDeviceEnum().get_available_filters(DeviceCategories.VideoInputDevice))
+        return enumerate(
+            SystemDeviceEnum().get_available_filters(DeviceCategories.VideoInputDevice)
         )
 
     cameras: list[tuple[int, str]] = []
     if sys.platform == "linux":
-        try:
-            # Iterating over /sys/class/video4linux will lead to duplicates, see
-            # https://askubuntu.com/questions/1123601/four-dev-video-entries-but-just-one-camera/1191209#1191209
-            # To properly filter and, we need to get every video devices,
-            # ask for capabilities using VIDIOC_QUERYCAP ioctl and check for V4L2_CAP_VIDEO_CAPTURE
-            for video_device in Path("/dev").glob("video*"):
-                with video_device.open("rb") as file:
-                    cap = v4l2_capability()
-                    fcntl.ioctl(file, VIDIOC_QUERYCAP, cap)
-                    if cap.device_caps & V4L2_CAP_VIDEO_CAPTURE:
-                        cameras.append((
-                            int(video_device.name.removeprefix("video")),
-                            cap.card.decode("utf-8"),
-                        ))
-        except FileNotFoundError:
-            pass
+        # Iterating over /sys/class/video4linux will lead to duplicates, see
+        # https://askubuntu.com/questions/1123601/four-dev-video-entries-but-just-one-camera/1191209#1191209
+        # To properly filter and, we need to get every video devices,
+        # ask for capabilities using VIDIOC_QUERYCAP ioctl and check for V4L2_CAP_VIDEO_CAPTURE
+        for video_device in Path("/dev").glob("video*"):
+            # TOCTOU: Device may have been unplugged since globbing
+            try:
+                file = video_device.open("rb")
+            except FileNotFoundError:
+                continue
+            with file:
+                cap = v4l2_capability()
+                fcntl.ioctl(file, VIDIOC_QUERYCAP, cap)
+                if cap.device_caps & V4L2_CAP_VIDEO_CAPTURE:
+                    cameras.append((
+                        int(video_device.name.removeprefix("video")),
+                        cap.card.decode("utf-8"),
+                    ))
     return cameras
 
 
