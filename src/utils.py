@@ -175,7 +175,7 @@ def get_window_bounds(hwnd: int) -> tuple[int, int, int, int]:
 # different helper modules and a methods submodule
 def get_input_device_resolution(index: int) -> tuple[int, int] | None:
     if sys.platform != "win32":
-        return (0, 0)
+        return None
     try:
         from pygrabber.dshow_graph import FilterGraph  # noqa: PLC0415
     except OSError as exception:
