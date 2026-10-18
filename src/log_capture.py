@@ -10,6 +10,8 @@ copy of each line is emitted on top.
 
 from __future__ import annotations
 
+import codecs
+import io
 import os
 import re
 import sys
@@ -37,6 +39,11 @@ These are still written to the real console: only the in-app log is filtered"""
 ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*m")
 """SGR (color/style) escape sequences. Python 3.13+ colourizes tracebacks; the real console renders
 them, but the Qt log widget shows the raw codes, so they're stripped from the in-app copy only."""
+
+STDERR_FILENO = 2
+"""The C runtime's stderr file descriptor, which native libraries write to directly."""
+NATIVE_READ_SIZE = 2**12
+"""Max bytes read from the native stderr pipe at once. Partial lines are buffered across reads."""
 
 LogLine = tuple[str, str, bool]
 """A logged line: `(timestamp, text, is_stderr)`. `is_stderr` marks warnings/errors."""
@@ -123,12 +130,76 @@ class _TeeStream:
         return getattr(real, name)
 
 
+def _forward_native_stderr(read_fd: int, original_fd: int | None, encoding: str):
+    """
+    Reader loop for `_capture_native_stderr`. Forwards raw bytes to the original stderr (if any)
+    and emits each completed line. Native output has no notion of a single `write`, so unlike
+    `_TeeStream`, every line is its own entry.
+    """
+    decoder = codecs.getincrementaldecoder(encoding)(errors="replace")
+    partial = ""
+    while chunk := os.read(read_fd, NATIVE_READ_SIZE):
+        if original_fd is not None:
+            try:
+                os.write(original_fd, chunk)
+            except OSError:
+                original_fd = None
+        partial += decoder.decode(chunk)
+        *lines, partial = partial.split("\n")
+        for line in lines:
+            LOG_EMITTER.emit_line(line.rstrip("\r"), is_stderr=True)
+
+
+def _capture_native_stderr():
+    """
+    Native libraries (ie: OpenCV's `[ WARN:...]` messages) write straight to the stderr file
+    descriptor, bypassing `sys.stderr`. Point that descriptor at a pipe drained by a reader thread.
+
+    Python's own `sys.stderr` is re-opened on a duplicate of the original descriptor, so it keeps
+    reaching the console directly and isn't captured twice (once by `_TeeStream`, once here).
+    """
+    try:
+        original_fd = os.dup(STDERR_FILENO)
+    except OSError:
+        # Frozen `--noconsole` builds on Windows have no valid stderr descriptor to forward to
+        original_fd = None
+
+    encoding = getattr(sys.stderr, "encoding", None) or "utf-8"
+    if sys.stderr is not None:
+        sys.stderr.flush()
+    read_fd, write_fd = os.pipe()
+    os.dup2(write_fd, STDERR_FILENO)
+    os.close(write_fd)
+    # TODO: On a hard crash (segfault, abort, Python fatal error), the last things native code and
+    # the interpreter wrote to the stderr descriptor are stuck in the pipe and die with the process.
+    # Add a crash hook that dumps a log file (ie: `faulthandler.enable(file=...)` on a real file,
+    # not the stderr descriptor) so users still have something to report.
+
+    if sys.stderr is not None and original_fd is not None:
+        sys.stderr = io.TextIOWrapper(
+            io.FileIO(original_fd, "w", closefd=False),
+            encoding=sys.stderr.encoding,
+            errors=sys.stderr.errors,
+            line_buffering=True,
+            write_through=True,
+        )
+
+    threading.Thread(
+        target=_forward_native_stderr,
+        args=(read_fd, original_fd, encoding),
+        name="NativeStderrCapture",
+        daemon=True,
+    ).start()
+
+
 def install():
     """
     Wrap `sys.stdout` and `sys.stderr` so console output is mirrored to `LOG_EMITTER`.
+    Also captures native writes to the stderr file descriptor.
 
     Call once, as early as possible, so startup output is captured.
     """
+    _capture_native_stderr()
     sys.stdout = cast("TextIO", _TeeStream(sys.stdout, LOG_EMITTER, is_stderr=False))
     sys.stderr = cast("TextIO", _TeeStream(sys.stderr, LOG_EMITTER, is_stderr=True))
 

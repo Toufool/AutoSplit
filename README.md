@@ -82,8 +82,13 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 
 ### Wine Limitations
 
-- Only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
-- No Video Capture Device (ie Webcam, OBS Virtual Cam). Wine [does not support DirectShow Device Enumeration](https://gitlab.winehq.org/wine/wine/-/wikis/Hardware#restrictions:~:text=camera)
+- For Window targetting, only the BitBlt Capture method is supported. Wine [does not support `CreateDirect3D11DeviceFromDXGIDevice`](https://bugs.winehq.org/show_bug.cgi?id=52487)
+- Video Capture Devices (ie Webcam, OBS Virtual Cam) require extra setup to list devices:
+  - Install native `qedit` (ie: `winetricks qedit`, already part of Essentials in Bottles).
+    - Wine's builtin `qedit.dll` [lacks the DirectShow type library](https://gitlab.winehq.org/wine/wine/-/tree/master/dlls/qedit) (unlike [`quartz.dll`'s `control_tlb.idl`](https://gitlab.winehq.org/wine/wine/-/blob/master/dlls/quartz/control_tlb.idl))
+  - Keep `qcap` and `quartz` builtin. If any of those were installed as native, override them: `WINEDLLOVERRIDES="quartz,qcap=b"`
+    - Only [Wine's implementation](https://gitlab.winehq.org/wine/wine/-/blob/master/dlls/qcap/v4l.c) of `qcap` can capture from Linux devices.
+    - Native `quartz` crashes on recent Wine versions (tested 11.19 and 11.20).
 - Requires Wine 10.1+ / Steam Proton 11+ (due to [added `crealf` implementation](https://gitlab.winehq.org/wine/wine/-/releases/wine-10.1#:~:text=crealf))
 - Wine 10.1 to 11.2 must use the `WineCompat` version of the Windows build (same build but without UPX compression) as Wine hadn't [stubbed `PssQuerySnapshot`](https://gitlab.winehq.org/wine/wine/-/merge_requests/8779) yet.
 - Wine 11.3+ can use the regular Windows build.
