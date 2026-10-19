@@ -136,6 +136,7 @@ Not a developer? You can still help through the following methods:
   - <https://github.com/boppreh/keyboard/issues/161>
   - <https://github.com/asweigart/pyautogui/issues/663>
   - <https://github.com/asweigart/pyautogui/pull/911>
+  - <https://github.com/obsproject/obs-studio/issues/14054>
   - <https://github.com/astral-sh/ruff/issues?q=is%3Aissue+is%3Aopen+involves%3AAvasam+sort%3Areactions-%2B1-asc+>
 
 ## Credits

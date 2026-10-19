@@ -98,6 +98,8 @@
   sudo modprobe v4l2loopback
   ```
 
+  Also on Linux, if you stop the Virtual Camera while OBS is recording, it's possible you can't start it again until the recording stops (<https://github.com/obsproject/obs-studio/issues/14054>).
+
 #### Capture Device
 
 Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.
