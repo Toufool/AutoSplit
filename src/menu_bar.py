@@ -298,10 +298,19 @@ class __SettingsWidget(QtWidgets.QWidget, settings_ui.Ui_SettingsWidget):
         if len(self.__video_capture_devices) > 0:
             for i in range(self.capture_device_combobox.count()):
                 self.capture_device_combobox.removeItem(i)
+
+            def resolution(device: CameraInfo):
+                if sys.platform != "win32":
+                    return ""
+                if not device.resolution:
+                    return " (Res. unknown)"
+                return f" ({device.resolution[0]}x{device.resolution[1]})"
+
             self.capture_device_combobox.addItems([
                 f"* {device.name}"
                 + (f" [{device.backend}]" if device.backend else "")
                 + (" (occupied)" if device.occupied else "")
+                + resolution(device)
                 for device in self.__video_capture_devices
             ])
             self.__enable_capture_device_if_its_selected_method()
