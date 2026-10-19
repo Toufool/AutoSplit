@@ -90,6 +90,14 @@
   You can select one from the `Capture Device` dropdown below.\
   See [this guide](https://obsproject.com/kb/virtual-camera-guide) on using the OBS Virtual Camera.
 
+  On Linux, OBS asks for your password every time it starts the Virtual Camera, because it needs root to load the `v4l2loopback` kernel module. To avoid that, load the module at boot with the same options OBS uses:
+
+  ```shell
+  echo v4l2loopback | sudo tee /etc/modules-load.d/v4l2loopback.conf
+  echo 'options v4l2loopback devices=1 exclusive_caps=1 card_label="OBS Virtual Camera"' | sudo tee /etc/modprobe.d/v4l2loopback.conf
+  sudo modprobe v4l2loopback
+  ```
+
 #### Capture Device
 
 Select the Video Capture Device that you wanna use if selecting the `Video Capture Device` Capture Method.
