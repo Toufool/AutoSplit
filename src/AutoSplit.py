@@ -98,6 +98,7 @@ from types import FunctionType
 from typing import TYPE_CHECKING, NoReturn, cast, override
 
 import cv2
+import numpy as np
 from PySide6 import QtCore, QtGui
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import (
@@ -1323,7 +1324,9 @@ def set_preview_image(qlabel: QLabel, image: MatLike | None):
             capture = cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA)
         else:
             image_format = QtGui.QImage.Format.Format_BGR888
-            capture = image
+            # Cropped frames (ie: Video Capture Device) can be non-contiguous views,
+            # but QImage needs a C-contiguous buffer. No-op if already contiguous.
+            capture = np.ascontiguousarray(image)
 
         qimage = QtGui.QImage(capture.data, width, height, width * channels, image_format)
         qlabel.setPixmap(
