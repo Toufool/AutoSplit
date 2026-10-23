@@ -42,7 +42,7 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow >=12.3.0; sys_platform == 'linux'", # Python 3.15 support # Necessary for ImageGrab.
+  "pillow >=13.0.0; sys_platform == 'linux'",
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -66,7 +66,7 @@ dev = [
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
   #
   # OS-specific, but installable on other OSes for convenient typing references
-  "pillow",
+  "pillow >=13.0.0",
   "pygrabber",
   "python-xlib",
   "typed-D3DShot[numpy]",
@@ -102,6 +102,7 @@ override-dependencies = [
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
+pillow = "6 day"
 
 ###
 # Development channels
