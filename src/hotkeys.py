@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Literal, TypeGuard, cast
 
 import keyboard
 import pyautogui
+from keyboard._canonical_names import normalize_name  # noqa: PLC2701
 from PySide6.QtTest import QTest
 
 import error_messages
-from utils import fire_and_forget, is_digit, try_input_device_access
+from utils import fire_and_forget, flatten, is_digit, try_input_device_access
 
 if sys.platform == "linux":
     import grp
@@ -282,10 +283,40 @@ def __get_hotkey_action(autosplit: AutoSplit, hotkey: Hotkey):
     return getattr(autosplit, f"{hotkey}_signal").emit
 
 
-def is_valid_hotkey_name(hotkey_name: str):
-    return any(
-        key and not keyboard.is_modifier(keyboard.key_to_scan_codes(key)[0])
-        for key in hotkey_name.split("+")
+def is_valid_hotkey_name(hotkey_name: object) -> TypeGuard[str]:
+    """
+    A valid hotkey is a single regular key, optionally combined with modifiers.
+    This is the only kind of hotkey `__read_hotkey` can produce.
+
+    Hotkeys are also sent as keystrokes, so anything else must be rejected to prevent
+    a malicious profile from injecting arbitrary keystrokes (see `_send_hotkey`).
+    This includes key sequences ("a, b"), multiple regular keys and the Windows key.
+    """
+    if not isinstance(hotkey_name, str):
+        return False
+    keys = hotkey_name.split("+")
+    if any(
+        not key
+        # keyboard.send treats commas as a separator for a sequence of hotkeys
+        or ("," in key and key != ",")
+        # The Windows key triggers OS shortcuts (ie: Win+R opens the Run dialog).
+        # keyboard normalizes aliases ("win", "cmd", "command", ...) to "[left |right ]windows"
+        or normalize_name(key).endswith("windows")
+        for key in keys
+    ):
+        return False
+
+    if KEYBOARD_GROUPS_ISSUE or KEYBOARD_UINPUT_ISSUE:
+        # Can't map to scan codes without keyboard access, fallback to canonical names
+        return sum(not keyboard.is_modifier(normalize_name(key)) for key in keys) == 1
+
+    # Scan codes also support localized key names
+    keys_scan_codes = [keyboard.key_to_scan_codes(key, error_if_missing=False) for key in keys]
+    windows_scan_codes = set(keyboard.key_to_scan_codes("windows", error_if_missing=False))
+    return (
+        all(keys_scan_codes)  # Unknown keys have no scan codes
+        and windows_scan_codes.isdisjoint(flatten(keys_scan_codes))
+        and sum(not keyboard.is_modifier(scan_codes[0]) for scan_codes in keys_scan_codes) == 1
     )
 
 

@@ -7,6 +7,7 @@ import os
 import signal
 import sys
 import traceback
+from collections.abc import Mapping
 from types import TracebackType
 from typing import TYPE_CHECKING, NoReturn
 
@@ -166,6 +167,15 @@ def invalid_settings():
 
 def invalid_hotkey(hotkey_name: str):
     _set_text_message(f"Invalid hotkey {hotkey_name!r}")
+
+
+def invalid_settings_hotkeys(hotkeys: Mapping[str, object]):
+    _set_text_message(
+        "The following hotkeys from the settings file are invalid and have been unset:\n"
+        + "\n".join(f"{name} = {value!r}" for name, value in hotkeys.items())
+        + "\nOnly a single key, optionally combined with modifiers (excluding Windows/Super), "
+        + "is allowed."
+    )
 
 
 def no_settings_file_on_open():

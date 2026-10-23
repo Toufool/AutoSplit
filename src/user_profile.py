@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import tomllib
 from copy import deepcopy
+from functools import partial
 from typing import TYPE_CHECKING, NoReturn, TypedDict, cast, override
 from warnings import deprecated
 
@@ -11,7 +12,7 @@ from PySide6 import QtCore, QtWidgets
 
 import error_messages
 from capture_method import CAPTURE_METHODS, CaptureMethodEnum, Region, change_capture_method
-from hotkeys import HOTKEYS, CommandStr, remove_all_hotkeys, set_hotkey
+from hotkeys import HOTKEYS, CommandStr, is_valid_hotkey_name, remove_all_hotkeys, set_hotkey
 from menu_bar import open_settings
 from utils import auto_split_directory
 
@@ -159,12 +160,24 @@ def __load_settings_from_file(autosplit: AutoSplit, load_settings_file_path: str
         return False
 
     remove_all_hotkeys()
-    if not autosplit.is_auto_controlled:
-        for hotkey in HOTKEYS:
-            hotkey_name = f"{hotkey}_hotkey"
-            hotkey_value = autosplit.settings_dict.get(hotkey_name)
-            if hotkey_value:
-                set_hotkey(autosplit, hotkey, hotkey_value)
+    invalid_hotkeys: dict[str, object] = {}
+    for hotkey in HOTKEYS:
+        hotkey_name = f"{hotkey}_hotkey"
+        hotkey_value = autosplit.settings_dict.get(hotkey_name)
+        if not hotkey_value:
+            continue
+        # Hotkeys are sent as keystrokes. Never keep an invalid one around.
+        if not is_valid_hotkey_name(hotkey_value):
+            invalid_hotkeys[hotkey_name] = hotkey_value
+            autosplit.settings_dict[hotkey_name] = ""  # pyright: ignore[reportGeneralTypeIssues]
+            autosplit.last_saved_settings[hotkey_name] = ""  # pyright: ignore[reportGeneralTypeIssues]
+            continue
+        if not autosplit.is_auto_controlled:
+            set_hotkey(autosplit, hotkey, hotkey_value)
+    if invalid_hotkeys:
+        autosplit.show_error_signal.emit(
+            partial(error_messages.invalid_settings_hotkeys, invalid_hotkeys)
+        )
 
     change_capture_method(
         cast("CaptureMethodEnum", autosplit.settings_dict["capture_method"]),
