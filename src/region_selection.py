@@ -15,10 +15,12 @@ from capture_method import Region
 from utils import (
     ALPHA_CHANNEL_COUNT,
     MAXBYTE,
+    SUPPORTED_IMREAD_FORMATS,
     ImageShape,
     auto_split_directory,
     get_window_bounds,
     imread,
+    is_supported_image_file,
     is_valid_hwnd,
     is_valid_image,
 )
@@ -37,27 +39,13 @@ if TYPE_CHECKING:
 GNOME_DESKTOP_ICONS_EXTENSION = "@!0,0;BDHF"
 ALIGN_REGION_THRESHOLD = 0.9
 BORDER_WIDTH = 2
-SUPPORTED_IMREAD_FORMATS = (
-    ("Windows bitmaps", "*.bmp *.dib"),
-    ("JPEG files", "*.jpeg *.jpg *.jpe"),
-    ("JPEG 2000 files", "*.jp2"),
-    ("Portable Network Graphics", "*.png"),
-    ("WebP", "*.webp"),
-    ("AVIF", "*.avif"),
-    ("Portable image format", "*.pbm *.pgm *.ppm *.pxm *.pnm"),
-    ("PFM files", "*.pfm"),
-    ("Sun rasters", "*.sr *.ras"),
-    ("TIFF files", "*.tiff *.tif"),
-    ("OpenEXR Image files", "*.exr"),
-    ("Radiance HDR", "*.hdr *.pic"),
-)
-"""https://docs.opencv.org/4.8.0/d4/da8/group__imgcodecs.html#imread"""
 IMREAD_EXT_FILTER = (
     "All Files ("
-    + " ".join(f"{extensions}" for _, extensions in SUPPORTED_IMREAD_FORMATS)
+    + " ".join(f"{extensions}" for _, extensions, _ in SUPPORTED_IMREAD_FORMATS)
     + ");;"
     + ";;".join(
-        f"{imread_format} ({extensions})" for imread_format, extensions in SUPPORTED_IMREAD_FORMATS
+        f"{imread_format} ({extensions})"
+        for imread_format, extensions, _ in SUPPORTED_IMREAD_FORMATS
     )
 )
 
@@ -218,6 +206,9 @@ def align_region(autosplit: AutoSplit):
     if not template_filename:
         return
 
+    if not is_supported_image_file(template_filename):
+        error_messages.image_validity()
+        return
     template = imread(template_filename, cv2.IMREAD_UNCHANGED)
     # Captures are standardized to BGR, so drop the template's alpha channel if present
     if template.shape[ImageShape.Channels] == ALPHA_CHANNEL_COUNT:

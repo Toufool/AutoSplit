@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
 import shutil
 import subprocess  # noqa: S404
 import sys
@@ -83,6 +84,35 @@ NO_ALPHA_CHANNEL_COUNT = 3
 """How many channels in a BGR/RGB image"""
 ALPHA_CHANNEL_COUNT = 4
 """How many channels in a BGRA/RGBA image"""
+SUPPORTED_IMREAD_FORMATS = (
+    ("Windows bitmaps", "*.bmp *.dib", rb"BM"),
+    ("GIF files", "*.gif", rb"GIF8[79]a"),
+    ("JPEG files", "*.jpeg *.jpg *.jpe", rb"\xFF\xD8\xFF"),
+    ("JPEG 2000 files", "*.jp2", rb"\x00\x00\x00\x0CjP  \r\n\x87\n"),
+    ("Portable Network Graphics", "*.png", rb"\x89PNG\r\n\x1A\n"),
+    ("WebP", "*.webp", rb"RIFF.{4}WEBP"),
+    # ISO BMFF "ftyp" box with an AVIF brand. The box size must not collide with other signatures.
+    ("AVIF", "*.avif", rb"\x00\x00.{2}ftyp(?:.{4})*?avi[fs]"),
+    ("Portable image format", "*.pbm *.pgm *.ppm *.pxm *.pnm", rb"P[1-6]\s"),
+    ("PFM files", "*.pfm", rb"P[Ff]\s"),
+    ("Sun rasters", "*.sr *.ras", rb"\x59\xA6\x6A\x95"),
+    ("TIFF files", "*.tiff *.tif", rb"II[*+]\x00|MM\x00[*+]"),
+    ("OpenEXR Image files", "*.exr", rb"\x76\x2F\x31\x01"),
+    ("Radiance HDR", "*.hdr *.pic", rb"#\?(?:RADIANCE|RGBE)"),
+    # GDAL is intentionally excluded: its formats don't share a signature we could validate.
+)
+"""
+Name, extensions and file signature (regex of the first bytes) of each supported image format.
+https://docs.opencv.org/5.0/main_modules/imgcodecs.html#imread
+"""
+IMREAD_SIGNATURES = {
+    extension: re.compile(signature, re.DOTALL)
+    for _, extensions, signature in SUPPORTED_IMREAD_FORMATS
+    for extension in extensions.split()
+}
+"""Compiled `SUPPORTED_IMREAD_FORMATS` signatures by extension (ie: `"*.png"`)"""
+IMAGE_SIGNATURE_MAX_SIZE = 64
+"""How many bytes to read from the start of a file to match its format signature"""
 
 
 class ImageShape(IntEnum):
@@ -261,6 +291,22 @@ def fire_and_forget(func: Callable[..., Any]):
 
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> chain[T]:
     return chain.from_iterable(nested_iterable)
+
+
+def is_supported_image_file(path: str):
+    """
+    Whether the file's extension is in `SUPPORTED_IMREAD_FORMATS`
+    and its content starts with the signature of that format.
+
+    `cv2.imdecode` picks a decoder based on the file's content, not its extension.
+    This ensures untrusted files can only ever reach the decoder of the format they claim to be.
+    """
+    signature = IMREAD_SIGNATURES.get("*" + os.path.splitext(path)[1].lower())
+    if signature is None:
+        return False
+    with open(path, mode="rb") as file:
+        header = file.read(IMAGE_SIGNATURE_MAX_SIZE)
+    return signature.match(header) is not None
 
 
 def imread(filename: str, flags: int = cv2.IMREAD_COLOR):
