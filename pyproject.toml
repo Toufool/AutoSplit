@@ -42,7 +42,6 @@ dependencies = [
   "winrt-Windows.Graphics.Imaging >=3.2.1; sys_platform == 'win32'",
   #
   # Linux-only dependencies
-  "pillow >=13.0.0; sys_platform == 'linux'",
   "python-xlib >=0.33; sys_platform == 'linux'",
 ]
 [dependency-groups]
@@ -66,7 +65,6 @@ dev = [
   "types-pywin32 >=306.0.0.20240130; sys_platform == 'win32'",
   #
   # OS-specific, but installable on other OSes for convenient typing references
-  "pillow >=13.0.0",
   "pygrabber",
   "python-xlib",
   "typed-D3DShot[numpy]",
@@ -98,21 +96,25 @@ override-dependencies = [
   # https://github.com/opencv/opencv-python/issues/1201
   "numpy >=2.5.2",
 ]
+# python-xlib's setup.py imports pkg_resources, removed in setuptools 81
+# https://github.com/python-xlib/python-xlib/issues/286
+build-constraint-dependencies = ["setuptools <81"]
 
 exclude-newer = "1 week"
 [tool.uv.exclude-newer-package]
 typed-D3DShot = false # I own it
-pillow = "6 day"
 
 ###
 # Development channels
 ###
 [tool.uv.sources]
 beslogic-ruff-config = { git = "https://github.com/Beslogic/Beslogic-Ruff-Config", rev = "39c27278054fc428b54205581a0e23caca7ad77a" }
+# Quadratic receive buffer fix for large GetImage replies (X11 capture)
+# https://github.com/python-xlib/python-xlib/pull/298
+python-xlib = { git = "https://github.com/Avasam/python-xlib", branch = "fix-quadratic-recv" }
 # pywin32 = { git = "https://github.com/mhammond/pywin32.git", marker = "python_version >= '3.15'" }
 # pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", marker = "python_version >= '3.15'" }
 # numpy = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
-# pillow = { index = "scientific-python-nightly-wheels", marker = "python_version >= '3.15'" }
 
 [[tool.uv.index]]
 exclude-newer = false # Anaconda index doesn't have upload dates

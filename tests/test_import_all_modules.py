@@ -30,7 +30,7 @@ PLATFORM_MODULES = {
     "linux": {
         "capture_method.Screenshot using QT attempt",
         "capture_method.ScrotCaptureMethod",
-        "capture_method.XcbCaptureMethod",
+        "capture_method.X11CaptureMethod",
     },
 }
 EXPECTED_OS_ERRORS = frozenset(

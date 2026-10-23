@@ -75,9 +75,9 @@
 
 ##### Linux
 
-- **X11 XCB** (slower, requires XCB)\
-  Uses the XCB library to take screenshots of the X11 server.
-- **Scrot** (fast, may leave files in `/tmp`)\
+- **X11** (fastest)\
+  Request screenshots directly from the X11 server.
+- **Scrot** (slow, may leave files in `/tmp`)\
   Uses Scrot (SCReenshOT) to take screenshots.\
   Leaves behind a screenshot file in `/tmp` if interrupted.
   <!-- Keep in sync with src/menu_bar.py -->

@@ -32,10 +32,8 @@ if sys.platform == "win32":
 if sys.platform == "linux":
     import fcntl
 
-    from PIL import features
-
     from capture_method.ScrotCaptureMethod import IS_SCROT_SUPPORTED, ScrotCaptureMethod
-    from capture_method.XcbCaptureMethod import XcbCaptureMethod
+    from capture_method.X11CaptureMethod import X11CaptureMethod
     from vidioc_querycap import V4L2_CAP_VIDEO_CAPTURE, VIDIOC_QUERYCAP, v4l2_capability
 
 
@@ -82,7 +80,7 @@ class CaptureMethodEnum(StrEnum, metaclass=ContainerEnumMeta):
     PRINTWINDOW_RENDERFULLCONTENT = auto()
     DESKTOP_DUPLICATION = auto()
     SCROT = auto()
-    XCB = auto()
+    X11 = auto()
     VIDEO_CAPTURE_DEVICE = auto()
 
 
@@ -138,8 +136,7 @@ if sys.platform == "win32":
         ForceFullContentRenderingCaptureMethod
     )
 elif sys.platform == "linux":
-    if features.check_feature(feature="xcb"):
-        CAPTURE_METHODS[CaptureMethodEnum.XCB] = XcbCaptureMethod
+    CAPTURE_METHODS[CaptureMethodEnum.X11] = X11CaptureMethod
     if IS_SCROT_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.SCROT] = ScrotCaptureMethod
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
