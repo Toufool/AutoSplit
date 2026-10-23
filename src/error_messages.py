@@ -178,6 +178,17 @@ def invalid_settings_hotkeys(hotkeys: Mapping[str, object]):
     )
 
 
+def invalid_settings_network_directories(directories: Mapping[str, str]):
+    _set_text_message(
+        "The following folders from the settings file are network locations "
+        + "and have been unset:\n"
+        + "\n".join(f"{name} = {value!r}" for name, value in directories.items())
+        + "\nOn Windows, accessing a network location can automatically send "
+        + "your Windows credentials to that server. "
+        + "If you trust this location, map it to a drive letter instead."
+    )
+
+
 def no_settings_file_on_open():
     print(
         "No settings file found. "

@@ -114,6 +114,9 @@ IMREAD_SIGNATURES = {
 IMAGE_SIGNATURE_MAX_SIZE = 64
 """How many bytes to read from the start of a file to match its format signature"""
 
+LOCAL_DRIVE_DEVICE_PATH = re.compile(r"\\\\[?.]\\[A-Za-z]:")
+r"""Device path to a local drive letter (ie: `\\?\C:` or `\\.\C:`)"""
+
 
 class ImageShape(IntEnum):
     Y = 0
@@ -153,6 +156,18 @@ def is_digit(value: str | int | None):
 
 def is_valid_image(image: MatLike | None) -> TypeGuard[MatLike]:
     return image is not None and bool(image.size)
+
+
+def is_network_path(path: str):
+    r"""
+    Whether the path is a UNC path (`\\host\share`), including device paths (`\\?\UNC\...`).
+    Only device paths to a local drive letter (`\\?\C:\`) are excluded.
+
+    On Windows, simply accessing a network path can automatically send
+    the user's NTLM credentials to that host.
+    """
+    normalized_path = path.replace("/", "\\")
+    return normalized_path.startswith("\\\\") and not LOCAL_DRIVE_DEVICE_PATH.match(normalized_path)
 
 
 def is_valid_hwnd(hwnd: int):
