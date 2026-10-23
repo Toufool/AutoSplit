@@ -63,6 +63,7 @@ class XcbCaptureMethod(CaptureMethodBase):
                 x + selection["width"],
                 y + selection["height"],
             ),
+            # Passing a non-None xdisplay also prevents pillow falling back to a screenshot tool
             xdisplay=self._xdisplay,
         )
         image = np.array(image)

@@ -11,7 +11,14 @@ import numpy as np
 
 import error_messages
 from compare import extract_and_compare_text, get_comparison_method_by_index
-from utils import MAXBYTE, TESSERACT_PATH, ColorChannel, imread, is_valid_image
+from utils import (
+    MAXBYTE,
+    TESSERACT_PATH,
+    ColorChannel,
+    imread,
+    is_supported_image_file,
+    is_valid_image,
+)
 
 if TYPE_CHECKING:
     from cv2.typing import MatLike
@@ -147,6 +154,9 @@ class AutoSplitImage:
         )
 
     def __read_image_bytes(self, path: str):
+        if not is_supported_image_file(path):
+            error_messages.image_type(path)
+            return
         image = imread(path, cv2.IMREAD_UNCHANGED)
         if not is_valid_image(image):
             self.byte_array = None
