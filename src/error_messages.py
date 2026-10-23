@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import os
 import signal
 import sys
@@ -40,9 +41,18 @@ def _set_text_message(
     details: str = "",
     kill_button: str = "",
     accept_button: str = "",
+    *,
+    rich_text: bool = False,
 ):
+    """
+    Plain text by default, so dynamic values (paths, filenames, hotkeys, etc.)
+    can't inject HTML. When `rich_text` is needed (for links),
+    every dynamic value must be escaped with `html.escape`.
+    """
     # Also surface the error message in the logs
-    plain_message = QtGui.QTextDocumentFragment.fromHtml(message).toPlainText()
+    plain_message = (
+        QtGui.QTextDocumentFragment.fromHtml(message).toPlainText() if rich_text else message
+    )
     print(
         f"{plain_message}\n{details}\n" if details else f"{plain_message}",
         file=sys.stderr if details else None,
@@ -50,7 +60,9 @@ def _set_text_message(
 
     message_box = QtWidgets.QMessageBox()
     message_box.setWindowTitle("Error")
-    message_box.setTextFormat(QtCore.Qt.TextFormat.RichText)
+    message_box.setTextFormat(
+        QtCore.Qt.TextFormat.RichText if rich_text else QtCore.Qt.TextFormat.PlainText
+    )
     message_box.setText(message)
     # Button order is important for default focus
     if accept_button:
@@ -189,7 +201,7 @@ def stdin_lost():
 def already_open():
     _set_text_message(
         "An instance of AutoSplit is already running."
-        + "<br/>Are you sure you want to open a another one?",
+        + "\nAre you sure you want to open a another one?",
         "",
         "Don't open",
         "Ignore",
@@ -222,7 +234,7 @@ def linux_uinput():
 
 
 def linux_wayland():
-    _set_text_message(WAYLAND_WARNING)
+    _set_text_message(WAYLAND_WARNING, rich_text=True)
 
 
 def exception_traceback(exception: BaseException, message: str = ""):
@@ -236,15 +248,17 @@ def exception_traceback(exception: BaseException, message: str = ""):
         message,
         "\n".join(traceback.format_exception(None, exception, exception.__traceback__)),
         "Close AutoSplit",
+        rich_text=True,
     )
 
 
 def tesseract_missing(ocr_split_file_path: str):
     _set_text_message(
-        f"{ocr_split_file_path!r} is an Optical Character Recognition split file "
+        f"{html.escape(repr(ocr_split_file_path))} is an Optical Character Recognition split file "
         + "but tesseract couldn't be found."
-        + f'\nPlease read <a href="https://github.com/{GITHUB_REPOSITORY}#install-tesseract">'
-        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions."
+        + f'<br/>Please read <a href="https://github.com/{GITHUB_REPOSITORY}#install-tesseract">'
+        + f"github.com/{GITHUB_REPOSITORY}#install-tesseract</a> for installation instructions.",
+        rich_text=True,
     )
 
 
@@ -255,7 +269,7 @@ def ocr_missing_key(ocr_split_file_path: str, missing_key: str):
 def wrong_ocr_values(ocr_split_file_path: str):
     _set_text_message(
         f"{ocr_split_file_path!r} has invalid values."
-        + "\nPlease make sure that `left &lt; right` and `top &lt; bottom`. "
+        + "\nPlease make sure that `left < right` and `top < bottom`. "
         + "Also check for negative values in the 'methods' or 'fps_limit' settings"
     )
 
