@@ -207,6 +207,8 @@ def get_input_device_resolution(index: int) -> tuple[int, int] | None:
 
 
 def open_file(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+    # Absolute, so the opener can't mistake a relative path starting with "-" for an option
+    file_path = os.path.abspath(file_path)
     if sys.platform == "win32":
         os.startfile(file_path)  # noqa: S606
     else:
