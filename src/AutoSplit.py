@@ -144,7 +144,6 @@ from utils import (
     AUTOSPLIT_VERSION,
     FROZEN,
     ONE_SECOND,
-    RUNNING_WAYLAND,
     auto_split_directory,
     decimal,
     flatten,
@@ -1375,8 +1374,6 @@ def main():
             error_messages.linux_groups()
         if KEYBOARD_UINPUT_ISSUE:
             error_messages.linux_uinput()
-        if RUNNING_WAYLAND:
-            error_messages.linux_wayland()
 
         AutoSplit()
 
