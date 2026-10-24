@@ -10,7 +10,7 @@ import numpy as np
 from pywinctl import getWindowsWithTitle
 from Xlib import X
 from Xlib.display import Display
-from Xlib.error import BadMatch, BadWindow
+from Xlib.error import BadDrawable, BadMatch
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from utils import ALPHA_CHANNEL_COUNT, is_valid_image
@@ -38,7 +38,9 @@ def _image_reply_to_bgr(reply: GetImage, width: int, height: int):
 class X11CaptureMethod(CaptureMethodBase):
     name = "X11"
     short_description = "fastest"
-    description = "\nRequests screenshots directly from the X11 server."
+    description = """
+Requests the window's content directly from the X11 server.
+Also works with X11 apps running through XWayland on Wayland."""
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
@@ -53,24 +55,26 @@ class X11CaptureMethod(CaptureMethodBase):
         if not self.check_selected_region_exists():
             return None
 
-        root = self._display.screen().root
-        try:
-            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
-        except BadWindow:
-            return None
-
+        # Grab from the window's own drawable rather than the root window: compositors and
+        # XWayland redirect toplevels to their own pixmap, so this works even when the window is
+        # partially off-screen or covered, and under rootless XWayland where the root is blank.
+        window = self._display.create_resource_object("window", self._autosplit_ref.hwnd)
         selection = self._autosplit_ref.settings_dict["capture_region"]
         try:
-            reply = root.get_image(
-                selection["x"] + window_coords["x"],
-                selection["y"] + window_coords["y"],
+            reply = window.get_image(
+                selection["x"],
+                selection["y"],
                 selection["width"],
                 selection["height"],
                 X.ZPixmap,
                 ALL_PLANES,
             )
+        except BadDrawable:
+            # Window was closed
+            return None
         except BadMatch:
-            # Region is (partially) outside the screen
+            # Window isn't viewable (unmapped or minimized), or the region extends past its bounds.
+            # Without a compositor, also when the region is (partially) outside the screen.
             return None
         return _image_reply_to_bgr(reply, selection["width"], selection["height"])
 

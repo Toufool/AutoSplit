@@ -39,9 +39,6 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
   loginctl terminate-user $USER
   ```
 
-  <!-- Keep in sync with src/error_messages.py -->
-  All screen capture method are incompatible with Wayland. Follow [this guide](https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop) to disable it.
-
 ### Compatibility
 
 - Windows 10 and 11.
@@ -49,7 +46,7 @@ To understand how to use AutoSplit and how it works in-depth, please read the [t
   - Useful if you want to use Desktop version of LiveSplit on Linux
 - Linux
   - Should work on Ubuntu 24.04+ (glibc 2.39) (tested on Kubuntu 26.04)
-  - Wayland is not currently supported
+  - Wayland is [limited](#wayland-limitations)
   - WSL2/WSLg requires an additional Desktop Environment, external X11 server, and/or systemd
 - x64 and ARM64 architectures
   - Native ARM64 builds go completely untested. There may be unforeseen issues.
@@ -79,6 +76,11 @@ Linux users, note that LiveSplit Desktop, with additional components, is only av
 - Linux support has feature-parity but is less performant. We're [looking for contributors](../../issues?q=is%3Aissue+is%3Aopen+label%3A"help+wanted"+label%3ALinux+).
   - Incompatible with LiveSplitOne on Linux (see <https://github.com/LiveSplit/LiveSplitOne/issues/1025>)
 - Antivirus false positives. Please read <https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md>
+
+### Wayland Limitations
+
+- Only X11 apps running through XWayland can be captured, with the X11 capture method. Scrot is not available.
+- To capture native Wayland windows, use a [Virtual Camera](./docs/tutorial.md#all-platforms), or log into an X11 session if your Desktop Environment still offers one. See guides for [GNOME](https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop) and [KDE Plasma](https://www.itechguides.com/how-to-switch-kde-plasma-from-x11-to-wayland/#When_auto-login_hides_the_session_menu).
 
 ### Wine Limitations
 

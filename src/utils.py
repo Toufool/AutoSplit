@@ -37,12 +37,12 @@ else:
 if sys.platform == "linux":
     import fcntl
 
-    RUNNING_X11 = os.environ.get("XDG_SESSION_TYPE") == "x11"
-    RUNNING_WAYLAND = not RUNNING_X11 and (
-        os.environ.get("XDG_SESSION_TYPE") == "wayland" or "WAYLAND_DISPLAY" in os.environ
-    )
+    from Xlib.error import BadWindow
+
+    # An X server (real or XWayland) to connect to, regardless of the session type
+    HAS_X_DISPLAY = bool(os.environ.get("DISPLAY"))
 else:
-    RUNNING_X11 = RUNNING_WAYLAND = False
+    HAS_X_DISPLAY = False
 
 
 if TYPE_CHECKING:

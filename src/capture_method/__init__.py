@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Never, TypedDict, cast, override
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
 from capture_method.VideoCaptureDeviceCaptureMethod import VideoCaptureDeviceCaptureMethod
-from utils import first, get_input_device_resolution
+from utils import HAS_X_DISPLAY, first, get_input_device_resolution
 
 if sys.platform == "win32":
     import winerror
@@ -136,7 +136,8 @@ if sys.platform == "win32":
         ForceFullContentRenderingCaptureMethod
     )
 elif sys.platform == "linux":
-    CAPTURE_METHODS[CaptureMethodEnum.X11] = X11CaptureMethod
+    if HAS_X_DISPLAY:
+        CAPTURE_METHODS[CaptureMethodEnum.X11] = X11CaptureMethod
     if IS_SCROT_SUPPORTED:
         CAPTURE_METHODS[CaptureMethodEnum.SCROT] = ScrotCaptureMethod
 CAPTURE_METHODS[CaptureMethodEnum.VIDEO_CAPTURE_DEVICE] = VideoCaptureDeviceCaptureMethod
