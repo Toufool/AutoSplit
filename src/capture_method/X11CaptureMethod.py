@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
-from pywinctl import getWindowsWithTitle
 from Xlib import X
 from Xlib.display import Display
 from Xlib.error import BadDrawable, BadMatch
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import ALPHA_CHANNEL_COUNT, is_valid_image
+from utils import ALPHA_CHANNEL_COUNT, get_windows_with_title, is_valid_image
 
 if TYPE_CHECKING:
     from Xlib.protocol.request import GetImage
@@ -80,7 +79,7 @@ Also works with X11 apps running through XWayland on Wayland."""
 
     @override
     def recover_window(self, captured_window_title: str):
-        windows = getWindowsWithTitle(captured_window_title)
+        windows = get_windows_with_title(captured_window_title)
         if len(windows) == 0:
             return False
         self._autosplit_ref.hwnd = windows[0].getHandle()

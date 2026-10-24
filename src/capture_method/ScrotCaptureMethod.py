@@ -95,7 +95,7 @@ Not available on Wayland."""
 
     @override
     def recover_window(self, captured_window_title: str):
-        windows = getWindowsWithTitle(captured_window_title)
+        windows = get_windows_with_title(captured_window_title)
         if len(windows) == 0:
             return False
         self._autosplit_ref.hwnd = windows[0].getHandle()
