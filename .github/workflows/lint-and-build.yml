@@ -96,6 +96,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
+          # Pyright installs dev dependencies, Build doesn't. Don't share the same cache key
+          cache-suffix: ${{ github.job }}
       - run: scripts/install.ps1
       - name: Analysing the code with Pyright
         uses: jakebailey/pyright-action@v3
@@ -138,8 +140,21 @@ jobs:
         with:
           # On Ubuntu use the global Python install (null) for PyInstaller reason above
           python-version: ${{ !startsWith(matrix.os, 'ubuntu') && matrix.python-version || null }}
+          # WineCompat installs the same dependencies, let the regular build save the cache
+          save-cache: ${{ !matrix.wine-compat }}
       # endregion
       - run: scripts/install.ps1 ${{ matrix.wine-compat }}
+      # Packages built from sdist (like OpenCV on Windows ARM64) leave their source and build tree
+      # in the uv cache (>1GB for OpenCV). Only the built wheel is needed to avoid a rebuild.
+      # Not using setup-uv's prune-cache because it also drops pre-built wheels,
+      # which we cache to reduce hits on PyPI. Requested in-between option: astral-sh/setup-uv#1109
+      - name: Remove built sdists' sources from uv cache
+        run: |
+          Get-ChildItem "$Env:UV_CACHE_DIR/sdists-v*" -Directory |
+            Get-ChildItem -Recurse -File -Filter metadata.msgpack |
+            ForEach-Object { Join-Path $_.DirectoryName src } |
+            Where-Object { Test-Path $_ } |
+            Remove-Item -Recurse -Force
       - run: scripts/build.ps1 ${{ matrix.wine-compat }} ${{ needs.Setup.outputs.include-python-version-tag }}
       - name: Run test suite
         # pywinctl/pymonctl connect to the X display at import-time, hence xvfb
