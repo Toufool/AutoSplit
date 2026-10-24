@@ -10,6 +10,7 @@ copy of each line is emitted on top.
 
 from __future__ import annotations
 
+import atexit
 import codecs
 import io
 import os
@@ -44,6 +45,9 @@ STDERR_FILENO = 2
 """The C runtime's stderr file descriptor, which native libraries write to directly."""
 NATIVE_READ_SIZE = 2**12
 """Max bytes read from the native stderr pipe at once. Partial lines are buffered across reads."""
+NATIVE_DRAIN_TIMEOUT = 1
+"""Max seconds to wait at exit for the native stderr pipe to drain. Only reached when another
+process (ie: a child that inherited the stderr descriptor) still holds the pipe open."""
 
 LogLine = tuple[str, str, bool]
 """A logged line: `(timestamp, text, is_stderr)`. `is_stderr` marks warnings/errors."""
@@ -184,12 +188,36 @@ def _capture_native_stderr():
             write_through=True,
         )
 
-    threading.Thread(
+    reader = threading.Thread(
         target=_forward_native_stderr,
         args=(read_fd, original_fd, encoding),
         name="NativeStderrCapture",
         daemon=True,
-    ).start()
+    )
+    reader.start()
+    atexit.register(_drain_native_stderr, original_fd, reader)
+
+
+def _drain_native_stderr(original_fd: int | None, reader: threading.Thread):
+    """
+    `atexit` hook for `_capture_native_stderr`. The reader is a daemon thread, killed as soon as the
+    interpreter exits, so whatever is still in the pipe would be lost (ie: the last native warnings,
+    or unittest's final report, written through a `sys.stderr` grabbed before `install()`).
+
+    Point the stderr descriptor back at the original stderr. That closes the pipe's last write end,
+    so the reader forwards what's left, reaches EOF and stops.
+    """
+    # Nowhere to restore to without an original,
+    # but the pipe must still be released for the reader to stop
+    restore_fd = os.open(os.devnull, os.O_WRONLY) if original_fd is None else original_fd
+    try:
+        os.dup2(restore_fd, STDERR_FILENO)
+    except OSError:
+        return
+    finally:
+        if restore_fd != original_fd:
+            os.close(restore_fd)
+    reader.join(NATIVE_DRAIN_TIMEOUT)
 
 
 def install():
