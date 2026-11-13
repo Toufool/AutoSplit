@@ -25,7 +25,6 @@ PLATFORM_MODULES = {
         "capture_method.DesktopDuplicationCaptureMethod",
         "capture_method.ForceFullContentRenderingCaptureMethod",
         "capture_method.WindowsGraphicsCaptureMethod",
-        "d3d11",
     },
     "linux": {
         "capture_method.Screenshot using QT attempt",

@@ -59,13 +59,12 @@ try {
     $arguments += @(
       '--onefile',
       "--name=AutoSplit-$version$buildNumber$pythonVersionTag-$arch$(if ($WineCompat) {'-WineCompat'} else {''})"
-      # Hidden import by winrt.windows.graphics.imaging.SoftwareBitmap.create_copy_from_surface_async
-      '--hidden-import=winrt.windows.foundation')
+    )
   }
   else {
     if (Test-Path build/AppDir) { Remove-Item build/AppDir -Recurse -Force }
     $arguments += @(
-      '--distpath=build/AppDir'
+      '--distpath=build/AppDir',
       # Apply a symbol-table strip to the executable and shared libs (not recommended for Windows)
       '--strip')
   }

@@ -5,7 +5,7 @@ import sys
 if sys.platform != "win32":
     raise OSError
 import asyncio
-from typing import TYPE_CHECKING, cast, override
+from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
@@ -18,7 +18,6 @@ from winrt.windows.graphics.directx import DirectXPixelFormat
 from winrt.windows.graphics.imaging import BitmapBufferAccessMode, SoftwareBitmap
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from d3d11 import D3D11_CREATE_DEVICE_FLAG, D3D_DRIVER_TYPE, D3D11CreateDevice
 from utils import ALPHA_CHANNEL_COUNT, WGC_MIN_BUILD, WINDOWS_BUILD_NUMBER, is_valid_hwnd
 
 if TYPE_CHECKING:
@@ -32,6 +31,7 @@ WGC_NO_BORDER_MIN_BUILD = 20348
 
 try:
     # Wine hasn't implemented CreateDirect3D11DeviceFromDXGIDevice yet
+    # (called by winrt's create_direct3d11_device)
     # https://bugs.winehq.org/show_bug.cgi?id=52487
     # Keep this check for a while even after it's implemented
     # TODO: Fix these pywin32 types in typeshed
@@ -48,9 +48,7 @@ except win32api.error as exception:
 
 if TYPE_CHECKING or IS_WGC_SUPPORTED:
     # This pyd hard-fails to load when the d3d11 export is missing (UPX+Wine)
-    from winrt.windows.graphics.directx.direct3d11.interop import (
-        create_direct3d11_device_from_dxgi_device,
-    )
+    from winrt.windows.graphics.directx.direct3d11.interop import create_direct3d11_device
 
 
 async def convert_d3d_surface_to_software_bitmap(surface: IDirect3DSurface):
@@ -77,11 +75,7 @@ Caps at around 60 FPS."""
         if not is_valid_hwnd(autosplit.hwnd):
             return
 
-        dxgi, *_ = D3D11CreateDevice(
-            DriverType=D3D_DRIVER_TYPE.HARDWARE,
-            Flags=D3D11_CREATE_DEVICE_FLAG.BGRA_SUPPORT,
-        )
-        direct3d_device = create_direct3d11_device_from_dxgi_device(dxgi.value)
+        direct3d_device = create_direct3d11_device()
         item = create_for_window(autosplit.hwnd)
         frame_pool = Direct3D11CaptureFramePool.create_free_threaded(
             direct3d_device,
@@ -158,8 +152,7 @@ Caps at around 60 FPS."""
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
         if not bitmap_buffer:
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
-        reference = bitmap_buffer.create_reference()
-        image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
+        image = np.frombuffer(bitmap_buffer, dtype=np.uint8)
         image = image.reshape((self.size.height, self.size.width, ALPHA_CHANNEL_COUNT))
         image = image[
             selection["y"] : selection["y"] + selection["height"],
