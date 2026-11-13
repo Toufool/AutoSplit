@@ -5,7 +5,7 @@ import sys
 if sys.platform != "win32":
     raise OSError
 import asyncio
-from typing import TYPE_CHECKING, cast, override
+from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
@@ -152,8 +152,7 @@ Caps at around 60 FPS."""
         bitmap_buffer = software_bitmap.lock_buffer(BitmapBufferAccessMode.READ_WRITE)
         if not bitmap_buffer:
             raise ValueError("Unable to obtain the BitmapBuffer from SoftwareBitmap.")
-        reference = bitmap_buffer.create_reference()
-        image = np.frombuffer(cast("bytes", reference), dtype=np.uint8)
+        image = np.frombuffer(bitmap_buffer, dtype=np.uint8)
         image = image.reshape((self.size.height, self.size.width, ALPHA_CHANNEL_COUNT))
         image = image[
             selection["y"] : selection["y"] + selection["height"],
