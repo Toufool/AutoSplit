@@ -21,12 +21,6 @@ ignore = [
   "RUF028", # invalid-formatter-suppression-comment, Is meant for the formatter, but false-positives
 ]
 
-[lint.per-file-ignores]
-"src/d3d11.py" = [
-  # Following windows API/ctypes like naming conventions
-  "N801", # invalid-class-name
-]
-
 [lint.isort]
 # gen/ is fully generated and won't exist on CI so Ruff can't detect it as first-party
 known-first-party = ["gen"]
