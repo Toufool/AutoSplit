@@ -18,12 +18,6 @@ from utils import FROZEN, GITHUB_REPOSITORY
 if TYPE_CHECKING:
     from AutoSplit import AutoSplit
 
-# Keep in sync with README.md#DOWNLOAD_AND_OPEN
-WAYLAND_WARNING = """\
-All screen capture method are incompatible with Wayland. Follow this guide to disable it:
-<a href="https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop"> \
-https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop</a>"""
-
 CREATE_NEW_ISSUE_MESSAGE = (
     f"Please create a New Issue at <a href='https://github.com/{GITHUB_REPOSITORY}/issues'>"
     + f"github.com/{GITHUB_REPOSITORY}/issues</a>, describe what happened, "
@@ -252,10 +246,6 @@ def linux_uinput():
         + "This can happen when running Linux under WSL. "
         + "Keyboard events have been disabled."
     )
-
-
-def linux_wayland():
-    _set_text_message(WAYLAND_WARNING, rich_text=True)
 
 
 def exception_traceback(exception: BaseException, message: str = ""):

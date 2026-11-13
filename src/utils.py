@@ -37,12 +37,12 @@ else:
 if sys.platform == "linux":
     import fcntl
 
-    RUNNING_X11 = os.environ.get("XDG_SESSION_TYPE") == "x11"
-    RUNNING_WAYLAND = not RUNNING_X11 and (
-        os.environ.get("XDG_SESSION_TYPE") == "wayland" or "WAYLAND_DISPLAY" in os.environ
-    )
+    from Xlib.error import BadWindow
+
+    # An X server (real or XWayland) to connect to, regardless of the session type
+    HAS_X_DISPLAY = bool(os.environ.get("DISPLAY"))
 else:
-    RUNNING_X11 = RUNNING_WAYLAND = False
+    HAS_X_DISPLAY = False
 
 
 if TYPE_CHECKING:
@@ -180,6 +180,34 @@ def is_valid_hwnd(hwnd: int):
     if sys.platform == "win32":
         return bool(win32gui.IsWindow(hwnd) and win32gui.GetWindowText(hwnd))
     return True
+
+
+if sys.platform == "linux":
+
+    def get_all_windows():
+        """
+        Like `pywinctl.getAllWindows`, but always asks the X server.
+
+        pywinctl asks GNOME Shell instead when `XDG_SESSION_TYPE` is "wayland",
+        which fails outside of GNOME, and requires unsafe_mode on GNOME.
+        AutoSplit is itself an X11 client (`QT_QPA_PLATFORM=xcb`),
+        so XWayland windows are listed by the X server like any other.
+        """
+        # Connects to the X server on import
+        from ewmhlib import defaultEwmhRoot  # noqa: PLC0415
+        from pywinctl import Window  # noqa: PLC0415
+
+        windows: list[Window] = []
+        for hwnd in defaultEwmhRoot.getClientListStacking() or ():
+            try:
+                windows.append(Window(hwnd))
+            except BadWindow:
+                # Window was closed in the meantime
+                continue
+        return windows
+
+    def get_windows_with_title(title: str):
+        return [window for window in get_all_windows() if window.title == title]
 
 
 def first(iterable: Iterable[T]) -> T:

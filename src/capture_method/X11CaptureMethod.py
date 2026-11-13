@@ -7,18 +7,18 @@ from typing import TYPE_CHECKING, override
 
 import cv2
 import numpy as np
-from pywinctl import getWindowsWithTitle
 from Xlib import X
 from Xlib.display import Display
-from Xlib.error import BadMatch, BadWindow
+from Xlib.error import BadDrawable, BadMatch
 
 from capture_method.CaptureMethodBase import CaptureMethodBase
-from utils import ALPHA_CHANNEL_COUNT, is_valid_image
+from utils import ALPHA_CHANNEL_COUNT, get_windows_with_title, is_valid_image
 
 if TYPE_CHECKING:
     from Xlib.protocol.request import GetImage
 
     from AutoSplit import AutoSplit
+    from capture_method import Region
 
 ALL_PLANES = 0xFFFFFFFF
 
@@ -35,10 +35,22 @@ def _image_reply_to_bgr(reply: GetImage, width: int, height: int):
     return cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
 
+def _clamp_to_window(selection: Region, window_width: int, window_height: int):
+    """@return: The (left, top, right, bottom) edges of the selection that are inside the window."""
+    return (
+        max(selection["x"], 0),
+        max(selection["y"], 0),
+        min(selection["x"] + selection["width"], window_width),
+        min(selection["y"] + selection["height"], window_height),
+    )
+
+
 class X11CaptureMethod(CaptureMethodBase):
     name = "X11"
     short_description = "fastest"
-    description = "\nRequests screenshots directly from the X11 server."
+    description = """
+Requests the window's content directly from the X11 server.
+Also works with X11 apps running through XWayland on Wayland."""
 
     def __init__(self, autosplit: AutoSplit):
         super().__init__(autosplit)
@@ -53,30 +65,42 @@ class X11CaptureMethod(CaptureMethodBase):
         if not self.check_selected_region_exists():
             return None
 
-        root = self._display.screen().root
-        try:
-            window_coords = root.translate_coords(self._autosplit_ref.hwnd, 0, 0)._data  # noqa: SLF001
-        except BadWindow:
-            return None
-
+        # Grab from the window's own drawable rather than the root window: compositors and
+        # XWayland redirect toplevels to their own pixmap, so this works even when the window is
+        # partially off-screen or covered, and under rootless XWayland where the root is blank.
+        window = self._display.create_resource_object("window", self._autosplit_ref.hwnd)
         selection = self._autosplit_ref.settings_dict["capture_region"]
         try:
-            reply = root.get_image(
-                selection["x"] + window_coords["x"],
-                selection["y"] + window_coords["y"],
-                selection["width"],
-                selection["height"],
-                X.ZPixmap,
-                ALL_PLANES,
-            )
-        except BadMatch:
-            # Region is (partially) outside the screen
+            geometry = window.get_geometry()
+            # GetImage requires the rectangle to be inside the window, so only request the part
+            # that is, and pad the rest to keep the selected size.
+            left, top, right, bottom = _clamp_to_window(selection, geometry.width, geometry.height)
+            if right <= left or bottom <= top:
+                # Region is entirely outside the window
+                return None
+            reply = window.get_image(left, top, right - left, bottom - top, X.ZPixmap, ALL_PLANES)
+        except BadDrawable:
+            # Window was closed
             return None
-        return _image_reply_to_bgr(reply, selection["width"], selection["height"])
+        except BadMatch:
+            # Window isn't viewable (unmapped or minimized).
+            # Without a compositor, also when the region is (partially) outside the screen.
+            return None
+        image = _image_reply_to_bgr(reply, right - left, bottom - top)
+        if image is None:
+            return None
+        return cv2.copyMakeBorder(
+            image,
+            top - selection["y"],
+            selection["y"] + selection["height"] - bottom,
+            left - selection["x"],
+            selection["x"] + selection["width"] - right,
+            cv2.BORDER_CONSTANT,
+        )
 
     @override
     def recover_window(self, captured_window_title: str):
-        windows = getWindowsWithTitle(captured_window_title)
+        windows = get_windows_with_title(captured_window_title)
         if len(windows) == 0:
             return False
         self._autosplit_ref.hwnd = windows[0].getHandle()

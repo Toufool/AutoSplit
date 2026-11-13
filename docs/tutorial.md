@@ -76,12 +76,13 @@
 ##### Linux
 
 - **X11** (fastest)\
-  Request screenshots directly from the X11 server.
+  Requests the window's content directly from the X11 server.\
+  Also works with X11 apps running through XWayland on Wayland.
 - **Scrot** (slow, may leave files in `/tmp`)\
   Uses Scrot (SCReenshOT) to take screenshots.\
-  Leaves behind a screenshot file in `/tmp` if interrupted.
-  <!-- Keep in sync with src/menu_bar.py -->
-  "scrot" must be installed: `sudo apt install scrot`
+  Leaves behind a screenshot file in `/tmp` if interrupted.\
+  "scrot" must be installed: `sudo apt install scrot`\
+  Not available on Wayland.
 
 ##### All platforms
 
