@@ -33,10 +33,11 @@ if TYPE_CHECKING:
 HALF_BRIGHTNESS = 128
 LINUX_SCREENSHOT_SUPPORT = (
     "\n\n----------------------------------------------------\n\n"
-    + error_messages.WAYLAND_WARNING
-    # Keep in sync with README.md#Capture_Method_Linux
-    + '\n"scrot" must be installed to use SCReenshOT. '
-    + "\nRun: sudo apt install scrot"
+    # Keep in sync with README.md#wayland-limitations
+    + "To capture native Wayland windows, use a Virtual Camera, "
+    + "or log into an X11 session if your Desktop Environment still offers one. See guides for"
+    + "\n- GNOME: https://linuxconfig.org/how-to-enable-disable-wayland-on-ubuntu-22-04-desktop"
+    + "\n- KDE Plasma: https://www.itechguides.com/how-to-switch-kde-plasma-from-x11-to-wayland/#When_auto-login_hides_the_session_menu"
 ) if sys.platform == "linux" else ""  # fmt: skip
 
 _DEBUG_SCREENSHOT_COMMANDS: tuple[CommandStr, ...] = (

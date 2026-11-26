@@ -28,6 +28,11 @@ from utils import (
 if sys.platform == "win32":
     import win32gui
 
+if sys.platform == "linux":
+    from pywinbox import pointInBox
+
+    from utils import get_all_windows
+
 if TYPE_CHECKING:
     from cv2.typing import MatLike, Point
 
@@ -55,6 +60,10 @@ def get_top_window_at(x: int, y: int):
     if sys.platform == "linux":
         # 80ms was the minimum needed when tested in increments of 10ms on my Pop!_OS 22.04 VM
         QTest.qWait(80)
+        return next(
+            (window for window in reversed(get_all_windows()) if pointInBox(x, y, window.box)),
+            None,
+        )
     return getTopWindowAt(x, y)
 
 
